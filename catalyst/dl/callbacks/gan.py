@@ -1,4 +1,4 @@
-from typing import Dict, List  # isort:skip
+from typing import Dict, List
 
 from catalyst.core import CriterionCallback, OptimizerCallback
 from catalyst.dl import MetricCallback, State
@@ -13,6 +13,7 @@ class WassersteinDistanceCallback(MetricCallback):
     """
     Callback to compute Wasserstein distance metric
     """
+
     def __init__(
         self,
         prefix: str = "wasserstein_distance",
@@ -32,9 +33,9 @@ class WassersteinDistanceCallback(MetricCallback):
             input_key={},
             output_key={
                 real_validity_output_key: "real_validity",
-                fake_validity_output_key: "fake_validity"
+                fake_validity_output_key: "fake_validity",
             },
-            multiplier=multiplier
+            multiplier=multiplier,
         )
 
     def get_wasserstein_distance(self, real_validity, fake_validity):
@@ -53,6 +54,7 @@ class GradientPenaltyCallback(CriterionCallback):
     """
     Criterion Callback to compute Gradient Penalty
     """
+
     def __init__(
         self,
         real_input_key: str = "data",
@@ -87,7 +89,7 @@ class GradientPenaltyCallback(CriterionCallback):
             output_key=fake_output_key,
             prefix=prefix,
             criterion_key=criterion_key,
-            multiplier=multiplier
+            multiplier=multiplier,
         )
         self.condition_keys = condition_keys or []
         self.critic_model_key = critic_model_key
@@ -103,7 +105,7 @@ class GradientPenaltyCallback(CriterionCallback):
             self.critic_criterion_key: state.model[self.critic_model_key],
             self.condition_args_criterion_key: [
                 state.batch_in[key] for key in self.condition_keys
-            ]
+            ],
         }
         criterion = state.get_attr("criterion", self.criterion_key)
         return criterion(**criterion_kwargs)
@@ -118,6 +120,7 @@ class WeightClampingOptimizerCallback(OptimizerCallback):
     """
     Optimizer callback + weights clipping after step is finished
     """
+
     def __init__(
         self,
         grad_clip_params: Dict = None,
@@ -125,7 +128,7 @@ class WeightClampingOptimizerCallback(OptimizerCallback):
         optimizer_key: str = None,
         loss_key: str = "loss",
         decouple_weight_decay: bool = True,
-        weight_clamp_value: float = 0.01
+        weight_clamp_value: float = 0.01,
     ):
         """
 
@@ -143,7 +146,7 @@ class WeightClampingOptimizerCallback(OptimizerCallback):
             accumulation_steps=accumulation_steps,
             optimizer_key=optimizer_key,
             loss_key=loss_key,
-            decouple_weight_decay=decouple_weight_decay
+            decouple_weight_decay=decouple_weight_decay,
         )
         self.weight_clamp_value = weight_clamp_value
 
@@ -157,19 +160,21 @@ class WeightClampingOptimizerCallback(OptimizerCallback):
             key="optimizer", inner_key=self.optimizer_key
         )
 
-        need_gradient_step = \
+        need_gradient_step = (
             self._accumulation_counter % self.accumulation_steps == 0
+        )
 
         if need_gradient_step:
             for group in optimizer.param_groups:
                 for param in group["params"]:
                     param.data.clamp_(
                         min=-self.weight_clamp_value,
-                        max=self.weight_clamp_value
+                        max=self.weight_clamp_value,
                     )
 
 
 __all__ = [
-    "WassersteinDistanceCallback", "GradientPenaltyCallback",
-    "WeightClampingOptimizerCallback"
+    "WassersteinDistanceCallback",
+    "GradientPenaltyCallback",
+    "WeightClampingOptimizerCallback",
 ]

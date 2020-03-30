@@ -1,4 +1,4 @@
-from typing import Callable, List, Type, Tuple, Union  # isort:skip
+from typing import Callable, List, Tuple, Type, Union
 import functools
 
 import numpy as np
@@ -13,6 +13,7 @@ class ReaderSpec:
 
     All inherited classes have to implement `__call__`.
     """
+
     def __init__(self, input_key: str, output_key: str):
         """
         Args:
@@ -42,12 +43,13 @@ class ImageReader(ReaderSpec):
     """
     Image reader abstraction. Reads images from a `csv` dataset.
     """
+
     def __init__(
         self,
         input_key: str,
         output_key: str,
         rootpath: str = None,
-        grayscale: bool = False
+        grayscale: bool = False,
     ):
         """
         Args:
@@ -85,12 +87,13 @@ class MaskReader(ReaderSpec):
     """
     Mask reader abstraction. Reads masks from a `csv` dataset.
     """
+
     def __init__(
         self,
         input_key: str,
         output_key: str,
         rootpath: str = None,
-        clip_range: Tuple[Union[int, float], Union[int, float]] = (0, 1)
+        clip_range: Tuple[Union[int, float], Union[int, float]] = (0, 1),
     ):
         """
         Args:
@@ -128,6 +131,7 @@ class ScalarReader(ReaderSpec):
     Numeric data reader abstraction.
     Reads a single float, int, str or other from data
     """
+
     def __init__(
         self,
         input_key: str,
@@ -153,9 +157,10 @@ class ScalarReader(ReaderSpec):
         self.one_hot_classes = one_hot_classes
         self.smoothing = smoothing
         if self.one_hot_classes is not None and self.smoothing is not None:
-            assert 0.0 < smoothing < 1.0, \
-                f"If smoothing is specified it must be in (0; 1), " \
+            assert 0.0 < smoothing < 1.0, (
+                f"If smoothing is specified it must be in (0; 1), "
                 f"got {smoothing}"
+            )
 
     def __call__(self, element):
         """
@@ -182,12 +187,13 @@ class LambdaReader(ReaderSpec):
     Reader abstraction with an lambda encoders.
     Can read an elem from dataset and apply `encode_fn` function to it
     """
+
     def __init__(
         self,
         input_key: str,
         output_key: str,
         lambda_fn: Callable = lambda x: x,
-        **kwargs
+        **kwargs,
     ):
         """
         Args:
@@ -222,6 +228,7 @@ class ReaderCompose(object):
     """
     Abstraction to compose several readers into one open function.
     """
+
     def __init__(self, readers: List[ReaderSpec], mixins: [] = None):
         """
         Args:
@@ -250,6 +257,9 @@ class ReaderCompose(object):
 
 
 __all__ = [
-    "ReaderSpec", "ImageReader", "ScalarReader", "LambdaReader",
-    "ReaderCompose"
+    "ReaderSpec",
+    "ImageReader",
+    "ScalarReader",
+    "LambdaReader",
+    "ReaderCompose",
 ]

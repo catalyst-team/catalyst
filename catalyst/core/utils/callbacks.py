@@ -1,4 +1,4 @@
-from typing import Union  # isort:skip
+from typing import Union
 from collections import OrderedDict
 
 

@@ -5,7 +5,7 @@
 # version         :19.08.7
 # ==============================================================================
 
-from typing import List, TypeVar, Union  # isort:skip
+from typing import List, TypeVar, Union
 from multiprocessing.pool import Pool
 
 from tqdm import tqdm
@@ -24,21 +24,13 @@ class DumbPool:
         return self
 
 
-def parallel_imap(
-    func,
-    args,
-    pool: Union[Pool, DumbPool],
-) -> List[T]:
+def parallel_imap(func, args, pool: Union[Pool, DumbPool],) -> List[T]:
     result = list(pool.imap_unordered(func, args))
     return result
 
 
 def tqdm_parallel_imap(
-    func,
-    args,
-    pool: Union[Pool, DumbPool],
-    total: int = None,
-    pbar=tqdm,
+    func, args, pool: Union[Pool, DumbPool], total: int = None, pbar=tqdm,
 ) -> List[T]:
     if total is None and hasattr(args, "__len__"):
         total = len(args)

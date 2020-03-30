@@ -16,6 +16,7 @@ class MSEMeter(meter.Meter):
     Args:
         root (bool): Toggle between calculation of RMSE(True) and MSE(False).
     """
+
     def __init__(self, root=False):
         super(MSEMeter, self).__init__()
         self.reset()
@@ -40,7 +41,7 @@ class MSEMeter(meter.Meter):
             output = torch.from_numpy(output)
             target = torch.from_numpy(target)
         self.n += output.numel()
-        self.sesum += torch.sum((output - target)**2)
+        self.sesum += torch.sum((output - target) ** 2)
 
     def value(self) -> float:
         """

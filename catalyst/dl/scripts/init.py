@@ -11,13 +11,13 @@ def build_args(parser):
         type=str,
         default=None,
         choices=["empty", "classification", "segmentation", "detection"],
-        help="select a Catalyst pipeline"
+        help="select a Catalyst pipeline",
     )
     parser.add_argument(
         "-i",
         "--interactive",
         action="store_true",
-        help="use interactive wizard to setup Catalyst pipeline"
+        help="use interactive wizard to setup Catalyst pipeline",
     )
     parser.add_argument(
         "-o", "--out-dir", type=Path, default="./", help="path where to init"

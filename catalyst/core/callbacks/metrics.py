@@ -1,5 +1,4 @@
-from typing import Any, Callable, Dict, List, Union  # isort:skip
-
+from typing import Any, Callable, Dict, List, Union
 from abc import ABC, abstractmethod
 from collections import defaultdict
 import logging
@@ -34,12 +33,15 @@ class _MetricCallback(ABC, Callback):
         self._get_output = utils.get_dictkey_auto_fn(self.output_key)
         kv_types = (dict, tuple, list, type(None))
 
-        is_value_input = \
+        is_value_input = (
             isinstance(self.input_key, str) and self.input_key != "__all__"
-        is_value_output = \
+        )
+        is_value_output = (
             isinstance(self.output_key, str) and self.output_key != "__all__"
-        is_kv_input = \
+        )
+        is_kv_input = (
             isinstance(self.input_key, kv_types) or self.input_key == "__all__"
+        )
         is_kv_output = (
             isinstance(self.output_key, kv_types)
             or self.output_key == "__all__"
@@ -86,6 +88,7 @@ class MetricCallback(_MetricCallback):
     """
     A callback that returns single metric on `state.on_batch_end`
     """
+
     def __init__(
         self,
         prefix: str,
@@ -113,6 +116,7 @@ class MultiMetricCallback(MetricCallback):
     """
     A callback that returns multiple metrics on `state.on_batch_end`
     """
+
     def __init__(
         self,
         prefix: str,
@@ -148,12 +152,13 @@ class MetricAggregationCallback(Callback):
     """
     A callback to aggregate several metrics in one value.
     """
+
     def __init__(
         self,
         prefix: str,
         metrics: Union[str, List[str], Dict[str, float]] = None,
         mode: str = "mean",
-        multiplier: float = 1.0
+        multiplier: float = 1.0,
     ) -> None:
         """
         Args:
@@ -200,17 +205,18 @@ class MetricAggregationCallback(Callback):
         self.multiplier = multiplier
 
         if mode in ("sum", "weighted_sum", "weighted_mean"):
-            self.aggregation_fn = \
+            self.aggregation_fn = (
                 lambda x: torch.sum(torch.stack(x)) * multiplier
+            )
             if mode == "weighted_mean":
                 weights_sum = sum(metrics.items())
                 self.metrics = {
-                    key: weight / weights_sum
-                    for key, weight in metrics.items()
+                    key: weight / weights_sum for key, weight in metrics.items()
                 }
         elif mode == "mean":
-            self.aggregation_fn = \
+            self.aggregation_fn = (
                 lambda x: torch.mean(torch.stack(x)) * multiplier
+            )
 
     def _preprocess(self, metrics: Any) -> List[float]:
         if self.metrics is not None:
@@ -237,10 +243,10 @@ class MetricManagerCallback(Callback):
     """
     Prepares metrics for logging, transferring values from PyTorch to numpy
     """
+
     def __init__(self):
         super().__init__(
-            order=CallbackOrder.Logging - 1,
-            node=CallbackNode.All,
+            order=CallbackOrder.Logging - 1, node=CallbackNode.All,
         )
         self.meters: Dict[str, meters.AverageValueMeter] = None
 
@@ -285,6 +291,9 @@ class MetricManagerCallback(Callback):
 
 
 __all__ = [
-    "_MetricCallback", "MetricCallback", "MultiMetricCallback",
-    "MetricAggregationCallback", "MetricManagerCallback"
+    "_MetricCallback",
+    "MetricCallback",
+    "MultiMetricCallback",
+    "MetricAggregationCallback",
+    "MetricManagerCallback",
 ]

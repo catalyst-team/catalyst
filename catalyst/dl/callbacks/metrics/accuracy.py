@@ -1,4 +1,4 @@
-from typing import List  # isort:skip
+from typing import List
 
 from catalyst.dl.core import MultiMetricCallback
 from catalyst.utils import metrics
@@ -54,6 +54,7 @@ class AccuracyCallback(MultiMetricCallback):
     There is no need to choose a type (multi-class/multi label).
     An appropriate type will be chosen automatically via shape of tensors.
     """
+
     def __init__(
         self,
         input_key: str = "targets",
@@ -99,6 +100,7 @@ class MapKCallback(MultiMetricCallback):
     """
     mAP@k metric callback.
     """
+
     def __init__(
         self,
         input_key: str = "targets",

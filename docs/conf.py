@@ -114,7 +114,13 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # Ignoring Third-party packages
 
 autodoc_mock_imports = [
-    "alchemy", "neptune", "wandb", "gym", "gridfs", "pymongo", "redis"
+    "alchemy",
+    "neptune",
+    "wandb",
+    "gym",
+    "gridfs",
+    "pymongo",
+    "redis",
 ]
 
 # autodoc_default_flags = [
@@ -172,7 +178,7 @@ html_context = {
     "github_repo": docs_repo,
     "github_version": "master",
     "conf_py_path": "/docs/",
-    "source_suffix": ".rst"
+    "source_suffix": ".rst",
 }
 
 # -- Options for HTMLHelp output ---------------------------------------------
@@ -186,15 +192,12 @@ latex_elements = {
     # The paper size ("letterpaper" or "a4paper").
     #
     # "papersize": "letterpaper",
-
     # The font size ("10pt", "11pt" or "12pt").
     #
     # "pointsize": "10pt",
-
     # Additional stuff for the LaTeX preamble.
     #
     # "preamble": "",
-
     # Latex figure (float) alignment
     #
     # "figure_align": "htbp",
@@ -205,8 +208,11 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (
-        master_doc, "Catalyst.tex", "Catalyst Documentation", "Scitator",
-        "manual"
+        master_doc,
+        "Catalyst.tex",
+        "Catalyst Documentation",
+        "Scitator",
+        "manual",
     ),
 ]
 
@@ -223,8 +229,13 @@ man_pages = [(master_doc, "catalyst", "Catalyst Documentation", [author], 1)]
 #  dir menu entry, description, category)
 texinfo_documents = [
     (
-        master_doc, "Catalyst", "Catalyst Documentation", author, "Catalyst",
-        "One line description of project.", "Miscellaneous"
+        master_doc,
+        "Catalyst",
+        "Catalyst Documentation",
+        author,
+        "Catalyst",
+        "One line description of project.",
+        "Miscellaneous",
     ),
 ]
 

@@ -13,8 +13,7 @@ from setuptools import Command, find_packages, setup
 
 # Package meta-data.
 NAME = "catalyst"
-DESCRIPTION = \
-    "Catalyst. PyTorch framework for DL research and development."
+DESCRIPTION = "Catalyst. PyTorch framework for DL research and development."
 URL = "https://github.com/catalyst-team/catalyst"
 EMAIL = "scitator@gmail.com"
 AUTHOR = "Sergey Kolesnikov"
@@ -67,9 +66,7 @@ class UploadCommand(Command):
 
         self.status("Building Source and Wheel (universal) distribution…")
         os.system(
-            "{0} setup.py sdist bdist_wheel --universal".format(
-                sys.executable
-            )
+            "{0} setup.py sdist bdist_wheel --universal".format(sys.executable)
         )
 
         self.status("Uploading the package to PyPI via Twine…")
@@ -126,7 +123,7 @@ setup(
         "Documentation": "https://catalyst-team.github.io/catalyst",
         "Source Code": "https://github.com/catalyst-team/catalyst",
     },
-    packages=find_packages(exclude=("tests", )),
+    packages=find_packages(exclude=("tests",)),
     entry_points={
         "console_scripts": [
             "catalyst-dl=catalyst.dl.__main__:main",
@@ -163,7 +160,5 @@ setup(
         "Programming Language :: Python :: Implementation :: CPython",
     ],
     # $ setup.py publish support.
-    cmdclass={
-        "upload": UploadCommand,
-    },
+    cmdclass={"upload": UploadCommand},
 )

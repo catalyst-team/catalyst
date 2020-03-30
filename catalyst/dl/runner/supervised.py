@@ -1,6 +1,4 @@
-from typing import (  # isort:skip
-    Any, Callable, Dict, List, Mapping, Tuple, Union  # isort:skip
-)  # isort:skip
+from typing import Any, Callable, Dict, List, Mapping, Tuple, Union
 from collections import OrderedDict
 import logging
 from pathlib import Path
@@ -10,12 +8,21 @@ from torch.jit import ScriptModule
 from torch.utils.data import DataLoader
 
 from catalyst.dl import (
-    Callback, CheckpointCallback, InferCallback, Runner, State,
-    SupervisedExperiment, utils
+    Callback,
+    CheckpointCallback,
+    InferCallback,
+    Runner,
+    State,
+    SupervisedExperiment,
+    utils,
 )
 from catalyst.dl.utils import trace
 from catalyst.utils.tools.typing import (
-    Criterion, Device, Model, Optimizer, Scheduler
+    Criterion,
+    Device,
+    Model,
+    Optimizer,
+    Scheduler,
 )
 
 logger = logging.getLogger(__name__)
@@ -25,6 +32,7 @@ class SupervisedRunner(Runner):
     """
     Runner for experiments with supervised model
     """
+
     _experiment_fn: Callable = SupervisedExperiment
 
     def __init__(
@@ -89,7 +97,7 @@ class SupervisedRunner(Runner):
         return output
 
     def _process_input_list(self, batch: Mapping[str, Any], **kwargs):
-        input = dict((key, batch[key]) for key in self.input_key)
+        input = {key: batch[key] for key in self.input_key}
         output = self.model(**input, **kwargs)
         return output
 
@@ -102,9 +110,7 @@ class SupervisedRunner(Runner):
         return output
 
     def _process_output_list(self, output: Union[Tuple, List]):
-        output = dict(
-            (key, value) for key, value in zip(self.output_key, output)
-        )
+        output = {key: value for key, value in zip(self.output_key, output)}
         return output
 
     def _process_output_none(self, output: Mapping[str, Any]):
@@ -180,8 +186,8 @@ class SupervisedRunner(Runner):
         if len(loaders) == 1:
             valid_loader = list(loaders.keys())[0]
             logger.warning(
-                "Attention, there is only one data loader - " +
-                str(valid_loader)
+                "Attention, there is only one data loader - "
+                + str(valid_loader)
             )
         if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
@@ -192,10 +198,7 @@ class SupervisedRunner(Runner):
         if resume is not None:
             callbacks = utils.process_callbacks(callbacks)
             checkpoint_callback_flag = any(
-                [
-                    isinstance(x, CheckpointCallback)
-                    for x in callbacks.values()
-                ]
+                isinstance(x, CheckpointCallback) for x in callbacks.values()
             )
             if not checkpoint_callback_flag:
                 callbacks["loader"] = CheckpointCallback(resume=resume)
@@ -220,7 +223,7 @@ class SupervisedRunner(Runner):
             state_kwargs=state_kwargs,
             checkpoint_data=checkpoint_data,
             distributed_params=fp16,
-            monitoring_params=monitoring_params
+            monitoring_params=monitoring_params,
         )
         self.run_experiment(experiment)
 
@@ -265,7 +268,7 @@ class SupervisedRunner(Runner):
             verbose=verbose,
             check_run=check,
             state_kwargs=state_kwargs,
-            distributed_params=fp16
+            distributed_params=fp16,
         )
         self.run_experiment(experiment)
 
@@ -309,7 +312,7 @@ class SupervisedRunner(Runner):
             verbose=verbose,
             state_kwargs=state_kwargs,
             fp16=fp16,
-            check=check
+            check=check,
         )
 
         output = callbacks["inference"].predictions
@@ -384,7 +387,7 @@ class SupervisedRunner(Runner):
             requires_grad=requires_grad,
             opt_level=opt_level,
             device=device,
-            predict_params=predict_params
+            predict_params=predict_params,
         )
 
         if logdir is not None:
@@ -392,7 +395,7 @@ class SupervisedRunner(Runner):
                 method_name=method_name,
                 mode=mode,
                 requires_grad=requires_grad,
-                opt_level=opt_level
+                opt_level=opt_level,
             )
 
             logdir = Path(logdir)

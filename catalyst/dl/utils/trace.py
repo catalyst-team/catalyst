@@ -1,5 +1,4 @@
-from typing import Union  # isort:skip
-
+from typing import Union
 import inspect
 from pathlib import Path
 
@@ -17,6 +16,7 @@ class _ForwardOverrideModel(nn.Module):
 
     (Workaround, single method tracing is not supported)
     """
+
     def __init__(self, model, method_name):
         super().__init__()
         self.model = model
@@ -32,6 +32,7 @@ class _TracingModelWrapper(nn.Module):
 
     (Workaround, to use native model batch handler)
     """
+
     def __init__(self, model, method_name):
         super().__init__()
         self.model = model
@@ -46,8 +47,9 @@ class _TracingModelWrapper(nn.Module):
 
             fn = getattr(self.model, self.method_name)
             argspec = inspect.getfullargspec(fn)
-            assert argspec.varargs is None and argspec.varkw is None, \
-                "not supported by PyTorch tracing"
+            assert (
+                argspec.varargs is None and argspec.varkw is None
+            ), "not supported by PyTorch tracing"
 
             method_argnames = utils.get_fn_argsnames(fn, exclude=["self"])
             method_input = tuple(kwargs[name] for name in method_argnames)
@@ -55,9 +57,7 @@ class _TracingModelWrapper(nn.Module):
             self.tracing_result = torch.jit.trace(method_model, method_input)
         except Exception:
             # for backward compatibility
-            self.tracing_result = torch.jit.trace(
-                method_model, *args, **kwargs
-            )
+            self.tracing_result = torch.jit.trace(method_model, *args, **kwargs)
         output = self.model.forward(*args, **kwargs)
 
         return output
@@ -107,6 +107,7 @@ def trace_model(
         # the jit
         # https://github.com/NVIDIA/apex/issues/303#issuecomment-493142950
         from apex import amp
+
         model = model.to(device)
         model = amp.initialize(model, optimizers=None, opt_level=opt_level)
         # TODO: remove `check_trace=False`
@@ -165,9 +166,7 @@ def get_trace_name(
 
 
 def load_traced_model(
-    model_path: Union[str, Path],
-    device: Device = "cpu",
-    opt_level: str = None,
+    model_path: Union[str, Path], device: Device = "cpu", opt_level: str = None,
 ) -> ScriptModule:
     """
     Loads a traced model
@@ -191,6 +190,7 @@ def load_traced_model(
     if opt_level is not None:
         utils.assert_fp16_available()
         from apex import amp
+
         model = amp.initialize(model, optimizers=None, opt_level=opt_level)
 
     return model

@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Tuple, Union  # isort:skip
+from typing import Dict, List, Optional, Tuple, Union
 from collections import defaultdict
 
 import numpy as np
@@ -48,9 +48,9 @@ def folds_to_list(folds: Union[list, str, pd.Series]) -> List[int]:
     if isinstance(folds, str):
         folds = folds.split(",")
     elif isinstance(folds, pd.Series):
-        folds = list(sorted(folds.unique()))
+        folds = sorted(folds.unique())
 
-    return list(sorted(list({int(x) for x in folds})))
+    return sorted({int(x) for x in folds})
 
 
 def split_dataframe_train_test(
@@ -122,7 +122,7 @@ def split_dataframe_on_stratified_folds(
     dataframe: pd.DataFrame,
     class_column: str,
     random_state: int = 42,
-    n_folds: int = 5
+    n_folds: int = 5,
 ) -> pd.DataFrame:
     """
     Splits DataFrame into `N` stratified folds.
@@ -154,7 +154,7 @@ def split_dataframe_on_column_folds(
     dataframe: pd.DataFrame,
     column: str,
     random_state: int = 42,
-    n_folds: int = 5
+    n_folds: int = 5,
 ) -> pd.DataFrame:
     """
     Splits DataFrame into `N` folds.
@@ -185,7 +185,7 @@ def map_dataframe(
     tag_column: str,
     class_column: str,
     tag2class: Dict[str, int],
-    verbose: bool = False
+    verbose: bool = False,
 ) -> pd.DataFrame:
     """
     This function maps tags from ``tag_column`` to ints into ``class_column``
@@ -260,8 +260,9 @@ def get_dataset_labeling(
     """
     tag_to_labels = {
         str(class_name): label
-        for label, class_name in
-        enumerate(sorted(dataframe[tag_column].unique()))
+        for label, class_name in enumerate(
+            sorted(dataframe[tag_column].unique())
+        )
     }
     return tag_to_labels
 
@@ -275,7 +276,7 @@ def split_dataframe(
     tag_column: str = None,
     class_column: str = None,
     seed: int = 42,
-    n_folds: int = 5
+    n_folds: int = 5,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """
     Split a Pandas DataFrame into folds.
@@ -307,7 +308,7 @@ def split_dataframe(
             dataframe,
             class_column=class_column,
             random_state=seed,
-            n_folds=n_folds
+            n_folds=n_folds,
         )
     else:
         result_dataframe = split_dataframe_on_folds(
@@ -359,7 +360,7 @@ def read_multiple_dataframes(
     in_csv_infer: str = None,
     tag2class: Optional[Dict[str, int]] = None,
     class_column: str = None,
-    tag_column: str = None
+    tag_column: str = None,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
     """This function reads train/valid/infer dataframes from giving paths
     Args:
@@ -374,14 +375,13 @@ def read_multiple_dataframes(
             whole dataframe, train part, valid part and infer part
     """
     assert any(
-        [x is not None for x in (in_csv_train, in_csv_valid, in_csv_infer)]
+        x is not None for x in (in_csv_train, in_csv_valid, in_csv_infer)
     )
 
     result_df = None
     fold_dfs = {}
     for fold_df, fold_name in zip(
-        (in_csv_train, in_csv_valid, in_csv_infer),
-        ("train", "valid", "infer")
+        (in_csv_train, in_csv_valid, in_csv_infer), ("train", "valid", "infer")
     ):
         if fold_df is not None:
             fold_df = merge_multiple_fold_csv(
@@ -393,9 +393,11 @@ def read_multiple_dataframes(
                 )
             fold_dfs[fold_name] = fold_df
 
-            result_df = fold_df \
-                if result_df is None \
+            result_df = (
+                fold_df
+                if result_df is None
                 else result_df.append(fold_df, ignore_index=True)
+            )
 
     output = (
         result_df,
@@ -464,10 +466,11 @@ def read_csv_data(
             and list with infer data)
     """
     from_one_df: bool = in_csv is not None
-    from_multiple_df: bool = \
-        in_csv_train is not None \
-        or in_csv_valid is not None \
+    from_multiple_df: bool = (
+        in_csv_train is not None
+        or in_csv_valid is not None
         or in_csv_infer is not None
+    )
 
     if from_one_df == from_multiple_df:
         raise ValueError(
@@ -486,7 +489,7 @@ def read_csv_data(
             class_column=class_column,
             tag_column=tag_column,
             seed=seed,
-            n_folds=n_folds
+            n_folds=n_folds,
         )
     else:
         dataframe, df_train, df_valid, df_infer = read_multiple_dataframes(
@@ -495,7 +498,7 @@ def read_csv_data(
             in_csv_infer=in_csv_infer,
             tag2class=tag2class,
             class_column=class_column,
-            tag_column=tag_column
+            tag_column=tag_column,
         )
 
     for data in [df_train, df_valid, df_infer]:
@@ -516,7 +519,7 @@ def balance_classes(
     dataframe: pd.DataFrame,
     class_column: str = "label",
     random_state: int = 42,
-    how: str = "downsampling"
+    how: str = "downsampling",
 ) -> pd.DataFrame:
     """
     Balance classes in dataframe by ``class_column``
@@ -551,7 +554,7 @@ def balance_classes(
                 df_class_column_additional = df_class_column.sample(
                     samples_per_class - len(df_class_column),
                     replace=True,
-                    random_state=random_state
+                    random_state=random_state,
                 )
                 balanced_dfs[label] = pd.concat(
                     (df_class_column, df_class_column_additional)
@@ -561,12 +564,10 @@ def balance_classes(
 
         balanced_dfs = {}
         for label in sorted(dataframe[class_column].unique()):
-            balanced_dfs[label] = (
-                dataframe[dataframe[class_column] == label].sample(
-                    samples_per_class,
-                    replace=False,
-                    random_state=random_state
-                )
+            balanced_dfs[label] = dataframe[
+                dataframe[class_column] == label
+            ].sample(
+                samples_per_class, replace=False, random_state=random_state
             )
     else:
         raise NotImplementedError()

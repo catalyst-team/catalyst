@@ -10,6 +10,7 @@ class PrecisionRecallF1ScoreCallback(MeterMetricsCallback):
     recall (true positive rate or tpr), and F1-score per class for each loader.
     Currently, supports binary and multi-label cases.
     """
+
     def __init__(
         self,
         input_key: str = "targets",
@@ -17,7 +18,7 @@ class PrecisionRecallF1ScoreCallback(MeterMetricsCallback):
         class_names: List[str] = None,
         num_classes: int = 2,
         threshold: float = 0.5,
-        activation: str = "Sigmoid"
+        activation: str = "Sigmoid",
     ):
         """
         Args:
@@ -33,9 +34,7 @@ class PrecisionRecallF1ScoreCallback(MeterMetricsCallback):
                 Must be one of ['none', 'Sigmoid', 'Softmax2d']
         """
         # adjusting num_classes automatically if class_names is not None
-        num_classes = num_classes \
-            if class_names is None \
-            else len(class_names)
+        num_classes = num_classes if class_names is None else len(class_names)
 
         meter_list = [
             meters.PrecisionRecallF1ScoreMeter(threshold)
@@ -49,7 +48,7 @@ class PrecisionRecallF1ScoreCallback(MeterMetricsCallback):
             output_key=output_key,
             class_names=class_names,
             num_classes=num_classes,
-            activation=activation
+            activation=activation,
         )
 
 

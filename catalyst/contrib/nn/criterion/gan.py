@@ -7,6 +7,7 @@ class MeanOutputLoss(nn.Module):
     Criterion to compute simple mean of the output, completely ignoring target
     (maybe useful e.g. for WGAN real/fake validity averaging
     """
+
     def forward(self, output, target):
         """Compute criterion"""
         return output.mean()
@@ -18,6 +19,7 @@ class GradientPenaltyLoss(nn.Module):
     WARN: SHOULD NOT BE RUN WITH CriterionCallback,
         use special GradientPenaltyCallback instead
     """
+
     def forward(self, fake_data, real_data, critic, critic_condition_args):
         """Compute gradient penalty"""
         device = real_data.device
@@ -42,7 +44,7 @@ class GradientPenaltyLoss(nn.Module):
             only_inputs=True,
         )[0]
         gradients = gradients.view(gradients.size(0), -1)
-        gradient_penalty = ((gradients.norm(2, dim=1) - 1)**2).mean()
+        gradient_penalty = ((gradients.norm(2, dim=1) - 1) ** 2).mean()
         return gradient_penalty
 
 

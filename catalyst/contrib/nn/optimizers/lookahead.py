@@ -1,4 +1,4 @@
-from typing import Dict  # isort:skip
+from typing import Dict
 from collections import defaultdict
 
 import torch
@@ -77,10 +77,7 @@ class Lookahead(Optimizer):
 
     @classmethod
     def get_from_params(
-        cls,
-        params: Dict,
-        base_optimizer_params: Dict = None,
-        **kwargs,
+        cls, params: Dict, base_optimizer_params: Dict = None, **kwargs,
     ) -> "Lookahead":
         from catalyst.dl.registry import OPTIMIZERS
 

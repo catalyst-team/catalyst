@@ -13,16 +13,14 @@ from catalyst.contrib.nn.modules import Normalize
 
 
 def _pop_normalization(dct):
-    for key, values in dct.items():
+    for values in dct.values():
         if isinstance(values, dict):
             values.pop("normalize_output", None)
             _pop_normalization(values)
 
 
 def _check_lists(left, right):
-    left_keys = list(sorted(left))
-    right_keys = list(sorted(right))
-    assert left_keys == right_keys
+    assert sorted(left) == sorted(right)
 
 
 def _check_named_parameters(left, right):
@@ -35,65 +33,41 @@ def test_config1():
     config1 = {
         "encoder_params": {
             "hiddens": [16, 16],
-            "layer_fn": {
-                "module": "Linear",
-                "bias": False
-            },
+            "layer_fn": {"module": "Linear", "bias": False},
             "norm_fn": "LayerNorm",
         },
         "heads_params": {
             "head1": {
                 "hiddens": [2],
-                "layer_fn": {
-                    "module": "Linear",
-                    "bias": True
-                },
+                "layer_fn": {"module": "Linear", "bias": True},
             },
             "_head2": {
                 "_hidden": {
                     "hiddens": [16],
-                    "layer_fn": {
-                        "module": "Linear",
-                        "bias": False
-                    },
+                    "layer_fn": {"module": "Linear", "bias": False},
                 },
                 "head2_1": {
                     "hiddens": [32],
-                    "layer_fn": {
-                        "module": "Linear",
-                        "bias": True
-                    },
-                    "normalize_output": True
+                    "layer_fn": {"module": "Linear", "bias": True},
+                    "normalize_output": True,
                 },
                 "_head2_2": {
                     "_hidden": {
                         "hiddens": [16, 16, 16],
-                        "layer_fn": {
-                            "module": "Linear",
-                            "bias": False
-                        },
+                        "layer_fn": {"module": "Linear", "bias": False},
                     },
                     "head2_2_1": {
                         "hiddens": [32],
-                        "layer_fn": {
-                            "module": "Linear",
-                            "bias": True
-                        },
+                        "layer_fn": {"module": "Linear", "bias": True},
                         "normalize_output": False,
                     },
                 },
             },
         },
         "embedders_params": {
-            "target1": {
-                "num_embeddings": 2,
-                "normalize_output": True,
-            },
-            "target2": {
-                "num_embeddings": 2,
-                "normalize_output": False,
-            },
-        }
+            "target1": {"num_embeddings": 2, "normalize_output": True},
+            "target2": {"num_embeddings": 2, "normalize_output": False},
+        },
     }
 
     hydra = Hydra.get_from_params(**config1)
@@ -120,7 +94,7 @@ def test_config1():
                                     "embedding",
                                     nn.Embedding(
                                         embedding_dim=16, num_embeddings=2
-                                    )
+                                    ),
                                 ),
                                 ("normalize", Normalize()),
                             ]
@@ -133,7 +107,7 @@ def test_config1():
                                     "embedding",
                                     nn.Embedding(
                                         embedding_dim=16, num_embeddings=2
-                                    )
+                                    ),
                                 ),
                             ]
                         )
@@ -144,12 +118,7 @@ def test_config1():
                 {
                     "head1": nn.Sequential(
                         OrderedDict(
-                            [
-                                (
-                                    "net",
-                                    SequentialNet(**heads_params["head1"])
-                                ),
-                            ]
+                            [("net", SequentialNet(**heads_params["head1"]))]
                         )
                     ),
                     "_head2": nn.ModuleDict(
@@ -160,9 +129,10 @@ def test_config1():
                                         (
                                             "net",
                                             SequentialNet(
-                                                **heads_params["_head2"]
-                                                ["_hidden"]
-                                            )
+                                                **heads_params["_head2"][
+                                                    "_hidden"
+                                                ]
+                                            ),
                                         )
                                     ]
                                 )
@@ -173,9 +143,10 @@ def test_config1():
                                         (
                                             "net",
                                             SequentialNet(
-                                                **heads_params["_head2"]
-                                                ["head2_1"]
-                                            )
+                                                **heads_params["_head2"][
+                                                    "head2_1"
+                                                ]
+                                            ),
                                         ),
                                         ("normalize", Normalize()),
                                     ]
@@ -189,10 +160,10 @@ def test_config1():
                                                 (
                                                     "net",
                                                     SequentialNet(
-                                                        **
-                                                        heads_params["_head2"]
-                                                        ["_head2_2"]["_hidden"]
-                                                    )
+                                                        **heads_params[
+                                                            "_head2"
+                                                        ]["_head2_2"]["_hidden"]
+                                                    ),
                                                 )
                                             ]
                                         )
@@ -203,21 +174,22 @@ def test_config1():
                                                 (
                                                     "net",
                                                     SequentialNet(
-                                                        **
-                                                        heads_params["_head2"]
-                                                        ["_head2_2"]
-                                                        ["head2_2_1"]
-                                                    )
+                                                        **heads_params[
+                                                            "_head2"
+                                                        ]["_head2_2"][
+                                                            "head2_2_1"
+                                                        ]
+                                                    ),
                                                 )
                                             ]
                                         )
                                     ),
                                 }
-                            )
+                            ),
                         }
-                    )
+                    ),
                 }
-            )
+            ),
         }
     )
 
@@ -267,9 +239,7 @@ def test_config1():
     _check_lists(output_kv.keys(), kv_keys)
 
     output_kv = hydra(
-        input_,
-        target1=torch.ones(1, 2).long(),
-        target2=torch.ones(1, 2).long()
+        input_, target1=torch.ones(1, 2).long(), target2=torch.ones(1, 2).long()
     )
     kv_keys = [
         "features",
@@ -296,41 +266,26 @@ def test_config2():
         "heads_params": {
             "head1": {
                 "hiddens": [2],
-                "layer_fn": {
-                    "module": "Linear",
-                    "bias": True
-                },
+                "layer_fn": {"module": "Linear", "bias": True},
             },
             "_head2": {
                 "_hidden": {
                     "hiddens": [16],
-                    "layer_fn": {
-                        "module": "Linear",
-                        "bias": False
-                    },
+                    "layer_fn": {"module": "Linear", "bias": False},
                 },
                 "head2_1": {
                     "hiddens": [32],
-                    "layer_fn": {
-                        "module": "Linear",
-                        "bias": True
-                    },
-                    "normalize_output": True
+                    "layer_fn": {"module": "Linear", "bias": True},
+                    "normalize_output": True,
                 },
                 "_head2_2": {
                     "_hidden": {
                         "hiddens": [16, 16, 16],
-                        "layer_fn": {
-                            "module": "Linear",
-                            "bias": False
-                        },
+                        "layer_fn": {"module": "Linear", "bias": False},
                     },
                     "head2_2_1": {
                         "hiddens": [32],
-                        "layer_fn": {
-                            "module": "Linear",
-                            "bias": True
-                        },
+                        "layer_fn": {"module": "Linear", "bias": True},
                         "normalize_output": False,
                     },
                 },
@@ -356,12 +311,7 @@ def test_config2():
                 {
                     "head1": nn.Sequential(
                         OrderedDict(
-                            [
-                                (
-                                    "net",
-                                    SequentialNet(**heads_params["head1"])
-                                ),
-                            ]
+                            [("net", SequentialNet(**heads_params["head1"]))]
                         )
                     ),
                     "_head2": nn.ModuleDict(
@@ -372,9 +322,10 @@ def test_config2():
                                         (
                                             "net",
                                             SequentialNet(
-                                                **heads_params["_head2"]
-                                                ["_hidden"]
-                                            )
+                                                **heads_params["_head2"][
+                                                    "_hidden"
+                                                ]
+                                            ),
                                         )
                                     ]
                                 )
@@ -385,9 +336,10 @@ def test_config2():
                                         (
                                             "net",
                                             SequentialNet(
-                                                **heads_params["_head2"]
-                                                ["head2_1"]
-                                            )
+                                                **heads_params["_head2"][
+                                                    "head2_1"
+                                                ]
+                                            ),
                                         ),
                                         ("normalize", Normalize()),
                                     ]
@@ -401,10 +353,10 @@ def test_config2():
                                                 (
                                                     "net",
                                                     SequentialNet(
-                                                        **
-                                                        heads_params["_head2"]
-                                                        ["_head2_2"]["_hidden"]
-                                                    )
+                                                        **heads_params[
+                                                            "_head2"
+                                                        ]["_head2_2"]["_hidden"]
+                                                    ),
                                                 )
                                             ]
                                         )
@@ -415,21 +367,22 @@ def test_config2():
                                                 (
                                                     "net",
                                                     SequentialNet(
-                                                        **
-                                                        heads_params["_head2"]
-                                                        ["_head2_2"]
-                                                        ["head2_2_1"]
-                                                    )
+                                                        **heads_params[
+                                                            "_head2"
+                                                        ]["_head2_2"][
+                                                            "head2_2_1"
+                                                        ]
+                                                    ),
                                                 )
                                             ]
                                         )
                                     ),
                                 }
-                            )
+                            ),
                         }
-                    )
+                    ),
                 }
-            )
+            ),
         }
     )
 
@@ -461,7 +414,7 @@ def test_config2():
         output_kv = hydra(
             input_,
             target1=torch.ones(1, 2).long(),
-            target2=torch.ones(1, 2).long()
+            target2=torch.ones(1, 2).long(),
         )
 
     output_tuple = hydra.forward_tuple(input_)
@@ -498,7 +451,7 @@ def test_config3():
                                     "embedding",
                                     nn.Embedding(
                                         embedding_dim=16, num_embeddings=2
-                                    )
+                                    ),
                                 ),
                                 ("normalize", Normalize()),
                             ]
@@ -511,7 +464,7 @@ def test_config3():
                                     "embedding",
                                     nn.Embedding(
                                         embedding_dim=16, num_embeddings=2
-                                    )
+                                    ),
                                 ),
                             ]
                         )
@@ -522,12 +475,7 @@ def test_config3():
                 {
                     "head1": nn.Sequential(
                         OrderedDict(
-                            [
-                                (
-                                    "net",
-                                    SequentialNet(**heads_params["head1"])
-                                ),
-                            ]
+                            [("net", SequentialNet(**heads_params["head1"]))]
                         )
                     ),
                     "_head2": nn.ModuleDict(
@@ -538,9 +486,10 @@ def test_config3():
                                         (
                                             "net",
                                             SequentialNet(
-                                                **heads_params["_head2"]
-                                                ["_hidden"]
-                                            )
+                                                **heads_params["_head2"][
+                                                    "_hidden"
+                                                ]
+                                            ),
                                         )
                                     ]
                                 )
@@ -551,9 +500,10 @@ def test_config3():
                                         (
                                             "net",
                                             SequentialNet(
-                                                **heads_params["_head2"]
-                                                ["head2_1"]
-                                            )
+                                                **heads_params["_head2"][
+                                                    "head2_1"
+                                                ]
+                                            ),
                                         ),
                                         ("normalize", Normalize()),
                                     ]
@@ -567,10 +517,10 @@ def test_config3():
                                                 (
                                                     "net",
                                                     SequentialNet(
-                                                        **
-                                                        heads_params["_head2"]
-                                                        ["_head2_2"]["_hidden"]
-                                                    )
+                                                        **heads_params[
+                                                            "_head2"
+                                                        ]["_head2_2"]["_hidden"]
+                                                    ),
                                                 )
                                             ]
                                         )
@@ -581,21 +531,22 @@ def test_config3():
                                                 (
                                                     "net",
                                                     SequentialNet(
-                                                        **
-                                                        heads_params["_head2"]
-                                                        ["_head2_2"]
-                                                        ["head2_2_1"]
-                                                    )
+                                                        **heads_params[
+                                                            "_head2"
+                                                        ]["_head2_2"][
+                                                            "head2_2_1"
+                                                        ]
+                                                    ),
                                                 )
                                             ]
                                         )
                                     ),
                                 }
-                            )
+                            ),
                         }
-                    )
+                    ),
                 }
-            )
+            ),
         }
     )
 
@@ -645,9 +596,7 @@ def test_config3():
     _check_lists(output_kv.keys(), kv_keys)
 
     output_kv = hydra(
-        input_,
-        target1=torch.ones(1, 2).long(),
-        target2=torch.ones(1, 2).long()
+        input_, target1=torch.ones(1, 2).long(), target2=torch.ones(1, 2).long()
     )
     kv_keys = [
         "features",
@@ -693,12 +642,7 @@ def test_config4():
                 {
                     "head1": nn.Sequential(
                         OrderedDict(
-                            [
-                                (
-                                    "net",
-                                    SequentialNet(**heads_params["head1"])
-                                ),
-                            ]
+                            [("net", SequentialNet(**heads_params["head1"]))]
                         )
                     ),
                     "_head2": nn.ModuleDict(
@@ -709,9 +653,10 @@ def test_config4():
                                         (
                                             "net",
                                             SequentialNet(
-                                                **heads_params["_head2"]
-                                                ["_hidden"]
-                                            )
+                                                **heads_params["_head2"][
+                                                    "_hidden"
+                                                ]
+                                            ),
                                         )
                                     ]
                                 )
@@ -722,9 +667,10 @@ def test_config4():
                                         (
                                             "net",
                                             SequentialNet(
-                                                **heads_params["_head2"]
-                                                ["head2_1"]
-                                            )
+                                                **heads_params["_head2"][
+                                                    "head2_1"
+                                                ]
+                                            ),
                                         ),
                                         ("normalize", Normalize()),
                                     ]
@@ -738,10 +684,10 @@ def test_config4():
                                                 (
                                                     "net",
                                                     SequentialNet(
-                                                        **
-                                                        heads_params["_head2"]
-                                                        ["_head2_2"]["_hidden"]
-                                                    )
+                                                        **heads_params[
+                                                            "_head2"
+                                                        ]["_head2_2"]["_hidden"]
+                                                    ),
                                                 )
                                             ]
                                         )
@@ -752,21 +698,22 @@ def test_config4():
                                                 (
                                                     "net",
                                                     SequentialNet(
-                                                        **
-                                                        heads_params["_head2"]
-                                                        ["_head2_2"]
-                                                        ["head2_2_1"]
-                                                    )
+                                                        **heads_params[
+                                                            "_head2"
+                                                        ]["_head2_2"][
+                                                            "head2_2_1"
+                                                        ]
+                                                    ),
                                                 )
                                             ]
                                         )
                                     ),
                                 }
-                            )
+                            ),
                         }
-                    )
+                    ),
                 }
-            )
+            ),
         }
     )
 
@@ -798,7 +745,7 @@ def test_config4():
         output_kv = hydra(
             input_,
             target1=torch.ones(1, 2).long(),
-            target2=torch.ones(1, 2).long()
+            target2=torch.ones(1, 2).long(),
         )
 
     output_tuple = hydra.forward_tuple(input_)

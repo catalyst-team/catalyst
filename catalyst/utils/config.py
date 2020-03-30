@@ -1,4 +1,4 @@
-from typing import Dict, List, Union  # isort:skip
+from typing import Dict, List, Union
 from collections import OrderedDict
 import json
 from logging import getLogger
@@ -25,18 +25,20 @@ OrderedLoader.add_constructor(
 OrderedLoader.add_implicit_resolver(
     "tag:yaml.org,2002:float",
     re.compile(
-        u"""^(?:
+        """^(?:
         [-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+]?[0-9]+)?
         |[-+]?(?:[0-9][0-9_]*)(?:[eE][-+]?[0-9]+)
         |\\.[0-9_]+(?:[eE][-+][0-9]+)?
         |[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*
         |[-+]?\\.(?:inf|Inf|INF)
-        |\\.(?:nan|NaN|NAN))$""", re.X
-    ), list(u"-+0123456789.")
+        |\\.(?:nan|NaN|NAN))$""",
+        re.X,
+    ),
+    list("-+0123456789."),
 )
 
 
-def _load_ordered_yaml(stream, ):
+def _load_ordered_yaml(stream,):
     return yaml.load(stream, OrderedLoader)
 
 
@@ -44,7 +46,7 @@ def load_config(
     path: Union[str, Path],
     ordered: bool = False,
     data_format: str = None,
-    encoding: str = "utf-8"
+    encoding: str = "utf-8",
 ) -> Union[Dict, List]:
     """
     Loads config by giving path. Supports YAML and JSON files.
@@ -73,8 +75,11 @@ def load_config(
     else:
         suffix = path.suffix
 
-    assert suffix in [".json", ".yml", ".yaml"], \
-        f"Unknown file format '{suffix}'"
+    assert suffix in [
+        ".json",
+        ".yml",
+        ".yaml",
+    ], f"Unknown file format '{suffix}'"
 
     config = None
     with path.open(encoding=encoding) as stream:
@@ -89,7 +94,7 @@ def load_config(
             config = yaml.load(stream, loader)
 
     if config is None:
-        return dict()
+        return {}
 
     return config
 
@@ -120,8 +125,11 @@ def save_config(
     else:
         suffix = path.suffix
 
-    assert suffix in [".json", ".yml", ".yaml"], \
-        f"Unknown file format '{suffix}'"
+    assert suffix in [
+        ".json",
+        ".yml",
+        ".yaml",
+    ], f"Unknown file format '{suffix}'"
 
     with path.open(encoding=encoding, mode="w") as stream:
         if suffix == ".json":

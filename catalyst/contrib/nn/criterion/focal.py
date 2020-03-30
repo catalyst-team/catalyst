@@ -26,14 +26,14 @@ class FocalLossBinary(_Loss):
                 metrics.reduced_focal_loss,
                 gamma=gamma,
                 threshold=threshold,
-                reduction=reduction
+                reduction=reduction,
             )
         else:
             self.loss_fn = partial(
                 metrics.sigmoid_focal_loss,
                 gamma=gamma,
                 alpha=alpha,
-                reduction=reduction
+                reduction=reduction,
             )
 
     def forward(self, logits, targets):
@@ -61,6 +61,7 @@ class FocalLossMultiClass(FocalLossBinary):
     Compute focal loss for multi-class problem.
     Ignores targets having -1 label
     """
+
     def forward(self, logits, targets):
         """
         Args:

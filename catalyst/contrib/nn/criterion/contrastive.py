@@ -1,6 +1,6 @@
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
+from torch import nn
+from torch.nn import functional as F
 
 
 class ContrastiveEmbeddingLoss(nn.Module):
@@ -9,6 +9,7 @@ class ContrastiveEmbeddingLoss(nn.Module):
 
     paper: http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf
     """
+
     def __init__(self, margin=1.0, reduction="mean"):
         """
         Constructor method for the ContrastiveEmbeddingLoss class.
@@ -38,10 +39,9 @@ class ContrastiveEmbeddingLoss(nn.Module):
         bs = len(distance_true)
         margin_distance = self.margin - distance_pred
         margin_distance_ = torch.clamp(margin_distance, min=0.0)
-        loss = (
-            (1 - distance_true) * torch.pow(distance_pred, 2) +
-            distance_true * torch.pow(margin_distance_, 2)
-        )
+        loss = (1 - distance_true) * torch.pow(
+            distance_pred, 2
+        ) + distance_true * torch.pow(margin_distance_, 2)
 
         if self.reduction == "mean":
             loss = torch.sum(loss) / 2.0 / bs
@@ -54,6 +54,7 @@ class ContrastiveDistanceLoss(nn.Module):
     """
     Contrastive distance loss
     """
+
     def __init__(self, margin=1.0, reduction="mean"):
         """
         Constructor method for the ContrastiveDistanceLoss class.
@@ -78,10 +79,9 @@ class ContrastiveDistanceLoss(nn.Module):
         bs = len(distance_true)
         margin_distance = self.margin - distance_pred
         margin_distance_ = torch.clamp(margin_distance, min=0.0)
-        loss = (
-            (1 - distance_true) * torch.pow(distance_pred, 2) +
-            distance_true * torch.pow(margin_distance_, 2)
-        )
+        loss = (1 - distance_true) * torch.pow(
+            distance_pred, 2
+        ) + distance_true * torch.pow(margin_distance_, 2)
 
         if self.reduction == "mean":
             loss = torch.sum(loss) / 2.0 / bs
@@ -95,6 +95,7 @@ class ContrastivePairwiseEmbeddingLoss(nn.Module):
     ContrastivePairwiseEmbeddingLoss – proof of concept criterion.
     Still work in progress.
     """
+
     def __init__(self, margin=1.0, reduction="mean"):
         """
         Constructor method for the ContrastivePairwiseEmbeddingLoss class.
@@ -132,6 +133,7 @@ class ContrastivePairwiseEmbeddingLoss(nn.Module):
 
 
 __all__ = [
-    "ContrastiveEmbeddingLoss", "ContrastiveDistanceLoss",
-    "ContrastivePairwiseEmbeddingLoss"
+    "ContrastiveEmbeddingLoss",
+    "ContrastiveDistanceLoss",
+    "ContrastivePairwiseEmbeddingLoss",
 ]

@@ -1,6 +1,6 @@
-from typing import Callable  # isort:skip
+from typing import Callable
 
-import torch.nn as nn
+from torch import nn
 
 ACTIVATIONS = {
     None: "sigmoid",

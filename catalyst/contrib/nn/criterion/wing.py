@@ -2,7 +2,7 @@ from functools import partial
 import math
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 
 def wing_loss(
@@ -10,7 +10,7 @@ def wing_loss(
     targets: torch.Tensor,
     width: int = 5,
     curvature: float = 0.5,
-    reduction: str = "mean"
+    reduction: str = "mean",
 ):
     """
     https://arxiv.org/pdf/1711.06753.pdf
@@ -24,8 +24,7 @@ def wing_loss(
     idx_smaller = diff_abs < width
     idx_bigger = diff_abs >= width
 
-    loss[idx_smaller] = \
-        width * torch.log(1 + diff_abs[idx_smaller] / curvature)
+    loss[idx_smaller] = width * torch.log(1 + diff_abs[idx_smaller] / curvature)
 
     c = width - width * math.log(1 + width / curvature)
     loss[idx_bigger] = loss[idx_bigger] - c

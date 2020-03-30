@@ -9,14 +9,15 @@ class RotateMixin:
     """
     Calculates rotation factor for augmented image
     """
+
     def __init__(
         self,
         input_key: str = "image",
         output_key: str = "rotation_factor",
         targets_key: str = None,
-        rotate_probability: float = 1.,
+        rotate_probability: float = 1.0,
         hflip_probability: float = 0.5,
-        one_hot_classes: int = None
+        one_hot_classes: int = None,
     ):
         """
         Args:
@@ -30,9 +31,9 @@ class RotateMixin:
         self.hflip_probability = hflip_probability
         self.rotate = A.RandomRotate90()
         self.hflip = A.HorizontalFlip()
-        self.one_hot_classes = one_hot_classes * 8 \
-            if one_hot_classes is not None \
-            else None
+        self.one_hot_classes = (
+            one_hot_classes * 8 if one_hot_classes is not None else None
+        )
 
     def __call__(self, dictionary):
         image = dictionary[self.input_key]
@@ -50,8 +51,9 @@ class RotateMixin:
         dictionary[self.output_key] = rotation_factor
 
         if self.targets_key is not None:
-            class_rotation_factor = \
+            class_rotation_factor = (
                 dictionary[self.targets_key] * 8 + rotation_factor
+            )
             key = f"class_rotation_{self.targets_key}"
             dictionary[key] = class_rotation_factor
 

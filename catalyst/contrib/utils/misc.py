@@ -1,4 +1,4 @@
-from typing import Any, Iterable, Optional  # isort:skip
+from typing import Any, Iterable, Optional
 from itertools import tee
 
 
@@ -32,8 +32,9 @@ def make_tuple(tuple_like):
         tuple or list
     """
     tuple_like = (
-        tuple_like if isinstance(tuple_like, (list, tuple)) else
-        (tuple_like, tuple_like)
+        tuple_like
+        if isinstance(tuple_like, (list, tuple))
+        else (tuple_like, tuple_like)
     )
     return tuple_like
 

@@ -1,6 +1,6 @@
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
+from torch import nn
+from torch.nn import functional as F
 
 from ..abn import ABN
 from .core import _get_block, _upsample, DecoderBlock, EncoderBlock
@@ -19,9 +19,11 @@ class EncoderDownsampleBlock(EncoderBlock):
         **kwargs
     ):
         super().__init__(in_channels, out_channels, in_strides)
-        self._out_strides = in_strides * first_stride * second_stride \
-            if in_strides is not None \
+        self._out_strides = (
+            in_strides * first_stride * second_stride
+            if in_strides is not None
             else None
+        )
         self._block = _get_block(
             in_channels=in_channels,
             out_channels=out_channels,
@@ -61,11 +63,13 @@ class EncoderUpsampleBlock(EncoderBlock):
         if in_strides is None:
             self._out_strides = None
         elif pool_first:
-            self._out_strides = \
+            self._out_strides = (
                 in_strides * first_stride * second_stride * 2 // upsample_scale
+            )
         else:
-            self._out_strides = \
+            self._out_strides = (
                 in_strides * first_stride * second_stride // upsample_scale
+            )
         self.pool_first = pool_first
         self.upsample_scale = upsample_scale
         self.interpolation_mode = interpolation_mode
@@ -97,7 +101,7 @@ class EncoderUpsampleBlock(EncoderBlock):
             x,
             scale_factor=self.upsample_scale,
             mode=self.interpolation_mode,
-            align_corners=self.align_corners
+            align_corners=self.align_corners,
         )
         return self.block(x)
 
@@ -111,8 +115,8 @@ class DecoderConcatBlock(DecoderBlock):
         in_strides: int = None,
         abn_block: nn.Module = ABN,
         activation: str = "ReLU",
-        pre_dropout_rate: float = 0.,
-        post_dropout_rate: float = 0.,
+        pre_dropout_rate: float = 0.0,
+        post_dropout_rate: float = 0.0,
         upsample_scale: int = None,
         interpolation_mode: str = "bilinear",
         align_corners: bool = True,
@@ -141,8 +145,8 @@ class DecoderConcatBlock(DecoderBlock):
         self,
         abn_block: nn.Module = ABN,
         activation: str = "ReLU",
-        pre_dropout_rate: float = 0.,
-        post_dropout_rate: float = 0.,
+        pre_dropout_rate: float = 0.0,
+        post_dropout_rate: float = 0.0,
         **kwargs
     ):
         layers = []
@@ -165,9 +169,7 @@ class DecoderConcatBlock(DecoderBlock):
         block = nn.Sequential(*layers)
         return block
 
-    def forward(
-        self, bottom: torch.Tensor, left: torch.Tensor
-    ) -> torch.Tensor:
+    def forward(self, bottom: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
 
         if self.aggregate_first:
             x = torch.cat([bottom, left], 1)
@@ -175,7 +177,7 @@ class DecoderConcatBlock(DecoderBlock):
                 x,
                 scale=self.upsample_scale,
                 interpolation_mode=self.interpolation_mode,
-                align_corners=self.align_corners
+                align_corners=self.align_corners,
             )
         else:
             x = _upsample(
@@ -183,7 +185,7 @@ class DecoderConcatBlock(DecoderBlock):
                 scale=self.upsample_scale,
                 size=left.shape[2:],
                 interpolation_mode=self.interpolation_mode,
-                align_corners=self.align_corners
+                align_corners=self.align_corners,
             )
             x = torch.cat([x, left], 1)
 
@@ -194,9 +196,7 @@ class DecoderSumBlock(DecoderConcatBlock):
     def __init__(self, enc_channels: int, **kwargs):
         super().__init__(enc_channels=0, **kwargs)
 
-    def forward(
-        self, bottom: torch.Tensor, left: torch.Tensor
-    ) -> torch.Tensor:
+    def forward(self, bottom: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
 
         if self.aggregate_first:
             x = bottom + left
@@ -204,7 +204,7 @@ class DecoderSumBlock(DecoderConcatBlock):
                 x,
                 scale=self.upsample_scale,
                 interpolation_mode=self.interpolation_mode,
-                align_corners=self.align_corners
+                align_corners=self.align_corners,
             )
             x = self.block(x)
         else:
@@ -213,7 +213,7 @@ class DecoderSumBlock(DecoderConcatBlock):
                 scale=self.upsample_scale,
                 size=left.shape[2:],
                 interpolation_mode=self.interpolation_mode,
-                align_corners=self.align_corners
+                align_corners=self.align_corners,
             )
             x = self.block(x)
             x = x + left

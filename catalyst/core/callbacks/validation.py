@@ -7,10 +7,10 @@ class ValidationManagerCallback(Callback):
     """
     A callback to aggregate state.valid_metrics from state.epoch_metrics.
     """
+
     def __init__(self):
         super().__init__(
-            order=CallbackOrder.Validation,
-            node=CallbackNode.Master,
+            order=CallbackOrder.Validation, node=CallbackNode.Master,
         )
 
     def on_epoch_start(self, state: State):
@@ -26,17 +26,20 @@ class ValidationManagerCallback(Callback):
             for k, v in state.epoch_metrics.items()
             if k.startswith(state.valid_loader)
         }
-        assert state.main_metric in state.valid_metrics, \
-            f"{state.main_metric} value is not available by the epoch end"
+        assert (
+            state.main_metric in state.valid_metrics
+        ), f"{state.main_metric} value is not available by the epoch end"
 
         current_valid_metric = state.valid_metrics[state.main_metric]
         if state.minimize_metric:
-            best_valid_metric = \
-                state.best_valid_metrics.get(state.main_metric, float("+inf"))
+            best_valid_metric = state.best_valid_metrics.get(
+                state.main_metric, float("+inf")
+            )
             is_best = current_valid_metric < best_valid_metric
         else:
-            best_valid_metric = \
-                state.best_valid_metrics.get(state.main_metric, float("-inf"))
+            best_valid_metric = state.best_valid_metrics.get(
+                state.main_metric, float("-inf")
+            )
             is_best = current_valid_metric > best_valid_metric
 
         if is_best:

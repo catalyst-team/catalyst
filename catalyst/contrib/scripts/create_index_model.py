@@ -16,7 +16,7 @@ def build_args(parser):
         "--knn-metric",
         type=str,
         default="l2",
-        choices=["l2", "angulardist", "cosinesimil"]
+        choices=["l2", "angulardist", "cosinesimil"],
     )
 
     parser.add_argument("--out-npy", type=str, default=None)
@@ -61,8 +61,9 @@ def main(args, _=None):
 
         print(
             "[ Explained variance ratio: {ratio:.4} ]".format(
-                ratio=pipeline.named_steps["pca"].explained_variance_ratio_.
-                sum()
+                ratio=pipeline.named_steps[
+                    "pca"
+                ].explained_variance_ratio_.sum()
             )
         )
 
@@ -72,7 +73,7 @@ def main(args, _=None):
     index = nmslib.init(
         method="hnsw",
         space=args.knn_metric,
-        data_type=nmslib.DataType.DENSE_VECTOR
+        data_type=nmslib.DataType.DENSE_VECTOR,
     )
     print("[==  Adding features to indexer  ==]")
     index.addDataPointBatch(features)

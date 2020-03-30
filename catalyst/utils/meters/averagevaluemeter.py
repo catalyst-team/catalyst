@@ -13,6 +13,7 @@ class AverageValueMeter(meter.Meter):
     Meter updates are applied online, one value for each update.
     Values are not cached, only the last added.
     """
+
     def __init__(self):
         super(AverageValueMeter, self).__init__()
         self.n = 0

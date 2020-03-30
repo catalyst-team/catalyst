@@ -1,8 +1,8 @@
-from typing import List  # isort:skip
+from typing import List
 from abc import ABC, abstractmethod
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 
 class BridgeSpec(ABC, nn.Module):

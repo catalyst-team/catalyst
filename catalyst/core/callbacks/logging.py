@@ -1,4 +1,4 @@
-from typing import Dict, List  # isort:skip
+from typing import Dict, List
 import logging
 import os
 import sys
@@ -8,6 +8,7 @@ from tqdm import tqdm
 from catalyst import utils
 from catalyst.core import Callback, CallbackNode, CallbackOrder, State
 from catalyst.utils.tools.tensorboard import SummaryWriter
+
 from . import formatters
 
 
@@ -15,10 +16,9 @@ class VerboseLogger(Callback):
     """
     Logs the params into console
     """
+
     def __init__(
-        self,
-        always_show: List[str] = None,
-        never_show: List[str] = None,
+        self, always_show: List[str] = None, never_show: List[str] = None,
     ):
         """
         Args:
@@ -98,6 +98,7 @@ class ConsoleLogger(Callback):
     Logger callback,
     translates ``state.*_metrics`` to console and text file
     """
+
     def __init__(self):
         """Init ``ConsoleLogger``"""
         super().__init__(order=CallbackOrder.Logging, node=CallbackNode.Master)
@@ -150,6 +151,7 @@ class TensorboardLogger(Callback):
     """
     Logger callback, translates ``state.metric_manager`` to tensorboard
     """
+
     def __init__(
         self,
         metric_names: List[str] = None,
@@ -171,13 +173,13 @@ class TensorboardLogger(Callback):
         if not (self.log_on_batch_end or self.log_on_epoch_end):
             raise ValueError("You have to log something!")
 
-        self.loggers = dict()
+        self.loggers = {}
 
     def _log_metrics(
         self, metrics: Dict[str, float], step: int, mode: str, suffix=""
     ):
         if self.metrics_to_log is None:
-            metrics_to_log = sorted(list(metrics.keys()))
+            metrics_to_log = sorted(metrics.keys())
         else:
             metrics_to_log = self.metrics_to_log
 
@@ -196,7 +198,6 @@ class TensorboardLogger(Callback):
 
     def on_loader_start(self, state: State):
         """Prepare tensorboard writers for the current stage"""
-
         if state.loader_name not in self.loggers:
             log_dir = os.path.join(state.logdir, f"{state.loader_name}_log")
             self.loggers[state.loader_name] = SummaryWriter(log_dir)
@@ -213,7 +214,7 @@ class TensorboardLogger(Callback):
                 metrics=metrics_,
                 step=state.global_step,
                 mode=mode,
-                suffix="/batch"
+                suffix="/batch",
             )
 
     def on_epoch_end(self, state: "State"):

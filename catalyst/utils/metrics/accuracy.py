@@ -10,11 +10,7 @@ from catalyst.utils import get_activation_fn
 
 
 def accuracy(
-    outputs,
-    targets,
-    topk=(1, ),
-    threshold: float = None,
-    activation: str = None
+    outputs, targets, topk=(1,), threshold: float = None, activation: str = None
 ):
     """
     Computes the accuracy.
@@ -94,7 +90,7 @@ def average_accuracy(outputs, targets, k=10):
     return score / min(len(targets), k)
 
 
-def mean_average_accuracy(outputs, targets, topk=(1, )):
+def mean_average_accuracy(outputs, targets, topk=(1,)):
     """
     Computes the mean average accuracy at k.
     This function computes the mean average accuracy at k between two lists
@@ -120,9 +116,7 @@ def mean_average_accuracy(outputs, targets, topk=(1, )):
 
     res = []
     for k in topk:
-        ap = np.mean(
-            [average_accuracy(p, a, k) for a, p in zip(targets, pred)]
-        )
+        ap = np.mean([average_accuracy(p, a, k) for a, p in zip(targets, pred)])
         res.append(ap)
     return res
 

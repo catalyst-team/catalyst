@@ -1,4 +1,4 @@
-from typing import Any, Dict, Iterable, List, Mapping, Union  # isort:skip
+from typing import Any, Dict, Iterable, List, Mapping, Union
 from collections import OrderedDict
 
 from torch import nn
@@ -13,6 +13,7 @@ class BaseExperiment(Experiment):
     Super-simple one-staged experiment
         you can use to declare experiment in code
     """
+
     def __init__(
         self,
         model: Model,
@@ -115,15 +116,15 @@ class BaseExperiment(Experiment):
 
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
         """Returns the state parameters for a given stage"""
-        default_params = dict(
-            logdir=self.logdir,
-            num_epochs=self._num_epochs,
-            valid_loader=self._valid_loader,
-            main_metric=self._main_metric,
-            verbose=self._verbose,
-            minimize_metric=self._minimize_metric,
-            checkpoint_data=self._checkpoint_data,
-        )
+        default_params = {
+            "logdir": self.logdir,
+            "num_epochs": self._num_epochs,
+            "valid_loader": self._valid_loader,
+            "main_metric": self._main_metric,
+            "verbose": self._verbose,
+            "minimize_metric": self._minimize_metric,
+            "checkpoint_data": self._checkpoint_data,
+        }
         state_params = {**default_params, **self._additional_state_kwargs}
         return state_params
 
@@ -144,9 +145,7 @@ class BaseExperiment(Experiment):
         return self._scheduler
 
     def get_loaders(
-        self,
-        stage: str,
-        epoch: int = None,
+        self, stage: str, epoch: int = None,
     ) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage"""
         return self._loaders

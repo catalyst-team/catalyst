@@ -1,4 +1,4 @@
-from typing import List, Tuple, Union  # isort:skip
+from typing import List, Tuple, Union
 import logging
 import os
 import pathlib
@@ -45,7 +45,7 @@ def imread(
     expand_dims: bool = True,
     rootpath: Union[str, pathlib.Path] = None,
     **kwargs,
-):
+) -> np.ndarray:
     """
 
     Args:
@@ -57,7 +57,7 @@ def imread(
         rootpath:
 
     Returns:
-
+        np.ndarray: image
     """
     uri = str(uri)
 
@@ -88,8 +88,8 @@ def mimread(
     clip_range: Tuple[int, int] = None,
     expand_dims: bool = True,
     rootpath: Union[str, pathlib.Path] = None,
-    **kwargs
-):
+    **kwargs,
+) -> np.ndarray:
     """
 
     Args:
@@ -103,8 +103,7 @@ def mimread(
             (allows to use relative path)
 
     Returns:
-        np.ndarray: Image
-
+        np.ndarray: image
     """
     if rootpath is not None:
         uri = uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
@@ -153,7 +152,8 @@ def tensor_to_ndimage(
         mean (Tuple[float, float, float]): per channel mean to add
         std (Tuple[float, float, float]): per channel std to multiply
         move_channels_dim (bool): if True, convert tensor to [B]xHxWxC format
-        dtype: result ndarray dtype. Only float32 and uint8 are supported.
+        dtype: result ndarray dtype. Only float32 and uint8 are supported
+
     Returns:
         [B]xHxWxC np.ndarray of dtype
     """
@@ -161,10 +161,10 @@ def tensor_to_ndimage(
         has_batch_dim = len(images.shape) == 4
 
         mean = images.new_tensor(mean).view(
-            *((1, ) if has_batch_dim else ()), len(mean), 1, 1
+            *((1,) if has_batch_dim else ()), len(mean), 1, 1
         )
         std = images.new_tensor(std).view(
-            *((1, ) if has_batch_dim else ()), len(std), 1, 1
+            *((1,) if has_batch_dim else ()), len(std), 1, 1
         )
 
         images = images * std + mean
@@ -186,7 +186,7 @@ def mask_to_overlay_image(
     image: np.ndarray,
     masks: List[np.ndarray],
     threshold: float = 0,
-    mask_strength: float = 0.5
+    mask_strength: float = 0.5,
 ) -> np.ndarray:
     """
     Draws every mask for with some color over image
@@ -196,9 +196,9 @@ def mask_to_overlay_image(
         masks (List[np.ndarray]): list of masks
         threshold (float): threshold for masks binarization
         mask_strength (float): opacity of colorized masks
+
     Returns:
         np.ndarray: HxWx3 image with overlay
-
     """
     h, w = image.shape[:2]
     labels = np.zeros((h, w), np.uint8)
@@ -226,7 +226,6 @@ def has_image_extension(uri) -> bool:
 
     Returns:
         bool: True if file has image extension, False otherwise
-
     """
     _, ext = os.path.splitext(uri)
     return ext.lower() in {".bmp", ".png", ".jpeg", ".jpg", ".tif", ".tiff"}

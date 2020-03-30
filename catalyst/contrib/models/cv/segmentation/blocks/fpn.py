@@ -1,6 +1,6 @@
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
+from torch import nn
+from torch.nn import functional as F
 
 from .core import DecoderBlock
 
@@ -29,14 +29,12 @@ class DecoderFPNBlock(DecoderBlock):
         block = nn.Conv2d(self.enc_channels, self.out_channels, kernel_size=1)
         return block
 
-    def forward(
-        self, bottom: torch.Tensor, left: torch.Tensor
-    ) -> torch.Tensor:
+    def forward(self, bottom: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
         x = F.interpolate(
             bottom,
             scale_factor=self.upsample_scale,
             mode=self.interpolation_mode,
-            align_corners=self.align_corners
+            align_corners=self.align_corners,
         )
         left = self.block(left)
         x = x + left
@@ -66,7 +64,7 @@ class Conv3x3GNReLU(nn.Module):
                 kernel_size=3,
                 stride=1,
                 padding=1,
-                bias=False
+                bias=False,
             ),
             nn.GroupNorm(32, out_channels),
             nn.ReLU(inplace=True),
@@ -79,7 +77,7 @@ class Conv3x3GNReLU(nn.Module):
                 x,
                 scale_factor=self.upsample_scale,
                 mode=self.interpolation_mode,
-                align_corners=self.align_corners
+                align_corners=self.align_corners,
             )
         return x
 

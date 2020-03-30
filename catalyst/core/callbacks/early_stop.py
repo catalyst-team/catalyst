@@ -31,7 +31,7 @@ class EarlyStoppingCallback(Callback):
         patience: int,
         metric: str = "loss",
         minimize: bool = True,
-        min_delta: float = 1e-6
+        min_delta: float = 1e-6,
     ):
         super().__init__(order=CallbackOrder.External, node=CallbackNode.All)
         self.best_score = None

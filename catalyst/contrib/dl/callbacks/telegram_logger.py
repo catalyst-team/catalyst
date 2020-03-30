@@ -1,4 +1,4 @@
-from typing import List  # isort:skip
+from typing import List
 import logging
 import os
 from urllib.parse import quote_plus
@@ -12,6 +12,7 @@ class TelegramLogger(Callback):
     """
     Logger callback, translates ``state.metric_manager`` to telegram channel
     """
+
     def __init__(
         self,
         token: str = None,
@@ -39,8 +40,8 @@ class TelegramLogger(Callback):
         super().__init__(order=CallbackOrder.Logging, node=CallbackNode.Master)
         # @TODO: replace this logic with global catalyst config at ~/.catalyst
         self._token = token or os.environ.get("CATALYST_TELEGRAM_TOKEN", None)
-        self._chat_id = (
-            chat_id or os.environ.get("CATALYST_TELEGRAM_CHAT_ID", None)
+        self._chat_id = chat_id or os.environ.get(
+            "CATALYST_TELEGRAM_CHAT_ID", None
         )
         assert self._token is not None and self._chat_id is not None
         self._base_url = (
@@ -79,9 +80,7 @@ class TelegramLogger(Callback):
     def on_loader_start(self, state: State):
         """Notify about starting running the new loader"""
         if self.log_on_loader_start:
-            text = (
-                f"{state.loader_name} {state.global_epoch} epoch has started"
-            )
+            text = f"{state.loader_name} {state.global_epoch} epoch has started"
 
             self._send_text(text)
 
@@ -91,7 +90,7 @@ class TelegramLogger(Callback):
             metrics = state.loader_metrics
 
             if self.metrics_to_log is None:
-                metrics_to_log = sorted(list(metrics.keys()))
+                metrics_to_log = sorted(metrics.keys())
             else:
                 metrics_to_log = self.metrics_to_log
 

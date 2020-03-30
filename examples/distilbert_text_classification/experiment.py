@@ -1,6 +1,6 @@
+from typing import Dict
 from collections import OrderedDict
 from pathlib import Path
-from typing import Dict
 
 import pandas as pd
 
@@ -18,8 +18,13 @@ class Experiment(ConfigExperiment):
 
     # noinspection PyMethodOverriding
     def get_datasets(
-        self, stage: str, path_to_data: str, train_filename: str,
-        valid_filename: str, max_sequence_length: int, **kwargs
+        self,
+        stage: str,
+        path_to_data: str,
+        train_filename: str,
+        valid_filename: str,
+        max_sequence_length: int,
+        **kwargs
     ):
         datasets = OrderedDict()
 
@@ -32,14 +37,14 @@ class Experiment(ConfigExperiment):
             texts=train_df["text"],
             labels=train_df["label"],
             label_dict=None,
-            max_seq_length=max_sequence_length
+            max_seq_length=max_sequence_length,
         )
 
         valid_dataset = TextClassificationDataset(
             texts=valid_df["text"],
             labels=valid_df["label"],
             label_dict=train_dataset.label_dict,
-            max_seq_length=max_sequence_length
+            max_seq_length=max_sequence_length,
         )
 
         datasets["train"] = train_dataset

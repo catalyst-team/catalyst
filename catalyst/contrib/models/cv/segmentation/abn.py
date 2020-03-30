@@ -1,6 +1,6 @@
-from typing import Dict  # isort:skip
+from typing import Dict
 
-import torch.nn as nn
+from torch import nn
 
 
 class ABN(nn.Module):
@@ -8,13 +8,14 @@ class ABN(nn.Module):
     Activated Batch Normalization
     This gathers a `BatchNorm2d` and an activation function in a single module
     """
+
     def __init__(
         self,
         num_features,
         activation="leaky_relu",
         batchnorm_params: Dict = None,
         activation_params: Dict = None,
-        use_batchnorm: bool = True
+        use_batchnorm: bool = True,
     ):
         """
         Create an Activated Batch Normalization module

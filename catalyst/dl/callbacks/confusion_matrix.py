@@ -1,4 +1,4 @@
-from typing import Dict, List  # isort:skip
+from typing import Dict, List
 
 import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
@@ -32,9 +32,9 @@ class ConfusionMatrixCallback(Callback):
         self._plot_params = plot_params or {}
 
         self.class_names = class_names
-        self.num_classes = num_classes \
-            if class_names is None \
-            else len(class_names)
+        self.num_classes = (
+            num_classes if class_names is None else len(class_names)
+        )
 
         assert self.num_classes is not None
         self._reset_stats()
@@ -77,7 +77,7 @@ class ConfusionMatrixCallback(Callback):
             class_names=class_names,
             normalize=True,
             show=False,
-            **self._plot_params
+            **self._plot_params,
         )
         fig = utils.render_figure_to_tensor(fig)
         logger.add_image(f"{self.prefix}/epoch", fig, global_step=epoch)
@@ -88,13 +88,13 @@ class ConfusionMatrixCallback(Callback):
     def on_batch_end(self, state: State):
         self._add_to_stats(
             state.batch_out[self.output_key].detach(),
-            state.batch_in[self.input_key].detach()
+            state.batch_in[self.input_key].detach(),
         )
 
     def on_loader_end(self, state: State):
-        class_names = \
-            self.class_names or \
-            [str(i) for i in range(self.num_classes)]
+        class_names = self.class_names or [
+            str(i) for i in range(self.num_classes)
+        ]
         confusion_matrix = self._compute_confusion_matrix()
 
         if state.distributed_rank >= 0:

@@ -1,4 +1,4 @@
-from typing import List  # isort:skip
+from typing import List
 
 from catalyst.dl.core import MetricCallback, MultiMetricCallback
 from catalyst.utils import metrics
@@ -13,6 +13,7 @@ class IouCallback(MetricCallback):
     """
     IoU (Jaccard) metric callback.
     """
+
     def __init__(
         self,
         input_key: str = "targets",
@@ -41,7 +42,7 @@ class IouCallback(MetricCallback):
             output_key=output_key,
             eps=eps,
             threshold=threshold,
-            activation=activation
+            activation=activation,
         )
 
 
@@ -52,6 +53,7 @@ class ClasswiseIouCallback(MultiMetricCallback):
     """
     Classwise IoU (Jaccard) metric callback.
     """
+
     def __init__(
         self,
         input_key: str = "targets",
@@ -79,8 +81,9 @@ class ClasswiseIouCallback(MultiMetricCallback):
             activation (str): An torch.nn activation applied to the outputs.
                 Must be one of ['none', 'Sigmoid', 'Softmax2d']
         """
-        assert classes is not None or num_classes is not None, \
-            "You should specify either 'classes' or 'num_classes'"
+        assert (
+            classes is not None or num_classes is not None
+        ), "You should specify either 'classes' or 'num_classes'"
         list_args = classes or _get_default_classwise_iou_args(num_classes)
 
         super().__init__(
@@ -99,6 +102,8 @@ class ClasswiseIouCallback(MultiMetricCallback):
 ClasswiseJaccardCallback = ClasswiseIouCallback
 
 __all__ = [
-    "IouCallback", "JaccardCallback", "ClasswiseIouCallback",
-    "ClasswiseJaccardCallback"
+    "IouCallback",
+    "JaccardCallback",
+    "ClasswiseIouCallback",
+    "ClasswiseJaccardCallback",
 ]

@@ -3,10 +3,18 @@ from collections import OrderedDict
 import torch
 
 from catalyst.dl import (
-    CheckpointCallback, CheckRunCallback, ConsoleLogger, CriterionCallback,
-    ExceptionCallback, MetricManagerCallback, OptimizerCallback,
-    SchedulerCallback, TensorboardLogger, TimerCallback,
-    ValidationManagerCallback, VerboseLogger
+    CheckpointCallback,
+    CheckRunCallback,
+    ConsoleLogger,
+    CriterionCallback,
+    ExceptionCallback,
+    MetricManagerCallback,
+    OptimizerCallback,
+    SchedulerCallback,
+    TensorboardLogger,
+    TimerCallback,
+    ValidationManagerCallback,
+    VerboseLogger,
 )
 from catalyst.dl.experiment.supervised import SupervisedExperiment
 
@@ -192,10 +200,7 @@ def test_scheduler():
     loaders["train"] = dataloader
 
     exp = SupervisedExperiment(
-        model=model,
-        loaders=loaders,
-        optimizer=optimizer,
-        scheduler=scheduler,
+        model=model, loaders=loaders, optimizer=optimizer, scheduler=scheduler,
     )
     _test_callbacks(test_callbacks, exp)
 
@@ -240,9 +245,7 @@ def test_all():
 
 
 def test_infer_defaults():
-    test_callbacks = OrderedDict([
-        ("_exception", ExceptionCallback),
-    ])
+    test_callbacks = OrderedDict([("_exception", ExceptionCallback)])
 
     model = torch.nn.Linear(10, 10)
     criterion = torch.nn.CrossEntropyLoss()

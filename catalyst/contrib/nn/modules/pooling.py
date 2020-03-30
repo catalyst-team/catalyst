@@ -1,6 +1,6 @@
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
+from torch import nn
+from torch.nn import functional as F
 
 from catalyst.contrib.registry import MODULES
 
@@ -53,7 +53,8 @@ class GlobalAttnPool2d(nn.Module):
         self.attn = nn.Sequential(
             nn.Conv2d(
                 in_features, 1, kernel_size=1, stride=1, padding=0, bias=False
-            ), activation_fn()
+            ),
+            activation_fn(),
         )
 
     def forward(self, x):

@@ -1,6 +1,7 @@
-from typing import Dict, List, Union  # isort:skip
+from typing import Dict, List, Union
 
 from catalyst.core import State
+
 from .metrics import _MetricCallback
 
 
@@ -8,6 +9,7 @@ class CriterionCallback(_MetricCallback):
     """
     Callback for that measures loss with specified criterion.
     """
+
     def __init__(
         self,
         input_key: Union[str, List[str], Dict[str, str]] = "targets",

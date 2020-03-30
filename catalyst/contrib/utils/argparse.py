@@ -1,4 +1,4 @@
-from typing import Optional  # isort:skip
+from typing import Optional
 import argparse
 
 
