@@ -254,7 +254,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.utils.sys</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
@@ -305,25 +305,29 @@
 
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">devnull</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">git_branch</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
-                <span class="s2">&quot;git rev-parse --abbrev-ref HEAD&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span>
-                <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">stderr</span><span class="o">=</span><span class="n">devnull</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
+            <span class="n">git_branch</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
+                    <span class="s2">&quot;git rev-parse --abbrev-ref HEAD&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span>
+                    <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">stderr</span><span class="o">=</span><span class="n">devnull</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
             <span class="n">git_local_commit</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
                 <span class="s2">&quot;git rev-parse HEAD&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">devnull</span>
             <span class="p">)</span>
             <span class="n">git_origin_commit</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;git rev-parse origin/</span><span class="si">{</span><span class="n">git_branch</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span>
                 <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                <span class="n">stderr</span><span class="o">=</span><span class="n">devnull</span>
+                <span class="n">stderr</span><span class="o">=</span><span class="n">devnull</span><span class="p">,</span>
             <span class="p">)</span>
 
-            <span class="n">git</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-                <span class="n">branch</span><span class="o">=</span><span class="n">git_branch</span><span class="p">,</span>
-                <span class="n">local_commit</span><span class="o">=</span><span class="n">git_local_commit</span><span class="p">,</span>
-                <span class="n">origin_commit</span><span class="o">=</span><span class="n">git_origin_commit</span>
-            <span class="p">)</span>
+            <span class="n">git</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;branch&quot;</span><span class="p">:</span> <span class="n">git_branch</span><span class="p">,</span>
+                <span class="s2">&quot;local_commit&quot;</span><span class="p">:</span> <span class="n">git_local_commit</span><span class="p">,</span>
+                <span class="s2">&quot;origin_commit&quot;</span><span class="p">:</span> <span class="n">git_origin_commit</span><span class="p">,</span>
+            <span class="p">}</span>
             <span class="n">result</span><span class="p">[</span><span class="s2">&quot;git&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_decode_dict</span><span class="p">(</span><span class="n">git</span><span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">):</span>
             <span class="k">pass</span>
@@ -336,9 +340,11 @@
     <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">devnull</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
-                <span class="s2">&quot;pip freeze&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">stderr</span><span class="o">=</span><span class="n">devnull</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="s2">&quot;pip freeze&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">stderr</span><span class="o">=</span><span class="n">devnull</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
         <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -354,9 +360,13 @@
         <span class="c1"># We are currently in conda virtual env</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">devnull</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
-                    <span class="s2">&quot;conda list --export&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">stderr</span><span class="o">=</span><span class="n">devnull</span>
-                <span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
+                        <span class="s2">&quot;conda list --export&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">stderr</span><span class="o">=</span><span class="n">devnull</span>
+                    <span class="p">)</span>
+                    <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
+                <span class="p">)</span>
             <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
                 <span class="k">pass</span>
             <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
@@ -369,9 +379,7 @@
 
 
 <div class="viewcode-block" id="dump_environment"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.sys.dump_environment">[docs]</a><span class="k">def</span> <span class="nf">dump_environment</span><span class="p">(</span>
-    <span class="n">experiment_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
-    <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">configs_path</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">experiment_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">configs_path</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Saves config, environment variables and package list in JSON into logdir</span>
@@ -421,8 +429,10 @@
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;get_environment_vars&quot;</span><span class="p">,</span> <span class="s2">&quot;list_conda_packages&quot;</span><span class="p">,</span> <span class="s2">&quot;list_pip_packages&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;dump_environment&quot;</span>
+    <span class="s2">&quot;get_environment_vars&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;list_conda_packages&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;list_pip_packages&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dump_environment&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

@@ -254,10 +254,11 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.dl.core.runner</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">_Runner</span><span class="p">,</span> <span class="n">State</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">utils</span>
+
 <span class="kn">from</span> <span class="nn">.experiment</span> <span class="kn">import</span> <span class="n">Experiment</span>
 
 
@@ -265,6 +266,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Deep Learning Runner for different supervised, unsupervised, gan, etc runs</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">_experiment_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">Experiment</span>
     <span class="n">_state_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">State</span>
 

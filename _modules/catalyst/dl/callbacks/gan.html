@@ -254,7 +254,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.dl.callbacks.gan</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">CriterionCallback</span><span class="p">,</span> <span class="n">OptimizerCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">MetricCallback</span><span class="p">,</span> <span class="n">State</span>
@@ -269,6 +269,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Callback to compute Wasserstein distance metric</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="WassersteinDistanceCallback.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.gan.WassersteinDistanceCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;wasserstein_distance&quot;</span><span class="p">,</span>
@@ -288,9 +289,9 @@
             <span class="n">input_key</span><span class="o">=</span><span class="p">{},</span>
             <span class="n">output_key</span><span class="o">=</span><span class="p">{</span>
                 <span class="n">real_validity_output_key</span><span class="p">:</span> <span class="s2">&quot;real_validity&quot;</span><span class="p">,</span>
-                <span class="n">fake_validity_output_key</span><span class="p">:</span> <span class="s2">&quot;fake_validity&quot;</span>
+                <span class="n">fake_validity_output_key</span><span class="p">:</span> <span class="s2">&quot;fake_validity&quot;</span><span class="p">,</span>
             <span class="p">},</span>
-            <span class="n">multiplier</span><span class="o">=</span><span class="n">multiplier</span>
+            <span class="n">multiplier</span><span class="o">=</span><span class="n">multiplier</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="WassersteinDistanceCallback.get_wasserstein_distance"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.gan.WassersteinDistanceCallback.get_wasserstein_distance">[docs]</a>    <span class="k">def</span> <span class="nf">get_wasserstein_distance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">real_validity</span><span class="p">,</span> <span class="n">fake_validity</span><span class="p">):</span>
@@ -309,6 +310,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Criterion Callback to compute Gradient Penalty</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="GradientPenaltyCallback.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.gan.GradientPenaltyCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">real_input_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span>
@@ -343,7 +345,7 @@
             <span class="n">output_key</span><span class="o">=</span><span class="n">fake_output_key</span><span class="p">,</span>
             <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
             <span class="n">criterion_key</span><span class="o">=</span><span class="n">criterion_key</span><span class="p">,</span>
-            <span class="n">multiplier</span><span class="o">=</span><span class="n">multiplier</span>
+            <span class="n">multiplier</span><span class="o">=</span><span class="n">multiplier</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">condition_keys</span> <span class="o">=</span> <span class="n">condition_keys</span> <span class="ow">or</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">critic_model_key</span> <span class="o">=</span> <span class="n">critic_model_key</span>
@@ -359,7 +361,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">critic_criterion_key</span><span class="p">:</span> <span class="n">state</span><span class="o">.</span><span class="n">model</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">critic_model_key</span><span class="p">],</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">condition_args_criterion_key</span><span class="p">:</span> <span class="p">[</span>
                 <span class="n">state</span><span class="o">.</span><span class="n">batch_in</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">condition_keys</span>
-            <span class="p">]</span>
+            <span class="p">],</span>
         <span class="p">}</span>
         <span class="n">criterion</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion_key</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">criterion</span><span class="p">(</span><span class="o">**</span><span class="n">criterion_kwargs</span><span class="p">)</span></div>
@@ -374,6 +376,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Optimizer callback + weights clipping after step is finished</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="WeightClampingOptimizerCallback.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.gan.WeightClampingOptimizerCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">grad_clip_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -381,7 +384,7 @@
         <span class="n">optimizer_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">loss_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
         <span class="n">decouple_weight_decay</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">weight_clamp_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span>
+        <span class="n">weight_clamp_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 
@@ -399,7 +402,7 @@
             <span class="n">accumulation_steps</span><span class="o">=</span><span class="n">accumulation_steps</span><span class="p">,</span>
             <span class="n">optimizer_key</span><span class="o">=</span><span class="n">optimizer_key</span><span class="p">,</span>
             <span class="n">loss_key</span><span class="o">=</span><span class="n">loss_key</span><span class="p">,</span>
-            <span class="n">decouple_weight_decay</span><span class="o">=</span><span class="n">decouple_weight_decay</span>
+            <span class="n">decouple_weight_decay</span><span class="o">=</span><span class="n">decouple_weight_decay</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">weight_clamp_value</span> <span class="o">=</span> <span class="n">weight_clamp_value</span></div>
 
@@ -413,21 +416,23 @@
             <span class="n">key</span><span class="o">=</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="n">inner_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer_key</span>
         <span class="p">)</span>
 
-        <span class="n">need_gradient_step</span> <span class="o">=</span> \
+        <span class="n">need_gradient_step</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_accumulation_counter</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">accumulation_steps</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">need_gradient_step</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">]:</span>
                     <span class="n">param</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">clamp_</span><span class="p">(</span>
                         <span class="nb">min</span><span class="o">=-</span><span class="bp">self</span><span class="o">.</span><span class="n">weight_clamp_value</span><span class="p">,</span>
-                        <span class="nb">max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">weight_clamp_value</span>
+                        <span class="nb">max</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">weight_clamp_value</span><span class="p">,</span>
                     <span class="p">)</span></div></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;WassersteinDistanceCallback&quot;</span><span class="p">,</span> <span class="s2">&quot;GradientPenaltyCallback&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;WeightClampingOptimizerCallback&quot;</span>
+    <span class="s2">&quot;WassersteinDistanceCallback&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;GradientPenaltyCallback&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;WeightClampingOptimizerCallback&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

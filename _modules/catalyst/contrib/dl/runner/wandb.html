@@ -254,7 +254,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.contrib.dl.runner.wandb</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
@@ -275,6 +275,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Runner wrapper with wandb integration hooks.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_log_metrics</span><span class="p">(</span>
         <span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">commit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
@@ -310,15 +311,16 @@
             <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
             <span class="n">deprecated_in</span><span class="o">=</span><span class="s2">&quot;20.03&quot;</span><span class="p">,</span>
             <span class="n">removed_in</span><span class="o">=</span><span class="s2">&quot;20.04&quot;</span><span class="p">,</span>
-            <span class="n">details</span><span class="o">=</span><span class="s2">&quot;Use WandbLogger instead.&quot;</span>
+            <span class="n">details</span><span class="o">=</span><span class="s2">&quot;Use WandbLogger instead.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">the_warning</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_on_batch_end</span> <span class="o">=</span> <span class="n">log_on_batch_end</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_on_epoch_end</span> <span class="o">=</span> <span class="n">log_on_epoch_end</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">checkpoints_glob</span> <span class="o">=</span> <span class="n">checkpoints_glob</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_on_batch_end</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_on_epoch_end</span><span class="p">)</span> \
-                <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_on_batch_end</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_on_epoch_end</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">log_on_batch_end</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_on_epoch_end</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_on_batch_end</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_on_epoch_end</span>
+        <span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">batch_log_suffix</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">epoch_log_suffix</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">else</span><span class="p">:</span>
@@ -329,12 +331,13 @@
         <span class="n">monitoring_params</span> <span class="o">=</span> <span class="n">experiment</span><span class="o">.</span><span class="n">monitoring_params</span>
         <span class="n">monitoring_params</span><span class="p">[</span><span class="s2">&quot;dir&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">experiment</span><span class="o">.</span><span class="n">logdir</span><span class="p">)</span><span class="o">.</span><span class="n">absolute</span><span class="p">())</span>
 
-        <span class="n">log_on_batch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> \
-            <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;log_on_batch_end&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="n">log_on_epoch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> \
-            <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;log_on_epoch_end&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-        <span class="n">checkpoints_glob</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> \
-            <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;checkpoints_glob&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">log_on_batch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
+            <span class="s2">&quot;log_on_batch_end&quot;</span><span class="p">,</span> <span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">log_on_epoch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;log_on_epoch_end&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">checkpoints_glob</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
+            <span class="s2">&quot;checkpoints_glob&quot;</span><span class="p">,</span> <span class="p">[]</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span>
             <span class="n">log_on_batch_end</span><span class="o">=</span><span class="n">log_on_batch_end</span><span class="p">,</span>
             <span class="n">log_on_epoch_end</span><span class="o">=</span><span class="n">log_on_epoch_end</span><span class="p">,</span>
@@ -384,7 +387,7 @@
         <span class="k">for</span> <span class="n">checkpoint_path</span> <span class="ow">in</span> <span class="n">checkpoint_paths</span><span class="p">:</span>
             <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="o">.</span><span class="n">absolute</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">checkpoints_dst</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">checkpoint_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">checkpoints_dst</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">checkpoint_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_run_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
@@ -396,7 +399,7 @@
                 <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
                 <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
                 <span class="n">suffix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_log_suffix</span><span class="p">,</span>
-                <span class="n">commit</span><span class="o">=</span><span class="kc">True</span>
+                <span class="n">commit</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_run_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
@@ -412,7 +415,7 @@
                     <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
                     <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
                     <span class="n">suffix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch_log_suffix</span><span class="p">,</span>
-                    <span class="n">commit</span><span class="o">=</span><span class="kc">False</span>
+                    <span class="n">commit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="n">wandb</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">commit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 

@@ -254,7 +254,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.utils.misc</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
@@ -281,10 +281,8 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">object_or_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">result</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">object_or_dict</span><span class="p">)()</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">object_or_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">r_args</span> <span class="o">=</span> \
-                <span class="kc">None</span> <span class="k">if</span> <span class="n">recursive_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">recursive_args</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-            <span class="n">r_kwargs</span> <span class="o">=</span> \
-                <span class="kc">None</span> <span class="k">if</span> <span class="n">recursive_kwargs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">recursive_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">r_args</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">recursive_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">recursive_args</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">r_kwargs</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">recursive_kwargs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">recursive_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
             <span class="n">result</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">maybe_recursive_call</span><span class="p">(</span>
                 <span class="n">v</span><span class="p">,</span>
                 <span class="n">method</span><span class="p">,</span>
@@ -367,7 +365,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">argspec</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
     <span class="n">default_params</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span>
-        <span class="n">argspec</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">argspec</span><span class="o">.</span><span class="n">defaults</span><span class="p">):],</span> <span class="n">argspec</span><span class="o">.</span><span class="n">defaults</span>
+        <span class="n">argspec</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">argspec</span><span class="o">.</span><span class="n">defaults</span><span class="p">)</span> <span class="p">:],</span> <span class="n">argspec</span><span class="o">.</span><span class="n">defaults</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="n">exclude</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">default_params</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">,</span> <span class="n">default_params</span><span class="p">)</span>

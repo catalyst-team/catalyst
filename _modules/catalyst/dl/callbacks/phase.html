@@ -254,7 +254,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.dl.callbacks.phase</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">State</span>
@@ -267,6 +267,7 @@
 <span class="sd">    - number of steps (batches) in phase before next phase is chosen</span>
 <span class="sd">    - how many steps (batches) are done already</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">steps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span> <span class="k">if</span> <span class="n">steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">curr_step</span> <span class="o">=</span> <span class="mi">0</span>
@@ -282,6 +283,7 @@
 <span class="sd">    By calling `.step(...)` method current phase is updated by step-size</span>
 <span class="sd">    and if current phase is finished, the next phase becomes current</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">train_phases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Phase</span><span class="p">],</span> <span class="n">valid_phases</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Phase</span><span class="p">]):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">train_phases</span> <span class="o">=</span> <span class="n">train_phases</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">valid_phases</span> <span class="o">=</span> <span class="n">valid_phases</span>
@@ -296,16 +298,18 @@
                 <span class="n">phase</span><span class="o">.</span><span class="n">curr_step</span> <span class="o">+=</span> <span class="n">step_size</span>
                 <span class="k">if</span> <span class="n">phase</span><span class="o">.</span><span class="n">curr_step</span> <span class="o">&gt;=</span> <span class="n">phase</span><span class="o">.</span><span class="n">steps</span><span class="p">:</span>
                     <span class="n">phase</span><span class="o">.</span><span class="n">curr_step</span> <span class="o">=</span> <span class="mi">0</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">train_index</span> <span class="o">=</span> \
-                        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_phases</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">train_index</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">train_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">train_phases</span>
+                    <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_phases</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">phase</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_phases</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_index</span><span class="p">]</span>
                 <span class="n">phase</span><span class="o">.</span><span class="n">curr_step</span> <span class="o">+=</span> <span class="n">step_size</span>
                 <span class="k">if</span> <span class="n">phase</span><span class="o">.</span><span class="n">curr_step</span> <span class="o">&gt;=</span> <span class="n">phase</span><span class="o">.</span><span class="n">steps</span><span class="p">:</span>
                     <span class="n">phase</span><span class="o">.</span><span class="n">curr_step</span> <span class="o">=</span> <span class="mi">0</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">valid_index</span> <span class="o">=</span> \
-                        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_phases</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">valid_index</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">valid_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">valid_phases</span>
+                    <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_phase_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">:</span>
@@ -326,23 +330,24 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">train_phases</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, int]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">valid_phases</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, int]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">valid_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">valid_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Internal</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">All</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">phase_manager</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_phase_manager</span><span class="p">(</span>
             <span class="n">train_phases</span><span class="o">=</span><span class="n">train_phases</span><span class="p">,</span>
             <span class="n">valid_phases</span><span class="o">=</span><span class="n">valid_phases</span><span class="p">,</span>
-            <span class="n">valid_mode</span><span class="o">=</span><span class="n">valid_mode</span>
+            <span class="n">valid_mode</span><span class="o">=</span><span class="n">valid_mode</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_phase_manager</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">train_phases</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, int]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">valid_phases</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, int]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">valid_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">valid_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="n">valid_phases</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">^</span> <span class="p">(</span><span class="n">valid_mode</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">),</span> \
-            <span class="s2">&quot;Exactly one of them must be specified&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">valid_phases</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">^</span> <span class="p">(</span>
+            <span class="n">valid_mode</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;Exactly one of them must be specified&quot;</span>
 
         <span class="k">if</span> <span class="n">train_phases</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">train_phases</span> <span class="o">=</span> <span class="p">[</span><span class="n">Phase</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">steps</span><span class="o">=</span><span class="kc">None</span><span class="p">)]</span>

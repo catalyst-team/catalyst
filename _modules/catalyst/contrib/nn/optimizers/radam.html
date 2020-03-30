@@ -267,7 +267,12 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Taken from https://github.com/LiyuanLucasLiu/RAdam</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">defaults</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span> <span class="n">betas</span><span class="o">=</span><span class="n">betas</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="n">weight_decay</span><span class="p">)</span>
+        <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="n">lr</span><span class="p">,</span>
+            <span class="s2">&quot;betas&quot;</span><span class="p">:</span> <span class="n">betas</span><span class="p">,</span>
+            <span class="s2">&quot;eps&quot;</span><span class="p">:</span> <span class="n">eps</span><span class="p">,</span>
+            <span class="s2">&quot;weight_decay&quot;</span><span class="p">:</span> <span class="n">weight_decay</span><span class="p">,</span>
+        <span class="p">}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">buffer</span> <span class="o">=</span> <span class="p">[[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">RAdam</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">defaults</span><span class="p">)</span></div>
 
@@ -317,20 +322,30 @@
                     <span class="n">N_sma</span><span class="p">,</span> <span class="n">step_size</span> <span class="o">=</span> <span class="n">buffered</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">buffered</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">buffered</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">]</span>
-                    <span class="n">beta2_t</span> <span class="o">=</span> <span class="n">beta2</span><span class="o">**</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">]</span>
+                    <span class="n">beta2_t</span> <span class="o">=</span> <span class="n">beta2</span> <span class="o">**</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">]</span>
                     <span class="n">N_sma_max</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta2</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
-                    <span class="n">N_sma</span> <span class="o">=</span> \
-                        <span class="n">N_sma_max</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">beta2_t</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta2_t</span><span class="p">)</span>
+                    <span class="n">N_sma</span> <span class="o">=</span> <span class="n">N_sma_max</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">beta2_t</span> <span class="o">/</span> <span class="p">(</span>
+                        <span class="mi">1</span> <span class="o">-</span> <span class="n">beta2_t</span>
+                    <span class="p">)</span>
                     <span class="n">buffered</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">N_sma</span>
 
                     <span class="c1"># more conservative since it&#39;s an approximated value</span>
                     <span class="k">if</span> <span class="n">N_sma</span> <span class="o">&gt;=</span> <span class="mi">5</span><span class="p">:</span>
-                        <span class="n">step_size</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
-                            <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta2_t</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">N_sma</span> <span class="o">-</span> <span class="mi">4</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">N_sma_max</span> <span class="o">-</span> <span class="mi">4</span><span class="p">)</span> <span class="o">*</span>
-                            <span class="p">(</span><span class="n">N_sma</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">N_sma</span> <span class="o">*</span> <span class="n">N_sma_max</span> <span class="o">/</span> <span class="p">(</span><span class="n">N_sma_max</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
-                        <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta1</span><span class="o">**</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">])</span>
+                        <span class="n">step_size</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">group</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">]</span>
+                            <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+                                <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta2_t</span><span class="p">)</span>
+                                <span class="o">*</span> <span class="p">(</span><span class="n">N_sma</span> <span class="o">-</span> <span class="mi">4</span><span class="p">)</span>
+                                <span class="o">/</span> <span class="p">(</span><span class="n">N_sma_max</span> <span class="o">-</span> <span class="mi">4</span><span class="p">)</span>
+                                <span class="o">*</span> <span class="p">(</span><span class="n">N_sma</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+                                <span class="o">/</span> <span class="n">N_sma</span>
+                                <span class="o">*</span> <span class="n">N_sma_max</span>
+                                <span class="o">/</span> <span class="p">(</span><span class="n">N_sma_max</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span>
+                            <span class="p">)</span>
+                            <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta1</span> <span class="o">**</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">])</span>
+                        <span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">step_size</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta1</span><span class="o">**</span><span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">])</span>
+                        <span class="n">step_size</span> <span class="o">=</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">beta1</span> <span class="o">**</span> <span class="n">state</span><span class="p">[</span><span class="s2">&quot;step&quot;</span><span class="p">])</span>
                     <span class="n">buffered</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">step_size</span>
 
                 <span class="k">if</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;weight_decay&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>

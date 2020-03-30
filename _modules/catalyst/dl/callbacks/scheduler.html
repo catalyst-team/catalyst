@@ -266,6 +266,7 @@
 
 <span class="sd">    https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="LRFinder.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.scheduler.LRFinder.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">final_lr</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="n">num_steps</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_key</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">):</span>
@@ -296,7 +297,7 @@
             <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Not supported&quot;</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_calc_lr_log</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_lr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">find_iter</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_lr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_iter</span>
 
     <span class="k">def</span> <span class="nf">_calc_lr_linear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_lr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr_step</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_iter</span>
@@ -310,7 +311,7 @@
         <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">:</span>
             <span class="n">lr_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_lr</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_lr</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span> <span class="ow">or</span> <span class="n">state</span><span class="o">.</span><span class="n">loader_len</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span> <span class="o">=</span> <span class="n">lr_</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span> <span class="o">=</span> <span class="n">lr_</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">lr_step</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">final_lr</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_lr</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_loader_start</span><span class="p">(</span><span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">)</span></div>

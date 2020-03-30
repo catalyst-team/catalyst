@@ -254,13 +254,15 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.contrib.models.cv.segmentation.unet</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">.blocks</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">DecoderConcatBlock</span><span class="p">,</span> <span class="n">EncoderDownsampleBlock</span><span class="p">,</span> <span class="n">EncoderUpsampleBlock</span>
+    <span class="n">DecoderConcatBlock</span><span class="p">,</span>
+    <span class="n">EncoderDownsampleBlock</span><span class="p">,</span>
+    <span class="n">EncoderUpsampleBlock</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">.bridge</span> <span class="kn">import</span> <span class="n">UnetBridge</span>
 <span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">ResnetUnetSpec</span><span class="p">,</span> <span class="n">UnetSpec</span>
@@ -283,7 +285,7 @@
             <span class="n">in_strides</span><span class="o">=</span><span class="n">encoder</span><span class="o">.</span><span class="n">out_strides</span><span class="p">,</span>
             <span class="n">out_channels</span><span class="o">=</span><span class="n">encoder</span><span class="o">.</span><span class="n">out_channels</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
             <span class="n">block_fn</span><span class="o">=</span><span class="n">EncoderDownsampleBlock</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">bridge_params</span>
+            <span class="o">**</span><span class="n">bridge_params</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">decoder</span> <span class="o">=</span> <span class="n">UNetDecoder</span><span class="p">(</span>
             <span class="n">in_channels</span><span class="o">=</span><span class="n">bridge</span><span class="o">.</span><span class="n">out_channels</span><span class="p">,</span>
@@ -296,7 +298,7 @@
             <span class="n">in_strides</span><span class="o">=</span><span class="n">decoder</span><span class="o">.</span><span class="n">out_strides</span><span class="p">,</span>
             <span class="n">out_channels</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
             <span class="n">num_upsample_blocks</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">decoder</span><span class="o">.</span><span class="n">out_strides</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])),</span>
-            <span class="o">**</span><span class="n">head_params</span>
+            <span class="o">**</span><span class="n">head_params</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">encoder</span><span class="p">,</span> <span class="n">bridge</span><span class="p">,</span> <span class="n">decoder</span><span class="p">,</span> <span class="n">head</span></div>
@@ -316,7 +318,7 @@
             <span class="n">in_strides</span><span class="o">=</span><span class="n">encoder</span><span class="o">.</span><span class="n">out_strides</span><span class="p">,</span>
             <span class="n">out_channels</span><span class="o">=</span><span class="n">encoder</span><span class="o">.</span><span class="n">out_channels</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
             <span class="n">block_fn</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">EncoderUpsampleBlock</span><span class="p">,</span> <span class="n">pool_first</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-            <span class="o">**</span><span class="n">bridge_params</span>
+            <span class="o">**</span><span class="n">bridge_params</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">decoder</span> <span class="o">=</span> <span class="n">UNetDecoder</span><span class="p">(</span>
             <span class="n">in_channels</span><span class="o">=</span><span class="n">bridge</span><span class="o">.</span><span class="n">out_channels</span><span class="p">,</span>
@@ -324,14 +326,14 @@
             <span class="n">block_fn</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span>
                 <span class="n">DecoderConcatBlock</span><span class="p">,</span> <span class="n">aggregate_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">upsample_scale</span><span class="o">=</span><span class="mi">2</span>
             <span class="p">),</span>
-            <span class="o">**</span><span class="n">decoder_params</span>
+            <span class="o">**</span><span class="n">decoder_params</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">head</span> <span class="o">=</span> <span class="n">UnetHead</span><span class="p">(</span>
             <span class="n">in_channels</span><span class="o">=</span><span class="n">decoder</span><span class="o">.</span><span class="n">out_channels</span><span class="p">,</span>
             <span class="n">in_strides</span><span class="o">=</span><span class="n">decoder</span><span class="o">.</span><span class="n">out_strides</span><span class="p">,</span>
             <span class="n">out_channels</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
             <span class="n">num_upsample_blocks</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">decoder</span><span class="o">.</span><span class="n">out_strides</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])),</span>
-            <span class="o">**</span><span class="n">head_params</span>
+            <span class="o">**</span><span class="n">head_params</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">encoder</span><span class="p">,</span> <span class="n">bridge</span><span class="p">,</span> <span class="n">decoder</span><span class="p">,</span> <span class="n">head</span></div>
 </pre></div>

@@ -255,8 +255,8 @@
               
   <h1>Source code for catalyst.contrib.nn.criterion.contrastive</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
-<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
 
 
 <div class="viewcode-block" id="ContrastiveEmbeddingLoss"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss">[docs]</a><span class="k">class</span> <span class="nc">ContrastiveEmbeddingLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -265,6 +265,7 @@
 
 <span class="sd">    paper: http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="ContrastiveEmbeddingLoss.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor method for the ContrastiveEmbeddingLoss class.</span>
@@ -294,10 +295,9 @@
         <span class="n">bs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">distance_true</span><span class="p">)</span>
         <span class="n">margin_distance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">-</span> <span class="n">distance_pred</span>
         <span class="n">margin_distance_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">margin_distance</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">distance_true</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">distance_pred</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span>
-            <span class="n">distance_true</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">margin_distance_</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">distance_true</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span>
+            <span class="n">distance_pred</span><span class="p">,</span> <span class="mi">2</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="n">distance_true</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">margin_distance_</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">==</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span>
             <span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="n">bs</span>
@@ -310,6 +310,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Contrastive distance loss</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="ContrastiveDistanceLoss.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastiveDistanceLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor method for the ContrastiveDistanceLoss class.</span>
@@ -334,10 +335,9 @@
         <span class="n">bs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">distance_true</span><span class="p">)</span>
         <span class="n">margin_distance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">-</span> <span class="n">distance_pred</span>
         <span class="n">margin_distance_</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">margin_distance</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">distance_true</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">distance_pred</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span>
-            <span class="n">distance_true</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">margin_distance_</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">distance_true</span><span class="p">)</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span>
+            <span class="n">distance_pred</span><span class="p">,</span> <span class="mi">2</span>
+        <span class="p">)</span> <span class="o">+</span> <span class="n">distance_true</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">margin_distance_</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">==</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span>
             <span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">/</span> <span class="n">bs</span>
@@ -351,6 +351,7 @@
 <span class="sd">    ContrastivePairwiseEmbeddingLoss – proof of concept criterion.</span>
 <span class="sd">    Still work in progress.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="ContrastivePairwiseEmbeddingLoss.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastivePairwiseEmbeddingLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor method for the ContrastivePairwiseEmbeddingLoss class.</span>
@@ -388,8 +389,9 @@
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;ContrastiveEmbeddingLoss&quot;</span><span class="p">,</span> <span class="s2">&quot;ContrastiveDistanceLoss&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ContrastivePairwiseEmbeddingLoss&quot;</span>
+    <span class="s2">&quot;ContrastiveEmbeddingLoss&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ContrastiveDistanceLoss&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ContrastivePairwiseEmbeddingLoss&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

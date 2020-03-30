@@ -255,7 +255,7 @@
               
   <h1>Source code for catalyst.contrib.nn.criterion.triplet</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 
 <span class="kn">from</span> <span class="nn">.functional</span> <span class="kn">import</span> <span class="n">triplet_loss</span>
 
@@ -269,6 +269,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        margin (float): margin for triplet.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="TripletLoss.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mf">0.3</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor method for the TripletLoss class.</span>
@@ -363,11 +364,7 @@
         <span class="k">return</span> <span class="o">~</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">labels</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_batch_hard_triplet_loss</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">embeddings</span><span class="p">,</span>
-        <span class="n">labels</span><span class="p">,</span>
-        <span class="n">margin</span><span class="p">,</span>
-        <span class="n">squared</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">margin</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Build the triplet loss over a batch of embeddings.</span>
@@ -391,8 +388,9 @@
         <span class="c1"># For each anchor, get the hardest positive</span>
         <span class="c1"># First, we need to get a mask for every valid</span>
         <span class="c1"># positive (they should have same label)</span>
-        <span class="n">mask_anchor_positive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_anchor_positive_triplet_mask</span><span class="p">(</span><span class="n">labels</span>
-                                                                      <span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+        <span class="n">mask_anchor_positive</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_anchor_positive_triplet_mask</span><span class="p">(</span>
+            <span class="n">labels</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
 
         <span class="c1"># We put to 0 any element where (a, p) is not valid</span>
         <span class="c1"># (valid if a != p and label(a) == label(p))</span>
@@ -404,14 +402,16 @@
         <span class="c1"># For each anchor, get the hardest negative</span>
         <span class="c1"># First, we need to get a mask for every valid negative</span>
         <span class="c1"># (they should have different labels)</span>
-        <span class="n">mask_anchor_negative</span> <span class="o">=</span> \
-            <span class="bp">self</span><span class="o">.</span><span class="n">_get_anchor_negative_triplet_mask</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+        <span class="n">mask_anchor_negative</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_anchor_negative_triplet_mask</span><span class="p">(</span>
+            <span class="n">labels</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
 
         <span class="c1"># We add the maximum value in each row</span>
         <span class="c1"># to the invalid negatives (label(a) == label(n))</span>
         <span class="n">max_anchor_negative_dist</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">pairwise_dist</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">anchor_negative_dist</span> <span class="o">=</span> <span class="n">pairwise_dist</span> <span class="o">+</span> <span class="n">max_anchor_negative_dist</span> <span class="o">*</span> \
-            <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">mask_anchor_negative</span><span class="p">)</span>
+        <span class="n">anchor_negative_dist</span> <span class="o">=</span> <span class="n">pairwise_dist</span> <span class="o">+</span> <span class="n">max_anchor_negative_dist</span> <span class="o">*</span> <span class="p">(</span>
+            <span class="mf">1.0</span> <span class="o">-</span> <span class="n">mask_anchor_negative</span>
+        <span class="p">)</span>
 
         <span class="c1"># shape (batch_size,)</span>
         <span class="n">hardest_negative_dist</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">anchor_negative_dist</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -442,6 +442,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        margin (float): margin for triplet.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mf">0.3</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor method for the TripletLoss class.</span>
@@ -453,11 +454,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="n">margin</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">triplet_loss</span><span class="p">(</span>
-            <span class="n">embeddings</span><span class="p">,</span>
-            <span class="n">targets</span><span class="p">,</span>
-            <span class="n">margin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">triplet_loss</span><span class="p">(</span><span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="p">,)</span>
 
 
 <div class="viewcode-block" id="TripletPairwiseEmbeddingLoss"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletPairwiseEmbeddingLoss">[docs]</a><span class="k">class</span> <span class="nc">TripletPairwiseEmbeddingLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -465,6 +462,7 @@
 <span class="sd">    TripletPairwiseEmbeddingLoss – proof of concept criterion.</span>
 <span class="sd">    Still work in progress.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="TripletPairwiseEmbeddingLoss.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletPairwiseEmbeddingLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor method for the TripletPairwiseEmbeddingLoss class.</span>
@@ -501,15 +499,15 @@
         <span class="p">)</span>
         <span class="n">bs</span> <span class="o">=</span> <span class="n">embeddings_pred</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">batch_idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">bs</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
-        <span class="n">negative_similarity</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">pairwise_similarity</span> <span class="o">+</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">([</span><span class="n">bs</span><span class="p">],</span> <span class="o">-</span><span class="mi">10</span><span class="o">**</span><span class="mi">9</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">))</span>
+        <span class="n">negative_similarity</span> <span class="o">=</span> <span class="n">pairwise_similarity</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">([</span><span class="n">bs</span><span class="p">],</span> <span class="o">-</span><span class="p">(</span><span class="mi">10</span> <span class="o">**</span> <span class="mi">9</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="c1"># TODO argsort, take k worst</span>
         <span class="n">hard_negative_ids</span> <span class="o">=</span> <span class="n">negative_similarity</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="n">negative_similarities</span> <span class="o">=</span> \
-            <span class="n">pairwise_similarity</span><span class="p">[</span><span class="n">batch_idx</span><span class="p">,</span> <span class="n">hard_negative_ids</span><span class="p">]</span>
+        <span class="n">negative_similarities</span> <span class="o">=</span> <span class="n">pairwise_similarity</span><span class="p">[</span>
+            <span class="n">batch_idx</span><span class="p">,</span> <span class="n">hard_negative_ids</span>
+        <span class="p">]</span>
         <span class="n">positive_similarities</span> <span class="o">=</span> <span class="n">pairwise_similarity</span><span class="p">[</span><span class="n">batch_idx</span><span class="p">,</span> <span class="n">batch_idx</span><span class="p">]</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">-</span> <span class="n">positive_similarities</span> <span class="o">+</span> <span class="n">negative_similarities</span>

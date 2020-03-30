@@ -254,9 +254,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.dl.runner.supervised</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>  <span class="c1"># isort:skip</span>
-    <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
-<span class="p">)</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
@@ -266,12 +264,21 @@
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Callback</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">,</span> <span class="n">InferCallback</span><span class="p">,</span> <span class="n">Runner</span><span class="p">,</span> <span class="n">State</span><span class="p">,</span>
-    <span class="n">SupervisedExperiment</span><span class="p">,</span> <span class="n">utils</span>
+    <span class="n">Callback</span><span class="p">,</span>
+    <span class="n">CheckpointCallback</span><span class="p">,</span>
+    <span class="n">InferCallback</span><span class="p">,</span>
+    <span class="n">Runner</span><span class="p">,</span>
+    <span class="n">State</span><span class="p">,</span>
+    <span class="n">SupervisedExperiment</span><span class="p">,</span>
+    <span class="n">utils</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="kn">import</span> <span class="n">trace</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.tools.typing</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Criterion</span><span class="p">,</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
+    <span class="n">Criterion</span><span class="p">,</span>
+    <span class="n">Device</span><span class="p">,</span>
+    <span class="n">Model</span><span class="p">,</span>
+    <span class="n">Optimizer</span><span class="p">,</span>
+    <span class="n">Scheduler</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -281,6 +288,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Runner for experiments with supervised model</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">_experiment_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">SupervisedExperiment</span>
 
 <div class="viewcode-block" id="SupervisedRunner.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.supervised.SupervisedRunner.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -345,7 +353,7 @@
         <span class="k">return</span> <span class="n">output</span>
 
     <span class="k">def</span> <span class="nf">_process_input_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">input</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">key</span><span class="p">,</span> <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">])</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">)</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">}</span>
         <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="nb">input</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">output</span>
 
@@ -358,9 +366,7 @@
         <span class="k">return</span> <span class="n">output</span>
 
     <span class="k">def</span> <span class="nf">_process_output_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">]):</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">,</span> <span class="n">output</span><span class="p">)}</span>
         <span class="k">return</span> <span class="n">output</span>
 
     <span class="k">def</span> <span class="nf">_process_output_none</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
@@ -436,8 +442,8 @@
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loaders</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">valid_loader</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">loaders</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Attention, there is only one data loader - &quot;</span> <span class="o">+</span>
-                <span class="nb">str</span><span class="p">(</span><span class="n">valid_loader</span><span class="p">)</span>
+                <span class="s2">&quot;Attention, there is only one data loader - &quot;</span>
+                <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">valid_loader</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp16</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fp16</span><span class="p">:</span>
             <span class="n">fp16</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;opt_level&quot;</span><span class="p">:</span> <span class="s2">&quot;O1&quot;</span><span class="p">}</span>
@@ -448,10 +454,7 @@
         <span class="k">if</span> <span class="n">resume</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">callbacks</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_callbacks</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
             <span class="n">checkpoint_callback_flag</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
-                <span class="p">[</span>
-                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">)</span>
-                    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-                <span class="p">]</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">checkpoint_callback_flag</span><span class="p">:</span>
                 <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;loader&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CheckpointCallback</span><span class="p">(</span><span class="n">resume</span><span class="o">=</span><span class="n">resume</span><span class="p">)</span>
@@ -476,7 +479,7 @@
             <span class="n">state_kwargs</span><span class="o">=</span><span class="n">state_kwargs</span><span class="p">,</span>
             <span class="n">checkpoint_data</span><span class="o">=</span><span class="n">checkpoint_data</span><span class="p">,</span>
             <span class="n">distributed_params</span><span class="o">=</span><span class="n">fp16</span><span class="p">,</span>
-            <span class="n">monitoring_params</span><span class="o">=</span><span class="n">monitoring_params</span>
+            <span class="n">monitoring_params</span><span class="o">=</span><span class="n">monitoring_params</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">run_experiment</span><span class="p">(</span><span class="n">experiment</span><span class="p">)</span></div>
 
@@ -521,7 +524,7 @@
             <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
             <span class="n">check_run</span><span class="o">=</span><span class="n">check</span><span class="p">,</span>
             <span class="n">state_kwargs</span><span class="o">=</span><span class="n">state_kwargs</span><span class="p">,</span>
-            <span class="n">distributed_params</span><span class="o">=</span><span class="n">fp16</span>
+            <span class="n">distributed_params</span><span class="o">=</span><span class="n">fp16</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">run_experiment</span><span class="p">(</span><span class="n">experiment</span><span class="p">)</span></div>
 
@@ -565,7 +568,7 @@
             <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
             <span class="n">state_kwargs</span><span class="o">=</span><span class="n">state_kwargs</span><span class="p">,</span>
             <span class="n">fp16</span><span class="o">=</span><span class="n">fp16</span><span class="p">,</span>
-            <span class="n">check</span><span class="o">=</span><span class="n">check</span>
+            <span class="n">check</span><span class="o">=</span><span class="n">check</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">output</span> <span class="o">=</span> <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;inference&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">predictions</span>
@@ -640,7 +643,7 @@
             <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span><span class="p">,</span>
             <span class="n">opt_level</span><span class="o">=</span><span class="n">opt_level</span><span class="p">,</span>
             <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
-            <span class="n">predict_params</span><span class="o">=</span><span class="n">predict_params</span>
+            <span class="n">predict_params</span><span class="o">=</span><span class="n">predict_params</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -648,7 +651,7 @@
                 <span class="n">method_name</span><span class="o">=</span><span class="n">method_name</span><span class="p">,</span>
                 <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
                 <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span><span class="p">,</span>
-                <span class="n">opt_level</span><span class="o">=</span><span class="n">opt_level</span>
+                <span class="n">opt_level</span><span class="o">=</span><span class="n">opt_level</span><span class="p">,</span>
             <span class="p">)</span>
 
             <span class="n">logdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">logdir</span><span class="p">)</span>

@@ -254,7 +254,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.core.callback</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">IntFlag</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
@@ -269,6 +269,7 @@
 <span class="sd">    - Master (1) - use only on master node.</span>
 <span class="sd">    - Worker (2) - use only in worker nodes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">All</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">Master</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">Worker</span> <span class="o">=</span> <span class="mi">2</span></div>
@@ -313,6 +314,7 @@
 
 <span class="sd">    .. _Alchemy: https://alchemy.host</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">Internal</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># pytorch</span>
     <span class="n">Metric</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># pytorch</span>
     <span class="n">MetricAggregation</span> <span class="o">=</span> <span class="mi">40</span>  <span class="c1"># pytorch</span>
@@ -330,6 +332,7 @@
 <span class="sd">    - Stage (0) - use Callback only during one experiment stage.</span>
 <span class="sd">    - Experiment (1) - use Callback during whole experiment run.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">Stage</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">Experiment</span> <span class="o">=</span> <span class="mi">1</span></div>
 
@@ -375,6 +378,7 @@
 <span class="sd">        - :py:mod:`catalyst.core.callbacks.logging.TensorboardLogger`</span>
 <span class="sd">        - :py:mod:`catalyst.core.callbacks.checkpoint.CheckpointCallback`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="Callback.__init__"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>

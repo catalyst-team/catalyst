@@ -282,14 +282,14 @@
                 <span class="n">metrics</span><span class="o">.</span><span class="n">reduced_focal_loss</span><span class="p">,</span>
                 <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
                 <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span>
-                <span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span>
+                <span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">loss_fn</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
                 <span class="n">metrics</span><span class="o">.</span><span class="n">sigmoid_focal_loss</span><span class="p">,</span>
                 <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
                 <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
-                <span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span>
+                <span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span><span class="p">,</span>
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="FocalLossBinary.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.focal.FocalLossBinary.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
@@ -317,6 +317,7 @@
 <span class="sd">    Compute focal loss for multi-class problem.</span>
 <span class="sd">    Ignores targets having -1 label</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="FocalLossMultiClass.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.focal.FocalLossMultiClass.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>

@@ -281,6 +281,7 @@
 <span class="sd">    3. The `weight` ( &gt; 0) represents weight</span>
 <span class="sd">    for each sample.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">APMeter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
@@ -319,27 +320,32 @@
         <span class="k">if</span> <span class="n">output</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">output</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> \
-                <span class="s2">&quot;wrong output size (should be 1D or 2D with one column </span><span class="se">\</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">output</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span>
+            <span class="p">),</span> <span class="s2">&quot;wrong output size (should be 1D or 2D with one column </span><span class="se">\</span>
 <span class="s2">                per class)&quot;</span>
 
         <span class="k">if</span> <span class="n">target</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> \
-                <span class="s2">&quot;wrong target size (should be 1D or 2D with one column </span><span class="se">\</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">target</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span>
+            <span class="p">),</span> <span class="s2">&quot;wrong target size (should be 1D or 2D with one column </span><span class="se">\</span>
 <span class="s2">                per class)&quot;</span>
 
         <span class="k">if</span> <span class="n">weight</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">weight</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Weight dimension should be 1&quot;</span>
-            <span class="k">assert</span> <span class="n">weight</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> \
-                <span class="s2">&quot;Weight dimension 1 should be the same as that of target&quot;</span>
+            <span class="k">assert</span> <span class="n">weight</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">(</span>
+                <span class="mi">0</span>
+            <span class="p">),</span> <span class="s2">&quot;Weight dimension 1 should be the same as that of target&quot;</span>
             <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Weight should be non-negative only&quot;</span>
-        <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="n">target</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">target</span><span class="p">),</span> \
-            <span class="s2">&quot;targets should be binary (0 or 1)&quot;</span>
+        <span class="k">assert</span> <span class="n">torch</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span>
+            <span class="n">target</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">target</span>
+        <span class="p">),</span> <span class="s2">&quot;targets should be binary (0 or 1)&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> \
-                <span class="s2">&quot;dimensions for output should match previously added examples.&quot;</span>
+            <span class="k">assert</span> <span class="n">target</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="o">.</span><span class="n">size</span><span class="p">(</span>
+                <span class="mi">1</span>
+            <span class="p">),</span> <span class="s2">&quot;dimensions for output should match previously added examples.&quot;</span>
 
         <span class="c1"># make sure storage is of sufficient size</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="o">.</span><span class="n">storage</span><span class="p">()</span><span class="o">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">+</span> <span class="n">output</span><span class="o">.</span><span class="n">numel</span><span class="p">():</span>
@@ -370,7 +376,6 @@
 <span class="sd">            FloatTensor: 1xK tensor, with avg precision for each class k</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">0</span>
         <span class="n">ap</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>

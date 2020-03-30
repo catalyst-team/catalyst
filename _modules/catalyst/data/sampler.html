@@ -254,7 +254,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.data.sampler</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span>
 <span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -270,6 +270,7 @@
 <span class="sd">    Abstraction over data sampler. Allows you to create stratified sample</span>
 <span class="sd">    on unbalanced classes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="BalanceClassSampler.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.BalanceClassSampler.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;downsampling&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
@@ -282,8 +283,7 @@
 
         <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
         <span class="n">samples_per_class</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">label</span><span class="p">:</span> <span class="p">(</span><span class="n">labels</span> <span class="o">==</span> <span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+            <span class="n">label</span><span class="p">:</span> <span class="p">(</span><span class="n">labels</span> <span class="o">==</span> <span class="n">label</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
         <span class="p">}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">lbl2idx</span> <span class="o">=</span> <span class="p">{</span>
@@ -295,9 +295,11 @@
             <span class="k">assert</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;downsampling&quot;</span><span class="p">,</span> <span class="s2">&quot;upsampling&quot;</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;upsampling&quot;</span><span class="p">:</span>
-            <span class="n">samples_per_class</span> <span class="o">=</span> <span class="n">mode</span> \
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> \
+            <span class="n">samples_per_class</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">mode</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
                 <span class="k">else</span> <span class="nb">max</span><span class="p">(</span><span class="n">samples_per_class</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">samples_per_class</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">samples_per_class</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
@@ -316,7 +318,7 @@
             <span class="n">indices</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">lbl2idx</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples_per_class</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace_</span>
             <span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span>
         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span></div>
@@ -353,12 +355,13 @@
 <span class="sd">        &gt;&gt;&gt; MiniEpochSampler(len(dataset), mini_epoch_len=100,</span>
 <span class="sd">        &gt;&gt;&gt;     shuffle=&quot;per_epoch&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">mini_epoch_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">drop_last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">shuffle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">shuffle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 
@@ -388,8 +391,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">shuffle_type</span> <span class="o">=</span> <span class="n">shuffle</span>
 
 <div class="viewcode-block" id="MiniEpochSampler.shuffle"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.MiniEpochSampler.shuffle">[docs]</a>    <span class="k">def</span> <span class="nf">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shuffle_type</span> <span class="o">==</span> <span class="s2">&quot;per_mini_epoch&quot;</span> <span class="ow">or</span> \
-                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shuffle_type</span> <span class="o">==</span> <span class="s2">&quot;per_epoch&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shuffle_type</span> <span class="o">==</span> <span class="s2">&quot;per_mini_epoch&quot;</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shuffle_type</span> <span class="o">==</span> <span class="s2">&quot;per_epoch&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_i</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_len</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mini_epoch_len</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_indices</span>
                 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">)</span>
@@ -403,9 +407,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span><span class="p">()</span>
 
         <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_i</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mini_epoch_len</span>
-        <span class="n">stop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">end_pointer</span> \
-            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state_i</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">)</span> \
+        <span class="n">stop</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">end_pointer</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state_i</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps</span><span class="p">)</span>
             <span class="k">else</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">state_i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mini_epoch_len</span>
+        <span class="p">)</span>
         <span class="n">indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">stop</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">state_i</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -436,12 +442,13 @@
 <span class="sd">        rank (optional): Rank of the current process within num_replicas.</span>
 <span class="sd">        shuffle (optional): If true (default), sampler will shuffle the indices</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">num_replicas</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DistributedSamplerWrapper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">DatasetFromSampler</span><span class="p">(</span><span class="n">sampler</span><span class="p">),</span>
             <span class="n">num_replicas</span><span class="o">=</span><span class="n">num_replicas</span><span class="p">,</span>
             <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span>
-            <span class="n">shuffle</span><span class="o">=</span><span class="n">shuffle</span>
+            <span class="n">shuffle</span><span class="o">=</span><span class="n">shuffle</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
 
@@ -453,7 +460,9 @@
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;BalanceClassSampler&quot;</span><span class="p">,</span> <span class="s2">&quot;MiniEpochSampler&quot;</span><span class="p">,</span> <span class="s2">&quot;DistributedSamplerWrapper&quot;</span>
+    <span class="s2">&quot;BalanceClassSampler&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MiniEpochSampler&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DistributedSamplerWrapper&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

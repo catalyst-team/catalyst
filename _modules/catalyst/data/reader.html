@@ -254,7 +254,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.data.reader</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -269,6 +269,7 @@
 
 <span class="sd">    All inherited classes have to implement `__call__`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="ReaderSpec.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ReaderSpec.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
@@ -298,12 +299,13 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Image reader abstraction. Reads images from a `csv` dataset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="ImageReader.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ImageReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">rootpath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">grayscale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">grayscale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
@@ -341,12 +343,13 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Mask reader abstraction. Reads masks from a `csv` dataset.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">rootpath</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">clip_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">clip_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
@@ -384,6 +387,7 @@
 <span class="sd">    Numeric data reader abstraction.</span>
 <span class="sd">    Reads a single float, int, str or other from data</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="ScalarReader.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ScalarReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -409,9 +413,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">one_hot_classes</span> <span class="o">=</span> <span class="n">one_hot_classes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">smoothing</span> <span class="o">=</span> <span class="n">smoothing</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">one_hot_classes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">smoothing</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">smoothing</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">,</span> \
-                <span class="sa">f</span><span class="s2">&quot;If smoothing is specified it must be in (0; 1), &quot;</span> \
-                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">smoothing</span><span class="si">}</span><span class="s2">&quot;</span></div>
+            <span class="k">assert</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">smoothing</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;If smoothing is specified it must be in (0; 1), &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">smoothing</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span></div>
 
 <div class="viewcode-block" id="ScalarReader.__call__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ScalarReader.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -438,12 +443,13 @@
 <span class="sd">    Reader abstraction with an lambda encoders.</span>
 <span class="sd">    Can read an elem from dataset and apply `encode_fn` function to it</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="LambdaReader.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.LambdaReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">lambda_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
@@ -478,6 +484,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstraction to compose several readers into one open function.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="ReaderCompose.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.reader.ReaderCompose.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">readers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">ReaderSpec</span><span class="p">],</span> <span class="n">mixins</span><span class="p">:</span> <span class="p">[]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
@@ -506,8 +513,11 @@
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;ReaderSpec&quot;</span><span class="p">,</span> <span class="s2">&quot;ImageReader&quot;</span><span class="p">,</span> <span class="s2">&quot;ScalarReader&quot;</span><span class="p">,</span> <span class="s2">&quot;LambdaReader&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;ReaderCompose&quot;</span>
+    <span class="s2">&quot;ReaderSpec&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ImageReader&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ScalarReader&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;LambdaReader&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ReaderCompose&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

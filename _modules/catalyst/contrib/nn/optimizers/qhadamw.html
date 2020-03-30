@@ -266,7 +266,7 @@
         <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="mf">0.995</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">),</span>
         <span class="n">nus</span><span class="o">=</span><span class="p">(</span><span class="mf">0.7</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span>
         <span class="n">weight_decay</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-        <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span>
+        <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Combines the weight decay decoupling from AdamW (Decoupled Weight</span>
@@ -322,7 +322,7 @@
             <span class="s2">&quot;betas&quot;</span><span class="p">:</span> <span class="n">betas</span><span class="p">,</span>
             <span class="s2">&quot;nus&quot;</span><span class="p">:</span> <span class="n">nus</span><span class="p">,</span>
             <span class="s2">&quot;weight_decay&quot;</span><span class="p">:</span> <span class="n">weight_decay</span><span class="p">,</span>
-            <span class="s2">&quot;eps&quot;</span><span class="p">:</span> <span class="n">eps</span>
+            <span class="s2">&quot;eps&quot;</span><span class="p">:</span> <span class="n">eps</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">QHAdamW</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">defaults</span><span class="p">)</span></div>
 
@@ -362,10 +362,12 @@
                     <span class="n">param_state</span><span class="p">[</span><span class="s2">&quot;exp_avg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
                     <span class="n">param_state</span><span class="p">[</span><span class="s2">&quot;exp_avg_sq&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
-                <span class="n">param_state</span><span class="p">[</span><span class="s2">&quot;beta1_weight&quot;</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="n">param_state</span><span class="p">[</span><span class="s2">&quot;beta1_weight&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="mf">1.0</span> <span class="o">+</span> <span class="n">beta1</span> <span class="o">*</span> <span class="n">param_state</span><span class="p">[</span><span class="s2">&quot;beta1_weight&quot;</span><span class="p">]</span>
-                <span class="n">param_state</span><span class="p">[</span><span class="s2">&quot;beta2_weight&quot;</span><span class="p">]</span> <span class="o">=</span> \
+                <span class="p">)</span>
+                <span class="n">param_state</span><span class="p">[</span><span class="s2">&quot;beta2_weight&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                     <span class="mf">1.0</span> <span class="o">+</span> <span class="n">beta2</span> <span class="o">*</span> <span class="n">param_state</span><span class="p">[</span><span class="s2">&quot;beta2_weight&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
 
                 <span class="n">beta1_weight</span> <span class="o">=</span> <span class="n">param_state</span><span class="p">[</span><span class="s2">&quot;beta1_weight&quot;</span><span class="p">]</span>
                 <span class="n">beta2_weight</span> <span class="o">=</span> <span class="n">param_state</span><span class="p">[</span><span class="s2">&quot;beta2_weight&quot;</span><span class="p">]</span>
@@ -392,8 +394,9 @@
                 <span class="c1"># p.data.addcdiv_(-lr, avg_grad, avg_grad_rms)</span>
 
                 <span class="c1"># Implementation following AdamW paper:</span>
-                <span class="n">p</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="o">-</span><span class="n">weight_decay</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> \
-                    <span class="o">.</span><span class="n">addcdiv_</span><span class="p">(</span><span class="o">-</span><span class="n">lr</span><span class="p">,</span> <span class="n">avg_grad</span><span class="p">,</span> <span class="n">avg_grad_rms</span><span class="p">)</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">add_</span><span class="p">(</span><span class="o">-</span><span class="n">weight_decay</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">addcdiv_</span><span class="p">(</span>
+                    <span class="o">-</span><span class="n">lr</span><span class="p">,</span> <span class="n">avg_grad</span><span class="p">,</span> <span class="n">avg_grad_rms</span>
+                <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">loss</span></div></div>
 </pre></div>

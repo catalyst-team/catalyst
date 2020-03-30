@@ -290,7 +290,7 @@
     <span class="n">name2activation</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;softmax&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Softmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
         <span class="s2">&quot;tanh&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Tanh</span><span class="p">(),</span>
-        <span class="s2">&quot;sigmoid&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">()</span>
+        <span class="s2">&quot;sigmoid&quot;</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">(),</span>
     <span class="p">}</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kernel_size</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
@@ -304,7 +304,8 @@
                 <span class="n">out_channels</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                 <span class="n">kernel_size</span><span class="o">=</span><span class="n">kernel_size</span><span class="p">,</span>
                 <span class="o">**</span><span class="n">params</span>
-            <span class="p">),</span> <span class="n">TemporalAttentionPooling</span><span class="o">.</span><span class="n">name2activation</span><span class="p">[</span><span class="n">activation</span><span class="p">]</span>
+            <span class="p">),</span>
+            <span class="n">TemporalAttentionPooling</span><span class="o">.</span><span class="n">name2activation</span><span class="p">[</span><span class="n">activation</span><span class="p">],</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">attention_pooling</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">outer_init</span><span class="p">)</span>
 
@@ -389,8 +390,12 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span> <span class="o">=</span> <span class="n">in_features</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">groups</span> <span class="o">=</span> <span class="n">groups</span> \
-            <span class="ow">or</span> <span class="p">[</span><span class="s2">&quot;last&quot;</span><span class="p">,</span> <span class="s2">&quot;avg_droplast&quot;</span><span class="p">,</span> <span class="s2">&quot;max_droplast&quot;</span><span class="p">,</span> <span class="s2">&quot;softmax_droplast&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">groups</span> <span class="o">=</span> <span class="n">groups</span> <span class="ow">or</span> <span class="p">[</span>
+            <span class="s2">&quot;last&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;avg_droplast&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;max_droplast&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;softmax_droplast&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span> <span class="o">=</span> <span class="n">in_features</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span>
 
         <span class="n">groups</span> <span class="o">=</span> <span class="p">{}</span>

@@ -254,7 +254,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.dl.experiment.base</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
@@ -269,6 +269,7 @@
 <span class="sd">    Super-simple one-staged experiment</span>
 <span class="sd">        you can use to declare experiment in code</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="BaseExperiment.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.base.BaseExperiment.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
@@ -371,15 +372,15 @@
 
 <div class="viewcode-block" id="BaseExperiment.get_state_params"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.base.BaseExperiment.get_state_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_state_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Returns the state parameters for a given stage&quot;&quot;&quot;</span>
-        <span class="n">default_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
-            <span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span>
-            <span class="n">num_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_epochs</span><span class="p">,</span>
-            <span class="n">valid_loader</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_valid_loader</span><span class="p">,</span>
-            <span class="n">main_metric</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_main_metric</span><span class="p">,</span>
-            <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">,</span>
-            <span class="n">minimize_metric</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_minimize_metric</span><span class="p">,</span>
-            <span class="n">checkpoint_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_data</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;logdir&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span>
+            <span class="s2">&quot;num_epochs&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_epochs</span><span class="p">,</span>
+            <span class="s2">&quot;valid_loader&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valid_loader</span><span class="p">,</span>
+            <span class="s2">&quot;main_metric&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_main_metric</span><span class="p">,</span>
+            <span class="s2">&quot;verbose&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">,</span>
+            <span class="s2">&quot;minimize_metric&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimize_metric</span><span class="p">,</span>
+            <span class="s2">&quot;checkpoint_data&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_data</span><span class="p">,</span>
+        <span class="p">}</span>
         <span class="n">state_params</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">default_params</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_additional_state_kwargs</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">state_params</span></div>
 
@@ -400,9 +401,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span></div>
 
 <div class="viewcode-block" id="BaseExperiment.get_loaders"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.base.BaseExperiment.get_loaders">[docs]</a>    <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the loaders for a given stage&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span></div>

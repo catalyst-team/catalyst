@@ -254,7 +254,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.dl.callbacks.mixup</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -275,11 +275,12 @@
 
 <span class="sd">        You may not use them together.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="MixupCallback.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.mixup.MixupCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;targets&quot;</span><span class="p">,</span>
         <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;logits&quot;</span><span class="p">,</span>
-        <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="p">),</span>
+        <span class="n">fields</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;features&quot;</span><span class="p">,),</span>
         <span class="n">alpha</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
         <span class="n">on_train_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
@@ -297,8 +298,9 @@
 <span class="sd">                for validation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_key</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_key</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> \
-            <span class="s2">&quot;At least one field for MixupCallback is required&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="p">),</span> <span class="s2">&quot;At least one field for MixupCallback is required&quot;</span>
         <span class="k">assert</span> <span class="n">alpha</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;alpha must be&gt;=0&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="n">input_key</span><span class="p">,</span> <span class="n">output_key</span><span class="o">=</span><span class="n">output_key</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -318,13 +320,13 @@
         <span class="n">y_a</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">batch_in</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">]</span>
         <span class="n">y_b</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">batch_in</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
 
-        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lam</span> <span class="o">*</span> <span class="n">criterion</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">y_a</span><span class="p">)</span> <span class="o">+</span> \
-            <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="n">criterion</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">y_b</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lam</span> <span class="o">*</span> <span class="n">criterion</span><span class="p">(</span><span class="n">pred</span><span class="p">,</span> <span class="n">y_a</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="n">criterion</span><span class="p">(</span>
+            <span class="n">pred</span><span class="p">,</span> <span class="n">y_b</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">loss</span>
 
 <div class="viewcode-block" id="MixupCallback.on_loader_start"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.mixup.MixupCallback.on_loader_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">is_needed</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_train_only</span> <span class="ow">or</span> \
-            <span class="n">state</span><span class="o">.</span><span class="n">is_train_loader</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_needed</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_train_only</span> <span class="ow">or</span> <span class="n">state</span><span class="o">.</span><span class="n">is_train_loader</span></div>
 
 <div class="viewcode-block" id="MixupCallback.on_batch_start"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.mixup.MixupCallback.on_batch_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_needed</span><span class="p">:</span>
@@ -339,8 +341,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fields</span><span class="p">:</span>
-            <span class="n">state</span><span class="o">.</span><span class="n">batch_in</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lam</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">batch_in</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">+</span> \
-                                <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">batch_in</span><span class="p">[</span><span class="n">f</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">]</span></div></div>
+            <span class="n">state</span><span class="o">.</span><span class="n">batch_in</span><span class="p">[</span><span class="n">f</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">lam</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">batch_in</span><span class="p">[</span><span class="n">f</span><span class="p">]</span>
+                <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lam</span><span class="p">)</span> <span class="o">*</span> <span class="n">state</span><span class="o">.</span><span class="n">batch_in</span><span class="p">[</span><span class="n">f</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+            <span class="p">)</span></div></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MixupCallback&quot;</span><span class="p">]</span>

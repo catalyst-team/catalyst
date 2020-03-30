@@ -254,29 +254,45 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.dl.experiment.config</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="p">(</span>  <span class="c1"># noqa F401</span>
-    <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DistributedSampler</span>
+    <span class="n">DataLoader</span><span class="p">,</span>
+    <span class="n">Dataset</span><span class="p">,</span>
+    <span class="n">DistributedSampler</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.data</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Augmentor</span><span class="p">,</span> <span class="n">AugmentorCompose</span><span class="p">,</span> <span class="n">DistributedSamplerWrapper</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catalyst.data</span> <span class="kn">import</span> <span class="n">Augmentor</span><span class="p">,</span> <span class="n">AugmentorCompose</span><span class="p">,</span> <span class="n">DistributedSamplerWrapper</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Callback</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">,</span> <span class="n">CheckRunCallback</span><span class="p">,</span> <span class="n">ConsoleLogger</span><span class="p">,</span>
-    <span class="n">CriterionCallback</span><span class="p">,</span> <span class="n">ExceptionCallback</span><span class="p">,</span> <span class="n">Experiment</span><span class="p">,</span> <span class="n">MetricManagerCallback</span><span class="p">,</span>
-    <span class="n">OptimizerCallback</span><span class="p">,</span> <span class="n">PhaseWrapperCallback</span><span class="p">,</span> <span class="n">SchedulerCallback</span><span class="p">,</span>
-    <span class="n">TensorboardLogger</span><span class="p">,</span> <span class="n">TimerCallback</span><span class="p">,</span> <span class="n">utils</span><span class="p">,</span> <span class="n">ValidationManagerCallback</span><span class="p">,</span>
-    <span class="n">VerboseLogger</span>
+    <span class="n">Callback</span><span class="p">,</span>
+    <span class="n">CheckpointCallback</span><span class="p">,</span>
+    <span class="n">CheckRunCallback</span><span class="p">,</span>
+    <span class="n">ConsoleLogger</span><span class="p">,</span>
+    <span class="n">CriterionCallback</span><span class="p">,</span>
+    <span class="n">ExceptionCallback</span><span class="p">,</span>
+    <span class="n">Experiment</span><span class="p">,</span>
+    <span class="n">MetricManagerCallback</span><span class="p">,</span>
+    <span class="n">OptimizerCallback</span><span class="p">,</span>
+    <span class="n">PhaseWrapperCallback</span><span class="p">,</span>
+    <span class="n">SchedulerCallback</span><span class="p">,</span>
+    <span class="n">TensorboardLogger</span><span class="p">,</span>
+    <span class="n">TimerCallback</span><span class="p">,</span>
+    <span class="n">utils</span><span class="p">,</span>
+    <span class="n">ValidationManagerCallback</span><span class="p">,</span>
+    <span class="n">VerboseLogger</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl.registry</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">CALLBACKS</span><span class="p">,</span> <span class="n">CRITERIONS</span><span class="p">,</span> <span class="n">MODELS</span><span class="p">,</span> <span class="n">OPTIMIZERS</span><span class="p">,</span> <span class="n">SAMPLERS</span><span class="p">,</span> <span class="n">SCHEDULERS</span><span class="p">,</span>
-    <span class="n">TRANSFORMS</span>
+    <span class="n">CALLBACKS</span><span class="p">,</span>
+    <span class="n">CRITERIONS</span><span class="p">,</span>
+    <span class="n">MODELS</span><span class="p">,</span>
+    <span class="n">OPTIMIZERS</span><span class="p">,</span>
+    <span class="n">SAMPLERS</span><span class="p">,</span>
+    <span class="n">SCHEDULERS</span><span class="p">,</span>
+    <span class="n">TRANSFORMS</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.tools.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
 
@@ -285,6 +301,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Experiment created from a configuration file</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">STAGE_KEYWORDS</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s2">&quot;criterion_params&quot;</span><span class="p">,</span>
         <span class="s2">&quot;optimizer_params&quot;</span><span class="p">,</span>
@@ -308,7 +325,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s2">&quot;stages&quot;</span><span class="p">][</span><span class="s2">&quot;state_params&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge_dicts</span><span class="p">(</span>
             <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s2">&quot;stages&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_params&quot;</span><span class="p">,</span> <span class="p">{})),</span>
-            <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})),</span> <span class="p">{</span><span class="s2">&quot;logdir&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">}</span>
+            <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})),</span>
+            <span class="p">{</span><span class="s2">&quot;logdir&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">},</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_stages_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s2">&quot;stages&quot;</span><span class="p">])</span></div>
 
@@ -332,8 +350,7 @@
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">STAGE_KEYWORDS</span><span class="p">:</span>
             <span class="n">stages_defaults</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{}))</span>
         <span class="k">for</span> <span class="n">stage</span> <span class="ow">in</span> <span class="n">stages_config</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">STAGE_KEYWORDS</span> \
-                    <span class="ow">or</span> <span class="n">stages_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">STAGE_KEYWORDS</span> <span class="ow">or</span> <span class="n">stages_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">continue</span>
             <span class="n">stages_config_out</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">STAGE_KEYWORDS</span><span class="p">:</span>
@@ -403,8 +420,7 @@
     <span class="k">def</span> <span class="nf">_preprocess_model_for_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">):</span>
         <span class="n">stage_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">stage_index</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">checkpoint_path</span> <span class="o">=</span> \
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="si">}</span><span class="s2">/checkpoints/best.pth&quot;</span>
+            <span class="n">checkpoint_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="si">}</span><span class="s2">/checkpoints/best.pth&quot;</span>
             <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="p">)</span>
             <span class="n">utils</span><span class="o">.</span><span class="n">unpack_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">model</span>
@@ -450,8 +466,7 @@
 
 <div class="viewcode-block" id="ConfigExperiment.get_criterion"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_criterion">[docs]</a>    <span class="k">def</span> <span class="nf">get_criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Criterion</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the criterion for a given stage&quot;&quot;&quot;</span>
-        <span class="n">criterion_params</span> <span class="o">=</span> \
-            <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;criterion_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">criterion_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;criterion_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="n">criterion</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_criterion</span><span class="p">(</span><span class="o">**</span><span class="n">criterion_params</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">criterion</span></div>
 
@@ -460,10 +475,8 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optimizer</span><span class="p">:</span>
         <span class="c1"># @TODO 1: refactoring; this method is too long</span>
         <span class="c1"># @TODO 2: load state dicts for schedulers &amp; criterion</span>
-        <span class="n">layerwise_params</span> <span class="o">=</span> \
-            <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;layerwise_params&quot;</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">())</span>
-        <span class="n">no_bias_weight_decay</span> <span class="o">=</span> \
-            <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;no_bias_weight_decay&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">layerwise_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;layerwise_params&quot;</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">())</span>
+        <span class="n">no_bias_weight_decay</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;no_bias_weight_decay&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># linear scaling rule from https://arxiv.org/pdf/1706.02677.pdf</span>
         <span class="n">lr_scaling_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;lr_linear_scaling&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -487,29 +500,33 @@
         <span class="c1"># getting model parameters</span>
         <span class="n">model_key</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_model&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">model_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">),</span> \
-                <span class="s2">&quot;model is keyvalue, but optimizer has no specified model&quot;</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">model</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span>
+            <span class="p">),</span> <span class="s2">&quot;model is keyvalue, but optimizer has no specified model&quot;</span>
             <span class="n">model_params</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_model_params</span><span class="p">(</span>
                 <span class="n">model</span><span class="p">,</span> <span class="n">layerwise_params</span><span class="p">,</span> <span class="n">no_bias_weight_decay</span><span class="p">,</span> <span class="n">lr_scaling</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">model_params</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_model_params</span><span class="p">(</span>
-                <span class="n">model</span><span class="p">[</span><span class="n">model_key</span><span class="p">],</span> <span class="n">layerwise_params</span><span class="p">,</span> <span class="n">no_bias_weight_decay</span><span class="p">,</span>
-                <span class="n">lr_scaling</span>
+                <span class="n">model</span><span class="p">[</span><span class="n">model_key</span><span class="p">],</span>
+                <span class="n">layerwise_params</span><span class="p">,</span>
+                <span class="n">no_bias_weight_decay</span><span class="p">,</span>
+                <span class="n">lr_scaling</span><span class="p">,</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_key</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
             <span class="n">model_params</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">model_key_</span> <span class="ow">in</span> <span class="n">model_key</span><span class="p">:</span>
                 <span class="n">model_params_</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_model_params</span><span class="p">(</span>
-                    <span class="n">model</span><span class="p">[</span><span class="n">model_key_</span><span class="p">],</span> <span class="n">layerwise_params</span><span class="p">,</span> <span class="n">no_bias_weight_decay</span><span class="p">,</span>
-                    <span class="n">lr_scaling</span>
+                    <span class="n">model</span><span class="p">[</span><span class="n">model_key_</span><span class="p">],</span>
+                    <span class="n">layerwise_params</span><span class="p">,</span>
+                    <span class="n">no_bias_weight_decay</span><span class="p">,</span>
+                    <span class="n">lr_scaling</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="n">model_params</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">model_params_</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;unknown type of model_params&quot;</span><span class="p">)</span>
 
-        <span class="n">load_from_previous_stage</span> <span class="o">=</span> \
-            <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;load_from_previous_stage&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">load_from_previous_stage</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;load_from_previous_stage&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="n">optimizer_key</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;optimizer_key&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">optimizer</span> <span class="o">=</span> <span class="n">OPTIMIZERS</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">model_params</span><span class="p">)</span>
 
@@ -547,8 +564,7 @@
 <span class="sd">            stage (str): stage name</span>
 <span class="sd">            model (Union[Model, Dict[str, Model]]): model or a dict of models</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">optimizer_params</span> <span class="o">=</span> \
-            <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;optimizer_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">optimizer_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;optimizer_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="n">key_value_flag</span> <span class="o">=</span> <span class="n">optimizer_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_key_value&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">key_value_flag</span><span class="p">:</span>
@@ -583,11 +599,8 @@
 
 <div class="viewcode-block" id="ConfigExperiment.get_scheduler"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_scheduler">[docs]</a>    <span class="k">def</span> <span class="nf">get_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Scheduler</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the scheduler for a given stage&quot;&quot;&quot;</span>
-        <span class="n">scheduler_params</span> <span class="o">=</span> \
-            <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scheduler_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
-        <span class="n">scheduler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_scheduler</span><span class="p">(</span>
-            <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">scheduler_params</span>
-        <span class="p">)</span>
+        <span class="n">scheduler_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scheduler_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">scheduler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_scheduler</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">scheduler_params</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">scheduler</span></div>
 
     <span class="nd">@staticmethod</span>
@@ -647,6 +660,7 @@
 
             <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="n">dict_</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">dict_</span>
+
         <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">AugmentorCompose</span><span class="p">):</span>
             <span class="n">transform_</span> <span class="o">=</span> <span class="n">transform</span>
 
@@ -656,9 +670,7 @@
         <span class="k">return</span> <span class="n">transform</span></div>
 
 <div class="viewcode-block" id="ConfigExperiment.get_loaders"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_loaders">[docs]</a>    <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the loaders for a given stage&quot;&quot;&quot;</span>
         <span class="n">data_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;data_params&quot;</span><span class="p">])</span>
@@ -679,17 +691,20 @@
         <span class="p">)</span>
 
         <span class="n">samplers_params</span> <span class="o">=</span> <span class="n">data_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;samplers_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">samplers_params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> \
-            <span class="sa">f</span><span class="s2">&quot;`samplers_params` should be a Dict. Got: </span><span class="si">{</span><span class="n">samplers_params</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">samplers_params</span><span class="p">,</span> <span class="nb">dict</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;`samplers_params` should be a Dict. Got: </span><span class="si">{</span><span class="n">samplers_params</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="n">loaders</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">ds_</span> <span class="ow">in</span> <span class="n">datasets</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ds_</span><span class="p">,</span> <span class="p">(</span><span class="n">Dataset</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)),</span> \
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ds_</span><span class="si">}</span><span class="s2"> should be Dataset or Dict&quot;</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">ds_</span><span class="p">,</span> <span class="p">(</span><span class="n">Dataset</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ds_</span><span class="si">}</span><span class="s2"> should be Dataset or Dict&quot;</span>
 
             <span class="n">overridden_loader_params</span> <span class="o">=</span> <span class="n">overridden_loaders_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">{})</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">overridden_loader_params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> \
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">overridden_loader_params</span><span class="si">}</span><span class="s2"> should be Dict&quot;</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="n">overridden_loader_params</span><span class="p">,</span> <span class="nb">dict</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">overridden_loader_params</span><span class="si">}</span><span class="s2"> should be Dict&quot;</span>
 
             <span class="n">sampler_params</span> <span class="o">=</span> <span class="n">samplers_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">sampler_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -702,10 +717,12 @@
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ds_</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;sampler&quot;</span> <span class="ow">in</span> <span class="n">ds_</span><span class="p">:</span>
                     <span class="n">ds_</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-            <span class="n">batch_size</span> <span class="o">=</span> <span class="n">overridden_loader_params</span><span class="o">.</span>\
-                <span class="n">pop</span><span class="p">(</span><span class="s2">&quot;batch_size&quot;</span><span class="p">,</span> <span class="n">default_batch_size</span><span class="p">)</span>
-            <span class="n">num_workers</span> <span class="o">=</span> <span class="n">overridden_loader_params</span><span class="o">.</span>\
-                <span class="n">pop</span><span class="p">(</span><span class="s2">&quot;num_workers&quot;</span><span class="p">,</span> <span class="n">default_num_workers</span><span class="p">)</span>
+            <span class="n">batch_size</span> <span class="o">=</span> <span class="n">overridden_loader_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
+                <span class="s2">&quot;batch_size&quot;</span><span class="p">,</span> <span class="n">default_batch_size</span>
+            <span class="p">)</span>
+            <span class="n">num_workers</span> <span class="o">=</span> <span class="n">overridden_loader_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
+                <span class="s2">&quot;num_workers&quot;</span><span class="p">,</span> <span class="n">default_num_workers</span>
+            <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">per_gpu_scaling</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">distributed</span><span class="p">:</span>
                 <span class="n">num_gpus</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">())</span>
@@ -717,14 +734,15 @@
                 <span class="s2">&quot;num_workers&quot;</span><span class="p">:</span> <span class="n">num_workers</span><span class="p">,</span>
                 <span class="s2">&quot;pin_memory&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">(),</span>
                 <span class="s2">&quot;drop_last&quot;</span><span class="p">:</span> <span class="n">drop_last</span><span class="p">,</span>
-                <span class="o">**</span><span class="n">overridden_loader_params</span>
+                <span class="o">**</span><span class="n">overridden_loader_params</span><span class="p">,</span>
             <span class="p">}</span>
 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ds_</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">):</span>
                 <span class="n">loader_params</span><span class="p">[</span><span class="s2">&quot;dataset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ds_</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ds_</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                <span class="k">assert</span> <span class="s2">&quot;dataset&quot;</span> <span class="ow">in</span> <span class="n">ds_</span><span class="p">,</span> \
-                    <span class="s2">&quot;You need to specify dataset for dataloader&quot;</span>
+                <span class="k">assert</span> <span class="p">(</span>
+                    <span class="s2">&quot;dataset&quot;</span> <span class="ow">in</span> <span class="n">ds_</span>
+                <span class="p">),</span> <span class="s2">&quot;You need to specify dataset for dataloader&quot;</span>
                 <span class="n">loader_params</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge_dicts</span><span class="p">(</span><span class="n">ds_</span><span class="p">,</span> <span class="n">loader_params</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span>
@@ -755,8 +773,9 @@
                     <span class="n">loader_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="s2">&quot;worker_init_fn&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">loader_params</span><span class="p">:</span>
-                <span class="n">loader_params</span><span class="p">[</span><span class="s2">&quot;worker_init_fn&quot;</span><span class="p">]</span> <span class="o">=</span> \
-                    <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">set_global_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_seed</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span>
+                <span class="n">loader_params</span><span class="p">[</span>
+                    <span class="s2">&quot;worker_init_fn&quot;</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">set_global_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_seed</span> <span class="o">+</span> <span class="n">x</span><span class="p">)</span>
 
             <span class="n">loaders</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="o">**</span><span class="n">loader_params</span><span class="p">)</span>
 
@@ -773,9 +792,7 @@
 
 <div class="viewcode-block" id="ConfigExperiment.get_callbacks"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[Callback]&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the callbacks for a given stage&quot;&quot;&quot;</span>
-        <span class="n">callbacks_params</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;callbacks_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
-        <span class="p">)</span>
+        <span class="n">callbacks_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;callbacks_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
 
         <span class="n">callbacks</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">callback_params</span> <span class="ow">in</span> <span class="n">callbacks_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -798,9 +815,7 @@
 
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_timer&quot;</span><span class="p">,</span> <span class="n">TimerCallback</span><span class="p">))</span>
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_metrics&quot;</span><span class="p">,</span> <span class="n">MetricManagerCallback</span><span class="p">))</span>
-            <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="p">(</span><span class="s2">&quot;_validation&quot;</span><span class="p">,</span> <span class="n">ValidationManagerCallback</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_validation&quot;</span><span class="p">,</span> <span class="n">ValidationManagerCallback</span><span class="p">))</span>
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_saver&quot;</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">))</span>
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_console&quot;</span><span class="p">,</span> <span class="n">ConsoleLogger</span><span class="p">))</span>
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_tensorboard&quot;</span><span class="p">,</span> <span class="n">TensorboardLogger</span><span class="p">))</span>

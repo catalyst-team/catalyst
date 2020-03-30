@@ -259,12 +259,22 @@
 <span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="n">ReduceLROnPlateau</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Callback</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">,</span> <span class="n">CheckRunCallback</span><span class="p">,</span> <span class="n">ConsoleLogger</span><span class="p">,</span>
-    <span class="n">CriterionCallback</span><span class="p">,</span> <span class="n">ExceptionCallback</span><span class="p">,</span> <span class="n">MetricManagerCallback</span><span class="p">,</span>
-    <span class="n">OptimizerCallback</span><span class="p">,</span> <span class="n">SchedulerCallback</span><span class="p">,</span> <span class="n">TensorboardLogger</span><span class="p">,</span> <span class="n">TimerCallback</span><span class="p">,</span>
-    <span class="n">ValidationManagerCallback</span><span class="p">,</span> <span class="n">VerboseLogger</span>
+    <span class="n">Callback</span><span class="p">,</span>
+    <span class="n">CheckpointCallback</span><span class="p">,</span>
+    <span class="n">CheckRunCallback</span><span class="p">,</span>
+    <span class="n">ConsoleLogger</span><span class="p">,</span>
+    <span class="n">CriterionCallback</span><span class="p">,</span>
+    <span class="n">ExceptionCallback</span><span class="p">,</span>
+    <span class="n">MetricManagerCallback</span><span class="p">,</span>
+    <span class="n">OptimizerCallback</span><span class="p">,</span>
+    <span class="n">SchedulerCallback</span><span class="p">,</span>
+    <span class="n">TensorboardLogger</span><span class="p">,</span>
+    <span class="n">TimerCallback</span><span class="p">,</span>
+    <span class="n">ValidationManagerCallback</span><span class="p">,</span>
+    <span class="n">VerboseLogger</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.tools.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
+
 <span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseExperiment</span>
 
 
@@ -294,6 +304,7 @@
 <span class="sd">        RaiseExceptionCallback:</span>
 <span class="sd">            will raise exception if needed</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="SupervisedExperiment.get_callbacks"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.supervised.SupervisedExperiment.get_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Callback]&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Override of ``BaseExperiment.get_callbacks`` method.</span>
@@ -315,22 +326,22 @@
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_check&quot;</span><span class="p">,</span> <span class="n">CheckRunCallback</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">stage</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">):</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> \
-                    <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span><span class="p">,</span> <span class="n">Criterion</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span><span class="p">,</span> <span class="n">Criterion</span>
+            <span class="p">):</span>
                 <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_criterion&quot;</span><span class="p">,</span> <span class="n">CriterionCallback</span><span class="p">))</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> \
-                    <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">,</span> <span class="n">Optimizer</span>
+            <span class="p">):</span>
                 <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_optimizer&quot;</span><span class="p">,</span> <span class="n">OptimizerCallback</span><span class="p">))</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> \
-                    <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="p">,</span> <span class="p">(</span><span class="n">Scheduler</span><span class="p">,</span> <span class="n">ReduceLROnPlateau</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="p">,</span> <span class="p">(</span><span class="n">Scheduler</span><span class="p">,</span> <span class="n">ReduceLROnPlateau</span><span class="p">)</span>
+            <span class="p">):</span>
                 <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_scheduler&quot;</span><span class="p">,</span> <span class="n">SchedulerCallback</span><span class="p">))</span>
 
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_timer&quot;</span><span class="p">,</span> <span class="n">TimerCallback</span><span class="p">))</span>
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_metrics&quot;</span><span class="p">,</span> <span class="n">MetricManagerCallback</span><span class="p">))</span>
-            <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="p">(</span><span class="s2">&quot;_validation&quot;</span><span class="p">,</span> <span class="n">ValidationManagerCallback</span><span class="p">)</span>
-            <span class="p">)</span>
+            <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_validation&quot;</span><span class="p">,</span> <span class="n">ValidationManagerCallback</span><span class="p">))</span>
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_saver&quot;</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">))</span>
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_console&quot;</span><span class="p">,</span> <span class="n">ConsoleLogger</span><span class="p">))</span>
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_tensorboard&quot;</span><span class="p">,</span> <span class="n">TensorboardLogger</span><span class="p">))</span>

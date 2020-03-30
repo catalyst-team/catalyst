@@ -262,6 +262,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Logs pipeline execution time</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Metric</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">All</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="n">TimeManager</span><span class="p">()</span>
@@ -283,8 +284,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s2">&quot;_timer/batch_time&quot;</span><span class="p">)</span>
 
         <span class="c1"># @TODO: just a trick</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">elapsed</span><span class="p">[</span><span class="s2">&quot;_timer/_fps&quot;</span><span class="p">]</span> <span class="o">=</span> \
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">elapsed</span><span class="p">[</span><span class="s2">&quot;_timer/_fps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">state</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">elapsed</span><span class="p">[</span><span class="s2">&quot;_timer/batch_time&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">elapsed</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">state</span><span class="o">.</span><span class="n">batch_metrics</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 

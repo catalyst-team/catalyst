@@ -263,10 +263,10 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A callback to aggregate state.valid_metrics from state.epoch_metrics.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Validation</span><span class="p">,</span>
-            <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">Master</span><span class="p">,</span>
+            <span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Validation</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">Master</span><span class="p">,</span>
         <span class="p">)</span>
 
 <div class="viewcode-block" id="ValidationManagerCallback.on_epoch_start"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.validation.ValidationManagerCallback.on_epoch_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
@@ -282,17 +282,20 @@
             <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">epoch_metrics</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">valid_loader</span><span class="p">)</span>
         <span class="p">}</span>
-        <span class="k">assert</span> <span class="n">state</span><span class="o">.</span><span class="n">main_metric</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">valid_metrics</span><span class="p">,</span> \
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">main_metric</span><span class="si">}</span><span class="s2"> value is not available by the epoch end&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">main_metric</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">valid_metrics</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">state</span><span class="o">.</span><span class="n">main_metric</span><span class="si">}</span><span class="s2"> value is not available by the epoch end&quot;</span>
 
         <span class="n">current_valid_metric</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">valid_metrics</span><span class="p">[</span><span class="n">state</span><span class="o">.</span><span class="n">main_metric</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">minimize_metric</span><span class="p">:</span>
-            <span class="n">best_valid_metric</span> <span class="o">=</span> \
-                <span class="n">state</span><span class="o">.</span><span class="n">best_valid_metrics</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">main_metric</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;+inf&quot;</span><span class="p">))</span>
+            <span class="n">best_valid_metric</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">best_valid_metrics</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">state</span><span class="o">.</span><span class="n">main_metric</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;+inf&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
             <span class="n">is_best</span> <span class="o">=</span> <span class="n">current_valid_metric</span> <span class="o">&lt;</span> <span class="n">best_valid_metric</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">best_valid_metric</span> <span class="o">=</span> \
-                <span class="n">state</span><span class="o">.</span><span class="n">best_valid_metrics</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">main_metric</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;-inf&quot;</span><span class="p">))</span>
+            <span class="n">best_valid_metric</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">best_valid_metrics</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">state</span><span class="o">.</span><span class="n">main_metric</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;-inf&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
             <span class="n">is_best</span> <span class="o">=</span> <span class="n">current_valid_metric</span> <span class="o">&gt;</span> <span class="n">best_valid_metric</span>
 
         <span class="k">if</span> <span class="n">is_best</span><span class="p">:</span>

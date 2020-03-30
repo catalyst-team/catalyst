@@ -254,13 +254,19 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.dl.experiment.gan</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Callback</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">,</span> <span class="n">ConsoleLogger</span><span class="p">,</span> <span class="n">ExceptionCallback</span><span class="p">,</span>
-    <span class="n">PhaseBatchWrapperCallback</span><span class="p">,</span> <span class="n">PhaseManagerCallback</span><span class="p">,</span> <span class="n">VerboseLogger</span>
+    <span class="n">Callback</span><span class="p">,</span>
+    <span class="n">CheckpointCallback</span><span class="p">,</span>
+    <span class="n">ConsoleLogger</span><span class="p">,</span>
+    <span class="n">ExceptionCallback</span><span class="p">,</span>
+    <span class="n">PhaseBatchWrapperCallback</span><span class="p">,</span>
+    <span class="n">PhaseManagerCallback</span><span class="p">,</span>
+    <span class="n">VerboseLogger</span><span class="p">,</span>
 <span class="p">)</span>
+
 <span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">BaseExperiment</span>
 
 
@@ -268,11 +274,9 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    One-staged GAN experiment</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="GanExperiment.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.gan.GanExperiment.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="o">*</span><span class="p">,</span>
-        <span class="n">phase2callbacks</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">phase2callbacks</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
@@ -318,13 +322,17 @@
 <div class="viewcode-block" id="GanExperiment.wrap_callbacks"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.gan.GanExperiment.wrap_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">wrap_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase2callbacks</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Phase wrapping procedure for callbacks&quot;&quot;&quot;</span>
         <span class="n">discriminator_phase_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_additional_state_kwargs</span><span class="p">[</span>
-            <span class="s2">&quot;discriminator_train_phase&quot;</span><span class="p">]</span>
+            <span class="s2">&quot;discriminator_train_phase&quot;</span>
+        <span class="p">]</span>
         <span class="n">discriminator_phase_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_additional_state_kwargs</span><span class="p">[</span>
-            <span class="s2">&quot;discriminator_train_num&quot;</span><span class="p">]</span>
+            <span class="s2">&quot;discriminator_train_num&quot;</span>
+        <span class="p">]</span>
         <span class="n">generator_phase_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_additional_state_kwargs</span><span class="p">[</span>
-            <span class="s2">&quot;generator_train_phase&quot;</span><span class="p">]</span>
+            <span class="s2">&quot;generator_train_phase&quot;</span>
+        <span class="p">]</span>
         <span class="n">generator_phase_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_additional_state_kwargs</span><span class="p">[</span>
-            <span class="s2">&quot;generator_train_num&quot;</span><span class="p">]</span>
+            <span class="s2">&quot;generator_train_num&quot;</span>
+        <span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">[</span><span class="s2">&quot;phase_manager&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PhaseManagerCallback</span><span class="p">(</span>
             <span class="n">train_phases</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">(</span>
                 <span class="p">[</span>
@@ -339,8 +347,7 @@
             <span class="k">for</span> <span class="n">callback_name</span> <span class="ow">in</span> <span class="n">callback_name_list</span><span class="p">:</span>
                 <span class="n">callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">callback_name</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">[</span><span class="n">callback_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">PhaseBatchWrapperCallback</span><span class="p">(</span>
-                    <span class="n">base_callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span>
-                    <span class="n">active_phases</span><span class="o">=</span><span class="p">[</span><span class="n">phase_name</span><span class="p">],</span>
+                    <span class="n">base_callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span> <span class="n">active_phases</span><span class="o">=</span><span class="p">[</span><span class="n">phase_name</span><span class="p">],</span>
                 <span class="p">)</span></div>
 
 <div class="viewcode-block" id="GanExperiment.get_callbacks"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.gan.GanExperiment.get_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Callback]&quot;</span><span class="p">:</span>

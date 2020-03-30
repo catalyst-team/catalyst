@@ -321,17 +321,16 @@
 <span class="sd">                })</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">log_on_batch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">log_on_epoch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">log_on_batch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">log_on_epoch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_init</span><span class="p">()</span>
         <span class="n">the_warning</span> <span class="o">=</span> <span class="n">DeprecatedWarning</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
             <span class="n">deprecated_in</span><span class="o">=</span><span class="s2">&quot;20.03&quot;</span><span class="p">,</span>
             <span class="n">removed_in</span><span class="o">=</span><span class="s2">&quot;20.04&quot;</span><span class="p">,</span>
-            <span class="n">details</span><span class="o">=</span><span class="s2">&quot;Use NeptuneLogger instead.&quot;</span>
+            <span class="n">details</span><span class="o">=</span><span class="s2">&quot;Use NeptuneLogger instead.&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">the_warning</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">log_on_batch_end</span> <span class="o">=</span> <span class="n">log_on_batch_end</span>
@@ -347,10 +346,10 @@
             <span class="o">**</span><span class="n">monitoring_params</span><span class="p">[</span><span class="s2">&quot;create_experiment&quot;</span><span class="p">]</span>
         <span class="p">)</span>
 
-        <span class="n">log_on_batch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> \
-            <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;log_on_batch_end&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="n">log_on_epoch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> \
-            <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;log_on_epoch_end&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">log_on_batch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
+            <span class="s2">&quot;log_on_batch_end&quot;</span><span class="p">,</span> <span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">log_on_epoch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;log_on_epoch_end&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span>
             <span class="n">log_on_batch_end</span><span class="o">=</span><span class="n">log_on_batch_end</span><span class="p">,</span>
