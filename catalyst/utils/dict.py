@@ -186,6 +186,13 @@ def split_dict_to_subdicts(dct: Dict, prefixes: List, extra_key: str):
 
 
 __all__ = [
-    "get_dictkey_auto_fn", "get_key_all", "get_key_dict", "get_key_list", "get_key_none", "get_key_str",
-    "merge_dicts", "flatten_dict", "split_dict_to_subdicts"
+    "get_dictkey_auto_fn",
+    "get_key_all",
+    "get_key_dict",
+    "get_key_list",
+    "get_key_none",
+    "get_key_str",
+    "merge_dicts",
+    "flatten_dict",
+    "split_dict_to_subdicts",
 ]

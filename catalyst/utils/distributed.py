@@ -1,7 +1,7 @@
 from typing import Dict, Tuple
 from collections import OrderedDict
-import os
 import copy
+import os
 import random
 import socket
 import subprocess
@@ -17,8 +17,9 @@ from catalyst.utils.tools.typing import (
     Optimizer,
     Scheduler,
 )
-from .torch import get_available_gpus, get_device
+
 from .misc import get_fn_default_params, maybe_recursive_call
+from .torch import get_available_gpus, get_device
 
 
 def is_wrapped_with_ddp(model: nn.Module) -> bool:
@@ -186,6 +187,7 @@ def get_distributed_env(
 
 def initialize_apex(model, optimizer=None, **distributed_params):
     import apex
+
     amp_params = get_fn_default_params(
         apex.amp.initialize, ["models", "optimizers"]
     )
@@ -228,8 +230,7 @@ def process_components(
     if device is None:
         device = get_device()
 
-    use_apex = \
-        distributed_params.pop("apex", True) and is_apex_available()
+    use_apex = distributed_params.pop("apex", True) and is_apex_available()
 
     model: Model = maybe_recursive_call(model, "to", device=device)
 
@@ -237,8 +238,9 @@ def process_components(
         pass
     # distributed data parallel run (ddp) (with apex support)
     elif get_rank() >= 0:
-        assert isinstance(model, nn.Module), \
-            "Distributed training is not available for KV model"
+        assert isinstance(
+            model, nn.Module
+        ), "Distributed training is not available for KV model"
 
         local_rank = distributed_params.pop("local_rank", 0)
         device = f"cuda:{local_rank}"
@@ -263,17 +265,16 @@ def process_components(
     # data parallel run (dp) (with apex support)
     else:
         # apex issue https://github.com/deepset-ai/FARM/issues/210
-        can_use_apex = \
-            (use_apex and torch.cuda.device_count() == 1) \
-            or (
-                    use_apex
-                    and torch.cuda.device_count() > 1
-                    and distributed_params.get("opt_level", "O0") == "O1"
-            )
+        can_use_apex = (use_apex and torch.cuda.device_count() == 1) or (
+            use_apex
+            and torch.cuda.device_count() > 1
+            and distributed_params.get("opt_level", "O0") == "O1"
+        )
 
         if can_use_apex:
-            assert isinstance(model, nn.Module), \
-                "Apex training is not available for KV model"
+            assert isinstance(
+                model, nn.Module
+            ), "Apex training is not available for KV model"
 
             model, optimizer = initialize_apex(
                 model, optimizer, **distributed_params

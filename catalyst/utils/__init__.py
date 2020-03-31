@@ -14,12 +14,31 @@ from .checkpoint import (
     unpack_checkpoint,
 )
 from .config import load_config, save_config
-from .dict import get_key_str, get_key_none, get_key_list, get_key_dict, get_key_all, get_dictkey_auto_fn, merge_dicts, flatten_dict, split_dict_to_subdicts
+from .dict import (
+    get_key_str,
+    get_key_none,
+    get_key_list,
+    get_key_dict,
+    get_key_all,
+    get_dictkey_auto_fn,
+    merge_dicts,
+    flatten_dict,
+    split_dict_to_subdicts,
+)
 from .distributed import (
-    get_nn_from_ddp_module, get_slurm_params, get_distributed_params,
-    get_distributed_env, get_rank, get_distributed_mean, is_wrapped_with_ddp,
-    is_torch_distributed_initialized, is_slurm_available, is_apex_available,
-    initialize_apex, assert_fp16_available, process_components
+    get_nn_from_ddp_module,
+    get_slurm_params,
+    get_distributed_params,
+    get_distributed_env,
+    get_rank,
+    get_distributed_mean,
+    is_wrapped_with_ddp,
+    is_torch_distributed_initialized,
+    is_slurm_available,
+    is_apex_available,
+    initialize_apex,
+    assert_fp16_available,
+    process_components,
 )
 from .hash import get_hash, get_short_hash
 from .initialization import get_optimal_inner_init, outer_init
@@ -41,7 +60,7 @@ from .scripts import (
     dump_python_files,
     import_experiment_and_runner,
     dump_base_experiment_code,
-    distributed_cmd_run
+    distributed_cmd_run,
 )
 from .seed import set_global_seed
 from .sys import (
@@ -62,22 +81,3 @@ from .torch import (
     set_optimizer_momentum,
     set_requires_grad,
 )
-<<<<<<< HEAD
-=======
-from .distributed import (
-    get_nn_from_ddp_module,
-    get_slurm_params,
-    get_distributed_params,
-    get_distributed_env,
-    get_rank,
-    get_distributed_mean,
-    is_wrapped_with_ddp,
-    is_torch_distributed_initialized,
-    is_slurm_available,
-    is_apex_available,
-    distributed_run,
-    initialize_apex,
-    assert_fp16_available,
-    process_components,
-)
->>>>>>> 28dd7696fb4a1331c85dbeecc147bed6b46b411c

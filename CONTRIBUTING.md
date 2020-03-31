@@ -31,6 +31,7 @@ If you are not familiar with creating a Pull Request, here are some guides:
 
 1. Install `catalyst-codestyle`
     ```
+    brew install bash # for MacOS users
     pip install -U catalyst-codestyle
     ```
 1. Break your work into small, single-purpose updates if possible.
