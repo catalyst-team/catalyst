@@ -284,6 +284,9 @@ class State(FrozenClass):
         is_check_run: bool = False,
         **kwargs,
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         # main part
         # data
         self.loaders: OrderedDict[str, DataLoader] = None

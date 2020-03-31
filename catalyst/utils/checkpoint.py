@@ -13,6 +13,9 @@ from .misc import maybe_recursive_call
 def pack_checkpoint(
     model=None, criterion=None, optimizer=None, scheduler=None, **kwargs
 ):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     checkpoint = kwargs
 
     if isinstance(model, OrderedDict):
@@ -48,6 +51,9 @@ def pack_checkpoint(
 def unpack_checkpoint(
     checkpoint, model=None, criterion=None, optimizer=None, scheduler=None
 ):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     if model is not None:
         model = get_nn_from_ddp_module(model)
         maybe_recursive_call(
@@ -81,6 +87,9 @@ def save_checkpoint(
     is_last: bool = False,
     special_suffix: str = "",
 ):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     os.makedirs(logdir, exist_ok=True)
     filename = f"{logdir}/{suffix}.pth"
     torch.save(checkpoint, filename)
@@ -92,6 +101,9 @@ def save_checkpoint(
 
 
 def load_checkpoint(filepath):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     checkpoint = torch.load(filepath, map_location=lambda storage, loc: storage)
     return checkpoint
 

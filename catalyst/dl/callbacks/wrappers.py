@@ -25,6 +25,9 @@ class PhaseWrapperCallback(Callback):
         active_phases: List[str] = None,
         inactive_phases: List[str] = None,
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__(base_callback.order)
         assert (active_phases is None) ^ (
             inactive_phases is None
@@ -37,9 +40,15 @@ class PhaseWrapperCallback(Callback):
         ), "Wrapper has no sense if callback is always active/inactive"
 
     def is_active_on_phase(self, phase, level, time):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return self._is_active_on_phase(phase=phase)
 
     def _is_active_on_phase(self, phase):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if phase is None:
             # if phase is None every callback is active
             return True
@@ -51,59 +60,93 @@ class PhaseWrapperCallback(Callback):
         return False
 
     def on_stage_start(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if self.is_active_on_phase(
             phase=state.phase, level=self.LEVEL_STAGE, time=self.TIME_START
         ):
             self.callback.on_stage_start(state)
 
     def on_stage_end(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if self.is_active_on_phase(
             phase=state.phase, level=self.LEVEL_STAGE, time=self.TIME_END
         ):
             self.callback.on_stage_end(state)
 
     def on_epoch_start(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if self.is_active_on_phase(
             phase=state.phase, level=self.LEVEL_EPOCH, time=self.TIME_START
         ):
             self.callback.on_epoch_start(state)
 
     def on_epoch_end(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if self.is_active_on_phase(
             phase=state.phase, level=self.LEVEL_EPOCH, time=self.TIME_END
         ):
             self.callback.on_epoch_end(state)
 
     def on_loader_start(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if self.is_active_on_phase(
             phase=state.phase, level=self.LEVEL_LOADER, time=self.TIME_START
         ):
             self.callback.on_loader_start(state)
 
     def on_loader_end(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if self.is_active_on_phase(
             phase=state.phase, level=self.LEVEL_LOADER, time=self.TIME_END
         ):
             self.callback.on_loader_end(state)
 
     def on_batch_start(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if self.is_active_on_phase(
             phase=state.phase, level=self.LEVEL_BATCH, time=self.TIME_START
         ):
             self.callback.on_batch_start(state)
 
     def on_batch_end(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if self.is_active_on_phase(
             phase=state.phase, level=self.LEVEL_BATCH, time=self.TIME_END
         ):
             self.callback.on_batch_end(state)
 
     def on_exception(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         self.callback.on_exception(state)
 
 
 class PhaseBatchWrapperCallback(PhaseWrapperCallback):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def is_active_on_phase(self, phase, level, time):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if level != self.LEVEL_BATCH:
             return True
         return self._is_active_on_phase(phase)

@@ -9,15 +9,24 @@ class ValidationManagerCallback(Callback):
     """
 
     def __init__(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__(
             order=CallbackOrder.Validation, node=CallbackNode.Master,
         )
 
     def on_epoch_start(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         state.valid_metrics = defaultdict(None)
         state.is_best_valid = False
 
     def on_epoch_end(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if state.stage_name.startswith("infer"):
             return
 

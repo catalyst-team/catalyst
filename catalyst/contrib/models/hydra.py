@@ -13,6 +13,7 @@ from .sequential import SequentialNet
 
 class Hydra(nn.Module):
     """
+    @TODO: Docs. Contribution is welcome
     Hydra - one model to predict them all.
 
     Author: Sergey Kolesnikov, scitator@gmail.com
@@ -28,6 +29,9 @@ class Hydra(nn.Module):
         encoder: nn.Module = None,
         embedders: nn.ModuleDict = None,
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
         self.encoder = encoder or nn.Sequential()
         self.heads = heads
@@ -37,6 +41,9 @@ class Hydra(nn.Module):
     def parse_head_params(
         head_params: Dict, in_features: int, is_leaf: bool = False,
     ) -> Union[nn.Module, nn.ModuleDict]:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if is_leaf:
             if isinstance(head_params, int):
                 head_params = {"hiddens": [head_params]}
@@ -76,6 +83,9 @@ class Hydra(nn.Module):
 
     @staticmethod
     def forward_head(input_, head):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if isinstance(head, nn.ModuleDict):
             output = {}
 
@@ -97,6 +107,9 @@ class Hydra(nn.Module):
     def forward(
         self, features: torch.Tensor, **targets_kwargs,
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         embeddings = self.encoder(features)
 
         heads_output = self.forward_head(embeddings, self.heads)
@@ -112,6 +125,9 @@ class Hydra(nn.Module):
         return output
 
     def forward_tuple(self, features: torch.Tensor):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         output_kv = self.forward(features)
         output = [
             output_kv["features"],
@@ -137,7 +153,9 @@ class Hydra(nn.Module):
         embedders_params: Dict = None,
         in_features: int = None,
     ) -> "Hydra":
-
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         heads_params_ = deepcopy(heads_params)
         encoder_params_ = deepcopy(encoder_params)
         embedders_params_ = deepcopy(embedders_params)

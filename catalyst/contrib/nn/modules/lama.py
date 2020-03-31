@@ -5,13 +5,27 @@ from catalyst.utils import outer_init
 
 
 class TemporalLastPooling(nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def forward(self, x: torch.Tensor, mask: torch.Tensor = None):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         x_out = x[:, -1:, :]
         return x_out
 
 
 class TemporalAvgPooling(nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def forward(self, x: torch.Tensor, mask: torch.Tensor = None):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if mask is None:
             x_out = x.mean(1, keepdim=True)
         else:
@@ -22,7 +36,14 @@ class TemporalAvgPooling(nn.Module):
 
 
 class TemporalMaxPooling(nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def forward(self, x: torch.Tensor, mask: torch.Tensor = None):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if mask is not None:
             mask_ = (~mask.bool()).float() * (-x.max()).float()
             x = torch.sum(x + mask_, dim=1, keepdim=True)
@@ -31,6 +52,10 @@ class TemporalMaxPooling(nn.Module):
 
 
 class TemporalAttentionPooling(nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     name2activation = {
         "softmax": nn.Softmax(dim=1),
         "tanh": nn.Tanh(),
@@ -38,6 +63,9 @@ class TemporalAttentionPooling(nn.Module):
     }
 
     def __init__(self, in_features, activation=None, kernel_size=1, **params):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
         self.in_features = in_features
         activation = activation or "softmax"
@@ -55,8 +83,9 @@ class TemporalAttentionPooling(nn.Module):
 
     def forward(self, x: torch.Tensor, mask: torch.Tensor = None):
         """
-        :param x: [batch_size, history_len, feature_size]
-        :return:
+        @TODO: Docs. Contribution is welcome
+        Args:
+            x: [batch_size, history_len, feature_size]
         """
         batch_size, history_len, feature_size = x.shape
 
@@ -69,32 +98,53 @@ class TemporalAttentionPooling(nn.Module):
 
 
 class TemporalConcatPooling(nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(self, in_features, history_len=1):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
         self.in_features = in_features
         self.out_features = in_features * history_len
 
     def forward(self, x: torch.Tensor, mask: torch.Tensor = None):
         """
-        :param x: [batch_size, history_len, feature_size]
-        :return:
+        @TODO: Docs. Contribution is welcome
+        Args:
+            x: [batch_size, history_len, feature_size]
         """
         x = x.view(x.shape[0], -1)
         return x
 
 
 class TemporalDropLastWrapper(nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(self, net):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
         self.net = net
 
     def forward(self, x: torch.Tensor, mask: torch.Tensor = None):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         x = x[:, :-1, :]
         x_out = self.net(x)
         return x_out
 
 
 def get_pooling(key, in_features, **params):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     key_ = key.split("_", 1)[0]
 
     if key_ == "last":
@@ -117,6 +167,10 @@ def get_pooling(key, in_features, **params):
 
 
 class LamaPooling(nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     available_groups = [
         "last",
         "avg",
@@ -132,6 +186,9 @@ class LamaPooling(nn.Module):
     ]
 
     def __init__(self, in_features, groups=None):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
         self.in_features = in_features
         self.groups = groups or [
@@ -156,8 +213,9 @@ class LamaPooling(nn.Module):
 
     def forward(self, x: torch.Tensor, mask: torch.Tensor = None):
         """
-        :param x: [batch_size, history_len, feature_size]
-        :return:
+        @TODO: Docs. Contribution is welcome
+        Args:
+            x: [batch_size, history_len, feature_size]
         """
         batch_size, history_len, feature_size = x.shape
 

@@ -13,6 +13,9 @@ class Phase:
     """
 
     def __init__(self, name: str = None, steps: int = None):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         self.steps = int(steps) if steps is not None else None
         self.curr_step = 0
         self.name = name
@@ -29,6 +32,9 @@ class PhaseManager:
     """
 
     def __init__(self, train_phases: List[Phase], valid_phases: List[Phase]):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         self.train_phases = train_phases
         self.valid_phases = valid_phases
 
@@ -36,6 +42,9 @@ class PhaseManager:
         self.valid_index = 0
 
     def step(self, state: State, step_size: int = 1):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if state.is_train_loader:
             if len(self.train_phases) > 1:
                 phase = self.train_phases[self.train_index]
@@ -56,6 +65,9 @@ class PhaseManager:
                     )
 
     def get_phase_name(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if state.is_train_loader:
             return self.train_phases[self.train_index].name
         return self.valid_phases[self.valid_index].name
@@ -76,6 +88,9 @@ class PhaseManagerCallback(Callback):
         valid_phases: "OrderedDict[str, int]" = None,
         valid_mode: str = None,
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__(order=CallbackOrder.Internal, node=CallbackNode.All)
         self.phase_manager = self._get_phase_manager(
             train_phases=train_phases,
@@ -119,9 +134,15 @@ class PhaseManagerCallback(Callback):
         )
 
     def on_batch_start(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         state.phase = self.phase_manager.get_phase_name(state)
 
     def on_batch_end(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         self.phase_manager.step(state)
 
 

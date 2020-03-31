@@ -6,6 +6,10 @@ from catalyst.utils import metrics
 
 
 class FocalLossBinary(_Loss):
+    """
+    Compute focal loss for binary classification problem.
+    """
+
     def __init__(
         self,
         ignore: int = None,
@@ -16,7 +20,7 @@ class FocalLossBinary(_Loss):
         reduction: str = "mean",
     ):
         """
-        Compute focal loss for binary classification problem.
+        @TODO: Docs. Contribution is welcome
         """
         super().__init__()
         self.ignore = ignore

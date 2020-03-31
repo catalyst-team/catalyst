@@ -6,12 +6,19 @@ from catalyst.core import Callback, CallbackNode, CallbackOrder, State
 
 
 class SchedulerCallback(Callback):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self,
         scheduler_key: str = None,
         mode: str = None,
         reduced_metric: str = None,
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__(order=CallbackOrder.Scheduler, node=CallbackNode.All)
         self.scheduler_key = scheduler_key
         self.mode = mode
@@ -33,6 +40,9 @@ class SchedulerCallback(Callback):
         return lr, momentum
 
     def step_batch(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         lr, momentum = self._scheduler_step(scheduler=self._scheduler)
 
         if self.scheduler_key is not None:
@@ -45,6 +55,9 @@ class SchedulerCallback(Callback):
                 state.batch_metrics["momentum"] = momentum
 
     def step_epoch(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         reduced_metric = state.valid_metrics[self.reduced_metric]
         lr, momentum = self._scheduler_step(
             scheduler=self._scheduler, reduced_metric=reduced_metric
@@ -60,6 +73,9 @@ class SchedulerCallback(Callback):
                 state.epoch_metrics["momentum"] = momentum
 
     def on_stage_start(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         self.reduced_metric = self.reduced_metric or state.main_metric
 
         scheduler = state.get_attr(
@@ -79,6 +95,9 @@ class SchedulerCallback(Callback):
         assert self.mode is not None
 
     def on_loader_start(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if (
             state.is_train_loader
             and isinstance(self._scheduler, OneCycleLRWithWarmup)
@@ -89,21 +108,29 @@ class SchedulerCallback(Callback):
             )
 
     def on_batch_end(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if state.is_train_loader and self.mode == "batch":
             self.step_batch(state=state)
 
     def on_epoch_end(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if self.mode == "epoch":
             self.step_epoch(state=state)
 
 
 class LRUpdater(Callback):
-    """Basic class that all Lr updaters inherit from"""
+    """
+    Basic class that all Lr updaters inherit from
+    """
 
     def __init__(self, optimizer_key: str = None):
         """
         Args:
-            optimizer_key: which optimizer key to use
+            optimizer_key (str): which optimizer key to use
                 for learning rate scheduling
         """
         super().__init__(order=CallbackOrder.Scheduler, node=CallbackNode.All)
@@ -111,9 +138,15 @@ class LRUpdater(Callback):
         self.optimizer_key = optimizer_key
 
     def calc_lr(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return None
 
     def calc_momentum(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return None
 
     @staticmethod
@@ -144,6 +177,9 @@ class LRUpdater(Callback):
         return new_lr, new_momentum
 
     def update_optimizer(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         lr, momentum = self._update_optimizer(optimizer=self._optimizer)
 
         if self.optimizer_key is not None:
@@ -154,6 +190,9 @@ class LRUpdater(Callback):
             state.batch_metrics["momentum"] = momentum
 
     def on_stage_start(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         optimizer = state.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
@@ -162,10 +201,16 @@ class LRUpdater(Callback):
         self.init_lr = optimizer.defaults["lr"]
 
     def on_loader_start(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if state.is_train_loader:
             self.update_optimizer(state=state)
 
     def on_batch_end(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if state.is_train_loader:
             self.update_optimizer(state=state)
 

@@ -7,6 +7,10 @@ from .core import _get_block, _upsample, DecoderBlock, EncoderBlock
 
 
 class EncoderDownsampleBlock(EncoderBlock):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self,
         in_channels: int,
@@ -18,6 +22,9 @@ class EncoderDownsampleBlock(EncoderBlock):
         second_stride: int = 1,
         **kwargs
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__(in_channels, out_channels, in_strides)
         self._out_strides = (
             in_strides * first_stride * second_stride
@@ -36,14 +43,24 @@ class EncoderDownsampleBlock(EncoderBlock):
 
     @property
     def out_strides(self) -> int:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return self._out_strides
 
     @property
     def block(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return self._block
 
 
 class EncoderUpsampleBlock(EncoderBlock):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self,
         in_channels: int,
@@ -59,6 +76,9 @@ class EncoderUpsampleBlock(EncoderBlock):
         align_corners: bool = None,
         **kwargs
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__(in_channels, out_channels, in_strides)
         if in_strides is None:
             self._out_strides = None
@@ -86,13 +106,22 @@ class EncoderUpsampleBlock(EncoderBlock):
 
     @property
     def out_strides(self) -> int:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return self._out_strides
 
     @property
     def block(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return self._block
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if self.pool_first:
             x = F.max_pool2d(
                 x, kernel_size=self.upsample_scale, stride=self.upsample_scale
@@ -107,6 +136,10 @@ class EncoderUpsampleBlock(EncoderBlock):
 
 
 class DecoderConcatBlock(DecoderBlock):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self,
         in_channels: int,
@@ -123,7 +156,9 @@ class DecoderConcatBlock(DecoderBlock):
         aggregate_first: bool = False,
         **kwargs
     ):
-
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         self.upsample_scale = upsample_scale
         self.interpolation_mode = interpolation_mode
         self.align_corners = align_corners
@@ -170,7 +205,9 @@ class DecoderConcatBlock(DecoderBlock):
         return block
 
     def forward(self, bottom: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
-
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if self.aggregate_first:
             x = torch.cat([bottom, left], 1)
             x = _upsample(
@@ -193,11 +230,20 @@ class DecoderConcatBlock(DecoderBlock):
 
 
 class DecoderSumBlock(DecoderConcatBlock):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(self, enc_channels: int, **kwargs):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__(enc_channels=0, **kwargs)
 
     def forward(self, bottom: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
-
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if self.aggregate_first:
             x = bottom + left
             x = _upsample(

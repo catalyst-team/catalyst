@@ -6,12 +6,19 @@ from catalyst.utils import metrics
 
 
 class DiceLoss(nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self,
         eps: float = 1e-7,
         threshold: float = None,
         activation: str = "Sigmoid",
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
 
         self.loss_fn = partial(
@@ -19,11 +26,18 @@ class DiceLoss(nn.Module):
         )
 
     def forward(self, logits, targets):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         dice = self.loss_fn(logits, targets)
         return 1 - dice
 
 
 class BCEDiceLoss(nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self,
         eps: float = 1e-7,
@@ -32,6 +46,9 @@ class BCEDiceLoss(nn.Module):
         bce_weight: float = 0.5,
         dice_weight: float = 0.5,
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
 
         if bce_weight == 0 and dice_weight == 0:
@@ -52,6 +69,9 @@ class BCEDiceLoss(nn.Module):
             )
 
     def forward(self, outputs, targets):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if self.bce_weight == 0:
             return self.dice_weight * self.dice_loss(outputs, targets)
         if self.dice_weight == 0:

@@ -17,7 +17,6 @@ class NeptuneLogger(Callback):
     Read about Neptune here https://neptune.ai
 
     Example:
-
         .. code-block:: python
 
             from catalyst.dl import SupervisedRunner
@@ -119,6 +118,9 @@ class NeptuneLogger(Callback):
         self.experiment = neptune.create_experiment(**logging_params)
 
     def __del__(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if hasattr(self, "experiment"):
             self.experiment.stop()
 
@@ -137,7 +139,9 @@ class NeptuneLogger(Callback):
                 self.experiment.log_metric(metric_name, y=metric_value, x=step)
 
     def on_batch_end(self, state: State):
-        """Log batch metrics to Neptune"""
+        """
+        Log batch metrics to Neptune
+        """
         if self.log_on_batch_end:
             mode = state.loader_name
             metrics_ = state.batch_metrics
@@ -149,7 +153,9 @@ class NeptuneLogger(Callback):
             )
 
     def on_loader_end(self, state: State):
-        """Translate epoch metrics to Neptune"""
+        """
+        Translate epoch metrics to Neptune
+        """
         if self.log_on_epoch_end:
             mode = state.loader_name
             metrics_ = state.loader_metrics

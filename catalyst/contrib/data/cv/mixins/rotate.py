@@ -36,6 +36,9 @@ class RotateMixin:
         )
 
     def __call__(self, dictionary):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         image = dictionary[self.input_key]
         rotation_factor = 0
 

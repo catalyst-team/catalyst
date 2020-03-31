@@ -204,15 +204,24 @@ class DatasetFromSampler(Dataset):
     """
 
     def __init__(self, sampler: Sampler):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         self.sampler = sampler
         self.sampler_list = None
 
     def __getitem__(self, index: int):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if self.sampler_list is None:
             self.sampler_list = list(self.sampler)
         return self.sampler_list[index]
 
     def __len__(self) -> int:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return len(self.sampler)
 
 

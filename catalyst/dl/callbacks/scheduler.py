@@ -1,3 +1,5 @@
+from typing import Optional
+
 from catalyst.core.callbacks import LRUpdater
 from catalyst.dl import State
 
@@ -12,15 +14,19 @@ class LRFinder(LRUpdater):
     """
 
     def __init__(
-        self, final_lr, scale="log", num_steps=None, optimizer_key=None
+        self,
+        final_lr,
+        scale: str = "log",
+        num_steps: Optional[int] = None,
+        optimizer_key: str = None,
     ):
         """
         Args:
             final_lr: final learning rate to try with
-            scale: learning rate increasing scale ("log" or "linear")
-            num_steps:  number of batches to try;
+            scale (str): learning rate increasing scale ("log" or "linear")
+            num_steps (Optional[int]):  number of batches to try;
                 if None - whole loader would be used.
-            optimizer_key: which optimizer key to use
+            optimizer_key (str): which optimizer key to use
                 for learning rate scheduling
         """
         super().__init__(optimizer_key=optimizer_key)
@@ -47,11 +53,17 @@ class LRFinder(LRUpdater):
         return self.init_lr + self.lr_step * self.find_iter
 
     def calc_lr(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         res = self._calc_lr()
         self.find_iter += 1
         return res
 
     def on_loader_start(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if state.is_train_loader:
             lr_ = self.final_lr / self.init_lr
             self.num_steps = self.num_steps or state.loader_len
@@ -61,6 +73,9 @@ class LRFinder(LRUpdater):
         super().on_loader_start(state=state)
 
     def on_batch_end(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().on_batch_end(state=state)
         if self.find_iter > self.num_steps:
             raise NotImplementedError("End of LRFinder")

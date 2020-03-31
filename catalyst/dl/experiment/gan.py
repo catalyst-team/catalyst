@@ -95,6 +95,9 @@ class GanExperiment(BaseExperiment):
                 )
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         callbacks = super().get_callbacks(stage=stage)
         default_callbacks = []
         if self._verbose:

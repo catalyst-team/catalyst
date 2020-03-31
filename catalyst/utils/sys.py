@@ -81,6 +81,9 @@ def get_environment_vars() -> Dict[str, Any]:
 
 
 def list_pip_packages() -> str:
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     result = ""
     with open(os.devnull, "w") as devnull:
         try:
@@ -98,6 +101,9 @@ def list_pip_packages() -> str:
 
 
 def list_conda_packages() -> str:
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     result = ""
     conda_meta_path = Path(sys.prefix) / "conda-meta"
     if conda_meta_path.exists():

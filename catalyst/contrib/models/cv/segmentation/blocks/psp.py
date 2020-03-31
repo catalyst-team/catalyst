@@ -10,6 +10,10 @@ from .core import _get_block
 
 
 class PyramidBlock(nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self,
         in_channels: int,
@@ -20,6 +24,9 @@ class PyramidBlock(nn.Module):
         align_corners: bool = True,
         complexity: int = 0,
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
         self.interpolation_mode = interpolation_mode
         self.align_corners = align_corners
@@ -38,6 +45,9 @@ class PyramidBlock(nn.Module):
         )
 
     def forward(self, x: torch.Tensor):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         h, w = x.shape[-2:]
         x = self._block(x)
         x = F.interpolate(
@@ -50,12 +60,19 @@ class PyramidBlock(nn.Module):
 
 
 class PSPBlock(nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self,
         in_channels: int,
         pool_sizes: Tuple[int] = (1, 2, 3, 6),
         use_batchnorm: bool = True,
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
 
         self.stages = nn.ModuleList(
@@ -71,6 +88,9 @@ class PSPBlock(nn.Module):
         )
 
     def forward(self, x):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         xs = [stage(x) for stage in self.stages] + [x]
         x = torch.cat(xs, dim=1)
         return x

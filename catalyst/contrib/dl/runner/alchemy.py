@@ -18,7 +18,6 @@ class AlchemyRunner(Runner):
     Powered by Catalyst.Ecosystem
 
     Example:
-
         .. code-block:: python
 
             from catalyst.dl import SupervisedAlchemyRunner
@@ -45,6 +44,9 @@ class AlchemyRunner(Runner):
     def _init(
         self, log_on_batch_end: bool = False, log_on_epoch_end: bool = True,
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super()._init()
         the_warning = DeprecatedWarning(
             self.__class__.__name__,
@@ -121,7 +123,9 @@ class AlchemyRunner(Runner):
 
 
 class SupervisedAlchemyRunner(AlchemyRunner, SupervisedRunner):
-    """SupervisedRunner with Alchemy"""
+    """
+    SupervisedRunner with Alchemy
+    """
 
     pass
 

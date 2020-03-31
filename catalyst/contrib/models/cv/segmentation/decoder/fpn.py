@@ -8,6 +8,10 @@ from .core import DecoderSpec
 
 
 class FPNDecoder(DecoderSpec):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self,
         in_channels: List[int],
@@ -15,6 +19,9 @@ class FPNDecoder(DecoderSpec):
         pyramid_channels: int = 256,
         **kwargs
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__(in_channels, in_strides)
         out_strides_ = [in_strides[-1]]
 
@@ -43,13 +50,22 @@ class FPNDecoder(DecoderSpec):
 
     @property
     def out_channels(self) -> List[int]:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return self._out_channels
 
     @property
     def out_strides(self) -> List[int]:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return self._out_strides
 
     def forward(self, x: List[torch.Tensor]) -> List[torch.Tensor]:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         # features from center block
         fpn_features = [self.center_conv(x[-1])]
         # features from encoders blocks

@@ -6,7 +6,14 @@ from torch import nn
 
 
 class DecoderSpec(ABC, nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(self, in_channels: List[int], in_strides: List[int]):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
         self.in_channels = in_channels
         self.in_strides = in_strides
@@ -14,13 +21,22 @@ class DecoderSpec(ABC, nn.Module):
     @property
     @abstractmethod
     def out_channels(self) -> List[int]:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         pass
 
     @property
     @abstractmethod
     def out_strides(self) -> List[int]:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         pass
 
     @abstractmethod
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         pass

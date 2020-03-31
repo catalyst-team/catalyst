@@ -5,11 +5,16 @@ from torch.optim.optimizer import Optimizer
 
 
 class RAdam(Optimizer):
+    """
+    @TODO: Docs. Contribution is welcome
+    Taken from https://github.com/LiyuanLucasLiu/RAdam
+    """
+
     def __init__(
         self, params, lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=0
     ):
         """
-        Taken from https://github.com/LiyuanLucasLiu/RAdam
+        @TODO: Docs. Contribution is welcome
         """
         defaults = {
             "lr": lr,
@@ -21,10 +26,15 @@ class RAdam(Optimizer):
         super(RAdam, self).__init__(params, defaults)
 
     def __setstate__(self, state):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super(RAdam, self).__setstate__(state)
 
     def step(self, closure=None):
-
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         loss = None
         if closure is not None:
             loss = closure()

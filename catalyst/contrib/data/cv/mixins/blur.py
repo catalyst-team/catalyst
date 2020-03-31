@@ -38,6 +38,9 @@ class BlurMixin:
         ) / self.num_blur_classes
 
     def __call__(self, dictionary):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         image = dictionary[self.input_key]
         blur_factor = 0
 

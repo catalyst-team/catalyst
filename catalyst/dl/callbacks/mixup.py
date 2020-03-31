@@ -70,9 +70,15 @@ class MixupCallback(CriterionCallback):
         return loss
 
     def on_loader_start(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         self.is_needed = not self.on_train_only or state.is_train_loader
 
     def on_batch_start(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if not self.is_needed:
             return
 

@@ -3,12 +3,22 @@ from torch import nn
 
 
 class HuberLoss(nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(self, clip_delta=1.0, reduction="mean"):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
         self.clip_delta = clip_delta
         self.reduction = reduction or "none"
 
     def forward(self, y_pred, y_true, weights=None):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         td_error = y_true - y_pred
         td_error_abs = torch.abs(td_error)
         quadratic_part = torch.clamp(td_error_abs, max=self.clip_delta)

@@ -44,5 +44,8 @@ class ABN(nn.Module):
         self.net = nn.Sequential(*layers)
 
     def forward(self, x):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         x = self.net(x)
         return x

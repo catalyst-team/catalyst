@@ -93,6 +93,9 @@ def parse_args():
 
 
 def main_worker(args, unknown_args):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     args, config = utils.parse_args_uargs(args, unknown_args)
     utils.set_global_seed(args.seed)
     utils.prepare_cudnn(args.deterministic, args.benchmark)
@@ -113,7 +116,9 @@ def main_worker(args, unknown_args):
 
 
 def main(args, unknown_args):
-    """Run the ``catalyst-dl run`` script"""
+    """
+    Run the ``catalyst-dl run`` script
+    """
     distributed_run(args.distributed, main_worker, args, unknown_args)
 
 

@@ -14,17 +14,33 @@ T = TypeVar("T")
 
 
 class DumbPool:
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def imap_unordered(self, func, args):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return map(func, args)
 
     def __enter__(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return self
 
 
 def parallel_imap(func, args, pool: Union[Pool, DumbPool],) -> List[T]:
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     result = list(pool.imap_unordered(func, args))
     return result
 
@@ -32,6 +48,9 @@ def parallel_imap(func, args, pool: Union[Pool, DumbPool],) -> List[T]:
 def tqdm_parallel_imap(
     func, args, pool: Union[Pool, DumbPool], total: int = None, pbar=tqdm,
 ) -> List[T]:
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     if total is None and hasattr(args, "__len__"):
         total = len(args)
 
@@ -44,5 +63,8 @@ def tqdm_parallel_imap(
 
 
 def get_pool(workers: int) -> Union[Pool, DumbPool]:
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     pool = Pool(workers) if workers > 0 and workers is not None else DumbPool()
     return pool

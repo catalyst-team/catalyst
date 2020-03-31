@@ -6,9 +6,14 @@ from torch.optim import Optimizer
 
 
 class Lookahead(Optimizer):
+    """
+    @TODO: Docs. Contribution is welcome
+    Taken from: https://github.com/alphadl/lookahead.pytorch
+    """
+
     def __init__(self, optimizer: Optimizer, k: int = 5, alpha: float = 0.5):
         """
-        Taken from: https://github.com/alphadl/lookahead.pytorch
+        @TODO: Docs. Contribution is welcome
         """
         self.optimizer = optimizer
         self.k = k
@@ -21,6 +26,9 @@ class Lookahead(Optimizer):
             group["counter"] = 0
 
     def update(self, group):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         for fast in group["params"]:
             param_state = self.state[fast]
             if "slow_param" not in param_state:
@@ -31,10 +39,16 @@ class Lookahead(Optimizer):
             fast.data.copy_(slow)
 
     def update_lookahead(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         for group in self.param_groups:
             self.update(group)
 
     def step(self, closure=None):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         loss = self.optimizer.step(closure)
         for group in self.param_groups:
             if group["counter"] == 0:
@@ -45,6 +59,9 @@ class Lookahead(Optimizer):
         return loss
 
     def state_dict(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         fast_state_dict = self.optimizer.state_dict()
         slow_state = {
             (id(k) if isinstance(k, torch.Tensor) else k): v
@@ -59,6 +76,9 @@ class Lookahead(Optimizer):
         }
 
     def load_state_dict(self, state_dict):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         slow_state_dict = {
             "state": state_dict["slow_state"],
             "param_groups": state_dict["param_groups"],
@@ -72,6 +92,9 @@ class Lookahead(Optimizer):
         self.fast_state = self.optimizer.state
 
     def add_param_group(self, param_group):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         param_group["counter"] = 0
         self.optimizer.add_param_group(param_group)
 
@@ -79,6 +102,9 @@ class Lookahead(Optimizer):
     def get_from_params(
         cls, params: Dict, base_optimizer_params: Dict = None, **kwargs,
     ) -> "Lookahead":
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         from catalyst.dl.registry import OPTIMIZERS
 
         base_optimizer = OPTIMIZERS.get_from_params(

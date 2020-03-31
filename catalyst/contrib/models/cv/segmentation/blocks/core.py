@@ -71,9 +71,16 @@ def _upsample(
 
 
 class EncoderBlock(ABC, nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self, in_channels: int, out_channels: int, in_strides: int = None
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -82,18 +89,31 @@ class EncoderBlock(ABC, nn.Module):
     @property
     @abstractmethod
     def out_strides(self) -> int:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         pass
 
     @property
     @abstractmethod
     def block(self) -> nn.Module:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         pass
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return self.block(x)
 
 
 class DecoderBlock(ABC, nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self,
         in_channels: int,
@@ -103,6 +123,9 @@ class DecoderBlock(ABC, nn.Module):
         *args,
         **kwargs
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
         self.in_channels = in_channels
         self.enc_channels = enc_channels
@@ -117,8 +140,14 @@ class DecoderBlock(ABC, nn.Module):
 
     @property
     def out_strides(self) -> int:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return self.in_strides // 2 if self.in_strides is not None else None
 
     @abstractmethod
     def forward(self, bottom: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         pass

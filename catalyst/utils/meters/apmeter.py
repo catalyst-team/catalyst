@@ -27,16 +27,26 @@ class APMeter(meter.Meter):
     """
 
     def __init__(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super(APMeter, self).__init__()
         self.reset()
 
     def reset(self):
-        """Resets the meter with empty member variables"""
+        """
+        Resets the meter with empty member variables
+        """
         self.scores = torch.FloatTensor(torch.FloatStorage())
         self.targets = torch.LongTensor(torch.LongStorage())
         self.weights = torch.FloatTensor(torch.FloatStorage())
 
-    def add(self, output, target, weight=None):
+    def add(
+        self,
+        output: torch.Tensor,
+        target: torch.Tensor,
+        weight: torch.Tensor = None,
+    ) -> None:
         """Add a new observation
 
         Args:
@@ -50,7 +60,6 @@ class APMeter(meter.Meter):
                 associated with classes 2 and 4)
             weight (optional, Tensor): Nx1 tensor representing the weight for
                 each example (each weight > 0)
-
         """
         if not torch.is_tensor(output):
             output = torch.from_numpy(output)
@@ -118,7 +127,6 @@ class APMeter(meter.Meter):
 
         Return:
             FloatTensor: 1xK tensor, with avg precision for each class k
-
         """
         if self.scores.numel() == 0:
             return 0

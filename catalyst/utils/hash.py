@@ -36,5 +36,8 @@ def get_hash(obj: Any) -> str:
 
 
 def get_short_hash(o) -> str:
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     hash = get_hash(o)[:6]
     return hash

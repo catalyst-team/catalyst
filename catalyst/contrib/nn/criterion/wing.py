@@ -38,15 +38,25 @@ def wing_loss(
 
 
 class WingLoss(nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self, width: int = 5, curvature: float = 0.5, reduction: str = "mean"
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
         self.loss_fn = partial(
             wing_loss, width=width, curvature=curvature, reduction=reduction
         )
 
     def forward(self, outputs, targets):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         loss = self.loss_fn(outputs, targets)
         return loss
 

@@ -1,4 +1,4 @@
-from typing import Iterator, List
+from typing import Iterator, List, Optional
 from operator import itemgetter
 
 import numpy as np
@@ -80,18 +80,6 @@ class MiniEpochSampler(Sampler):
     Sampler iterates mini epochs from the dataset
     used by ``mini_epoch_len``
 
-    Args:
-        data_len (int): Size of the dataset
-        mini_epoch_len (int): Num samples from the dataset used in one
-            mini epoch.
-        drop_last (bool): If ``True``, sampler will drop the last batches if
-            its size would be less than ``batches_per_epoch``
-        shuffle (str): one of  ``["always", "real_epoch", None]``.
-            The sampler will shuffle indices
-            > "per_mini_epoch" -- every mini epoch (every ``__iter__`` call)
-            > "per_epoch" -- every real epoch
-            > None -- don't shuffle
-
     Example:
         >>> MiniEpochSampler(len(dataset), mini_epoch_len=100)
         >>> MiniEpochSampler(len(dataset), mini_epoch_len=100,
@@ -107,6 +95,19 @@ class MiniEpochSampler(Sampler):
         drop_last: bool = False,
         shuffle: str = None,
     ):
+        """
+        Args:
+            data_len (int): Size of the dataset
+            mini_epoch_len (int): Num samples from the dataset used in one
+                mini epoch.
+            drop_last (bool): If ``True``, sampler will drop the last batches if
+                its size would be less than ``batches_per_epoch``
+            shuffle (str): one of  ``["always", "real_epoch", None]``.
+                The sampler will shuffle indices
+                > "per_mini_epoch" -- every mini epoch (every ``__iter__`` call)
+                > "per_epoch" -- every real epoch
+                > None -- don't shuffle
+        """
         super().__init__(None)
 
         self.data_len = int(data_len)
@@ -134,7 +135,10 @@ class MiniEpochSampler(Sampler):
             )
         self.shuffle_type = shuffle
 
-    def shuffle(self):
+    def shuffle(self) -> None:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if self.shuffle_type == "per_mini_epoch" or (
             self.shuffle_type == "per_epoch" and self.state_i == 0
         ):
@@ -147,6 +151,9 @@ class MiniEpochSampler(Sampler):
                 )
 
     def __iter__(self) -> Iterator[int]:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         self.state_i = self.state_i % self.divider
         self.shuffle()
 
@@ -162,6 +169,9 @@ class MiniEpochSampler(Sampler):
         return iter(indices)
 
     def __len__(self) -> int:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return self.mini_epoch_len
 
 
@@ -178,16 +188,25 @@ class DistributedSamplerWrapper(DistributedSampler):
 
     .. note::
         Sampler is assumed to be of constant size.
-
-    Arguments:
-        sampler: Sampler used for subsampling.
-        num_replicas (optional): Number of processes participating in
-            distributed training.
-        rank (optional): Rank of the current process within num_replicas.
-        shuffle (optional): If true (default), sampler will shuffle the indices
     """
 
-    def __init__(self, sampler, num_replicas=None, rank=None, shuffle=True):
+    def __init__(
+        self,
+        sampler,
+        num_replicas: Optional[int] = None,
+        rank: Optional[int] = None,
+        shuffle: bool = True,
+    ):
+        """
+        Args:
+            sampler: Sampler used for subsampling
+            num_replicas (int, optional): Number of processes participating in
+                distributed training
+            rank (int, optional): Rank of the current process
+                within ``num_replicas``
+            shuffle (bool, optional): If true (default),
+                sampler will shuffle the indices
+        """
         super(DistributedSamplerWrapper, self).__init__(
             DatasetFromSampler(sampler),
             num_replicas=num_replicas,
@@ -197,6 +216,9 @@ class DistributedSamplerWrapper(DistributedSampler):
         self.sampler = sampler
 
     def __iter__(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         self.dataset = DatasetFromSampler(self.sampler)
         indexes_of_indexes = super().__iter__()
         subsampler_indexes = self.dataset

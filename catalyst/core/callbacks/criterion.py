@@ -47,6 +47,9 @@ class CriterionCallback(_MetricCallback):
 
     @property
     def metric_fn(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return self._criterion
 
     def on_stage_start(self, state: State):

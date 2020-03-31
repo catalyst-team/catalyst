@@ -28,6 +28,9 @@ class FlareMixin:
         self.transform = A.RandomSunFlare(**self.sunflare_params)
 
     def __call__(self, dictionary):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         image = dictionary[self.input_key]
         sunflare_factor = 0
 

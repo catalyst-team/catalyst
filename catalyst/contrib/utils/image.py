@@ -119,6 +119,9 @@ def mimread(
 
 
 def mimwrite_with_meta(uri, ims, meta, **kwargs):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     writer = imageio.get_writer(uri, mode="I", **kwargs)
     writer.set_meta_data(meta)
     with writer:
@@ -127,6 +130,9 @@ def mimwrite_with_meta(uri, ims, meta, **kwargs):
 
 
 def tensor_from_rgb_image(image: np.ndarray) -> torch.Tensor:
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     image = np.moveaxis(image, -1, 0)
     image = np.ascontiguousarray(image)
     image = torch.from_numpy(image)

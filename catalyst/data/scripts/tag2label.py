@@ -13,6 +13,9 @@ from catalyst.utils import (
 
 
 def build_args(parser):
+    """
+    Constructs the command-line arguments for ``catalyst-data tag2label``
+    """
     parser.add_argument(
         "--in-csv", type=str, default=None, help="Path to data in `.csv`."
     )
@@ -56,6 +59,9 @@ def build_args(parser):
 
 
 def parse_args():
+    """
+    Parses the command line arguments for the main method
+    """
     parser = argparse.ArgumentParser()
     build_args(parser)
     args = parser.parse_args()
@@ -92,6 +98,9 @@ def _prepare_df_from_dirs(in_dirs, tag_column_name, recursive: bool = False):
 
 
 def main(args, _=None):
+    """
+    Run the ``catalyst-data tag2label`` script
+    """
     if args.in_csv is not None:
         df = pd.read_csv(args.in_csv)
     elif args.in_dir is not None:

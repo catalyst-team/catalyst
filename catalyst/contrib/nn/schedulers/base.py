@@ -34,4 +34,8 @@ class BaseScheduler(_LRScheduler, ABC):
 
 
 class BatchScheduler(BaseScheduler, ABC):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     pass

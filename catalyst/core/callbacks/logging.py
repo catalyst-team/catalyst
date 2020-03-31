@@ -190,6 +190,9 @@ class TensorboardLogger(Callback):
                 )
 
     def on_stage_start(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         assert state.logdir is not None
 
         extra_mode = "_base"

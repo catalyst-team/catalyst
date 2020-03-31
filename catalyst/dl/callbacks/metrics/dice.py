@@ -95,6 +95,9 @@ class MulticlassDiceMetricCallback(Callback):
             self.confusion_matrix += confusion_matrix
 
     def on_loader_end(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         tp_fp_fn_dict = utils.calculate_tp_fp_fn(self.confusion_matrix)
 
         dice_scores: np.ndarray = calculate_dice(**tp_fp_fn_dict)

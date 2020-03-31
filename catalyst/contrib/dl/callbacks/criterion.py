@@ -13,6 +13,10 @@ from catalyst.dl import MetricAggregationCallback
     details="Use MetricAggregationCallback instead.",
 )
 class CriterionAggregatorCallback(MetricAggregationCallback):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self,
         prefix: str,
@@ -20,6 +24,9 @@ class CriterionAggregatorCallback(MetricAggregationCallback):
         loss_aggregate_fn: str = "sum",
         multiplier: float = 1.0,
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__(
             prefix=prefix,
             metrics=loss_keys,

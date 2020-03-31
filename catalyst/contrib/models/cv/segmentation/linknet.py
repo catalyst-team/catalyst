@@ -12,6 +12,10 @@ from .head import UnetHead
 
 
 class Linknet(UnetSpec):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def _get_components(
         self,
         encoder: UnetEncoder,
@@ -44,6 +48,10 @@ class Linknet(UnetSpec):
 
 
 class ResnetLinknet(ResnetUnetSpec):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def _get_components(
         self,
         encoder: ResnetEncoder,

@@ -179,6 +179,9 @@ def flatten_dict(
 
 
 def split_dict_to_subdicts(dct: Dict, prefixes: List, extra_key: str):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     subdicts = {}
     extra_subdict = {
         k: v

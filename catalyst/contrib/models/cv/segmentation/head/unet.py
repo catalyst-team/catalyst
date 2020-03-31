@@ -9,6 +9,10 @@ from .core import HeadSpec
 
 
 class UnetHead(HeadSpec):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self,
         in_channels: List[int],
@@ -20,6 +24,9 @@ class UnetHead(HeadSpec):
         interpolation_mode: str = "bilinear",
         align_corners: bool = True,
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__(in_channels, out_channels, in_strides)
         self.upsample_scale = upsample_scale
         self.interpolation_mode = interpolation_mode
@@ -36,6 +43,9 @@ class UnetHead(HeadSpec):
         )
 
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         x_ = x[-1]
         x = self.head(x_)
         if self.upsample_scale > 1:

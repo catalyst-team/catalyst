@@ -19,7 +19,6 @@ class AlchemyLogger(Callback):
     Powered by Catalyst.Ecosystem
 
     Example:
-
         .. code-block:: python
 
             from catalyst.dl import SupervisedRunner, AlchemyLogger
@@ -83,6 +82,9 @@ class AlchemyLogger(Callback):
         self.logger = Logger(**logging_params)
 
     def __del__(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         self.logger.close()
 
     def _log_metrics(
@@ -102,7 +104,9 @@ class AlchemyLogger(Callback):
                 )
 
     def on_batch_end(self, state: State):
-        """Translate batch metrics to Alchemy"""
+        """
+        Translate batch metrics to Alchemy
+        """
         if self.log_on_batch_end:
             mode = state.loader_name
             metrics_ = state.batch_metrics
@@ -114,7 +118,9 @@ class AlchemyLogger(Callback):
             )
 
     def on_loader_end(self, state: State):
-        """Translate loader metrics to Alchemy"""
+        """
+        Translate loader metrics to Alchemy
+        """
         if self.log_on_epoch_end:
             mode = state.loader_name
             metrics_ = state.loader_metrics
@@ -126,7 +132,9 @@ class AlchemyLogger(Callback):
             )
 
     def on_epoch_end(self, state: State):
-        """Translate epoch metrics to Alchemy"""
+        """
+        Translate epoch metrics to Alchemy
+        """
         extra_mode = "_base"
         splitted_epoch_metrics = utils.split_dict_to_subdicts(
             dct=state.epoch_metrics,

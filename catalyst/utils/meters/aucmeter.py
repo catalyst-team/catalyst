@@ -30,17 +30,23 @@ class AUCMeter(meter.Meter):
     """
 
     def __init__(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super(AUCMeter, self).__init__()
         self.reset()
 
-    def reset(self):
-        """Reset stored scores and targets."""
+    def reset(self) -> None:
+        """
+        Reset stored scores and targets
+        """
         self.scores = torch.DoubleTensor(torch.DoubleStorage()).numpy()
         self.targets = torch.LongTensor(torch.LongStorage()).numpy()
 
-    def add(self, output, target):
+    def add(self, output: torch.Tensor, target: torch.Tensor) -> None:
         """
-        Update stored scores and targets.
+        Update stored scores and targets
+
         Args:
             output (Tensor): one-dimensional tensor `output`
             target (Tensor): one-dimensional tensor `target`
@@ -65,7 +71,8 @@ class AUCMeter(meter.Meter):
 
     def value(self):
         """
-        Return metric values of AUC, TPR and FPR.
+        Return metric values of AUC, TPR and FPR
+
         Returns:
              tuple of floats: (AUC, TPR, FPR)
         """

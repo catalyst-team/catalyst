@@ -6,6 +6,10 @@ from .functional import margin_loss
 
 
 class MarginLoss(nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self,
         alpha: float = 0.2,
@@ -14,6 +18,7 @@ class MarginLoss(nn.Module):
     ):
         """
         Constructor method for the MarginLoss class.
+
         Args:
             alpha:
             beta:
@@ -25,6 +30,9 @@ class MarginLoss(nn.Module):
         self.skip_labels = skip_labels
 
     def forward(self, embeddings, targets):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return margin_loss(
             embeddings,
             targets,

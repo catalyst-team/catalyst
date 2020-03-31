@@ -8,6 +8,10 @@ from .core import _take, EncoderSpec
 
 
 class UnetEncoder(EncoderSpec):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self,
         in_channels: int,
@@ -16,6 +20,9 @@ class UnetEncoder(EncoderSpec):
         layers_indices: List[int] = None,
         **kwargs,
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
 
         self.num_filters = num_channels
@@ -43,13 +50,22 @@ class UnetEncoder(EncoderSpec):
 
     @property
     def out_channels(self) -> List[int]:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return self._channels
 
     @property
     def out_strides(self) -> List[int]:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return self._strides
 
     def forward(self, x: torch.Tensor) -> List[torch.Tensor]:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         output = []
         for i in range(self.num_blocks):
             x = self.__getattr__(f"block{i + 1}")(x)

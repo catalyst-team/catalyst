@@ -220,7 +220,14 @@ def _lovasz_softmax(
 
 
 class LovaszLossBinary(_Loss):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(self, per_image=False, ignore=None):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
         self.ignore = ignore
         self.per_image = per_image
@@ -238,7 +245,14 @@ class LovaszLossBinary(_Loss):
 
 
 class LovaszLossMultiClass(_Loss):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(self, per_image=False, ignore=None):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
         self.ignore = ignore
         self.per_image = per_image
@@ -256,7 +270,14 @@ class LovaszLossMultiClass(_Loss):
 
 
 class LovaszLossMultiLabel(_Loss):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(self, per_image=False, ignore=None):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
         self.ignore = ignore
         self.per_image = per_image

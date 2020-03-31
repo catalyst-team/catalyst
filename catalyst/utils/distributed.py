@@ -124,10 +124,16 @@ def get_distributed_mean(value: float):
 
 
 def is_slurm_available():
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     return "SLURM_JOB_NUM_NODES" in os.environ and "SLURM_NODEID" in os.environ
 
 
 def get_slurm_params():
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     cmd = "scontrol show hostnames '%s'" % os.environ["SLURM_JOB_NODELIST"]
     nodes = subprocess.getoutput(cmd).split()
     num_nodes = int(os.environ["SLURM_JOB_NUM_NODES"])
@@ -140,6 +146,9 @@ def get_slurm_params():
 
 
 def get_distributed_params():
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     master_port = str(random.randint(5 * 10 ** 4, 6 * 10 ** 4))
     master_addr = "127.0.0.1"
     cur_node, num_nodes = 0, 1
@@ -173,6 +182,9 @@ def get_distributed_params():
 def get_distributed_env(
     local_rank, rank, world_size, use_cuda_visible_devices=True
 ):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     env = os.environ.copy()
     env["RANK"] = str(rank)
     env["WORLD_SIZE"] = str(world_size)
@@ -186,7 +198,9 @@ def get_distributed_env(
 
 def distributed_run(distributed, worker_fn, *args, **kwargs):
     """
+    @TODO: Docs. Contribution is welcome
     Distributed run
+
     Args:
         distributed:
         worker_fn:
@@ -222,6 +236,9 @@ def distributed_run(distributed, worker_fn, *args, **kwargs):
 
 
 def initialize_apex(model, optimizer=None, **distributed_params):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     import apex
 
     amp_params = utils.get_fn_default_params(

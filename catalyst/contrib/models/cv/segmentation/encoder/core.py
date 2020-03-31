@@ -9,12 +9,22 @@ def _take(elements, indexes):
 
 
 class EncoderSpec(ABC, nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     @property
     @abstractmethod
     def out_channels(self) -> List[int]:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         pass
 
     @property
     @abstractmethod
     def out_strides(self) -> List[int]:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         pass

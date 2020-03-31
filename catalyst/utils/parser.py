@@ -5,6 +5,9 @@ from catalyst import utils
 
 
 def parse_config_args(*, config, args, unknown_args):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     for arg in unknown_args:
         arg_name, value = arg.split("=")
         arg_name = arg_name.lstrip("-").strip("/")

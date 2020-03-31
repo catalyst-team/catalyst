@@ -13,6 +13,10 @@ logger = logging.getLogger(__name__)
 
 
 class _MetricCallback(ABC, Callback):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self,
         prefix: str,
@@ -21,6 +25,9 @@ class _MetricCallback(ABC, Callback):
         multiplier: float = 1.0,
         **metrics_kwargs,
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__(order=CallbackOrder.Metric, node=CallbackNode.All)
         self.prefix = prefix
         # self.metric_fn = partial(metric_fn, **metric_params)
@@ -60,6 +67,9 @@ class _MetricCallback(ABC, Callback):
     @property
     @abstractmethod
     def metric_fn(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         pass
 
     def _compute_metric_value(self, state: State):
@@ -98,6 +108,9 @@ class MetricCallback(_MetricCallback):
         multiplier: float = 1.0,
         **metric_kwargs,
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__(
             prefix=prefix,
             input_key=input_key,
@@ -109,6 +122,9 @@ class MetricCallback(_MetricCallback):
 
     @property
     def metric_fn(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return self.metric
 
 
@@ -127,6 +143,9 @@ class MultiMetricCallback(MetricCallback):
         multiplier: float = 1.0,
         **metrics_kwargs,
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__(
             prefix=prefix,
             metric_fn=metric_fn,
@@ -138,6 +157,9 @@ class MultiMetricCallback(MetricCallback):
         self.list_args = list_args
 
     def on_batch_end(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         metrics_ = self._compute_metric(state)
 
         for arg, metric in zip(self.list_args, metrics_):
@@ -245,6 +267,9 @@ class MetricManagerCallback(Callback):
     """
 
     def __init__(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__(
             order=CallbackOrder.Logging - 1, node=CallbackNode.All,
         )
@@ -268,13 +293,22 @@ class MetricManagerCallback(Callback):
         return output
 
     def on_epoch_start(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         state.epoch_metrics = defaultdict(None)
 
     def on_loader_start(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         state.loader_metrics = defaultdict(None)
         self.meters = defaultdict(meters.AverageValueMeter)
 
     def on_loader_end(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         for key, value in self.meters.items():
             value = value.mean
             state.loader_metrics[key] = value
@@ -282,9 +316,15 @@ class MetricManagerCallback(Callback):
             state.epoch_metrics[f"{state.loader_name}_{key}"] = value
 
     def on_batch_start(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         state.batch_metrics = defaultdict(None)
 
     def on_batch_end(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         state.batch_metrics = self._process_metrics(state.batch_metrics)
         for key, value in state.batch_metrics.items():
             self.meters[key].add(value)

@@ -56,9 +56,15 @@ class MeterMetricsCallback(Callback):
             meter.reset()
 
     def on_loader_start(self, state):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         self._reset_stats()
 
     def on_batch_end(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         logits = state.batch_out[self.output_key].detach().float()
         targets = state.batch_in[self.input_key].detach().float()
         probabilities = self.activation_fn(logits)
@@ -67,6 +73,9 @@ class MeterMetricsCallback(Callback):
             self.meters[i].add(probabilities[:, i], targets[:, i])
 
     def on_loader_end(self, state: State):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         metrics_tracker = defaultdict(list)
         loader_values = state.loader_metrics
         # Computing metrics for each class

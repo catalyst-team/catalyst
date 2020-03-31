@@ -4,6 +4,10 @@ from catalyst.core import _Experiment
 
 
 class Experiment(_Experiment):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def get_native_batch(
         self, stage: str, loader: Union[str, int] = 0, data_index: int = 0
     ):

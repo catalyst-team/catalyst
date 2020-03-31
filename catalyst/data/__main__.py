@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-"""Catalyst-data scripts.
+r"""Catalyst-data scripts.
 
 Examples:
-
     1.  **process-images** reads raw data and outputs
     preprocessed resized images
 
@@ -69,7 +68,6 @@ Examples:
             --batch-size=8 \\
             --num-workers=16 \\
             --verbose
-
 """
 
 from argparse import ArgumentParser, RawTextHelpFormatter

@@ -5,6 +5,9 @@ from catalyst.dl import utils
 
 
 def build_args(parser):
+    """
+    Constructs the command-line arguments for ``catalyst-dl init``
+    """
     parser.add_argument(
         "-p",
         "--pipeline",
@@ -27,6 +30,9 @@ def build_args(parser):
 
 
 def main(args, _):
+    """
+    Run the ``catalyst-dl init`` script
+    """
     if args.interactive:
         utils.run_wizard()
     else:
@@ -34,6 +40,9 @@ def main(args, _):
 
 
 def parse_args():
+    """
+    Parses the command line arguments for the main method
+    """
     parser = argparse.ArgumentParser()
     build_args(parser)
     args = parser.parse_args()

@@ -15,6 +15,9 @@ class AverageValueMeter(meter.Meter):
     """
 
     def __init__(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super(AverageValueMeter, self).__init__()
         self.n = 0
         self.val = 0.0
@@ -23,7 +26,7 @@ class AverageValueMeter(meter.Meter):
         self.m_s = 0.0
         self.std = np.nan
 
-    def add(self, value):
+    def add(self, value) -> None:
         """
         Add a new observation.
         Updates of mean and std are going online, with
@@ -34,7 +37,7 @@ class AverageValueMeter(meter.Meter):
 
         Args:
             value (float): value for update,
-            can be scalar number or PyTorch tensor
+                can be scalar number or PyTorch tensor
         """
         self.val = value
         self.n += 1
@@ -52,7 +55,7 @@ class AverageValueMeter(meter.Meter):
 
     def value(self):
         """
-        Returns meter values.
+        Returns meter values
 
         Returns:
             mean (float): Mean that has been updated online.
@@ -61,7 +64,9 @@ class AverageValueMeter(meter.Meter):
         return self.mean, self.std
 
     def reset(self):
-        """Resets the meter to default settings."""
+        """
+        Resets the meter to default settings
+        """
         self.n = 0
         self.val = 0.0
         self.mean = np.nan

@@ -6,6 +6,10 @@ from .core import DecoderBlock
 
 
 class DecoderFPNBlock(DecoderBlock):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self,
         in_channels: int,
@@ -18,6 +22,9 @@ class DecoderFPNBlock(DecoderBlock):
         aggregate_first: bool = False,
         **kwargs
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         self.upsample_scale = upsample_scale
         self.interpolation_mode = interpolation_mode
         self.align_corners = align_corners
@@ -30,6 +37,9 @@ class DecoderFPNBlock(DecoderBlock):
         return block
 
     def forward(self, bottom: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         x = F.interpolate(
             bottom,
             scale_factor=self.upsample_scale,
@@ -42,6 +52,10 @@ class DecoderFPNBlock(DecoderBlock):
 
 
 class Conv3x3GNReLU(nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self,
         in_channels,
@@ -51,6 +65,9 @@ class Conv3x3GNReLU(nn.Module):
         interpolation_mode: str = "bilinear",
         align_corners: bool = True,
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
         self.upsample = upsample
         self.upsample_scale = upsample_scale
@@ -71,6 +88,9 @@ class Conv3x3GNReLU(nn.Module):
         )
 
     def forward(self, x):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         x = self.block(x)
         if self.upsample:
             x = F.interpolate(
@@ -83,9 +103,16 @@ class Conv3x3GNReLU(nn.Module):
 
 
 class SegmentationBlock(nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(
         self, in_channels: int, out_channels: int, num_upsamples: int = 0
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
 
         blocks = [
@@ -103,4 +130,7 @@ class SegmentationBlock(nn.Module):
         self.block = nn.Sequential(*blocks)
 
     def forward(self, x):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return self.block(x)
