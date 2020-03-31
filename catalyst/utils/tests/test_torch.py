@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 
-from .. import torch as utils  # import
+from .. import torch as torch_utils
 
 
 def test_network_output():
@@ -10,11 +10,11 @@ def test_network_output():
     """
     # case #0
     net = nn.Identity()
-    assert utils.get_network_output(net, (1, 20)).shape == (1, 1, 20)
+    assert torch_utils.get_network_output(net, (1, 20)).shape == (1, 1, 20)
 
     # case #1
     net = nn.Linear(20, 10)
-    assert utils.get_network_output(net, (1, 20)).shape == (1, 1, 10)
+    assert torch_utils.get_network_output(net, (1, 20)).shape == (1, 1, 10)
 
     # case #2
     class Net(nn.Module):
@@ -28,7 +28,7 @@ def test_network_output():
             return z
 
     net = Net()
-    assert utils.get_network_output(net, (1, 20), (1, 10)).shape == (1, 1, 15)
+    assert torch_utils.get_network_output(net, (20,), (10,)).shape == (1, 15)
 
     # case #3
     class Net(nn.Module):
@@ -42,4 +42,4 @@ def test_network_output():
 
     net = Net()
     input_shapes = {"x": (1, 20)}
-    assert utils.get_network_output(net, input_shapes).shape == (1, 1, 10)
+    assert torch_utils.get_network_output(net, input_shapes).shape == (1, 1, 10)
