@@ -1,10 +1,14 @@
-from typing import Dict, List  # isort:skip
+from typing import Dict, List
 
 from alchemy import Logger
 
 from catalyst import utils
 from catalyst.core import (
-    Callback, CallbackNode, CallbackOrder, CallbackScope, State
+    Callback,
+    CallbackNode,
+    CallbackOrder,
+    CallbackScope,
+    State,
 )
 
 
@@ -40,6 +44,7 @@ class AlchemyLogger(Callback):
                 }
             )
     """
+
     def __init__(
         self,
         metric_names: List[str] = None,
@@ -66,8 +71,9 @@ class AlchemyLogger(Callback):
         if not (self.log_on_batch_end or self.log_on_epoch_end):
             raise ValueError("You have to log something!")
 
-        if (self.log_on_batch_end and not self.log_on_epoch_end) \
-                or (not self.log_on_batch_end and self.log_on_epoch_end):
+        if (self.log_on_batch_end and not self.log_on_epoch_end) or (
+            not self.log_on_batch_end and self.log_on_epoch_end
+        ):
             self.batch_log_suffix = ""
             self.epoch_log_suffix = ""
         else:
@@ -83,7 +89,7 @@ class AlchemyLogger(Callback):
         self, metrics: Dict[str, float], step: int, mode: str, suffix=""
     ):
         if self.metrics_to_log is None:
-            metrics_to_log = sorted(list(metrics.keys()))
+            metrics_to_log = sorted(metrics.keys())
         else:
             metrics_to_log = self.metrics_to_log
 
@@ -92,9 +98,7 @@ class AlchemyLogger(Callback):
                 metric_name = f"{name}/{mode}{suffix}"
                 metric_value = metrics[name]
                 self.logger.log_scalar(
-                    name=metric_name,
-                    value=metric_value,
-                    step=step,
+                    name=metric_name, value=metric_value, step=step,
                 )
 
     def on_batch_end(self, state: State):

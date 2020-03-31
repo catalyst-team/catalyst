@@ -1,6 +1,6 @@
 from typing import List, Union
 
-import torch.nn as nn
+from torch import nn
 
 from .functional import margin_loss
 

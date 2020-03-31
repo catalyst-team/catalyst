@@ -1,4 +1,4 @@
-from typing import Iterator, List  # isort:skip
+from typing import Iterator, List
 from operator import itemgetter
 
 import numpy as np
@@ -14,6 +14,7 @@ class BalanceClassSampler(Sampler):
     Abstraction over data sampler. Allows you to create stratified sample
     on unbalanced classes.
     """
+
     def __init__(self, labels: List[int], mode: str = "downsampling"):
         """
         Args:
@@ -26,8 +27,7 @@ class BalanceClassSampler(Sampler):
 
         labels = np.array(labels)
         samples_per_class = {
-            label: (labels == label).sum()
-            for label in set(labels)
+            label: (labels == label).sum() for label in set(labels)
         }
 
         self.lbl2idx = {
@@ -39,9 +39,11 @@ class BalanceClassSampler(Sampler):
             assert mode in ["downsampling", "upsampling"]
 
         if isinstance(mode, int) or mode == "upsampling":
-            samples_per_class = mode \
-                if isinstance(mode, int) \
+            samples_per_class = (
+                mode
+                if isinstance(mode, int)
                 else max(samples_per_class.values())
+            )
         else:
             samples_per_class = min(samples_per_class.values())
 
@@ -60,7 +62,7 @@ class BalanceClassSampler(Sampler):
             indices += np.random.choice(
                 self.lbl2idx[key], self.samples_per_class, replace=replace_
             ).tolist()
-        assert (len(indices) == self.length)
+        assert len(indices) == self.length
         np.random.shuffle(indices)
 
         return iter(indices)
@@ -97,12 +99,13 @@ class MiniEpochSampler(Sampler):
         >>> MiniEpochSampler(len(dataset), mini_epoch_len=100,
         >>>     shuffle="per_epoch")
     """
+
     def __init__(
         self,
         data_len: int,
         mini_epoch_len: int,
         drop_last: bool = False,
-        shuffle: str = None
+        shuffle: str = None,
     ):
         super().__init__(None)
 
@@ -132,8 +135,9 @@ class MiniEpochSampler(Sampler):
         self.shuffle_type = shuffle
 
     def shuffle(self):
-        if self.shuffle_type == "per_mini_epoch" or \
-                (self.shuffle_type == "per_epoch" and self.state_i == 0):
+        if self.shuffle_type == "per_mini_epoch" or (
+            self.shuffle_type == "per_epoch" and self.state_i == 0
+        ):
             if self.data_len >= self.mini_epoch_len:
                 self.indices = self._indices
                 np.random.shuffle(self.indices)
@@ -147,9 +151,11 @@ class MiniEpochSampler(Sampler):
         self.shuffle()
 
         start = self.state_i * self.mini_epoch_len
-        stop = self.end_pointer \
-            if (self.state_i == self.steps) \
+        stop = (
+            self.end_pointer
+            if (self.state_i == self.steps)
             else (self.state_i + 1) * self.mini_epoch_len
+        )
         indices = self.indices[start:stop].tolist()
 
         self.state_i += 1
@@ -180,12 +186,13 @@ class DistributedSamplerWrapper(DistributedSampler):
         rank (optional): Rank of the current process within num_replicas.
         shuffle (optional): If true (default), sampler will shuffle the indices
     """
+
     def __init__(self, sampler, num_replicas=None, rank=None, shuffle=True):
         super(DistributedSamplerWrapper, self).__init__(
             DatasetFromSampler(sampler),
             num_replicas=num_replicas,
             rank=rank,
-            shuffle=shuffle
+            shuffle=shuffle,
         )
         self.sampler = sampler
 
@@ -197,5 +204,7 @@ class DistributedSamplerWrapper(DistributedSampler):
 
 
 __all__ = [
-    "BalanceClassSampler", "MiniEpochSampler", "DistributedSamplerWrapper"
+    "BalanceClassSampler",
+    "MiniEpochSampler",
+    "DistributedSamplerWrapper",
 ]

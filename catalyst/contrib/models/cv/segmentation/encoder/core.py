@@ -1,11 +1,11 @@
-from typing import List  # isort:skip
+from typing import List
 from abc import ABC, abstractmethod
 
-import torch.nn as nn
+from torch import nn
 
 
 def _take(elements, indexes):
-    return list([elements[i] for i in indexes])
+    return [elements[i] for i in indexes]
 
 
 class EncoderSpec(ABC, nn.Module):

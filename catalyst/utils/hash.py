@@ -1,4 +1,4 @@
-from typing import Any  # isort:skip
+from typing import Any
 from base64 import urlsafe_b64encode
 from hashlib import sha256
 

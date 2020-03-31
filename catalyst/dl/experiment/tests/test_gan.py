@@ -3,8 +3,13 @@ from collections import OrderedDict
 import torch
 
 from catalyst.dl import (
-    CheckpointCallback, ConsoleLogger, ExceptionCallback, OptimizerCallback,
-    PhaseManagerCallback, PhaseWrapperCallback, TensorboardLogger
+    CheckpointCallback,
+    ConsoleLogger,
+    ExceptionCallback,
+    OptimizerCallback,
+    PhaseManagerCallback,
+    PhaseWrapperCallback,
+    TensorboardLogger,
 )
 from catalyst.dl.experiment.gan import GanExperiment
 
@@ -36,9 +41,7 @@ def test_defaults():
         "generator_train_num": 5,
     }
     exp = GanExperiment(
-        model=model,
-        loaders=loaders,
-        state_kwargs=state_kwargs,
+        model=model, loaders=loaders, state_kwargs=state_kwargs,
     )
 
     assert exp.get_callbacks("train").keys() == DEFAULT_CALLBACKS.keys()
@@ -64,8 +67,7 @@ def test_callback_wrapping():
     input_callbacks = OrderedDict(
         {
             "optim_d": OptimizerCallback(
-                loss_key=discriminator_loss_key,
-                optimizer_key=discriminator_key
+                loss_key=discriminator_loss_key, optimizer_key=discriminator_key
             ),
             "optim_g": OptimizerCallback(
                 loss_key=generator_loss_key, optimizer_key=generator_key

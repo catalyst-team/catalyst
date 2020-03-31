@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 try:
     import lz4.frame
+
     LZ4_ENABLED = True
 except ImportError as ex:
     if os.environ.get("USE_LZ4", "0") == "1":
@@ -23,7 +24,7 @@ except ImportError as ex:
 
 
 def is_compressed(data):
-    return isinstance(data, bytes) or isinstance(data, string_types)
+    return isinstance(data, (bytes, string_types))
 
 
 def compress(data):

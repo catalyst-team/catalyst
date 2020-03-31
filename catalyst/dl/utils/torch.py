@@ -1,4 +1,4 @@
-from typing import Iterable, Callable  # isort:skip
+from typing import Callable, Iterable
 
 import torch
 from torch.utils.data.dataloader import default_collate as default_collate_fn
@@ -15,7 +15,7 @@ def get_loader(
     batch_size: int = 32,
     num_workers: int = 4,
     shuffle: bool = False,
-    drop_last: bool = False
+    drop_last: bool = False,
 ):
     """
     Creates a DataLoader from given source and its open/transform params
@@ -50,11 +50,8 @@ def get_loader(
     Returns:
         DataLoader with ``catalyst.data.ListDataset``
     """
-
     dataset = ListDataset(
-        list_data=data_source,
-        open_fn=open_fn,
-        dict_transform=dict_transform,
+        list_data=data_source, open_fn=open_fn, dict_transform=dict_transform,
     )
     loader = torch.utils.data.DataLoader(
         dataset=dataset,

@@ -11,7 +11,11 @@ from torch import nn
 import torch.distributed
 
 from catalyst.utils.tools.typing import (
-    Criterion, Device, Model, Optimizer, Scheduler
+    Criterion,
+    Device,
+    Model,
+    Optimizer,
+    Scheduler,
 )
 from .torch import get_available_gpus, get_device
 from .misc import get_fn_default_params, maybe_recursive_call
@@ -27,7 +31,8 @@ def is_wrapped_with_ddp(model: nn.Module) -> bool:
     # add Apex's DistributedDataParallel to list of checked types
     try:
         from apex.parallel import DistributedDataParallel as apex_DDP
-        parallel_wrappers = parallel_wrappers + (apex_DDP, )
+
+        parallel_wrappers = parallel_wrappers + (apex_DDP,)
     except ImportError:
         pass
 
@@ -68,6 +73,7 @@ def is_apex_available() -> bool:
     try:
         import apex  # noqa: F401
         from apex import amp  # noqa: F401
+
         return True and env_apex
     except ImportError:
         return False and env_apex
@@ -77,11 +83,14 @@ def assert_fp16_available() -> None:
     """
     Asserts for installed and available Apex FP16
     """
-    assert torch.backends.cudnn.enabled, \
-        "fp16 mode requires cudnn backend to be enabled."
+    assert (
+        torch.backends.cudnn.enabled
+    ), "fp16 mode requires cudnn backend to be enabled."
 
-    assert is_apex_available(), "NVidia Apex package must be installed. "  \
-                                "See https://github.com/NVIDIA/apex."
+    assert is_apex_available(), (
+        "NVidia Apex package must be installed. "
+        "See https://github.com/NVIDIA/apex."
+    )
 
 
 def get_rank() -> int:
@@ -107,7 +116,7 @@ def get_distributed_mean(value: float):
             value,
             dtype=torch.float,
             device=f"cuda:{torch.cuda.current_device()}",
-            requires_grad=False
+            requires_grad=False,
         )
         torch.distributed.all_reduce(value)
         value = float(value.item() / torch.distributed.get_world_size())
@@ -126,12 +135,12 @@ def get_slurm_params():
     master_node = socket.gethostbyname(nodes[0])
     cur_node_idx = nodes.index(current_node)
     job_id = os.environ["SLURM_JOB_ID"]
-    master_port = str(5 * 10**4 + int(job_id) % 10**4)
+    master_port = str(5 * 10 ** 4 + int(job_id) % 10 ** 4)
     return cur_node_idx, num_nodes, master_node, master_port
 
 
 def get_distributed_params():
-    master_port = str(random.randint(5 * 10**4, 6 * 10**4))
+    master_port = str(random.randint(5 * 10 ** 4, 6 * 10 ** 4))
     master_addr = "127.0.0.1"
     cur_node, num_nodes = 0, 1
     if is_slurm_available():
@@ -192,6 +201,7 @@ def initialize_apex(model, optimizer=None, **distributed_params):
         model = amp_result
     return model, optimizer
 
+
 def process_components(
     model: Model,
     criterion: Criterion = None,
@@ -238,6 +248,7 @@ def process_components(
 
         if use_apex:
             import apex
+
             model, optimizer = initialize_apex(
                 model, optimizer, **distributed_params
             )

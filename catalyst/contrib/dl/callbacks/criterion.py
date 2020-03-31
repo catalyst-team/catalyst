@@ -1,4 +1,4 @@
-from typing import Dict, List, Union  # isort:skip
+from typing import Dict, List, Union
 
 import deprecation
 
@@ -10,7 +10,7 @@ from catalyst.dl import MetricAggregationCallback
     deprecated_in="20.03",
     removed_in="20.04",
     current_version=__version__,
-    details="Use MetricAggregationCallback instead."
+    details="Use MetricAggregationCallback instead.",
 )
 class CriterionAggregatorCallback(MetricAggregationCallback):
     def __init__(
@@ -18,7 +18,7 @@ class CriterionAggregatorCallback(MetricAggregationCallback):
         prefix: str,
         loss_keys: Union[str, List[str], Dict[str, float]] = None,
         loss_aggregate_fn: str = "sum",
-        multiplier: float = 1.0
+        multiplier: float = 1.0,
     ):
         super().__init__(
             prefix=prefix,

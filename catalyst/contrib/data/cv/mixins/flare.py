@@ -1,4 +1,4 @@
-from typing import Dict  # isort:skip
+from typing import Dict
 import random
 
 import albumentations as A
@@ -8,11 +8,12 @@ class FlareMixin:
     """
     Calculates flare factor for augmented image
     """
+
     def __init__(
         self,
         input_key: str = "image",
         output_key: str = "flare_factor",
-        sunflare_params: Dict = None
+        sunflare_params: Dict = None,
     ):
         """
         Args:

@@ -1,7 +1,7 @@
 from collections import OrderedDict
 
 import torch
-import torch.nn as nn
+from torch import nn
 import torchvision
 
 from catalyst import utils

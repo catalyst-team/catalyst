@@ -3,6 +3,7 @@ import numpy as np
 from catalyst import utils
 from catalyst.dl.core import Callback, CallbackOrder, MetricCallback, State
 from catalyst.utils import metrics
+
 from .functional import calculate_dice
 
 
@@ -10,6 +11,7 @@ class DiceCallback(MetricCallback):
     """
     Dice metric callback.
     """
+
     def __init__(
         self,
         input_key: str = "targets",
@@ -17,7 +19,7 @@ class DiceCallback(MetricCallback):
         prefix: str = "dice",
         eps: float = 1e-7,
         threshold: float = None,
-        activation: str = "Sigmoid"
+        activation: str = "Sigmoid",
     ):
         """
         Args:
@@ -33,7 +35,7 @@ class DiceCallback(MetricCallback):
             output_key=output_key,
             eps=eps,
             threshold=threshold,
-            activation=activation
+            activation=activation,
         )
 
 
@@ -43,6 +45,7 @@ class MulticlassDiceMetricCallback(Callback):
     dice score across multiple batches. This callback is good for getting
     the dice score with small batch sizes where the batchwise dice is noisier.
     """
+
     def __init__(
         self,
         input_key: str = "targets",
@@ -98,20 +101,20 @@ class MulticlassDiceMetricCallback(Callback):
 
         # logging the dice scores in the state
         for i, dice in enumerate(dice_scores):
-            if (
-                isinstance(self.class_names, dict)
-                and i not in list(self.class_names.keys())
+            if isinstance(self.class_names, dict) and i not in list(
+                self.class_names.keys()
             ):
                 continue
-            postfix = self.class_names[i] \
-                if self.class_names is not None \
-                else str(i)
+            postfix = (
+                self.class_names[i] if self.class_names is not None else str(i)
+            )
 
             state.loader_metrics[f"{self.prefix}_{postfix}"] = dice
 
         # For supporting averaging of only classes specified in `class_names`
         values_to_avg = [
-            value for key, value in state.loader_metrics.items()
+            value
+            for key, value in state.loader_metrics.items()
             if key.startswith(f"{self.prefix}_")
         ]
         state.loader_metrics[f"{self.prefix}_mean"] = np.mean(values_to_avg)

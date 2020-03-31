@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
+from torch import nn
+from torch.nn import functional as F
 
 from ..abn import ABN
 
@@ -42,7 +42,7 @@ def _get_block(
                 bias=False,
                 **kwargs
             ),
-            abn_block(out_channels, activation=activation)
+            abn_block(out_channels, activation=activation),
         ] * complexity
         layers = layers + layers_
     block = nn.Sequential(*layers)
@@ -54,7 +54,7 @@ def _upsample(
     scale: int = None,
     size: int = None,
     interpolation_mode: str = "bilinear",
-    align_corners: bool = True
+    align_corners: bool = True,
 ) -> torch.Tensor:
     if scale is None:
         x = F.interpolate(
@@ -65,7 +65,7 @@ def _upsample(
             x,
             scale_factor=scale,
             mode=interpolation_mode,
-            align_corners=align_corners
+            align_corners=align_corners,
         )
     return x
 
@@ -120,7 +120,5 @@ class DecoderBlock(ABC, nn.Module):
         return self.in_strides // 2 if self.in_strides is not None else None
 
     @abstractmethod
-    def forward(
-        self, bottom: torch.Tensor, left: torch.Tensor
-    ) -> torch.Tensor:
+    def forward(self, bottom: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
         pass

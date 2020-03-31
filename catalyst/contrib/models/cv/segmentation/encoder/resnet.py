@@ -1,34 +1,35 @@
-from typing import List, Union  # isort:skip
+from typing import List, Union
 from collections import OrderedDict
 from pathlib import Path
 
 import torch
-import torch.nn as nn
+from torch import nn
 import torchvision
 
 from catalyst import utils
+
 from .core import _take, EncoderSpec
 
 RESNET_PARAMS = {
     "resnet18": {
         "channels": [64, 64, 128, 256, 512],
-        "strides": [2, 4, 8, 16, 32]
+        "strides": [2, 4, 8, 16, 32],
     },
     "resnet34": {
         "channels": [64, 64, 128, 256, 512],
-        "strides": [2, 4, 8, 16, 32]
+        "strides": [2, 4, 8, 16, 32],
     },
     "resnet50": {
         "channels": [64, 256, 512, 1024, 2048],
-        "strides": [2, 4, 8, 16, 32]
+        "strides": [2, 4, 8, 16, 32],
     },
     "resnet101": {
         "channels": [64, 256, 512, 1024, 2048],
-        "strides": [2, 4, 8, 16, 32]
+        "strides": [2, 4, 8, 16, 32],
     },
     "resnet152": {
         "channels": [64, 256, 512, 1024, 2048],
-        "strides": [2, 4, 8, 16, 32]
+        "strides": [2, 4, 8, 16, 32],
     },
 }
 
@@ -71,24 +72,24 @@ class ResnetEncoder(EncoderSpec):
                 state_dict = torch.load(str(state_dict))
             resnet.load_state_dict(state_dict)
         self._layers_indices = layers_indices or [1, 2, 3, 4]
-        self._channels, self._strides = \
-            resnet_params["channels"], resnet_params["strides"]
+        self._channels, self._strides = (
+            resnet_params["channels"],
+            resnet_params["strides"],
+        )
         self._channels = _take(self._channels, self._layers_indices)
         self._strides = _take(self._strides, self._layers_indices)
 
         layer0 = nn.Sequential(
             OrderedDict(
                 [
-                    ("conv1", resnet.conv1), ("bn1", resnet.bn1),
-                    ("relu", resnet.relu)
+                    ("conv1", resnet.conv1),
+                    ("bn1", resnet.bn1),
+                    ("relu", resnet.relu),
                 ]
             )
         )
         self._layers = nn.ModuleList(
-            [
-                layer0, resnet.layer1, resnet.layer2, resnet.layer3,
-                resnet.layer4
-            ]
+            [layer0, resnet.layer1, resnet.layer2, resnet.layer3, resnet.layer4]
         )
         self.maxpool0 = resnet.maxpool
 

@@ -4,8 +4,11 @@ import json
 import pandas as pd
 
 from catalyst.utils import (
-    boolean_flag, create_dataframe, create_dataset, get_dataset_labeling,
-    separate_tags
+    boolean_flag,
+    create_dataframe,
+    create_dataset,
+    get_dataset_labeling,
+    separate_tags,
 )
 
 
@@ -18,7 +21,7 @@ def build_args(parser):
         type=str,
         default=None,
         help="Path to directory with dataset"
-        "or paths separated by commas for several datasets"
+        "or paths separated by commas for several datasets",
     )
 
     parser.add_argument(
@@ -26,14 +29,14 @@ def build_args(parser):
         type=str,
         default=None,
         required=True,
-        help="Path to output dataframe"
+        help="Path to output dataframe",
     )
     parser.add_argument(
         "--out-labeling",
         type=str,
         default=None,
         required=True,
-        help="Path to output JSON"
+        help="Path to output JSON",
     )
 
     parser.add_argument(
@@ -43,13 +46,10 @@ def build_args(parser):
         "--tag-delim",
         type=str,
         default=None,
-        help="Separator if you want to use several target columns"
+        help="Separator if you want to use several target columns",
     )
     boolean_flag(
-        parser,
-        "recursive",
-        default=False,
-        help="Include subdirs in dataset",
+        parser, "recursive", default=False, help="Include subdirs in dataset",
     )
 
     return parser

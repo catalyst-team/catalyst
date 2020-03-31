@@ -1,4 +1,4 @@
-from typing import Dict  # isort:skip
+from typing import Dict
 
 from .blocks import EncoderDownsampleBlock
 from .bridge import UnetBridge

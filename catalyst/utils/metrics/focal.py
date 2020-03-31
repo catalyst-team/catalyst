@@ -13,7 +13,7 @@ def sigmoid_focal_loss(
     targets: torch.Tensor,
     gamma: float = 2.0,
     alpha: float = 0.25,
-    reduction: str = "mean"
+    reduction: str = "mean",
 ):
     """
     Compute binary focal loss between target and output logits.
@@ -32,7 +32,7 @@ def sigmoid_focal_loss(
             elements in the output,
             "sum": the output will be summed.
 
-    See https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/loss/losses.py  # noqa: E501
+    See https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/loss/losses.py  # noqa: E501, W505
     """
     targets = targets.type(outputs.type())
 
@@ -62,7 +62,7 @@ def reduced_focal_loss(
     targets: torch.Tensor,
     threshold: float = 0.5,
     gamma: float = 2.0,
-    reduction="mean"
+    reduction="mean",
 ):
     """
     Compute reduced focal loss between target and output logits.
@@ -100,7 +100,7 @@ def reduced_focal_loss(
     pt = torch.exp(logpt)
 
     # compute the loss
-    focal_reduction = ((1. - pt) / threshold).pow(gamma)
+    focal_reduction = ((1.0 - pt) / threshold).pow(gamma)
     focal_reduction[pt < threshold] = 1
 
     loss = -focal_reduction * logpt

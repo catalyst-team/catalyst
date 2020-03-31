@@ -1,4 +1,4 @@
-from typing import Dict, Union  # isort:skip
+from typing import Dict, Union
 import argparse
 from argparse import ArgumentParser
 from pathlib import Path
@@ -98,52 +98,52 @@ def build_args(parser: ArgumentParser):
         "-c",
         default="best",
         help="Checkpoint's name to trace",
-        metavar="CHECKPOINT_NAME"
+        metavar="CHECKPOINT_NAME",
     )
     parser.add_argument(
         "--out-dir",
         type=Path,
         default=None,
-        help="Output directory to save traced model"
+        help="Output directory to save traced model",
     )
     parser.add_argument(
         "--out-model",
         type=Path,
         default=None,
-        help="Output path to save traced model (overrides --out-dir)"
+        help="Output path to save traced model (overrides --out-dir)",
     )
     parser.add_argument(
         "--mode",
         type=str,
         choices=["eval", "train"],
         default="eval",
-        help="Model's mode 'eval' or 'train'"
+        help="Model's mode 'eval' or 'train'",
     )
     parser.add_argument(
         "--with-grad",
         action="store_true",
         default=False,
-        help="If true, model will be traced with `requires_grad_(True)`"
+        help="If true, model will be traced with `requires_grad_(True)`",
     )
     parser.add_argument(
         "--opt-level",
         type=str,
         default=None,
-        help="Opt level for FP16 (optional)"
+        help="Opt level for FP16 (optional)",
     )
 
     parser.add_argument(
         "--stage",
         type=str,
         default=None,
-        help="Stage from experiment from which model and loader will be taken"
+        help="Stage from experiment from which model and loader will be taken",
     )
 
     parser.add_argument(
         "--loader",
         type=str,
         default=None,
-        help="Loader name to get the batch from"
+        help="Loader name to get the batch from",
     )
 
     return parser

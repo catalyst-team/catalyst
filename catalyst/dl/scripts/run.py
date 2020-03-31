@@ -19,7 +19,7 @@ def build_args(parser: ArgumentParser):
         help="path to config/configs",
         metavar="CONFIG_PATH",
         dest="configs",
-        required=True
+        required=True,
     )
     parser.add_argument("--expdir", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
@@ -29,7 +29,7 @@ def build_args(parser: ArgumentParser):
         "--num-workers",
         default=None,
         type=int,
-        help="number of data loading workers"
+        help="number of data loading workers",
     )
     parser.add_argument(
         "-b", "--batch-size", default=None, type=int, help="mini-batch size"
@@ -42,7 +42,7 @@ def build_args(parser: ArgumentParser):
         default=None,
         type=str,
         metavar="PATH",
-        help="path to latest checkpoint"
+        help="path to latest checkpoint",
     )
     parser.add_argument(
         "--autoresume",
@@ -53,21 +53,21 @@ def build_args(parser: ArgumentParser):
         ),
         required=False,
         choices=["best", "last"],
-        default=None
+        default=None,
     )
     parser.add_argument("--seed", type=int, default=42)
     utils.boolean_flag(
         parser,
         "apex",
         default=os.getenv("USE_APEX", "1") == "1",
-        help="Enable/disable using of Apex extension"
+        help="Enable/disable using of Apex extension",
     )
     utils.boolean_flag(
         parser,
         "distributed",
         shorthand="ddp",
         default=os.getenv("USE_DDP", "0") == "1",
-        help="Run in distributed mode"
+        help="Run in distributed mode",
     )
     utils.boolean_flag(parser, "verbose", default=None)
     utils.boolean_flag(parser, "check", default=None)
@@ -75,7 +75,7 @@ def build_args(parser: ArgumentParser):
         parser,
         "deterministic",
         default=None,
-        help="Deterministic mode if running in CuDNN backend"
+        help="Deterministic mode if running in CuDNN backend",
     )
     utils.boolean_flag(
         parser, "benchmark", default=None, help="Use CuDNN benchmark"

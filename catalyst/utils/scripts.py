@@ -20,7 +20,7 @@ def import_module(expdir: pathlib.Path):
     s = spec_from_file_location(
         expdir.name,
         str(expdir.absolute() / "__init__.py"),
-        submodule_search_locations=[expdir.absolute()]
+        submodule_search_locations=[expdir.absolute()],
     )
     m = module_from_spec(s)
     s.loader.exec_module(m)
@@ -113,7 +113,10 @@ def distributed_cmd_run(distributed, worker_fn, *args, **kwargs):
 
 
 __all__ = [
-    "import_module", "dump_code", "dump_python_files",
-    "import_experiment_and_runner", "dump_base_experiment_code",
-    "distributed_cmd_run"
+    "import_module",
+    "dump_code",
+    "dump_python_files",
+    "import_experiment_and_runner",
+    "dump_base_experiment_code",
+    "distributed_cmd_run",
 ]

@@ -65,6 +65,7 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
     those metrics. Currently, this meter works for binary cases only, please
     use multiple instances of this class for multi-label cases.
     """
+
     def __init__(self, threshold=0.5):
         super(PrecisionRecallF1ScoreMeter, self).__init__()
         self.threshold = threshold

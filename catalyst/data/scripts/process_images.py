@@ -8,7 +8,7 @@
 #   --clear-exif \
 #   --grayscale
 
-from typing import List  # isort:skip
+from typing import List
 import argparse
 from functools import wraps
 from multiprocessing.pool import Pool
@@ -19,8 +19,12 @@ import cv2
 import numpy as np
 
 from catalyst.utils import (
-    boolean_flag, get_pool, has_image_extension, imread, imwrite,
-    tqdm_parallel_imap
+    boolean_flag,
+    get_pool,
+    has_image_extension,
+    imread,
+    imwrite,
+    tqdm_parallel_imap,
 )
 
 # Limit cv2's processor usage
@@ -39,7 +43,7 @@ def build_args(parser):
         "--out-dir",
         required=True,
         type=Path,
-        help="Processed images folder path"
+        help="Processed images folder path",
     )
 
     parser.add_argument(
@@ -47,7 +51,7 @@ def build_args(parser):
         "-j",
         default=1,
         type=int,
-        help="Number of workers to parallel the processing"
+        help="Number of workers to parallel the processing",
     )
 
     parser.add_argument(
@@ -55,7 +59,7 @@ def build_args(parser):
         default=None,
         required=False,
         type=int,
-        help="Output images size. E.g. 224, 448"
+        help="Output images size. E.g. 224, 448",
     )
 
     boolean_flag(parser, "clear-exif", default=True, help="Clear EXIF data")
@@ -68,7 +72,7 @@ def build_args(parser):
         parser,
         "expand-dims",
         default=True,
-        help="Expand array shape for grayscale images"
+        help="Expand array shape for grayscale images",
     )
 
     return parser
@@ -94,6 +98,7 @@ def py3round(number):
 
 def preserve_channel_dim(func):
     """Preserve dummy channel dim."""
+
     @wraps(func)
     def wrapped_function(img, *args, **kwargs):
         shape = img.shape
@@ -148,7 +153,7 @@ class Preprocessor:
             _, extension = os.path.splitext(image_path)
             kwargs = {
                 "grayscale": self.grayscale,
-                "expand_dims": self.expand_dims
+                "expand_dims": self.expand_dims,
             }
             if extension.lower() in {"jpg", "jpeg"}:
                 # imread does not have exifrotate for non-jpeg type
@@ -170,11 +175,12 @@ class Preprocessor:
 
     def process_all(self, pool: Pool):
         images: List[Path] = []
-        for root, dirs, files in os.walk(self.in_dir):
+        for root, _, files in os.walk(self.in_dir):
             root = Path(root)
             images.extend(
                 [
-                    root / filename for filename in files
+                    root / filename
+                    for filename in files
                     if has_image_extension(filename)
                 ]
             )

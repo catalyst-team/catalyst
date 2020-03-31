@@ -1,8 +1,8 @@
-from typing import Union  # isort:skip
+from typing import Union
 from pathlib import Path
 
 import torch
-import torch.nn as nn
+from torch import nn
 import torchvision
 
 from catalyst import utils
@@ -56,10 +56,13 @@ class ResnetEncoder(nn.Module):
         if pooling is not None:
             pooling_kwargs = pooling_kwargs or {}
             pooling_layer_fn = MODULES.get(pooling)
-            pooling_layer = pooling_layer_fn(
-                in_features=resnet.fc.in_features, **pooling_kwargs) \
-                if "attn" in pooling.lower() \
+            pooling_layer = (
+                pooling_layer_fn(
+                    in_features=resnet.fc.in_features, **pooling_kwargs
+                )
+                if "attn" in pooling.lower()
                 else pooling_layer_fn(**pooling_kwargs)
+            )
             modules += [pooling_layer]
 
             if hasattr(pooling_layer, "out_features"):

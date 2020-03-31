@@ -1,4 +1,4 @@
-from typing import Any, Dict, Iterable, Mapping, Tuple  # isort:skip
+from typing import Any, Dict, Iterable, Mapping, Tuple
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 
@@ -6,6 +6,7 @@ from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
 from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
+
 from .callback import Callback
 
 
@@ -31,6 +32,7 @@ class _Experiment(ABC):
         - :py:mod:`catalyst.dl.experiment.gan.GanExperiment`
         - :py:mod:`catalyst.dl.experiment.supervised.SupervisedExperiment`
     """
+
     @property
     @abstractmethod
     def initial_seed(self) -> int:
@@ -287,10 +289,7 @@ class _Experiment(ABC):
         raise NotImplementedError
 
     def get_datasets(
-        self,
-        stage: str,
-        epoch: int = None,
-        **kwargs,
+        self, stage: str, epoch: int = None, **kwargs,
     ) -> "OrderedDict[str, Dataset]":
         """
         Returns the datasets for a given stage and epoch.
@@ -336,9 +335,7 @@ class _Experiment(ABC):
 
     @abstractmethod
     def get_loaders(
-        self,
-        stage: str,
-        epoch: int = None,
+        self, stage: str, epoch: int = None,
     ) -> "OrderedDict[str, DataLoader]":
         """
         Returns the loaders for a given stage.

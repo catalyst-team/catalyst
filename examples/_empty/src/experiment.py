@@ -4,6 +4,7 @@ from collections import OrderedDict
 from torchvision import transforms
 
 from catalyst.dl import ConfigExperiment
+
 from .dataset import SomeDataset
 
 
@@ -15,7 +16,7 @@ class Experiment(ConfigExperiment):
         result = transforms.Compose(
             [
                 transforms.ToTensor(),
-                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
             ]
         )
 

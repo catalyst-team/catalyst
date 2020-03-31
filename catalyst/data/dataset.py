@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Union  # isort:skip
+from typing import Any, Callable, Dict, List, Union
 from pathlib import Path
 
 import numpy as np
@@ -14,6 +14,7 @@ class ListDataset(Dataset):
     """
     General purpose dataset class with several data sources `list_data`
     """
+
     def __init__(
         self,
         list_data: List[Dict],
@@ -65,6 +66,7 @@ class MergeDataset(Dataset):
     """
     Abstraction to merge several datasets into one dataset.
     """
+
     def __init__(self, *datasets: Dataset, dict_transform: Callable = None):
         """
         Args:
@@ -73,7 +75,7 @@ class MergeDataset(Dataset):
                 (for example normalize image, add blur, crop/resize/etc)
         """
         self.len = len(datasets[0])
-        assert all([len(x) == self.len for x in datasets])
+        assert all(len(x) == self.len for x in datasets)
         self.datasets = datasets
         self.dict_transform = dict_transform
 
@@ -106,6 +108,7 @@ class NumpyDataset(Dataset):
     """
     General purpose dataset class to use with `numpy_data`
     """
+
     def __init__(
         self,
         numpy_data: np.ndarray,
@@ -152,9 +155,13 @@ class PathsDataset(ListDataset):
     """
     Dataset that derives features and targets from samples filesystem paths.
     """
+
     def __init__(
-        self, filenames: List[_Path], open_fn: Callable[[dict], dict],
-        label_fn: Callable[[_Path], Any], **list_dataset_params
+        self,
+        filenames: List[_Path],
+        open_fn: Callable[[dict], dict],
+        label_fn: Callable[[_Path], Any],
+        **list_dataset_params
     ):
         """
          Args:
@@ -182,7 +189,7 @@ class PathsDataset(ListDataset):
             >>> )
         """
         list_data = [
-            dict(features=filename, targets=label_fn(filename))
+            {"features": filename, "targets": label_fn(filename)}
             for filename in filenames
         ]
 
@@ -195,6 +202,7 @@ class DatasetFromSampler(Dataset):
     """
     Dataset of indexes from `Sampler`
     """
+
     def __init__(self, sampler: Sampler):
         self.sampler = sampler
         self.sampler_list = None
@@ -209,6 +217,9 @@ class DatasetFromSampler(Dataset):
 
 
 __all__ = [
-    "ListDataset", "MergeDataset", "NumpyDataset", "PathsDataset",
-    "DatasetFromSampler"
+    "ListDataset",
+    "MergeDataset",
+    "NumpyDataset",
+    "PathsDataset",
+    "DatasetFromSampler",
 ]

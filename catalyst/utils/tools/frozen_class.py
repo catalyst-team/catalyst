@@ -11,6 +11,7 @@ class FrozenClass:
     Examples:
         >>> class State(FrozenClass):
     """
+
     __isfrozen = False
 
     def __setattr__(self, key, value):

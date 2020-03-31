@@ -3,12 +3,22 @@ from collections import OrderedDict
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from catalyst.dl import (
-    Callback, CheckpointCallback, CheckRunCallback, ConsoleLogger,
-    CriterionCallback, ExceptionCallback, MetricManagerCallback,
-    OptimizerCallback, SchedulerCallback, TensorboardLogger, TimerCallback,
-    ValidationManagerCallback, VerboseLogger
+    Callback,
+    CheckpointCallback,
+    CheckRunCallback,
+    ConsoleLogger,
+    CriterionCallback,
+    ExceptionCallback,
+    MetricManagerCallback,
+    OptimizerCallback,
+    SchedulerCallback,
+    TensorboardLogger,
+    TimerCallback,
+    ValidationManagerCallback,
+    VerboseLogger,
 )
 from catalyst.utils.tools.typing import Criterion, Optimizer, Scheduler
+
 from .base import BaseExperiment
 
 
@@ -38,6 +48,7 @@ class SupervisedExperiment(BaseExperiment):
         RaiseExceptionCallback:
             will raise exception if needed
     """
+
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """
         Override of ``BaseExperiment.get_callbacks`` method.
@@ -59,22 +70,22 @@ class SupervisedExperiment(BaseExperiment):
             default_callbacks.append(("_check", CheckRunCallback))
 
         if not stage.startswith("infer"):
-            if self._criterion is not None \
-                    and isinstance(self._criterion, Criterion):
+            if self._criterion is not None and isinstance(
+                self._criterion, Criterion
+            ):
                 default_callbacks.append(("_criterion", CriterionCallback))
-            if self._optimizer is not None \
-                    and isinstance(self._optimizer, Optimizer):
+            if self._optimizer is not None and isinstance(
+                self._optimizer, Optimizer
+            ):
                 default_callbacks.append(("_optimizer", OptimizerCallback))
-            if self._scheduler is not None \
-                    and isinstance(
-                    self._scheduler, (Scheduler, ReduceLROnPlateau)):
+            if self._scheduler is not None and isinstance(
+                self._scheduler, (Scheduler, ReduceLROnPlateau)
+            ):
                 default_callbacks.append(("_scheduler", SchedulerCallback))
 
             default_callbacks.append(("_timer", TimerCallback))
             default_callbacks.append(("_metrics", MetricManagerCallback))
-            default_callbacks.append(
-                ("_validation", ValidationManagerCallback)
-            )
+            default_callbacks.append(("_validation", ValidationManagerCallback))
             default_callbacks.append(("_saver", CheckpointCallback))
             default_callbacks.append(("_console", ConsoleLogger))
             default_callbacks.append(("_tensorboard", TensorboardLogger))

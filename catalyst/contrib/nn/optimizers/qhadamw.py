@@ -10,7 +10,7 @@ class QHAdamW(Optimizer):
         betas=(0.995, 0.999),
         nus=(0.7, 1.0),
         weight_decay=0.0,
-        eps=1e-8
+        eps=1e-8,
     ):
         r"""
         Combines the weight decay decoupling from AdamW (Decoupled Weight
@@ -66,7 +66,7 @@ class QHAdamW(Optimizer):
             "betas": betas,
             "nus": nus,
             "weight_decay": weight_decay,
-            "eps": eps
+            "eps": eps,
         }
         super(QHAdamW, self).__init__(params, defaults)
 
@@ -106,10 +106,12 @@ class QHAdamW(Optimizer):
                     param_state["exp_avg"] = torch.zeros_like(p.data)
                     param_state["exp_avg_sq"] = torch.zeros_like(p.data)
 
-                param_state["beta1_weight"] = \
+                param_state["beta1_weight"] = (
                     1.0 + beta1 * param_state["beta1_weight"]
-                param_state["beta2_weight"] = \
+                )
+                param_state["beta2_weight"] = (
                     1.0 + beta2 * param_state["beta2_weight"]
+                )
 
                 beta1_weight = param_state["beta1_weight"]
                 beta2_weight = param_state["beta2_weight"]
@@ -136,7 +138,8 @@ class QHAdamW(Optimizer):
                 # p.data.addcdiv_(-lr, avg_grad, avg_grad_rms)
 
                 # Implementation following AdamW paper:
-                p.data.add_(-weight_decay, p.data) \
-                    .addcdiv_(-lr, avg_grad, avg_grad_rms)
+                p.data.add_(-weight_decay, p.data).addcdiv_(
+                    -lr, avg_grad, avg_grad_rms
+                )
 
         return loss

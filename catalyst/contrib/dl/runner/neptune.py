@@ -65,17 +65,16 @@ class NeptuneRunner(Runner):
                 })
 
     """
+
     def _init(
-        self,
-        log_on_batch_end: bool = False,
-        log_on_epoch_end: bool = True,
+        self, log_on_batch_end: bool = False, log_on_epoch_end: bool = True,
     ):
         super()._init()
         the_warning = DeprecatedWarning(
             self.__class__.__name__,
             deprecated_in="20.03",
             removed_in="20.04",
-            details="Use NeptuneLogger instead."
+            details="Use NeptuneLogger instead.",
         )
         warnings.warn(the_warning, category=DeprecationWarning, stacklevel=2)
         self.log_on_batch_end = log_on_batch_end
@@ -91,10 +90,10 @@ class NeptuneRunner(Runner):
             **monitoring_params["create_experiment"]
         )
 
-        log_on_batch_end: bool = \
-            monitoring_params.pop("log_on_batch_end", False)
-        log_on_epoch_end: bool = \
-            monitoring_params.pop("log_on_epoch_end", True)
+        log_on_batch_end: bool = monitoring_params.pop(
+            "log_on_batch_end", False
+        )
+        log_on_epoch_end: bool = monitoring_params.pop("log_on_epoch_end", True)
 
         self._init(
             log_on_batch_end=log_on_batch_end,

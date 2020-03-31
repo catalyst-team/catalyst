@@ -1,4 +1,4 @@
-from typing import Any, Callable, List  # isort:skip
+from typing import Any, Callable, List
 from datetime import datetime
 import inspect
 from pathlib import Path
@@ -25,10 +25,8 @@ def maybe_recursive_call(
     if isinstance(object_or_dict, dict):
         result = type(object_or_dict)()
         for k, v in object_or_dict.items():
-            r_args = \
-                None if recursive_args is None else recursive_args[k]
-            r_kwargs = \
-                None if recursive_kwargs is None else recursive_kwargs[k]
+            r_args = None if recursive_args is None else recursive_args[k]
+            r_kwargs = None if recursive_kwargs is None else recursive_kwargs[k]
             result[k] = maybe_recursive_call(
                 v,
                 method,
@@ -111,7 +109,7 @@ def get_fn_default_params(fn: Callable[..., Any], exclude: List[str] = None):
     """
     argspec = inspect.getfullargspec(fn)
     default_params = zip(
-        argspec.args[-len(argspec.defaults):], argspec.defaults
+        argspec.args[-len(argspec.defaults) :], argspec.defaults
     )
     if exclude is not None:
         default_params = filter(lambda x: x[0] not in exclude, default_params)

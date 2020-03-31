@@ -1,4 +1,4 @@
-from typing import Dict  # isort:skip
+from typing import Dict
 
 from .core import ResnetUnetSpec, UnetSpec
 from .decoder import PSPDecoder

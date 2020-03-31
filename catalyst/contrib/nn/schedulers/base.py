@@ -1,4 +1,4 @@
-from typing import List, Optional  # isort:skip
+from typing import List, Optional
 from abc import ABC
 
 from torch.optim.lr_scheduler import _LRScheduler
@@ -10,6 +10,7 @@ class BaseScheduler(_LRScheduler, ABC):
     """
     Base class for all schedulers with momentum update
     """
+
     def get_momentum(self) -> List[float]:
         """
         Function that returns the new momentum for optimizer

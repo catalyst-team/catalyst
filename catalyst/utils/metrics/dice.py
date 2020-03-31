@@ -11,7 +11,7 @@ def dice(
     targets: torch.Tensor,
     eps: float = 1e-7,
     threshold: float = None,
-    activation: str = "Sigmoid"
+    activation: str = "Sigmoid",
 ):
     """
     Computes the dice metric

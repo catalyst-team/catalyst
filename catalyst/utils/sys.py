@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Union  # isort:skip
+from typing import Any, Dict, List, Union
 import json
 import os
 from pathlib import Path
@@ -50,25 +50,29 @@ def get_environment_vars() -> Dict[str, Any]:
 
     with open(os.devnull, "w") as devnull:
         try:
-            git_branch = subprocess.check_output(
-                "git rev-parse --abbrev-ref HEAD".split(),
-                shell=True,
-                stderr=devnull
-            ).strip().decode("UTF-8")
+            git_branch = (
+                subprocess.check_output(
+                    "git rev-parse --abbrev-ref HEAD".split(),
+                    shell=True,
+                    stderr=devnull,
+                )
+                .strip()
+                .decode("UTF-8")
+            )
             git_local_commit = subprocess.check_output(
                 "git rev-parse HEAD".split(), shell=True, stderr=devnull
             )
             git_origin_commit = subprocess.check_output(
                 f"git rev-parse origin/{git_branch}".split(),
                 shell=True,
-                stderr=devnull
+                stderr=devnull,
             )
 
-            git = dict(
-                branch=git_branch,
-                local_commit=git_local_commit,
-                origin_commit=git_origin_commit
-            )
+            git = {
+                "branch": git_branch,
+                "local_commit": git_local_commit,
+                "origin_commit": git_origin_commit,
+            }
             result["git"] = _decode_dict(git)
         except (subprocess.CalledProcessError, FileNotFoundError):
             pass
@@ -81,9 +85,11 @@ def list_pip_packages() -> str:
     result = ""
     with open(os.devnull, "w") as devnull:
         try:
-            result = subprocess.check_output(
-                "pip freeze".split(), stderr=devnull
-            ).strip().decode("UTF-8")
+            result = (
+                subprocess.check_output("pip freeze".split(), stderr=devnull)
+                .strip()
+                .decode("UTF-8")
+            )
         except FileNotFoundError:
             pass
         except subprocess.CalledProcessError as e:
@@ -99,9 +105,13 @@ def list_conda_packages() -> str:
         # We are currently in conda virtual env
         with open(os.devnull, "w") as devnull:
             try:
-                result = subprocess.check_output(
-                    "conda list --export".split(), stderr=devnull
-                ).strip().decode("UTF-8")
+                result = (
+                    subprocess.check_output(
+                        "conda list --export".split(), stderr=devnull
+                    )
+                    .strip()
+                    .decode("UTF-8")
+                )
             except FileNotFoundError:
                 pass
             except subprocess.CalledProcessError as e:
@@ -114,9 +124,7 @@ def list_conda_packages() -> str:
 
 
 def dump_environment(
-    experiment_config: Dict,
-    logdir: str,
-    configs_path: List[str] = None,
+    experiment_config: Dict, logdir: str, configs_path: List[str] = None,
 ) -> None:
     """
     Saves config, environment variables and package list in JSON into logdir
@@ -166,6 +174,8 @@ def dump_environment(
 
 
 __all__ = [
-    "get_environment_vars", "list_conda_packages", "list_pip_packages",
-    "dump_environment"
+    "get_environment_vars",
+    "list_conda_packages",
+    "list_pip_packages",
+    "dump_environment",
 ]

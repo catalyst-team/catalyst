@@ -1,5 +1,4 @@
-from typing import Any, Callable, Dict, Mapping, Tuple, Union  # isort:skip
-
+from typing import Any, Callable, Dict, Mapping, Tuple, Union
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 
@@ -10,8 +9,13 @@ from torch.utils.data import DataLoader, DistributedSampler
 from catalyst.core import utils
 from catalyst.utils.tools.settings import LOADER_TRAIN_PREFIX
 from catalyst.utils.tools.typing import (
-    Criterion, Device, Model, Optimizer, Scheduler
+    Criterion,
+    Device,
+    Model,
+    Optimizer,
+    Scheduler,
 )
+
 from .callback import Callback, CallbackNode, CallbackScope
 from .callbacks import ExceptionCallback
 from .experiment import _Experiment
@@ -39,13 +43,12 @@ class _Runner(ABC):
         - :py:mod:`catalyst.dl.runner.supervised.SupervisedRunner`
 
     """
+
     _experiment_fn: Callable = _Experiment
     _state_fn: Callable = State
 
     def __init__(
-        self,
-        model: Model = None,
-        device: Device = None,
+        self, model: Model = None, device: Device = None,
     ):
         """
         Args:
@@ -75,7 +78,7 @@ class _Runner(ABC):
             model = value
         elif isinstance(value, dict):
             values_are_models = all(
-                [isinstance(v, nn.Module) for v in value.values()]
+                isinstance(v, nn.Module) for v in value.values()
             )
             if not values_are_models:
                 raise TypeError(
@@ -166,18 +169,26 @@ class _Runner(ABC):
         """
         utils.set_global_seed(self.experiment.initial_seed)
         model = self.experiment.get_model(stage)
-        criterion, optimizer, scheduler = \
-            self.experiment.get_experiment_components(model, stage)
+        (
+            criterion,
+            optimizer,
+            scheduler,
+        ) = self.experiment.get_experiment_components(model, stage)
 
-        model, criterion, optimizer, scheduler, device = \
-            utils.process_components(
-                model=model,
-                criterion=criterion,
-                optimizer=optimizer,
-                scheduler=scheduler,
-                distributed_params=self.experiment.distributed_params,
-                device=self.device
-            )
+        (
+            model,
+            criterion,
+            optimizer,
+            scheduler,
+            device,
+        ) = utils.process_components(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            distributed_params=self.experiment.distributed_params,
+            device=self.device,
+        )
 
         return model, criterion, optimizer, scheduler, device
 
@@ -219,12 +230,15 @@ class _Runner(ABC):
                 - :py:mod:`catalyst.core.callback.Callback`
         """
         migrating_params = dict(**self.experiment.get_state_params(stage))
-        migrate_from_previous_stage = \
-            migrating_params.get("migrate_from_previous_stage", True)
+        migrate_from_previous_stage = migrating_params.get(
+            "migrate_from_previous_stage", True
+        )
 
-        if migrate_from_previous_stage \
-                and self.state is not None \
-                and self.state.callbacks is not None:
+        if (
+            migrate_from_previous_stage
+            and self.state is not None
+            and self.state.callbacks is not None
+        ):
             for key, value in self.state.callbacks.items():
                 if value.scope == CallbackScope.Experiment:
                     callbacks[key] = value
@@ -247,7 +261,7 @@ class _Runner(ABC):
             optimizer=optimizer,
             scheduler=scheduler,
             callbacks=callbacks,
-            **migrating_params
+            **migrating_params,
         )
 
         return state
@@ -276,7 +290,7 @@ class _Runner(ABC):
             for k in list(
                 filter(
                     lambda c: callbacks[c].node == CallbackNode.Worker,
-                    callbacks
+                    callbacks,
                 )
             ):
                 del callbacks[k]
@@ -285,7 +299,7 @@ class _Runner(ABC):
             for k in list(
                 filter(
                     lambda c: callbacks[c].node == CallbackNode.Master,
-                    callbacks
+                    callbacks,
                 )
             ):
                 del callbacks[k]
@@ -308,8 +322,13 @@ class _Runner(ABC):
                 like "pretraining" / "training" / "finetuning" / etc
         """
         utils.set_global_seed(self.experiment.initial_seed)
-        self.model, criterion, optimizer, scheduler, self.device = \
-            self._get_experiment_components(stage=stage)
+        (
+            self.model,
+            criterion,
+            optimizer,
+            scheduler,
+            self.device,
+        ) = self._get_experiment_components(stage=stage)
 
         utils.set_global_seed(self.experiment.initial_seed)
         callbacks = self._get_callbacks(stage)
@@ -352,9 +371,7 @@ class _Runner(ABC):
             getattr(callback, event)(self.state)
 
     def _batch2device(
-        self,
-        batch: Mapping[str, Any],
-        device: Device,
+        self, batch: Mapping[str, Any], device: Device,
     ) -> Mapping[str, Any]:
         """
         Inner method to transfer incoming data batches to Runners' device.
@@ -365,7 +382,8 @@ class _Runner(ABC):
             device (Device): torch device
 
         Returns:
-
+            Mapping[str, Any]: same structure as value,
+                but all tensors and np.arrays moved to device
         """
         output = utils.any2device(batch, device)
         return output
@@ -431,7 +449,8 @@ class _Runner(ABC):
         """
         self.state.batch_size = (
             loader.batch_sampler.batch_size
-            if loader.batch_sampler is not None else loader.batch_size
+            if loader.batch_sampler is not None
+            else loader.batch_size
         )
         self.state.global_step = (
             self.state.global_step
@@ -464,9 +483,10 @@ class _Runner(ABC):
         # @TODO: better solution with train/inference handling ?
         state.is_infer_stage = state.stage_name.startswith("infer")
         if not state.is_infer_stage:
-            assert state.valid_loader in loaders.keys(), \
-                f"'{state.valid_loader}' " \
+            assert state.valid_loader in loaders.keys(), (
+                f"'{state.valid_loader}' "
                 f"should be in provided loaders: {list(loaders.keys())}"
+            )
         else:
             # @TODO: add check for non distributed run for inference
             assert not any(
@@ -479,8 +499,10 @@ class _Runner(ABC):
             state.is_train_loader = loader_name.startswith(LOADER_TRAIN_PREFIX)
             self.model.train(state.is_train_loader)
 
-            if isinstance(loader.sampler, DistributedSampler) \
-                    and not state.is_infer_stage:
+            if (
+                isinstance(loader.sampler, DistributedSampler)
+                and not state.is_infer_stage
+            ):
                 loader.sampler.set_epoch(state.epoch)
 
             utils.set_global_seed(
@@ -538,14 +560,14 @@ class _Runner(ABC):
         except (Exception, KeyboardInterrupt) as ex:
 
             def _exception_handler_check(callbacks: Union[OrderedDict, Dict]):
-                return (
-                    callbacks is not None and any(
-                        issubclass(x.__class__, ExceptionCallback)
-                        for x in callbacks.values()
-                    )
+                return callbacks is not None and any(
+                    issubclass(x.__class__, ExceptionCallback)
+                    for x in callbacks.values()
                 )
-            if self.state is not None and \
-                    _exception_handler_check(self.state.callbacks):
+
+            if self.state is not None and _exception_handler_check(
+                self.state.callbacks
+            ):
                 self.state.exception = ex
                 self._run_event("on_exception")
             else:

@@ -11,12 +11,13 @@ class TensorToImage(ImageOnlyTransform):
     """
     Casts torch.tensor to numpy array
     """
+
     def __init__(
         self,
         denormalize: bool = False,
         move_channels_dim: bool = True,
         always_apply: bool = False,
-        p: float = 1.0
+        p: float = 1.0,
     ):
         """
         Args:
@@ -39,7 +40,7 @@ class TensorToImage(ImageOnlyTransform):
         return utils.tensor_to_ndimage(
             img,
             denormalize=self.denormalize,
-            move_channels_dim=self.move_channels_dim
+            move_channels_dim=self.move_channels_dim,
         )
 
 
@@ -47,6 +48,7 @@ class ToTensor(ToTensorV2):
     """
     Casts numpy array to ``torch.tensor``
     """
+
     def __init__(
         self,
         move_channels_dim: bool = True,
@@ -76,7 +78,7 @@ class ToTensor(ToTensorV2):
         return super().apply_to_mask(mask.astype(np.float32), **params)
 
     def get_transform_init_args_names(self) -> tuple:
-        return ("move_channels_dim", )
+        return ("move_channels_dim",)
 
 
 __all__ = ["TensorToImage", "ToTensor"]

@@ -34,7 +34,7 @@ class TemporalAttentionPooling(nn.Module):
     name2activation = {
         "softmax": nn.Softmax(dim=1),
         "tanh": nn.Tanh(),
-        "sigmoid": nn.Sigmoid()
+        "sigmoid": nn.Sigmoid(),
     }
 
     def __init__(self, in_features, activation=None, kernel_size=1, **params):
@@ -48,7 +48,8 @@ class TemporalAttentionPooling(nn.Module):
                 out_channels=1,
                 kernel_size=kernel_size,
                 **params
-            ), TemporalAttentionPooling.name2activation[activation]
+            ),
+            TemporalAttentionPooling.name2activation[activation],
         )
         self.attention_pooling.apply(outer_init)
 
@@ -133,8 +134,12 @@ class LamaPooling(nn.Module):
     def __init__(self, in_features, groups=None):
         super().__init__()
         self.in_features = in_features
-        self.groups = groups \
-            or ["last", "avg_droplast", "max_droplast", "softmax_droplast"]
+        self.groups = groups or [
+            "last",
+            "avg_droplast",
+            "max_droplast",
+            "softmax_droplast",
+        ]
         self.out_features = in_features * len(self.groups)
 
         groups = {}

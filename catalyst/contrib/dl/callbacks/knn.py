@@ -1,10 +1,13 @@
-from math import ceil
 from typing import Dict, List
+from math import ceil
 
 import numpy as np
 from scipy import stats
 from sklearn.metrics import (
-    accuracy_score, f1_score, precision_score, recall_score
+    accuracy_score,
+    f1_score,
+    precision_score,
+    recall_score,
 )
 from sklearn.neighbors import NearestNeighbors
 
@@ -17,6 +20,7 @@ class KNNMetricCallback(Callback):
     """
     A callback that returns single metric on `state.on_loader_end`
     """
+
     def __init__(
         self,
         input_key: str = "logits",
@@ -27,7 +31,7 @@ class KNNMetricCallback(Callback):
         cv_loader_names: Dict[str, List[str]] = None,
         metric_fn: str = "f1-score",
         knn_metric: str = "euclidean",
-        num_neighbors: int = 5
+        num_neighbors: int = 5,
     ):
         """
         Returns metric value calculated using kNN algorithm.
@@ -57,17 +61,20 @@ class KNNMetricCallback(Callback):
             "f1-score": f1_score,
         }
 
-        assert metric_fn in metric_fns, \
-            f"Metric function with value `{metric_fn}` not implemented"
+        assert (
+            metric_fn in metric_fns
+        ), f"Metric function with value `{metric_fn}` not implemented"
 
         self.prefix = prefix
         self.features_key = input_key
         self.targets_key = output_key
 
         self.num_classes = num_classes
-        self.class_names = class_names \
-            if class_names is not None \
+        self.class_names = (
+            class_names
+            if class_names is not None
             else [str(i) for i in range(num_classes)]
+        )
 
         self.cv_loader_names = cv_loader_names
 
@@ -124,13 +131,13 @@ class KNNMetricCallback(Callback):
                 classifier = NearestNeighbors(
                     num_neighbors=self.num_neighbors + int(leave_one_out),
                     metric=self.knn_metric,
-                    algorithm="brute"
+                    algorithm="brute",
                 )
                 classifier.fit(x_train, y_train)
 
                 # data could be evaluated in num_folds in order to avoid OOM
                 end_idx, batch_size = 0, ceil(size / self.num_folds)
-                for s, start_idx in enumerate(range(0, size, batch_size)):
+                for start_idx in range(0, size, batch_size):
 
                     end_idx = min(start_idx + batch_size, size)
 
@@ -156,9 +163,7 @@ class KNNMetricCallback(Callback):
             # this try catch block made because sometimes sets are quite big
             # and it is not possible to put everything in memory, so we split
             except MemoryError:
-                print(
-                    f"Memory error with {self.num_folds} folds, trying more."
-                )
+                print(f"Memory error with {self.num_folds} folds, trying more.")
                 self.num_folds *= 2
                 result = None
 
@@ -168,10 +173,12 @@ class KNNMetricCallback(Callback):
         """
         Batch end hook.
         """
-        features: torch.Tensor = \
-            state.batch_out[self.features_key].cpu().detach().numpy()
-        targets: torch.Tensor = \
-            state.batch_in[self.targets_key].cpu().detach().numpy()
+        features: torch.Tensor = state.batch_out[
+            self.features_key
+        ].cpu().detach().numpy()
+        targets: torch.Tensor = state.batch_in[
+            self.targets_key
+        ].cpu().detach().numpy()
 
         self.features.extend(features)
         self.targets.extend(targets)
@@ -197,8 +204,9 @@ class KNNMetricCallback(Callback):
 
         loader_values = state.loader_metrics
         if self.num_classes == 2:
-            loader_values[self.prefix] = \
-                self.metric_fn(y_true, y_pred, average="binary")
+            loader_values[self.prefix] = self.metric_fn(
+                y_true, y_pred, average="binary"
+            )
         else:
             values = self.metric_fn(y_true, y_pred, average=None)
 
@@ -233,14 +241,14 @@ class KNNMetricCallback(Callback):
                         )
                         continue
 
-                    y_true, y_pred = \
-                        self._knn(self.sets[k], self.sets[v])
+                    y_true, y_pred = self._knn(self.sets[k], self.sets[v])
 
                     loader_values = state.epoch_metrics[f"{k}_{v}_cv"]
 
                     if self.num_classes == 2:
-                        loader_values[f"{self.prefix}"] = \
-                            self.metric_fn(y_true, y_pred, average="binary")
+                        loader_values[f"{self.prefix}"] = self.metric_fn(
+                            y_true, y_pred, average="binary"
+                        )
                     else:
                         values = self.metric_fn(y_true, y_pred, average=None)
 

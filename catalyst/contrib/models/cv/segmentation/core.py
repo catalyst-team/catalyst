@@ -1,8 +1,8 @@
-from typing import Dict, List, Union  # isort:skip
+from typing import Dict, List, Union
 from pathlib import Path
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 from .bridge import BridgeSpec
 from .decoder import DecoderSpec
@@ -74,7 +74,7 @@ class UnetSpec(UnetMetaSpec):
             bridge=bridge,
             decoder=decoder,
             head=head,
-            state_dict=state_dict
+            state_dict=state_dict,
         )
 
     def _get_components(
@@ -118,7 +118,7 @@ class ResnetUnetSpec(UnetMetaSpec):
             bridge=bridge,
             decoder=decoder,
             head=head,
-            state_dict=state_dict
+            state_dict=state_dict,
         )
 
     def _get_components(

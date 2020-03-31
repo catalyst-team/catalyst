@@ -1,5 +1,4 @@
-from typing import Dict  # isort:skip
-
+from typing import Dict
 import warnings
 
 from alchemy import Logger
@@ -42,24 +41,24 @@ class AlchemyRunner(Runner):
                 }
             )
     """
+
     def _init(
-        self,
-        log_on_batch_end: bool = False,
-        log_on_epoch_end: bool = True,
+        self, log_on_batch_end: bool = False, log_on_epoch_end: bool = True,
     ):
         super()._init()
         the_warning = DeprecatedWarning(
             self.__class__.__name__,
             deprecated_in="20.03",
             removed_in="20.04",
-            details="Use AlchemyLogger instead."
+            details="Use AlchemyLogger instead.",
         )
         warnings.warn(the_warning, category=DeprecationWarning, stacklevel=2)
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
 
-        if (self.log_on_batch_end and not self.log_on_epoch_end) \
-                or (not self.log_on_batch_end and self.log_on_epoch_end):
+        if (self.log_on_batch_end and not self.log_on_epoch_end) or (
+            not self.log_on_batch_end and self.log_on_epoch_end
+        ):
             self.batch_log_suffix = ""
             self.epoch_log_suffix = ""
         else:
@@ -74,10 +73,10 @@ class AlchemyRunner(Runner):
     def _pre_experiment_hook(self, experiment: Experiment):
         monitoring_params = experiment.monitoring_params
 
-        log_on_batch_end: bool = \
-            monitoring_params.pop("log_on_batch_end", False)
-        log_on_epoch_end: bool = \
-            monitoring_params.pop("log_on_epoch_end", True)
+        log_on_batch_end: bool = monitoring_params.pop(
+            "log_on_batch_end", False
+        )
+        log_on_epoch_end: bool = monitoring_params.pop("log_on_epoch_end", True)
 
         self._init(
             log_on_batch_end=log_on_batch_end,
@@ -123,6 +122,7 @@ class AlchemyRunner(Runner):
 
 class SupervisedAlchemyRunner(AlchemyRunner, SupervisedRunner):
     """SupervisedRunner with Alchemy"""
+
     pass
 
 

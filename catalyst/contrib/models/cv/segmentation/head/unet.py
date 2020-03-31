@@ -1,8 +1,8 @@
-from typing import List  # isort:skip
+from typing import List
 
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
+from torch import nn
+from torch.nn import functional as F
 
 from ..blocks import EncoderUpsampleBlock
 from .core import HeadSpec
@@ -43,6 +43,6 @@ class UnetHead(HeadSpec):
                 x,
                 scale_factor=self.upsample_scale,
                 mode=self.interpolation_mode,
-                align_corners=self.align_corners
+                align_corners=self.align_corners,
             )
         return x

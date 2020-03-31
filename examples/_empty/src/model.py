@@ -13,10 +13,7 @@ class Model(torch.nn.Module):
         return x
 
     @classmethod
-    def get_from_params(
-        cls,
-        **model_params,
-    ) -> "Model":
+    def get_from_params(cls, **model_params,) -> "Model":
         # CHANGE ME
         model = cls(**model_params)
         return model

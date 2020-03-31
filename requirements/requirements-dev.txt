@@ -3,10 +3,5 @@ sphinx_rtd_theme
 Sphinx==2.2.1
 # git+https://github.com/bitprophet/releases/#egg=releases
 # git+https://github.com/readthedocs/sphinx_rtd_theme
-flake8==3.7.9
-# flake8-docstrings==1.5.0
-flake8-quotes==2.1.1
-yapf==0.28.0
 mock==3.0.5
-pre-commit==1.20.0
-isort==4.3.21
+catalyst-codestyle

@@ -6,6 +6,7 @@ class F1ScoreCallback(MetricCallback):
     """
     F1 score metric callback.
     """
+
     def __init__(
         self,
         input_key: str = "targets",
@@ -14,7 +15,7 @@ class F1ScoreCallback(MetricCallback):
         beta: float = 1.0,
         eps: float = 1e-7,
         threshold: float = None,
-        activation: str = "Sigmoid"
+        activation: str = "Sigmoid",
     ):
         """
         Args:
@@ -37,7 +38,7 @@ class F1ScoreCallback(MetricCallback):
             beta=beta,
             eps=eps,
             threshold=threshold,
-            activation=activation
+            activation=activation,
         )
 
 

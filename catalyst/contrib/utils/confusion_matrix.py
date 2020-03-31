@@ -10,7 +10,7 @@ def calculate_tp_fp_fn(confusion_matrix: np.array) -> np.array:
     return {
         "true_positives": true_positives,
         "false_positives": false_positives,
-        "false_negatives": false_negatives
+        "false_negatives": false_negatives,
     }
 
 
@@ -37,7 +37,7 @@ def calculate_confusion_matrix_from_arrays(
     confusion_matrix, _ = np.histogramdd(
         replace_indices,
         bins=(num_classes, num_classes),
-        range=[(0, num_classes), (0, num_classes)]
+        range=[(0, num_classes), (0, num_classes)],
     )
     return confusion_matrix.astype(np.uint64)
 

@@ -6,6 +6,7 @@ class TimerCallback(Callback):
     """
     Logs pipeline execution time
     """
+
     def __init__(self):
         super().__init__(order=CallbackOrder.Metric + 1, node=CallbackNode.All)
         self.timer = TimeManager()
@@ -27,8 +28,9 @@ class TimerCallback(Callback):
         self.timer.stop("_timer/batch_time")
 
         # @TODO: just a trick
-        self.timer.elapsed["_timer/_fps"] = \
+        self.timer.elapsed["_timer/_fps"] = (
             state.batch_size / self.timer.elapsed["_timer/batch_time"]
+        )
         for key, value in self.timer.elapsed.items():
             state.batch_metrics[key] = value
 

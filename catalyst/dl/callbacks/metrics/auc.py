@@ -1,4 +1,4 @@
-from typing import List  # isort:skip
+from typing import List
 
 from catalyst.dl.core import MeterMetricsCallback
 from catalyst.utils import meters
@@ -9,6 +9,7 @@ class AUCCallback(MeterMetricsCallback):
     Calculates the AUC  per class for each loader.
     Currently, supports binary and multi-label cases.
     """
+
     def __init__(
         self,
         input_key: str = "targets",
@@ -16,7 +17,7 @@ class AUCCallback(MeterMetricsCallback):
         prefix: str = "auc",
         class_names: List[str] = None,
         num_classes: int = 2,
-        activation: str = "Sigmoid"
+        activation: str = "Sigmoid",
     ):
         """
         Args:
@@ -31,9 +32,7 @@ class AUCCallback(MeterMetricsCallback):
             activation (str): An torch.nn activation applied to the outputs.
                 Must be one of ['none', 'Sigmoid', 'Softmax2d']
         """
-        num_classes = num_classes \
-            if class_names is None \
-            else len(class_names)
+        num_classes = num_classes if class_names is None else len(class_names)
 
         meter_list = [meters.AUCMeter() for _ in range(num_classes)]
 
@@ -44,7 +43,7 @@ class AUCCallback(MeterMetricsCallback):
             output_key=output_key,
             class_names=class_names,
             num_classes=num_classes,
-            activation=activation
+            activation=activation,
         )
 
 
