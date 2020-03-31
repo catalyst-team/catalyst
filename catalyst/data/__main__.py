@@ -111,6 +111,9 @@ except ImportError as ex:
 
 
 def build_parser() -> ArgumentParser:
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     parser = ArgumentParser(
         "catalyst-data", formatter_class=RawTextHelpFormatter
     )
@@ -133,6 +136,9 @@ def build_parser() -> ArgumentParser:
 
 
 def main():
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     parser = build_parser()
 
     args, uargs = parser.parse_known_args()

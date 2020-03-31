@@ -9,7 +9,14 @@ from catalyst.dl import ConfigExperiment
 
 
 class CIFAR10(torchvision.datasets.CIFAR10):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __getitem__(self, index: int):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         image, target = self.data[index], self.targets[index]
 
         if self.transform is not None:
@@ -19,7 +26,14 @@ class CIFAR10(torchvision.datasets.CIFAR10):
 
 
 class Experiment(ConfigExperiment):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def _postprocess_model_for_stage(self, stage: str, model: nn.Module):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         model_ = model
         if isinstance(model, torch.nn.DataParallel):
             model_ = model_.module
@@ -31,6 +45,9 @@ class Experiment(ConfigExperiment):
         return model_
 
     def get_datasets(self, stage: str, **kwargs):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         datasets = OrderedDict()
         for mode in ("train", "valid"):
             datasets[mode] = CIFAR10(
