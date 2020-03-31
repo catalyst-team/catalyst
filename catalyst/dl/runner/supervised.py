@@ -137,6 +137,7 @@ class SupervisedRunner(Runner):
         state_kwargs: Dict = None,
         checkpoint_data: Dict = None,
         fp16: Union[Dict, bool] = None,
+        distributed: bool = False,
         monitoring_params: Dict = None,
         check: bool = False,
     ) -> None:
@@ -171,7 +172,7 @@ class SupervisedRunner(Runner):
                 See https://nvidia.github.io/apex/amp.html#properties
                 if fp16=True, params by default will be ``{"opt_level": "O1"}``
             monitoring_params (dict): If not None, then create monitoring
-                through Alchemy or Weights&Biases.
+                through Alchemy or other tools.
                 For example,
                 ``{"token": "api_token", "experiment": "experiment_name"}``
             check (bool): if True, then only checks that pipeline is working
@@ -183,11 +184,9 @@ class SupervisedRunner(Runner):
                 "Attention, there is only one data loader - " +
                 str(valid_loader)
             )
+
         if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
-
-        if model is not None:
-            self.model = model
 
         if resume is not None:
             callbacks = utils.process_callbacks(callbacks)
@@ -222,7 +221,10 @@ class SupervisedRunner(Runner):
             distributed_params=fp16,
             monitoring_params=monitoring_params
         )
-        self.run_experiment(experiment)
+        if distributed:
+            utils.distributed_exp_run(experiment=experiment, runner=self)
+        else:
+            self.run_experiment(experiment)
 
     def infer(
         self,

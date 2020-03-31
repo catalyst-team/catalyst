@@ -7,7 +7,8 @@ import torch
 from torch import nn
 from torch.jit import ScriptModule
 
-from catalyst.dl import Runner, utils
+from catalyst import utils
+from catalyst.dl import Runner
 from catalyst.utils.tools.typing import Device, Model
 
 

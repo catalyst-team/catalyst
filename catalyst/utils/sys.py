@@ -7,8 +7,9 @@ import shutil
 import subprocess
 import sys
 
-from catalyst import utils
 from catalyst.utils.tools.tensorboard import SummaryWriter
+from .config import save_config
+from .misc import get_utcnow_time
 
 
 def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:
@@ -37,7 +38,7 @@ def get_environment_vars() -> Dict[str, Any]:
     result = {
         "python_version": sys.version,
         "conda_environment": os.environ.get("CONDA_DEFAULT_ENV", ""),
-        "creation_time": utils.get_utcnow_time(),
+        "creation_time": get_utcnow_time(),
         "sysname": platform.uname()[0],
         "nodename": platform.uname()[1],
         "release": platform.uname()[2],
@@ -134,8 +135,8 @@ def dump_environment(
 
     environment = get_environment_vars()
 
-    utils.save_config(experiment_config, config_dir / "_config.json")
-    utils.save_config(environment, config_dir / "_environment.json")
+    save_config(experiment_config, config_dir / "_config.json")
+    save_config(environment, config_dir / "_environment.json")
 
     pip_pkg = list_pip_packages()
     (config_dir / "pip-packages.txt").write_text(pip_pkg)

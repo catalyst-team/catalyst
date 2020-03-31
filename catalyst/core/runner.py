@@ -36,7 +36,7 @@ class _Runner(ABC):
 
         - :py:mod:`catalyst.dl.runner.gan.MultiPhaseRunner`
         - :py:mod:`catalyst.dl.runner.gan.GanRunner`
-        - :py:mod:`catalyst.dl.experiment.supervised.SupervisedRunner`
+        - :py:mod:`catalyst.dl.runner.supervised.SupervisedRunner`
 
     """
     _experiment_fn: Callable = _Experiment

@@ -3,7 +3,11 @@ import os
 import pathlib
 import shutil
 import sys
+import subprocess
 
+import torch
+
+from .distributed import get_distributed_env, get_distributed_params
 from .misc import get_utcnow_time
 
 
@@ -71,7 +75,45 @@ def dump_base_experiment_code(src: pathlib.Path, dst: pathlib.Path):
     dump_python_files(src, dst)
 
 
+def distributed_cmd_run(distributed, worker_fn, *args, **kwargs):
+    """
+    Distributed run
+    Args:
+        distributed:
+        worker_fn:
+        args:
+        kwargs:
+    """
+    distributed_params = get_distributed_params()
+    local_rank = distributed_params["local_rank"]
+    world_size = distributed_params["world_size"]
+
+    if not distributed or world_size <= 1:
+        worker_fn(*args, **kwargs)
+    elif local_rank is not None:
+        torch.cuda.set_device(int(local_rank))
+
+        torch.distributed.init_process_group(
+            backend="nccl", init_method="env://"
+        )
+        worker_fn(*args, **kwargs)
+    else:
+        workers = []
+        try:
+            for local_rank in range(torch.cuda.device_count()):
+                rank = distributed_params["start_rank"] + local_rank
+                env = get_distributed_env(local_rank, rank, world_size)
+                cmd = [sys.executable] + sys.argv.copy()
+                workers.append(subprocess.Popen(cmd, env=env))
+            for worker in workers:
+                worker.wait()
+        finally:
+            for worker in workers:
+                worker.kill()
+
+
 __all__ = [
     "import_module", "dump_code", "dump_python_files",
-    "import_experiment_and_runner", "dump_base_experiment_code"
+    "import_experiment_and_runner", "dump_base_experiment_code",
+    "distributed_cmd_run"
 ]

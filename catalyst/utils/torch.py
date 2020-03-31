@@ -9,8 +9,8 @@ import torch
 from torch import nn
 import torch.backends.cudnn as cudnn
 
-from catalyst import utils
 from catalyst.utils.tools.typing import Device, Model, Optimizer
+from .dict import merge_dicts
 
 
 def get_optimizable_params(model_or_params):
@@ -191,7 +191,8 @@ def process_model_params(
     Returns:
         iterable: parameters for an optimizer
 
-    Examples:
+    Example::
+
         >>> model = catalyst.contrib.models.segmentation.ResnetUnet()
         >>> layerwise_params = collections.OrderedDict([
         >>>     ("conv1.*", dict(lr=0.001, weight_decay=0.0003)),
@@ -209,7 +210,7 @@ def process_model_params(
         for pattern, options_ in layerwise_params.items():
             if re.match(pattern, name) is not None:
                 # all new LR rules write on top of the old ones
-                options = utils.merge_dicts(options, options_)
+                options = merge_dicts(options, options_)
 
         # no bias decay from https://arxiv.org/abs/1812.01187
         if no_bias_weight_decay and name.endswith("bias"):
@@ -232,7 +233,8 @@ def set_requires_grad(model: Model, requires_grad: bool):
         model (torch.nn.Module): Model
         requires_grad (bool): value
 
-    Examples:
+    Example::
+
         >>> model = SimpleModel()
         >>> set_requires_grad(model, requires_grad=True)
     """

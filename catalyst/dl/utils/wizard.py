@@ -5,7 +5,8 @@ from prompt_toolkit import prompt
 import yaml
 
 from catalyst.contrib.utils.pipelines import URLS
-from catalyst.dl import registry, utils
+from catalyst import utils
+from catalyst.dl import registry
 
 yaml.add_representer(
     OrderedDict, lambda dumper, data: dumper.
