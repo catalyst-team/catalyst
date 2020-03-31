@@ -123,6 +123,7 @@ def test_meta_factory():
     """
     @TODO: Docs. Contribution is welcome
     """
+
     def meta_1(fn, args, kwargs):
         return fn
 
