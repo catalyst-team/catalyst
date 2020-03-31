@@ -295,7 +295,7 @@
     <span class="c1"># makes sure that if I and U are both 0, than Dice == 1</span>
     <span class="c1"># and if U != 0 and I == 0 the eps term in numerator is zeroed out</span>
     <span class="c1"># i.e. (0 + eps) / (U - 0 + eps) doesn&#39;t happen</span>
-    <span class="n">dice</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">intersection</span> <span class="o">+</span> <span class="n">eps</span> <span class="o">*</span> <span class="p">(</span><span class="n">union</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">union</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="n">dice</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">intersection</span> <span class="o">+</span> <span class="n">eps</span> <span class="o">*</span> <span class="p">(</span><span class="n">union</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">union</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">dice</span></div>
 
