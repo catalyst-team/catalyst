@@ -84,7 +84,9 @@ def test_events_reader_successful():
             if event_raw["type"] == "scalar":
                 assert event.summary.value[0].HasField("simple_value")
                 assert event.summary.value[0].tag == event_raw["tag"]
-                assert event.summary.value[0].simple_value == event_raw["value"]
+                assert (
+                    event.summary.value[0].simple_value == event_raw["value"]
+                )
             elif event_raw["type"] == "image":
                 assert event.summary.value[0].HasField("image")
                 assert event.summary.value[0].image.height == 2

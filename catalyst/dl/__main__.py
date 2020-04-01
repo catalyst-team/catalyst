@@ -8,7 +8,9 @@ COMMANDS = OrderedDict([("init", init), ("run", run), ("trace", trace)])
 
 
 def build_parser() -> ArgumentParser:
-    parser = ArgumentParser("catalyst-dl", formatter_class=RawTextHelpFormatter)
+    parser = ArgumentParser(
+        "catalyst-dl", formatter_class=RawTextHelpFormatter
+    )
     parser.add_argument(
         "-v", "--version", action="version", version=f"%(prog)s {__version__}"
     )

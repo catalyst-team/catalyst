@@ -169,7 +169,9 @@ class DecoderConcatBlock(DecoderBlock):
         block = nn.Sequential(*layers)
         return block
 
-    def forward(self, bottom: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self, bottom: torch.Tensor, left: torch.Tensor
+    ) -> torch.Tensor:
 
         if self.aggregate_first:
             x = torch.cat([bottom, left], 1)
@@ -196,7 +198,9 @@ class DecoderSumBlock(DecoderConcatBlock):
     def __init__(self, enc_channels: int, **kwargs):
         super().__init__(enc_channels=0, **kwargs)
 
-    def forward(self, bottom: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self, bottom: torch.Tensor, left: torch.Tensor
+    ) -> torch.Tensor:
 
         if self.aggregate_first:
             x = bottom + left

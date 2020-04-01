@@ -89,7 +89,13 @@ class ResnetEncoder(EncoderSpec):
             )
         )
         self._layers = nn.ModuleList(
-            [layer0, resnet.layer1, resnet.layer2, resnet.layer3, resnet.layer4]
+            [
+                layer0,
+                resnet.layer1,
+                resnet.layer2,
+                resnet.layer3,
+                resnet.layer4,
+            ]
         )
         self.maxpool0 = resnet.maxpool
 

@@ -10,7 +10,11 @@ from torch.utils.data import (  # noqa F401
     DistributedSampler,
 )
 
-from catalyst.data import Augmentor, AugmentorCompose, DistributedSamplerWrapper
+from catalyst.data import (
+    Augmentor,
+    AugmentorCompose,
+    DistributedSamplerWrapper,
+)
 from catalyst.dl import (
     Callback,
     CheckpointCallback,
@@ -94,7 +98,10 @@ class ConfigExperiment(Experiment):
         for key in self.STAGE_KEYWORDS:
             stages_defaults[key] = deepcopy(stages_config.get(key, {}))
         for stage in stages_config:
-            if stage in self.STAGE_KEYWORDS or stages_config.get(stage) is None:
+            if (
+                stage in self.STAGE_KEYWORDS
+                or stages_config.get(stage) is None
+            ):
                 continue
             stages_config_out[stage] = {}
             for key in self.STAGE_KEYWORDS:
@@ -210,7 +217,9 @@ class ConfigExperiment(Experiment):
 
     def get_criterion(self, stage: str) -> Criterion:
         """Returns the criterion for a given stage"""
-        criterion_params = self.stages_config[stage].get("criterion_params", {})
+        criterion_params = self.stages_config[stage].get(
+            "criterion_params", {}
+        )
         criterion = self._get_criterion(**criterion_params)
         return criterion
 
@@ -246,7 +255,7 @@ class ConfigExperiment(Experiment):
         if model_key is None:
             assert isinstance(
                 model, nn.Module
-            ), "model is keyvalue, but optimizer has no specified model"
+            ), "model is key-value, but optimizer has no specified model"
             model_params = utils.process_model_params(
                 model, layerwise_params, no_bias_weight_decay, lr_scaling
             )
@@ -270,7 +279,9 @@ class ConfigExperiment(Experiment):
         else:
             raise ValueError("unknown type of model_params")
 
-        load_from_previous_stage = params.pop("load_from_previous_stage", False)
+        load_from_previous_stage = params.pop(
+            "load_from_previous_stage", False
+        )
         optimizer_key = params.pop("optimizer_key", None)
         optimizer = OPTIMIZERS.get_from_params(**params, params=model_params)
 
@@ -308,7 +319,9 @@ class ConfigExperiment(Experiment):
             stage (str): stage name
             model (Union[Model, Dict[str, Model]]): model or a dict of models
         """
-        optimizer_params = self.stages_config[stage].get("optimizer_params", {})
+        optimizer_params = self.stages_config[stage].get(
+            "optimizer_params", {}
+        )
         key_value_flag = optimizer_params.pop("_key_value", False)
 
         if key_value_flag:
@@ -343,8 +356,12 @@ class ConfigExperiment(Experiment):
 
     def get_scheduler(self, stage: str, optimizer: Optimizer) -> Scheduler:
         """Returns the scheduler for a given stage"""
-        scheduler_params = self.stages_config[stage].get("scheduler_params", {})
-        scheduler = self._get_scheduler(optimizer=optimizer, **scheduler_params)
+        scheduler_params = self.stages_config[stage].get(
+            "scheduler_params", {}
+        )
+        scheduler = self._get_scheduler(
+            optimizer=optimizer, **scheduler_params
+        )
         return scheduler
 
     @staticmethod
@@ -536,7 +553,9 @@ class ConfigExperiment(Experiment):
 
     def get_callbacks(self, stage: str) -> "OrderedDict[Callback]":
         """Returns the callbacks for a given stage"""
-        callbacks_params = self.stages_config[stage].get("callbacks_params", {})
+        callbacks_params = self.stages_config[stage].get(
+            "callbacks_params", {}
+        )
 
         callbacks = OrderedDict()
         for key, callback_params in callbacks_params.items():
@@ -559,7 +578,9 @@ class ConfigExperiment(Experiment):
 
             default_callbacks.append(("_timer", TimerCallback))
             default_callbacks.append(("_metrics", MetricManagerCallback))
-            default_callbacks.append(("_validation", ValidationManagerCallback))
+            default_callbacks.append(
+                ("_validation", ValidationManagerCallback)
+            )
             default_callbacks.append(("_saver", CheckpointCallback))
             default_callbacks.append(("_console", ConsoleLogger))
             default_callbacks.append(("_tensorboard", TensorboardLogger))

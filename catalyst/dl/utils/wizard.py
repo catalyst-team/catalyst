@@ -206,7 +206,9 @@ class Wizard:
                 module = modules[module - 1]
                 self.__res(module)
         else:
-            module = prompt(f"Enter class name of {param} " "you'll be using: ")
+            module = prompt(
+                f"Enter class name of {param} " "you'll be using: "
+            )
             self.__res(module)
         opts[param] = module
         res = prompt(

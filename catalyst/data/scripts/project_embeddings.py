@@ -102,7 +102,9 @@ def main(args, _=None):
         img_data = np.stack(
             [load_image(name, args.img_size) for name in image_names], axis=0
         )
-        img_data = (img_data.transpose((0, 3, 1, 2)) / 255.0).astype(np.float32)
+        img_data = (img_data.transpose((0, 3, 1, 2)) / 255.0).astype(
+            np.float32
+        )
         img_data = torch.from_numpy(img_data)
     else:
         img_data = None

@@ -236,7 +236,9 @@ class GanRunner(MultiPhaseRunner):
         d_real_conditions = self._get_real_data_conditions()
 
         fake_data = self.generator(z, *g_conditions)
-        fake_logits = self.discriminator(fake_data.detach(), *d_fake_conditions)
+        fake_logits = self.discriminator(
+            fake_data.detach(), *d_fake_conditions
+        )
         real_logits = self.discriminator(
             self.state.batch_in[self.data_input_key], *d_real_conditions
         )

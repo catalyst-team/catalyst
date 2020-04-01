@@ -29,7 +29,9 @@ class DecoderFPNBlock(DecoderBlock):
         block = nn.Conv2d(self.enc_channels, self.out_channels, kernel_size=1)
         return block
 
-    def forward(self, bottom: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self, bottom: torch.Tensor, left: torch.Tensor
+    ) -> torch.Tensor:
         x = F.interpolate(
             bottom,
             scale_factor=self.upsample_scale,

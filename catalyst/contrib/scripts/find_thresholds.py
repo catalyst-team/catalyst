@@ -73,7 +73,11 @@ def build_args(parser):
         "--num-splits", type=int, help="NUM_SPLITS", required=False, default=5
     )
     parser.add_argument(
-        "--num-repeats", type=int, help="NUM_REPEATS", required=False, default=1
+        "--num-repeats",
+        type=int,
+        help="NUM_REPEATS",
+        required=False,
+        default=1,
     )
     parser.add_argument(
         "--num-workers",

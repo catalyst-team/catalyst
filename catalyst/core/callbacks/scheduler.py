@@ -38,7 +38,9 @@ class SchedulerCallback(Callback):
         if self.scheduler_key is not None:
             state.batch_metrics[f"lr/{self.scheduler_key}"] = lr
             if momentum is not None:
-                state.batch_metrics[f"momentum/{self.scheduler_key}"] = momentum
+                state.batch_metrics[
+                    f"momentum/{self.scheduler_key}"
+                ] = momentum
         else:
             state.batch_metrics["lr"] = lr
             if momentum is not None:
@@ -53,7 +55,9 @@ class SchedulerCallback(Callback):
         if self.scheduler_key is not None:
             state.epoch_metrics[f"lr/{self.scheduler_key}"] = lr
             if momentum is not None:
-                state.epoch_metrics[f"momentum/{self.scheduler_key}"] = momentum
+                state.epoch_metrics[
+                    f"momentum/{self.scheduler_key}"
+                ] = momentum
         else:
             state.epoch_metrics["lr"] = lr
             if momentum is not None:
@@ -74,7 +78,10 @@ class SchedulerCallback(Callback):
             else:
                 self.mode = "epoch"
 
-        if isinstance(scheduler, OneCycleLRWithWarmup) and self.mode == "batch":
+        if (
+            isinstance(scheduler, OneCycleLRWithWarmup)
+            and self.mode == "batch"
+        ):
             scheduler.reset()
         assert self.mode is not None
 

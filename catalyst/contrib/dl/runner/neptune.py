@@ -93,7 +93,9 @@ class NeptuneRunner(Runner):
         log_on_batch_end: bool = monitoring_params.pop(
             "log_on_batch_end", False
         )
-        log_on_epoch_end: bool = monitoring_params.pop("log_on_epoch_end", True)
+        log_on_epoch_end: bool = monitoring_params.pop(
+            "log_on_epoch_end", True
+        )
 
         self._init(
             log_on_batch_end=log_on_batch_end,

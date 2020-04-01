@@ -26,7 +26,9 @@ def maybe_recursive_call(
         result = type(object_or_dict)()
         for k, v in object_or_dict.items():
             r_args = None if recursive_args is None else recursive_args[k]
-            r_kwargs = None if recursive_kwargs is None else recursive_kwargs[k]
+            r_kwargs = (
+                None if recursive_kwargs is None else recursive_kwargs[k]
+            )
             result[k] = maybe_recursive_call(
                 v,
                 method,

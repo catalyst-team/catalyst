@@ -58,7 +58,9 @@ class _TracingModelWrapper(nn.Module):
             self.tracing_result = torch.jit.trace(method_model, method_input)
         except Exception:
             # for backward compatibility
-            self.tracing_result = torch.jit.trace(method_model, *args, **kwargs)
+            self.tracing_result = torch.jit.trace(
+                method_model, *args, **kwargs
+            )
         output = self.model.forward(*args, **kwargs)
 
         return output
@@ -167,7 +169,9 @@ def get_trace_name(
 
 
 def load_traced_model(
-    model_path: Union[str, Path], device: Device = "cpu", opt_level: str = None,
+    model_path: Union[str, Path],
+    device: Device = "cpu",
+    opt_level: str = None,
 ) -> ScriptModule:
     """
     Loads a traced model

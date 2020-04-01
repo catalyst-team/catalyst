@@ -3,7 +3,9 @@ import collections
 import copy
 
 
-def get_key_str(dictionary: dict, key: Optional[Union[str, List[str]]],) -> Any:
+def get_key_str(
+    dictionary: dict, key: Optional[Union[str, List[str]]],
+) -> Any:
     """
     Returns value from dict by key.
 

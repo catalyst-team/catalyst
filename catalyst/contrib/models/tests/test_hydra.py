@@ -162,7 +162,9 @@ def test_config1():
                                                     SequentialNet(
                                                         **heads_params[
                                                             "_head2"
-                                                        ]["_head2_2"]["_hidden"]
+                                                        ]["_head2_2"][
+                                                            "_hidden"
+                                                        ]
                                                     ),
                                                 )
                                             ]
@@ -239,7 +241,9 @@ def test_config1():
     _check_lists(output_kv.keys(), kv_keys)
 
     output_kv = hydra(
-        input_, target1=torch.ones(1, 2).long(), target2=torch.ones(1, 2).long()
+        input_,
+        target1=torch.ones(1, 2).long(),
+        target2=torch.ones(1, 2).long(),
     )
     kv_keys = [
         "features",
@@ -355,7 +359,9 @@ def test_config2():
                                                     SequentialNet(
                                                         **heads_params[
                                                             "_head2"
-                                                        ]["_head2_2"]["_hidden"]
+                                                        ]["_head2_2"][
+                                                            "_hidden"
+                                                        ]
                                                     ),
                                                 )
                                             ]
@@ -519,7 +525,9 @@ def test_config3():
                                                     SequentialNet(
                                                         **heads_params[
                                                             "_head2"
-                                                        ]["_head2_2"]["_hidden"]
+                                                        ]["_head2_2"][
+                                                            "_hidden"
+                                                        ]
                                                     ),
                                                 )
                                             ]
@@ -596,7 +604,9 @@ def test_config3():
     _check_lists(output_kv.keys(), kv_keys)
 
     output_kv = hydra(
-        input_, target1=torch.ones(1, 2).long(), target2=torch.ones(1, 2).long()
+        input_,
+        target1=torch.ones(1, 2).long(),
+        target2=torch.ones(1, 2).long(),
     )
     kv_keys = [
         "features",
@@ -686,7 +696,9 @@ def test_config4():
                                                     SequentialNet(
                                                         **heads_params[
                                                             "_head2"
-                                                        ]["_head2_2"]["_hidden"]
+                                                        ]["_head2_2"][
+                                                            "_hidden"
+                                                        ]
                                                     ),
                                                 )
                                             ]

@@ -1,4 +1,4 @@
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Union
 from collections import OrderedDict
 import copy
 import os
@@ -112,7 +112,7 @@ def get_rank() -> int:
         return -1
 
 
-def get_distributed_mean(value: torch.Tensor):
+def get_distributed_mean(value: Union[float, torch.Tensor]):
     """
     Computes distributed mean among all nodes
     """

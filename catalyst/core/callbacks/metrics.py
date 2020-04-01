@@ -211,7 +211,8 @@ class MetricAggregationCallback(Callback):
             if mode == "weighted_mean":
                 weights_sum = sum(metrics.items())
                 self.metrics = {
-                    key: weight / weights_sum for key, weight in metrics.items()
+                    key: weight / weights_sum
+                    for key, weight in metrics.items()
                 }
         elif mode == "mean":
             self.aggregation_fn = (

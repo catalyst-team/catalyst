@@ -31,7 +31,9 @@ class ClassErrorMeter(meter.Meter):
         if np.ndim(output) == 1:
             output = output[np.newaxis]
         else:
-            assert np.ndim(output) == 2, "wrong output size (1D or 2D expected)"
+            assert (
+                np.ndim(output) == 2
+            ), "wrong output size (1D or 2D expected)"
             assert np.ndim(target) == 1, "target and output do not match"
         assert (
             target.shape[0] == output.shape[0]

@@ -44,7 +44,9 @@ def test_get_fn_argsnames():
     ]
 
     params_predicted = list(
-        map(lambda x: utils.get_fn_argsnames(x.forward, exclude=["self"]), nets)
+        map(
+            lambda x: utils.get_fn_argsnames(x.forward, exclude=["self"]), nets
+        )
     )
     assert params_predicted == params_true
 
@@ -81,7 +83,12 @@ def test_fn_ends_with_pass_on_callbacks():
     from catalyst.dl import Callback
 
     callback = Callback(order=1)
-    start_events = ["stage_start", "epoch_start", "batch_start", "loader_start"]
+    start_events = [
+        "stage_start",
+        "epoch_start",
+        "batch_start",
+        "loader_start",
+    ]
     end_events = [
         "stage_end",
         "epoch_end",

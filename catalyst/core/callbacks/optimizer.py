@@ -2,7 +2,13 @@ from typing import Callable, Dict, List
 import logging
 
 from catalyst import utils
-from catalyst.core import Callback, CallbackNode, CallbackOrder, registry, State
+from catalyst.core import (
+    Callback,
+    CallbackNode,
+    CallbackOrder,
+    registry,
+    State,
+)
 from catalyst.utils.tools.typing import Optimizer
 
 logger = logging.getLogger(__name__)

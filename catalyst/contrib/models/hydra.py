@@ -177,7 +177,9 @@ class Hydra(nn.Module):
                 block = [
                     (
                         "embedding",
-                        nn.Embedding(embedding_dim=in_features, **head_params,),
+                        nn.Embedding(
+                            embedding_dim=in_features, **head_params,
+                        ),
                     )
                 ]
                 if normalize_:

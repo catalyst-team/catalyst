@@ -44,7 +44,9 @@ def batch_all(
     Create a 3D mask of all possible triplets
     """
     batch_size = labels.size(0)
-    indices_equal = torch.eye(batch_size, device=labels.device).type(torch.bool)
+    indices_equal = torch.eye(batch_size, device=labels.device).type(
+        torch.bool
+    )
     indices_not_equal = ~indices_equal
 
     i_not_equal_j = indices_not_equal.unsqueeze(2)

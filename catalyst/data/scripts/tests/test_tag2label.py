@@ -7,7 +7,10 @@ def _setup_dataset_fs(tmp_path):
             sub_parent = parent / child
             sub_parent.mkdir()
             if type(sub_children) == list:
-                [(sub_parent / sub_child).touch() for sub_child in sub_children]
+                [
+                    (sub_parent / sub_child).touch()
+                    for sub_child in sub_children
+                ]
             else:
                 create_children(sub_parent, sub_children)
 

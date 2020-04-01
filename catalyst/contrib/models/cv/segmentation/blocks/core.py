@@ -120,5 +120,7 @@ class DecoderBlock(ABC, nn.Module):
         return self.in_strides // 2 if self.in_strides is not None else None
 
     @abstractmethod
-    def forward(self, bottom: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self, bottom: torch.Tensor, left: torch.Tensor
+    ) -> torch.Tensor:
         pass

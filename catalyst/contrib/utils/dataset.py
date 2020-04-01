@@ -119,6 +119,8 @@ def create_dataframe(dataset: DictDataset, **dataframe_args) -> pd.DataFrame:
     Returns:
         pd.DataFrame: dataframe from giving dataset
     """
-    data = [(key, value) for key, values in dataset.items() for value in values]
+    data = [
+        (key, value) for key, values in dataset.items() for value in values
+    ]
     df = pd.DataFrame(data, **dataframe_args)
     return df

@@ -87,7 +87,9 @@ class InferMaskCallback(Callback):
             if value is not None:
                 setattr(self, key, value)
         # assert self.out_prefix is not None
-        self.out_prefix = self.out_prefix if self.out_prefix is not None else ""
+        self.out_prefix = (
+            self.out_prefix if self.out_prefix is not None else ""
+        )
         if self.out_dir is not None:
             self.out_prefix = str(self.out_dir) + "/" + str(self.out_prefix)
         os.makedirs(os.path.dirname(self.out_prefix), exist_ok=True)
@@ -105,7 +107,9 @@ class InferMaskCallback(Callback):
 
         logits = state.batch_out[self.output_key]
         logits = (
-            torch.unsqueeze_(logits, dim=1) if len(logits.shape) < 4 else logits
+            torch.unsqueeze_(logits, dim=1)
+            if len(logits.shape) < 4
+            else logits
         )
 
         if self.mask_type == "soft":
@@ -130,7 +134,9 @@ class InferMaskCallback(Callback):
 
             mask = label2rgb(mask, bg_label=0)
 
-            image = image * (1 - self.mask_strength) + mask * self.mask_strength
+            image = (
+                image * (1 - self.mask_strength) + mask * self.mask_strength
+            )
             image = (image * 255).clip(0, 255).round().astype(np.uint8)
 
             filename = f"{self.out_prefix}/{lm}/{suffix}.jpg"

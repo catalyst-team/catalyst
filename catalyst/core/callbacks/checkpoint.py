@@ -70,7 +70,9 @@ class BaseCheckpointCallback(Callback):
             metrics_filename (str): filename to save metrics
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
         """
-        super().__init__(order=CallbackOrder.External, node=CallbackNode.Master)
+        super().__init__(
+            order=CallbackOrder.External, node=CallbackNode.Master
+        )
         self.metrics_filename = metrics_filename
         self.metrics: dict = {}
 

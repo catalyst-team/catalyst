@@ -92,7 +92,9 @@ def save_checkpoint(
 
 
 def load_checkpoint(filepath):
-    checkpoint = torch.load(filepath, map_location=lambda storage, loc: storage)
+    checkpoint = torch.load(
+        filepath, map_location=lambda storage, loc: storage
+    )
     return checkpoint
 
 

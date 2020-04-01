@@ -152,7 +152,9 @@ class OneCycleLRWithWarmup(BatchScheduler):
         momentum_annealing = np.linspace(
             min_momentum, max_momentum, lr_annealing_steps
         )
-        momentum_warmup = np.linspace(max_momentum, final_momentum, decay_steps)
+        momentum_warmup = np.linspace(
+            max_momentum, final_momentum, decay_steps
+        )
 
         self.momentums = np.concatenate(
             (momentum_decay, momentum_annealing, momentum_warmup)

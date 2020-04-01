@@ -67,7 +67,8 @@ def test_callback_wrapping():
     input_callbacks = OrderedDict(
         {
             "optim_d": OptimizerCallback(
-                loss_key=discriminator_loss_key, optimizer_key=discriminator_key
+                loss_key=discriminator_loss_key,
+                optimizer_key=discriminator_key,
             ),
             "optim_g": OptimizerCallback(
                 loss_key=generator_loss_key, optimizer_key=generator_key
