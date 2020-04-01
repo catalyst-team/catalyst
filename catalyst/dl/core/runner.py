@@ -23,6 +23,7 @@ class Runner(_Runner):
 
         utils.set_global_seed(self.experiment.initial_seed)
         loaders = self.experiment.get_loaders(stage=stage)
+        loaders = utils.process_loaders(loaders)
         self.state.loaders = loaders
 
 

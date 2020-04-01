@@ -6,6 +6,7 @@ import subprocess
 import sys
 
 import torch
+import torch.distributed
 
 from .distributed import get_distributed_env, get_distributed_params
 from .misc import get_utcnow_time

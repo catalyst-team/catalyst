@@ -242,7 +242,7 @@ class _Runner(ABC):
             for key, value in self.state.callbacks.items():
                 if value.scope == CallbackScope.Experiment:
                     callbacks[key] = value
-            callbacks = utils.process_callbacks(callbacks)
+            callbacks = utils.sort_callbacks_by_order(callbacks)
 
         if self.state is not None and migrate_from_previous_stage:
             migrating_params.update(
@@ -282,30 +282,8 @@ class _Runner(ABC):
                 with callbacks for current experiment stage.
         """
         callbacks = self.experiment.get_callbacks(stage)
-
-        # distributed run setting
-        rank = utils.get_rank()
-        if rank == 0:  # master node
-            # remove worker-only callbacks on master node
-            for k in list(
-                filter(
-                    lambda c: callbacks[c].node == CallbackNode.Worker,
-                    callbacks,
-                )
-            ):
-                del callbacks[k]
-        elif rank > 0:  # worker node
-            # remove master-only callbacks on worker nodes
-            for k in list(
-                filter(
-                    lambda c: callbacks[c].node == CallbackNode.Master,
-                    callbacks,
-                )
-            ):
-                del callbacks[k]
-
-        callbacks = utils.process_callbacks(callbacks)
-
+        callbacks = utils.filter_callbacks_by_node(callbacks)
+        callbacks = utils.sort_callbacks_by_order(callbacks)
         return callbacks
 
     def _prepare_for_stage(self, stage: str):
@@ -544,7 +522,7 @@ class _Runner(ABC):
             state.epoch += 1
         self._run_event("on_stage_end")
 
-    def run_experiment(self, experiment: _Experiment):
+    def run_experiment(self, experiment: _Experiment = None):
         """
         Starts the experiment.
 
@@ -552,7 +530,8 @@ class _Runner(ABC):
             experiment (_Experiment): Experiment instance to use for Runner.
 
         """
-        self.experiment = experiment
+        self.experiment = experiment or self.experiment
+        assert self.experiment is not None
 
         try:
             for stage in self.experiment.stages:

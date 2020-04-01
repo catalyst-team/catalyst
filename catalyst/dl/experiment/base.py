@@ -4,7 +4,7 @@ from collections import OrderedDict
 from torch import nn
 from torch.utils.data import DataLoader
 
-from catalyst.dl import Callback, Experiment, utils
+from catalyst.dl import Callback, Experiment
 from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
@@ -69,7 +69,7 @@ class BaseExperiment(Experiment):
         """
         self._model = model
         self._loaders = loaders
-        self._callbacks = utils.process_callbacks(callbacks)
+        self._callbacks = callbacks
 
         self._criterion = criterion
         self._optimizer = optimizer
@@ -84,7 +84,7 @@ class BaseExperiment(Experiment):
         self._minimize_metric = minimize_metric
         self._verbose = verbose
         self._check_run = check_run
-        self._additional_state_kwargs = state_kwargs or {}
+        self._state_kwargs = state_kwargs or {}
         self._checkpoint_data = checkpoint_data or {}
         self._distributed_params = distributed_params or {}
         self._monitoring_params = monitoring_params or {}
@@ -125,7 +125,7 @@ class BaseExperiment(Experiment):
             "minimize_metric": self._minimize_metric,
             "checkpoint_data": self._checkpoint_data,
         }
-        state_params = {**default_params, **self._additional_state_kwargs}
+        state_params = {**default_params, **self._state_kwargs}
         return state_params
 
     def get_model(self, stage: str) -> Model:

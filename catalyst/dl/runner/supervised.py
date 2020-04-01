@@ -169,7 +169,7 @@ class SupervisedRunner(Runner):
                 by which the checkpoints will be selected.
             minimize_metric (bool): flag to indicate whether
                 the ``main_metric`` should be minimized.
-            verbose (bool): ff true, it displays the status of the training
+            verbose (bool): if `True`, it displays the status of the training
                 to the console.
             state_kwargs (dict): additional state params to ``State``
             checkpoint_data (dict): additional data to save in checkpoint,
@@ -177,6 +177,9 @@ class SupervisedRunner(Runner):
             fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
                 See https://nvidia.github.io/apex/amp.html#properties
                 if fp16=True, params by default will be ``{"opt_level": "O1"}``
+            distributed (bool): if `True` will start training
+                in distributed mode.
+                Note: Works only with python scripts. No jupyter support.
             monitoring_params (dict): If not None, then create monitoring
                 through Alchemy or other tools.
                 For example,
@@ -195,7 +198,7 @@ class SupervisedRunner(Runner):
             fp16 = {"opt_level": "O1"}
 
         if resume is not None:
-            callbacks = utils.process_callbacks(callbacks)
+            callbacks = utils.sort_callbacks_by_order(callbacks)
             checkpoint_callback_flag = any(
                 isinstance(x, CheckpointCallback) for x in callbacks.values()
             )
@@ -224,10 +227,8 @@ class SupervisedRunner(Runner):
             distributed_params=fp16,
             monitoring_params=monitoring_params,
         )
-        if distributed:
-            utils.distributed_exp_run(experiment=experiment, runner=self)
-        else:
-            self.run_experiment(experiment)
+        self.experiment = experiment
+        utils.distributed_cmd_run(distributed, self.run_experiment)
 
     def infer(
         self,
@@ -351,7 +352,7 @@ class SupervisedRunner(Runner):
             requires_grad (bool): flag to trace with gradients
             fp16 (Union[Dict, bool]): If not None, then sets
                 tracing params to FP16
-            deivice (Device): Torch deivice or a string
+            device (Device): Torch deivice or a string
             predict_params (dict): additional parameters for model forward
         """
         if batch is None:

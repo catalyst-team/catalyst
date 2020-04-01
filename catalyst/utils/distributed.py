@@ -5,6 +5,7 @@ import os
 import random
 import socket
 import subprocess
+import warnings
 
 import torch
 from torch import nn
@@ -20,6 +21,9 @@ from catalyst.utils.tools.typing import (
 
 from .misc import get_fn_default_params, maybe_recursive_call
 from .torch import get_available_gpus, get_device
+
+warnings.simplefilter("once")
+warnings.filterwarnings("once")
 
 
 def is_wrapped_with_ddp(model: nn.Module) -> bool:
@@ -108,7 +112,7 @@ def get_rank() -> int:
         return -1
 
 
-def get_distributed_mean(value: float):
+def get_distributed_mean(value: torch.Tensor):
     """
     Computes distributed mean among all nodes
     """
@@ -221,7 +225,7 @@ def process_components(
         optimizer (Optimizer): optimizer
         scheduler (Scheduler): scheduler
         distributed_params (dict, optional): dict with the parameters
-            for distributed and FP16 methond
+            for distributed and FP16 method
         device (Device, optional): device
     """
     distributed_params = distributed_params or {}
@@ -242,7 +246,7 @@ def process_components(
             model, nn.Module
         ), "Distributed training is not available for KV model"
 
-        local_rank = distributed_params.pop("local_rank", 0)
+        local_rank = distributed_params.pop("local_rank", 0) or 0
         device = f"cuda:{local_rank}"
         model = maybe_recursive_call(model, "to", device=device)
 

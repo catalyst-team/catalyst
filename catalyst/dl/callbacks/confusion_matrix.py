@@ -4,6 +4,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 
 import torch
+import torch.distributed
 
 from catalyst.dl import Callback, CallbackNode, CallbackOrder, State, utils
 from catalyst.utils import meters

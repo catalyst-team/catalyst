@@ -65,18 +65,12 @@ class GanExperiment(BaseExperiment):
 
     def wrap_callbacks(self, phase2callbacks) -> None:
         """Phase wrapping procedure for callbacks"""
-        discriminator_phase_name = self._additional_state_kwargs[
+        discriminator_phase_name = self._state_kwargs[
             "discriminator_train_phase"
         ]
-        discriminator_phase_num = self._additional_state_kwargs[
-            "discriminator_train_num"
-        ]
-        generator_phase_name = self._additional_state_kwargs[
-            "generator_train_phase"
-        ]
-        generator_phase_num = self._additional_state_kwargs[
-            "generator_train_num"
-        ]
+        discriminator_phase_num = self._state_kwargs["discriminator_train_num"]
+        generator_phase_name = self._state_kwargs["generator_train_phase"]
+        generator_phase_num = self._state_kwargs["generator_train_num"]
         self._callbacks["phase_manager"] = PhaseManagerCallback(
             train_phases=OrderedDict(
                 [
