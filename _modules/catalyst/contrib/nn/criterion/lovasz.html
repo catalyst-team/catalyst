@@ -254,11 +254,8 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.contrib.nn.criterion.lovasz</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">https://arxiv.org/abs/1705.08790</span>
-<span class="sd">Lovasz-Softmax and Jaccard hinge loss in PyTorch</span>
-<span class="sd">Maxim Berman 2018 ESAT-PSI KU Leuven (MIT License)</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="c1"># Lovasz-Softmax and Jaccard hinge loss in PyTorch</span>
+<span class="c1"># Maxim Berman 2018 ESAT-PSI KU Leuven (MIT License)</span>
 
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">filterfalse</span> <span class="k">as</span> <span class="n">ifilterfalse</span>
 
@@ -296,8 +293,8 @@
 
 <span class="k">def</span> <span class="nf">_lovasz_grad</span><span class="p">(</span><span class="n">gt_sorted</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Compute gradient of the Lovasz extension w.r.t sorted errors</span>
-<span class="sd">    See Alg. 1 in paper</span>
+<span class="sd">    Compute gradient of the Lovasz extension w.r.t sorted errors,</span>
+<span class="sd">    see Alg. 1 in paper</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">p</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">gt_sorted</span><span class="p">)</span>
     <span class="n">gts</span> <span class="o">=</span> <span class="n">gt_sorted</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
@@ -314,7 +311,7 @@
 
 <span class="k">def</span> <span class="nf">_flatten_binary_scores</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Flattens predictions in the batch (binary case)</span>
+<span class="sd">    Flattens predictions in the batch (binary case).</span>
 <span class="sd">    Remove targets equal to &quot;ignore&quot;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">logits</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -328,14 +325,12 @@
 
 
 <span class="k">def</span> <span class="nf">_lovasz_hinge_flat</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Binary Lovasz hinge loss</span>
+    <span class="sd">&quot;&quot;&quot;The binary Lovasz hinge loss.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        logits: [P] Variable, logits at each prediction</span>
 <span class="sd">            (between -iinfinity and +iinfinity)</span>
 <span class="sd">        targets: [P] Tensor, binary ground truth targets (0 or 1)</span>
-<span class="sd">        ignore: label to ignore</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="c1"># only void pixels, the gradients should be 0</span>
@@ -351,8 +346,7 @@
 
 
 <span class="k">def</span> <span class="nf">_lovasz_hinge</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">per_image</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Binary Lovasz hinge loss</span>
+    <span class="sd">&quot;&quot;&quot;The binary Lovasz hinge loss.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        logits: [B, H, W] Variable, logits at each pixel</span>
@@ -401,8 +395,7 @@
 
 
 <span class="k">def</span> <span class="nf">_lovasz_softmax_flat</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;present&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Multi-class Lovasz-Softmax loss</span>
+    <span class="sd">&quot;&quot;&quot;The multi-class Lovasz-Softmax loss.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        probabilities: [P, C]</span>
@@ -439,8 +432,7 @@
 <span class="k">def</span> <span class="nf">_lovasz_softmax</span><span class="p">(</span>
     <span class="n">probabilities</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;present&quot;</span><span class="p">,</span> <span class="n">per_image</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Multi-class Lovasz-Softmax loss</span>
+    <span class="sd">&quot;&quot;&quot;The multi-class Lovasz-Softmax loss.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        probabilities: [B, C, H, W]</span>
@@ -476,16 +468,31 @@
 
 
 <div class="viewcode-block" id="LovaszLossBinary"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.lovasz.LovaszLossBinary">[docs]</a><span class="k">class</span> <span class="nc">LovaszLossBinary</span><span class="p">(</span><span class="n">_Loss</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">per_image</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a criterion that optimizes a binary Lovasz loss.</span>
+
+<span class="sd">    It has been proposed in `The Lovasz-Softmax loss: A tractable surrogate</span>
+<span class="sd">    for the optimization of the intersection-over-union measure</span>
+<span class="sd">    in neural networks`_.</span>
+
+<span class="sd">    .. _The Lovasz-Softmax loss\: A tractable surrogate for the optimization</span>
+<span class="sd">        of the intersection-over-union measure in neural networks:</span>
+<span class="sd">        https://arxiv.org/abs/1705.08790</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="LovaszLossBinary.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.lovasz.LovaszLossBinary.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">per_image</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ignore</span> <span class="o">=</span> <span class="n">ignore</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">per_image</span> <span class="o">=</span> <span class="n">per_image</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">per_image</span> <span class="o">=</span> <span class="n">per_image</span></div>
 
 <div class="viewcode-block" id="LovaszLossBinary.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.lovasz.LovaszLossBinary.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Forward propagation method for the Lovasz loss.</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            logits: [bs; ...]</span>
 <span class="sd">            targets: [bs; ...]</span>
+
+<span class="sd">        @TODO: Docs. Contribution is welcome.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">_lovasz_hinge</span><span class="p">(</span>
             <span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">per_image</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">per_image</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ignore</span>
@@ -494,16 +501,31 @@
 
 
 <div class="viewcode-block" id="LovaszLossMultiClass"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.lovasz.LovaszLossMultiClass">[docs]</a><span class="k">class</span> <span class="nc">LovaszLossMultiClass</span><span class="p">(</span><span class="n">_Loss</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">per_image</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a criterion that optimizes a multi-class Lovasz loss.</span>
+
+<span class="sd">    It has been proposed in `The Lovasz-Softmax loss: A tractable surrogate</span>
+<span class="sd">    for the optimization of the intersection-over-union measure</span>
+<span class="sd">    in neural networks`_.</span>
+
+<span class="sd">    .. _The Lovasz-Softmax loss\: A tractable surrogate for the optimization</span>
+<span class="sd">        of the intersection-over-union measure in neural networks:</span>
+<span class="sd">        https://arxiv.org/abs/1705.08790</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="LovaszLossMultiClass.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.lovasz.LovaszLossMultiClass.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">per_image</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ignore</span> <span class="o">=</span> <span class="n">ignore</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">per_image</span> <span class="o">=</span> <span class="n">per_image</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">per_image</span> <span class="o">=</span> <span class="n">per_image</span></div>
 
 <div class="viewcode-block" id="LovaszLossMultiClass.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.lovasz.LovaszLossMultiClass.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Forward propagation method for the Lovasz loss.</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            logits: [bs; num_classes; ...]</span>
 <span class="sd">            targets: [bs; ...]</span>
+
+<span class="sd">        @TODO: Docs. Contribution is welcome.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">_lovasz_softmax</span><span class="p">(</span>
             <span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">per_image</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">per_image</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">ignore</span>
@@ -512,16 +534,31 @@
 
 
 <div class="viewcode-block" id="LovaszLossMultiLabel"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.lovasz.LovaszLossMultiLabel">[docs]</a><span class="k">class</span> <span class="nc">LovaszLossMultiLabel</span><span class="p">(</span><span class="n">_Loss</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">per_image</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a criterion that optimizes a multi-label Lovasz loss.</span>
+
+<span class="sd">    It has been proposed in `The Lovasz-Softmax loss: A tractable surrogate</span>
+<span class="sd">    for the optimization of the intersection-over-union measure</span>
+<span class="sd">    in neural networks`_.</span>
+
+<span class="sd">    .. _The Lovasz-Softmax loss\: A tractable surrogate for the optimization</span>
+<span class="sd">        of the intersection-over-union measure in neural networks:</span>
+<span class="sd">        https://arxiv.org/abs/1705.08790</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="LovaszLossMultiLabel.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.lovasz.LovaszLossMultiLabel.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">per_image</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ignore</span> <span class="o">=</span> <span class="n">ignore</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">per_image</span> <span class="o">=</span> <span class="n">per_image</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">per_image</span> <span class="o">=</span> <span class="n">per_image</span></div>
 
 <div class="viewcode-block" id="LovaszLossMultiLabel.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.lovasz.LovaszLossMultiLabel.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Forward propagation method for the Lovasz loss.</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            logits: [bs; num_classes; ...]</span>
 <span class="sd">            targets: [bs; num_classes; ...]</span>
+
+<span class="sd">        @TODO: Docs. Contribution is welcome.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">losses</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">_lovasz_hinge</span><span class="p">(</span>

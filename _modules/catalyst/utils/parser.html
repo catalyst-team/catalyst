@@ -261,6 +261,7 @@
 
 
 <div class="viewcode-block" id="parse_config_args"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.parser.parse_config_args">[docs]</a><span class="k">def</span> <span class="nf">parse_config_args</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">unknown_args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">unknown_args</span><span class="p">:</span>
         <span class="n">arg_name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
         <span class="n">arg_name</span> <span class="o">=</span> <span class="n">arg_name</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
@@ -314,8 +315,7 @@
 
 
 <div class="viewcode-block" id="parse_args_uargs"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.parser.parse_args_uargs">[docs]</a><span class="k">def</span> <span class="nf">parse_args_uargs</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">unknown_args</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Function for parsing configuration files</span>
+    <span class="sd">&quot;&quot;&quot;Function for parsing configuration files.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        args: recognized arguments</span>

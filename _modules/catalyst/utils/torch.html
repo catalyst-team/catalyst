@@ -271,9 +271,7 @@
 
 
 <div class="viewcode-block" id="get_optimizable_params"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_optimizable_params">[docs]</a><span class="k">def</span> <span class="nf">get_optimizable_params</span><span class="p">(</span><span class="n">model_or_params</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns all the parameters that requires gradients</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns all the parameters that requires gradients.&quot;&quot;&quot;</span>
     <span class="n">params</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_or_params</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_or_params</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">model_or_params</span><span class="o">.</span><span class="n">parameters</span><span class="p">()</span>
@@ -283,8 +281,7 @@
 
 
 <div class="viewcode-block" id="get_optimizer_momentum"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_optimizer_momentum">[docs]</a><span class="k">def</span> <span class="nf">get_optimizer_momentum</span><span class="p">(</span><span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Get momentum of current optimizer.</span>
+    <span class="sd">&quot;&quot;&quot;Get momentum of current optimizer.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        optimizer: PyTorch optimizer</span>
@@ -298,8 +295,7 @@
 
 
 <div class="viewcode-block" id="set_optimizer_momentum"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.set_optimizer_momentum">[docs]</a><span class="k">def</span> <span class="nf">set_optimizer_momentum</span><span class="p">(</span><span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Set momentum of ``index`` &#39;th param group of optimizer to ``value``</span>
+    <span class="sd">&quot;&quot;&quot;Set momentum of ``index`` &#39;th param group of optimizer to ``value``.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        optimizer: PyTorch optimizer</span>
@@ -317,33 +313,32 @@
 
 
 <div class="viewcode-block" id="get_device"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_device">[docs]</a><span class="k">def</span> <span class="nf">get_device</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Simple returning the best available device (GPU or CPU)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Simple returning the best available device (GPU or CPU).&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_available_gpus"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_available_gpus">[docs]</a><span class="k">def</span> <span class="nf">get_available_gpus</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Array of available GPU ids</span>
-<span class="sd">    Returns:</span>
-<span class="sd">        iterable: available GPU ids</span>
+    <span class="sd">&quot;&quot;&quot;Array of available GPU ids.</span>
+
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;0,2&quot;</span>
 <span class="sd">        &gt;&gt;&gt; get_available_gpus()</span>
-<span class="sd">        &gt;&gt;&gt; [0, 2]</span>
+<span class="sd">        [0, 2]</span>
 
 <span class="sd">        &gt;&gt;&gt; os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;0,-1,1&quot;</span>
 <span class="sd">        &gt;&gt;&gt; get_available_gpus()</span>
-<span class="sd">        &gt;&gt;&gt; [0]</span>
+<span class="sd">        [0]</span>
 
 <span class="sd">        &gt;&gt;&gt; os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;&quot;</span>
 <span class="sd">        &gt;&gt;&gt; get_available_gpus()</span>
-<span class="sd">        &gt;&gt;&gt; []</span>
+<span class="sd">        []</span>
 
 <span class="sd">        &gt;&gt;&gt; os.environ[&quot;CUDA_VISIBLE_DEVICES&quot;] = &quot;-1&quot;</span>
 <span class="sd">        &gt;&gt;&gt; get_available_gpus()</span>
-<span class="sd">        &gt;&gt;&gt; []</span>
+<span class="sd">        []</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        iterable: available GPU ids</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="s2">&quot;CUDA_VISIBLE_DEVICES&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">:</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CUDA_VISIBLE_DEVICES&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
@@ -361,9 +356,7 @@
 
 
 <div class="viewcode-block" id="get_activation_fn"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_activation_fn">[docs]</a><span class="k">def</span> <span class="nf">get_activation_fn</span><span class="p">(</span><span class="n">activation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns the activation function from ``torch.nn`` by its name</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Returns the activation function from ``torch.nn`` by its name.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">activation</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">activation</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
         <span class="n">activation_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span>  <span class="c1"># noqa: E731</span>
     <span class="k">else</span><span class="p">:</span>
@@ -434,8 +427,16 @@
     <span class="n">no_bias_weight_decay</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="n">lr_scaling</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Gains model parameters for ``torch.optim.Optimizer``</span>
+    <span class="sd">&quot;&quot;&quot;Gains model parameters for ``torch.optim.Optimizer``.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; model = catalyst.contrib.models.segmentation.ResnetUnet()</span>
+<span class="sd">        &gt;&gt;&gt; layerwise_params = collections.OrderedDict([</span>
+<span class="sd">        &gt;&gt;&gt;     (&quot;conv1.*&quot;, dict(lr=0.001, weight_decay=0.0003)),</span>
+<span class="sd">        &gt;&gt;&gt;     (&quot;conv.*&quot;, dict(lr=0.002))</span>
+<span class="sd">        &gt;&gt;&gt; ])</span>
+<span class="sd">        &gt;&gt;&gt; params = process_model_params(model, layerwise_params)</span>
+<span class="sd">        &gt;&gt;&gt; optimizer = torch.optim.Adam(params, lr=0.0003)</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        model (torch.nn.Module): Model to process</span>
@@ -449,15 +450,6 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        iterable: parameters for an optimizer</span>
-
-<span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; model = catalyst.contrib.models.segmentation.ResnetUnet()</span>
-<span class="sd">        &gt;&gt;&gt; layerwise_params = collections.OrderedDict([</span>
-<span class="sd">        &gt;&gt;&gt;     (&quot;conv1.*&quot;, dict(lr=0.001, weight_decay=0.0003)),</span>
-<span class="sd">        &gt;&gt;&gt;     (&quot;conv.*&quot;, dict(lr=0.002))</span>
-<span class="sd">        &gt;&gt;&gt; ])</span>
-<span class="sd">        &gt;&gt;&gt; params = process_model_params(model, layerwise_params)</span>
-<span class="sd">        &gt;&gt;&gt; optimizer = torch.optim.Adam(params, lr=0.0003)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">())</span>
     <span class="n">layerwise_params</span> <span class="o">=</span> <span class="n">layerwise_params</span> <span class="ow">or</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
@@ -484,16 +476,15 @@
 
 
 <div class="viewcode-block" id="set_requires_grad"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.set_requires_grad">[docs]</a><span class="k">def</span> <span class="nf">set_requires_grad</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">requires_grad</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Sets the ``requires_grad`` value for all model parameters.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        model (torch.nn.Module): Model</span>
-<span class="sd">        requires_grad (bool): value</span>
+    <span class="sd">&quot;&quot;&quot;Sets the ``requires_grad`` value for all model parameters.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; model = SimpleModel()</span>
 <span class="sd">        &gt;&gt;&gt; set_requires_grad(model, requires_grad=True)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (torch.nn.Module): model</span>
+<span class="sd">        requires_grad (bool): value</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">requires_grad</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">requires_grad</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>

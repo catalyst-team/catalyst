@@ -272,9 +272,7 @@
 
 
 <div class="viewcode-block" id="WandbRunner"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.dl.runner.wandb.WandbRunner">[docs]</a><span class="k">class</span> <span class="nc">WandbRunner</span><span class="p">(</span><span class="n">Runner</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Runner wrapper with wandb integration hooks.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Runner wrapper with wandb integration hooks.&quot;&quot;&quot;</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_log_metrics</span><span class="p">(</span>
@@ -334,7 +332,9 @@
         <span class="n">log_on_batch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
             <span class="s2">&quot;log_on_batch_end&quot;</span><span class="p">,</span> <span class="kc">False</span>
         <span class="p">)</span>
-        <span class="n">log_on_epoch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;log_on_epoch_end&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">log_on_epoch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
+            <span class="s2">&quot;log_on_epoch_end&quot;</span><span class="p">,</span> <span class="kc">True</span>
+        <span class="p">)</span>
         <span class="n">checkpoints_glob</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
             <span class="s2">&quot;checkpoints_glob&quot;</span><span class="p">,</span> <span class="p">[]</span>
         <span class="p">)</span>
@@ -420,7 +420,7 @@
             <span class="n">wandb</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">commit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <div class="viewcode-block" id="WandbRunner.run_experiment"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.dl.runner.wandb.WandbRunner.run_experiment">[docs]</a>    <span class="k">def</span> <span class="nf">run_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment</span><span class="p">:</span> <span class="n">Experiment</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Starts experiment</span>
+        <span class="sd">&quot;&quot;&quot;Starts experiment.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            experiment (Experiment): experiment class</span>
@@ -431,7 +431,7 @@
 
 
 <div class="viewcode-block" id="SupervisedWandbRunner"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.dl.runner.wandb.SupervisedWandbRunner">[docs]</a><span class="k">class</span> <span class="nc">SupervisedWandbRunner</span><span class="p">(</span><span class="n">WandbRunner</span><span class="p">,</span> <span class="n">SupervisedRunner</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;SupervisedRunner with WandB&quot;&quot;&quot;</span></div>
+    <span class="sd">&quot;&quot;&quot;SupervisedRunner with WandB.&quot;&quot;&quot;</span></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;WandbRunner&quot;</span><span class="p">,</span> <span class="s2">&quot;SupervisedWandbRunner&quot;</span><span class="p">]</span>

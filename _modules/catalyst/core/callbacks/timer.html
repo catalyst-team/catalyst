@@ -259,27 +259,46 @@
 
 
 <div class="viewcode-block" id="TimerCallback"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.timer.TimerCallback">[docs]</a><span class="k">class</span> <span class="nc">TimerCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Logs pipeline execution time</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Logs pipeline execution time.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TimerCallback.__init__"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.timer.TimerCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Metric</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">All</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="n">TimeManager</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="n">TimeManager</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="TimerCallback.on_loader_start"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.timer.TimerCallback.on_loader_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
+<div class="viewcode-block" id="TimerCallback.on_loader_start"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.timer.TimerCallback.on_loader_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Loader start hook.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            state (State): current state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s2">&quot;_timer/batch_time&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s2">&quot;_timer/data_time&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="TimerCallback.on_loader_end"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.timer.TimerCallback.on_loader_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
+<div class="viewcode-block" id="TimerCallback.on_loader_end"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.timer.TimerCallback.on_loader_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Loader end hook.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            state (State): current state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="TimerCallback.on_batch_start"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.timer.TimerCallback.on_batch_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
+<div class="viewcode-block" id="TimerCallback.on_batch_start"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.timer.TimerCallback.on_batch_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Batch start hook.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            state (State): current state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s2">&quot;_timer/data_time&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s2">&quot;_timer/model_time&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="TimerCallback.on_batch_end"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.timer.TimerCallback.on_batch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
+<div class="viewcode-block" id="TimerCallback.on_batch_end"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.timer.TimerCallback.on_batch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Batch end hook.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            state (State): current state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s2">&quot;_timer/model_time&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s2">&quot;_timer/batch_time&quot;</span><span class="p">)</span>
 

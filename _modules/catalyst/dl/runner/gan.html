@@ -261,9 +261,7 @@
 
 
 <div class="viewcode-block" id="MultiPhaseRunner"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.gan.MultiPhaseRunner">[docs]</a><span class="k">class</span> <span class="nc">MultiPhaseRunner</span><span class="p">(</span><span class="n">Runner</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Base Runner with multiple phases</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Base Runner with multiple phases.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="MultiPhaseRunner.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.gan.MultiPhaseRunner.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -316,7 +314,10 @@
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_batch2device</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
 
 <div class="viewcode-block" id="MultiPhaseRunner.forward"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.gan.MultiPhaseRunner.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Forward call&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Forward call.</span>
+
+<span class="sd">        @TODO: Docs (add `batch` shapes). Contribution is welcome.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">phase</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">registered_phases</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown phase: &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">phase</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
 
@@ -325,7 +326,7 @@
 
 <div class="viewcode-block" id="GanRunner"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.gan.GanRunner">[docs]</a><span class="k">class</span> <span class="nc">GanRunner</span><span class="p">(</span><span class="n">MultiPhaseRunner</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Runner with logic for single-generator single-discriminator GAN training</span>
+<span class="sd">    Runner with logic for single-generator single-discriminator GAN training.</span>
 
 <span class="sd">    Various conditioning types, penalties and regularization (such as WGAN-GP)</span>
 <span class="sd">    can be easily derived from this class</span>
@@ -390,7 +391,7 @@
 <span class="sd">            discriminator_model_key: name for discriminator model,</span>
 <span class="sd">                e.g. &quot;discriminator&quot;</span>
 
-<span class="sd">        Note:</span>
+<span class="sd">        .. note::</span>
 <span class="sd">            THIS RUNNER SUPPORTS ONLY EQUALLY CONDITIONED generator and</span>
 <span class="sd">            discriminator (i.e. if generator is conditioned on 3 variables,</span>
 <span class="sd">            discriminator must be conditioned on same 3 variables)</span>
@@ -456,7 +457,7 @@
     <span class="c1"># Common utility functions</span>
 
     <span class="k">def</span> <span class="nf">_get_noise_and_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns generator inputs&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns generator inputs.&quot;&quot;&quot;</span>
         <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">batch_in</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">noise_input_key</span><span class="p">]</span>
         <span class="n">conditions</span> <span class="o">=</span> <span class="p">[</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">batch_in</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fake_condition_keys</span>
@@ -464,17 +465,17 @@
         <span class="k">return</span> <span class="n">z</span><span class="p">,</span> <span class="n">conditions</span>
 
     <span class="k">def</span> <span class="nf">_get_real_data_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns discriminator conditions (for real data)&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns discriminator conditions (for real data).&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">batch_in</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">real_condition_keys</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_get_fake_data_conditions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns discriminator conditions (for fake data)&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns discriminator conditions (for fake data).&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">batch_in</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fake_condition_keys</span><span class="p">]</span>
 
     <span class="c1"># concrete phase methods</span>
 
     <span class="k">def</span> <span class="nf">_generator_train_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Forward call on generator training phase&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Forward call on generator training phase.&quot;&quot;&quot;</span>
         <span class="n">z</span><span class="p">,</span> <span class="n">g_conditions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_noise_and_conditions</span><span class="p">()</span>
         <span class="n">d_fake_conditions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_fake_data_conditions</span><span class="p">()</span>
 
@@ -486,13 +487,15 @@
         <span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">_discriminator_train_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Forward call on discriminator training phase&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Forward call on discriminator training phase.&quot;&quot;&quot;</span>
         <span class="n">z</span><span class="p">,</span> <span class="n">g_conditions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_noise_and_conditions</span><span class="p">()</span>
         <span class="n">d_fake_conditions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_fake_data_conditions</span><span class="p">()</span>
         <span class="n">d_real_conditions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_real_data_conditions</span><span class="p">()</span>
 
         <span class="n">fake_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generator</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="o">*</span><span class="n">g_conditions</span><span class="p">)</span>
-        <span class="n">fake_logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">discriminator</span><span class="p">(</span><span class="n">fake_data</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="o">*</span><span class="n">d_fake_conditions</span><span class="p">)</span>
+        <span class="n">fake_logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">discriminator</span><span class="p">(</span>
+            <span class="n">fake_data</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span> <span class="o">*</span><span class="n">d_fake_conditions</span>
+        <span class="p">)</span>
         <span class="n">real_logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">discriminator</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">batch_in</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data_input_key</span><span class="p">],</span> <span class="o">*</span><span class="n">d_real_conditions</span>
         <span class="p">)</span>
@@ -522,7 +525,8 @@
         <span class="n">initial_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
         <span class="n">check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Starts the training process of the model.</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            model: models, usually generator and discriminator</span>
 <span class="sd">            loaders: dictionary containing one or several</span>

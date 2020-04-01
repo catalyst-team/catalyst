@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.data.augmentor &mdash; Catalyst 20.03.4 documentation</title>
+  <title>catalyst.data.__main__ &mdash; Catalyst 20.03.4 documentation</title>
   
 
   
@@ -227,7 +227,7 @@
         
           <li><a href="../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.data.augmentor</li>
+      <li>catalyst.data.__main__</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -253,124 +253,157 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.data.augmentor</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+  <h1>Source code for catalyst.data.__main__</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;Catalyst-data scripts.</span>
+
+<span class="sd">Examples:</span>
+<span class="sd">    1.  **process-images** reads raw data and outputs</span>
+<span class="sd">    preprocessed resized images</span>
+
+<span class="sd">    .. code:: bash</span>
+
+<span class="sd">        $ catalyst-data process-images \\</span>
+<span class="sd">            --in-dir /path/to/raw/data/ \\</span>
+<span class="sd">            --out-dir=./data/dataset \\</span>
+<span class="sd">            --num-workers=6 \\</span>
+<span class="sd">            --max-size=224 \\</span>
+<span class="sd">            --extension=png \\</span>
+<span class="sd">            --clear-exif \\</span>
+<span class="sd">            --grayscale \\</span>
+<span class="sd">            --expand-dims</span>
+
+<span class="sd">    2. **tag2label** prepares a dataset to json like</span>
+<span class="sd">    `{&quot;class_id&quot;:  class_column_from_dataset}`</span>
+
+<span class="sd">    .. code:: bash</span>
+
+<span class="sd">        $ catalyst-data tag2label \\</span>
+<span class="sd">            --in-dir=./data/dataset \\</span>
+<span class="sd">            --out-dataset=./data/dataset_raw.csv \\</span>
+<span class="sd">            --out-labeling=./data/tag2cls.json</span>
+
+<span class="sd">    3. **check-images** checks images in your data</span>
+<span class="sd">    to be non-broken and writes a flag:</span>
+<span class="sd">    `true` if image opened without an error and `false` otherwise</span>
+
+<span class="sd">    .. code:: bash</span>
+
+<span class="sd">        $ catalyst-data check-images \\</span>
+<span class="sd">            --in-csv=./data/dataset_raw.csv \\</span>
+<span class="sd">            --img-rootpath=./data/dataset \\</span>
+<span class="sd">            --img-col=&quot;tag&quot; \\</span>
+<span class="sd">            --out-csv=./data/dataset_checked.csv \\</span>
+<span class="sd">            --n-cpu=4</span>
+
+<span class="sd">    4. **split-dataframe** split your dataset into train/valid folds</span>
+
+<span class="sd">    .. code:: bash</span>
+
+<span class="sd">        $ catalyst-data split-dataframe \\</span>
+<span class="sd">            --in-csv=./data/dataset_raw.csv \\</span>
+<span class="sd">            --tag2class=./data/tag2cls.json \\</span>
+<span class="sd">            --tag-column=tag \\</span>
+<span class="sd">            --class-column=class \\</span>
+<span class="sd">            --n-folds=5 \\</span>
+<span class="sd">            --train-folds=0,1,2,3 \\</span>
+<span class="sd">            --out-csv=./data/dataset.csv</span>
+
+<span class="sd">    5. **image2embedding** embeds images from your csv</span>
+<span class="sd">    or image directory with specified neural net architecture</span>
+
+<span class="sd">    .. code:: bash</span>
+
+<span class="sd">        $ catalyst-data image2embedding \\</span>
+<span class="sd">            --in-csv=./data/input.csv \\</span>
+<span class="sd">            --img-col=&quot;filename&quot; \\</span>
+<span class="sd">            --img-size=64 \\</span>
+<span class="sd">            --out-npy=./embeddings.npy \\</span>
+<span class="sd">            --arch=resnet34 \\</span>
+<span class="sd">            --pooling=GlobalMaxPool2d \\</span>
+<span class="sd">            --batch-size=8 \\</span>
+<span class="sd">            --num-workers=16 \\</span>
+<span class="sd">            --verbose</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">RawTextHelpFormatter</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">catalyst.__version__</span> <span class="kn">import</span> <span class="n">__version__</span>
+<span class="kn">from</span> <span class="nn">catalyst.data.scripts</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">image2embedding</span><span class="p">,</span>
+    <span class="n">process_images</span><span class="p">,</span>
+    <span class="n">project_embeddings</span><span class="p">,</span>
+    <span class="n">split_dataframe</span><span class="p">,</span>
+    <span class="n">tag2label</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">COMMANDS</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="p">(</span><span class="s2">&quot;tag2label&quot;</span><span class="p">,</span> <span class="n">tag2label</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;process-images&quot;</span><span class="p">,</span> <span class="n">process_images</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;split-dataframe&quot;</span><span class="p">,</span> <span class="n">split_dataframe</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;image2embedding&quot;</span><span class="p">,</span> <span class="n">image2embedding</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;project-embeddings&quot;</span><span class="p">,</span> <span class="n">project_embeddings</span><span class="p">),</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">transformers</span>  <span class="c1"># noqa: F401</span>
+    <span class="kn">from</span> <span class="nn">catalyst.data.scripts</span> <span class="kn">import</span> <span class="n">text2embedding</span>
+
+    <span class="n">COMMANDS</span><span class="p">[</span><span class="s2">&quot;text2embedding&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text2embedding</span>
+<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;USE_TRANSFORMERS&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;transformers not available, to install transformers,&quot;</span>
+            <span class="s2">&quot; run `pip install transformers`.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ex</span>
 
 
-<div class="viewcode-block" id="Augmentor"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.augmentor.Augmentor">[docs]</a><span class="k">class</span> <span class="nc">Augmentor</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Augmentation abstraction to use with data dictionaries.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="build_parser"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.__main__.build_parser">[docs]</a><span class="k">def</span> <span class="nf">build_parser</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">ArgumentParser</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    @TODO: Docs. Contribution is welcome</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="s2">&quot;catalyst-data&quot;</span><span class="p">,</span> <span class="n">formatter_class</span><span class="o">=</span><span class="n">RawTextHelpFormatter</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;-v&quot;</span><span class="p">,</span> <span class="s2">&quot;--version&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;version&quot;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;%(prog)s </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="p">)</span>
+    <span class="n">all_commands</span> <span class="o">=</span> <span class="s2">&quot;, </span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;    </span><span class="si">{</span><span class="n">x</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">COMMANDS</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
 
-<div class="viewcode-block" id="Augmentor.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.augmentor.Augmentor.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">dict_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">augment_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
-        <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Args:</span>
-<span class="sd">            dict_key (str): key to transform</span>
-<span class="sd">            augment_fn (Callable): augmentation function to use</span>
-<span class="sd">            input_key (str): ``augment_fn`` input key</span>
-<span class="sd">            output_key (str): ``augment_fn`` output key</span>
-<span class="sd">            **kwargs: default kwargs for augmentations function</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dict_key</span> <span class="o">=</span> <span class="n">dict_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">augment_fn</span> <span class="o">=</span> <span class="n">augment_fn</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span> <span class="o">=</span> <span class="n">input_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span> <span class="o">=</span> <span class="n">output_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span></div>
+    <span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span>
+        <span class="n">metavar</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">{command}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="n">dest</span><span class="o">=</span><span class="s2">&quot;command&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;available commands: </span><span class="se">\n</span><span class="si">{</span><span class="n">all_commands</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">subparsers</span><span class="o">.</span><span class="n">required</span> <span class="o">=</span> <span class="kc">True</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Applies the augmentation.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">augment_fn</span><span class="p">(</span>
-                <span class="o">**</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">:</span> <span class="n">dict_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_key</span><span class="p">]},</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">augment_fn</span><span class="p">(</span><span class="n">dict_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_key</span><span class="p">],</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">COMMANDS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">value</span><span class="o">.</span><span class="n">build_args</span><span class="p">(</span><span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">dict_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">dict_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">output</span>
-        <span class="k">return</span> <span class="n">dict_</span></div>
+    <span class="k">return</span> <span class="n">parser</span></div>
 
 
-<div class="viewcode-block" id="AugmentorCompose"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.augmentor.AugmentorCompose">[docs]</a><span class="k">class</span> <span class="nc">AugmentorCompose</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Compose augmentors.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.__main__.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    @TODO: Docs. Contribution is welcome</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">build_parser</span><span class="p">()</span>
 
-<div class="viewcode-block" id="AugmentorCompose.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.augmentor.AugmentorCompose.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key2augment_fn</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Args:</span>
-<span class="sd">            key2augment_fn (Dict[str, Callable]): mapping from input key</span>
-<span class="sd">                to augmentation function to apply</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">key2augment_fn</span> <span class="o">=</span> <span class="n">key2augment_fn</span></div>
+    <span class="n">args</span><span class="p">,</span> <span class="n">uargs</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_known_args</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Args:</span>
-<span class="sd">            dictionary (dict): item from dataset</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            dict: dictionaty with augmented data</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">augment_fn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">key2augment_fn</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">results</span><span class="p">,</span> <span class="o">**</span><span class="n">augment_fn</span><span class="p">({</span><span class="n">key</span><span class="p">:</span> <span class="n">dictionary</span><span class="p">[</span><span class="n">key</span><span class="p">]})}</span>
-
-        <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">dictionary</span><span class="p">,</span> <span class="o">**</span><span class="n">results</span><span class="p">}</span></div>
+    <span class="n">COMMANDS</span><span class="p">[</span><span class="n">args</span><span class="o">.</span><span class="n">command</span><span class="p">]</span><span class="o">.</span><span class="n">main</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">uargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="AugmentorKeys"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.augmentor.AugmentorKeys">[docs]</a><span class="k">class</span> <span class="nc">AugmentorKeys</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Augmentation abstraction to match input and augmentations keys.&quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="AugmentorKeys.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.augmentor.AugmentorKeys.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">dict2fn_dict</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
-        <span class="n">augment_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Args:</span>
-<span class="sd">            dict2fn_dict (Dict[str, str]): keys matching dict</span>
-<span class="sd">                ``{input_key: augment_fn_key}``. For example:</span>
-<span class="sd">                ``{&quot;image&quot;: &quot;image&quot;, &quot;mask&quot;: &quot;mask&quot;}``</span>
-<span class="sd">            augment_fn: augmentation function</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dict2fn_dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="n">dict2fn_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dict2fn_dict</span><span class="p">}</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">dict2fn_dict</span> <span class="o">=</span> <span class="n">dict2fn_dict</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">augment_fn</span> <span class="o">=</span> <span class="n">augment_fn</span></div>
-
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Args:</span>
-<span class="sd">            dictionary (dict): item from dataset</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            dict: dictionaty with augmented data</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># link keys from dict_ with augment_fn keys</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">fn_key</span><span class="p">:</span> <span class="n">dictionary</span><span class="p">[</span><span class="n">dict_key</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">dict_key</span><span class="p">,</span> <span class="n">fn_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict2fn_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-        <span class="p">}</span>
-
-        <span class="n">augmented</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">augment_fn</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
-
-        <span class="c1"># link keys from augment_fn back to dict_ keys</span>
-        <span class="n">results</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">dict_key</span><span class="p">:</span> <span class="n">augmented</span><span class="p">[</span><span class="n">fn_key</span><span class="p">]</span>
-            <span class="k">for</span> <span class="n">dict_key</span><span class="p">,</span> <span class="n">fn_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict2fn_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-        <span class="p">}</span>
-
-        <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">dictionary</span><span class="p">,</span> <span class="o">**</span><span class="n">results</span><span class="p">}</span></div>
-
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Augmentor&quot;</span><span class="p">,</span> <span class="s2">&quot;AugmentorCompose&quot;</span><span class="p">,</span> <span class="s2">&quot;AugmentorKeys&quot;</span><span class="p">]</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
 </pre></div>
 
              </article>

@@ -268,13 +268,10 @@
 
 
 <div class="viewcode-block" id="AlchemyRunner"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.dl.runner.alchemy.AlchemyRunner">[docs]</a><span class="k">class</span> <span class="nc">AlchemyRunner</span><span class="p">(</span><span class="n">Runner</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Runner wrapper with Alchemy integration hooks.</span>
+    <span class="sd">&quot;&quot;&quot;Runner wrapper with Alchemy integration hooks.</span>
 <span class="sd">    Read about Alchemy here https://alchemy.host</span>
-<span class="sd">    Powered by Catalyst.Ecosystem</span>
 
 <span class="sd">    Example:</span>
-
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            from catalyst.dl import SupervisedAlchemyRunner</span>
@@ -296,11 +293,14 @@
 <span class="sd">                    &quot;group&quot;: &quot;your_experiment_group_name&quot;</span>
 <span class="sd">                }</span>
 <span class="sd">            )</span>
+
+<span class="sd">    Powered by Catalyst.Ecosystem.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">log_on_batch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">log_on_epoch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_init</span><span class="p">()</span>
         <span class="n">the_warning</span> <span class="o">=</span> <span class="n">DeprecatedWarning</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
@@ -332,7 +332,9 @@
         <span class="n">log_on_batch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
             <span class="s2">&quot;log_on_batch_end&quot;</span><span class="p">,</span> <span class="kc">False</span>
         <span class="p">)</span>
-        <span class="n">log_on_epoch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;log_on_epoch_end&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">log_on_epoch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
+            <span class="s2">&quot;log_on_epoch_end&quot;</span><span class="p">,</span> <span class="kc">True</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span>
             <span class="n">log_on_batch_end</span><span class="o">=</span><span class="n">log_on_batch_end</span><span class="p">,</span>
@@ -366,7 +368,7 @@
                 <span class="p">)</span>
 
 <div class="viewcode-block" id="AlchemyRunner.run_experiment"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.dl.runner.alchemy.AlchemyRunner.run_experiment">[docs]</a>    <span class="k">def</span> <span class="nf">run_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment</span><span class="p">:</span> <span class="n">Experiment</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Starts experiment</span>
+        <span class="sd">&quot;&quot;&quot;Starts experiment.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            experiment (Experiment): experiment class</span>
@@ -377,9 +379,7 @@
 
 
 <div class="viewcode-block" id="SupervisedAlchemyRunner"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.dl.runner.alchemy.SupervisedAlchemyRunner">[docs]</a><span class="k">class</span> <span class="nc">SupervisedAlchemyRunner</span><span class="p">(</span><span class="n">AlchemyRunner</span><span class="p">,</span> <span class="n">SupervisedRunner</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;SupervisedRunner with Alchemy&quot;&quot;&quot;</span>
-
-    <span class="k">pass</span></div>
+    <span class="sd">&quot;&quot;&quot;SupervisedRunner with Alchemy.&quot;&quot;&quot;</span></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AlchemyRunner&quot;</span><span class="p">,</span> <span class="s2">&quot;SupervisedAlchemyRunner&quot;</span><span class="p">]</span>

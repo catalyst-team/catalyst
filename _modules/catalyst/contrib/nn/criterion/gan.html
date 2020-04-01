@@ -261,23 +261,30 @@
 <div class="viewcode-block" id="MeanOutputLoss"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.gan.MeanOutputLoss">[docs]</a><span class="k">class</span> <span class="nc">MeanOutputLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Criterion to compute simple mean of the output, completely ignoring target</span>
-<span class="sd">    (maybe useful e.g. for WGAN real/fake validity averaging</span>
+<span class="sd">    (maybe useful e.g. for WGAN real/fake validity averaging.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="MeanOutputLoss.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.gan.MeanOutputLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Compute criterion&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Compute criterion.</span>
+
+<span class="sd">        @TODO: Docs (add typing). Contribution is welcome.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">output</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span></div></div>
 
 
 <div class="viewcode-block" id="GradientPenaltyLoss"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.gan.GradientPenaltyLoss">[docs]</a><span class="k">class</span> <span class="nc">GradientPenaltyLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Criterion to compute gradient penalty</span>
+    <span class="sd">&quot;&quot;&quot;Criterion to compute gradient penalty.</span>
 
 <span class="sd">    WARN: SHOULD NOT BE RUN WITH CriterionCallback,</span>
 <span class="sd">        use special GradientPenaltyCallback instead</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="GradientPenaltyLoss.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.gan.GradientPenaltyLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fake_data</span><span class="p">,</span> <span class="n">real_data</span><span class="p">,</span> <span class="n">critic</span><span class="p">,</span> <span class="n">critic_condition_args</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Compute gradient penalty&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Compute gradient penalty.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            @TODO: Docs. Contribution is welcome.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">device</span> <span class="o">=</span> <span class="n">real_data</span><span class="o">.</span><span class="n">device</span>
         <span class="c1"># Random weight term for interpolation between real and fake samples</span>
         <span class="n">alpha</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">((</span><span class="n">real_data</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>

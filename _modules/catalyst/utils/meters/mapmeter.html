@@ -257,6 +257,10 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">The mAP meter measures the mean average precision over all classes.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">APMeter</span><span class="p">,</span> <span class="n">meter</span>
 
 
@@ -280,28 +284,33 @@
 <span class="sd">    for each sample.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="mAPMeter.__init__"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.mapmeter.mAPMeter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor method for the ``mAPMeter`` class.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">mAPMeter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">apmeter</span> <span class="o">=</span> <span class="n">APMeter</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apmeter</span> <span class="o">=</span> <span class="n">APMeter</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="mAPMeter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.mapmeter.mAPMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Reset `self.apmeter`&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="mAPMeter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.mapmeter.mAPMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Reset `self.apmeter`.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">apmeter</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="mAPMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.mapmeter.mAPMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update `self.apmeter`.</span>
+<div class="viewcode-block" id="mAPMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.mapmeter.mAPMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">output</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Update `self.apmeter`.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            output (Tensor): Model output scores as `NxK` tensor</span>
 <span class="sd">            target (Tensor): Target scores as `NxK` tensor</span>
-<span class="sd">            weight (Tensor): Weight values for each sample as `Nx1` Tensor</span>
+<span class="sd">            weight (Tensor, optional): Weight values for each sample</span>
+<span class="sd">                as `Nx1` Tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">apmeter</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="mAPMeter.value"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.mapmeter.mAPMeter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns mean of `self.apmeter` value.</span>
+        <span class="sd">&quot;&quot;&quot;Returns mean of `self.apmeter` value.</span>
 
 <span class="sd">        Return:</span>
 <span class="sd">            FloatTensor: mAP scalar tensor</span>

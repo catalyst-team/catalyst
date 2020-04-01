@@ -268,8 +268,7 @@
     <span class="n">recursive_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calls the ``method`` recursively for the object_or_dict</span>
+    <span class="sd">&quot;&quot;&quot;Calls the ``method`` recursively for the ``object_or_dict``.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        object_or_dict (Any): some object or a dictionary of objects</span>
@@ -282,7 +281,9 @@
         <span class="n">result</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">object_or_dict</span><span class="p">)()</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">object_or_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">r_args</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">recursive_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">recursive_args</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-            <span class="n">r_kwargs</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">recursive_kwargs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">recursive_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">r_kwargs</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="kc">None</span> <span class="k">if</span> <span class="n">recursive_kwargs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">recursive_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="p">)</span>
             <span class="n">result</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">maybe_recursive_call</span><span class="p">(</span>
                 <span class="n">v</span><span class="p">,</span>
                 <span class="n">method</span><span class="p">,</span>
@@ -300,16 +301,13 @@
 
 
 <div class="viewcode-block" id="is_exception"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.is_exception">[docs]</a><span class="k">def</span> <span class="nf">is_exception</span><span class="p">(</span><span class="n">ex</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Check if the argument is of Exception type</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Check if the argument is of ``Exception`` type.&quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">ex</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="ne">BaseException</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">result</span></div>
 
 
 <div class="viewcode-block" id="copy_directory"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.copy_directory">[docs]</a><span class="k">def</span> <span class="nf">copy_directory</span><span class="p">(</span><span class="n">input_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Recursively copies the input directory</span>
+    <span class="sd">&quot;&quot;&quot;Recursively copies the input directory.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        input_dir (Path): input directory</span>
@@ -325,8 +323,7 @@
 
 
 <div class="viewcode-block" id="get_utcnow_time"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.get_utcnow_time">[docs]</a><span class="k">def</span> <span class="nf">get_utcnow_time</span><span class="p">(</span><span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return string with current utc time in chosen format</span>
+    <span class="sd">&quot;&quot;&quot;Return string with current utc time in chosen format.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        format (str): format string. if None &quot;%y%m%d.%H%M%S&quot; will be used.</span>
@@ -341,9 +338,10 @@
 
 
 <div class="viewcode-block" id="format_metric"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.format_metric">[docs]</a><span class="k">def</span> <span class="nf">format_metric</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Format metric. Metric will be returned in the scientific format if 4</span>
-<span class="sd">    decimal chars are not enough (metric value lower than 1e-4)</span>
+    <span class="sd">&quot;&quot;&quot;Format metric.</span>
+
+<span class="sd">    Metric will be returned in the scientific format if 4</span>
+<span class="sd">    decimal chars are not enough (metric value lower than 1e-4).</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        name (str): metric name</span>
@@ -355,11 +353,12 @@
 
 
 <div class="viewcode-block" id="get_fn_default_params"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.get_fn_default_params">[docs]</a><span class="k">def</span> <span class="nf">get_fn_default_params</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">exclude</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return default parameters of Callable.</span>
+    <span class="sd">&quot;&quot;&quot;Return default parameters of Callable.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        fn (Callable[..., Any]): target Callable</span>
 <span class="sd">        exclude (List[str]): exclude list of parameters</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: contains default parameters of `fn`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -374,11 +373,12 @@
 
 
 <div class="viewcode-block" id="get_fn_argsnames"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.get_fn_argsnames">[docs]</a><span class="k">def</span> <span class="nf">get_fn_argsnames</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">exclude</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Return parameter names of Callable.</span>
+    <span class="sd">&quot;&quot;&quot;Return parameter names of Callable.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        fn (Callable[..., Any]): target Callable</span>
 <span class="sd">        exclude (List[str]): exclude list of parameters</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        list: contains parameter names of `fn`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -394,8 +394,10 @@
 <span class="sd">    Check that function end with pass statement</span>
 <span class="sd">    (probably does nothing in any way).</span>
 <span class="sd">    Mainly used to filter callbacks with empty on_{event} methods.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        fn (Callable[..., Any]): target Callable</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        bool: True if there is pass in the first indentation level of fn</span>
 <span class="sd">            and nothing happens before it, False in any other case.</span>

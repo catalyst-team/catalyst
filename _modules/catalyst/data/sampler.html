@@ -254,7 +254,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.data.sampler</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -266,9 +266,9 @@
 
 
 <div class="viewcode-block" id="BalanceClassSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.BalanceClassSampler">[docs]</a><span class="k">class</span> <span class="nc">BalanceClassSampler</span><span class="p">(</span><span class="n">Sampler</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Abstraction over data sampler. Allows you to create stratified sample</span>
-<span class="sd">    on unbalanced classes.</span>
+    <span class="sd">&quot;&quot;&quot;Abstraction over data sampler.</span>
+
+<span class="sd">    Allows you to create stratified sample on unbalanced classes.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="BalanceClassSampler.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.BalanceClassSampler.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;downsampling&quot;</span><span class="p">):</span>
@@ -333,20 +333,7 @@
 
 <div class="viewcode-block" id="MiniEpochSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.MiniEpochSampler">[docs]</a><span class="k">class</span> <span class="nc">MiniEpochSampler</span><span class="p">(</span><span class="n">Sampler</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Sampler iterates mini epochs from the dataset</span>
-<span class="sd">    used by ``mini_epoch_len``</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        data_len (int): Size of the dataset</span>
-<span class="sd">        mini_epoch_len (int): Num samples from the dataset used in one</span>
-<span class="sd">            mini epoch.</span>
-<span class="sd">        drop_last (bool): If ``True``, sampler will drop the last batches if</span>
-<span class="sd">            its size would be less than ``batches_per_epoch``</span>
-<span class="sd">        shuffle (str): one of  ``[&quot;always&quot;, &quot;real_epoch&quot;, None]``.</span>
-<span class="sd">            The sampler will shuffle indices</span>
-<span class="sd">            &gt; &quot;per_mini_epoch&quot; -- every mini epoch (every ``__iter__`` call)</span>
-<span class="sd">            &gt; &quot;per_epoch&quot; -- every real epoch</span>
-<span class="sd">            &gt; None -- don&#39;t shuffle</span>
+<span class="sd">    Sampler iterates mini epochs from the dataset used by ``mini_epoch_len``.</span>
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; MiniEpochSampler(len(dataset), mini_epoch_len=100)</span>
@@ -356,13 +343,26 @@
 <span class="sd">        &gt;&gt;&gt;     shuffle=&quot;per_epoch&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="MiniEpochSampler.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.MiniEpochSampler.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">data_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">mini_epoch_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">drop_last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">shuffle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            data_len (int): Size of the dataset</span>
+<span class="sd">            mini_epoch_len (int): Num samples from the dataset used in one</span>
+<span class="sd">                mini epoch.</span>
+<span class="sd">            drop_last (bool): If ``True``, sampler will drop the last batches</span>
+<span class="sd">                if its size would be less than ``batches_per_epoch``</span>
+<span class="sd">            shuffle (str): one of  ``&quot;always&quot;``, ``&quot;real_epoch&quot;``, or `None``.</span>
+<span class="sd">                The sampler will shuffle indices</span>
+<span class="sd">                &gt; &quot;per_mini_epoch&quot; - every mini epoch (every ``__iter__`` call)</span>
+<span class="sd">                &gt; &quot;per_epoch&quot; -- every real epoch</span>
+<span class="sd">                &gt; None -- don&#39;t shuffle</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">data_len</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">data_len</span><span class="p">)</span>
@@ -388,9 +388,10 @@
                 <span class="sa">f</span><span class="s2">&quot;Shuffle must be one of [&#39;per_mini_epoch&#39;, &#39;per_epoch&#39;]. &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="n">shuffle</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">shuffle_type</span> <span class="o">=</span> <span class="n">shuffle</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shuffle_type</span> <span class="o">=</span> <span class="n">shuffle</span></div>
 
-<div class="viewcode-block" id="MiniEpochSampler.shuffle"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.MiniEpochSampler.shuffle">[docs]</a>    <span class="k">def</span> <span class="nf">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MiniEpochSampler.shuffle"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.MiniEpochSampler.shuffle">[docs]</a>    <span class="k">def</span> <span class="nf">shuffle</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shuffle_type</span> <span class="o">==</span> <span class="s2">&quot;per_mini_epoch&quot;</span> <span class="ow">or</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">shuffle_type</span> <span class="o">==</span> <span class="s2">&quot;per_epoch&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_i</span> <span class="o">==</span> <span class="mi">0</span>
         <span class="p">):</span>
@@ -403,6 +404,7 @@
                 <span class="p">)</span></div>
 
 <div class="viewcode-block" id="MiniEpochSampler.__iter__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.MiniEpochSampler.__iter__">[docs]</a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_i</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">divider</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shuffle</span><span class="p">()</span>
 
@@ -418,6 +420,10 @@
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MiniEpochSampler.__len__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.MiniEpochSampler.__len__">[docs]</a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            int: length of the mini-epoch</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mini_epoch_len</span></div></div>
 
 
@@ -434,25 +440,35 @@
 
 <span class="sd">    .. note::</span>
 <span class="sd">        Sampler is assumed to be of constant size.</span>
-
-<span class="sd">    Arguments:</span>
-<span class="sd">        sampler: Sampler used for subsampling.</span>
-<span class="sd">        num_replicas (optional): Number of processes participating in</span>
-<span class="sd">            distributed training.</span>
-<span class="sd">        rank (optional): Rank of the current process within num_replicas.</span>
-<span class="sd">        shuffle (optional): If true (default), sampler will shuffle the indices</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span> <span class="n">num_replicas</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rank</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="DistributedSamplerWrapper.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.DistributedSamplerWrapper.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">sampler</span><span class="p">,</span>
+        <span class="n">num_replicas</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">rank</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">shuffle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            sampler: Sampler used for subsampling</span>
+<span class="sd">            num_replicas (int, optional): Number of processes participating in</span>
+<span class="sd">                distributed training</span>
+<span class="sd">            rank (int, optional): Rank of the current process</span>
+<span class="sd">                within ``num_replicas``</span>
+<span class="sd">            shuffle (bool, optional): If true (default),</span>
+<span class="sd">                sampler will shuffle the indices</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DistributedSamplerWrapper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">DatasetFromSampler</span><span class="p">(</span><span class="n">sampler</span><span class="p">),</span>
             <span class="n">num_replicas</span><span class="o">=</span><span class="n">num_replicas</span><span class="p">,</span>
             <span class="n">rank</span><span class="o">=</span><span class="n">rank</span><span class="p">,</span>
             <span class="n">shuffle</span><span class="o">=</span><span class="n">shuffle</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span></div>
 
 <div class="viewcode-block" id="DistributedSamplerWrapper.__iter__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.DistributedSamplerWrapper.__iter__">[docs]</a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">DatasetFromSampler</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="p">)</span>
         <span class="n">indexes_of_indexes</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">()</span>
         <span class="n">subsampler_indexes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span>

@@ -268,8 +268,8 @@
 
 
 <span class="k">def</span> <span class="nf">_decode_dict</span><span class="p">(</span><span class="n">dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Decode bytes values in the dictionary to UTF-8</span>
+    <span class="sd">&quot;&quot;&quot;Decode bytes values in the dictionary to UTF-8.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        dictionary: a dict</span>
 
@@ -284,8 +284,7 @@
 
 
 <div class="viewcode-block" id="get_environment_vars"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.sys.get_environment_vars">[docs]</a><span class="k">def</span> <span class="nf">get_environment_vars</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates a dictionary with environment variables</span>
+    <span class="sd">&quot;&quot;&quot;Creates a dictionary with environment variables.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: environment variables</span>
@@ -337,6 +336,9 @@
 
 
 <div class="viewcode-block" id="list_pip_packages"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.sys.list_pip_packages">[docs]</a><span class="k">def</span> <span class="nf">list_pip_packages</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    @TODO: Docs. Contribution is welcome</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">devnull</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
@@ -354,6 +356,9 @@
 
 
 <div class="viewcode-block" id="list_conda_packages"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.sys.list_conda_packages">[docs]</a><span class="k">def</span> <span class="nf">list_conda_packages</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    @TODO: Docs. Contribution is welcome</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="n">conda_meta_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;conda-meta&quot;</span>
     <span class="k">if</span> <span class="n">conda_meta_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
@@ -382,7 +387,7 @@
     <span class="n">experiment_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">configs_path</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Saves config, environment variables and package list in JSON into logdir</span>
+<span class="sd">    Saves config, environment variables and package list in JSON into logdir.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        experiment_config (dict): experiment config</span>

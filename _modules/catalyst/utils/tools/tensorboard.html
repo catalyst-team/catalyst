@@ -302,19 +302,14 @@
 
 
 <div class="viewcode-block" id="EventReadingException"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.tools.tensorboard.EventReadingException">[docs]</a><span class="k">class</span> <span class="nc">EventReadingException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An exception that correspond to an event file reading error</span>
-<span class="sd">    &quot;&quot;&quot;</span></div>
+    <span class="sd">&quot;&quot;&quot;An exception that correspond to an event file reading error.&quot;&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="EventsFileReader"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.tools.tensorboard.EventsFileReader">[docs]</a><span class="k">class</span> <span class="nc">EventsFileReader</span><span class="p">(</span><span class="n">Iterable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An iterator over a Tensorboard events file</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;An iterator over a Tensorboard events file.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="EventsFileReader.__init__"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.tools.tensorboard.EventsFileReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events_file</span><span class="p">:</span> <span class="n">BinaryIO</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialize an iterator over an events file</span>
+        <span class="sd">&quot;&quot;&quot;Initialize an iterator over an events file.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            events_file: An opened file-like object.</span>
@@ -322,8 +317,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_events_file</span> <span class="o">=</span> <span class="n">events_file</span></div>
 
     <span class="k">def</span> <span class="nf">_read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read exactly next `size` bytes from the current stream.</span>
+        <span class="sd">&quot;&quot;&quot;Read exactly next `size` bytes from the current stream.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            size: A size in bytes to be read.</span>
@@ -346,8 +340,7 @@
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span> <span class="nf">_read_and_check</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Read and check data described by a format string.</span>
+        <span class="sd">&quot;&quot;&quot;Read and check data described by a format string.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            size:  A size in bytes to be read.</span>
@@ -370,8 +363,7 @@
         <span class="k">return</span> <span class="n">data</span>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Event</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Iterates over events in the current events file</span>
+        <span class="sd">&quot;&quot;&quot;Iterates over events in the current events file.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            An Event object</span>
@@ -396,8 +388,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_scalar</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Decode an scalar event</span>
+    <span class="sd">&quot;&quot;&quot;Decode an scalar event.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        value: A value field of an event</span>
@@ -411,8 +402,7 @@
 
 
 <span class="k">def</span> <span class="nf">_get_image</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Decode an image event</span>
+    <span class="sd">&quot;&quot;&quot;Decode an image event.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        value: A value field of an event</span>
@@ -429,9 +419,10 @@
 
 
 <div class="viewcode-block" id="SummaryReader"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.tools.tensorboard.SummaryReader">[docs]</a><span class="k">class</span> <span class="nc">SummaryReader</span><span class="p">(</span><span class="n">Iterable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Iterates over events in all the files in the current logdir.</span>
-<span class="sd">    Only scalars and images are supported at the moment.</span>
+    <span class="sd">&quot;&quot;&quot;Iterates over events in all the files in the current logdir.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Only scalars and images are supported at the moment.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_DECODERS</span> <span class="o">=</span> <span class="p">{</span>
@@ -445,8 +436,7 @@
         <span class="n">tag_filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">types</span><span class="p">:</span> <span class="n">Iterable</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;scalar&quot;</span><span class="p">,),</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initalize new summary reader</span>
+        <span class="sd">&quot;&quot;&quot;Initalize new summary reader.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            logdir: A directory with Tensorboard summary data</span>
@@ -469,8 +459,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid type name&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_decode_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SummaryItem</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Convert events to `SummaryItem` instances</span>
+        <span class="sd">&quot;&quot;&quot;Convert events to `SummaryItem` instances.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            events: An iterable with events objects</span>
@@ -501,8 +490,7 @@
                     <span class="k">yield</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_check_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Check if a tag matches the current tag filter</span>
+        <span class="sd">&quot;&quot;&quot;Check if a tag matches the current tag filter.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            tag: A string with tag</span>
@@ -513,8 +501,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag_filter</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">tag</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tag_filter</span>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SummaryItem</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Iterate over events in all the files in the current logdir</span>
+        <span class="sd">&quot;&quot;&quot;Iterate over events in all the files in the current logdir.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A generator with `SummaryItem` objects</span>

@@ -271,9 +271,11 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculating F1-score from precision and recall to reduce computation</span>
 <span class="sd">    redundancy.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        precision_value: precision (0-1)</span>
 <span class="sd">        recall_value: recall (0-1)</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        F1 score (0-1)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -282,13 +284,15 @@
     <span class="k">return</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">denominator</span></div>
 
 
-<div class="viewcode-block" id="precision"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.ppv_tpr_f1_meter.precision">[docs]</a><span class="k">def</span> <span class="nf">precision</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<div class="viewcode-block" id="precision"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.ppv_tpr_f1_meter.precision">[docs]</a><span class="k">def</span> <span class="nf">precision</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates precision (a.k.a. positive predictive value) for binary</span>
 <span class="sd">    classification and segmentation.</span>
+
 <span class="sd">    Args:</span>
-<span class="sd">        tp: number of true positives</span>
-<span class="sd">        fp: number of false positives</span>
+<span class="sd">        tp (int): number of true positives</span>
+<span class="sd">        fp (int): number of false positives</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        precision value (0-1)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -298,13 +302,15 @@
     <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">fp</span> <span class="o">/</span> <span class="p">(</span><span class="n">tp</span> <span class="o">+</span> <span class="n">fp</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="recall"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.ppv_tpr_f1_meter.recall">[docs]</a><span class="k">def</span> <span class="nf">recall</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<div class="viewcode-block" id="recall"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.ppv_tpr_f1_meter.recall">[docs]</a><span class="k">def</span> <span class="nf">recall</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates recall (a.k.a. true positive rate) for binary classification and</span>
-<span class="sd">    segmentation</span>
+<span class="sd">    segmentation.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        tp: number of true positives</span>
 <span class="sd">        fn: number of false negatives</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        recall value (0-1)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -322,31 +328,30 @@
 <span class="sd">    use multiple instances of this class for multi-label cases.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+<div class="viewcode-block" id="PrecisionRecallF1ScoreMeter.__init__"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor method for the `` PrecisionRecallF1ScoreMeter`` class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">PrecisionRecallF1ScoreMeter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="PrecisionRecallF1ScoreMeter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PrecisionRecallF1ScoreMeter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Resets true positive, false positive and false negative counts to 0.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tp_fp_fn_counts</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PrecisionRecallF1ScoreMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+<div class="viewcode-block" id="PrecisionRecallF1ScoreMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Thresholds predictions and calculates the true positives,</span>
 <span class="sd">        false positives, and false negatives in comparison to the target.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            output (torch.Tensor):</span>
-<span class="sd">                prediction after activation function</span>
+<span class="sd">            output (torch.Tensor): prediction after activation function</span>
 <span class="sd">                shape should be (batch_size, ...), but works with any shape</span>
-<span class="sd">            target (torch.Tensor):</span>
-<span class="sd">                label (binary)</span>
+<span class="sd">            target (torch.Tensor): label (binary),</span>
 <span class="sd">                shape should be the same as output&#39;s shape</span>
-<span class="sd">        Returns:</span>
-<span class="sd">            None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">output</span> <span class="o">=</span> <span class="p">(</span><span class="n">output</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
 

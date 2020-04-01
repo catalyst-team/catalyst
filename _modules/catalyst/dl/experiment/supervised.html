@@ -279,8 +279,7 @@
 
 
 <div class="viewcode-block" id="SupervisedExperiment"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.supervised.SupervisedExperiment">[docs]</a><span class="k">class</span> <span class="nc">SupervisedExperiment</span><span class="p">(</span><span class="n">BaseExperiment</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Supervised experiment</span>
+    <span class="sd">&quot;&quot;&quot;Supervised experiment.</span>
 
 <span class="sd">    The main difference with BaseExperiment that it will</span>
 <span class="sd">    add several callbacks by default if you haven&#39;t.</span>
@@ -314,6 +313,7 @@
 <span class="sd">            stage (str): name of stage. It should start with `infer` if you</span>
 <span class="sd">                don&#39;t need default callbacks, as they required only for</span>
 <span class="sd">                training stages.</span>
+
 <span class="sd">        Returns:</span>
 <span class="sd">            List[Callback]: list of callbacks for experiment</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -341,7 +341,9 @@
 
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_timer&quot;</span><span class="p">,</span> <span class="n">TimerCallback</span><span class="p">))</span>
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_metrics&quot;</span><span class="p">,</span> <span class="n">MetricManagerCallback</span><span class="p">))</span>
-            <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_validation&quot;</span><span class="p">,</span> <span class="n">ValidationManagerCallback</span><span class="p">))</span>
+            <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">(</span><span class="s2">&quot;_validation&quot;</span><span class="p">,</span> <span class="n">ValidationManagerCallback</span><span class="p">)</span>
+            <span class="p">)</span>
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_saver&quot;</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">))</span>
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_console&quot;</span><span class="p">,</span> <span class="n">ConsoleLogger</span><span class="p">))</span>
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_tensorboard&quot;</span><span class="p">,</span> <span class="n">TensorboardLogger</span><span class="p">))</span>

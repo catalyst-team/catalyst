@@ -317,15 +317,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the runner&#39;s model instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns the runner&#39;s model instance.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span>
 
     <span class="nd">@model</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Model</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Model</span><span class="p">]]):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Setter for the runner&#39;s model, useful for experiment tracing.</span>
+        <span class="sd">&quot;&quot;&quot;Setter for the runner&#39;s model, useful for experiment tracing.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            value (Union[Model, Dict[str, Model]]): new model.</span>
@@ -359,15 +356,12 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">device</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Device</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the runner&#39;s device instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns the runner&#39;s device instance.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span>
 
     <span class="nd">@device</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Device</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Setter for the runner&#39;s device</span>
+        <span class="sd">&quot;&quot;&quot;Setter for the runner&#39;s device.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            value (Device): new torch device.</span>
@@ -386,7 +380,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inner method for children&#39;s classes</span>
 <span class="sd">        to specify types for Runners&#39; Experiment and State.</span>
@@ -409,8 +403,7 @@
     <span class="k">def</span> <span class="nf">_get_experiment_components</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Model</span><span class="p">,</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span><span class="p">,</span> <span class="n">Device</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Inner method for `Experiment` components preparation.</span>
+        <span class="sd">&quot;&quot;&quot;Inner method for `Experiment` components preparation.</span>
 
 <span class="sd">        Check available torch device, takes model from the experiment</span>
 <span class="sd">        and creates stage-specified criterion, optimizer, scheduler for it.</span>
@@ -458,8 +451,7 @@
         <span class="n">device</span><span class="p">:</span> <span class="n">Device</span><span class="p">,</span>
         <span class="n">callbacks</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callback</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">State</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Inner method for `State` preparation.</span>
+        <span class="sd">&quot;&quot;&quot;Inner method for `State` preparation.</span>
 
 <span class="sd">        Migrates State parameters from previous stage if possible,</span>
 <span class="sd">        create new State for current stage.</span>
@@ -523,8 +515,7 @@
         <span class="k">return</span> <span class="n">state</span>
 
     <span class="k">def</span> <span class="nf">_get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callback</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Inner method for `Callbacks` preparation.</span>
+        <span class="sd">&quot;&quot;&quot;Inner method for `Callbacks` preparation.</span>
 
 <span class="sd">        Takes callbacks from the Experiment</span>
 <span class="sd">        and filters them for distributed master/worker cases.</span>
@@ -564,9 +555,8 @@
 
         <span class="k">return</span> <span class="n">callbacks</span>
 
-    <span class="k">def</span> <span class="nf">_prepare_for_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Inner method to prepare `Runner` for the specified stage.</span>
+    <span class="k">def</span> <span class="nf">_prepare_for_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Inner method to prepare `Runner` for the specified stage.</span>
 
 <span class="sd">        Sets `Experiment` initial seed.</span>
 <span class="sd">        Prepares experiment components with `self._get_experiment_components`.</span>
@@ -600,9 +590,8 @@
             <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_prepare_for_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Inner method to prepare `Runner` for the specified stage and epoch.</span>
+    <span class="k">def</span> <span class="nf">_prepare_for_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Inner method to prepare `Runner` for the specified stage and epoch.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): stage name of interest,</span>
@@ -611,9 +600,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">_run_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Inner method to run specified event on Runners&#39; callbacks.</span>
+    <span class="k">def</span> <span class="nf">_run_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Inner method to run specified event on Runners&#39; callbacks.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            event(str): event name to run on callbacks.</span>
@@ -629,8 +617,7 @@
     <span class="k">def</span> <span class="nf">_batch2device</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">device</span><span class="p">:</span> <span class="n">Device</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Inner method to transfer incoming data batches to Runners&#39; device.</span>
+        <span class="sd">&quot;&quot;&quot;Inner method to transfer incoming data batches to Runners&#39; device.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            batch (Mapping[str, Any]): dictionary with data batches</span>
@@ -644,9 +631,8 @@
         <span class="n">output</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">any2device</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">output</span>
 
-    <span class="k">def</span> <span class="nf">_run_train_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Inner method to run train step on specified data batch.</span>
+    <span class="k">def</span> <span class="nf">_run_train_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Inner method to run train step on specified data batch.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            batch (Mapping[str, Any]): dictionary with data batches</span>
@@ -659,8 +645,7 @@
     <span class="k">def</span> <span class="nf">predict_batch</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Run model inference on specified data batch.</span>
+        <span class="sd">&quot;&quot;&quot;Run model inference on specified data batch.</span>
 
 <span class="sd">        .. warning::</span>
 <span class="sd">            You should not override this method. If you need specific model</span>
@@ -678,7 +663,7 @@
         <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">output</span></div>
 
-    <span class="k">def</span> <span class="nf">_run_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="nf">_run_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inner method to run train step on specified data batch,</span>
 <span class="sd">        with batch callbacks events.</span>
@@ -695,7 +680,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_train_step</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;on_batch_end&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_run_loader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_run_loader</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inner method to pass whole DataLoader through Runner,</span>
 <span class="sd">        with loader callbacks events.</span>
@@ -720,7 +705,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">need_early_stop</span> <span class="o">=</span> <span class="kc">False</span>
                 <span class="k">break</span>
 
-    <span class="k">def</span> <span class="nf">_run_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_run_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inner method to run epoch on Runner,</span>
 <span class="sd">        with epoch callbacks events.</span>
@@ -769,7 +754,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_run_loader</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;on_loader_end&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_run_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_run_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inner method to run stage on Runner,</span>
 <span class="sd">        with stage callbacks events.</span>
@@ -800,9 +785,8 @@
             <span class="n">state</span><span class="o">.</span><span class="n">epoch</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;on_stage_end&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="_Runner.run_experiment"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.runner._Runner.run_experiment">[docs]</a>    <span class="k">def</span> <span class="nf">run_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment</span><span class="p">:</span> <span class="n">_Experiment</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Starts the experiment.</span>
+<div class="viewcode-block" id="_Runner.run_experiment"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.runner._Runner.run_experiment">[docs]</a>    <span class="k">def</span> <span class="nf">run_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment</span><span class="p">:</span> <span class="n">_Experiment</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_Runner&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Starts the experiment.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            experiment (_Experiment): Experiment instance to use for Runner.</span>

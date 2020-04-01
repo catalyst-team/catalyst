@@ -254,19 +254,32 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.contrib.nn.optimizers.radam</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span> <span class="nn">math</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.optim.optimizer</span> <span class="kn">import</span> <span class="n">Optimizer</span>
 
 
 <div class="viewcode-block" id="RAdam"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.optimizers.radam.RAdam">[docs]</a><span class="k">class</span> <span class="nc">RAdam</span><span class="p">(</span><span class="n">Optimizer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Implements RAdam algorithm.</span>
+
+<span class="sd">    It has been proposed in `On the Variance of the Adaptive Learning Rate</span>
+<span class="sd">    and Beyond`_.</span>
+
+<span class="sd">    @TODO: Docs (add `Example`). Contribution is welcome</span>
+
+<span class="sd">    Main origins of inspiration:</span>
+<span class="sd">        https://github.com/LiyuanLucasLiu/RAdam (Apache-2.0 License)</span>
+
+<span class="sd">    .. _On the Variance of the Adaptive Learning Rate and Beyond:</span>
+<span class="sd">        https://arxiv.org/abs/1908.03265</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="RAdam.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.optimizers.radam.RAdam.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">),</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mi">0</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Taken from https://github.com/LiyuanLucasLiu/RAdam</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
         <span class="n">defaults</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="n">lr</span><span class="p">,</span>
             <span class="s2">&quot;betas&quot;</span><span class="p">:</span> <span class="n">betas</span><span class="p">,</span>
@@ -277,10 +290,16 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">RAdam</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">defaults</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">RAdam</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setstate__</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
-<div class="viewcode-block" id="RAdam.step"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.optimizers.radam.RAdam.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closure</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="RAdam.step"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.optimizers.radam.RAdam.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closure</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Makes optimizer step.</span>
 
+<span class="sd">        Args:</span>
+<span class="sd">            closure (callable, optional): A closure that reevaluates</span>
+<span class="sd">                the model and returns the loss.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">closure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">loss</span> <span class="o">=</span> <span class="n">closure</span><span class="p">()</span>

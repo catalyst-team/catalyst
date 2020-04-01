@@ -284,7 +284,7 @@
 
 
 <div class="viewcode-block" id="RegistryException"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.registry.RegistryException">[docs]</a><span class="k">class</span> <span class="nc">RegistryException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Exception class for all registry errors&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Exception class for all registry errors.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="RegistryException.__init__"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.registry.RegistryException.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init&quot;&quot;&quot;</span>
@@ -293,7 +293,7 @@
 
 <div class="viewcode-block" id="Registry"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.registry.Registry">[docs]</a><span class="k">class</span> <span class="nc">Registry</span><span class="p">(</span><span class="n">collections</span><span class="o">.</span><span class="n">MutableMapping</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Universal class allowing to add and access various factories by name</span>
+<span class="sd">    Universal class allowing to add and access various factories by name.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Registry.__init__"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.registry.Registry.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -386,7 +386,7 @@
 <div class="viewcode-block" id="Registry.late_add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.registry.Registry.late_add">[docs]</a>    <span class="k">def</span> <span class="nf">late_add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cb</span><span class="p">:</span> <span class="n">LateAddCallbak</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Allows to prevent cycle imports by delaying some imports till next</span>
-<span class="sd">        registry query</span>
+<span class="sd">        registry query.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            cb: Callback receives registry and must call it&#39;s methods to</span>
@@ -399,7 +399,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds all factories present in module.</span>
-<span class="sd">        If ``__all__`` attribute is present, takes ony what mentioned in it</span>
+<span class="sd">        If ``__all__`` attribute is present, takes ony what mentioned in it.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            module: module to scan</span>
@@ -438,7 +438,7 @@
 <div class="viewcode-block" id="Registry.get"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.registry.Registry.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Factory</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Retrieves factory, without creating any objects with it</span>
-<span class="sd">        or raises error</span>
+<span class="sd">        or raises error.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            name: factory name</span>
@@ -462,7 +462,7 @@
 
 <div class="viewcode-block" id="Registry.get_if_str"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.registry.Registry.get_if_str">[docs]</a>    <span class="k">def</span> <span class="nf">get_if_str</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Factory</span><span class="p">]):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns object from the registry if ``obj`` type is string</span>
+<span class="sd">        Returns object from the registry if ``obj`` type is string.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
@@ -471,7 +471,7 @@
 <div class="viewcode-block" id="Registry.get_instance"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.registry.Registry.get_instance">[docs]</a>    <span class="k">def</span> <span class="nf">get_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">meta_factory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates instance by calling specified factory</span>
-<span class="sd">        with instantiate_fn</span>
+<span class="sd">        with ``instantiate_fn``.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            name: factory name</span>
@@ -532,39 +532,39 @@
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_factories</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Returns a string of registered items&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns a string of registered items.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Returns a string representation of registered items&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns a string representation of registered items.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
 
     <span class="c1"># mapping methods</span>
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Returns length of registered items&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns length of registered items.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_do_late_add</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Factory</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Returns a value from the registry by name&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns a value from the registry by name.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Iterates over all registered items&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Iterates over all registered items.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_do_late_add</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factories</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Check if a particular name was registered&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Check if a particular name was registered.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_do_late_add</span><span class="p">()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factories</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">factory</span><span class="p">:</span> <span class="n">Factory</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Add a new factory by giving name&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Add a new factory by giving name.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">factory</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Removes a factory by giving name&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Removes a factory by giving name.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_factories</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">)</span></div>
 
 

@@ -271,9 +271,7 @@
 
 
 <div class="viewcode-block" id="GanExperiment"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.gan.GanExperiment">[docs]</a><span class="k">class</span> <span class="nc">GanExperiment</span><span class="p">(</span><span class="n">BaseExperiment</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    One-staged GAN experiment</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;One-staged GAN experiment.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="GanExperiment.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.gan.GanExperiment.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">phase2callbacks</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
@@ -320,7 +318,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">wrap_callbacks</span><span class="p">(</span><span class="n">phase2callbacks</span> <span class="ow">or</span> <span class="p">{})</span></div>
 
 <div class="viewcode-block" id="GanExperiment.wrap_callbacks"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.gan.GanExperiment.wrap_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">wrap_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase2callbacks</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Phase wrapping procedure for callbacks&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Phase wrapping procedure for callbacks.&quot;&quot;&quot;</span>
         <span class="n">discriminator_phase_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_additional_state_kwargs</span><span class="p">[</span>
             <span class="s2">&quot;discriminator_train_phase&quot;</span>
         <span class="p">]</span>
@@ -351,6 +349,7 @@
                 <span class="p">)</span></div>
 
 <div class="viewcode-block" id="GanExperiment.get_callbacks"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.gan.GanExperiment.get_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Callback]&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
         <span class="n">callbacks</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_callbacks</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">)</span>
         <span class="n">default_callbacks</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span>

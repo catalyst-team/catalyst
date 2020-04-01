@@ -268,30 +268,29 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This meter can handle MSE and RMSE.</span>
 <span class="sd">    Root calculation can be toggled(not calculated by default).</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        root (bool): Toggle between calculation of RMSE(True) and MSE(False).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="MSEMeter.__init__"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.msemeter.MSEMeter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            root (bool): Toggle between calculation of</span>
+<span class="sd">                RMSE (True) and MSE (False)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">MSEMeter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span></div>
 
-<div class="viewcode-block" id="MSEMeter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.msemeter.MSEMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Reset meter number of elements and squared error sum.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="MSEMeter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.msemeter.MSEMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Reset meter number of elements and squared error sum.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sesum</span> <span class="o">=</span> <span class="mf">0.0</span></div>
 
-<div class="viewcode-block" id="MSEMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.msemeter.MSEMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update squared error stored sum and number of elements</span>
+<div class="viewcode-block" id="MSEMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.msemeter.MSEMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Update squared error stored sum and number of elements.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            output (Tensor): Model output tensor or numpy array.</span>
-<span class="sd">            target (Tensor): Target tensor or numpy array.</span>
+<span class="sd">            output (Tensor): Model output tensor or numpy array</span>
+<span class="sd">            target (Tensor): Target tensor or numpy array</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
             <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
@@ -300,11 +299,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sesum</span> <span class="o">+=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">output</span> <span class="o">-</span> <span class="n">target</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MSEMeter.value"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.msemeter.MSEMeter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculate MSE and return RMSE or MSE</span>
+        <span class="sd">&quot;&quot;&quot;Calculate MSE and return RMSE or MSE.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            float: Root of MSE if `self.root` is True else MSE.</span>
+<span class="sd">            float: Root of MSE if `self.root` is True else MSE</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sesum</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mse</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="k">else</span> <span class="n">mse</span></div></div>

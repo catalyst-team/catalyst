@@ -260,20 +260,29 @@
 
 
 <div class="viewcode-block" id="ValidationManagerCallback"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.validation.ValidationManagerCallback">[docs]</a><span class="k">class</span> <span class="nc">ValidationManagerCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A callback to aggregate state.valid_metrics from state.epoch_metrics.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;A callback to aggregate state.valid_metrics from state.epoch_metrics.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ValidationManagerCallback.__init__"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.validation.ValidationManagerCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Validation</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">Master</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
 
-<div class="viewcode-block" id="ValidationManagerCallback.on_epoch_start"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.validation.ValidationManagerCallback.on_epoch_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
+<div class="viewcode-block" id="ValidationManagerCallback.on_epoch_start"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.validation.ValidationManagerCallback.on_epoch_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Epoch start hook.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            state (State): current state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">state</span><span class="o">.</span><span class="n">valid_metrics</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">state</span><span class="o">.</span><span class="n">is_best_valid</span> <span class="o">=</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="ValidationManagerCallback.on_epoch_end"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.validation.ValidationManagerCallback.on_epoch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
+<div class="viewcode-block" id="ValidationManagerCallback.on_epoch_end"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.validation.ValidationManagerCallback.on_epoch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Epoch end hook.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            state (State): current state</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">stage_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">):</span>
             <span class="k">return</span>
 

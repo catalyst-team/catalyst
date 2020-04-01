@@ -262,7 +262,8 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Applies OneHot vectorization to a giving scalar, optional with</span>
-<span class="sd">    label smoothing from https://arxiv.org/abs/1812.01187</span>
+<span class="sd">    label smoothing as described in `Bag of Tricks for Image Classification</span>
+<span class="sd">    with Convolutional Neural Networks`_.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        label (int): scalar value to be vectorized</span>
@@ -273,6 +274,9 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        np.ndarray: a one-hot vector with shape ``(num_classes,)``</span>
+
+<span class="sd">    .. _Bag of Tricks for Image Classification with</span>
+<span class="sd">        Convolutional Neural Networks: https://arxiv.org/abs/1812.01187</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="p">(</span>
         <span class="n">num_classes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_classes</span> <span class="o">&gt;</span> <span class="mi">0</span>

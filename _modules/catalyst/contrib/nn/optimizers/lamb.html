@@ -254,7 +254,8 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.contrib.nn.optimizers.lamb</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">collections</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span> <span class="nn">collections</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.optim.optimizer</span> <span class="kn">import</span> <span class="n">Optimizer</span>
@@ -275,19 +276,24 @@
 
 
 <div class="viewcode-block" id="Lamb"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.optimizers.lamb.Lamb">[docs]</a><span class="k">class</span> <span class="nc">Lamb</span><span class="p">(</span><span class="n">Optimizer</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Lamb optimizer&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Implements Lamb algorithm.</span>
+
+<span class="sd">    It has been proposed in `Training BERT in 76 minutes`_.</span>
+
+<span class="sd">    .. _`Training BERT in 76 minutes`:</span>
+<span class="sd">        https://arxiv.org/abs/1904.00962</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Lamb.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.optimizers.lamb.Lamb.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">params</span><span class="p">,</span>
-        <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
-        <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">),</span>
-        <span class="n">eps</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span>
-        <span class="n">weight_decay</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-        <span class="n">adam</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">lr</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+        <span class="n">betas</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.999</span><span class="p">),</span>
+        <span class="n">eps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
+        <span class="n">weight_decay</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">adam</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Implements Lamb algorithm from `Training BERT in 76 minutes`_.</span>
-
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            params (iterable): iterable of parameters to optimize or dicts</span>
 <span class="sd">                defining parameter groups</span>
@@ -301,9 +307,6 @@
 <span class="sd">                (default: 0)</span>
 <span class="sd">            adam (bool, optional): always use trust ratio = 1, which turns</span>
 <span class="sd">                this into Adam. Useful for comparison purposes.</span>
-
-<span class="sd">        .. _`Training BERT in 76 minutes`:</span>
-<span class="sd">            https://arxiv.org/abs/1904.00962</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">lr</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid learning rate: </span><span class="si">{</span><span class="n">lr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -322,8 +325,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">adam</span> <span class="o">=</span> <span class="n">adam</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Lamb</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">defaults</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Lamb.step"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.optimizers.lamb.Lamb.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closure</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Makes optimizer step&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Lamb.step"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.optimizers.lamb.Lamb.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closure</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Makes optimizer step.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            closure (callable, optional): A closure that reevaluates</span>
+<span class="sd">                the model and returns the loss.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">closure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">loss</span> <span class="o">=</span> <span class="n">closure</span><span class="p">()</span>

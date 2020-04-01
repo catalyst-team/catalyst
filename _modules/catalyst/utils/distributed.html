@@ -313,18 +313,14 @@
 
 
 <div class="viewcode-block" id="is_torch_distributed_initialized"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.is_torch_distributed_initialized">[docs]</a><span class="k">def</span> <span class="nf">is_torch_distributed_initialized</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Checks if torch.distributed is available and initialized</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Checks if torch.distributed is available and initialized.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span>
         <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">()</span>
     <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="is_apex_available"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.is_apex_available">[docs]</a><span class="k">def</span> <span class="nf">is_apex_available</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Checks if apex is available</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Checks if apex is available.&quot;&quot;&quot;</span>
     <span class="n">env_apex</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;USE_APEX&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">import</span> <span class="nn">apex</span>  <span class="c1"># noqa: F401</span>
@@ -336,9 +332,7 @@
 
 
 <div class="viewcode-block" id="assert_fp16_available"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.assert_fp16_available">[docs]</a><span class="k">def</span> <span class="nf">assert_fp16_available</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Asserts for installed and available Apex FP16</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Asserts for installed and available Apex FP16.&quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="p">(</span>
         <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">enabled</span>
     <span class="p">),</span> <span class="s2">&quot;fp16 mode requires cudnn backend to be enabled.&quot;</span>
@@ -350,8 +344,7 @@
 
 
 <div class="viewcode-block" id="get_rank"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.get_rank">[docs]</a><span class="k">def</span> <span class="nf">get_rank</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns the rank of the current worker.</span>
+    <span class="sd">&quot;&quot;&quot;Returns the rank of the current worker.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">         int: ``rank`` if torch.distributed is initialized,</span>
@@ -364,9 +357,7 @@
 
 
 <div class="viewcode-block" id="get_distributed_mean"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.get_distributed_mean">[docs]</a><span class="k">def</span> <span class="nf">get_distributed_mean</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Computes distributed mean among all nodes</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Computes distributed mean among all nodes.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">is_torch_distributed_initialized</span><span class="p">():</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
             <span class="n">value</span><span class="p">,</span>
@@ -380,10 +371,12 @@
 
 
 <div class="viewcode-block" id="is_slurm_available"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.is_slurm_available">[docs]</a><span class="k">def</span> <span class="nf">is_slurm_available</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Checks if slurm is available.&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="s2">&quot;SLURM_JOB_NUM_NODES&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span> <span class="ow">and</span> <span class="s2">&quot;SLURM_NODEID&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span></div>
 
 
 <div class="viewcode-block" id="get_slurm_params"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.get_slurm_params">[docs]</a><span class="k">def</span> <span class="nf">get_slurm_params</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
     <span class="n">cmd</span> <span class="o">=</span> <span class="s2">&quot;scontrol show hostnames &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SLURM_JOB_NODELIST&quot;</span><span class="p">]</span>
     <span class="n">nodes</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">getoutput</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
     <span class="n">num_nodes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;SLURM_JOB_NUM_NODES&quot;</span><span class="p">])</span>
@@ -396,6 +389,7 @@
 
 
 <div class="viewcode-block" id="get_distributed_params"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.get_distributed_params">[docs]</a><span class="k">def</span> <span class="nf">get_distributed_params</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
     <span class="n">master_port</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">4</span><span class="p">))</span>
     <span class="n">master_addr</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span>
     <span class="n">cur_node</span><span class="p">,</span> <span class="n">num_nodes</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
@@ -429,6 +423,7 @@
 <div class="viewcode-block" id="get_distributed_env"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.get_distributed_env">[docs]</a><span class="k">def</span> <span class="nf">get_distributed_env</span><span class="p">(</span>
     <span class="n">local_rank</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="p">,</span> <span class="n">use_cuda_visible_devices</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
     <span class="n">env</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
     <span class="n">env</span><span class="p">[</span><span class="s2">&quot;RANK&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">rank</span><span class="p">)</span>
     <span class="n">env</span><span class="p">[</span><span class="s2">&quot;WORLD_SIZE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">world_size</span><span class="p">)</span>
@@ -441,13 +436,15 @@
 
 
 <div class="viewcode-block" id="distributed_run"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.distributed_run">[docs]</a><span class="k">def</span> <span class="nf">distributed_run</span><span class="p">(</span><span class="n">distributed</span><span class="p">,</span> <span class="n">worker_fn</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Distributed run</span>
+    <span class="sd">&quot;&quot;&quot;Distributed run.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        distributed:</span>
 <span class="sd">        worker_fn:</span>
 <span class="sd">        args:</span>
 <span class="sd">        kwargs:</span>
+
+<span class="sd">    @TODO: Docs. Contribution is welcome.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">distributed_params</span> <span class="o">=</span> <span class="n">get_distributed_params</span><span class="p">()</span>
     <span class="n">local_rank</span> <span class="o">=</span> <span class="n">distributed_params</span><span class="p">[</span><span class="s2">&quot;local_rank&quot;</span><span class="p">]</span>
@@ -478,6 +475,7 @@
 
 
 <div class="viewcode-block" id="initialize_apex"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.initialize_apex">[docs]</a><span class="k">def</span> <span class="nf">initialize_apex</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">distributed_params</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">apex</span>
 
     <span class="n">amp_params</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_fn_default_params</span><span class="p">(</span>
@@ -505,7 +503,7 @@
     <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Model</span><span class="p">,</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span><span class="p">,</span> <span class="n">Device</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Returns the processed model, criterion, optimizer, scheduler and device</span>
+<span class="sd">    Returns the processed model, criterion, optimizer, scheduler and device.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        model (Model): torch model</span>

@@ -254,11 +254,37 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.contrib.nn.optimizers.qhadamw</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.optim.optimizer</span> <span class="kn">import</span> <span class="n">Optimizer</span>
 
 
 <div class="viewcode-block" id="QHAdamW"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.optimizers.qhadamw.QHAdamW">[docs]</a><span class="k">class</span> <span class="nc">QHAdamW</span><span class="p">(</span><span class="n">Optimizer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Implements QHAdam algorithm.</span>
+
+<span class="sd">    Combines QHAdam algorithm that was proposed in  `Quasi-hyperbolic momentum</span>
+<span class="sd">    and Adam for deep learning`_ with weight decay decoupling from</span>
+<span class="sd">    `Decoupled Weight Decay Regularization`_ paper.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; optimizer = QHAdamW(</span>
+<span class="sd">        ...     model.parameters(),</span>
+<span class="sd">        ...     lr=3e-4, nus=(0.8, 1.0), betas=(0.99, 0.999))</span>
+<span class="sd">        &gt;&gt;&gt; optimizer.zero_grad()</span>
+<span class="sd">        &gt;&gt;&gt; loss_fn(model(input), target).backward()</span>
+<span class="sd">        &gt;&gt;&gt; optimizer.step()</span>
+
+<span class="sd">    Main origins of inspiration:</span>
+<span class="sd">        https://github.com/iprally/qhadamw-pytorch/blob/master/qhadamw.py</span>
+<span class="sd">        (MIT License)</span>
+
+<span class="sd">    .. _Decoupled Weight Decay Regularization:</span>
+<span class="sd">        https://arxiv.org/abs/1711.05101</span>
+<span class="sd">    .. _Quasi-hyperbolic momentum and Adam for deep learning:</span>
+<span class="sd">        https://arxiv.org/abs/1810.06801</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="QHAdamW.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.optimizers.qhadamw.QHAdamW.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">params</span><span class="p">,</span>
@@ -269,13 +295,6 @@
         <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Combines the weight decay decoupling from AdamW (Decoupled Weight</span>
-<span class="sd">        Decay Regularization. Loshchilov and Hutter, 2019) with QHAdam</span>
-<span class="sd">        (Quasi-hyperbolic momentum and Adam for deep learning. Ma and</span>
-<span class="sd">        Yarats, 2019).</span>
-
-<span class="sd">        https://github.com/iprally/qhadamw-pytorch/blob/master/qhadamw.py</span>
-
 <span class="sd">        Args:</span>
 <span class="sd">            params (iterable):</span>
 <span class="sd">                iterable of parameters to optimize or dicts defining parameter</span>
@@ -294,17 +313,6 @@
 <span class="sd">            weight_decay (float, optional): weight decay</span>
 <span class="sd">                (L2 regularization coefficient, times two)</span>
 <span class="sd">                (default: 0.0)</span>
-<span class="sd">        Example:</span>
-<span class="sd">            &gt;&gt;&gt; optimizer = QHAdamW(</span>
-<span class="sd">            ...     model.parameters(),</span>
-<span class="sd">            ...     lr=3e-4, nus=(0.8, 1.0), betas=(0.99, 0.999))</span>
-<span class="sd">            &gt;&gt;&gt; optimizer.zero_grad()</span>
-<span class="sd">            &gt;&gt;&gt; loss_fn(model(input), target).backward()</span>
-<span class="sd">            &gt;&gt;&gt; optimizer.step()</span>
-<span class="sd">            QHAdam paper:</span>
-<span class="sd">        .. _`(Ma and Yarats, 2019)`: https://arxiv.org/abs/1810.06801</span>
-<span class="sd">            AdamW paper:</span>
-<span class="sd">        .. _`(Loshchilov and Hutter, 2019)`: https://arxiv.org/abs/1711.05101</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">lr</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid learning rate: </span><span class="si">{</span><span class="n">lr</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -326,7 +334,13 @@
         <span class="p">}</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">QHAdamW</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">defaults</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="QHAdamW.step"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.optimizers.qhadamw.QHAdamW.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closure</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="QHAdamW.step"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.optimizers.qhadamw.QHAdamW.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closure</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Makes optimizer step.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            closure (callable, optional): A closure that reevaluates</span>
+<span class="sd">                the model and returns the loss.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">closure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">loss</span> <span class="o">=</span> <span class="n">closure</span><span class="p">()</span>

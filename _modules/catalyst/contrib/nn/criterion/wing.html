@@ -267,12 +267,20 @@
     <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
     <span class="n">curvature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
     <span class="n">reduction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    https://arxiv.org/pdf/1711.06753.pdf</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;The Wing loss.</span>
 
-<span class="sd">    Source https://github.com/BloodAxe/pytorch-toolbelt</span>
-<span class="sd">    See :class:`~pytorch_toolbelt.losses` for details.</span>
+<span class="sd">    It has been proposed in `Wing Loss for Robust Facial Landmark Localisation</span>
+<span class="sd">    with Convolutional Neural Networks`_.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        @TODO: Docs. Contribution is welcome.</span>
+
+<span class="sd">    Main origins of inspiration:</span>
+<span class="sd">        https://github.com/BloodAxe/pytorch-toolbelt (MIT License)</span>
+
+<span class="sd">    .. _Wing Loss for Robust Facial Landmark Localisation with Convolutional</span>
+<span class="sd">        Neural Networks: https://arxiv.org/abs/1711.06753</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">diff_abs</span> <span class="o">=</span> <span class="p">(</span><span class="n">targets</span> <span class="o">-</span> <span class="n">outputs</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
     <span class="n">loss</span> <span class="o">=</span> <span class="n">diff_abs</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
@@ -280,7 +288,9 @@
     <span class="n">idx_smaller</span> <span class="o">=</span> <span class="n">diff_abs</span> <span class="o">&lt;</span> <span class="n">width</span>
     <span class="n">idx_bigger</span> <span class="o">=</span> <span class="n">diff_abs</span> <span class="o">&gt;=</span> <span class="n">width</span>
 
-    <span class="n">loss</span><span class="p">[</span><span class="n">idx_smaller</span><span class="p">]</span> <span class="o">=</span> <span class="n">width</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">diff_abs</span><span class="p">[</span><span class="n">idx_smaller</span><span class="p">]</span> <span class="o">/</span> <span class="n">curvature</span><span class="p">)</span>
+    <span class="n">loss</span><span class="p">[</span><span class="n">idx_smaller</span><span class="p">]</span> <span class="o">=</span> <span class="n">width</span> <span class="o">*</span> <span class="n">torch</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+        <span class="mi">1</span> <span class="o">+</span> <span class="n">diff_abs</span><span class="p">[</span><span class="n">idx_smaller</span><span class="p">]</span> <span class="o">/</span> <span class="n">curvature</span>
+    <span class="p">)</span>
 
     <span class="n">c</span> <span class="o">=</span> <span class="n">width</span> <span class="o">-</span> <span class="n">width</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">width</span> <span class="o">/</span> <span class="n">curvature</span><span class="p">)</span>
     <span class="n">loss</span><span class="p">[</span><span class="n">idx_bigger</span><span class="p">]</span> <span class="o">=</span> <span class="n">loss</span><span class="p">[</span><span class="n">idx_bigger</span><span class="p">]</span> <span class="o">-</span> <span class="n">c</span>
@@ -294,15 +304,40 @@
 
 
 <div class="viewcode-block" id="WingLoss"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.wing.WingLoss">[docs]</a><span class="k">class</span> <span class="nc">WingLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="sd">&quot;&quot;&quot;Creates a criterion that optimizes a Wing loss.</span>
+
+<span class="sd">    It has been proposed in `Wing Loss for Robust Facial Landmark Localisation</span>
+<span class="sd">    with Convolutional Neural Networks`_.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        @TODO: Docs. Contribution is welcome.</span>
+
+<span class="sd">    Main origins of inspiration:</span>
+<span class="sd">        https://github.com/BloodAxe/pytorch-toolbelt</span>
+
+<span class="sd">    .. _Wing Loss for Robust Facial Landmark Localisation with Convolutional</span>
+<span class="sd">        Neural Networks: https://arxiv.org/abs/1711.06753</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="WingLoss.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.wing.WingLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span> <span class="n">curvature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">reduction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span>
     <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            @TODO: Docs. Contribution is welcome.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loss_fn</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
             <span class="n">wing_loss</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">curvature</span><span class="o">=</span><span class="n">curvature</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="n">reduction</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WingLoss.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.wing.WingLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
+<div class="viewcode-block" id="WingLoss.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.wing.WingLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            @TODO: Docs. Contribution is welcome.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_fn</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">loss</span></div></div>
 

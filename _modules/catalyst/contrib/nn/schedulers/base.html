@@ -263,13 +263,10 @@
 
 
 <div class="viewcode-block" id="BaseScheduler"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.schedulers.base.BaseScheduler">[docs]</a><span class="k">class</span> <span class="nc">BaseScheduler</span><span class="p">(</span><span class="n">_LRScheduler</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Base class for all schedulers with momentum update</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Base class for all schedulers with momentum update.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="BaseScheduler.get_momentum"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.schedulers.base.BaseScheduler.get_momentum">[docs]</a>    <span class="k">def</span> <span class="nf">get_momentum</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Function that returns the new momentum for optimizer</span>
+        <span class="sd">&quot;&quot;&quot;Function that returns the new momentum for optimizer.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            List[float]: calculated momentum for every param groups</span>
@@ -277,11 +274,10 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="BaseScheduler.step"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.schedulers.base.BaseScheduler.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Make one scheduler step</span>
+        <span class="sd">&quot;&quot;&quot;Make one scheduler step.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            epoch (int, optional): current epoch&#39;s num</span>
+<span class="sd">            epoch (int, optional): current epoch num</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">epoch</span><span class="p">)</span>
         <span class="n">momentums</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_momentum</span><span class="p">()</span>
@@ -290,7 +286,7 @@
 
 
 <div class="viewcode-block" id="BatchScheduler"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.schedulers.base.BatchScheduler">[docs]</a><span class="k">class</span> <span class="nc">BatchScheduler</span><span class="p">(</span><span class="n">BaseScheduler</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span></div>
 </pre></div>
 
              </article>

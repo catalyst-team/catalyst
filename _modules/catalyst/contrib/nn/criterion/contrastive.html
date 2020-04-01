@@ -260,33 +260,40 @@
 
 
 <div class="viewcode-block" id="ContrastiveEmbeddingLoss"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss">[docs]</a><span class="k">class</span> <span class="nc">ContrastiveEmbeddingLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Contrastive embedding loss</span>
+    <span class="sd">&quot;&quot;&quot;The Contrastive embedding loss.</span>
 
-<span class="sd">    paper: http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf</span>
+<span class="sd">    It has been proposed in `Dimensionality Reduction</span>
+<span class="sd">    by Learning an Invariant Mapping`_.</span>
+
+<span class="sd">    .. _Dimensionality Reduction by Learning an Invariant Mapping:</span>
+<span class="sd">        http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ContrastiveEmbeddingLoss.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor method for the ContrastiveEmbeddingLoss class.</span>
 <span class="sd">        Args:</span>
-<span class="sd">            margin: margin parameter.</span>
-<span class="sd">            reduction: criterion reduction type.</span>
+<span class="sd">            margin: margin parameter</span>
+<span class="sd">            reduction: criterion reduction type</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="n">margin</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">=</span> <span class="n">reduction</span> <span class="ow">or</span> <span class="s2">&quot;none&quot;</span></div>
 
-<div class="viewcode-block" id="ContrastiveEmbeddingLoss.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings_left</span><span class="p">,</span> <span class="n">embeddings_right</span><span class="p">,</span> <span class="n">distance_true</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Forward propagation method for the contrastive loss.</span>
+<div class="viewcode-block" id="ContrastiveEmbeddingLoss.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">embeddings_left</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">embeddings_right</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">distance_true</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Forward propagation method for the contrastive loss.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">            embeddings_left: left objects embeddings</span>
-<span class="sd">            embeddings_right: right objects embeddings</span>
+<span class="sd">            embeddings_left (torch.Tensor): left objects embeddings</span>
+<span class="sd">            embeddings_right (torch.Tensor): right objects embeddings</span>
 <span class="sd">            distance_true: true distances</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            loss</span>
+<span class="sd">            torch.Tensor: loss</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># euclidian distance</span>
         <span class="n">diff</span> <span class="o">=</span> <span class="n">embeddings_left</span> <span class="o">-</span> <span class="n">embeddings_right</span>
@@ -307,30 +314,30 @@
 
 
 <div class="viewcode-block" id="ContrastiveDistanceLoss"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastiveDistanceLoss">[docs]</a><span class="k">class</span> <span class="nc">ContrastiveDistanceLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Contrastive distance loss</span>
+    <span class="sd">&quot;&quot;&quot;The Contrastive distance loss.</span>
+
+<span class="sd">    @TODO: Docs. Contribution is welcome.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ContrastiveDistanceLoss.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastiveDistanceLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor method for the ContrastiveDistanceLoss class.</span>
 <span class="sd">        Args:</span>
-<span class="sd">            margin: margin parameter.</span>
-<span class="sd">            reduction: criterion reduction type.</span>
+<span class="sd">            margin: margin parameter</span>
+<span class="sd">            reduction (str): criterion reduction type</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="n">margin</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">=</span> <span class="n">reduction</span> <span class="ow">or</span> <span class="s2">&quot;none&quot;</span></div>
 
-<div class="viewcode-block" id="ContrastiveDistanceLoss.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastiveDistanceLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distance_pred</span><span class="p">,</span> <span class="n">distance_true</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Forward propagation method for the contrastive loss.</span>
+<div class="viewcode-block" id="ContrastiveDistanceLoss.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastiveDistanceLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distance_pred</span><span class="p">,</span> <span class="n">distance_true</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Forward propagation method for the contrastive loss.</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            distance_pred: predicted distances</span>
 <span class="sd">            distance_true: true distances</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            loss</span>
+<span class="sd">            torch.Tensor: loss</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">bs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">distance_true</span><span class="p">)</span>
         <span class="n">margin_distance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">-</span> <span class="n">distance_pred</span>
@@ -347,31 +354,34 @@
 
 
 <div class="viewcode-block" id="ContrastivePairwiseEmbeddingLoss"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastivePairwiseEmbeddingLoss">[docs]</a><span class="k">class</span> <span class="nc">ContrastivePairwiseEmbeddingLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    ContrastivePairwiseEmbeddingLoss – proof of concept criterion.</span>
+    <span class="sd">&quot;&quot;&quot;ContrastivePairwiseEmbeddingLoss – proof of concept criterion.</span>
+
 <span class="sd">    Still work in progress.</span>
+
+<span class="sd">    @TODO: Docs. Contribution is welcome.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ContrastivePairwiseEmbeddingLoss.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastivePairwiseEmbeddingLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor method for the ContrastivePairwiseEmbeddingLoss class.</span>
 <span class="sd">        Args:</span>
-<span class="sd">            margin: margin parameter.</span>
-<span class="sd">            reduction: criterion reduction type.</span>
+<span class="sd">            margin: margin parameter</span>
+<span class="sd">            reduction: criterion reduction type</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="n">margin</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">=</span> <span class="n">reduction</span> <span class="ow">or</span> <span class="s2">&quot;none&quot;</span></div>
 
-<div class="viewcode-block" id="ContrastivePairwiseEmbeddingLoss.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastivePairwiseEmbeddingLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings_pred</span><span class="p">,</span> <span class="n">embeddings_true</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ContrastivePairwiseEmbeddingLoss.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.contrastive.ContrastivePairwiseEmbeddingLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings_pred</span><span class="p">,</span> <span class="n">embeddings_true</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Forward propagation method for the contrastive loss.</span>
+
 <span class="sd">        Work in progress.</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            embeddings_pred: predicted embeddings</span>
 <span class="sd">            embeddings_true: true embeddings</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            loss</span>
+<span class="sd">            torch.Tensor: loss</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">device</span> <span class="o">=</span> <span class="n">embeddings_pred</span><span class="o">.</span><span class="n">device</span>
         <span class="c1"># s - state space</span>

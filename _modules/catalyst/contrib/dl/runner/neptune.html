@@ -270,8 +270,7 @@
 
 
 <div class="viewcode-block" id="NeptuneRunner"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.dl.runner.neptune.NeptuneRunner">[docs]</a><span class="k">class</span> <span class="nc">NeptuneRunner</span><span class="p">(</span><span class="n">Runner</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Runner wrapper with Neptune integration hooks.</span>
+    <span class="sd">&quot;&quot;&quot;Runner wrapper with Neptune integration hooks.</span>
 <span class="sd">    Read about Neptune here https://neptune.ai</span>
 
 <span class="sd">    Examples:</span>
@@ -349,7 +348,9 @@
         <span class="n">log_on_batch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
             <span class="s2">&quot;log_on_batch_end&quot;</span><span class="p">,</span> <span class="kc">False</span>
         <span class="p">)</span>
-        <span class="n">log_on_epoch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;log_on_epoch_end&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">log_on_epoch_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">monitoring_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
+            <span class="s2">&quot;log_on_epoch_end&quot;</span><span class="p">,</span> <span class="kc">True</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span>
             <span class="n">log_on_batch_end</span><span class="o">=</span><span class="n">log_on_batch_end</span><span class="p">,</span>
@@ -403,13 +404,14 @@
                     <span class="p">)</span>
 
 <div class="viewcode-block" id="NeptuneRunner.run_experiment"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.dl.runner.neptune.NeptuneRunner.run_experiment">[docs]</a>    <span class="k">def</span> <span class="nf">run_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment</span><span class="p">:</span> <span class="n">Experiment</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_pre_experiment_hook</span><span class="p">(</span><span class="n">experiment</span><span class="o">=</span><span class="n">experiment</span><span class="p">)</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">run_experiment</span><span class="p">(</span><span class="n">experiment</span><span class="o">=</span><span class="n">experiment</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_post_experiment_hook</span><span class="p">(</span><span class="n">experiment</span><span class="o">=</span><span class="n">experiment</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="SupervisedNeptuneRunner"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.dl.runner.neptune.SupervisedNeptuneRunner">[docs]</a><span class="k">class</span> <span class="nc">SupervisedNeptuneRunner</span><span class="p">(</span><span class="n">NeptuneRunner</span><span class="p">,</span> <span class="n">SupervisedRunner</span><span class="p">):</span>
-    <span class="k">pass</span></div>
+    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NeptuneRunner&quot;</span><span class="p">,</span> <span class="s2">&quot;SupervisedNeptuneRunner&quot;</span><span class="p">]</span>

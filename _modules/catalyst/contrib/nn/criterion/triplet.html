@@ -261,37 +261,32 @@
 
 
 <div class="viewcode-block" id="TripletLoss"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletLoss">[docs]</a><span class="k">class</span> <span class="nc">TripletLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Triplet loss with hard positive/negative mining.</span>
-<span class="sd">    Reference:</span>
-<span class="sd">    Code imported from https://github.com/NegatioN/OnlineMiningTripletLoss.</span>
+    <span class="sd">&quot;&quot;&quot;Triplet loss with hard positive/negative mining.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        margin (float): margin for triplet.</span>
+<span class="sd">    Reference:</span>
+<span class="sd">        Code imported from https://github.com/NegatioN/OnlineMiningTripletLoss</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="TripletLoss.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mf">0.3</span><span class="p">):</span>
+<div class="viewcode-block" id="TripletLoss.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor method for the TripletLoss class.</span>
-
 <span class="sd">        Args:</span>
-<span class="sd">            margin: margin parameter.</span>
+<span class="sd">            margin (float): margin for triplet</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="n">margin</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ranking_loss</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MarginRankingLoss</span><span class="p">(</span><span class="n">margin</span><span class="o">=</span><span class="n">margin</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="nf">_pairwise_distances</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute the 2D matrix of distances between all the embeddings.</span>
+        <span class="sd">&quot;&quot;&quot;Compute the 2D matrix of distances between all the embeddings.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            embeddings: tensor of shape (batch_size, embed_dim)</span>
-<span class="sd">            squared: Boolean. If true, output is the pairwise</span>
-<span class="sd">                     squared euclidean distance matrix. If false, output</span>
-<span class="sd">                     is the pairwise euclidean distance matrix.</span>
+<span class="sd">            squared (bool): if true, output is the pairwise squared euclidean</span>
+<span class="sd">                distance matrix. If false, output is the pairwise euclidean</span>
+<span class="sd">                distance matrix</span>
+
 <span class="sd">        Returns:</span>
-<span class="sd">            pairwise_distances: tensor of shape (batch_size, batch_size)</span>
+<span class="sd">            torch.Tensor: pairwise matrix of size (batch_size, batch_size)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get squared L2 norm for each embedding.</span>
         <span class="c1"># We can just take the diagonal of `dot_product`.</span>
@@ -349,8 +344,7 @@
         <span class="k">return</span> <span class="n">labels_equal</span> <span class="o">&amp;</span> <span class="n">indices_not_equal</span>
 
     <span class="k">def</span> <span class="nf">_get_anchor_negative_triplet_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return 2D mask where mask[a, n] is True if a and n have same label.</span>
+        <span class="sd">&quot;&quot;&quot;Return 2D mask where mask[a, n] is True if a and n have same label.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            labels: tf.int32 `Tensor` with shape [batch_size]</span>
@@ -424,8 +418,7 @@
         <span class="k">return</span> <span class="n">triplet_loss</span>
 
 <div class="viewcode-block" id="TripletLoss.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Forward propagation method for the triplet loss.</span>
+        <span class="sd">&quot;&quot;&quot;Forward propagation method for the triplet loss.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            embeddings: tensor of shape (batch_size, embed_dim)</span>
@@ -438,38 +431,34 @@
 
 
 <span class="k">class</span> <span class="nc">TripletLossV2</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Args:</span>
-<span class="sd">        margin (float): margin for triplet.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mf">0.3</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor method for the TripletLoss class.</span>
-
 <span class="sd">        Args:</span>
-<span class="sd">            margin: margin parameter.</span>
+<span class="sd">            margin (float): margin for triplet.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="n">margin</span>
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">triplet_loss</span><span class="p">(</span><span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="p">,)</span>
 
 
 <div class="viewcode-block" id="TripletPairwiseEmbeddingLoss"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletPairwiseEmbeddingLoss">[docs]</a><span class="k">class</span> <span class="nc">TripletPairwiseEmbeddingLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    TripletPairwiseEmbeddingLoss – proof of concept criterion.</span>
+    <span class="sd">&quot;&quot;&quot;TripletPairwiseEmbeddingLoss – proof of concept criterion.</span>
+
 <span class="sd">    Still work in progress.</span>
+
+<span class="sd">    @TODO: Docs. Contribution is welcome.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="TripletPairwiseEmbeddingLoss.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletPairwiseEmbeddingLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">reduction</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="TripletPairwiseEmbeddingLoss.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletPairwiseEmbeddingLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">reduction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Constructor method for the TripletPairwiseEmbeddingLoss class.</span>
-
 <span class="sd">        Args:</span>
-<span class="sd">            margin: margin parameter.</span>
-<span class="sd">            reduction: criterion reduction type.</span>
+<span class="sd">            margin (float): margin parameter</span>
+<span class="sd">            reduction (str): criterion reduction type</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="n">margin</span>

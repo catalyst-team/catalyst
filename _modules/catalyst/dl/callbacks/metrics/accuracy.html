@@ -261,19 +261,19 @@
 
 
 <span class="k">def</span> <span class="nf">_get_default_accuracy_args</span><span class="p">(</span><span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate list params for Accuracy@k and mAP@k</span>
-<span class="sd">    Args:</span>
-<span class="sd">        num_classes (int): number of classes</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        iterable: array of accuracy arguments</span>
+    <span class="sd">&quot;&quot;&quot;Calculate list params for ``Accuracy@k`` and ``mAP@k``.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; _get_default_accuracy_args(num_classes=4)</span>
 <span class="sd">        &gt;&gt;&gt; [1, 3]</span>
 <span class="sd">        &gt;&gt;&gt; _get_default_accuracy_args(num_classes=8)</span>
 <span class="sd">        &gt;&gt;&gt; [1, 3, 5]</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        num_classes (int): number of classes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        iterable: array of accuracy arguments</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
@@ -289,8 +289,7 @@
 
 
 <div class="viewcode-block" id="AccuracyCallback"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback">[docs]</a><span class="k">class</span> <span class="nc">AccuracyCallback</span><span class="p">(</span><span class="n">MultiMetricCallback</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Accuracy metric callback.</span>
+    <span class="sd">&quot;&quot;&quot;Accuracy metric callback.</span>
 
 <span class="sd">    It can be used either for</span>
 <span class="sd">        - multi-class task:</span>
@@ -306,9 +305,9 @@
 <span class="sd">            -input_key, output_key point on tensor: batch_size x num_classes.</span>
 <span class="sd">            -output_key point on a tensor with binary vectors.</span>
 
-
-<span class="sd">    There is no need to choose a type (multi-class/multi label).</span>
-<span class="sd">    An appropriate type will be chosen automatically via shape of tensors.</span>
+<span class="sd">    .. note::</span>
+<span class="sd">        There is no need to choose a type (multi-class/multi label).</span>
+<span class="sd">        An appropriate type will be chosen automatically via shape of tensors.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="AccuracyCallback.__init__"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -324,11 +323,11 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            input_key (str): input key to use for accuracy calculation;</span>
-<span class="sd">                specifies our `y_true`.</span>
+<span class="sd">                specifies our `y_true`</span>
 <span class="sd">            output_key (str): output key to use for accuracy calculation;</span>
-<span class="sd">                specifies our `y_pred`.</span>
+<span class="sd">                specifies our `y_pred`</span>
 <span class="sd">            prefix (str): key for the metric&#39;s name</span>
-<span class="sd">            accuracy_args (List[int]): specifies which accuracy@K to log.</span>
+<span class="sd">            accuracy_args (List[int]): specifies which accuracy@K to log:</span>
 <span class="sd">                [1] - accuracy</span>
 <span class="sd">                [1, 3] - accuracy at 1 and 3</span>
 <span class="sd">                [1, 3, 5] - accuracy at 1, 3 and 5</span>
@@ -336,7 +335,7 @@
 <span class="sd">                if ``accuracy_args`` is None</span>
 <span class="sd">            threshold (float): threshold for outputs binarization.</span>
 <span class="sd">            activation (str): An torch.nn activation applied to the outputs.</span>
-<span class="sd">                Must be one of [&quot;none&quot;, &quot;Sigmoid&quot;, &quot;Softmax&quot;].</span>
+<span class="sd">                Must be one of ``&quot;none&quot;``, ``&quot;Sigmoid&quot;``, or ``&quot;Softmax&quot;``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">list_args</span> <span class="o">=</span> <span class="n">accuracy_args</span> <span class="ow">or</span> <span class="n">_get_default_accuracy_args</span><span class="p">(</span><span class="n">num_classes</span><span class="p">)</span>
 
@@ -353,9 +352,7 @@
 
 
 <div class="viewcode-block" id="MapKCallback"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.accuracy.MapKCallback">[docs]</a><span class="k">class</span> <span class="nc">MapKCallback</span><span class="p">(</span><span class="n">MultiMetricCallback</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    mAP@k metric callback.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;mAP@k metric callback.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="MapKCallback.__init__"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.accuracy.MapKCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -369,10 +366,10 @@
 <span class="sd">        Args:</span>
 <span class="sd">            input_key (str): input key to use for</span>
 <span class="sd">                calculation mean average accuracy at k;</span>
-<span class="sd">                specifies our `y_true`.</span>
+<span class="sd">                specifies our `y_true`</span>
 <span class="sd">            output_key (str): output key to use for</span>
 <span class="sd">                calculation mean average accuracy at k;</span>
-<span class="sd">                specifies our `y_pred`.</span>
+<span class="sd">                specifies our `y_pred`</span>
 <span class="sd">            prefix (str): key for the metric&#39;s name</span>
 <span class="sd">            map_args (List[int]): specifies which map@K to log.</span>
 <span class="sd">                [1] - map@1</span>

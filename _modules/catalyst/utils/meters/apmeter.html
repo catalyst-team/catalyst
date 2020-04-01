@@ -282,18 +282,24 @@
 <span class="sd">    for each sample.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="APMeter.__init__"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.apmeter.APMeter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor method for the ``APMeter`` class.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">APMeter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="APMeter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.apmeter.APMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Resets the meter with empty member variables&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Resets the meter with empty member variables.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scores</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">FloatStorage</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">LongStorage</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">FloatStorage</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="APMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.apmeter.APMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add a new observation</span>
+<div class="viewcode-block" id="APMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.apmeter.APMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">output</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+        <span class="n">weight</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add a new observation.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            output (Tensor): NxK tensor that for each of the N examples</span>
@@ -306,7 +312,6 @@
 <span class="sd">                associated with classes 2 and 4)</span>
 <span class="sd">            weight (optional, Tensor): Nx1 tensor representing the weight for</span>
 <span class="sd">                each example (each weight &gt; 0)</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
             <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
@@ -370,11 +375,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">narrow</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">weight</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="APMeter.value"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.apmeter.APMeter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns the model&quot;s average precision for each class</span>
+        <span class="sd">&quot;&quot;&quot;Returns the model&quot;s average precision for each class.</span>
 
 <span class="sd">        Return:</span>
 <span class="sd">            FloatTensor: 1xK tensor, with avg precision for each class k</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scores</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">0</span>

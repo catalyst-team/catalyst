@@ -270,27 +270,30 @@
 <span class="sd">    Values are not cached, only the last added.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AverageValueMeter.__init__"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.averagevaluemeter.AverageValueMeter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Constructor method for the ``AverageValueMeter`` class.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">AverageValueMeter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mean_old</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">m_s</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span></div>
 
-<div class="viewcode-block" id="AverageValueMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.averagevaluemeter.AverageValueMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add a new observation.</span>
+<div class="viewcode-block" id="AverageValueMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.averagevaluemeter.AverageValueMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add a new observation.</span>
+
 <span class="sd">        Updates of mean and std are going online, with</span>
 <span class="sd">        `Welford&#39;s online algorithm</span>
 <span class="sd">        &lt;https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance&gt;`_.</span>
-<span class="sd">        Because of algorithm design,</span>
-<span class="sd">        you can update meter values with only one value a time.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            value (float): value for update,</span>
-<span class="sd">            can be scalar number or PyTorch tensor</span>
+<span class="sd">                can be scalar number or PyTorch tensor</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Because of algorithm design,</span>
+<span class="sd">            you can update meter values with only one value a time.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">value</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -307,8 +310,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m_s</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="AverageValueMeter.value"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.averagevaluemeter.AverageValueMeter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns meter values.</span>
+        <span class="sd">&quot;&quot;&quot;Returns meter values.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            mean (float): Mean that has been updated online.</span>
