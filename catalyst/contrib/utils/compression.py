@@ -24,16 +24,12 @@ except ImportError as ex:
 
 
 def is_compressed(data):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     return isinstance(data, (bytes, string_types))
 
 
 def compress(data):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     if LZ4_ENABLED:
         data = serialize(data)
         data = lz4.frame.compress(data)
@@ -42,18 +38,14 @@ def compress(data):
 
 
 def compress_if_needed(data):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     if isinstance(data, np.ndarray):
         data = compress(data)
     return data
 
 
 def decompress(data):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     if LZ4_ENABLED:
         data = base64.b64decode(data)
         data = lz4.frame.decompress(data)
@@ -62,9 +54,7 @@ def decompress(data):
 
 
 def decompress_if_needed(data):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     if is_compressed(data):
         data = decompress(data)
     return data

@@ -24,6 +24,7 @@ class FilteringCollateFn:
         """
         Args:
             batch: current batch
+
         Returns:
             batch values filtered by `keys`
         """

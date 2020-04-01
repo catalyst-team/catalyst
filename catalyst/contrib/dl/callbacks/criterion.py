@@ -13,9 +13,7 @@ from catalyst.dl import MetricAggregationCallback
     details="Use MetricAggregationCallback instead.",
 )
 class CriterionAggregatorCallback(MetricAggregationCallback):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
 
     def __init__(
         self,
@@ -25,7 +23,8 @@ class CriterionAggregatorCallback(MetricAggregationCallback):
         multiplier: float = 1.0,
     ):
         """
-        @TODO: Docs. Contribution is welcome
+        Args:
+            @TODO: Docs. Contribution is welcome.
         """
         super().__init__(
             prefix=prefix,

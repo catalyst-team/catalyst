@@ -11,9 +11,7 @@ from .core import HeadSpec
 
 
 class FPNHead(HeadSpec):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
 
     def __init__(
         self,
@@ -27,9 +25,7 @@ class FPNHead(HeadSpec):
         interpolation_mode: str = "bilinear",
         align_corners: bool = True,
     ):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__(in_channels, out_channels, in_strides)
         self.upsample_scale = upsample_scale
         self.interpolation_mode = interpolation_mode
@@ -62,9 +58,7 @@ class FPNHead(HeadSpec):
         )
 
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """Forward call."""
         x = list(
             map(
                 lambda block, features: block(features),

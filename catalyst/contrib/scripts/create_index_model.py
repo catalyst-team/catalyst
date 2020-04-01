@@ -9,9 +9,7 @@ from sklearn.preprocessing import Normalizer, StandardScaler
 
 
 def build_args(parser):
-    """
-    Constructs the command-line arguments
-    """
+    """Constructs the command-line arguments."""
     parser.add_argument("--in-npy", type=str, default=None)
 
     parser.add_argument("--n-hidden", type=int, default=None)
@@ -33,9 +31,7 @@ def build_args(parser):
 
 
 def parse_args():
-    """
-    Parses the command line arguments for the main method
-    """
+    """Parses the command line arguments for the main method."""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args = parser.parse_args()
@@ -43,9 +39,7 @@ def parse_args():
 
 
 def main(args, _=None):
-    """
-    Run script
-    """
+    """Run ``catalyst-contrib create-index-model`` script."""
     print("[==       Loading features       ==]")
     features = None
     for in_npy in args.in_npy.split(","):

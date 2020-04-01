@@ -35,9 +35,7 @@ def plot_tensorboard_log(
     height: Optional[int] = None,
     width: Optional[int] = None,
 ) -> None:
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     init_notebook_mode()
     logdir = Path(logdir)
 

@@ -8,9 +8,7 @@ import tqdm
 
 
 def build_args(parser):
-    """
-    Constructs the command-line arguments
-    """
+    """Constructs the command-line arguments."""
     parser.add_argument("--in-csv", type=str, default=None)
     parser.add_argument("--in-knn", type=str, default=None)
 
@@ -38,9 +36,7 @@ def build_args(parser):
 
 
 def parse_args():
-    """
-    Parses the command line arguments for the main method
-    """
+    """Parses the command line arguments for the main method."""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args = parser.parse_args()
@@ -48,9 +44,7 @@ def parse_args():
 
 
 def main(args, _=None):
-    """
-    Run script
-    """
+    """Run ``catalyst-contrib check-index-model`` script."""
     print("[==       Loading features       ==]")
     test_features = np.load(args.in_npy_test, mmap_mode="r")
     test_df = pd.read_csv(args.in_csv_test)

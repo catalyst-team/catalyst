@@ -15,9 +15,7 @@ class AverageValueMeter(meter.Meter):
     """
 
     def __init__(self):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """Constructor method for the ``AverageValueMeter`` class."""
         super(AverageValueMeter, self).__init__()
         self.n = 0
         self.val = 0.0
@@ -27,17 +25,19 @@ class AverageValueMeter(meter.Meter):
         self.std = np.nan
 
     def add(self, value) -> None:
-        """
-        Add a new observation.
+        """Add a new observation.
+
         Updates of mean and std are going online, with
         `Welford's online algorithm
         <https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance>`_.
-        Because of algorithm design,
-        you can update meter values with only one value a time.
 
         Args:
             value (float): value for update,
                 can be scalar number or PyTorch tensor
+
+        .. note::
+            Because of algorithm design,
+            you can update meter values with only one value a time.
         """
         self.val = value
         self.n += 1
@@ -54,8 +54,7 @@ class AverageValueMeter(meter.Meter):
             self.std = np.sqrt(self.m_s / (self.n - 1.0))
 
     def value(self):
-        """
-        Returns meter values
+        """Returns meter values.
 
         Returns:
             mean (float): Mean that has been updated online.
@@ -64,9 +63,7 @@ class AverageValueMeter(meter.Meter):
         return self.mean, self.std
 
     def reset(self):
-        """
-        Resets the meter to default settings
-        """
+        """Resets the meter to default settings."""
         self.n = 0
         self.val = 0.0
         self.mean = np.nan

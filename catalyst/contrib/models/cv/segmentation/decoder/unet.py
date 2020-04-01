@@ -9,9 +9,7 @@ from .core import DecoderSpec
 
 
 class UNetDecoder(DecoderSpec):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
 
     def __init__(
         self,
@@ -20,9 +18,7 @@ class UNetDecoder(DecoderSpec):
         block_fn: DecoderBlock = DecoderConcatBlock,
         **kwargs
     ):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__(in_channels, in_strides)
 
         # features from center block
@@ -51,22 +47,16 @@ class UNetDecoder(DecoderSpec):
 
     @property
     def out_channels(self) -> List[int]:
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """Number of channels produced by the block."""
         return self._out_channels
 
     @property
     def out_strides(self) -> List[int]:
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         return self._out_strides
 
-    def forward(self, x: List[torch.Tensor]):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+    def forward(self, x: List[torch.Tensor]) -> List[torch.Tensor]:
+        """Forward call."""
         # features from center block
         decoder_outputs = [x[-1]]
         # features from encoders blocks

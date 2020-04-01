@@ -6,9 +6,7 @@ from torch import nn
 
 
 class HeadSpec(ABC, nn.Module):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
 
     def __init__(
         self,
@@ -16,9 +14,7 @@ class HeadSpec(ABC, nn.Module):
         out_channles: int,
         in_strides: List[int] = None,
     ):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__()
         self.in_channels = in_channels
         self.in_strides = in_strides
@@ -26,7 +22,5 @@ class HeadSpec(ABC, nn.Module):
 
     @abstractmethod
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """Forward call."""
         pass

@@ -10,7 +10,7 @@ from catalyst.utils import distributed_run, get_rank
 
 
 def build_args(parser: ArgumentParser):
-    """Constructs the command-line arguments for ``catalyst-dl run``"""
+    """Constructs the command-line arguments for ``catalyst-dl run``."""
     parser.add_argument(
         "--config",
         "--configs",
@@ -85,7 +85,7 @@ def build_args(parser: ArgumentParser):
 
 
 def parse_args():
-    """Parses the command line arguments and returns arguments and config"""
+    """Parses the command line arguments and returns arguments and config."""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args, unknown_args = parser.parse_known_args()
@@ -93,9 +93,7 @@ def parse_args():
 
 
 def main_worker(args, unknown_args):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     args, config = utils.parse_args_uargs(args, unknown_args)
     utils.set_global_seed(args.seed)
     utils.prepare_cudnn(args.deterministic, args.benchmark)
@@ -116,9 +114,7 @@ def main_worker(args, unknown_args):
 
 
 def main(args, unknown_args):
-    """
-    Run the ``catalyst-dl run`` script
-    """
+    """Run the ``catalyst-dl run`` script."""
     distributed_run(args.distributed, main_worker, args, unknown_args)
 
 

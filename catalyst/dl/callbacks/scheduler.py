@@ -6,11 +6,16 @@ from catalyst.dl import State
 
 class LRFinder(LRUpdater):
     """
-    Helps you find an optimal learning rate for a model,
-    as per suggestion of 2015 CLR paper.
+    Helps you find an optimal learning rate for a model, as per suggestion of
+    `Cyclical Learning Rates for Training Neural Networks`_ paper.
     Learning rate is increased in linear or log scale, depending on user input.
 
-    https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html
+    See `How Do You Find A Good Learning Rate`_ article for details.
+
+    .. _Cyclical Learning Rates for Training Neural Networks:
+        https://arxiv.org/abs/1506.01186
+    .. _How Do You Find A Good Learning Rate:
+        https://sgugger.github.io/how-do-you-find-a-good-learning-rate.html
     """
 
     def __init__(
@@ -53,16 +58,16 @@ class LRFinder(LRUpdater):
         return self.init_lr + self.lr_step * self.find_iter
 
     def calc_lr(self):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         res = self._calc_lr()
         self.find_iter += 1
         return res
 
     def on_loader_start(self, state: State):
-        """
-        @TODO: Docs. Contribution is welcome
+        """@TODO: Docs. Contribution is welcome.
+
+        Args:
+            state (State): current state
         """
         if state.is_train_loader:
             lr_ = self.final_lr / self.init_lr
@@ -73,8 +78,10 @@ class LRFinder(LRUpdater):
         super().on_loader_start(state=state)
 
     def on_batch_end(self, state: State):
-        """
-        @TODO: Docs. Contribution is welcome
+        """@TODO: Docs. Contribution is welcome.
+
+        Args:
+            state (State): current state
         """
         super().on_batch_end(state=state)
         if self.find_iter > self.num_steps:

@@ -57,18 +57,14 @@ def get_nn_from_ddp_module(model: nn.Module) -> nn.Module:
 
 
 def is_torch_distributed_initialized() -> bool:
-    """
-    Checks if torch.distributed is available and initialized
-    """
+    """Checks if torch.distributed is available and initialized."""
     return (
         torch.distributed.is_available() and torch.distributed.is_initialized()
     )
 
 
 def is_apex_available() -> bool:
-    """
-    Checks if apex is available
-    """
+    """Checks if apex is available."""
     env_apex = os.getenv("USE_APEX", "1") == "1"
     try:
         import apex  # noqa: F401
@@ -80,9 +76,7 @@ def is_apex_available() -> bool:
 
 
 def assert_fp16_available() -> None:
-    """
-    Asserts for installed and available Apex FP16
-    """
+    """Asserts for installed and available Apex FP16."""
     assert (
         torch.backends.cudnn.enabled
     ), "fp16 mode requires cudnn backend to be enabled."
@@ -94,8 +88,7 @@ def assert_fp16_available() -> None:
 
 
 def get_rank() -> int:
-    """
-    Returns the rank of the current worker.
+    """Returns the rank of the current worker.
 
     Returns:
          int: ``rank`` if torch.distributed is initialized,
@@ -108,9 +101,7 @@ def get_rank() -> int:
 
 
 def get_distributed_mean(value: float):
-    """
-    Computes distributed mean among all nodes
-    """
+    """Computes distributed mean among all nodes."""
     if is_torch_distributed_initialized():
         value = torch.tensor(
             value,
@@ -124,16 +115,12 @@ def get_distributed_mean(value: float):
 
 
 def is_slurm_available():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """Checks if slurm is available."""
     return "SLURM_JOB_NUM_NODES" in os.environ and "SLURM_NODEID" in os.environ
 
 
 def get_slurm_params():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     cmd = "scontrol show hostnames '%s'" % os.environ["SLURM_JOB_NODELIST"]
     nodes = subprocess.getoutput(cmd).split()
     num_nodes = int(os.environ["SLURM_JOB_NUM_NODES"])
@@ -146,9 +133,7 @@ def get_slurm_params():
 
 
 def get_distributed_params():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     master_port = str(random.randint(5 * 10 ** 4, 6 * 10 ** 4))
     master_addr = "127.0.0.1"
     cur_node, num_nodes = 0, 1
@@ -182,9 +167,7 @@ def get_distributed_params():
 def get_distributed_env(
     local_rank, rank, world_size, use_cuda_visible_devices=True
 ):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     env = os.environ.copy()
     env["RANK"] = str(rank)
     env["WORLD_SIZE"] = str(world_size)
@@ -197,15 +180,15 @@ def get_distributed_env(
 
 
 def distributed_run(distributed, worker_fn, *args, **kwargs):
-    """
-    @TODO: Docs. Contribution is welcome
-    Distributed run
+    """Distributed run.
 
     Args:
         distributed:
         worker_fn:
         args:
         kwargs:
+
+    @TODO: Docs. Contribution is welcome.
     """
     distributed_params = get_distributed_params()
     local_rank = distributed_params["local_rank"]
@@ -236,9 +219,7 @@ def distributed_run(distributed, worker_fn, *args, **kwargs):
 
 
 def initialize_apex(model, optimizer=None, **distributed_params):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     import apex
 
     amp_params = utils.get_fn_default_params(
@@ -266,7 +247,7 @@ def process_components(
     device: Device = None,
 ) -> Tuple[Model, Criterion, Optimizer, Scheduler, Device]:
     """
-    Returns the processed model, criterion, optimizer, scheduler and device
+    Returns the processed model, criterion, optimizer, scheduler and device.
 
     Args:
         model (Model): torch model

@@ -15,9 +15,11 @@ def f1score(precision_value, recall_value, eps=1e-5):
     """
     Calculating F1-score from precision and recall to reduce computation
     redundancy.
+
     Args:
         precision_value: precision (0-1)
         recall_value: recall (0-1)
+
     Returns:
         F1 score (0-1)
     """
@@ -47,7 +49,7 @@ def precision(tp, fp, eps: float = 1e-5) -> float:
 def recall(tp, fn, eps=1e-5) -> float:
     """
     Calculates recall (a.k.a. true positive rate) for binary classification and
-    segmentation
+    segmentation.
 
     Args:
         tp: number of true positives
@@ -72,7 +74,7 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
 
     def __init__(self, threshold=0.5):
         """
-        @TODO: Docs. Contribution is welcome
+        Constructor method for the `` PrecisionRecallF1ScoreMeter`` class.
         """
         super(PrecisionRecallF1ScoreMeter, self).__init__()
         self.threshold = threshold
@@ -80,14 +82,14 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
 
     def reset(self) -> None:
         """
-        Resets true positive, false positive and false negative counts to 0
+        Resets true positive, false positive and false negative counts to 0.
         """
         self.tp_fp_fn_counts = defaultdict(int)
 
     def add(self, output: torch.Tensor, target: torch.Tensor) -> None:
         """
         Thresholds predictions and calculates the true positives,
-        false positives, and false negatives in comparison to the target
+        false positives, and false negatives in comparison to the target.
 
         Args:
             output (torch.Tensor): prediction after activation function
@@ -108,7 +110,7 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
     def value(self):
         """
         Calculates precision/recall/f1 based on the current stored
-        tp/fp/fn counts
+        tp/fp/fn counts.
 
         Returns:
             tuple of floats: (precision, recall, f1)

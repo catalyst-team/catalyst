@@ -15,9 +15,7 @@ from catalyst.utils.tools.typing import Device, Model, Optimizer
 
 
 def get_optimizable_params(model_or_params):
-    """
-    Returns all the parameters that requires gradients
-    """
+    """Returns all the parameters that requires gradients."""
     params: Iterable[torch.Tensor] = model_or_params
     if isinstance(model_or_params, nn.Module):
         params = model_or_params.parameters()
@@ -27,8 +25,7 @@ def get_optimizable_params(model_or_params):
 
 
 def get_optimizer_momentum(optimizer: Optimizer) -> float:
-    """
-    Get momentum of current optimizer.
+    """Get momentum of current optimizer.
 
     Args:
         optimizer: PyTorch optimizer
@@ -42,8 +39,7 @@ def get_optimizer_momentum(optimizer: Optimizer) -> float:
 
 
 def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
-    """
-    Set momentum of ``index`` 'th param group of optimizer to ``value``
+    """Set momentum of ``index`` 'th param group of optimizer to ``value``.
 
     Args:
         optimizer: PyTorch optimizer
@@ -61,33 +57,32 @@ def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
 
 
 def get_device() -> torch.device:
-    """
-    Simple returning the best available device (GPU or CPU)
-    """
+    """Simple returning the best available device (GPU or CPU)."""
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def get_available_gpus():
-    """
-    Array of available GPU ids
-    Returns:
-        iterable: available GPU ids
+    """Array of available GPU ids.
+
     Examples:
         >>> os.environ["CUDA_VISIBLE_DEVICES"] = "0,2"
         >>> get_available_gpus()
-        >>> [0, 2]
+        [0, 2]
 
         >>> os.environ["CUDA_VISIBLE_DEVICES"] = "0,-1,1"
         >>> get_available_gpus()
-        >>> [0]
+        [0]
 
         >>> os.environ["CUDA_VISIBLE_DEVICES"] = ""
         >>> get_available_gpus()
-        >>> []
+        []
 
         >>> os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
         >>> get_available_gpus()
-        >>> []
+        []
+
+    Returns:
+        iterable: available GPU ids
     """
     if "CUDA_VISIBLE_DEVICES" in os.environ:
         result = os.environ["CUDA_VISIBLE_DEVICES"].split(",")
@@ -105,9 +100,7 @@ def get_available_gpus():
 
 
 def get_activation_fn(activation: str = None):
-    """
-    Returns the activation function from ``torch.nn`` by its name
-    """
+    """Returns the activation function from ``torch.nn`` by its name."""
     if activation is None or activation.lower() == "none":
         activation_fn = lambda x: x  # noqa: E731
     else:
@@ -178,8 +171,16 @@ def process_model_params(
     no_bias_weight_decay: bool = True,
     lr_scaling: float = 1.0,
 ) -> List[Union[torch.nn.Parameter, dict]]:
-    """
-    Gains model parameters for ``torch.optim.Optimizer``
+    """Gains model parameters for ``torch.optim.Optimizer``.
+
+    Examples:
+        >>> model = catalyst.contrib.models.segmentation.ResnetUnet()
+        >>> layerwise_params = collections.OrderedDict([
+        >>>     ("conv1.*", dict(lr=0.001, weight_decay=0.0003)),
+        >>>     ("conv.*", dict(lr=0.002))
+        >>> ])
+        >>> params = process_model_params(model, layerwise_params)
+        >>> optimizer = torch.optim.Adam(params, lr=0.0003)
 
     Args:
         model (torch.nn.Module): Model to process
@@ -193,15 +194,6 @@ def process_model_params(
 
     Returns:
         iterable: parameters for an optimizer
-
-    Examples:
-        >>> model = catalyst.contrib.models.segmentation.ResnetUnet()
-        >>> layerwise_params = collections.OrderedDict([
-        >>>     ("conv1.*", dict(lr=0.001, weight_decay=0.0003)),
-        >>>     ("conv.*", dict(lr=0.002))
-        >>> ])
-        >>> params = process_model_params(model, layerwise_params)
-        >>> optimizer = torch.optim.Adam(params, lr=0.0003)
     """
     params = list(model.named_parameters())
     layerwise_params = layerwise_params or collections.OrderedDict()
@@ -228,16 +220,15 @@ def process_model_params(
 
 
 def set_requires_grad(model: Model, requires_grad: bool):
-    """
-    Sets the ``requires_grad`` value for all model parameters.
-
-    Args:
-        model (torch.nn.Module): Model
-        requires_grad (bool): value
+    """Sets the ``requires_grad`` value for all model parameters.
 
     Examples:
         >>> model = SimpleModel()
         >>> set_requires_grad(model, requires_grad=True)
+
+    Args:
+        model (torch.nn.Module): model
+        requires_grad (bool): value
     """
     requires_grad = bool(requires_grad)
     for param in model.parameters():

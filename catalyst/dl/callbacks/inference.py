@@ -13,13 +13,12 @@ from catalyst.dl import Callback, CallbackOrder, State, utils
 
 # @TODO: refactor
 class InferCallback(Callback):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
 
     def __init__(self, out_dir=None, out_prefix=None):
         """
-        @TODO: Docs. Contribution is welcome
+        Args:
+            @TODO: Docs. Contribution is welcome
         """
         super().__init__(CallbackOrder.Internal)
         self.out_dir = out_dir
@@ -28,8 +27,10 @@ class InferCallback(Callback):
         self._keys_from_state = ["out_dir", "out_prefix"]
 
     def on_stage_start(self, state: State):
-        """
-        @TODO: Docs. Contribution is welcome
+        """Stage start hook.
+
+        Args:
+            state (State): current state
         """
         for key in self._keys_from_state:
             value = getattr(state, key, None)
@@ -42,14 +43,18 @@ class InferCallback(Callback):
             os.makedirs(os.path.dirname(self.out_prefix), exist_ok=True)
 
     def on_loader_start(self, state: State):
-        """
-        @TODO: Docs. Contribution is welcome
+        """Loader start hook.
+
+        Args:
+            state (State): current state
         """
         self.predictions = defaultdict(lambda: [])
 
     def on_batch_end(self, state: State):
-        """
-        @TODO: Docs. Contribution is welcome
+        """Batch end hook.
+
+        Args:
+            state (State): current state
         """
         dct = state.batch_out
         dct = {key: value.detach().cpu().numpy() for key, value in dct.items()}
@@ -57,8 +62,10 @@ class InferCallback(Callback):
             self.predictions[key].append(value)
 
     def on_loader_end(self, state: State):
-        """
-        @TODO: Docs. Contribution is welcome
+        """Loader end hook.
+
+        Args:
+            state (State): current state
         """
         self.predictions = {
             key: np.concatenate(value, axis=0)
@@ -71,9 +78,7 @@ class InferCallback(Callback):
 
 
 class InferMaskCallback(Callback):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
 
     def __init__(
         self,
@@ -89,7 +94,8 @@ class InferMaskCallback(Callback):
         mask_type: str = "soft",
     ):
         """
-        @TODO: Docs. Contribution is welcome
+        Args:
+            @TODO: Docs. Contribution is welcome
         """
         super().__init__(CallbackOrder.Internal)
         self.out_dir = out_dir
@@ -108,29 +114,37 @@ class InferMaskCallback(Callback):
         self._keys_from_state = ["out_dir", "out_prefix"]
 
     def on_stage_start(self, state: State):
-        """
-        @TODO: Docs. Contribution is welcome
+        """Stage start hook.
+
+        Args:
+            state (State): current state
         """
         for key in self._keys_from_state:
             value = getattr(state, key, None)
             if value is not None:
                 setattr(self, key, value)
         # assert self.out_prefix is not None
-        self.out_prefix = self.out_prefix if self.out_prefix is not None else ""
+        self.out_prefix = (
+            self.out_prefix if self.out_prefix is not None else ""
+        )
         if self.out_dir is not None:
             self.out_prefix = str(self.out_dir) + "/" + str(self.out_prefix)
         os.makedirs(os.path.dirname(self.out_prefix), exist_ok=True)
 
     def on_loader_start(self, state: State):
-        """
-        @TODO: Docs. Contribution is welcome
+        """Loader start hook.
+
+        Args:
+            state (State): current state
         """
         lm = state.loader_name
         os.makedirs(f"{self.out_prefix}/{lm}/", exist_ok=True)
 
     def on_batch_end(self, state: State):
-        """
-        @TODO: Docs. Contribution is welcome
+        """Batch end hook.
+
+        Args:
+            state (State): current state
         """
         lm = state.loader_name
         names = state.batch_in.get(self.name_key, [])
@@ -140,7 +154,9 @@ class InferMaskCallback(Callback):
 
         logits = state.batch_out[self.output_key]
         logits = (
-            torch.unsqueeze_(logits, dim=1) if len(logits.shape) < 4 else logits
+            torch.unsqueeze_(logits, dim=1)
+            if len(logits.shape) < 4
+            else logits
         )
 
         if self.mask_type == "soft":
@@ -165,7 +181,9 @@ class InferMaskCallback(Callback):
 
             mask = label2rgb(mask, bg_label=0)
 
-            image = image * (1 - self.mask_strength) + mask * self.mask_strength
+            image = (
+                image * (1 - self.mask_strength) + mask * self.mask_strength
+            )
             image = (image * 255).clip(0, 255).round().astype(np.uint8)
 
             filename = f"{self.out_prefix}/{lm}/{suffix}.jpg"

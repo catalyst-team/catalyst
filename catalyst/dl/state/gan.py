@@ -9,7 +9,8 @@ class GanState(State):
 
     def __init__(self, *, batch_consistant_metrics: bool = False, **kwargs):
         """
-        @TODO: Docs. Contribution is welcome
+        Args:
+            @TODO: Docs. Contribution is welcome
         """
         self.phase = None
         super().__init__(

@@ -6,9 +6,7 @@ from .metrics import _MetricCallback
 
 
 class CriterionCallback(_MetricCallback):
-    """
-    Callback for that measures loss with specified criterion.
-    """
+    """Callback for that measures loss with specified criterion."""
 
     def __init__(
         self,
@@ -47,15 +45,11 @@ class CriterionCallback(_MetricCallback):
 
     @property
     def metric_fn(self):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         return self._criterion
 
     def on_stage_start(self, state: State):
-        """
-        Checks that the current stage has correct criterion
-        """
+        """Checks that the current stage has correct criterion."""
         criterion = state.get_attr(
             key="criterion", inner_key=self.criterion_key
         )

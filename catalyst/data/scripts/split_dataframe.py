@@ -8,8 +8,8 @@ from catalyst.utils import folds_to_list, split_dataframe
 
 
 def build_args(parser):
-    """
-    Constructs the command-line arguments for ``catalyst-data split-dataframe``
+    """Constructs the command-line arguments for
+    ``catalyst-data split-dataframe``.
     """
     parser.add_argument(
         "--in-csv",
@@ -82,9 +82,7 @@ def build_args(parser):
 
 
 def parse_args():
-    """
-    Parses the command line arguments for the main method
-    """
+    """Parses the command line arguments for the main method."""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args, uargs = parser.parse_known_args()
@@ -92,9 +90,7 @@ def parse_args():
 
 
 def main(args, uargs=None):
-    """
-    Run the ``catalyst-data split-dataframe`` script
-    """
+    """Run the ``catalyst-data split-dataframe`` script."""
     dataframe = pd.read_csv(args.in_csv)
 
     train_folds = (

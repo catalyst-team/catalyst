@@ -19,8 +19,8 @@ class ConfusionMeter(meter.Meter):
         """
         Args:
             k (int): number of classes in the classification problem
-            normalized (boolean): Determines whether or not the confusion matrix
-                is normalized or not
+            normalized (boolean): determines whether or not the confusion
+                matrix is normalized or not
         """
         super(ConfusionMeter, self).__init__()
         self.conf = np.ndarray((k, k), dtype=np.int32)
@@ -29,11 +29,12 @@ class ConfusionMeter(meter.Meter):
         self.reset()
 
     def reset(self) -> None:
-        """Reset confusion matrix, filling it with zeros"""
+        """Reset confusion matrix, filling it with zeros."""
         self.conf.fill(0)
 
     def add(self, predicted: torch.Tensor, target: torch.Tensor) -> None:
-        """Computes the confusion matrix of K x K size where K is no of classes
+        """Computes the confusion matrix of ``K x K`` size
+        where ``K`` is no of classes.
 
         Args:
             predicted (tensor): Can be an N x K tensor of predicted scores
@@ -42,7 +43,6 @@ class ConfusionMeter(meter.Meter):
             target (tensor): Can be a N-tensor of integer values assumed
                 to be integer values between 0 and K-1 or N x K tensor, where
                 targets are assumed to be provided as one-hot vectors
-
         """
         predicted = predicted.cpu().numpy()
         target = target.cpu().numpy()

@@ -4,33 +4,40 @@ from torch.nn import functional as F
 
 
 class ContrastiveEmbeddingLoss(nn.Module):
-    """
-    Contrastive embedding loss
+    """The Contrastive embedding loss.
 
-    paper: http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf
+    It has been proposed in `Dimensionality Reduction
+    by Learning an Invariant Mapping`_.
+
+    .. _Dimensionality Reduction by Learning an Invariant Mapping:
+        http://yann.lecun.com/exdb/publis/pdf/hadsell-chopra-lecun-06.pdf
     """
 
     def __init__(self, margin=1.0, reduction="mean"):
         """
-        Constructor method for the ContrastiveEmbeddingLoss class.
         Args:
-            margin: margin parameter.
-            reduction: criterion reduction type.
+            margin: margin parameter
+            reduction: criterion reduction type
         """
         super().__init__()
         self.margin = margin
         self.reduction = reduction or "none"
 
-    def forward(self, embeddings_left, embeddings_right, distance_true):
-        """
-        Forward propagation method for the contrastive loss.
+    def forward(
+        self,
+        embeddings_left: torch.Tensor,
+        embeddings_right: torch.Tensor,
+        distance_true,
+    ) -> torch.Tensor:
+        """Forward propagation method for the contrastive loss.
+
         Args:
-            embeddings_left: left objects embeddings
-            embeddings_right: right objects embeddings
+            embeddings_left (torch.Tensor): left objects embeddings
+            embeddings_right (torch.Tensor): right objects embeddings
             distance_true: true distances
 
         Returns:
-            loss
+            torch.Tensor: loss
         """
         # euclidian distance
         diff = embeddings_left - embeddings_right
@@ -51,30 +58,30 @@ class ContrastiveEmbeddingLoss(nn.Module):
 
 
 class ContrastiveDistanceLoss(nn.Module):
-    """
-    Contrastive distance loss
+    """The Contrastive distance loss.
+
+    @TODO: Docs. Contribution is welcome.
     """
 
     def __init__(self, margin=1.0, reduction="mean"):
         """
-        Constructor method for the ContrastiveDistanceLoss class.
         Args:
-            margin: margin parameter.
-            reduction: criterion reduction type.
+            margin: margin parameter
+            reduction (str): criterion reduction type
         """
         super().__init__()
         self.margin = margin
         self.reduction = reduction or "none"
 
-    def forward(self, distance_pred, distance_true):
-        """
-        Forward propagation method for the contrastive loss.
+    def forward(self, distance_pred, distance_true) -> torch.Tensor:
+        """Forward propagation method for the contrastive loss.
+
         Args:
             distance_pred: predicted distances
             distance_true: true distances
 
         Returns:
-            loss
+            torch.Tensor: loss
         """
         bs = len(distance_true)
         margin_distance = self.margin - distance_pred
@@ -91,31 +98,34 @@ class ContrastiveDistanceLoss(nn.Module):
 
 
 class ContrastivePairwiseEmbeddingLoss(nn.Module):
-    """
-    ContrastivePairwiseEmbeddingLoss – proof of concept criterion.
+    """ContrastivePairwiseEmbeddingLoss – proof of concept criterion.
+
     Still work in progress.
+
+    @TODO: Docs. Contribution is welcome.
     """
 
     def __init__(self, margin=1.0, reduction="mean"):
         """
-        Constructor method for the ContrastivePairwiseEmbeddingLoss class.
         Args:
-            margin: margin parameter.
-            reduction: criterion reduction type.
+            margin: margin parameter
+            reduction: criterion reduction type
         """
         super().__init__()
         self.margin = margin
         self.reduction = reduction or "none"
 
-    def forward(self, embeddings_pred, embeddings_true):
-        """
+    def forward(self, embeddings_pred, embeddings_true) -> torch.Tensor:
+        """Forward propagation method for the contrastive loss.
+
         Work in progress.
+
         Args:
             embeddings_pred: predicted embeddings
             embeddings_true: true embeddings
 
         Returns:
-            loss
+            torch.Tensor: loss
         """
         device = embeddings_pred.device
         # s - state space

@@ -9,9 +9,7 @@ from .head import FPNHead
 
 
 class FPNUnet(UnetSpec):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
 
     def _get_components(
         self,
@@ -46,9 +44,7 @@ class FPNUnet(UnetSpec):
 
 
 class ResnetFPNUnet(ResnetUnetSpec):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
 
     def _get_components(
         self,

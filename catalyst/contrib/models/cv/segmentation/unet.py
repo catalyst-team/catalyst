@@ -16,9 +16,7 @@ from .head import UnetHead
 
 
 class Unet(UnetSpec):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
 
     def _get_components(
         self,
@@ -53,9 +51,7 @@ class Unet(UnetSpec):
 
 
 class ResnetUnet(ResnetUnetSpec):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
 
     def _get_components(
         self,

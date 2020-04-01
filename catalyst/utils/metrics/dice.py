@@ -13,12 +13,11 @@ def dice(
     threshold: float = None,
     activation: str = "Sigmoid",
 ):
-    """
-    Computes the dice metric
+    """Computes the dice metric.
 
     Args:
-        outputs (list):  A list of predicted elements
-        targets (list): A list of elements that are to be predicted
+        outputs (list):  a list of predicted elements
+        targets (list): a list of elements that are to be predicted
         eps (float): epsilon
         threshold (float): threshold for outputs binarization
         activation (str): An torch.nn activation applied to the outputs.

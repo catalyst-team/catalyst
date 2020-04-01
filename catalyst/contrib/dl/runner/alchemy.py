@@ -12,10 +12,8 @@ warnings.simplefilter("always")
 
 
 class AlchemyRunner(Runner):
-    """
-    Runner wrapper with Alchemy integration hooks.
+    """Runner wrapper with Alchemy integration hooks.
     Read about Alchemy here https://alchemy.host
-    Powered by Catalyst.Ecosystem
 
     Example:
         .. code-block:: python
@@ -39,14 +37,14 @@ class AlchemyRunner(Runner):
                     "group": "your_experiment_group_name"
                 }
             )
+
+    Powered by Catalyst.Ecosystem.
     """
 
     def _init(
         self, log_on_batch_end: bool = False, log_on_epoch_end: bool = True,
     ):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         super()._init()
         the_warning = DeprecatedWarning(
             self.__class__.__name__,
@@ -78,7 +76,9 @@ class AlchemyRunner(Runner):
         log_on_batch_end: bool = monitoring_params.pop(
             "log_on_batch_end", False
         )
-        log_on_epoch_end: bool = monitoring_params.pop("log_on_epoch_end", True)
+        log_on_epoch_end: bool = monitoring_params.pop(
+            "log_on_epoch_end", True
+        )
 
         self._init(
             log_on_batch_end=log_on_batch_end,
@@ -112,7 +112,7 @@ class AlchemyRunner(Runner):
                 )
 
     def run_experiment(self, experiment: Experiment):
-        """Starts experiment
+        """Starts experiment.
 
         Args:
             experiment (Experiment): experiment class
@@ -123,11 +123,7 @@ class AlchemyRunner(Runner):
 
 
 class SupervisedAlchemyRunner(AlchemyRunner, SupervisedRunner):
-    """
-    SupervisedRunner with Alchemy
-    """
-
-    pass
+    """SupervisedRunner with Alchemy."""
 
 
 __all__ = ["AlchemyRunner", "SupervisedAlchemyRunner"]

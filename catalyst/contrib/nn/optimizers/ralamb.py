@@ -1,4 +1,4 @@
-from typing import Iterable, Tuple
+from typing import Callable, Iterable, Optional, Tuple
 import math
 
 import torch
@@ -6,9 +6,11 @@ from torch.optim.optimizer import Optimizer
 
 
 class Ralamb(Optimizer):
-    """
-    RAdam optimizer with LARS/LAMB tricks
-    Taken from https://github.com/mgrankin/over9000/blob/master/ralamb.py
+    """RAdam optimizer with LARS/LAMB tricks.
+
+    Main origins of inspiration:
+        https://github.com/mgrankin/over9000/blob/master/ralamb.py
+        (Apache-2.0 License)
     """
 
     def __init__(
@@ -42,11 +44,16 @@ class Ralamb(Optimizer):
         super(Ralamb, self).__init__(params, defaults)
 
     def __setstate__(self, state):
-        """Sets state"""
+        """Sets state."""
         super(Ralamb, self).__setstate__(state)
 
-    def step(self, closure=None):
-        """Makes optimizer step"""
+    def step(self, closure: Optional[Callable] = None):
+        """Makes optimizer step.
+
+        Args:
+            closure (callable, optional): A closure that reevaluates
+                the model and returns the loss.
+        """
         loss = None
         if closure is not None:
             loss = closure()

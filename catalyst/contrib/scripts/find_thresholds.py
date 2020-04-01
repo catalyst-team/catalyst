@@ -30,9 +30,7 @@ RANK_METRICS = [
 
 
 def build_args(parser):
-    """
-    Constructs the command-line arguments
-    """
+    """Constructs the command-line arguments."""
     parser.add_argument(
         "--in-csv",
         type=Path,
@@ -76,7 +74,11 @@ def build_args(parser):
         "--num-splits", type=int, help="NUM_SPLITS", required=False, default=5
     )
     parser.add_argument(
-        "--num-repeats", type=int, help="NUM_REPEATS", required=False, default=1
+        "--num-repeats",
+        type=int,
+        help="NUM_REPEATS",
+        required=False,
+        default=1,
     )
     parser.add_argument(
         "--num-workers",
@@ -93,9 +95,7 @@ def build_args(parser):
 
 
 def parse_args():
-    """
-    Parses the command line arguments for the main method
-    """
+    """Parses the command line arguments for the main method."""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args = parser.parse_args()
@@ -103,9 +103,7 @@ def parse_args():
 
 
 def get_binary_labels(labels: np.array, label: int, ignore_label: int = None):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     binary_labels = labels == label
     if ignore_label is not None:
         binary_labels[labels == ignore_label] = 0
@@ -115,9 +113,7 @@ def get_binary_labels(labels: np.array, label: int, ignore_label: int = None):
 def find_best_split_threshold(
     y_pred: np.array, y_true: np.array, metric: Callable,
 ):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     thresholds = np.linspace(0.0, 1.0, num=100)
     metric_values = []
     for t in thresholds:
@@ -139,9 +135,7 @@ def find_best_threshold(
     num_repeats: int = 1,
     random_state: int = 42,
 ):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     rkf = RepeatedStratifiedKFold(
         n_splits=num_splits, n_repeats=num_repeats, random_state=random_state
     )
@@ -176,9 +170,7 @@ def find_best_threshold(
 
 
 def wrap_find_best_threshold(args: Tuple[Any]):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     class_id, function_args = args[0], args[1:]
     threshold, metrics = find_best_threshold(*function_args)
     return class_id, threshold, metrics
@@ -194,9 +186,7 @@ def optimize_thresholds(
     num_workers: int = 0,
     ignore_label: int = None,
 ) -> Tuple[Dict, Dict]:
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     pool = utils.get_pool(num_workers)
 
     predictions_ = predictions.copy()
@@ -235,6 +225,8 @@ def get_model_confidences(
     classes: List[int] = None,
 ):
     """
+    @TODO: Docs (add description). Contribution is welcome
+
     Args:
         confidences (np.ndarray): model predictions of shape
             [dataset_len; class_confidences]
@@ -255,9 +247,7 @@ def get_model_confidences(
 
 
 def score_model_coverage(confidences: np.ndarray, labels: np.ndarray):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     candidates = np.argsort(-confidences, axis=1)
     confidences = -np.sort(-confidences, axis=1)
     candidates[confidences < 0] = -1
@@ -288,9 +278,7 @@ def _save_json(dct: Dict, outpath: Path, suffix: str = None):
 
 
 def main(args, _=None):
-    """
-    Run script
-    """
+    """Run ``catalyst-contrib find-thresholds`` script."""
     predictions = expit(np.load(args.in_npy))
     if args.sigmoid:
         predictions = expit(predictions)

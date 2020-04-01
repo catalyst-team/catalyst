@@ -1,3 +1,4 @@
+from typing import Callable, Optional
 import math
 
 import torch
@@ -5,17 +6,24 @@ from torch.optim.optimizer import Optimizer
 
 
 class RAdam(Optimizer):
-    """
-    @TODO: Docs. Contribution is welcome
-    Taken from https://github.com/LiyuanLucasLiu/RAdam
+    """Implements RAdam algorithm.
+
+    It has been proposed in `On the Variance of the Adaptive Learning Rate
+    and Beyond`_.
+
+    @TODO: Docs (add `Example`). Contribution is welcome
+
+    Main origins of inspiration:
+        https://github.com/LiyuanLucasLiu/RAdam (Apache-2.0 License)
+
+    .. _On the Variance of the Adaptive Learning Rate and Beyond:
+        https://arxiv.org/abs/1908.03265
     """
 
     def __init__(
         self, params, lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=0
     ):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         defaults = {
             "lr": lr,
             "betas": betas,
@@ -26,14 +34,15 @@ class RAdam(Optimizer):
         super(RAdam, self).__init__(params, defaults)
 
     def __setstate__(self, state):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         super(RAdam, self).__setstate__(state)
 
-    def step(self, closure=None):
-        """
-        @TODO: Docs. Contribution is welcome
+    def step(self, closure: Optional[Callable] = None):
+        """Makes optimizer step.
+
+        Args:
+            closure (callable, optional): A closure that reevaluates
+                the model and returns the loss.
         """
         loss = None
         if closure is not None:

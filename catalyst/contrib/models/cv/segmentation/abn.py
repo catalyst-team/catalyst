@@ -4,28 +4,30 @@ from torch import nn
 
 
 class ABN(nn.Module):
-    """
-    Activated Batch Normalization
-    This gathers a `BatchNorm2d` and an activation function in a single module
+    """Activated Batch Normalization.
+
+    This gathers a `BatchNorm2d` and an activation function in a single module.
+
+    @TODO: Docs (add `Example`). Contribution is welcome.
     """
 
     def __init__(
         self,
-        num_features,
-        activation="leaky_relu",
+        num_features: int,
+        activation: str = "leaky_relu",
         batchnorm_params: Dict = None,
         activation_params: Dict = None,
         use_batchnorm: bool = True,
     ):
         """
-        Create an Activated Batch Normalization module
-        Parameters
-        ----------
-        num_features : int
-            Number of feature channels in the input and output.
-        activation : str
-            Name of the activation functions, one of:
-                `leaky_relu`, `elu` or `none`.
+        Args:
+            num_features (int): number of feature channels
+                in the input and output
+            activation (str): name of the activation functions, one of:
+                ``'leaky_relu'``, ``'elu'`` or ``'none'``.
+            batchnorm_params (dict): additional ``nn.BatchNorm2d`` params
+            activation_params (dict): additional params for activation fucntion
+            use_batchnorm (bool): @TODO: Docs. Contribution is welcome
         """
         super().__init__()
         batchnorm_params = batchnorm_params or {}
@@ -44,8 +46,6 @@ class ABN(nn.Module):
         self.net = nn.Sequential(*layers)
 
     def forward(self, x):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """Forward call."""
         x = self.net(x)
         return x

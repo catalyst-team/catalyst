@@ -1,3 +1,4 @@
+from typing import Tuple
 from collections import OrderedDict
 
 import torchvision
@@ -6,16 +7,13 @@ from catalyst.dl.experiment import ConfigExperiment
 
 
 class MNIST(torchvision.datasets.MNIST):
-    """
-    `MNIST <http://yann.lecun.com/exdb/mnist/>`_ Dataset.
-    """
+    """`MNIST <http://yann.lecun.com/exdb/mnist/>`_ Dataset."""
 
-    def __getitem__(self, index: int):
-        """
-        Fetches a sample for a given index from MNIST dataset.
+    def __getitem__(self, index: int) -> Tuple:
+        """Fetches a sample for a given index from MNIST dataset.
 
         Args:
-            index (int): Index
+            index (int): index of the element in the dataset
 
         Returns:
             tuple: (image, target) where target is index of the target class
@@ -29,13 +27,13 @@ class MNIST(torchvision.datasets.MNIST):
 
 
 class Experiment(ConfigExperiment):
-    """
-    ``ConfigExperiment`` on MNIST dataset
-    """
+    """``ConfigExperiment`` with MNIST dataset."""
 
     def get_datasets(self, stage: str, **kwargs):
-        """
-        Provides train/validation subsets from MNIST dataset
+        """Provides train/validation subsets from MNIST dataset.
+
+        Args:
+            stage (str): stage name e.g. ``'stage1'`` or ``'infer'``
         """
         datasets = OrderedDict()
         for mode in ("train", "valid"):

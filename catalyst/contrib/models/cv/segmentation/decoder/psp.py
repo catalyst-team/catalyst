@@ -10,9 +10,7 @@ from .core import DecoderSpec
 
 
 class PSPDecoder(DecoderSpec):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
 
     def __init__(
         self,
@@ -22,9 +20,7 @@ class PSPDecoder(DecoderSpec):
         use_batchnorm: bool = True,
         out_channels: int = 512,
     ):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__(in_channels, in_strides)
         self.block_offset = self._get_block_offset(downsample_factor)
         psp_out_channels: int = self._get(in_channels)
@@ -48,16 +44,12 @@ class PSPDecoder(DecoderSpec):
 
     @property
     def out_channels(self) -> List[int]:
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """Number of channels produced by the block."""
         return [self._out_channels]
 
     @property
     def out_strides(self) -> List[int]:
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         return [self.downsample_factor]
 
     def _get_block_offset(self, downsample_factor: int):
@@ -68,9 +60,7 @@ class PSPDecoder(DecoderSpec):
         return xs[self.block_offset]
 
     def forward(self, x: List[torch.Tensor]) -> List[torch.Tensor]:
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """Forward call."""
         features = self._get(x)
         x = self.psp(features)
         x = self.conv(x)

@@ -14,9 +14,7 @@ def _setup_data(num_rows=10):
 
 
 def test_stratified_fold_split():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     df = _setup_data()
 
     splitted = split_dataframe_on_stratified_folds(
@@ -31,9 +29,7 @@ def test_stratified_fold_split():
 
 
 def test_stratified_fold_split_num_folds():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     df = _setup_data()
 
     splitted = split_dataframe_on_stratified_folds(df, "class", n_folds=2)

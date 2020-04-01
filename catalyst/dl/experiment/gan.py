@@ -15,9 +15,7 @@ from .base import BaseExperiment
 
 
 class GanExperiment(BaseExperiment):
-    """
-    One-staged GAN experiment
-    """
+    """One-staged GAN experiment."""
 
     def __init__(
         self, *, phase2callbacks: Dict[str, List[str]] = None, **kwargs,
@@ -64,7 +62,7 @@ class GanExperiment(BaseExperiment):
         self.wrap_callbacks(phase2callbacks or {})
 
     def wrap_callbacks(self, phase2callbacks) -> None:
-        """Phase wrapping procedure for callbacks"""
+        """Phase wrapping procedure for callbacks."""
         discriminator_phase_name = self._additional_state_kwargs[
             "discriminator_train_phase"
         ]
@@ -95,9 +93,7 @@ class GanExperiment(BaseExperiment):
                 )
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         callbacks = super().get_callbacks(stage=stage)
         default_callbacks = []
         if self._verbose:

@@ -9,9 +9,8 @@ from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
 class BaseExperiment(Experiment):
-    """
-    Super-simple one-staged experiment
-        you can use to declare experiment in code
+    """Super-simple one-staged experiment,
+    you can use to declare experiment in code.
     """
 
     def __init__(
@@ -91,31 +90,31 @@ class BaseExperiment(Experiment):
 
     @property
     def initial_seed(self) -> int:
-        """Experiment's initial seed value"""
+        """Experiment's initial seed value."""
         return self._initial_seed
 
     @property
     def logdir(self):
-        """Path to the directory where the experiment logs"""
+        """Path to the directory where the experiment logs."""
         return self._logdir
 
     @property
     def stages(self) -> Iterable[str]:
-        """Experiment's stage names (array with one value)"""
+        """Experiment's stage names (array with one value)."""
         return [self._stage]
 
     @property
     def distributed_params(self) -> Dict:
-        """Dict with the parameters for distributed and FP16 method"""
+        """Dict with the parameters for distributed and FP16 method."""
         return self._distributed_params
 
     @property
     def monitoring_params(self) -> Dict:
-        """Dict with the parameters for monitoring services"""
+        """Dict with the parameters for monitoring services."""
         return self._monitoring_params
 
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
-        """Returns the state parameters for a given stage"""
+        """Returns the state parameters for a given stage."""
         default_params = {
             "logdir": self.logdir,
             "num_epochs": self._num_epochs,
@@ -129,29 +128,29 @@ class BaseExperiment(Experiment):
         return state_params
 
     def get_model(self, stage: str) -> Model:
-        """Returns the model for a given stage"""
+        """Returns the model for a given stage."""
         return self._model
 
     def get_criterion(self, stage: str) -> Criterion:
-        """Returns the criterion for a given stage"""
+        """Returns the criterion for a given stage."""
         return self._criterion
 
     def get_optimizer(self, stage: str, model: nn.Module) -> Optimizer:
-        """Returns the optimizer for a given stage"""
+        """Returns the optimizer for a given stage."""
         return self._optimizer
 
     def get_scheduler(self, stage: str, optimizer=None) -> Scheduler:
-        """Returns the scheduler for a given stage"""
+        """Returns the scheduler for a given stage."""
         return self._scheduler
 
     def get_loaders(
         self, stage: str, epoch: int = None,
     ) -> "OrderedDict[str, DataLoader]":
-        """Returns the loaders for a given stage"""
+        """Returns the loaders for a given stage."""
         return self._loaders
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
-        """Returns the callbacks for a given stage"""
+        """Returns the callbacks for a given stage."""
         return self._callbacks
 
 

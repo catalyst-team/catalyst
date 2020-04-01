@@ -2,9 +2,7 @@ from typing import Callable, Dict, List, Union
 
 
 class Augmentor:
-    """
-    Augmentation abstraction to use with data dictionaries.
-    """
+    """Augmentation abstraction to use with data dictionaries."""
 
     def __init__(
         self,
@@ -29,7 +27,7 @@ class Augmentor:
         self.kwargs = kwargs
 
     def __call__(self, dict_: dict):
-        """Applies the augmentation"""
+        """Applies the augmentation."""
         if self.input_key is not None:
             output = self.augment_fn(
                 **{self.input_key: dict_[self.dict_key]}, **self.kwargs
@@ -45,9 +43,7 @@ class Augmentor:
 
 
 class AugmentorCompose:
-    """
-    Compose augmentors
-    """
+    """Compose augmentors."""
 
     def __init__(self, key2augment_fn: Dict[str, Callable]):
         """
@@ -73,9 +69,7 @@ class AugmentorCompose:
 
 
 class AugmentorKeys:
-    """
-    Augmentation abstraction to match input and augmentations keys
-    """
+    """Augmentation abstraction to match input and augmentations keys."""
 
     def __init__(
         self,

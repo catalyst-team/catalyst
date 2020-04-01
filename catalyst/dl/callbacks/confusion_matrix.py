@@ -10,9 +10,7 @@ from catalyst.utils import meters
 
 
 class ConfusionMatrixCallback(Callback):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
 
     def __init__(
         self,
@@ -26,7 +24,8 @@ class ConfusionMatrixCallback(Callback):
         tensorboard_callback_name: str = "_tensorboard",
     ):
         """
-        @TODO: Docs. Contribution is welcome
+        Args:
+            @TODO: Docs. Contribution is welcome
         """
         super().__init__(CallbackOrder.Metric, CallbackNode.All)
         self.prefix = prefix
@@ -90,14 +89,18 @@ class ConfusionMatrixCallback(Callback):
         logger.add_image(f"{self.prefix}/epoch", fig, global_step=epoch)
 
     def on_loader_start(self, state: State):
-        """
-        @TODO: Docs. Contribution is welcome
+        """Loader start hook.
+
+        Args:
+            state (State): current state
         """
         self._reset_stats()
 
     def on_batch_end(self, state: State):
-        """
-        @TODO: Docs. Contribution is welcome
+        """Batch end hook.
+
+        Args:
+            state (State): current state
         """
         self._add_to_stats(
             state.batch_out[self.output_key].detach(),
@@ -105,8 +108,10 @@ class ConfusionMatrixCallback(Callback):
         )
 
     def on_loader_end(self, state: State):
-        """
-        @TODO: Docs. Contribution is welcome
+        """Loader end hook.
+
+        Args:
+            state (State): current state
         """
         class_names = self.class_names or [
             str(i) for i in range(self.num_classes)

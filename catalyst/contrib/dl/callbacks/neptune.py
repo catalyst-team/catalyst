@@ -12,8 +12,7 @@ from catalyst.core import (
 
 
 class NeptuneLogger(Callback):
-    """
-    Logger callback, translates ``state.*_metrics`` to Neptune
+    """Logger callback, translates ``state.*_metrics`` to Neptune.
     Read about Neptune here https://neptune.ai
 
     Example:
@@ -78,7 +77,7 @@ class NeptuneLogger(Callback):
             log_on_batch_end (bool): logs per-batch metrics if set True
             log_on_epoch_end (bool): logs per-epoch metrics if set True
             offline_mode (bool): whether logging to Neptune server should
-                 be turned off. It is useful for debugging.
+                 be turned off. It is useful for debugging
         """
         super().__init__(
             order=CallbackOrder.Logging,
@@ -118,9 +117,7 @@ class NeptuneLogger(Callback):
         self.experiment = neptune.create_experiment(**logging_params)
 
     def __del__(self):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome"""
         if hasattr(self, "experiment"):
             self.experiment.stop()
 
@@ -139,9 +136,7 @@ class NeptuneLogger(Callback):
                 self.experiment.log_metric(metric_name, y=metric_value, x=step)
 
     def on_batch_end(self, state: State):
-        """
-        Log batch metrics to Neptune
-        """
+        """Log batch metrics to Neptune."""
         if self.log_on_batch_end:
             mode = state.loader_name
             metrics_ = state.batch_metrics
@@ -153,9 +148,7 @@ class NeptuneLogger(Callback):
             )
 
     def on_loader_end(self, state: State):
-        """
-        Translate epoch metrics to Neptune
-        """
+        """Translate epoch metrics to Neptune."""
         if self.log_on_epoch_end:
             mode = state.loader_name
             metrics_ = state.loader_metrics

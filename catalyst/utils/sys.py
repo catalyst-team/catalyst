@@ -12,8 +12,8 @@ from catalyst.utils.tools.tensorboard import SummaryWriter
 
 
 def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:
-    """
-    Decode bytes values in the dictionary to UTF-8
+    """Decode bytes values in the dictionary to UTF-8.
+
     Args:
         dictionary: a dict
 
@@ -28,8 +28,7 @@ def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:
 
 
 def get_environment_vars() -> Dict[str, Any]:
-    """
-    Creates a dictionary with environment variables
+    """Creates a dictionary with environment variables.
 
     Returns:
         dict: environment variables
@@ -132,7 +131,7 @@ def dump_environment(
     experiment_config: Dict, logdir: str, configs_path: List[str] = None,
 ) -> None:
     """
-    Saves config, environment variables and package list in JSON into logdir
+    Saves config, environment variables and package list in JSON into logdir.
 
     Args:
         experiment_config (dict): experiment config

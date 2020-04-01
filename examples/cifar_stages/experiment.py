@@ -9,13 +9,16 @@ from catalyst.dl import ConfigExperiment
 
 
 class CIFAR10(torchvision.datasets.CIFAR10):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """`CIFAR10 <https://www.cs.toronto.edu/~kriz/cifar.html>`_ Dataset."""
 
     def __getitem__(self, index: int):
-        """
-        @TODO: Docs. Contribution is welcome
+        """Fetch a data sample for a given index.
+
+        Args:
+            index (int): index of the element in the dataset
+
+        Returns:
+            Single element by index
         """
         image, target = self.data[index], self.targets[index]
 
@@ -26,14 +29,9 @@ class CIFAR10(torchvision.datasets.CIFAR10):
 
 
 class Experiment(ConfigExperiment):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """``ConfigExperiment`` with CIFAR10 dataset."""
 
     def _postprocess_model_for_stage(self, stage: str, model: nn.Module):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
         model_ = model
         if isinstance(model, torch.nn.DataParallel):
             model_ = model_.module
@@ -45,8 +43,10 @@ class Experiment(ConfigExperiment):
         return model_
 
     def get_datasets(self, stage: str, **kwargs):
-        """
-        @TODO: Docs. Contribution is welcome
+        """Provides train/validation subsets from CIFAR10 dataset.
+
+        Args:
+            stage (str): stage name e.g. ``'stage1'`` or ``'infer'``
         """
         datasets = OrderedDict()
         for mode in ("train", "valid"):

@@ -285,7 +285,8 @@ class State(FrozenClass):
         **kwargs,
     ):
         """
-        @TODO: Docs. Contribution is welcome
+        Args:
+            @TODO: Docs. Contribution is welcome
         """
         # main part
         # data
@@ -369,8 +370,7 @@ class State(FrozenClass):
 
     @property
     def input(self):
-        """
-        Alias for `state.batch_in`.
+        """Alias for `state.batch_in`.
 
         .. warning::
             Deprecated, saved for backward compatibility.
@@ -384,8 +384,7 @@ class State(FrozenClass):
 
     @property
     def output(self):
-        """
-        Alias for `state.batch_out`.
+        """Alias for `state.batch_out`.
 
         .. warning::
             Deprecated, saved for backward compatibility.
@@ -399,8 +398,7 @@ class State(FrozenClass):
 
     @property
     def need_backward_pass(self):
-        """
-        Alias for `state.is_train_loader`.
+        """Alias for `state.is_train_loader`.
 
         .. warning::
             Deprecated, saved for backward compatibility.

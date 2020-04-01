@@ -2,24 +2,26 @@ from torch.utils.data import Dataset
 
 
 class SomeDataset(Dataset):
-    """
-    Class representing a `Dataset`
-    """
+    """Class representing a `Dataset`."""
 
     def __init__(self):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         pass
 
-    def __getitem__(self, index):
-        """
-        Fetch a data sample for a given index
+    def __getitem__(self, index: int):
+        """Fetch a data sample for a given index.
+
+        Args:
+            index (int): index of the element in the dataset
+
+        Returns:
+            Single element by index
         """
         raise NotImplementedError
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
-        Return the size of the dataset
+        Returns:
+            int: length of the dataset
         """
         pass

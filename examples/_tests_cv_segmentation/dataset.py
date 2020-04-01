@@ -21,18 +21,28 @@ class SegmentationDataset(Dataset):
             images (List[Path]): list of paths to the images
             masks (List[Path]): list of paths to the masks
                 (names must be the same as in images)
-            transforms: optional dict transforms
+            transforms (optional): dict transforms
         """
         self.images = images
         self.masks = masks
         self.transforms = transforms
 
     def __len__(self) -> int:
-        """Length of the dataset"""
+        """
+        Returns:
+            int: length of the dataset
+        """
         return len(self.images)
 
     def __getitem__(self, idx: int) -> dict:
-        """Main method"""
+        """Fetch a data sample for a given index.
+
+        Args:
+            index (int): index of the element in the dataset
+
+        Returns:
+            Single element by index
+        """
         image_path = self.images[idx]
         image = utils.imread(image_path)
 

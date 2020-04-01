@@ -19,9 +19,7 @@ def get_convolution_net(
     residual: Union[bool, str] = False,
     layer_order: List = None,
 ) -> nn.Module:
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     channels = channels or [32, 64, 64]
     kernel_sizes = kernel_sizes or [8, 4, 3]
     strides = strides or [4, 2, 1]
@@ -78,9 +76,7 @@ def get_linear_net(
     residual: Union[bool, str] = False,
     layer_order: List = None,
 ) -> nn.Module:
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     features = features or [64, 128, 64]
 
     layer_fn = (

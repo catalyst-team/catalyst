@@ -6,9 +6,7 @@ from .core import DecoderBlock
 
 
 class DecoderFPNBlock(DecoderBlock):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs (add description, `Example`). Contribution is welcome."""
 
     def __init__(
         self,
@@ -23,7 +21,8 @@ class DecoderFPNBlock(DecoderBlock):
         **kwargs
     ):
         """
-        @TODO: Docs. Contribution is welcome
+        Args:
+            @TODO: Docs. Contribution is welcome.
         """
         self.upsample_scale = upsample_scale
         self.interpolation_mode = interpolation_mode
@@ -36,10 +35,10 @@ class DecoderFPNBlock(DecoderBlock):
         block = nn.Conv2d(self.enc_channels, self.out_channels, kernel_size=1)
         return block
 
-    def forward(self, bottom: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+    def forward(
+        self, bottom: torch.Tensor, left: torch.Tensor
+    ) -> torch.Tensor:
+        """Forward call."""
         x = F.interpolate(
             bottom,
             scale_factor=self.upsample_scale,
@@ -52,9 +51,7 @@ class DecoderFPNBlock(DecoderBlock):
 
 
 class Conv3x3GNReLU(nn.Module):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs (add description, `Example`). Contribution is welcome."""
 
     def __init__(
         self,
@@ -66,7 +63,8 @@ class Conv3x3GNReLU(nn.Module):
         align_corners: bool = True,
     ):
         """
-        @TODO: Docs. Contribution is welcome
+        Args:
+            @TODO: Docs. Contribution is welcome.
         """
         super().__init__()
         self.upsample = upsample
@@ -87,10 +85,8 @@ class Conv3x3GNReLU(nn.Module):
             nn.ReLU(inplace=True),
         )
 
-    def forward(self, x):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward call."""
         x = self.block(x)
         if self.upsample:
             x = F.interpolate(
@@ -103,16 +99,12 @@ class Conv3x3GNReLU(nn.Module):
 
 
 class SegmentationBlock(nn.Module):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs (add description, `Example`). Contribution is welcome."""
 
     def __init__(
         self, in_channels: int, out_channels: int, num_upsamples: int = 0
     ):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__()
 
         blocks = [
@@ -129,8 +121,6 @@ class SegmentationBlock(nn.Module):
 
         self.block = nn.Sequential(*blocks)
 
-    def forward(self, x):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward call."""
         return self.block(x)

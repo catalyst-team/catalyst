@@ -5,19 +5,15 @@ from time import time
 
 
 class TimeManager(object):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
 
     def __init__(self):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         self._starts = {}
         self.elapsed = {}
 
     def start(self, name: str) -> None:
-        """Starts timer ``name``
+        """Starts timer ``name``.
 
         Args:
             name (str): name of a timer
@@ -25,7 +21,7 @@ class TimeManager(object):
         self._starts[name] = time()
 
     def stop(self, name: str) -> None:
-        """Stops timer ``name``
+        """Stops timer ``name``.
 
         Args:
             name (str): name of a timer
@@ -36,9 +32,7 @@ class TimeManager(object):
         del self._starts[name]
 
     def reset(self) -> None:
-        """
-        Reset all previous timers
-        """
+        """Reset all previous timers."""
         self.elapsed = {}
         self._starts = {}
 

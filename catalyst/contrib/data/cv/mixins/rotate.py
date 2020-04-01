@@ -6,9 +6,7 @@ from catalyst import utils
 
 
 class RotateMixin:
-    """
-    Calculates rotation factor for augmented image
-    """
+    """Calculates rotation factor for augmented image."""
 
     def __init__(
         self,
@@ -36,9 +34,7 @@ class RotateMixin:
         )
 
     def __call__(self, dictionary):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         image = dictionary[self.input_key]
         rotation_factor = 0
 

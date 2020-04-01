@@ -3,14 +3,7 @@ from itertools import tee
 
 
 def pairwise(iterable: Iterable[Any]) -> Iterable[Any]:
-    """
-    Iterate sequences by pairs
-
-    Args:
-        iterable: Any iterable sequence
-
-    Returns:
-        pairwise iterator
+    """Iterate sequences by pairs.
 
     Examples:
         >>> for i in pairwise([1, 2, 5, -3]):
@@ -18,6 +11,12 @@ def pairwise(iterable: Iterable[Any]) -> Iterable[Any]:
         (1, 2)
         (2, 5)
         (5, -3)
+
+    Args:
+        iterable: Any iterable sequence
+
+    Returns:
+        pairwise iterator
     """
     a, b = tee(iterable)
     next(b, None)
@@ -25,8 +24,7 @@ def pairwise(iterable: Iterable[Any]) -> Iterable[Any]:
 
 
 def make_tuple(tuple_like):
-    """
-    Creates a tuple if given ``tuple_like`` value isn't list or tuple
+    """Creates a tuple if given ``tuple_like`` value isn't list or tuple.
 
     Returns:
         tuple or list
@@ -40,10 +38,11 @@ def make_tuple(tuple_like):
 
 
 def args_are_not_none(*args: Optional[Any]) -> bool:
-    """
-    Check that all arguments are not None
+    """Check that all arguments are not ``None``.
+
     Args:
         *args (Any): values
+
     Returns:
          bool: True if all value were not None, False otherwise
     """

@@ -4,9 +4,7 @@ from .. import __main__ as main
 
 
 def test_arg_parser_run():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     parser = main.build_parser()
 
     args, uargs = parser.parse_known_args(
@@ -19,9 +17,7 @@ def test_arg_parser_run():
 
 
 def test_run_multiple_configs():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     parser = main.build_parser()
 
     args, uargs = parser.parse_known_args(
@@ -32,9 +28,7 @@ def test_run_multiple_configs():
 
 
 def test_arg_parser_fail_on_none():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     parser = main.build_parser()
 
     with pytest.raises(SystemExit):

@@ -10,9 +10,9 @@ from catalyst.data import DatasetFromSampler
 
 
 class BalanceClassSampler(Sampler):
-    """
-    Abstraction over data sampler. Allows you to create stratified sample
-    on unbalanced classes.
+    """Abstraction over data sampler.
+
+    Allows you to create stratified sample on unbalanced classes.
     """
 
     def __init__(self, labels: List[int], mode: str = "downsampling"):
@@ -77,8 +77,7 @@ class BalanceClassSampler(Sampler):
 
 class MiniEpochSampler(Sampler):
     """
-    Sampler iterates mini epochs from the dataset
-    used by ``mini_epoch_len``
+    Sampler iterates mini epochs from the dataset used by ``mini_epoch_len``.
 
     Example:
         >>> MiniEpochSampler(len(dataset), mini_epoch_len=100)
@@ -100,11 +99,11 @@ class MiniEpochSampler(Sampler):
             data_len (int): Size of the dataset
             mini_epoch_len (int): Num samples from the dataset used in one
                 mini epoch.
-            drop_last (bool): If ``True``, sampler will drop the last batches if
-                its size would be less than ``batches_per_epoch``
-            shuffle (str): one of  ``["always", "real_epoch", None]``.
+            drop_last (bool): If ``True``, sampler will drop the last batches
+                if its size would be less than ``batches_per_epoch``
+            shuffle (str): one of  ``"always"``, ``"real_epoch"``, or `None``.
                 The sampler will shuffle indices
-                > "per_mini_epoch" -- every mini epoch (every ``__iter__`` call)
+                > "per_mini_epoch" - every mini epoch (every ``__iter__`` call)
                 > "per_epoch" -- every real epoch
                 > None -- don't shuffle
         """
@@ -136,9 +135,7 @@ class MiniEpochSampler(Sampler):
         self.shuffle_type = shuffle
 
     def shuffle(self) -> None:
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         if self.shuffle_type == "per_mini_epoch" or (
             self.shuffle_type == "per_epoch" and self.state_i == 0
         ):
@@ -151,9 +148,7 @@ class MiniEpochSampler(Sampler):
                 )
 
     def __iter__(self) -> Iterator[int]:
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         self.state_i = self.state_i % self.divider
         self.shuffle()
 
@@ -170,7 +165,8 @@ class MiniEpochSampler(Sampler):
 
     def __len__(self) -> int:
         """
-        @TODO: Docs. Contribution is welcome
+        Returns:
+            int: length of the mini-epoch
         """
         return self.mini_epoch_len
 
@@ -216,9 +212,7 @@ class DistributedSamplerWrapper(DistributedSampler):
         self.sampler = sampler
 
     def __iter__(self):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         self.dataset = DatasetFromSampler(self.sampler)
         indexes_of_indexes = super().__iter__()
         subsampler_indexes = self.dataset

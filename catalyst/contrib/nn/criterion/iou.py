@@ -6,8 +6,9 @@ from catalyst.utils import metrics
 
 
 class IoULoss(nn.Module):
-    """
-    Intersection over union (Jaccard) loss
+    """The intersection over union (Jaccard) loss.
+
+    @TODO: Docs. Contribution is welcome.
     """
 
     def __init__(
@@ -21,7 +22,7 @@ class IoULoss(nn.Module):
             eps (float): epsilon to avoid zero division
             threshold (float): threshold for outputs binarization
             activation (str): An torch.nn activation applied to the outputs.
-                Must be one of ['none', 'Sigmoid', 'Softmax2d']
+                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
         """
         super().__init__()
         self.metric_fn = partial(
@@ -29,16 +30,15 @@ class IoULoss(nn.Module):
         )
 
     def forward(self, outputs, targets):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         iou = self.metric_fn(outputs, targets)
         return 1 - iou
 
 
 class BCEIoULoss(nn.Module):
-    """
-    Intersection over union (Jaccard) with BCE loss
+    """The Intersection over union (Jaccard) with BCE loss.
+
+    @TODO: Docs. Contribution is welcome.
     """
 
     def __init__(
@@ -53,7 +53,7 @@ class BCEIoULoss(nn.Module):
             eps (float): epsilon to avoid zero division
             threshold (float): threshold for outputs binarization
             activation (str): An torch.nn activation applied to the outputs.
-                Must be one of ['none', 'Sigmoid', 'Softmax2d']
+                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
             reduction (str): Specifies the reduction to apply
                 to the output of BCE
         """
@@ -62,9 +62,7 @@ class BCEIoULoss(nn.Module):
         self.iou_loss = IoULoss(eps, threshold, activation)
 
     def forward(self, outputs, targets):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         iou = self.iou_loss.forward(outputs, targets)
         bce = self.bce_loss(outputs, targets)
         loss = iou + bce

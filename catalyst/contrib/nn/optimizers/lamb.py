@@ -1,3 +1,4 @@
+from typing import Callable, Optional, Tuple
 import collections
 
 import torch
@@ -19,19 +20,24 @@ def log_lamb_rs(optimizer: Optimizer, event_writer, token_count: int):
 
 
 class Lamb(Optimizer):
-    """Lamb optimizer"""
+    """Implements Lamb algorithm.
+
+    It has been proposed in `Training BERT in 76 minutes`_.
+
+    .. _`Training BERT in 76 minutes`:
+        https://arxiv.org/abs/1904.00962
+    """
 
     def __init__(
         self,
         params,
-        lr=1e-3,
-        betas=(0.9, 0.999),
-        eps=1e-6,
-        weight_decay=0,
-        adam=False,
+        lr: Optional[float] = 1e-3,
+        betas: Optional[Tuple[float, float]] = (0.9, 0.999),
+        eps: Optional[float] = 1e-6,
+        weight_decay: Optional[float] = 0.0,
+        adam: Optional[bool] = False,
     ):
-        """Implements Lamb algorithm from `Training BERT in 76 minutes`_.
-
+        """
         Args:
             params (iterable): iterable of parameters to optimize or dicts
                 defining parameter groups
@@ -45,9 +51,6 @@ class Lamb(Optimizer):
                 (default: 0)
             adam (bool, optional): always use trust ratio = 1, which turns
                 this into Adam. Useful for comparison purposes.
-
-        .. _`Training BERT in 76 minutes`:
-            https://arxiv.org/abs/1904.00962
         """
         if not 0.0 <= lr:
             raise ValueError(f"Invalid learning rate: {lr}")
@@ -66,8 +69,13 @@ class Lamb(Optimizer):
         self.adam = adam
         super(Lamb, self).__init__(params, defaults)
 
-    def step(self, closure=None):
-        """Makes optimizer step"""
+    def step(self, closure: Optional[Callable] = None):
+        """Makes optimizer step.
+
+        Args:
+            closure (callable, optional): A closure that reevaluates
+                the model and returns the loss.
+        """
         loss = None
         if closure is not None:
             loss = closure()

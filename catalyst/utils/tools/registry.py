@@ -28,7 +28,7 @@ def _default_meta_factory(factory: Factory, args: Tuple, kwargs: Mapping):
 
 
 class RegistryException(Exception):
-    """Exception class for all registry errors"""
+    """Exception class for all registry errors."""
 
     def __init__(self, message):
         """Init"""
@@ -37,7 +37,7 @@ class RegistryException(Exception):
 
 class Registry(collections.MutableMapping):
     """
-    Universal class allowing to add and access various factories by name
+    Universal class allowing to add and access various factories by name.
     """
 
     def __init__(
@@ -130,7 +130,7 @@ class Registry(collections.MutableMapping):
     def late_add(self, cb: LateAddCallbak):
         """
         Allows to prevent cycle imports by delaying some imports till next
-        registry query
+        registry query.
 
         Args:
             cb: Callback receives registry and must call it's methods to
@@ -143,7 +143,7 @@ class Registry(collections.MutableMapping):
     ) -> None:
         """
         Adds all factories present in module.
-        If ``__all__`` attribute is present, takes ony what mentioned in it
+        If ``__all__`` attribute is present, takes ony what mentioned in it.
 
         Args:
             module: module to scan
@@ -182,7 +182,7 @@ class Registry(collections.MutableMapping):
     def get(self, name: str) -> Optional[Factory]:
         """
         Retrieves factory, without creating any objects with it
-        or raises error
+        or raises error.
 
         Args:
             name: factory name
@@ -206,7 +206,7 @@ class Registry(collections.MutableMapping):
 
     def get_if_str(self, obj: Union[str, Factory]):
         """
-        Returns object from the registry if ``obj`` type is string
+        Returns object from the registry if ``obj`` type is string.
         """
         if type(obj) is str:
             return self.get(obj)
@@ -215,7 +215,7 @@ class Registry(collections.MutableMapping):
     def get_instance(self, name: str, *args, meta_factory=None, **kwargs):
         """
         Creates instance by calling specified factory
-        with instantiate_fn
+        with ``instantiate_fn``.
 
         Args:
             name: factory name
@@ -276,39 +276,39 @@ class Registry(collections.MutableMapping):
         return len(self._factories)
 
     def __str__(self) -> str:
-        """Returns a string of registered items"""
+        """Returns a string of registered items."""
         return self.all().__str__()
 
     def __repr__(self) -> str:
-        """Returns a string representation of registered items"""
+        """Returns a string representation of registered items."""
         return self.all().__str__()
 
     # mapping methods
     def __len__(self) -> int:
-        """Returns length of registered items"""
+        """Returns length of registered items."""
         self._do_late_add()
         return self.len()
 
     def __getitem__(self, name: str) -> Optional[Factory]:
-        """Returns a value from the registry by name"""
+        """Returns a value from the registry by name."""
         return self.get(name)
 
     def __iter__(self) -> Iterator[str]:
-        """Iterates over all registered items"""
+        """Iterates over all registered items."""
         self._do_late_add()
         return self._factories.__iter__()
 
     def __contains__(self, name: str):
-        """Check if a particular name was registered"""
+        """Check if a particular name was registered."""
         self._do_late_add()
         return self._factories.__contains__(name)
 
     def __setitem__(self, name: str, factory: Factory) -> None:
-        """Add a new factory by giving name"""
+        """Add a new factory by giving name."""
         self.add(factory, name=name)
 
     def __delitem__(self, name: str) -> None:
-        """Removes a factory by giving name"""
+        """Removes a factory by giving name."""
         self._factories.pop(name)
 
 

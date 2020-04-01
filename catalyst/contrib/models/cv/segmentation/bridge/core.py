@@ -6,13 +6,13 @@ from torch import nn
 
 
 class BridgeSpec(ABC, nn.Module):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
 
     def __init__(self, in_channels: List[int], in_strides: List[int]):
         """
-        @TODO: Docs. Contribution is welcome
+        Args:
+            in_channels (List[int]): number of channels in the input sample
+            in_strides (List[int]): the stride of the block
         """
         super().__init__()
         self._in_channels = in_channels
@@ -20,37 +20,27 @@ class BridgeSpec(ABC, nn.Module):
 
     @property
     def in_channels(self) -> List[int]:
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """Number of channels in the input sample."""
         return self._in_channels
 
     @property
     def in_strides(self) -> List[int]:
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         return self._in_strides
 
     @property
     @abstractmethod
     def out_channels(self) -> List[int]:
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """Number of channels produced by the block."""
         pass
 
     @property
     @abstractmethod
     def out_strides(self) -> List[int]:
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         pass
 
     @abstractmethod
     def forward(self, x: List[torch.Tensor]) -> List[torch.Tensor]:
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """Forward call."""
         pass

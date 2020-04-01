@@ -17,22 +17,20 @@ class MSEMeter(meter.Meter):
     def __init__(self, root: bool = False):
         """
         Args:
-            root (bool): Toggle between calculation of RMSE(True) and MSE(False)
+            root (bool): Toggle between calculation of
+                RMSE (True) and MSE (False)
         """
         super(MSEMeter, self).__init__()
         self.reset()
         self.root = root
 
     def reset(self) -> None:
-        """
-        Reset meter number of elements and squared error sum
-        """
+        """Reset meter number of elements and squared error sum."""
         self.n = 0
         self.sesum = 0.0
 
     def add(self, output: torch.Tensor, target: torch.Tensor) -> None:
-        """
-        Update squared error stored sum and number of elements
+        """Update squared error stored sum and number of elements.
 
         Args:
             output (Tensor): Model output tensor or numpy array
@@ -45,8 +43,7 @@ class MSEMeter(meter.Meter):
         self.sesum += torch.sum((output - target) ** 2)
 
     def value(self) -> float:
-        """
-        Calculate MSE and return RMSE or MSE
+        """Calculate MSE and return RMSE or MSE.
 
         Returns:
             float: Root of MSE if `self.root` is True else MSE

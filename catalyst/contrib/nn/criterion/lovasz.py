@@ -1,8 +1,5 @@
-"""
-https://arxiv.org/abs/1705.08790
-Lovasz-Softmax and Jaccard hinge loss in PyTorch
-Maxim Berman 2018 ESAT-PSI KU Leuven (MIT License)
-"""
+# Lovasz-Softmax and Jaccard hinge loss in PyTorch
+# Maxim Berman 2018 ESAT-PSI KU Leuven (MIT License)
 
 from itertools import filterfalse as ifilterfalse
 
@@ -40,8 +37,8 @@ def mean(values, ignore_nan=False, empty=0):
 
 def _lovasz_grad(gt_sorted):
     """
-    Compute gradient of the Lovasz extension w.r.t sorted errors
-    See Alg. 1 in paper
+    Compute gradient of the Lovasz extension w.r.t sorted errors,
+    see Alg. 1 in paper
     """
     p = len(gt_sorted)
     gts = gt_sorted.sum()
@@ -58,7 +55,7 @@ def _lovasz_grad(gt_sorted):
 
 def _flatten_binary_scores(logits, targets, ignore=None):
     """
-    Flattens predictions in the batch (binary case)
+    Flattens predictions in the batch (binary case).
     Remove targets equal to "ignore"
     """
     logits = logits.reshape(-1)
@@ -72,14 +69,12 @@ def _flatten_binary_scores(logits, targets, ignore=None):
 
 
 def _lovasz_hinge_flat(logits, targets):
-    """
-    Binary Lovasz hinge loss
+    """The binary Lovasz hinge loss.
 
     Args:
         logits: [P] Variable, logits at each prediction
             (between -iinfinity and +iinfinity)
         targets: [P] Tensor, binary ground truth targets (0 or 1)
-        ignore: label to ignore
     """
     if len(targets) == 0:
         # only void pixels, the gradients should be 0
@@ -95,8 +90,7 @@ def _lovasz_hinge_flat(logits, targets):
 
 
 def _lovasz_hinge(logits, targets, per_image=True, ignore=None):
-    """
-    Binary Lovasz hinge loss
+    """The binary Lovasz hinge loss.
 
     Args:
         logits: [B, H, W] Variable, logits at each pixel
@@ -145,8 +139,7 @@ def _flatten_probabilities(probabilities, targets, ignore=None):
 
 
 def _lovasz_softmax_flat(probabilities, targets, classes="present"):
-    """
-    Multi-class Lovasz-Softmax loss
+    """The multi-class Lovasz-Softmax loss.
 
     Args:
         probabilities: [P, C]
@@ -183,8 +176,7 @@ def _lovasz_softmax_flat(probabilities, targets, classes="present"):
 def _lovasz_softmax(
     probabilities, targets, classes="present", per_image=False, ignore=None
 ):
-    """
-    Multi-class Lovasz-Softmax loss
+    """The multi-class Lovasz-Softmax loss.
 
     Args:
         probabilities: [B, C, H, W]
@@ -220,23 +212,31 @@ def _lovasz_softmax(
 
 
 class LovaszLossBinary(_Loss):
-    """
-    @TODO: Docs. Contribution is welcome
+    """Creates a criterion that optimizes a binary Lovasz loss.
+
+    It has been proposed in `The Lovasz-Softmax loss: A tractable surrogate
+    for the optimization of the intersection-over-union measure
+    in neural networks`_.
+
+    .. _The Lovasz-Softmax loss\: A tractable surrogate for the optimization
+        of the intersection-over-union measure in neural networks:
+        https://arxiv.org/abs/1705.08790
     """
 
     def __init__(self, per_image=False, ignore=None):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__()
         self.ignore = ignore
         self.per_image = per_image
 
     def forward(self, logits, targets):
-        """
+        """Forward propagation method for the Lovasz loss.
+
         Args:
             logits: [bs; ...]
             targets: [bs; ...]
+
+        @TODO: Docs. Contribution is welcome.
         """
         loss = _lovasz_hinge(
             logits, targets, per_image=self.per_image, ignore=self.ignore
@@ -245,23 +245,31 @@ class LovaszLossBinary(_Loss):
 
 
 class LovaszLossMultiClass(_Loss):
-    """
-    @TODO: Docs. Contribution is welcome
+    """Creates a criterion that optimizes a multi-class Lovasz loss.
+
+    It has been proposed in `The Lovasz-Softmax loss: A tractable surrogate
+    for the optimization of the intersection-over-union measure
+    in neural networks`_.
+
+    .. _The Lovasz-Softmax loss\: A tractable surrogate for the optimization
+        of the intersection-over-union measure in neural networks:
+        https://arxiv.org/abs/1705.08790
     """
 
     def __init__(self, per_image=False, ignore=None):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__()
         self.ignore = ignore
         self.per_image = per_image
 
     def forward(self, logits, targets):
-        """
+        """Forward propagation method for the Lovasz loss.
+
         Args:
             logits: [bs; num_classes; ...]
             targets: [bs; ...]
+
+        @TODO: Docs. Contribution is welcome.
         """
         loss = _lovasz_softmax(
             logits, targets, per_image=self.per_image, ignore=self.ignore
@@ -270,23 +278,31 @@ class LovaszLossMultiClass(_Loss):
 
 
 class LovaszLossMultiLabel(_Loss):
-    """
-    @TODO: Docs. Contribution is welcome
+    """Creates a criterion that optimizes a multi-label Lovasz loss.
+
+    It has been proposed in `The Lovasz-Softmax loss: A tractable surrogate
+    for the optimization of the intersection-over-union measure
+    in neural networks`_.
+
+    .. _The Lovasz-Softmax loss\: A tractable surrogate for the optimization
+        of the intersection-over-union measure in neural networks:
+        https://arxiv.org/abs/1705.08790
     """
 
     def __init__(self, per_image=False, ignore=None):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__()
         self.ignore = ignore
         self.per_image = per_image
 
     def forward(self, logits, targets):
-        """
+        """Forward propagation method for the Lovasz loss.
+
         Args:
             logits: [bs; num_classes; ...]
             targets: [bs; num_classes; ...]
+
+        @TODO: Docs. Contribution is welcome.
         """
         losses = [
             _lovasz_hinge(

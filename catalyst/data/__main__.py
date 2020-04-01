@@ -42,9 +42,9 @@ Examples:
 
     4. **split-dataframe** split your dataset into train/valid folds
 
-     .. code:: bash
+    .. code:: bash
 
-         $ catalyst-data split-dataframe \\
+        $ catalyst-data split-dataframe \\
             --in-csv=./data/dataset_raw.csv \\
             --tag2class=./data/tag2cls.json \\
             --tag-column=tag \\

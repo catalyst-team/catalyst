@@ -23,9 +23,7 @@ IMAGENET_NORM = transforms.Normalize(
 
 
 def dict_transformer(sample):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     image = sample["image"]
 
     # image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
@@ -39,8 +37,8 @@ def dict_transformer(sample):
 
 
 def build_args(parser):
-    """
-    Constructs the command-line arguments for ``catalyst-data image2embeddings``
+    """Constructs the command-line arguments for
+    ``catalyst-data image2embeddings``.
     """
     parser.add_argument(
         "--in-csv", type=str, dest="in_csv", help="Path to csv with photos"
@@ -128,9 +126,7 @@ def build_args(parser):
 
 
 def parse_args():
-    """
-    Parses the command line arguments for the main method
-    """
+    """Parses the command line arguments for the main method."""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args = parser.parse_args()
@@ -138,9 +134,7 @@ def parse_args():
 
 
 def main(args, _=None):
-    """
-    Run the ``catalyst-data image2embeddings`` script
-    """
+    """Run the ``catalyst-data image2embeddings`` script."""
     global IMG_SIZE
 
     utils.set_global_seed(args.seed)

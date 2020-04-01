@@ -30,7 +30,7 @@ class MovingAverageValueMeter(meter.Meter):
 
     def reset(self) -> None:
         """
-        Reset sum, number of elements, moving variance and zero out window
+        Reset sum, number of elements, moving variance and zero out window.
         """
         self.sum = 0.0
         self.n = 0
@@ -38,8 +38,7 @@ class MovingAverageValueMeter(meter.Meter):
         self.valuequeue.fill_(0)
 
     def add(self, value: float) -> None:
-        """
-        Adds observation sample
+        """Adds observation sample.
 
         Args:
             value (float): scalar
@@ -52,8 +51,7 @@ class MovingAverageValueMeter(meter.Meter):
         self.n += 1
 
     def value(self):
-        """
-        Return mean and standard deviation of window
+        """Return mean and standard deviation of window.
 
         Returns:
             tuple of floats: (window mean, window std)

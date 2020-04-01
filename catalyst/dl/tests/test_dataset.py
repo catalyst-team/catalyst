@@ -2,9 +2,7 @@ from catalyst.data.dataset import _Path, PathsDataset
 
 
 def test_PathsDataset() -> None:
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
 
     def get_target(path: _Path) -> int:
         result = str(path).split(".")[0].split("_")[1]

@@ -29,14 +29,12 @@ class mAPMeter(meter.Meter):
     """
 
     def __init__(self):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """Constructor method for the ``mAPMeter`` class."""
         super(mAPMeter, self).__init__()
         self.apmeter = APMeter()
 
     def reset(self) -> None:
-        """Reset `self.apmeter`"""
+        """Reset `self.apmeter`."""
         self.apmeter.reset()
 
     def add(
@@ -45,8 +43,7 @@ class mAPMeter(meter.Meter):
         target: torch.Tensor,
         weight: Optional[torch.Tensor] = None,
     ) -> None:
-        """
-        Update `self.apmeter`.
+        """Update `self.apmeter`.
 
         Args:
             output (Tensor): Model output scores as `NxK` tensor
@@ -57,8 +54,7 @@ class mAPMeter(meter.Meter):
         self.apmeter.add(output, target, weight)
 
     def value(self):
-        """
-        Returns mean of `self.apmeter` value
+        """Returns mean of `self.apmeter` value.
 
         Return:
             FloatTensor: mAP scalar tensor

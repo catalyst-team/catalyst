@@ -4,20 +4,23 @@ from torch.nn import functional as F
 
 
 class NaiveCrossEntropyLoss(nn.Module):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
 
     def __init__(self, size_average=True):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__()
         self.size_average = size_average
 
-    def forward(self, input, target):
-        """
-        @TODO: Docs. Contribution is welcome
+    def forward(
+        self, input: torch.Tensor, target: torch.Tensor
+    ) -> torch.Tensor:
+        """Calculates loss between ``input`` and ``target`` tensors.
+
+        Args:
+            input (torch.Tensor): input tensor of shape ...
+            target (torch.Tensor): target tensor of shape ...
+
+        @TODO: Docs (add shapes). Contribution is welcome.
         """
         assert input.size() == target.size()
         input = F.log_softmax(input)
@@ -27,15 +30,17 @@ class NaiveCrossEntropyLoss(nn.Module):
 
 
 class SymmetricCrossEntropyLoss(nn.Module):
-    """
-    @TODO: Docs. Contribution is welcome
+    """The Symmetric Cross Entropy loss.
+
+    It has been proposed in `Symmetric Cross Entropy for Robust Learning
+    with Noisy Labels`_.
+
+    .. _Symmetric Cross Entropy for Robust Learning with Noisy Labels:
+        https://arxiv.org/abs/1908.06112
     """
 
-    def __init__(self, alpha=1.0, beta=1.0):
+    def __init__(self, alpha: float = 1.0, beta: float = 1.0):
         """
-        Symmetric Cross Entropy
-        paper : https://arxiv.org/abs/1908.06112
-
         Args:
             alpha(float):
                 corresponds to overfitting issue of CE
@@ -46,12 +51,16 @@ class SymmetricCrossEntropyLoss(nn.Module):
         self.alpha = alpha
         self.beta = beta
 
-    def forward(self, input, target):
-        """
+    def forward(
+        self, input: torch.Tensor, target: torch.Tensor
+    ) -> torch.Tensor:
+        """Calculates loss between ``input`` and ``target`` tensors.
+
         Args:
-            input: shape = [batch_size; num_classes]
-            target: shape = [batch_size]
-            values of a vector correspond to class index
+            input (torch.Tensor): input tensor of size
+                (batch_size, num_classes)
+            target (torch.Tensor): target tensor of size (batch_size), where
+                values of a vector correspond to class index
         """
         num_classes = input.shape[1]
         target_one_hot = F.one_hot(target, num_classes).float()
@@ -71,9 +80,7 @@ class SymmetricCrossEntropyLoss(nn.Module):
 
 
 class MaskCrossEntropyLoss(torch.nn.CrossEntropyLoss):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
 
     def __init__(
         self,
@@ -82,17 +89,18 @@ class MaskCrossEntropyLoss(torch.nn.CrossEntropyLoss):
         mask_name: str = "mask",
         **kwargs
     ):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__(*args, **kwargs)
         self.target_name = target_name
         self.mask_name = mask_name
         self.reduction = "none"
 
-    def forward(self, input, target_mask):
-        """
-        @TODO: Docs. Contribution is welcome
+    def forward(
+        self, input: torch.Tensor, target_mask: torch.Tensor
+    ) -> torch.Tensor:
+        """Calculates loss between ``input`` and ``target_mask`` tensors.
+
+        @TODO: Docs. Contribution is welcome.
         """
         target = target_mask[self.target_name]
         mask = target_mask[self.mask_name]

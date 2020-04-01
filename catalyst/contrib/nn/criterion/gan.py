@@ -5,23 +5,30 @@ from torch import nn
 class MeanOutputLoss(nn.Module):
     """
     Criterion to compute simple mean of the output, completely ignoring target
-    (maybe useful e.g. for WGAN real/fake validity averaging
+    (maybe useful e.g. for WGAN real/fake validity averaging.
     """
 
     def forward(self, output, target):
-        """Compute criterion"""
+        """Compute criterion.
+
+        @TODO: Docs (add typing). Contribution is welcome.
+        """
         return output.mean()
 
 
 class GradientPenaltyLoss(nn.Module):
-    """Criterion to compute gradient penalty
+    """Criterion to compute gradient penalty.
 
     WARN: SHOULD NOT BE RUN WITH CriterionCallback,
         use special GradientPenaltyCallback instead
     """
 
     def forward(self, fake_data, real_data, critic, critic_condition_args):
-        """Compute gradient penalty"""
+        """Compute gradient penalty.
+
+        Args:
+            @TODO: Docs. Contribution is welcome.
+        """
         device = real_data.device
         # Random weight term for interpolation between real and fake samples
         alpha = torch.rand((real_data.size(0), 1, 1, 1), device=device)

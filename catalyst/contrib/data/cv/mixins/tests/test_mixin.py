@@ -10,9 +10,7 @@ image = utils.imread(jpg_rgb_uri)
 
 
 def test_blur_mixin():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     global image
     image_ = image.copy()
 
@@ -28,9 +26,7 @@ def test_blur_mixin():
 
 
 def test_flare_mixin():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     global image
     image_ = image.copy()
 
@@ -46,9 +42,7 @@ def test_flare_mixin():
 
 
 def test_rotate_mixin():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     global image
     image_ = image.copy()
 

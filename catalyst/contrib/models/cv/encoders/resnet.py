@@ -11,8 +11,14 @@ from catalyst.contrib.registry import MODULES
 
 
 class ResnetEncoder(nn.Module):
-    """
-    Specifies ResNet encoders for classification network
+    """Specifies ResNet encoders for classification network.
+
+    Examples:
+        >>> encoders = ResnetEncoder(
+        >>>    arch="resnet18",
+        >>>    pretrained=False,
+        >>>    state_dict="/model/path/resnet18-5c106cde.pth"
+        >>> )
     """
 
     def __init__(
@@ -35,13 +41,6 @@ class ResnetEncoder(nn.Module):
             pooling_kwargs (dict): params for pooling
             state_dict (Union[dict, str, Path]): Path to ``torch.Model``
                 or a dict containing parameters and persistent buffers.
-
-        Examples:
-            >>> encoders = ResnetEncoder(
-            >>>    arch="resnet18",
-            >>>    pretrained=False,
-            >>>    state_dict="/model/path/resnet18-5c106cde.pth"
-            >>> )
         """
         super().__init__()
 
@@ -84,6 +83,6 @@ class ResnetEncoder(nn.Module):
         self.encoder = nn.Sequential(*modules)
 
     def forward(self, image):
-        """Extract the image feature vectors"""
+        """Extract the image feature vectors."""
         features = self.encoder(image)
         return features

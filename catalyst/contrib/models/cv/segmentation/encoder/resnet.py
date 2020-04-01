@@ -35,8 +35,14 @@ RESNET_PARAMS = {
 
 
 class ResnetEncoder(EncoderSpec):
-    """
-    Specifies ResNet encoders for segmentation network
+    """Specifies ResNet encoders for segmentation network.
+
+    Examples:
+        >>> encoders = ResnetEncoder(
+        >>>    arch="resnet18",
+        >>>    pretrained=False,
+        >>>    state_dict="/model/path/resnet18-5c106cde.pth"
+        >>> )
     """
 
     def __init__(
@@ -59,13 +65,6 @@ class ResnetEncoder(EncoderSpec):
                 If None, calculates as ``[1, 2, 3, 4]``
             state_dict (Union[dict, str, Path]): Path to ``torch.Model``
                 or a dict containing parameters and persistent buffers.
-
-        Examples:
-            >>> encoders = ResnetEncoder(
-            >>>    arch="resnet18",
-            >>>    pretrained=False,
-            >>>    state_dict="/model/path/resnet18-5c106cde.pth"
-            >>> )
         """
         super().__init__()
 
@@ -93,7 +92,13 @@ class ResnetEncoder(EncoderSpec):
             )
         )
         self._layers = nn.ModuleList(
-            [layer0, resnet.layer1, resnet.layer2, resnet.layer3, resnet.layer4]
+            [
+                layer0,
+                resnet.layer1,
+                resnet.layer2,
+                resnet.layer3,
+                resnet.layer4,
+            ]
         )
         self.maxpool0 = resnet.maxpool
 
@@ -104,22 +109,16 @@ class ResnetEncoder(EncoderSpec):
 
     @property
     def out_channels(self) -> List[int]:
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """Number of channels produced by the block."""
         return self._channels
 
     @property
     def out_strides(self) -> List[int]:
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         return self._strides
 
     def forward(self, x: torch.Tensor) -> List[torch.Tensor]:
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """Forward call."""
         output = []
         for i, layer in enumerate(self._layers):
             layer_output = layer(x)

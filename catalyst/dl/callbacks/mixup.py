@@ -8,16 +8,18 @@ from catalyst.dl import CriterionCallback, State
 
 
 class MixupCallback(CriterionCallback):
-    """
-    Callback to do mixup augmentation.
+    """Callback to do mixup augmentation.
 
-    Paper: https://arxiv.org/abs/1710.09412
+    More details about mixin can be found in the paper
+    `mixup: Beyond Empirical Risk Minimization`_.
 
-    Note:
-        MixupCallback is inherited from CriterionCallback and
-        does its work.
-
+    .. warning::
+        :class:`catalyst.dl.callbacks.MixupCallback` is inherited from
+        :class:`catalyst.dl.CriterionCallback` and does its work.
         You may not use them together.
+
+    .. _mixup\: Beyond Empirical Risk Minimization:
+        https://arxiv.org/abs/1710.09412
     """
 
     def __init__(
@@ -70,14 +72,18 @@ class MixupCallback(CriterionCallback):
         return loss
 
     def on_loader_start(self, state: State):
-        """
-        @TODO: Docs. Contribution is welcome
+        """Loader start hook.
+
+        Args:
+            state (State): current state
         """
         self.is_needed = not self.on_train_only or state.is_train_loader
 
     def on_batch_start(self, state: State):
-        """
-        @TODO: Docs. Contribution is welcome
+        """Batch start hook.
+
+        Args:
+            state (State): current state
         """
         if not self.is_needed:
             return

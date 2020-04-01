@@ -77,9 +77,7 @@ def plot_confusion_matrix(
 
 
 def render_figure_to_tensor(figure):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     import matplotlib
 
     matplotlib.use("Agg")

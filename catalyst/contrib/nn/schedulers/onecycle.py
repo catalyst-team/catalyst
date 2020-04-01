@@ -10,8 +10,8 @@ from .base import BatchScheduler
 
 
 class OneCycleLRWithWarmup(BatchScheduler):
-    """
-    OneCycle scheduler with warm-up & lr decay stages.
+    """OneCycle scheduler with warm-up & lr decay stages.
+
     First stage increases lr from ``init_lr`` to ``max_lr``,
     and called ``warmup``. Also it decreases momentum
     from ``init_momentum`` to ``min_momentum``. Takes ``warmup_steps`` steps
@@ -152,7 +152,9 @@ class OneCycleLRWithWarmup(BatchScheduler):
         momentum_annealing = np.linspace(
             min_momentum, max_momentum, lr_annealing_steps
         )
-        momentum_warmup = np.linspace(max_momentum, final_momentum, decay_steps)
+        momentum_warmup = np.linspace(
+            max_momentum, final_momentum, decay_steps
+        )
 
         self.momentums = np.concatenate(
             (momentum_decay, momentum_annealing, momentum_warmup)
@@ -173,8 +175,8 @@ class OneCycleLRWithWarmup(BatchScheduler):
         return lr, momentum
 
     def get_lr(self) -> List[float]:
-        """
-        Function that returns the new lr for optimizer
+        """Function that returns the new lr for optimizer.
+
         Returns:
             List[float]: calculated lr for every param groups
         """
@@ -182,8 +184,7 @@ class OneCycleLRWithWarmup(BatchScheduler):
         return [lr] * self.total_groups
 
     def get_momentum(self) -> List[float]:
-        """
-        Function that returns the new momentum for optimizer
+        """Function that returns the new momentum for optimizer.
 
         Returns:
             List[float]: calculated momentum for every param groups
@@ -192,17 +193,14 @@ class OneCycleLRWithWarmup(BatchScheduler):
         return [momentum] * self.total_groups
 
     def reset(self):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome."""
         self._calculate_lr_momentum(
             self.warmup_steps, self.lr_annealing_steps, self.decay_steps
         )
         self.last_epoch = 0
 
     def recalculate(self, loader_len: int, current_step: int,) -> None:
-        """
-        Recalculates total num_steps for ``batch`` mode
+        """Recalculates total num_steps for ``batch`` mode.
 
         Args:
             loader_len (int): total count of batches in an epoch

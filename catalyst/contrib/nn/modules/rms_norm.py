@@ -3,9 +3,9 @@ from torch import nn
 
 
 class RMSNorm(nn.Module):
-    """
-    @TODO: Docs (link to paper). Contribution is welcome
-    An implementation of RMS Normalization
+    """An implementation of RMS Normalization.
+
+    @TODO: Docs (link to paper). Contribution is welcome.
     """
 
     def __init__(
@@ -13,11 +13,11 @@ class RMSNorm(nn.Module):
     ):
         """
         Args:
-            dimension (int): The dimension of the layer output to normalize
-            epsilon (float): An epsilon to prevent dividing by zero
+            dimension (int): the dimension of the layer output to normalize
+            epsilon (float): an epsilon to prevent dividing by zero
                 in case the layer has zero variance. (default = 1e-8)
-            is_bias (bool) :  A boolean value whether to include bias term
-                while normalization (default = False)
+            is_bias (bool): a boolean value whether to include bias term
+                while normalization
         """
         super().__init__()
         self.dimension = dimension
@@ -27,10 +27,8 @@ class RMSNorm(nn.Module):
         if self.is_bias:
             self.bias = nn.Parameter(torch.zeros(self.dimension))
 
-    def forward(self, x: torch.Tensor):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """@TODO: Docs. Contribution is welcome."""
         x_std = torch.sqrt(torch.mean(x ** 2, -1, keepdim=True))
         x_norm = x / (x_std + self.epsilon)
         if self.is_bias:

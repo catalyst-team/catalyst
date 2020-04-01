@@ -6,8 +6,7 @@ if TYPE_CHECKING:
 
 
 class CallbackNode(IntFlag):
-    """
-    Callback node usage flag during distributed training.
+    """Callback node usage flag during distributed training.
 
     - All (0) - use on all nodes, botch master and worker.
     - Master (1) - use only on master node.
@@ -20,8 +19,7 @@ class CallbackNode(IntFlag):
 
 
 class CallbackOrder(IntFlag):
-    """
-    Callback usage order during training.
+    """Callback usage order during training.
 
     Catalyst executes Callbacks with low `CallbackOrder`
     **before** Callbacks with high `CallbackOrder`.
@@ -70,8 +68,7 @@ class CallbackOrder(IntFlag):
 
 
 class CallbackScope(IntFlag):
-    """
-    Callback scope usage flag during training.
+    """Callback scope usage flag during training.
 
     - Stage (0) - use Callback only during one experiment stage.
     - Experiment (1) - use Callback during whole experiment run.
@@ -129,8 +126,7 @@ class Callback:
         node: int = CallbackNode.All,
         scope: int = CallbackScope.Stage,
     ):
-        """
-        Callback initializer.
+        """Callback initializer.
 
         Args:
             order: flag from ``CallbackOrder``
@@ -142,8 +138,7 @@ class Callback:
         self.scope = scope
 
     def on_stage_start(self, state: "State"):
-        """
-        Event handler for stage start.
+        """Event handler for stage start.
 
         Args:
             state ("State"): State instance.
@@ -151,8 +146,7 @@ class Callback:
         pass
 
     def on_stage_end(self, state: "State"):
-        """
-        Event handler for stage end.
+        """Event handler for stage end.
 
         Args:
             state ("State"): State instance.
@@ -160,8 +154,7 @@ class Callback:
         pass
 
     def on_epoch_start(self, state: "State"):
-        """
-        Event handler for epoch start.
+        """Event handler for epoch start.
 
         Args:
             state ("State"): State instance.
@@ -169,8 +162,7 @@ class Callback:
         pass
 
     def on_epoch_end(self, state: "State"):
-        """
-        Event handler for epoch end.
+        """Event handler for epoch end.
 
         Args:
             state ("State"): State instance.
@@ -178,8 +170,7 @@ class Callback:
         pass
 
     def on_loader_start(self, state: "State"):
-        """
-        Event handler for loader start.
+        """Event handler for loader start.
 
         Args:
             state ("State"): State instance.
@@ -187,8 +178,7 @@ class Callback:
         pass
 
     def on_loader_end(self, state: "State"):
-        """
-        Event handler for loader end.
+        """Event handler for loader end.
 
         Args:
             state ("State"): State instance.
@@ -196,8 +186,7 @@ class Callback:
         pass
 
     def on_batch_start(self, state: "State"):
-        """
-        Event handler for batch start.
+        """Event handler for batch start.
 
         Args:
             state ("State"): State instance.
@@ -205,8 +194,7 @@ class Callback:
         pass
 
     def on_batch_end(self, state: "State"):
-        """
-        Event handler for batch end.
+        """Event handler for batch end.
 
         Args:
             state ("State"): State instance.
@@ -214,8 +202,7 @@ class Callback:
         pass
 
     def on_exception(self, state: "State"):
-        """
-        Event handler for exception case.
+        """Event handler for exception case.
 
         Args:
             state ("State"): State instance.

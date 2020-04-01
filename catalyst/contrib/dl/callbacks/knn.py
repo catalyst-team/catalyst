@@ -17,9 +17,7 @@ from catalyst.dl import Callback, CallbackOrder, State
 
 
 class KNNMetricCallback(Callback):
-    """
-    A callback that returns single metric on `state.on_loader_end`
-    """
+    """A callback that returns single metric on ``state.on_loader_end``."""
 
     def __init__(
         self,
@@ -33,8 +31,7 @@ class KNNMetricCallback(Callback):
         knn_metric: str = "euclidean",
         num_neighbors: int = 5,
     ):
-        """
-        Returns metric value calculated using kNN algorithm.
+        """Returns metric value calculated using kNN algorithm.
 
         Args:
             input_key: input key to get features.
@@ -88,25 +85,21 @@ class KNNMetricCallback(Callback):
         self._reset_sets()
 
     def _reset_cache(self):
-        """
-        Function to reset cache for features and labels.
-        """
+        """Function to reset cache for features and labels."""
         self.features = []
         self.targets = []
 
     def _reset_sets(self):
-        """
-        Function to reset cache for all sets.
-        """
+        """Function to reset cache for all sets."""
         self.sets = {}
 
     def _knn(self, train_set, test_set=None):
-        """
-        Returns accuracy calculated using kNN algorithm.
+        """Returns accuracy calculated using kNN algorithm.
 
         Args:
             train_set: dict of feature "values" and "labels" for training set.
             test_set: dict of feature "values" and "labels" for test set.
+
         Returns:
             cm: tuple of lists of true & predicted classes.
         """
@@ -163,15 +156,19 @@ class KNNMetricCallback(Callback):
             # this try catch block made because sometimes sets are quite big
             # and it is not possible to put everything in memory, so we split
             except MemoryError:
-                print(f"Memory error with {self.num_folds} folds, trying more.")
+                print(
+                    f"Memory error with {self.num_folds} folds, trying more."
+                )
                 self.num_folds *= 2
                 result = None
 
         return result
 
-    def on_batch_end(self, state: State):
-        """
-        Batch end hook.
+    def on_batch_end(self, state: State) -> None:
+        """Batch end hook.
+
+        Args:
+            state (State): current state
         """
         features: torch.Tensor = state.batch_out[
             self.features_key
@@ -183,9 +180,11 @@ class KNNMetricCallback(Callback):
         self.features.extend(features)
         self.targets.extend(targets)
 
-    def on_loader_end(self, state: State):
-        """
-        Loader end hook.
+    def on_loader_end(self, state: State) -> None:
+        """Loader end hook.
+
+        Args:
+            state (State): current state
         """
         self.features = np.stack(self.features)
         self.targets = np.stack(self.targets)
@@ -216,9 +215,11 @@ class KNNMetricCallback(Callback):
 
         self._reset_cache()
 
-    def on_epoch_end(self, state: State):
-        """
-        Epoch end hook.
+    def on_epoch_end(self, state: State) -> None:
+        """Epoch end hook.
+
+        Args:
+            state (State): current state
         """
         if self.cv_loader_names is not None:
             for k, vs in self.cv_loader_names.items():

@@ -1,20 +1,32 @@
+from typing import Callable, Optional
+
 import torch
 from torch.optim.optimizer import Optimizer
 
 
 class QHAdamW(Optimizer):
-    """
-    Combines the weight decay decoupling from AdamW (Decoupled Weight
-    Decay Regularization. Loshchilov and Hutter, 2019) with QHAdam
-    (Quasi-hyperbolic momentum and Adam for deep learning. Ma and
-    Yarats, 2019).
+    """Implements QHAdam algorithm.
 
-    https://github.com/iprally/qhadamw-pytorch/blob/master/qhadamw.py
+    Combines QHAdam algorithm that was proposed in  `Quasi-hyperbolic momentum
+    and Adam for deep learning`_ with weight decay decoupling from
+    `Decoupled Weight Decay Regularization`_ paper.
 
-        QHAdam paper:
-    .. _`(Ma and Yarats, 2019)`: https://arxiv.org/abs/1810.06801
-        AdamW paper:
-    .. _`(Loshchilov and Hutter, 2019)`: https://arxiv.org/abs/1711.05101
+    Example:
+        >>> optimizer = QHAdamW(
+        ...     model.parameters(),
+        ...     lr=3e-4, nus=(0.8, 1.0), betas=(0.99, 0.999))
+        >>> optimizer.zero_grad()
+        >>> loss_fn(model(input), target).backward()
+        >>> optimizer.step()
+
+    Main origins of inspiration:
+        https://github.com/iprally/qhadamw-pytorch/blob/master/qhadamw.py
+        (MIT License)
+
+    .. _Decoupled Weight Decay Regularization:
+        https://arxiv.org/abs/1711.05101
+    .. _Quasi-hyperbolic momentum and Adam for deep learning:
+        https://arxiv.org/abs/1810.06801
     """
 
     def __init__(
@@ -45,14 +57,6 @@ class QHAdamW(Optimizer):
             weight_decay (float, optional): weight decay
                 (L2 regularization coefficient, times two)
                 (default: 0.0)
-
-        Example:
-            >>> optimizer = QHAdamW(
-            ...     model.parameters(),
-            ...     lr=3e-4, nus=(0.8, 1.0), betas=(0.99, 0.999))
-            >>> optimizer.zero_grad()
-            >>> loss_fn(model(input), target).backward()
-            >>> optimizer.step()
         """
         if not 0.0 <= lr:
             raise ValueError(f"Invalid learning rate: {lr}")
@@ -74,9 +78,12 @@ class QHAdamW(Optimizer):
         }
         super(QHAdamW, self).__init__(params, defaults)
 
-    def step(self, closure=None):
-        """
-        @TODO: Docs. Contribution is welcome
+    def step(self, closure: Optional[Callable] = None):
+        """Makes optimizer step.
+
+        Args:
+            closure (callable, optional): A closure that reevaluates
+                the model and returns the loss.
         """
         loss = None
         if closure is not None:

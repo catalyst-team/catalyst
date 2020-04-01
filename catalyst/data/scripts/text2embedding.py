@@ -14,8 +14,8 @@ from catalyst.dl import utils
 
 
 def build_args(parser):
-    """
-    Constructs the command-line arguments for ``catalyst-data text2embeddings``
+    """Constructs the command-line arguments for
+    ``catalyst-data text2embeddings``.
     """
     parser.add_argument(
         "--in-csv", type=str, help="Path to csv with text", required=True
@@ -72,9 +72,7 @@ def build_args(parser):
 
 
 def parse_args():
-    """
-    Parses the command line arguments for the main method
-    """
+    """Parses the command line arguments for the main method."""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args = parser.parse_args()
@@ -87,9 +85,7 @@ def _detach(tensor):
 
 @torch.no_grad()
 def main(args, _=None):
-    """
-    Run the ``catalyst-data text2embeddings`` script
-    """
+    """Run the ``catalyst-data text2embeddings`` script."""
     batch_size = args.batch_size
     num_workers = args.num_workers
     max_length = args.max_length

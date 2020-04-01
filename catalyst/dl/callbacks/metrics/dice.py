@@ -8,9 +8,7 @@ from .functional import calculate_dice
 
 
 class DiceCallback(MetricCallback):
-    """
-    Dice metric callback.
-    """
+    """Dice metric callback."""
 
     def __init__(
         self,
@@ -24,9 +22,9 @@ class DiceCallback(MetricCallback):
         """
         Args:
             input_key (str): input key to use for dice calculation;
-                specifies our `y_true`.
+                specifies our `y_true`
             output_key (str): output key to use for dice calculation;
-                specifies our `y_pred`.
+                specifies our `y_pred`
         """
         super().__init__(
             prefix=prefix,
@@ -56,9 +54,9 @@ class MulticlassDiceMetricCallback(Callback):
         """
         Args:
             input_key (str): input key to use for dice calculation;
-                specifies our `y_true`.
+                specifies our `y_true`
             output_key (str): output key to use for dice calculation;
-                specifies our `y_pred`.
+                specifies our `y_pred`
             prefix (str): prefix for printing the metric
             class_names (dict/List): if dictionary, should be:
                 {class_id: class_name, ...} where class_id is an integer
@@ -73,14 +71,14 @@ class MulticlassDiceMetricCallback(Callback):
         self.class_names = class_names
 
     def _reset_stats(self):
-        """
-        Resets the confusion matrix holding the epoch-wise stats.
-        """
+        """Resets the confusion matrix holding the epoch-wise stats."""
         self.confusion_matrix = None
 
     def on_batch_end(self, state: State):
-        """
-        Records the confusion matrix at the end of each batch.
+        """Records the confusion matrix at the end of each batch.
+
+        Args:
+            state (State): current state
         """
         outputs = state.batch_out[self.output_key]
         targets = state.batch_in[self.input_key]
@@ -95,8 +93,10 @@ class MulticlassDiceMetricCallback(Callback):
             self.confusion_matrix += confusion_matrix
 
     def on_loader_end(self, state: State):
-        """
-        @TODO: Docs. Contribution is welcome
+        """@TODO: Docs. Contribution is welcome.
+
+        Args:
+            state (State): current state
         """
         tp_fp_fn_dict = utils.calculate_tp_fp_fn(self.confusion_matrix)
 

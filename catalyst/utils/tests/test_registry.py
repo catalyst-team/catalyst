@@ -7,9 +7,7 @@ from .registery_foo import foo
 
 
 def test_add_function():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     r = Registry("")
 
     r.add(foo)
@@ -18,9 +16,7 @@ def test_add_function():
 
 
 def test_add_function_name_override():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     r = Registry("")
 
     r.add(foo, name="bar")
@@ -29,9 +25,7 @@ def test_add_function_name_override():
 
 
 def test_add_lambda_fail():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     r = Registry("")
 
     with pytest.raises(RegistryException):
@@ -39,9 +33,7 @@ def test_add_lambda_fail():
 
 
 def test_add_lambda_override():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     r = Registry("")
 
     r.add(lambda x: x, name="bar")
@@ -50,9 +42,7 @@ def test_add_lambda_override():
 
 
 def test_fail_multiple_with_name():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     r = Registry("")
 
     with pytest.raises(RegistryException):
@@ -60,9 +50,7 @@ def test_fail_multiple_with_name():
 
 
 def test_fail_double_add_different():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     r = Registry("")
     r.add(foo)
 
@@ -75,9 +63,7 @@ def test_fail_double_add_different():
 
 
 def test_double_add_same_nofail():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     r = Registry("")
     r.add(foo)
     # It's ok to add same twice, forced by python relative import
@@ -87,9 +73,7 @@ def test_double_add_same_nofail():
 
 
 def test_instantiations():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     r = Registry("")
 
     r.add(foo)
@@ -105,9 +89,7 @@ def test_instantiations():
 
 
 def test_from_config():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     r = Registry("obj")
 
     r.add(foo)
@@ -120,9 +102,7 @@ def test_from_config():
 
 
 def test_meta_factory():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
 
     def meta_1(fn, args, kwargs):
         return fn
@@ -141,9 +121,7 @@ def test_meta_factory():
 
 
 def test_fail_instantiation():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     r = Registry("")
 
     r.add(foo)
@@ -155,9 +133,7 @@ def test_fail_instantiation():
 
 
 def test_decorator():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     r = Registry("")
 
     @r.add
@@ -168,9 +144,7 @@ def test_decorator():
 
 
 def test_kwargs():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     r = Registry("")
 
     r.add(bar=foo)
@@ -179,9 +153,7 @@ def test_kwargs():
 
 
 def test_add_module():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     r = Registry("")
 
     r.add_from_module(module)

@@ -11,12 +11,20 @@ def wing_loss(
     width: int = 5,
     curvature: float = 0.5,
     reduction: str = "mean",
-):
-    """
-    https://arxiv.org/pdf/1711.06753.pdf
+) -> torch.Tensor:
+    """The Wing loss.
 
-    Source https://github.com/BloodAxe/pytorch-toolbelt
-    See :class:`~pytorch_toolbelt.losses` for details.
+    It has been proposed in `Wing Loss for Robust Facial Landmark Localisation
+    with Convolutional Neural Networks`_.
+
+    Args:
+        @TODO: Docs. Contribution is welcome.
+
+    Main origins of inspiration:
+        https://github.com/BloodAxe/pytorch-toolbelt (MIT License)
+
+    .. _Wing Loss for Robust Facial Landmark Localisation with Convolutional
+        Neural Networks: https://arxiv.org/abs/1711.06753
     """
     diff_abs = (targets - outputs).abs()
     loss = diff_abs.clone()
@@ -24,7 +32,9 @@ def wing_loss(
     idx_smaller = diff_abs < width
     idx_bigger = diff_abs >= width
 
-    loss[idx_smaller] = width * torch.log(1 + diff_abs[idx_smaller] / curvature)
+    loss[idx_smaller] = width * torch.log(
+        1 + diff_abs[idx_smaller] / curvature
+    )
 
     c = width - width * math.log(1 + width / curvature)
     loss[idx_bigger] = loss[idx_bigger] - c
@@ -38,24 +48,39 @@ def wing_loss(
 
 
 class WingLoss(nn.Module):
-    """
-    @TODO: Docs. Contribution is welcome
+    """Creates a criterion that optimizes a Wing loss.
+
+    It has been proposed in `Wing Loss for Robust Facial Landmark Localisation
+    with Convolutional Neural Networks`_.
+
+    Examples:
+        @TODO: Docs. Contribution is welcome.
+
+    Main origins of inspiration:
+        https://github.com/BloodAxe/pytorch-toolbelt
+
+    .. _Wing Loss for Robust Facial Landmark Localisation with Convolutional
+        Neural Networks: https://arxiv.org/abs/1711.06753
     """
 
     def __init__(
         self, width: int = 5, curvature: float = 0.5, reduction: str = "mean"
     ):
         """
-        @TODO: Docs. Contribution is welcome
+        Args:
+            @TODO: Docs. Contribution is welcome.
         """
         super().__init__()
         self.loss_fn = partial(
             wing_loss, width=width, curvature=curvature, reduction=reduction
         )
 
-    def forward(self, outputs, targets):
+    def forward(
+        self, outputs: torch.Tensor, targets: torch.Tensor
+    ) -> torch.Tensor:
         """
-        @TODO: Docs. Contribution is welcome
+        Args:
+            @TODO: Docs. Contribution is welcome.
         """
         loss = self.loss_fn(outputs, targets)
         return loss

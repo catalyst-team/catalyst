@@ -30,9 +30,7 @@ def _check_named_parameters(left, right):
 
 
 def test_config1():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     config1 = {
         "encoder_params": {
             "hiddens": [16, 16],
@@ -165,7 +163,9 @@ def test_config1():
                                                     SequentialNet(
                                                         **heads_params[
                                                             "_head2"
-                                                        ]["_head2_2"]["_hidden"]
+                                                        ]["_head2_2"][
+                                                            "_hidden"
+                                                        ]
                                                     ),
                                                 )
                                             ]
@@ -242,7 +242,9 @@ def test_config1():
     _check_lists(output_kv.keys(), kv_keys)
 
     output_kv = hydra(
-        input_, target1=torch.ones(1, 2).long(), target2=torch.ones(1, 2).long()
+        input_,
+        target1=torch.ones(1, 2).long(),
+        target2=torch.ones(1, 2).long(),
     )
     kv_keys = [
         "features",
@@ -264,9 +266,7 @@ def test_config1():
 
 
 def test_config2():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     config2 = {
         "in_features": 16,
         "heads_params": {
@@ -361,7 +361,9 @@ def test_config2():
                                                     SequentialNet(
                                                         **heads_params[
                                                             "_head2"
-                                                        ]["_head2_2"]["_hidden"]
+                                                        ]["_head2_2"][
+                                                            "_hidden"
+                                                        ]
                                                     ),
                                                 )
                                             ]
@@ -430,9 +432,7 @@ def test_config2():
 
 
 def test_config3():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     config_path = Path(__file__).absolute().parent / "config3.yml"
     config3 = utils.load_config(config_path)["model_params"]
 
@@ -528,7 +528,9 @@ def test_config3():
                                                     SequentialNet(
                                                         **heads_params[
                                                             "_head2"
-                                                        ]["_head2_2"]["_hidden"]
+                                                        ]["_head2_2"][
+                                                            "_hidden"
+                                                        ]
                                                     ),
                                                 )
                                             ]
@@ -605,7 +607,9 @@ def test_config3():
     _check_lists(output_kv.keys(), kv_keys)
 
     output_kv = hydra(
-        input_, target1=torch.ones(1, 2).long(), target2=torch.ones(1, 2).long()
+        input_,
+        target1=torch.ones(1, 2).long(),
+        target2=torch.ones(1, 2).long(),
     )
     kv_keys = [
         "features",
@@ -627,9 +631,7 @@ def test_config3():
 
 
 def test_config4():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome."""
     config_path = Path(__file__).absolute().parent / "config4.yml"
     config4 = utils.load_config(config_path)["model_params"]
 
@@ -698,7 +700,9 @@ def test_config4():
                                                     SequentialNet(
                                                         **heads_params[
                                                             "_head2"
-                                                        ]["_head2_2"]["_hidden"]
+                                                        ]["_head2_2"][
+                                                            "_hidden"
+                                                        ]
                                                     ),
                                                 )
                                             ]
