@@ -1,19 +1,24 @@
+from typing import Optional
+
+import torch
 from torch import nn
 from transformers import AutoConfig, AutoModel
 
 
 class BertClassifier(nn.Module):
-    """
-    Simplified version of the same class by HuggingFace.
-    See transformers/modeling_distilbert.py in the transformers repository.
+    """Simplified version of the same class by HuggingFace.
+
+    See ``transformers/modeling_distilbert.py`` in the transformers repository.
     """
 
-    def __init__(self, pretrained_model_name: str, num_classes: int = None):
+    def __init__(
+        self, pretrained_model_name: str, num_classes: Optional[int] = None
+    ):
         """
         Args:
             pretrained_model_name (str): HuggingFace model name.
                 See transformers/modeling_auto.py
-            num_classes (int): the number of class labels
+            num_classes (int, optional): the number of class labels
                 in the classification task
         """
         super().__init__()
@@ -32,18 +37,24 @@ class BertClassifier(nn.Module):
             nn.Linear(config.dim, num_classes),
         )
 
-    def forward(self, features, attention_mask=None, head_mask=None):
+    def forward(
+        self,
+        features: torch.Tensor,
+        attention_mask: Optional[torch.Tensor] = None,
+        head_mask: Optional[torch.Tensor] = None,
+    ) -> torch.Tensor:
         """Compute class probabilities for the input sequence.
 
         Args:
             features (torch.Tensor): ids of each token,
                 size ([bs, seq_length]
-            attention_mask (torch.Tensor): binary tensor, used to select
-                tokens which are used to compute attention scores
-                in the self-attention heads, size [bs, seq_length]
-            head_mask (torch.Tensor): 1.0 in head_mask indicates that
+            attention_mask (torch.Tensor, optional): binary tensor,
+                used to select tokens which are used to compute attention
+                scores in the self-attention heads, size [bs, seq_length]
+            head_mask (torch.Tensor, optional): 1.0 in head_mask indicates that
                 we keep the head, size: [num_heads]
                 or [num_hidden_layers x num_heads]
+
         Returns:
             PyTorch Tensor with predicted class probabilities
         """

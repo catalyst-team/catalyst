@@ -13,11 +13,11 @@ tqdm.pandas()
 
 
 def dataframe_to_list(dataframe: pd.DataFrame) -> List[dict]:
-    """
-    Converts dataframe to a list of rows (without indexes)
+    """Converts dataframe to a list of rows (without indexes).
 
     Args:
         dataframe (DataFrame): input dataframe
+
     Returns:
         (List[dict]): list of rows
     """
@@ -26,24 +26,25 @@ def dataframe_to_list(dataframe: pd.DataFrame) -> List[dict]:
 
 
 def folds_to_list(folds: Union[list, str, pd.Series]) -> List[int]:
-    """
-    This function formats string or either list of numbers
-    into a list of unique int
+    """This function formats string or either list of numbers
+    into a list of unique int.
 
-    Args:
-        folds (Union[list, str, pd.Series]): Either list of numbers or
-            one string with numbers separated by commas or
-            pandas series
-    Returns:
-        List[int]: list of unique ints
     Examples:
         >>> folds_to_list("1,2,1,3,4,2,4,6")
         [1, 2, 3, 4, 6]
         >>> folds_to_list([1, 2, 3.0, 5])
         [1, 2, 3, 5]
+
+    Args:
+        folds (Union[list, str, pd.Series]): Either list of numbers or
+            one string with numbers separated by commas or
+            pandas series
+
+    Returns:
+        List[int]: list of unique ints
+
     Raises:
         ValueError: if value in string or array cannot be casted to int
-
     """
     if isinstance(folds, str):
         folds = folds.split(",")
@@ -56,8 +57,7 @@ def folds_to_list(folds: Union[list, str, pd.Series]) -> List[int]:
 def split_dataframe_train_test(
     dataframe: pd.DataFrame, **train_test_split_args
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    """
-    Split dataframe in train and test part.
+    """Split dataframe in train and test part.
 
     Args:
         dataframe: pd.DataFrame to split
@@ -87,8 +87,8 @@ def split_dataframe_train_test(
     Returns:
         train and test DataFrames
 
-
-    PS. It exist cause sklearn `split` is overcomplicated.
+    .. note::
+        It exist cause sklearn `split` is overcomplicated.
     """
     df_train, df_test = train_test_split(dataframe, **train_test_split_args)
     return df_train, df_test
@@ -97,8 +97,7 @@ def split_dataframe_train_test(
 def split_dataframe_on_folds(
     dataframe: pd.DataFrame, random_state: int = 42, n_folds: int = 5
 ) -> pd.DataFrame:
-    """
-    Splits DataFrame into `N` folds.
+    """Splits DataFrame into `N` folds.
 
     Args:
         dataframe: a dataset
@@ -124,8 +123,7 @@ def split_dataframe_on_stratified_folds(
     random_state: int = 42,
     n_folds: int = 5,
 ) -> pd.DataFrame:
-    """
-    Splits DataFrame into `N` stratified folds.
+    """Splits DataFrame into `N` stratified folds.
 
     Also see :class:`catalyst.data.sampler.BalanceClassSampler`
 
@@ -156,8 +154,7 @@ def split_dataframe_on_column_folds(
     random_state: int = 42,
     n_folds: int = 5,
 ) -> pd.DataFrame:
-    """
-    Splits DataFrame into `N` folds.
+    """Splits DataFrame into `N` folds.
 
     Args:
         dataframe: a dataset
@@ -187,9 +184,8 @@ def map_dataframe(
     tag2class: Dict[str, int],
     verbose: bool = False,
 ) -> pd.DataFrame:
-    """
-    This function maps tags from ``tag_column`` to ints into ``class_column``
-    Using ``tag2class`` dictionary
+    """This function maps tags from ``tag_column`` to ints into
+    ``class_column`` using ``tag2class`` dictionary.
 
     Args:
         dataframe (pd.DataFrame): input dataframe
@@ -197,6 +193,7 @@ def map_dataframe(
         class_column (str) output column with classes
         tag2class (Dict[str, int]): mapping from tags to class labels
         verbose: flag if true, uses tqdm
+
     Returns:
         pd.DataFrame: updated dataframe with ``class_column``
     """
@@ -217,8 +214,7 @@ def map_dataframe(
 def separate_tags(
     dataframe: pd.DataFrame, tag_column: str = "tag", tag_delim: str = ","
 ) -> pd.DataFrame:
-    """
-    Separates values in ``class_column`` column
+    """Separates values in ``class_column`` column.
 
     Args:
         dataframe: a dataset
@@ -239,8 +235,7 @@ def separate_tags(
 def get_dataset_labeling(
     dataframe: pd.DataFrame, tag_column: str
 ) -> Dict[str, int]:
-    """
-    Prepares a mapping using unique values from ``tag_column``
+    """Prepares a mapping using unique values from ``tag_column``.
 
     .. code-block:: javascript
 
@@ -278,8 +273,7 @@ def split_dataframe(
     seed: int = 42,
     n_folds: int = 5,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """
-    Split a Pandas DataFrame into folds.
+    """Split a Pandas DataFrame into folds.
 
     Args:
         dataframe (pd.DataFrame): input dataframe
@@ -294,6 +288,7 @@ def split_dataframe(
         class_column (str, optional): column to use for split
         seed (int): seed for split
         n_folds (int): number of folds
+
     Returns:
         (tuple): tuple with 4 dataframes
             whole dataframe, train part, valid part and infer part
@@ -336,11 +331,12 @@ def split_dataframe(
 def merge_multiple_fold_csv(
     fold_name: str, paths: Optional[str]
 ) -> pd.DataFrame:
-    """
-    Reads csv into one DataFrame with column ``fold``
+    """Reads csv into one DataFrame with column ``fold``.
+
     Args:
         fold_name (str): current fold name
         paths (str): paths to csv separated by commas
+
     Returns:
          pd.DataFrame: merged dataframes with column ``fold`` == ``fold_name``
     """
@@ -362,7 +358,8 @@ def read_multiple_dataframes(
     class_column: str = None,
     tag_column: str = None,
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """This function reads train/valid/infer dataframes from giving paths
+    """This function reads train/valid/infer dataframes from giving paths.
+
     Args:
         in_csv_train (str): paths to train csv separated by commas
         in_csv_valid (str): paths to valid csv separated by commas
@@ -370,6 +367,7 @@ def read_multiple_dataframes(
         tag2class (Dict[str, int], optional): mapping from label names into int
         tag_column (str, optional): column with label names
         class_column (str, optional): column to use for split
+
     Returns:
         (tuple): tuple with 4 dataframes
             whole dataframe, train part, valid part and infer part
@@ -429,7 +427,7 @@ def read_csv_data(
     or from several paths ``in_csv_train``, ``in_csv_valid``, ``in_csv_infer``
     reads independent folds.
 
-    Note:
+    .. note::
        This function can be used with different combinations of params.
         First block is used to get dataset from one `csv`:
             in_csv, train_folds, valid_folds, infer_folds, seed, n_folds
@@ -521,10 +519,9 @@ def balance_classes(
     random_state: int = 42,
     how: str = "downsampling",
 ) -> pd.DataFrame:
-    """
-    Balance classes in dataframe by ``class_column``
+    """Balance classes in dataframe by ``class_column``.
 
-    See also :class:`catalyst.data.sampler.BalanceClassSampler`
+    See also :class:`catalyst.data.sampler.BalanceClassSampler`.
 
     Args:
         dataframe: a dataset

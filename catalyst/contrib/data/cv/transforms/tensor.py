@@ -8,9 +8,7 @@ from catalyst import utils
 
 
 class TensorToImage(ImageOnlyTransform):
-    """
-    Casts torch.tensor to numpy array
-    """
+    """Casts ``torch.tensor`` to ``numpy.array``."""
 
     def __init__(
         self,
@@ -33,7 +31,7 @@ class TensorToImage(ImageOnlyTransform):
         self.move_channels_dim = move_channels_dim
 
     def apply(self, img: torch.Tensor, **params) -> np.ndarray:
-        """Apply the transform to the image"""
+        """Apply the transform to the image."""
         if len(img.shape) == 2:
             img = img.unsqueeze(0)
 
@@ -45,9 +43,7 @@ class TensorToImage(ImageOnlyTransform):
 
 
 class ToTensor(ToTensorV2):
-    """
-    Casts numpy array to ``torch.tensor``
-    """
+    """Casts ``numpy.array`` to ``torch.tensor``."""
 
     def __init__(
         self,
@@ -66,18 +62,19 @@ class ToTensor(ToTensorV2):
         self.move_channels_dim = move_channels_dim
 
     def apply(self, img: np.ndarray, **params) -> torch.Tensor:
-        """Apply the transform to the image"""
+        """Apply the transform to the image."""
         if self.move_channels_dim:
             return super().apply(img, **params)
         return torch.from_numpy(img)
 
     def apply_to_mask(self, mask: np.ndarray, **params) -> torch.Tensor:
-        """Apply the transform to the mask"""
+        """Apply the transform to the mask."""
         if self.move_channels_dim:
             mask = mask.transpose(2, 0, 1)
         return super().apply_to_mask(mask.astype(np.float32), **params)
 
     def get_transform_init_args_names(self) -> tuple:
+        """@TODO: Docs. Contribution is welcome."""
         return ("move_channels_dim",)
 
 

@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Callable, Dict, Optional
 from collections import defaultdict
 
 import torch
@@ -6,10 +6,20 @@ from torch.optim import Optimizer
 
 
 class Lookahead(Optimizer):
+    """Implements Lookahead algorithm.
+
+    It has been proposed in `Lookahead Optimizer: k steps forward,
+    1 step back`_.
+
+    Main origins of inspiration:
+        https://github.com/alphadl/lookahead.pytorch (MIT License)
+
+    .. _`Lookahead Optimizer\: k steps forward, 1 step back`:
+        https://arxiv.org/abs/1907.08610
+    """
+
     def __init__(self, optimizer: Optimizer, k: int = 5, alpha: float = 0.5):
-        """
-        Taken from: https://github.com/alphadl/lookahead.pytorch
-        """
+        """@TODO: Docs. Contribution is welcome."""
         self.optimizer = optimizer
         self.k = k
         self.alpha = alpha
@@ -21,6 +31,7 @@ class Lookahead(Optimizer):
             group["counter"] = 0
 
     def update(self, group):
+        """@TODO: Docs. Contribution is welcome."""
         for fast in group["params"]:
             param_state = self.state[fast]
             if "slow_param" not in param_state:
@@ -31,10 +42,17 @@ class Lookahead(Optimizer):
             fast.data.copy_(slow)
 
     def update_lookahead(self):
+        """@TODO: Docs. Contribution is welcome."""
         for group in self.param_groups:
             self.update(group)
 
-    def step(self, closure=None):
+    def step(self, closure: Optional[Callable] = None):
+        """Makes optimizer step.
+
+        Args:
+            closure (callable, optional): A closure that reevaluates
+                the model and returns the loss.
+        """
         loss = self.optimizer.step(closure)
         for group in self.param_groups:
             if group["counter"] == 0:
@@ -45,6 +63,7 @@ class Lookahead(Optimizer):
         return loss
 
     def state_dict(self):
+        """@TODO: Docs. Contribution is welcome."""
         fast_state_dict = self.optimizer.state_dict()
         slow_state = {
             (id(k) if isinstance(k, torch.Tensor) else k): v
@@ -59,6 +78,7 @@ class Lookahead(Optimizer):
         }
 
     def load_state_dict(self, state_dict):
+        """@TODO: Docs. Contribution is welcome."""
         slow_state_dict = {
             "state": state_dict["slow_state"],
             "param_groups": state_dict["param_groups"],
@@ -72,6 +92,7 @@ class Lookahead(Optimizer):
         self.fast_state = self.optimizer.state
 
     def add_param_group(self, param_group):
+        """@TODO: Docs. Contribution is welcome."""
         param_group["counter"] = 0
         self.optimizer.add_param_group(param_group)
 
@@ -79,6 +100,7 @@ class Lookahead(Optimizer):
     def get_from_params(
         cls, params: Dict, base_optimizer_params: Dict = None, **kwargs,
     ) -> "Lookahead":
+        """@TODO: Docs. Contribution is welcome."""
         from catalyst.dl.registry import OPTIMIZERS
 
         base_optimizer = OPTIMIZERS.get_from_params(

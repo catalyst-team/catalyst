@@ -36,9 +36,7 @@ DEFAULT_CALLBACKS = OrderedDict(
 
 
 class SomeModel(torch.nn.Module):
-    """
-    Dummy test torch model
-    """
+    """Dummy test torch model."""
 
     pass
 

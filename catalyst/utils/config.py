@@ -48,20 +48,23 @@ def load_config(
     data_format: str = None,
     encoding: str = "utf-8",
 ) -> Union[Dict, List]:
-    """
-    Loads config by giving path. Supports YAML and JSON files.
+    """Loads config by giving path. Supports YAML and JSON files.
+
+    Examples:
+        >>> load(path="./config.yml", ordered=True)
+
     Args:
         path (str): path to config file (YAML or JSON)
         ordered (bool): if true the config will be loaded as ``OrderedDict``
         data_format (str): ``yaml``, ``yml`` or ``json``.
         encoding (str): encoding to read the config
+
     Returns:
-        (Union[Dict, List]): Config
+        (Union[Dict, List]): config
+
     Raises:
         Exception: if path ``path`` doesn't exists
             or file format is not YAML or JSON
-    Examples:
-        >>> load(path="./config.yml", ordered=True)
     """
     path = Path(path)
 
@@ -107,8 +110,8 @@ def save_config(
     ensure_ascii: bool = False,
     indent: int = 2,
 ) -> None:
-    """
-    Saves config to file. Path must be either YAML or JSON
+    """Saves config to file. Path must be either YAML or JSON.
+
     Args:
         config (Union[Dict, List]): config to save
         path (Union[str, Path]): path to save

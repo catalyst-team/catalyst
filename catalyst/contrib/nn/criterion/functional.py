@@ -9,6 +9,7 @@ _EPS = 1e-8
 def euclidean_distance(
     x: torch.Tensor, y: torch.Tensor = None,
 ) -> torch.Tensor:
+    """@TODO: Docs. Contribution is welcome."""
     x_norm = (x ** 2).sum(1).unsqueeze(1)
     if y is not None:
         y_norm = (y ** 2).sum(1).unsqueeze(0)
@@ -24,8 +25,10 @@ def euclidean_distance(
 def cosine_distance(
     x: torch.Tensor, z: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
-    """
-    Calculate cosine distance between x and z
+    """Calculate cosine distance between x and z.
+
+    Args:
+        @TODO: Docs. Contribution is welcome.
     """
     x = F.normalize(x)
 
@@ -40,11 +43,15 @@ def cosine_distance(
 def batch_all(
     labels: torch.Tensor, exclude_negatives: bool = True,
 ) -> torch.Tensor:
-    """
-    Create a 3D mask of all possible triplets
+    """Create a 3D mask of all possible triplets.
+
+    Args:
+        @TODO: Docs. Contribution is welcome.
     """
     batch_size = labels.size(0)
-    indices_equal = torch.eye(batch_size, device=labels.device).type(torch.bool)
+    indices_equal = torch.eye(batch_size, device=labels.device).type(
+        torch.bool
+    )
     indices_not_equal = ~indices_equal
 
     i_not_equal_j = indices_not_equal.unsqueeze(2)
@@ -72,7 +79,7 @@ def batch_all(
 def create_negative_mask(
     labels: torch.Tensor, neg_label: int = -1
 ) -> torch.Tensor:
-
+    """@TODO: Docs. Contribution is welcome."""
     neg_labels = torch.ge(labels, neg_label)
     pos_labels = ~neg_labels
 
@@ -93,7 +100,7 @@ def create_negative_mask(
 def triplet_loss(
     embeddings: torch.Tensor, labels: torch.Tensor, margin: float = 0.3
 ) -> torch.Tensor:
-
+    """@TODO: Docs. Contribution is welcome."""
     cosine_dists = cosine_distance(embeddings)
     mask = batch_all(labels)
 
@@ -136,7 +143,7 @@ def margin_loss(
     beta: float = 1.0,
     skip_labels: Union[int, List[int]] = -1,
 ) -> torch.Tensor:
-
+    """@TODO: Docs. Contribution is welcome."""
     embeddings = F.normalize(embeddings, p=2.0, dim=1)
     distances = euclidean_distance(embeddings, embeddings)
 

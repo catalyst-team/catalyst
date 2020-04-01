@@ -4,6 +4,8 @@ from catalyst import utils
 
 
 def test_get_fn_argsnames():
+    """@TODO: Docs. Contribution is welcome."""
+
     class Net1(nn.Module):
         def forward(self, x):
             return x
@@ -44,12 +46,16 @@ def test_get_fn_argsnames():
     ]
 
     params_predicted = list(
-        map(lambda x: utils.get_fn_argsnames(x.forward, exclude=["self"]), nets)
+        map(
+            lambda x: utils.get_fn_argsnames(x.forward, exclude=["self"]), nets
+        )
     )
     assert params_predicted == params_true
 
 
 def test_fn_ends_with_pass():
+    """@TODO: Docs. Contribution is welcome."""
+
     def useless_fn():
         pass
 
@@ -61,6 +67,8 @@ def test_fn_ends_with_pass():
 
 
 def test_fn_ends_with_pass_on_callbacks():
+    """@TODO: Docs. Contribution is welcome."""
+
     def test_fn_ends_with_pass_on_callback(
         callback, events,
     ):
@@ -81,7 +89,12 @@ def test_fn_ends_with_pass_on_callbacks():
     from catalyst.dl import Callback
 
     callback = Callback(order=1)
-    start_events = ["stage_start", "epoch_start", "batch_start", "loader_start"]
+    start_events = [
+        "stage_start",
+        "epoch_start",
+        "batch_start",
+        "loader_start",
+    ]
     end_events = [
         "stage_end",
         "epoch_end",

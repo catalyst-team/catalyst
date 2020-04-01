@@ -4,20 +4,29 @@ from catalyst.core import Callback, CallbackNode, CallbackOrder, State
 
 
 class ValidationManagerCallback(Callback):
-    """
-    A callback to aggregate state.valid_metrics from state.epoch_metrics.
-    """
+    """A callback to aggregate state.valid_metrics from state.epoch_metrics."""
 
     def __init__(self):
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__(
             order=CallbackOrder.Validation, node=CallbackNode.Master,
         )
 
-    def on_epoch_start(self, state: State):
+    def on_epoch_start(self, state: State) -> None:
+        """Epoch start hook.
+
+        Args:
+            state (State): current state
+        """
         state.valid_metrics = defaultdict(None)
         state.is_best_valid = False
 
-    def on_epoch_end(self, state: State):
+    def on_epoch_end(self, state: State) -> None:
+        """Epoch end hook.
+
+        Args:
+            state (State): current state
+        """
         if state.stage_name.startswith("infer"):
             return
 

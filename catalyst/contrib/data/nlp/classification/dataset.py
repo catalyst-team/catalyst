@@ -7,9 +7,7 @@ from transformers import AutoTokenizer
 
 
 class TextClassificationDataset(Dataset):
-    """
-    Wrapper around Torch Dataset to perform text classification
-    """
+    """Wrapper around Torch Dataset to perform text classification."""
 
     def __init__(
         self,
@@ -30,7 +28,6 @@ class TextClassificationDataset(Dataset):
                 texts will be stripped to this length
             model_name (str): transformer model name, needed to perform
                 appropriate tokenization
-
         """
         self.texts = texts
         self.labels = labels
@@ -59,7 +56,7 @@ class TextClassificationDataset(Dataset):
         self.cls_vid = self.tokenizer.vocab["[CLS]"]
         self.pad_vid = self.tokenizer.vocab["[PAD]"]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Returns:
             int: length of the dataset
@@ -67,7 +64,7 @@ class TextClassificationDataset(Dataset):
         return len(self.texts)
 
     def __getitem__(self, index) -> Mapping[str, torch.Tensor]:
-        """Gets element of the dataset
+        """Gets element of the dataset.
 
         Args:
             index (int): index of the element in the dataset

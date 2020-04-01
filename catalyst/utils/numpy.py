@@ -6,7 +6,8 @@ def get_one_hot(
 ) -> np.ndarray:
     """
     Applies OneHot vectorization to a giving scalar, optional with
-    label smoothing from https://arxiv.org/abs/1812.01187
+    label smoothing as described in `Bag of Tricks for Image Classification
+    with Convolutional Neural Networks`_.
 
     Args:
         label (int): scalar value to be vectorized
@@ -17,6 +18,9 @@ def get_one_hot(
 
     Returns:
         np.ndarray: a one-hot vector with shape ``(num_classes,)``
+
+    .. _Bag of Tricks for Image Classification with
+        Convolutional Neural Networks: https://arxiv.org/abs/1812.01187
     """
     assert (
         num_classes is not None and num_classes > 0

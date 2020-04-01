@@ -23,8 +23,7 @@ from .base import BaseExperiment
 
 
 class SupervisedExperiment(BaseExperiment):
-    """
-    Supervised experiment
+    """Supervised experiment.
 
     The main difference with BaseExperiment that it will
     add several callbacks by default if you haven't.
@@ -58,6 +57,7 @@ class SupervisedExperiment(BaseExperiment):
             stage (str): name of stage. It should start with `infer` if you
                 don't need default callbacks, as they required only for
                 training stages.
+
         Returns:
             List[Callback]: list of callbacks for experiment
         """
@@ -85,7 +85,9 @@ class SupervisedExperiment(BaseExperiment):
 
             default_callbacks.append(("_timer", TimerCallback))
             default_callbacks.append(("_metrics", MetricManagerCallback))
-            default_callbacks.append(("_validation", ValidationManagerCallback))
+            default_callbacks.append(
+                ("_validation", ValidationManagerCallback)
+            )
             default_callbacks.append(("_saver", CheckpointCallback))
             default_callbacks.append(("_console", ConsoleLogger))
             default_callbacks.append(("_tensorboard", TensorboardLogger))

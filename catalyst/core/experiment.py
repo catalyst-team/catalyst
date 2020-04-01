@@ -54,8 +54,7 @@ class _Experiment(ABC):
     @property
     @abstractmethod
     def logdir(self) -> str:
-        """
-        Path to the directory where the experiment logs would be saved.
+        """Path to the directory where the experiment logs would be saved.
 
         Example::
 
@@ -67,8 +66,7 @@ class _Experiment(ABC):
     @property
     @abstractmethod
     def stages(self) -> Iterable[str]:
-        """
-        Experiment's stage names.
+        """Experiment's stage names.
 
         Example::
 
@@ -131,8 +129,7 @@ class _Experiment(ABC):
 
     @abstractmethod
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
-        """
-        Returns State parameters for a given stage.
+        """Returns State parameters for a given stage.
 
         To learn more about State, please follow
         :py:mod:`catalyst.core.state.State`
@@ -161,8 +158,7 @@ class _Experiment(ABC):
 
     @abstractmethod
     def get_model(self, stage: str) -> Model:
-        """
-        Returns the model for a given stage.
+        """Returns the model for a given stage.
 
         Example::
 
@@ -185,8 +181,7 @@ class _Experiment(ABC):
 
     @abstractmethod
     def get_criterion(self, stage: str) -> Criterion:
-        """
-        Returns the criterion for a given stage.
+        """Returns the criterion for a given stage.
 
         Example::
 
@@ -205,8 +200,7 @@ class _Experiment(ABC):
 
     @abstractmethod
     def get_optimizer(self, stage: str, model: Model) -> Optimizer:
-        """
-        Returns the optimizer for a given stage and model.
+        """Returns the optimizer for a given stage and model.
 
         Example::
 
@@ -225,8 +219,7 @@ class _Experiment(ABC):
 
     @abstractmethod
     def get_scheduler(self, stage: str, optimizer: Optimizer) -> Scheduler:
-        """
-        Returns the scheduler for a given stage and optimizer.
+        """Returns the scheduler for a given stage and optimizer.
 
         Example::
             >>> experiment.get_scheduler(stage="training", optimizer=optimizer)
@@ -269,8 +262,7 @@ class _Experiment(ABC):
         return criterion, optimizer, scheduler
 
     def get_transforms(self, stage: str = None, dataset: str = None):
-        """
-        Returns the data transforms for a given stage and dataset.
+        """Returns the data transforms for a given stage and dataset.
 
         Args:
             stage (str): stage name of interest,
@@ -291,8 +283,7 @@ class _Experiment(ABC):
     def get_datasets(
         self, stage: str, epoch: int = None, **kwargs,
     ) -> "OrderedDict[str, Dataset]":
-        """
-        Returns the datasets for a given stage and epoch.
+        """Returns the datasets for a given stage and epoch.
 
         .. note::
             For Deep Learning cases you have the same dataset
@@ -337,8 +328,7 @@ class _Experiment(ABC):
     def get_loaders(
         self, stage: str, epoch: int = None,
     ) -> "OrderedDict[str, DataLoader]":
-        """
-        Returns the loaders for a given stage.
+        """Returns the loaders for a given stage.
 
         .. note::
             Wrapper for
@@ -362,8 +352,7 @@ class _Experiment(ABC):
 
     @abstractmethod
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
-        """
-        Returns callbacks for a given stage.
+        """Returns callbacks for a given stage.
 
         .. note::
             To learn more about Catalyst Callbacks mechanism, please follow

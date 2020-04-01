@@ -15,9 +15,11 @@ def f1score(precision_value, recall_value, eps=1e-5):
     """
     Calculating F1-score from precision and recall to reduce computation
     redundancy.
+
     Args:
         precision_value: precision (0-1)
         recall_value: recall (0-1)
+
     Returns:
         F1 score (0-1)
     """
@@ -26,13 +28,15 @@ def f1score(precision_value, recall_value, eps=1e-5):
     return numerator / denominator
 
 
-def precision(tp, fp, eps=1e-5):
+def precision(tp, fp, eps: float = 1e-5) -> float:
     """
     Calculates precision (a.k.a. positive predictive value) for binary
     classification and segmentation.
+
     Args:
-        tp: number of true positives
-        fp: number of false positives
+        tp (int): number of true positives
+        fp (int): number of false positives
+
     Returns:
         precision value (0-1)
     """
@@ -42,13 +46,15 @@ def precision(tp, fp, eps=1e-5):
     return 1 - fp / (tp + fp + eps)
 
 
-def recall(tp, fn, eps=1e-5):
+def recall(tp, fn, eps=1e-5) -> float:
     """
     Calculates recall (a.k.a. true positive rate) for binary classification and
-    segmentation
+    segmentation.
+
     Args:
         tp: number of true positives
         fn: number of false negatives
+
     Returns:
         recall value (0-1)
     """
@@ -67,30 +73,29 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
     """
 
     def __init__(self, threshold=0.5):
+        """
+        Constructor method for the `` PrecisionRecallF1ScoreMeter`` class.
+        """
         super(PrecisionRecallF1ScoreMeter, self).__init__()
         self.threshold = threshold
         self.reset()
 
-    def reset(self):
+    def reset(self) -> None:
         """
         Resets true positive, false positive and false negative counts to 0.
         """
         self.tp_fp_fn_counts = defaultdict(int)
 
-    def add(self, output, target):
+    def add(self, output: torch.Tensor, target: torch.Tensor) -> None:
         """
         Thresholds predictions and calculates the true positives,
         false positives, and false negatives in comparison to the target.
 
         Args:
-            output (torch.Tensor):
-                prediction after activation function
+            output (torch.Tensor): prediction after activation function
                 shape should be (batch_size, ...), but works with any shape
-            target (torch.Tensor):
-                label (binary)
+            target (torch.Tensor): label (binary),
                 shape should be the same as output's shape
-        Returns:
-            None
         """
         output = (output > self.threshold).float()
 

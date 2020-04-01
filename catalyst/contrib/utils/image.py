@@ -46,15 +46,16 @@ def imread(
     rootpath: Union[str, pathlib.Path] = None,
     **kwargs,
 ) -> np.ndarray:
-    """
+    """Reads an image from the specified file.
 
     Args:
-        uri: {str, pathlib.Path, bytes, file}
-        The resource to load the image from, e.g. a filename, pathlib.Path,
-        http address or file object, see the docs for more info.
-        grayscale:
-        expand_dims:
-        rootpath:
+        uri (str, pathlib.Path, bytes, file): the resource to load the image
+        from, e.g. a filename, ``pathlib.Path``, http address or file object,
+        see ``imageio.imread`` docs for more info
+        grayscale (bool):
+        expand_dims (bool):
+        rootpath (Union[str, pathlib.Path]): path to the resource with image
+            (allows to use relative path)
 
     Returns:
         np.ndarray: image
@@ -90,16 +91,16 @@ def mimread(
     rootpath: Union[str, pathlib.Path] = None,
     **kwargs,
 ) -> np.ndarray:
-    """
+    """Reads multiple images from the specified file.
 
     Args:
-        uri: {str, pathlib.Path, bytes, file}
-        The resource to load the mask from, e.g. a filename, pathlib.Path,
-        http address or file object, see the docs for more info.
+        uri (str, pathlib.Path, bytes, file): the resource to load the image
+        from, e.g. a filename, ``pathlib.Path``, http address or file object,
+        see ``imageio.mimread`` docs for more info
         clip_range (Tuple[int, int]): lower and upper interval edges,
             image values outside the interval are clipped to the interval edges
         expand_dims (bool): if True, append channel axis to grayscale images
-        rootpath (Union[str, pathlib.Path]): path to an image
+        rootpath (Union[str, pathlib.Path]): path to the resource with image
             (allows to use relative path)
 
     Returns:
@@ -119,6 +120,7 @@ def mimread(
 
 
 def mimwrite_with_meta(uri, ims, meta, **kwargs):
+    """@TODO: Docs. Contribution is welcome."""
     writer = imageio.get_writer(uri, mode="I", **kwargs)
     writer.set_meta_data(meta)
     with writer:
@@ -127,6 +129,7 @@ def mimwrite_with_meta(uri, ims, meta, **kwargs):
 
 
 def tensor_from_rgb_image(image: np.ndarray) -> torch.Tensor:
+    """@TODO: Docs. Contribution is welcome."""
     image = np.moveaxis(image, -1, 0)
     image = np.ascontiguousarray(image)
     image = torch.from_numpy(image)
@@ -188,8 +191,7 @@ def mask_to_overlay_image(
     threshold: float = 0,
     mask_strength: float = 0.5,
 ) -> np.ndarray:
-    """
-    Draws every mask for with some color over image
+    """Draws every mask for with some color over image.
 
     Args:
         image (np.ndarray): RGB image used as underlay for masks
@@ -218,11 +220,10 @@ def mask_to_overlay_image(
 
 
 def has_image_extension(uri) -> bool:
-    """
-    Check that file has image extension
+    """Check that file has image extension.
 
     Args:
-        uri (Union[str, pathlib.Path]): The resource to load the file from
+        uri (Union[str, pathlib.Path]): the resource to load the file from
 
     Returns:
         bool: True if file has image extension, False otherwise

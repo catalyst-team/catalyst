@@ -14,7 +14,7 @@ class Meter(object):
         pass
 
     def add(self, value):
-        """Log a new value to the meter
+        """Log a new value to the meter.
 
         Args:
             value: Next result to include.

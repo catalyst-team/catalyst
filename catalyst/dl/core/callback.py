@@ -11,7 +11,9 @@ class MeterMetricsCallback(Callback):
     """
     A callback that tracks metrics through meters and prints metrics for
     each class on `state.on_loader_end`.
-    This callback works for both single metric and multi-metric meters.
+
+    .. note::
+        This callback works for both single metric and multi-metric meters.
     """
 
     def __init__(
@@ -56,9 +58,19 @@ class MeterMetricsCallback(Callback):
             meter.reset()
 
     def on_loader_start(self, state):
+        """Loader start hook.
+
+        Args:
+            state (State): current state
+        """
         self._reset_stats()
 
     def on_batch_end(self, state: State):
+        """Batch end hook. Computes batch metrics.
+
+        Args:
+            state (State): current state
+        """
         logits = state.batch_out[self.output_key].detach().float()
         targets = state.batch_in[self.input_key].detach().float()
         probabilities = self.activation_fn(logits)
@@ -67,6 +79,11 @@ class MeterMetricsCallback(Callback):
             self.meters[i].add(probabilities[:, i], targets[:, i])
 
     def on_loader_end(self, state: State):
+        """Loader end hook. Computes loader metrics.
+
+        Args:
+            state (State): current state
+        """
         metrics_tracker = defaultdict(list)
         loader_values = state.loader_metrics
         # Computing metrics for each class

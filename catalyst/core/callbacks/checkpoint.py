@@ -60,9 +60,7 @@ def _load_checkpoint(*, filename, state: State):
 
 
 class BaseCheckpointCallback(Callback):
-    """
-    Base class for all checkpoint callbacks
-    """
+    """Base class for all checkpoint callbacks."""
 
     def __init__(self, metrics_filename: str = "_metrics.json"):
         """
@@ -70,7 +68,9 @@ class BaseCheckpointCallback(Callback):
             metrics_filename (str): filename to save metrics
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
         """
-        super().__init__(order=CallbackOrder.External, node=CallbackNode.Master)
+        super().__init__(
+            order=CallbackOrder.External, node=CallbackNode.Master
+        )
         self.metrics_filename = metrics_filename
         self.metrics: dict = {}
 
@@ -136,10 +136,12 @@ class CheckpointCallback(BaseCheckpointCallback):
         self._keys_from_state = ["resume", "resume_dir"]
 
     def get_checkpoint_suffix(self, checkpoint: dict) -> str:
+        """@TODO: Docs. Contribution is welcome."""
         result = f"{checkpoint['stage_name']}.{checkpoint['epoch']}"
         return result
 
     def process_metrics(self, last_valid_metrics) -> Dict:
+        """@TODO: Docs. Contribution is welcome."""
         top_best_checkpoints = [
             (Path(filepath).stem, valid_metric)
             for (filepath, _, valid_metric) in self.top_best_metrics
@@ -160,6 +162,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         return self.metrics
 
     def truncate_checkpoints(self, minimize_metric: bool) -> None:
+        """@TODO: Docs. Contribution is welcome."""
         self.top_best_metrics = sorted(
             self.top_best_metrics,
             key=lambda x: x[1],
@@ -182,6 +185,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         main_metric: str = "loss",
         minimize_metric: bool = True,
     ):
+        """@TODO: Docs. Contribution is welcome."""
         suffix = self.get_checkpoint_suffix(checkpoint)
         utils.save_checkpoint(
             logdir=Path(f"{logdir}/checkpoints/"),
@@ -216,6 +220,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         self.save_metric(logdir, metrics)
 
     def on_stage_start(self, state: State):
+        """@TODO: Docs. Contribution is welcome."""
         for key in self._keys_from_state:
             value = getattr(state, key, None)
             if value is not None:
@@ -229,6 +234,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             self.resume = None
 
     def on_epoch_end(self, state: State):
+        """@TODO: Docs. Contribution is welcome."""
         if state.stage_name.startswith("infer"):
             return
 
@@ -242,6 +248,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         )
 
     def on_stage_end(self, state: State):
+        """@TODO: Docs. Contribution is welcome."""
         if state.stage_name.startswith("infer"):
             return
 
@@ -258,9 +265,7 @@ class CheckpointCallback(BaseCheckpointCallback):
 
 
 class IterationCheckpointCallback(BaseCheckpointCallback):
-    """
-    Iteration checkpoint callback to save your model/criterion/optimizer
-    """
+    """Iteration checkpoint callback to save your model/criterion/optimizer."""
 
     def __init__(
         self,
@@ -286,6 +291,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         self.metrics_history = []
 
     def get_checkpoint_suffix(self, checkpoint: dict) -> str:
+        """@TODO: Docs. Contribution is welcome."""
         result = (
             f"{checkpoint['stage_name']}."
             f"epoch.{checkpoint['epoch']}."
@@ -295,6 +301,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         return result
 
     def process_metrics(self) -> Dict:
+        """@TODO: Docs. Contribution is welcome."""
         n_last_checkpoints = [
             (Path(filepath).stem, batch_values)
             for (filepath, batch_values) in self.last_checkpoints
@@ -309,6 +316,9 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         return self.metrics
 
     def truncate_checkpoints(self, **kwargs) -> None:
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         if len(self.last_checkpoints) > self.save_n_last:
             item = self.last_checkpoints.pop(0)
             top_filepath = item[0]
@@ -320,6 +330,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         checkpoint: Dict,
         batch_metrics: Dict[str, float],
     ):
+        """@TODO: Docs. Contribution is welcome."""
         filepath = utils.save_checkpoint(
             logdir=Path(f"{logdir}/checkpoints/"),
             checkpoint=checkpoint,
@@ -338,10 +349,12 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         print(f"\nSaved checkpoint at {filepath}")
 
     def on_stage_start(self, state: State):
+        """@TODO: Docs. Contribution is welcome."""
         if self.stage_restart:
             self._iteration_counter = 0
 
     def on_batch_end(self, state: State):
+        """@TODO: Docs. Contribution is welcome."""
         self._iteration_counter += 1
         if self._iteration_counter % self.period == 0:
             checkpoint = _pack_state(state)

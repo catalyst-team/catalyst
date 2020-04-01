@@ -11,8 +11,7 @@ from catalyst.utils.tools.typing import Device, Model
 
 
 class _ForwardOverrideModel(nn.Module):
-    """
-    Model that calls specified method instead of forward
+    """Model that calls specified method instead of forward.
 
     (Workaround, single method tracing is not supported)
     """
@@ -27,8 +26,7 @@ class _ForwardOverrideModel(nn.Module):
 
 
 class _TracingModelWrapper(nn.Module):
-    """
-    Wrapper that traces model with batch instead of calling it
+    """Wrapper that traces model with batch instead of calling it.
 
     (Workaround, to use native model batch handler)
     """
@@ -57,7 +55,9 @@ class _TracingModelWrapper(nn.Module):
             self.tracing_result = torch.jit.trace(method_model, method_input)
         except Exception:
             # for backward compatibility
-            self.tracing_result = torch.jit.trace(method_model, *args, **kwargs)
+            self.tracing_result = torch.jit.trace(
+                method_model, *args, **kwargs
+            )
         output = self.model.forward(*args, **kwargs)
 
         return output
@@ -74,8 +74,7 @@ def trace_model(
     device: Device = "cpu",
     predict_params: dict = None,
 ) -> ScriptModule:
-    """
-    Traces model using runner and batch
+    """Traces model using runner and batch.
 
     Args:
         model: Model to trace
@@ -136,8 +135,7 @@ def get_trace_name(
     opt_level: str = None,
     additional_string: str = None,
 ):
-    """
-    Creates a file name for the traced model.
+    """Creates a file name for the traced model.
 
     Args:
         method_name (str): model's method name
@@ -166,10 +164,11 @@ def get_trace_name(
 
 
 def load_traced_model(
-    model_path: Union[str, Path], device: Device = "cpu", opt_level: str = None,
+    model_path: Union[str, Path],
+    device: Device = "cpu",
+    opt_level: str = None,
 ) -> ScriptModule:
-    """
-    Loads a traced model
+    """Loads a traced model.
 
     Args:
         model_path: Path to traced model

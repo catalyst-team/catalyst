@@ -12,8 +12,7 @@ def maybe_recursive_call(
     recursive_kwargs=None,
     **kwargs,
 ):
-    """
-    Calls the ``method`` recursively for the object_or_dict
+    """Calls the ``method`` recursively for the ``object_or_dict``.
 
     Args:
         object_or_dict (Any): some object or a dictionary of objects
@@ -26,7 +25,9 @@ def maybe_recursive_call(
         result = type(object_or_dict)()
         for k, v in object_or_dict.items():
             r_args = None if recursive_args is None else recursive_args[k]
-            r_kwargs = None if recursive_kwargs is None else recursive_kwargs[k]
+            r_kwargs = (
+                None if recursive_kwargs is None else recursive_kwargs[k]
+            )
             result[k] = maybe_recursive_call(
                 v,
                 method,
@@ -44,16 +45,13 @@ def maybe_recursive_call(
 
 
 def is_exception(ex: Any) -> bool:
-    """
-    Check if the argument is of Exception type
-    """
+    """Check if the argument is of ``Exception`` type."""
     result = (ex is not None) and isinstance(ex, BaseException)
     return result
 
 
 def copy_directory(input_dir: Path, output_dir: Path) -> None:
-    """
-    Recursively copies the input directory
+    """Recursively copies the input directory.
 
     Args:
         input_dir (Path): input directory
@@ -69,8 +67,7 @@ def copy_directory(input_dir: Path, output_dir: Path) -> None:
 
 
 def get_utcnow_time(format: str = None) -> str:
-    """
-    Return string with current utc time in chosen format
+    """Return string with current utc time in chosen format.
 
     Args:
         format (str): format string. if None "%y%m%d.%H%M%S" will be used.
@@ -85,9 +82,10 @@ def get_utcnow_time(format: str = None) -> str:
 
 
 def format_metric(name: str, value: float) -> str:
-    """
-    Format metric. Metric will be returned in the scientific format if 4
-    decimal chars are not enough (metric value lower than 1e-4)
+    """Format metric.
+
+    Metric will be returned in the scientific format if 4
+    decimal chars are not enough (metric value lower than 1e-4).
 
     Args:
         name (str): metric name
@@ -99,11 +97,12 @@ def format_metric(name: str, value: float) -> str:
 
 
 def get_fn_default_params(fn: Callable[..., Any], exclude: List[str] = None):
-    """
-    Return default parameters of Callable.
+    """Return default parameters of Callable.
+
     Args:
         fn (Callable[..., Any]): target Callable
         exclude (List[str]): exclude list of parameters
+
     Returns:
         dict: contains default parameters of `fn`
     """
@@ -118,11 +117,12 @@ def get_fn_default_params(fn: Callable[..., Any], exclude: List[str] = None):
 
 
 def get_fn_argsnames(fn: Callable[..., Any], exclude: List[str] = None):
-    """
-    Return parameter names of Callable.
+    """Return parameter names of Callable.
+
     Args:
         fn (Callable[..., Any]): target Callable
         exclude (List[str]): exclude list of parameters
+
     Returns:
         list: contains parameter names of `fn`
     """
@@ -138,8 +138,10 @@ def fn_ends_with_pass(fn: Callable[..., Any]):
     Check that function end with pass statement
     (probably does nothing in any way).
     Mainly used to filter callbacks with empty on_{event} methods.
+
     Args:
         fn (Callable[..., Any]): target Callable
+
     Returns:
         bool: True if there is pass in the first indentation level of fn
             and nothing happens before it, False in any other case.
