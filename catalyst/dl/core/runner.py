@@ -8,7 +8,7 @@ from .experiment import Experiment
 
 class Runner(_Runner):
     """
-    Deep Learning Runner for different supervised, unsupervised, gan, etc runs
+    Deep Learning Runner for different supervised, unsupervised, gan, etc runs.
     """
 
     _experiment_fn: Callable = Experiment

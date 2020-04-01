@@ -12,6 +12,7 @@ from catalyst.utils.tools.tensorboard import SummaryWriter
 
 
 def build_args(parser):
+    """Constructs the command-line arguments."""
     parser.add_argument(
         "--in-npy",
         type=str,
@@ -68,6 +69,7 @@ def build_args(parser):
 
 
 def parse_args():
+    """Parses the command line arguments for the main method."""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args = parser.parse_args()
@@ -75,12 +77,14 @@ def parse_args():
 
 
 def load_image(filename, size):
+    """@TODO: Docs. Contribution is welcome."""
     image = cv2.imread(filename)[..., ::-1]
     image = cv2.resize(image, (size, size), interpolation=cv2.INTER_NEAREST)
     return image
 
 
 def main(args, _=None):
+    """Run ``catalyst-data project-embeddings`` script."""
     df = pd.read_csv(args.in_csv)
     os.makedirs(args.out_dir, exist_ok=True)
 
@@ -102,7 +106,9 @@ def main(args, _=None):
         img_data = np.stack(
             [load_image(name, args.img_size) for name in image_names], axis=0
         )
-        img_data = (img_data.transpose((0, 3, 1, 2)) / 255.0).astype(np.float32)
+        img_data = (img_data.transpose((0, 3, 1, 2)) / 255.0).astype(
+            np.float32
+        )
         img_data = torch.from_numpy(img_data)
     else:
         img_data = None

@@ -29,9 +29,7 @@ logger = logging.getLogger(__name__)
 
 
 class SupervisedRunner(Runner):
-    """
-    Runner for experiments with supervised model
-    """
+    """Runner for experiments with supervised model."""
 
     _experiment_fn: Callable = SupervisedExperiment
 
@@ -237,8 +235,7 @@ class SupervisedRunner(Runner):
         fp16: Union[Dict, bool] = None,
         check: bool = False,
     ) -> None:
-        """
-        Makes the inference on the model.
+        """Makes the inference on the model.
 
         Args:
             model (Model): model to infer
@@ -282,8 +279,7 @@ class SupervisedRunner(Runner):
         fp16: Union[Dict, bool] = None,
         check: bool = False,
     ) -> Any:
-        """
-        Makes a prediction on the whole loader with the specified model.
+        """Makes a prediction on the whole loader with the specified model.
 
         Args:
             model (Model): model to infer
@@ -334,8 +330,7 @@ class SupervisedRunner(Runner):
         device: Device = "cpu",
         predict_params: dict = None,
     ) -> ScriptModule:
-        """
-        Traces model using Torch Jit
+        """Traces model using Torch Jit.
 
         Args:
             model (Model): model to trace

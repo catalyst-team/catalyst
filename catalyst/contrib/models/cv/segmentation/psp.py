@@ -7,6 +7,8 @@ from .head import UnetHead
 
 
 class PSPnet(UnetSpec):
+    """@TODO: Docs. Contribution is welcome."""
+
     def _get_components(
         self,
         encoder: UnetEncoder,
@@ -34,6 +36,8 @@ class PSPnet(UnetSpec):
 
 
 class ResnetPSPnet(ResnetUnetSpec):
+    """@TODO: Docs. Contribution is welcome."""
+
     def _get_components(
         self,
         encoder: ResnetEncoder,

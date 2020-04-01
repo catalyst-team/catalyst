@@ -10,10 +10,13 @@ from catalyst.utils import get_activation_fn
 
 
 def accuracy(
-    outputs, targets, topk=(1,), threshold: float = None, activation: str = None
+    outputs,
+    targets,
+    topk=(1,),
+    threshold: float = None,
+    activation: str = None,
 ):
-    """
-    Computes the accuracy.
+    """Computes the accuracy.
 
     It can be used either for:
         - multi-class task:
@@ -61,8 +64,8 @@ def accuracy(
 
 
 def average_accuracy(outputs, targets, k=10):
-    """
-    Computes the average accuracy at k.
+    """Computes the average accuracy at k.
+
     This function computes the average
     accuracy at k between two lists of items.
 
@@ -70,6 +73,7 @@ def average_accuracy(outputs, targets, k=10):
         outputs (list): A list of predicted elements
         targets (list):  A list of elements that are to be predicted
         k (int, optional): The maximum number of predicted elements
+
     Returns:
         double: The average accuracy at k over the input lists
     """
@@ -91,8 +95,8 @@ def average_accuracy(outputs, targets, k=10):
 
 
 def mean_average_accuracy(outputs, targets, topk=(1,)):
-    """
-    Computes the mean average accuracy at k.
+    """Computes the mean average accuracy at k.
+
     This function computes the mean average accuracy at k between two lists
     of lists of items.
 
@@ -116,7 +120,9 @@ def mean_average_accuracy(outputs, targets, topk=(1,)):
 
     res = []
     for k in topk:
-        ap = np.mean([average_accuracy(p, a, k) for a, p in zip(targets, pred)])
+        ap = np.mean(
+            [average_accuracy(p, a, k) for a, p in zip(targets, pred)]
+        )
         res.append(ap)
     return res
 

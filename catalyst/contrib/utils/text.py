@@ -16,7 +16,7 @@ def tokenize_text(
     lowercase: bool = True,
     remove_punctuation: bool = True,
 ) -> Dict[str, np.array]:
-    """Tokenizes givin text
+    """Tokenizes givin text.
 
     Args:
         text (str): text to tokenize
@@ -60,7 +60,7 @@ def process_bert_output(
     mask: torch.Tensor = None,
     level: Union[int, str] = None,
 ):
-    """Processed the output"""
+    """Processed the output."""
     # @TODO: make this functional
     pooling = (
         LamaPooling(groups=pooling_groups, in_features=hidden_size)

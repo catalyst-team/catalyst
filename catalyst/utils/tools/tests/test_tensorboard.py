@@ -74,6 +74,7 @@ def _compare_image_data(png, data):
 
 
 def test_events_reader_successful():
+    """@TODO: Docs. Contribution is welcome."""
     data, data_raw = _get_test_data()
     reader = EventsFileReader(BytesIO(data))
     for event, event_raw in zip(reader, data_raw):
@@ -84,7 +85,9 @@ def test_events_reader_successful():
             if event_raw["type"] == "scalar":
                 assert event.summary.value[0].HasField("simple_value")
                 assert event.summary.value[0].tag == event_raw["tag"]
-                assert event.summary.value[0].simple_value == event_raw["value"]
+                assert (
+                    event.summary.value[0].simple_value == event_raw["value"]
+                )
             elif event_raw["type"] == "image":
                 assert event.summary.value[0].HasField("image")
                 assert event.summary.value[0].image.height == 2
@@ -97,12 +100,14 @@ def test_events_reader_successful():
 
 
 def test_events_reader_empty():
+    """@TODO: Docs. Contribution is welcome."""
     data = BytesIO(b"")
     reader = EventsFileReader(data)
     assert len(list(reader)) == 0
 
 
 def test_events_reader_invalid_data():
+    """@TODO: Docs. Contribution is welcome."""
     data, _ = _get_test_data()
     data1 = bytearray(data)
     data1[0] = (data1[0] + 1) % 256
@@ -118,6 +123,7 @@ def test_events_reader_invalid_data():
 
 
 def test_events_reader_unexpected_end():
+    """@TODO: Docs. Contribution is welcome."""
     data, _ = _get_test_data()
     data = data[:-5]
     reader = EventsFileReader(BytesIO(data))
@@ -134,6 +140,7 @@ def _open(path, mode):
 @patch("pathlib.Path.is_file", lambda s: True)
 @patch("builtins.open", _open)
 def test_summary_reader_iterate():
+    """@TODO: Docs. Contribution is welcome."""
     reader = SummaryReader("logs", types=["scalar", "image"])
     _, data_raw = _get_test_data()
     data_raw2 = 2 * [d for d in data_raw if d is not None]
@@ -152,6 +159,7 @@ def test_summary_reader_iterate():
 @patch("pathlib.Path.is_file", lambda s: True)
 @patch("builtins.open", _open)
 def test_summary_reader_filter():
+    """@TODO: Docs. Contribution is welcome."""
     tags = ["x", "z"]
     reader = SummaryReader("logs", tag_filter=tags, types=["scalar", "image"])
     _, data_raw = _get_test_data()
@@ -172,6 +180,7 @@ def test_summary_reader_filter():
 @patch("pathlib.Path.is_file", lambda s: True)
 @patch("builtins.open", _open)
 def test_summary_reader_filter_scalars():
+    """@TODO: Docs. Contribution is welcome."""
     types = ["scalar"]
     reader = SummaryReader("logs", types=types)
     _, data_raw = _get_test_data()
@@ -190,5 +199,6 @@ def test_summary_reader_filter_scalars():
 
 
 def test_summary_reader_invalid_type():
+    """@TODO: Docs. Contribution is welcome."""
     with pytest.raises(ValueError):
         SummaryReader(".", types=["unknown-type"])

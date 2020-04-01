@@ -18,15 +18,21 @@ def _process_additional_params(params, layers):
 
 
 class ResidualWrapper(nn.Module):
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(self, net):
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__()
         self.net = net
 
     def forward(self, x):
+        """Forward call."""
         return x + self.net(x)
 
 
 class SequentialNet(nn.Module):
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(
         self,
         hiddens,
@@ -37,7 +43,7 @@ class SequentialNet(nn.Module):
         residual: Union[bool, str] = False,
         layer_order: List = None,
     ):
-
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__()
         assert len(hiddens) > 1, "No sequence found"
 
@@ -131,6 +137,7 @@ class SequentialNet(nn.Module):
         self.net = torch.nn.Sequential(OrderedDict(net))
 
     def forward(self, x):
+        """Forward call."""
         x = self.net.forward(x)
         return x
 

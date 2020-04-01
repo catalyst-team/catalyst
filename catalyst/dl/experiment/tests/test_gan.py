@@ -51,9 +51,7 @@ def test_defaults():
 
 
 def test_callback_wrapping():
-    """
-    Test on callback wrapping for GanExperiment class.
-    """
+    """Test on callback wrapping for GanExperiment class."""
     model = torch.nn.Module()
     dataset = torch.utils.data.Dataset()
     dataloader = torch.utils.data.DataLoader(dataset)
@@ -67,7 +65,8 @@ def test_callback_wrapping():
     input_callbacks = OrderedDict(
         {
             "optim_d": OptimizerCallback(
-                loss_key=discriminator_loss_key, optimizer_key=discriminator_key
+                loss_key=discriminator_loss_key,
+                optimizer_key=discriminator_key,
             ),
             "optim_g": OptimizerCallback(
                 loss_key=generator_loss_key, optimizer_key=generator_key

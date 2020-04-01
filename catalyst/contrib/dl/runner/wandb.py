@@ -16,9 +16,7 @@ warnings.simplefilter("always")
 
 
 class WandbRunner(Runner):
-    """
-    Runner wrapper with wandb integration hooks.
-    """
+    """Runner wrapper with wandb integration hooks."""
 
     @staticmethod
     def _log_metrics(
@@ -78,7 +76,9 @@ class WandbRunner(Runner):
         log_on_batch_end: bool = monitoring_params.pop(
             "log_on_batch_end", False
         )
-        log_on_epoch_end: bool = monitoring_params.pop("log_on_epoch_end", True)
+        log_on_epoch_end: bool = monitoring_params.pop(
+            "log_on_epoch_end", True
+        )
         checkpoints_glob: List[str] = monitoring_params.pop(
             "checkpoints_glob", []
         )
@@ -164,7 +164,7 @@ class WandbRunner(Runner):
             wandb.log(commit=True)
 
     def run_experiment(self, experiment: Experiment):
-        """Starts experiment
+        """Starts experiment.
 
         Args:
             experiment (Experiment): experiment class
@@ -175,7 +175,7 @@ class WandbRunner(Runner):
 
 
 class SupervisedWandbRunner(WandbRunner, SupervisedRunner):
-    """SupervisedRunner with WandB"""
+    """SupervisedRunner with WandB."""
 
 
 __all__ = ["WandbRunner", "SupervisedWandbRunner"]

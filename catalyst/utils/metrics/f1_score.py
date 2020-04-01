@@ -15,8 +15,6 @@ def f1_score(
     activation: str = "Sigmoid",
 ):
     """
-    Source https://github.com/qubvel/segmentation_models.pytorch
-
     Args:
         outputs (torch.Tensor): A list of predicted elements
         targets (torch.Tensor):  A list of elements that are to be predicted
@@ -28,6 +26,9 @@ def f1_score(
 
     Returns:
         float: F_1 score
+
+    Main origins of inspiration:
+        https://github.com/qubvel/segmentation_models.pytorch
     """
     activation_fn = get_activation_fn(activation)
 

@@ -14,8 +14,7 @@ warnings.simplefilter("always")
 
 
 class NeptuneRunner(Runner):
-    """
-    Runner wrapper with Neptune integration hooks.
+    """Runner wrapper with Neptune integration hooks.
     Read about Neptune here https://neptune.ai
 
     Examples:
@@ -93,7 +92,9 @@ class NeptuneRunner(Runner):
         log_on_batch_end: bool = monitoring_params.pop(
             "log_on_batch_end", False
         )
-        log_on_epoch_end: bool = monitoring_params.pop("log_on_epoch_end", True)
+        log_on_epoch_end: bool = monitoring_params.pop(
+            "log_on_epoch_end", True
+        )
 
         self._init(
             log_on_batch_end=log_on_batch_end,
@@ -147,13 +148,14 @@ class NeptuneRunner(Runner):
                     )
 
     def run_experiment(self, experiment: Experiment):
+        """@TODO: Docs. Contribution is welcome."""
         self._pre_experiment_hook(experiment=experiment)
         super().run_experiment(experiment=experiment)
         self._post_experiment_hook(experiment=experiment)
 
 
 class SupervisedNeptuneRunner(NeptuneRunner, SupervisedRunner):
-    pass
+    """@TODO: Docs. Contribution is welcome."""
 
 
 __all__ = ["NeptuneRunner", "SupervisedNeptuneRunner"]

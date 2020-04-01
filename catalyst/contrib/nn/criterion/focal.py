@@ -6,6 +6,16 @@ from catalyst.utils import metrics
 
 
 class FocalLossBinary(_Loss):
+    """Compute focal loss for binary classification problem.
+
+    It has been proposed in `Focal Loss for Dense Object Detection`_ paper.
+
+    @TODO: Docs (add `Example`). Contribution is welcome.
+
+    .. _Focal Loss for Dense Object Detection:
+        https://arxiv.org/abs/1708.02002
+    """
+
     def __init__(
         self,
         ignore: int = None,
@@ -15,9 +25,7 @@ class FocalLossBinary(_Loss):
         threshold: float = 0.5,
         reduction: str = "mean",
     ):
-        """
-        Compute focal loss for binary classification problem.
-        """
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__()
         self.ignore = ignore
 
@@ -41,6 +49,8 @@ class FocalLossBinary(_Loss):
         Args:
             logits: [bs; ...]
             targets: [bs; ...]
+
+        @TODO: Docs. Contribution is welcome.
         """
         targets = targets.view(-1)
         logits = logits.view(-1)
@@ -57,9 +67,15 @@ class FocalLossBinary(_Loss):
 
 
 class FocalLossMultiClass(FocalLossBinary):
-    """
-    Compute focal loss for multi-class problem.
-    Ignores targets having -1 label
+    """Compute focal loss for multi-class problem.
+    Ignores targets having -1 label.
+
+    It has been proposed in `Focal Loss for Dense Object Detection`_ paper.
+
+    @TODO: Docs (add `Example`). Contribution is welcome.
+
+    .. _Focal Loss for Dense Object Detection:
+        https://arxiv.org/abs/1708.02002
     """
 
     def forward(self, logits, targets):
@@ -67,6 +83,8 @@ class FocalLossMultiClass(FocalLossBinary):
         Args:
             logits: [bs; num_classes; ...]
             targets: [bs; ...]
+
+        @TODO: Docs. Contribution is welcome.
         """
         num_classes = logits.size(1)
         loss = 0
@@ -92,9 +110,15 @@ class FocalLossMultiClass(FocalLossBinary):
 
 # @TODO: check
 # class FocalLossMultiLabel(_Loss):
-#     """
-#     Compute focal loss for multi-label problem.
-#     Ignores targets having -1 label
+#     """Compute focal loss for multi-label problem.
+#     Ignores targets having -1 label.
+#
+#     It has been proposed in `Focal Loss for Dense Object Detection`_ paper.
+#
+#     @TODO: Docs (add `Example`). Contribution is welcome.
+#
+#     .. _Focal Loss for Dense Object Detection:
+#         https://arxiv.org/abs/1708.02002
 #     """
 #
 #     def forward(self, logits, targets):

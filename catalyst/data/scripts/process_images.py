@@ -35,6 +35,9 @@ cv2.ocl.setUseOpenCL(False)
 
 
 def build_args(parser):
+    """
+    Constructs the command-line arguments for ``catalyst-data process-images``.
+    """
     parser.add_argument(
         "--in-dir", required=True, type=Path, help="Raw data folder path"
     )
@@ -79,6 +82,7 @@ def build_args(parser):
 
 
 def parse_args():
+    """Parses the command line arguments for the main method."""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args = parser.parse_args()
@@ -123,6 +127,7 @@ def _func_max_size(img, max_size, interpolation, func):
 
 @preserve_channel_dim
 def longest_max_size(img, max_size, interpolation):
+    """@TODO: Docs. Contribution is welcome."""
     return _func_max_size(img, max_size, interpolation, max)
 
 
@@ -130,6 +135,8 @@ def longest_max_size(img, max_size, interpolation):
 
 
 class Preprocessor:
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(
         self,
         in_dir: Path,
@@ -140,6 +147,7 @@ class Preprocessor:
         expand_dims: bool = True,
         interpolation=cv2.INTER_LANCZOS4,
     ):
+        """@TODO: Docs. Contribution is welcome."""
         self.in_dir = in_dir
         self.out_dir = out_dir
         self.grayscale = grayscale
@@ -149,6 +157,7 @@ class Preprocessor:
         self.interpolation = interpolation
 
     def preprocess(self, image_path: Path):
+        """@TODO: Docs. Contribution is welcome."""
         try:
             _, extension = os.path.splitext(image_path)
             kwargs = {
@@ -174,6 +183,7 @@ class Preprocessor:
         imwrite(target_path, image)
 
     def process_all(self, pool: Pool):
+        """@TODO: Docs. Contribution is welcome."""
         images: List[Path] = []
         for root, _, files in os.walk(self.in_dir):
             root = Path(root)
@@ -189,6 +199,7 @@ class Preprocessor:
 
 
 def main(args, _=None):
+    """Run the ``catalyst-data process-images`` script."""
     args = args.__dict__
     args.pop("command", None)
     num_workers = args.pop("num_workers")

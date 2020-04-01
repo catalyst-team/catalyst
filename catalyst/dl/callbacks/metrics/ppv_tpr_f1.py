@@ -8,7 +8,9 @@ class PrecisionRecallF1ScoreCallback(MeterMetricsCallback):
     """
     Calculates the global precision (positive predictive value or ppv),
     recall (true positive rate or tpr), and F1-score per class for each loader.
-    Currently, supports binary and multi-label cases.
+
+    .. note::
+        Currently, supports binary and multi-label cases.
     """
 
     def __init__(
@@ -23,7 +25,7 @@ class PrecisionRecallF1ScoreCallback(MeterMetricsCallback):
         """
         Args:
             input_key (str): input key to use for metric calculation
-                specifies our ``y_true``.
+                specifies our ``y_true``
             output_key (str): output key to use for metric calculation;
                 specifies our ``y_pred``
             class_names (List[str]): class names to display in the logs.
@@ -31,7 +33,7 @@ class PrecisionRecallF1ScoreCallback(MeterMetricsCallback):
             num_classes (int): Number of classes; must be > 1
             threshold (float): threshold for outputs binarization
             activation (str): An torch.nn activation applied to the outputs.
-                Must be one of ['none', 'Sigmoid', 'Softmax2d']
+                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
         """
         # adjusting num_classes automatically if class_names is not None
         num_classes = num_classes if class_names is None else len(class_names)

@@ -19,8 +19,7 @@ except ImportError as ex:
 
 
 def pyarrow_serialize(data):
-    """
-    Serialize the data into bytes using pyarrow
+    """Serialize the data into bytes using pyarrow.
 
     Args:
         data: a value
@@ -32,8 +31,7 @@ def pyarrow_serialize(data):
 
 
 def pyarrow_deserialize(data):
-    """
-    Deserialize bytes into an object using pyarrow
+    """Deserialize bytes into an object using pyarrow.
 
     Args:
         bytes: a bytes object containing serialized with pyarrow data.
@@ -45,8 +43,7 @@ def pyarrow_deserialize(data):
 
 
 def pickle_serialize(data):
-    """
-    Serialize the data into bytes using pickle
+    """Serialize the data into bytes using pickle.
 
     Args:
         data: a value
@@ -58,8 +55,7 @@ def pickle_serialize(data):
 
 
 def pickle_deserialize(data):
-    """
-    Deserialize bytes into an object using pickle
+    """Deserialize bytes into an object using pickle.
 
     Args:
         bytes: a bytes object containing serialized with pickle data.

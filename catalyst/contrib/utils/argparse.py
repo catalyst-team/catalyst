@@ -9,8 +9,13 @@ def boolean_flag(
     help: str = None,
     shorthand: str = None,
 ) -> None:
-    """
-    Add a boolean flag to a parser inplace.
+    """Add a boolean flag to a parser inplace.
+
+    Examples:
+        >>> parser = argparse.ArgumentParser()
+        >>> boolean_flag(
+        >>>     parser, "flag", default=False, help="some flag", shorthand="f"
+        >>> )
 
     Args:
         parser (argparse.ArgumentParser): parser to add the flag to
@@ -20,12 +25,6 @@ def boolean_flag(
         default (bool, optional): default value of the flag
         help (str): help string for the flag
         shorthand (str): shorthand string for the argument
-
-    Examples:
-        >>> parser = argparse.ArgumentParser()
-        >>> boolean_flag(
-        >>>     parser, "flag", default=False, help="some flag", shorthand="f"
-        >>> )
     """
     dest = name.replace("-", "_")
     names = ["--" + name]

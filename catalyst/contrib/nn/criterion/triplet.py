@@ -5,37 +5,32 @@ from .functional import triplet_loss
 
 
 class TripletLoss(nn.Module):
-    """
-    Triplet loss with hard positive/negative mining.
+    """Triplet loss with hard positive/negative mining.
+
     Reference:
-    Code imported from https://github.com/NegatioN/OnlineMiningTripletLoss.
-
-    Args:
-        margin (float): margin for triplet.
+        Code imported from https://github.com/NegatioN/OnlineMiningTripletLoss
     """
 
-    def __init__(self, margin=0.3):
+    def __init__(self, margin: float = 0.3):
         """
-        Constructor method for the TripletLoss class.
-
         Args:
-            margin: margin parameter.
+            margin (float): margin for triplet
         """
         super().__init__()
         self.margin = margin
         self.ranking_loss = nn.MarginRankingLoss(margin=margin)
 
     def _pairwise_distances(self, embeddings, squared=False):
-        """
-        Compute the 2D matrix of distances between all the embeddings.
+        """Compute the 2D matrix of distances between all the embeddings.
 
         Args:
             embeddings: tensor of shape (batch_size, embed_dim)
-            squared: Boolean. If true, output is the pairwise
-                     squared euclidean distance matrix. If false, output
-                     is the pairwise euclidean distance matrix.
+            squared (bool): if true, output is the pairwise squared euclidean
+                distance matrix. If false, output is the pairwise euclidean
+                distance matrix
+
         Returns:
-            pairwise_distances: tensor of shape (batch_size, batch_size)
+            torch.Tensor: pairwise matrix of size (batch_size, batch_size)
         """
         # Get squared L2 norm for each embedding.
         # We can just take the diagonal of `dot_product`.
@@ -93,8 +88,7 @@ class TripletLoss(nn.Module):
         return labels_equal & indices_not_equal
 
     def _get_anchor_negative_triplet_mask(self, labels):
-        """
-        Return 2D mask where mask[a, n] is True if a and n have same label.
+        """Return 2D mask where mask[a, n] is True if a and n have same label.
 
         Args:
             labels: tf.int32 `Tensor` with shape [batch_size]
@@ -168,8 +162,7 @@ class TripletLoss(nn.Module):
         return triplet_loss
 
     def forward(self, embeddings, targets):
-        """
-        Forward propagation method for the triplet loss.
+        """Forward propagation method for the triplet loss.
 
         Args:
             embeddings: tensor of shape (batch_size, embed_dim)
@@ -182,38 +175,34 @@ class TripletLoss(nn.Module):
 
 
 class TripletLossV2(nn.Module):
-    """
-    Args:
-        margin (float): margin for triplet.
-    """
+    """@TODO: Docs. Contribution is welcome."""
 
     def __init__(self, margin=0.3):
         """
-        Constructor method for the TripletLoss class.
-
         Args:
-            margin: margin parameter.
+            margin (float): margin for triplet.
         """
         super().__init__()
         self.margin = margin
 
     def forward(self, embeddings, targets):
+        """@TODO: Docs. Contribution is welcome."""
         return triplet_loss(embeddings, targets, margin=self.margin,)
 
 
 class TripletPairwiseEmbeddingLoss(nn.Module):
-    """
-    TripletPairwiseEmbeddingLoss – proof of concept criterion.
+    """TripletPairwiseEmbeddingLoss – proof of concept criterion.
+
     Still work in progress.
+
+    @TODO: Docs. Contribution is welcome.
     """
 
-    def __init__(self, margin=0.3, reduction="mean"):
+    def __init__(self, margin: float = 0.3, reduction: str = "mean"):
         """
-        Constructor method for the TripletPairwiseEmbeddingLoss class.
-
         Args:
-            margin: margin parameter.
-            reduction: criterion reduction type.
+            margin (float): margin parameter
+            reduction (str): criterion reduction type
         """
         super().__init__()
         self.margin = margin

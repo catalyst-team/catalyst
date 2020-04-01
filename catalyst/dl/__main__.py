@@ -8,7 +8,10 @@ COMMANDS = OrderedDict([("init", init), ("run", run), ("trace", trace)])
 
 
 def build_parser() -> ArgumentParser:
-    parser = ArgumentParser("catalyst-dl", formatter_class=RawTextHelpFormatter)
+    """@TODO: Docs. Contribution is welcome."""
+    parser = ArgumentParser(
+        "catalyst-dl", formatter_class=RawTextHelpFormatter
+    )
     parser.add_argument(
         "-v", "--version", action="version", version=f"%(prog)s {__version__}"
     )
@@ -28,6 +31,7 @@ def build_parser() -> ArgumentParser:
 
 
 def main():
+    """@TODO: Docs. Contribution is welcome."""
     parser = build_parser()
 
     args, uargs = parser.parse_known_args()

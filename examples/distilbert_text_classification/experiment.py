@@ -9,11 +9,21 @@ from catalyst.dl import ConfigExperiment
 
 
 class Experiment(ConfigExperiment):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(self, config: Dict):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__(config)
         self.config = config
 
     def get_transforms(self, stage: str = None, mode: str = None):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         return []
 
     # noinspection PyMethodOverriding
@@ -26,6 +36,9 @@ class Experiment(ConfigExperiment):
         max_sequence_length: int,
         **kwargs
     ):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         datasets = OrderedDict()
 
         path_to_data = Path(path_to_data)

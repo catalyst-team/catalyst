@@ -10,7 +10,11 @@ from torch.utils.data import (  # noqa F401
     DistributedSampler,
 )
 
-from catalyst.data import Augmentor, AugmentorCompose, DistributedSamplerWrapper
+from catalyst.data import (
+    Augmentor,
+    AugmentorCompose,
+    DistributedSamplerWrapper,
+)
 from catalyst.dl import (
     Callback,
     CheckpointCallback,
@@ -42,9 +46,7 @@ from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
 class ConfigExperiment(Experiment):
-    """
-    Experiment created from a configuration file
-    """
+    """Experiment created from a configuration file."""
 
     STAGE_KEYWORDS = [
         "criterion_params",
@@ -94,7 +96,10 @@ class ConfigExperiment(Experiment):
         for key in self.STAGE_KEYWORDS:
             stages_defaults[key] = deepcopy(stages_config.get(key, {}))
         for stage in stages_config:
-            if stage in self.STAGE_KEYWORDS or stages_config.get(stage) is None:
+            if (
+                stage in self.STAGE_KEYWORDS
+                or stages_config.get(stage) is None
+            ):
                 continue
             stages_config_out[stage] = {}
             for key in self.STAGE_KEYWORDS:
@@ -116,17 +121,17 @@ class ConfigExperiment(Experiment):
 
     @property
     def initial_seed(self) -> int:
-        """Experiment's initial seed value"""
+        """Experiment's initial seed value."""
         return self._initial_seed
 
     @property
     def logdir(self):
-        """Path to the directory where the experiment logs"""
+        """Path to the directory where the experiment logs."""
         return self._logdir
 
     @property
     def stages(self) -> List[str]:
-        """Experiment's stage names"""
+        """Experiment's stage names."""
         stages_keys = list(self.stages_config.keys())
 
         # @TODO: return the feature
@@ -149,16 +154,16 @@ class ConfigExperiment(Experiment):
 
     @property
     def distributed_params(self) -> Dict:
-        """Dict with the parameters for distributed and FP16 methond"""
+        """Dict with the parameters for distributed and FP16 methond."""
         return self._config.get("distributed_params", {})
 
     @property
     def monitoring_params(self) -> Dict:
-        """Dict with the parameters for monitoring services"""
+        """Dict with the parameters for monitoring services."""
         return self._config.get("monitoring_params", {})
 
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
-        """Returns the state parameters for a given stage"""
+        """Returns the state parameters for a given stage."""
         return self.stages_config[stage].get("state_params", {})
 
     def _preprocess_model_for_stage(self, stage: str, model: Model):
@@ -186,7 +191,7 @@ class ConfigExperiment(Experiment):
         return model
 
     def get_model(self, stage: str):
-        """Returns the model for a given stage"""
+        """Returns the model for a given stage."""
         model_params = self._config["model_params"]
         model = self._get_model(**model_params)
 
@@ -209,8 +214,10 @@ class ConfigExperiment(Experiment):
         return criterion
 
     def get_criterion(self, stage: str) -> Criterion:
-        """Returns the criterion for a given stage"""
-        criterion_params = self.stages_config[stage].get("criterion_params", {})
+        """Returns the criterion for a given stage."""
+        criterion_params = self.stages_config[stage].get(
+            "criterion_params", {}
+        )
         criterion = self._get_criterion(**criterion_params)
         return criterion
 
@@ -270,7 +277,9 @@ class ConfigExperiment(Experiment):
         else:
             raise ValueError("unknown type of model_params")
 
-        load_from_previous_stage = params.pop("load_from_previous_stage", False)
+        load_from_previous_stage = params.pop(
+            "load_from_previous_stage", False
+        )
         optimizer_key = params.pop("optimizer_key", None)
         optimizer = OPTIMIZERS.get_from_params(**params, params=model_params)
 
@@ -301,14 +310,15 @@ class ConfigExperiment(Experiment):
     def get_optimizer(
         self, stage: str, model: Union[Model, Dict[str, Model]]
     ) -> Union[Optimizer, Dict[str, Optimizer]]:
-        """
-        Returns the optimizer for a given stage
+        """Returns the optimizer for a given stage.
 
         Args:
             stage (str): stage name
             model (Union[Model, Dict[str, Model]]): model or a dict of models
         """
-        optimizer_params = self.stages_config[stage].get("optimizer_params", {})
+        optimizer_params = self.stages_config[stage].get(
+            "optimizer_params", {}
+        )
         key_value_flag = optimizer_params.pop("_key_value", False)
 
         if key_value_flag:
@@ -342,9 +352,13 @@ class ConfigExperiment(Experiment):
         return scheduler
 
     def get_scheduler(self, stage: str, optimizer: Optimizer) -> Scheduler:
-        """Returns the scheduler for a given stage"""
-        scheduler_params = self.stages_config[stage].get("scheduler_params", {})
-        scheduler = self._get_scheduler(optimizer=optimizer, **scheduler_params)
+        """Returns the scheduler for a given stage."""
+        scheduler_params = self.stages_config[stage].get(
+            "scheduler_params", {}
+        )
+        scheduler = self._get_scheduler(
+            optimizer=optimizer, **scheduler_params
+        )
         return scheduler
 
     @staticmethod
@@ -383,8 +397,7 @@ class ConfigExperiment(Experiment):
     def get_transforms(
         self, stage: str = None, dataset: str = None
     ) -> Callable:
-        """
-        Returns transform for a given stage & mode
+        """Returns transform for a given stage and mode.
 
         Args:
             stage (str): stage name
@@ -416,7 +429,7 @@ class ConfigExperiment(Experiment):
     def get_loaders(
         self, stage: str, epoch: int = None,
     ) -> "OrderedDict[str, DataLoader]":
-        """Returns the loaders for a given stage"""
+        """Returns the loaders for a given stage."""
         data_params = dict(self.stages_config[stage]["data_params"])
 
         default_batch_size = data_params.pop("batch_size", 1)
@@ -535,8 +548,10 @@ class ConfigExperiment(Experiment):
         return callback
 
     def get_callbacks(self, stage: str) -> "OrderedDict[Callback]":
-        """Returns the callbacks for a given stage"""
-        callbacks_params = self.stages_config[stage].get("callbacks_params", {})
+        """Returns the callbacks for a given stage."""
+        callbacks_params = self.stages_config[stage].get(
+            "callbacks_params", {}
+        )
 
         callbacks = OrderedDict()
         for key, callback_params in callbacks_params.items():
@@ -559,7 +574,9 @@ class ConfigExperiment(Experiment):
 
             default_callbacks.append(("_timer", TimerCallback))
             default_callbacks.append(("_metrics", MetricManagerCallback))
-            default_callbacks.append(("_validation", ValidationManagerCallback))
+            default_callbacks.append(
+                ("_validation", ValidationManagerCallback)
+            )
             default_callbacks.append(("_saver", CheckpointCallback))
             default_callbacks.append(("_console", ConsoleLogger))
             default_callbacks.append(("_tensorboard", TensorboardLogger))
