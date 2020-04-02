@@ -4,8 +4,7 @@ from collections import OrderedDict
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from catalyst.core import utils
-from catalyst.dl import Callback, Experiment
+from catalyst.dl import Callback, Experiment, utils
 from catalyst.utils.tools.settings import STAGE_TRAIN_PREFIX
 from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
@@ -96,7 +95,7 @@ class BaseExperiment(Experiment):
         self._model = model
         self._datasets = datasets
         self._loaders = loaders
-        self._callbacks = callbacks or OrderedDict()
+        self._callbacks = utils.sort_callbacks_by_order(callbacks)
 
         self._criterion = criterion
         self._optimizer = optimizer
