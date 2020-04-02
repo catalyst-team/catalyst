@@ -2,8 +2,9 @@ from typing import Any, Dict, Iterable, List, Mapping, Union
 from collections import OrderedDict
 
 from torch import nn
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 
+from catalyst.core import utils
 from catalyst.dl import Callback, Experiment
 from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
@@ -17,7 +18,8 @@ class BaseExperiment(Experiment):
     def __init__(
         self,
         model: Model,
-        loaders: "OrderedDict[str, DataLoader]",
+        datasets: "OrderedDict[str, Union[Dataset, Dict, Any]]" = None,
+        loaders: "OrderedDict[str, DataLoader]" = None,
         callbacks: "Union[OrderedDict[str, Callback], List[Callback]]" = None,
         logdir: str = None,
         stage: str = "train",
@@ -39,9 +41,16 @@ class BaseExperiment(Experiment):
         """
         Args:
             model (Model): model
-            loaders (dict): dictionary containing one or several
-                ``torch.utils.data.DataLoader`` for training and validation
-            callbacks (List[catalyst.dl.Callback]): list of callbacks
+            datasets (OrderedDict[str, Union[Dataset, Dict, Any]]): dictionary
+                with one or several  ``torch.utils.data.Dataset``
+                for training, validation or inference
+                used for Loaders automatic creation
+                preferred way for distributed training setup
+            loaders (OrderedDict[str, DataLoader]): dictionary
+                with one or several ``torch.utils.data.DataLoader``
+                for training, validation or inference
+            callbacks (Union[List[Callback], OrderedDict[str, Callback]]):
+                list or dictionary with Catalyst callbacks
             logdir (str): path to output directory
             stage (str): current stage
             criterion (Criterion): criterion function
@@ -67,7 +76,23 @@ class BaseExperiment(Experiment):
                 for monitoring services
             initial_seed (int): experiment's initial seed value
         """
+        assert (
+            datasets is not None or loaders is not None
+        ), "Please specify the data sources"
+        if datasets is None:
+            assert loaders is not None
+            assert valid_loader in loaders, (
+                "The validation loader must be present "
+                "in the loaders used during experiment"
+            )
+        if loaders is None:
+            assert datasets is not None
+            assert valid_loader in datasets, (
+                "The validation loader must be present "
+                "in the loaders used during experiment"
+            )
         self._model = model
+        self._datasets = datasets
         self._loaders = loaders
         self._callbacks = callbacks
 
@@ -97,7 +122,11 @@ class BaseExperiment(Experiment):
     @property
     def logdir(self):
         """Path to the directory where the experiment logs"""
-        return self._logdir
+        logdir = self._logdir
+        distributed_rank = utils.get_rank()
+        if distributed_rank > -1:
+            logdir = f"{logdir}.rank{distributed_rank:02d}"
+        return logdir
 
     @property
     def stages(self) -> Iterable[str]:
@@ -144,10 +173,20 @@ class BaseExperiment(Experiment):
         """Returns the scheduler for a given stage"""
         return self._scheduler
 
+    def get_datasets(
+        self, stage: str, epoch: int = None, **kwargs,
+    ) -> "OrderedDict[str, Dataset]":
+        """Returns the datasets for a given stage"""
+        return self._datasets
+
     def get_loaders(
         self, stage: str, epoch: int = None,
     ) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage"""
+        if self._datasets is not None:
+            self._loaders = utils.get_loaders_from_params(
+                initial_seed=self.initial_seed, **self._datasets,
+            )
         return self._loaders
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":

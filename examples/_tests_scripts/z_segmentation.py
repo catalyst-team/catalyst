@@ -85,7 +85,8 @@ data_transform = transforms.Compose(
             ).unsqueeze_(0),
         ),
         Augmentor(
-            dict_key="features", augment_fn=transforms.Normalize((0.5,), (0.5,))
+            dict_key="features",
+            augment_fn=transforms.Normalize((0.5,), (0.5,)),
         ),
         Augmentor(
             dict_key="targets",
@@ -206,7 +207,8 @@ data_transform = transforms.Compose(
             ).unsqueeze_(0),
         ),
         Augmentor(
-            dict_key="features", augment_fn=transforms.Normalize((0.5,), (0.5,))
+            dict_key="features",
+            augment_fn=transforms.Normalize((0.5,), (0.5,)),
         ),
         Augmentor(
             dict_key="targets",
@@ -251,7 +253,8 @@ data_transform = transforms.Compose(
             ).unsqueeze_(0),
         ),
         Augmentor(
-            dict_key="features", augment_fn=transforms.Normalize((0.5,), (0.5,))
+            dict_key="features",
+            augment_fn=transforms.Normalize((0.5,), (0.5,)),
         ),
         Augmentor(
             dict_key="targets",

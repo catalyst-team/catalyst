@@ -5,7 +5,7 @@ from pathlib import Path
 
 import torch
 from torch.jit import ScriptModule
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 
 from catalyst.dl import (
     Callback,
@@ -127,13 +127,15 @@ class SupervisedRunner(Runner):
 
     def train(
         self,
+        *,
+        logdir: str,
         model: Model,
         criterion: Criterion,
         optimizer: Optimizer,
-        loaders: "OrderedDict[str, DataLoader]",
-        logdir: str,
-        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
         scheduler: Scheduler = None,
+        datasets: "OrderedDict[str, Union[Dataset, Dict, Any]]" = None,
+        loaders: "OrderedDict[str, DataLoader]" = None,
+        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
         resume: str = None,
         num_epochs: int = 1,
         valid_loader: str = "valid",
@@ -151,14 +153,21 @@ class SupervisedRunner(Runner):
         Starts the training process of the model.
 
         Args:
+            logdir (str): path to output directory
             model (Model): model to train
             criterion (Criterion): criterion function for training
             optimizer (Optimizer): optimizer for training
-            loaders (dict): dictionary containing one or several
-                ``torch.utils.data.DataLoader`` for training and validation
-            logdir (str): path to output directory
-            callbacks (List[catalyst.dl.Callback]): list of callbacks
             scheduler (Scheduler): scheduler for training
+            datasets (OrderedDict[str, Union[Dataset, Dict, Any]]): dictionary
+                with one or several  ``torch.utils.data.Dataset``
+                for training, validation or inference
+                used for Loaders automatic creation
+                preferred way for distributed training setup
+            loaders (OrderedDict[str, DataLoader]): dictionary
+                with one or several ``torch.utils.data.DataLoader``
+                for training, validation or inference
+            callbacks (Union[List[Callback], OrderedDict[str, Callback]]):
+                list or dictionary with Catalyst callbacks
             resume (str): path to checkpoint for model
             num_epochs (int): number of training epochs
             valid_loader (str): loader name used to calculate
@@ -187,12 +196,31 @@ class SupervisedRunner(Runner):
             check (bool): if True, then only checks that pipeline is working
                 (3 epochs only)
         """
-        if len(loaders) == 1:
+        if loaders is not None and len(loaders) == 1:
             valid_loader = list(loaders.keys())[0]
             logger.warning(
-                "Attention, there is only one data loader - "
+                "Attention, there is only one dataloader - "
                 + str(valid_loader)
             )
+        if datasets is not None:
+            datasets_keys = set(datasets.keys())
+            default_datasets_keys = {
+                "batch_size",
+                "num_workers",
+                "drop_last",
+                "per_gpu_scaling",
+                "loaders_params",
+                "samplers_params",
+                "initial_seed",
+                "datasets_fn",
+            }
+            datasets_keys = datasets_keys - default_datasets_keys
+            if len(datasets_keys) == 1:
+                valid_loader = list(datasets_keys)[0]
+                logger.warning(
+                    "Attention, there is only one dataset - "
+                    + str(valid_loader)
+                )
 
         if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
@@ -211,6 +239,7 @@ class SupervisedRunner(Runner):
             stage="train",
             model=model,
             loaders=loaders,
+            datasets=datasets,
             callbacks=callbacks,
             logdir=logdir,
             criterion=criterion,
