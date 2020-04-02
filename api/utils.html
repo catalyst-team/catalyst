@@ -1044,6 +1044,27 @@ if 1.0, learning rates will not be scaled</p></li>
 </dl>
 </dd></dl>
 
+<dl class="function">
+<dt id="catalyst.utils.torch.get_network_output">
+<code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">get_network_output</code><span class="sig-paren">(</span><em class="sig-param">net: torch.nn.modules.module.Module</em>, <em class="sig-param">*input_shapes_args</em>, <em class="sig-param">**input_shapes_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_network_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_network_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>For each input shape returns an output tensor</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>net</strong> (<em>Model</em>) – the model</p></li>
+<li><p><strong>*input_shapes_args</strong> – variable length argument list of shapes</p></li>
+<li><p><strong>**input_shapes_kwargs</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">utils</span><span class="o">.</span><span class="n">get_network_output</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="go">tensor([[[-0.2665,  0.5792,  0.9757, -0.5782,  0.1530]]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </div>
 </div>
 <div class="section" id="tools">

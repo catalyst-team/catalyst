@@ -491,6 +491,45 @@
         <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="n">requires_grad</span></div>
 
 
+<div class="viewcode-block" id="get_network_output"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_network_output">[docs]</a><span class="k">def</span> <span class="nf">get_network_output</span><span class="p">(</span><span class="n">net</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="o">*</span><span class="n">input_shapes_args</span><span class="p">,</span> <span class="o">**</span><span class="n">input_shapes_kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For each input shape returns an output tensor</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        net (Model): the model</span>
+<span class="sd">        *input_shapes_args: variable length argument list of shapes</span>
+<span class="sd">        **input_shapes_kwargs:</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; net = nn.Linear(10, 5)</span>
+<span class="sd">        &gt;&gt;&gt; utils.get_network_output(net, (1, 10))</span>
+<span class="sd">        tensor([[[-0.2665,  0.5792,  0.9757, -0.5782,  0.1530]]])</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_rand_sample</span><span class="p">(</span>
+        <span class="n">input_shape</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]]:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_shape</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">input_t</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">key</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">1</span><span class="p">,)</span> <span class="o">+</span> <span class="n">input_shape_</span><span class="p">))</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">input_shape_</span> <span class="ow">in</span> <span class="n">input_shape</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">input_t</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">((</span><span class="mi">1</span><span class="p">,)</span> <span class="o">+</span> <span class="n">input_shape</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">input_t</span>
+
+    <span class="n">input_args</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">_rand_sample</span><span class="p">(</span><span class="n">input_shape</span><span class="p">)</span> <span class="k">for</span> <span class="n">input_shape</span> <span class="ow">in</span> <span class="n">input_shapes_args</span>
+    <span class="p">]</span>
+    <span class="n">input_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">key</span><span class="p">:</span> <span class="n">_rand_sample</span><span class="p">(</span><span class="n">input_shape</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">input_shape</span> <span class="ow">in</span> <span class="n">input_shapes_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">}</span>
+
+    <span class="n">output_t</span> <span class="o">=</span> <span class="n">net</span><span class="p">(</span><span class="o">*</span><span class="n">input_args</span><span class="p">,</span> <span class="o">**</span><span class="n">input_kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output_t</span></div>
+
+
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;get_optimizable_params&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_optimizer_momentum&quot;</span><span class="p">,</span>
@@ -502,6 +541,7 @@
     <span class="s2">&quot;prepare_cudnn&quot;</span><span class="p">,</span>
     <span class="s2">&quot;process_model_params&quot;</span><span class="p">,</span>
     <span class="s2">&quot;set_requires_grad&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_network_output&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 
