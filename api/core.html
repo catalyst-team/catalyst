@@ -719,7 +719,7 @@ stages, epoch and batches.</p>
 <div><ul class="simple">
 <li><p><a class="reference internal" href="dl.html#catalyst.dl.runner.gan.MultiPhaseRunner" title="catalyst.dl.runner.gan.MultiPhaseRunner"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.dl.runner.gan.MultiPhaseRunner</span></code></a></p></li>
 <li><p><a class="reference internal" href="dl.html#catalyst.dl.runner.gan.GanRunner" title="catalyst.dl.runner.gan.GanRunner"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.dl.runner.gan.GanRunner</span></code></a></p></li>
-<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.dl.experiment.supervised.SupervisedRunner</span></code></p></li>
+<li><p><a class="reference internal" href="dl.html#catalyst.dl.runner.supervised.SupervisedRunner" title="catalyst.dl.runner.supervised.SupervisedRunner"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.dl.runner.supervised.SupervisedRunner</span></code></a></p></li>
 </ul>
 </div></blockquote>
 <dl class="method">
@@ -790,7 +790,7 @@ from DataLoader.</p></li>
 
 <dl class="method">
 <dt id="catalyst.core.runner._Runner.run_experiment">
-<code class="sig-name descname">run_experiment</code><span class="sig-paren">(</span><em class="sig-param">experiment: catalyst.core.experiment._Experiment</em><span class="sig-paren">)</span> &#x2192; catalyst.core.runner._Runner<a class="reference internal" href="../_modules/catalyst/core/runner.html#_Runner.run_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner._Runner.run_experiment" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">run_experiment</code><span class="sig-paren">(</span><em class="sig-param">experiment: catalyst.core.experiment._Experiment = None</em><span class="sig-paren">)</span> &#x2192; catalyst.core.runner._Runner<a class="reference internal" href="../_modules/catalyst/core/runner.html#_Runner.run_experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner._Runner.run_experiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Starts the experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2445,8 +2445,8 @@ single instance.</p></li>
 <div class="section" id="module-catalyst.core.utils">
 <span id="utils"></span><h2>Utils<a class="headerlink" href="#module-catalyst.core.utils" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-catalyst.core.utils.callbacks"></span><dl class="function">
-<dt id="catalyst.core.utils.callbacks.process_callbacks">
-<code class="sig-prename descclassname">catalyst.core.utils.callbacks.</code><code class="sig-name descname">process_callbacks</code><span class="sig-paren">(</span><em class="sig-param">callbacks: Union[list, collections.OrderedDict]</em><span class="sig-paren">)</span> &#x2192; collections.OrderedDict<a class="reference internal" href="../_modules/catalyst/core/utils/callbacks.html#process_callbacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.utils.callbacks.process_callbacks" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.core.utils.callbacks.sort_callbacks_by_order">
+<code class="sig-prename descclassname">catalyst.core.utils.callbacks.</code><code class="sig-name descname">sort_callbacks_by_order</code><span class="sig-paren">(</span><em class="sig-param">callbacks: Union[list, collections.OrderedDict]</em><span class="sig-paren">)</span> &#x2192; collections.OrderedDict<a class="reference internal" href="../_modules/catalyst/core/utils/callbacks.html#sort_callbacks_by_order"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.utils.callbacks.sort_callbacks_by_order" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an sequence of callbacks and sort them.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2454,6 +2454,25 @@ single instance.</p></li>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>sequence of callbacks sorted by <code class="docutils literal notranslate"><span class="pre">callback</span> <span class="pre">order</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.core.utils.callbacks.filter_callbacks_by_node">
+<code class="sig-prename descclassname">catalyst.core.utils.callbacks.</code><code class="sig-name descname">filter_callbacks_by_node</code><span class="sig-paren">(</span><em class="sig-param">callbacks: Dict</em><span class="sig-paren">)</span> &#x2192; Dict<a class="reference internal" href="../_modules/catalyst/core/utils/callbacks.html#filter_callbacks_by_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.utils.callbacks.filter_callbacks_by_node" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters callbacks based on running node.
+Deletes worker-only callbacks from <code class="docutils literal notranslate"><span class="pre">CallbackNode.Master</span></code>
+and master-only callbacks from <code class="docutils literal notranslate"><span class="pre">CallbackNode.Worker</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>callbacks</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>OrderedDict</em><em>]</em>) – callbacks</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>filtered callbacks dictionary.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Union[Dict, OrderedDict]</p>
 </dd>
 </dl>
 </dd></dl>

@@ -261,7 +261,7 @@
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.jit</span> <span class="kn">import</span> <span class="n">ScriptModule</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Callback</span><span class="p">,</span>
@@ -381,13 +381,15 @@
 
 <div class="viewcode-block" id="SupervisedRunner.train"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.supervised.SupervisedRunner.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
         <span class="n">criterion</span><span class="p">:</span> <span class="n">Criterion</span><span class="p">,</span>
         <span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span><span class="p">,</span>
-        <span class="n">loaders</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">,</span>
-        <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">callbacks</span><span class="p">:</span> <span class="s2">&quot;Union[List[Callback], OrderedDict[str, Callback]]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">scheduler</span><span class="p">:</span> <span class="n">Scheduler</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">datasets</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, Union[Dataset, Dict, Any]]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">loaders</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">callbacks</span><span class="p">:</span> <span class="s2">&quot;Union[List[Callback], OrderedDict[str, Callback]]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">resume</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">valid_loader</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;valid&quot;</span><span class="p">,</span>
@@ -397,6 +399,7 @@
         <span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fp16</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">distributed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">monitoring_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -404,14 +407,21 @@
 <span class="sd">        Starts the training process of the model.</span>
 
 <span class="sd">        Args:</span>
+<span class="sd">            logdir (str): path to output directory</span>
 <span class="sd">            model (Model): model to train</span>
 <span class="sd">            criterion (Criterion): criterion function for training</span>
 <span class="sd">            optimizer (Optimizer): optimizer for training</span>
-<span class="sd">            loaders (dict): dictionary containing one or several</span>
-<span class="sd">                ``torch.utils.data.DataLoader`` for training and validation</span>
-<span class="sd">            logdir (str): path to output directory</span>
-<span class="sd">            callbacks (List[catalyst.dl.Callback]): list of callbacks</span>
 <span class="sd">            scheduler (Scheduler): scheduler for training</span>
+<span class="sd">            datasets (OrderedDict[str, Union[Dataset, Dict, Any]]): dictionary</span>
+<span class="sd">                with one or several  ``torch.utils.data.Dataset``</span>
+<span class="sd">                for training, validation or inference</span>
+<span class="sd">                used for Loaders automatic creation</span>
+<span class="sd">                preferred way for distributed training setup</span>
+<span class="sd">            loaders (OrderedDict[str, DataLoader]): dictionary</span>
+<span class="sd">                with one or several ``torch.utils.data.DataLoader``</span>
+<span class="sd">                for training, validation or inference</span>
+<span class="sd">            callbacks (Union[List[Callback], OrderedDict[str, Callback]]):</span>
+<span class="sd">                list or dictionary with Catalyst callbacks</span>
 <span class="sd">            resume (str): path to checkpoint for model</span>
 <span class="sd">            num_epochs (int): number of training epochs</span>
 <span class="sd">            valid_loader (str): loader name used to calculate</span>
@@ -422,7 +432,7 @@
 <span class="sd">                by which the checkpoints will be selected.</span>
 <span class="sd">            minimize_metric (bool): flag to indicate whether</span>
 <span class="sd">                the ``main_metric`` should be minimized.</span>
-<span class="sd">            verbose (bool): ff true, it displays the status of the training</span>
+<span class="sd">            verbose (bool): if `True`, it displays the status of the training</span>
 <span class="sd">                to the console.</span>
 <span class="sd">            state_kwargs (dict): additional state params to ``State``</span>
 <span class="sd">            checkpoint_data (dict): additional data to save in checkpoint,</span>
@@ -430,27 +440,47 @@
 <span class="sd">            fp16 (Union[Dict, bool]): If not None, then sets training to FP16.</span>
 <span class="sd">                See https://nvidia.github.io/apex/amp.html#properties</span>
 <span class="sd">                if fp16=True, params by default will be ``{&quot;opt_level&quot;: &quot;O1&quot;}``</span>
+<span class="sd">            distributed (bool): if `True` will start training</span>
+<span class="sd">                in distributed mode.</span>
+<span class="sd">                Note: Works only with python scripts. No jupyter support.</span>
 <span class="sd">            monitoring_params (dict): If not None, then create monitoring</span>
-<span class="sd">                through Alchemy or Weights&amp;Biases.</span>
+<span class="sd">                through Alchemy or other tools.</span>
 <span class="sd">                For example,</span>
 <span class="sd">                ``{&quot;token&quot;: &quot;api_token&quot;, &quot;experiment&quot;: &quot;experiment_name&quot;}``</span>
 <span class="sd">            check (bool): if True, then only checks that pipeline is working</span>
 <span class="sd">                (3 epochs only)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loaders</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">loaders</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">loaders</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">valid_loader</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">loaders</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Attention, there is only one data loader - &quot;</span>
+                <span class="s2">&quot;Attention, there is only one dataloader - &quot;</span>
                 <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">valid_loader</span><span class="p">)</span>
             <span class="p">)</span>
+        <span class="k">if</span> <span class="n">datasets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">datasets_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">datasets</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="n">default_datasets_keys</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;batch_size&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;num_workers&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;drop_last&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;per_gpu_scaling&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;loaders_params&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;samplers_params&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;initial_seed&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;datasets_fn&quot;</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">datasets_keys</span> <span class="o">=</span> <span class="n">datasets_keys</span> <span class="o">-</span> <span class="n">default_datasets_keys</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">datasets_keys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">valid_loader</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">datasets_keys</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Attention, there is only one dataset - &quot;</span>
+                    <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">valid_loader</span><span class="p">)</span>
+                <span class="p">)</span>
+
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp16</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fp16</span><span class="p">:</span>
             <span class="n">fp16</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;opt_level&quot;</span><span class="p">:</span> <span class="s2">&quot;O1&quot;</span><span class="p">}</span>
 
-        <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
-
         <span class="k">if</span> <span class="n">resume</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">callbacks</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_callbacks</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
+            <span class="n">callbacks</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">sort_callbacks_by_order</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
             <span class="n">checkpoint_callback_flag</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
                 <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
             <span class="p">)</span>
@@ -463,6 +493,7 @@
             <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span>
             <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
             <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
+            <span class="n">datasets</span><span class="o">=</span><span class="n">datasets</span><span class="p">,</span>
             <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
             <span class="n">logdir</span><span class="o">=</span><span class="n">logdir</span><span class="p">,</span>
             <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
@@ -479,7 +510,8 @@
             <span class="n">distributed_params</span><span class="o">=</span><span class="n">fp16</span><span class="p">,</span>
             <span class="n">monitoring_params</span><span class="o">=</span><span class="n">monitoring_params</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">run_experiment</span><span class="p">(</span><span class="n">experiment</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span> <span class="o">=</span> <span class="n">experiment</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">distributed_cmd_run</span><span class="p">(</span><span class="n">distributed</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_experiment</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SupervisedRunner.infer"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.supervised.SupervisedRunner.infer">[docs]</a>    <span class="k">def</span> <span class="nf">infer</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -600,7 +632,7 @@
 <span class="sd">            requires_grad (bool): flag to trace with gradients</span>
 <span class="sd">            fp16 (Union[Dict, bool]): If not None, then sets</span>
 <span class="sd">                tracing params to FP16</span>
-<span class="sd">            deivice (Device): Torch deivice or a string</span>
+<span class="sd">            device (Device): Torch deivice or a string</span>
 <span class="sd">            predict_params (dict): additional parameters for model forward</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">batch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

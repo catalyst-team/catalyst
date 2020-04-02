@@ -1293,20 +1293,26 @@ Must be one of <code class="docutils literal notranslate"><span class="pre">'non
 <span id="experiment"></span><h2>Experiment<a class="headerlink" href="#module-catalyst.dl.experiment.base" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.dl.experiment.base.BaseExperiment">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.experiment.base.</code><code class="sig-name descname">BaseExperiment</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, loaders: OrderedDict[str, DataLoader], callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, check_run: bool = False, state_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, monitoring_params: Dict = None, initial_seed: int = 42</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/base.html#BaseExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.base.BaseExperiment" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.experiment.base.</code><code class="sig-name descname">BaseExperiment</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, datasets: OrderedDict[str, Union[Dataset, Dict, Any]] = None, loaders: OrderedDict[str, DataLoader] = None, callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, check_run: bool = False, state_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, monitoring_params: Dict = None, initial_seed: int = 42</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/base.html#BaseExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.base.BaseExperiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.dl.core.experiment.Experiment" title="catalyst.dl.core.experiment.Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.core.experiment.Experiment</span></code></a></p>
 <p>Super-simple one-staged experiment,
 you can use to declare experiment in code.</p>
 <dl class="method">
 <dt id="catalyst.dl.experiment.base.BaseExperiment.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, loaders: OrderedDict[str, DataLoader], callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, check_run: bool = False, state_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, monitoring_params: Dict = None, initial_seed: int = 42</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/base.html#BaseExperiment.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.base.BaseExperiment.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, datasets: OrderedDict[str, Union[Dataset, Dict, Any]] = None, loaders: OrderedDict[str, DataLoader] = None, callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, check_run: bool = False, state_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, monitoring_params: Dict = None, initial_seed: int = 42</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/base.html#BaseExperiment.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.base.BaseExperiment.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<em>Model</em>) – model</p></li>
-<li><p><strong>loaders</strong> (<em>dict</em>) – dictionary containing one or several
-<code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code> for training and validation</p></li>
-<li><p><strong>callbacks</strong> (<em>List</em><em>[</em><em>catalyst.dl.Callback</em><em>]</em>) – list of callbacks</p></li>
+<li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="utils.html#catalyst.utils.tools.typing.Dataset" title="catalyst.utils.tools.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
+with one or several  <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code>
+for training, validation or inference
+used for Loaders automatic creation
+preferred way for distributed training setup</p></li>
+<li><p><strong>loaders</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>DataLoader</em><em>]</em>) – dictionary
+with one or several <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code>
+for training, validation or inference</p></li>
+<li><p><strong>callbacks</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>, </em><em>OrderedDict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>]</em>) – list or dictionary with Catalyst callbacks</p></li>
 <li><p><strong>logdir</strong> (<em>str</em>) – path to output directory</p></li>
 <li><p><strong>stage</strong> (<em>str</em>) – current stage</p></li>
 <li><p><strong>criterion</strong> (<em>Criterion</em>) – criterion function</p></li>
@@ -1529,7 +1535,7 @@ will be used only if the value of <cite>_key_value`</cite> is <code class="docut
 
 <span class="target" id="module-catalyst.dl.experiment.supervised"></span><dl class="class">
 <dt id="catalyst.dl.experiment.supervised.SupervisedExperiment">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.experiment.supervised.</code><code class="sig-name descname">SupervisedExperiment</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, loaders: OrderedDict[str, DataLoader], callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, check_run: bool = False, state_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, monitoring_params: Dict = None, initial_seed: int = 42</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/supervised.html#SupervisedExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.supervised.SupervisedExperiment" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.experiment.supervised.</code><code class="sig-name descname">SupervisedExperiment</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, datasets: OrderedDict[str, Union[Dataset, Dict, Any]] = None, loaders: OrderedDict[str, DataLoader] = None, callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, check_run: bool = False, state_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, monitoring_params: Dict = None, initial_seed: int = 42</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/supervised.html#SupervisedExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.supervised.SupervisedExperiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.dl.experiment.base.BaseExperiment" title="catalyst.dl.experiment.base.BaseExperiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.experiment.base.BaseExperiment</span></code></a></p>
 <p>Supervised experiment.</p>
 <p>The main difference with BaseExperiment that it will
@@ -1741,7 +1747,7 @@ will be <code class="docutils literal notranslate"><span class="pre">next(iter(l
 <li><p><strong>requires_grad</strong> (<em>bool</em>) – flag to trace with gradients</p></li>
 <li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets
 tracing params to FP16</p></li>
-<li><p><strong>deivice</strong> (<em>Device</em>) – Torch deivice or a string</p></li>
+<li><p><strong>device</strong> (<em>Device</em>) – Torch deivice or a string</p></li>
 <li><p><strong>predict_params</strong> (<em>dict</em>) – additional parameters for model forward</p></li>
 </ul>
 </dd>
@@ -1750,19 +1756,25 @@ tracing params to FP16</p></li>
 
 <dl class="method">
 <dt id="catalyst.dl.runner.supervised.SupervisedRunner.train">
-<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, criterion: torch.nn.modules.module.Module, optimizer: torch.optim.optimizer.Optimizer, loaders: OrderedDict[str, DataLoader], logdir: str, callbacks: Union[List[Callback], OrderedDict[str, Callback]] = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, resume: str = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, state_kwargs: Dict = None, checkpoint_data: Dict = None, fp16: Union[Dict, bool] = None, monitoring_params: Dict = None, check: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/runner/supervised.html#SupervisedRunner.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.supervised.SupervisedRunner.train" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param">*, logdir: str, model: torch.nn.modules.module.Module, criterion: torch.nn.modules.module.Module, optimizer: torch.optim.optimizer.Optimizer, scheduler: torch.optim.lr_scheduler._LRScheduler = None, datasets: OrderedDict[str, Union[Dataset, Dict, Any]] = None, loaders: OrderedDict[str, DataLoader] = None, callbacks: Union[List[Callback], OrderedDict[str, Callback]] = None, resume: str = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, state_kwargs: Dict = None, checkpoint_data: Dict = None, fp16: Union[Dict, bool] = None, distributed: bool = False, monitoring_params: Dict = None, check: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/runner/supervised.html#SupervisedRunner.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.supervised.SupervisedRunner.train" title="Permalink to this definition">¶</a></dt>
 <dd><p>Starts the training process of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
+<li><p><strong>logdir</strong> (<em>str</em>) – path to output directory</p></li>
 <li><p><strong>model</strong> (<em>Model</em>) – model to train</p></li>
 <li><p><strong>criterion</strong> (<em>Criterion</em>) – criterion function for training</p></li>
 <li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.utils.tools.typing.Optimizer" title="catalyst.utils.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer for training</p></li>
-<li><p><strong>loaders</strong> (<em>dict</em>) – dictionary containing one or several
-<code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code> for training and validation</p></li>
-<li><p><strong>logdir</strong> (<em>str</em>) – path to output directory</p></li>
-<li><p><strong>callbacks</strong> (<em>List</em><em>[</em><em>catalyst.dl.Callback</em><em>]</em>) – list of callbacks</p></li>
 <li><p><strong>scheduler</strong> (<em>Scheduler</em>) – scheduler for training</p></li>
+<li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="utils.html#catalyst.utils.tools.typing.Dataset" title="catalyst.utils.tools.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
+with one or several  <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code>
+for training, validation or inference
+used for Loaders automatic creation
+preferred way for distributed training setup</p></li>
+<li><p><strong>loaders</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>DataLoader</em><em>]</em>) – dictionary
+with one or several <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code>
+for training, validation or inference</p></li>
+<li><p><strong>callbacks</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>, </em><em>OrderedDict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>]</em>) – list or dictionary with Catalyst callbacks</p></li>
 <li><p><strong>resume</strong> (<em>str</em>) – path to checkpoint for model</p></li>
 <li><p><strong>num_epochs</strong> (<em>int</em>) – number of training epochs</p></li>
 <li><p><strong>valid_loader</strong> (<em>str</em>) – loader name used to calculate
@@ -1773,7 +1785,7 @@ the metrics will be taken from <cite>train</cite> loader.</p></li>
 by which the checkpoints will be selected.</p></li>
 <li><p><strong>minimize_metric</strong> (<em>bool</em>) – flag to indicate whether
 the <code class="docutils literal notranslate"><span class="pre">main_metric</span></code> should be minimized.</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – ff true, it displays the status of the training
+<li><p><strong>verbose</strong> (<em>bool</em>) – if <cite>True</cite>, it displays the status of the training
 to the console.</p></li>
 <li><p><strong>state_kwargs</strong> (<em>dict</em>) – additional state params to <code class="docutils literal notranslate"><span class="pre">State</span></code></p></li>
 <li><p><strong>checkpoint_data</strong> (<em>dict</em>) – additional data to save in checkpoint,
@@ -1781,8 +1793,11 @@ for example: <code class="docutils literal notranslate"><span class="pre">class_
 <li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets training to FP16.
 See <a class="reference external" href="https://nvidia.github.io/apex/amp.html#properties">https://nvidia.github.io/apex/amp.html#properties</a>
 if fp16=True, params by default will be <code class="docutils literal notranslate"><span class="pre">{&quot;opt_level&quot;:</span> <span class="pre">&quot;O1&quot;}</span></code></p></li>
+<li><p><strong>distributed</strong> (<em>bool</em>) – if <cite>True</cite> will start training
+in distributed mode.
+Note: Works only with python scripts. No jupyter support.</p></li>
 <li><p><strong>monitoring_params</strong> (<em>dict</em>) – If not None, then create monitoring
-through Alchemy or Weights&amp;Biases.
+through Alchemy or other tools.
 For example,
 <code class="docutils literal notranslate"><span class="pre">{&quot;token&quot;:</span> <span class="pre">&quot;api_token&quot;,</span> <span class="pre">&quot;experiment&quot;:</span> <span class="pre">&quot;experiment_name&quot;}</span></code></p></li>
 <li><p><strong>check</strong> (<em>bool</em>) – if True, then only checks that pipeline is working

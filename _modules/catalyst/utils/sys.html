@@ -263,8 +263,10 @@
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
-<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.tools.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
+
+<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">save_config</span>
+<span class="kn">from</span> <span class="nn">.misc</span> <span class="kn">import</span> <span class="n">get_utcnow_time</span>
 
 
 <span class="k">def</span> <span class="nf">_decode_dict</span><span class="p">(</span><span class="n">dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
@@ -292,7 +294,7 @@
     <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;python_version&quot;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
         <span class="s2">&quot;conda_environment&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CONDA_DEFAULT_ENV&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-        <span class="s2">&quot;creation_time&quot;</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_utcnow_time</span><span class="p">(),</span>
+        <span class="s2">&quot;creation_time&quot;</span><span class="p">:</span> <span class="n">get_utcnow_time</span><span class="p">(),</span>
         <span class="s2">&quot;sysname&quot;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">uname</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span>
         <span class="s2">&quot;nodename&quot;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">uname</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span>
         <span class="s2">&quot;release&quot;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">uname</span><span class="p">()[</span><span class="mi">2</span><span class="p">],</span>
@@ -403,8 +405,8 @@
 
     <span class="n">environment</span> <span class="o">=</span> <span class="n">get_environment_vars</span><span class="p">()</span>
 
-    <span class="n">utils</span><span class="o">.</span><span class="n">save_config</span><span class="p">(</span><span class="n">experiment_config</span><span class="p">,</span> <span class="n">config_dir</span> <span class="o">/</span> <span class="s2">&quot;_config.json&quot;</span><span class="p">)</span>
-    <span class="n">utils</span><span class="o">.</span><span class="n">save_config</span><span class="p">(</span><span class="n">environment</span><span class="p">,</span> <span class="n">config_dir</span> <span class="o">/</span> <span class="s2">&quot;_environment.json&quot;</span><span class="p">)</span>
+    <span class="n">save_config</span><span class="p">(</span><span class="n">experiment_config</span><span class="p">,</span> <span class="n">config_dir</span> <span class="o">/</span> <span class="s2">&quot;_config.json&quot;</span><span class="p">)</span>
+    <span class="n">save_config</span><span class="p">(</span><span class="n">environment</span><span class="p">,</span> <span class="n">config_dir</span> <span class="o">/</span> <span class="s2">&quot;_environment.json&quot;</span><span class="p">)</span>
 
     <span class="n">pip_pkg</span> <span class="o">=</span> <span class="n">list_pip_packages</span><span class="p">()</span>
     <span class="p">(</span><span class="n">config_dir</span> <span class="o">/</span> <span class="s2">&quot;pip-packages.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">pip_pkg</span><span class="p">)</span>

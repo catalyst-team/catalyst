@@ -421,27 +421,8 @@
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.distributed.process_components">
-<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">process_components</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module</em>, <em class="sig-param">criterion: torch.nn.modules.module.Module = None</em>, <em class="sig-param">optimizer: torch.optim.optimizer.Optimizer = None</em>, <em class="sig-param">scheduler: torch.optim.lr_scheduler._LRScheduler = None</em>, <em class="sig-param">distributed_params: Dict = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.nn.modules.module.Module, torch.nn.modules.module.Module, torch.optim.optimizer.Optimizer, torch.optim.lr_scheduler._LRScheduler, Union[str, torch.device]]<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#process_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.process_components" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the processed model, criterion, optimizer, scheduler and device.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>Model</em>) – torch model</p></li>
-<li><p><strong>criterion</strong> (<em>Criterion</em>) – criterion function</p></li>
-<li><p><strong>optimizer</strong> (<a class="reference internal" href="#catalyst.utils.tools.typing.Optimizer" title="catalyst.utils.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer</p></li>
-<li><p><strong>scheduler</strong> (<em>Scheduler</em>) – scheduler</p></li>
-<li><p><strong>distributed_params</strong> (<em>dict</em><em>, </em><em>optional</em>) – dict with the parameters
-for distributed and FP16 methond</p></li>
-<li><p><strong>device</strong> (<em>Device</em><em>, </em><em>optional</em>) – device</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
 <dt id="catalyst.utils.distributed.get_distributed_mean">
-<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">get_distributed_mean</code><span class="sig-paren">(</span><em class="sig-param">value: float</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/distributed.html#get_distributed_mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.get_distributed_mean" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">get_distributed_mean</code><span class="sig-paren">(</span><em class="sig-param">value: Union[float, torch.Tensor]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/distributed.html#get_distributed_mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.get_distributed_mean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes distributed mean among all nodes.</p>
 </dd></dl>
 
@@ -455,23 +436,6 @@ for distributed and FP16 methond</p></li>
 <dt id="catalyst.utils.distributed.assert_fp16_available">
 <code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">assert_fp16_available</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#assert_fp16_available"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.assert_fp16_available" title="Permalink to this definition">¶</a></dt>
 <dd><p>Asserts for installed and available Apex FP16.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.utils.distributed.distributed_run">
-<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">distributed_run</code><span class="sig-paren">(</span><em class="sig-param">distributed</em>, <em class="sig-param">worker_fn</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/distributed.html#distributed_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.distributed_run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Distributed run.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>distributed</strong> – </p></li>
-<li><p><strong>worker_fn</strong> – </p></li>
-<li><p><strong>args</strong> – </p></li>
-<li><p><strong>kwargs</strong> – </p></li>
-</ul>
-</dd>
-</dl>
-<p>&#64;TODO: Docs. Contribution is welcome.</p>
 </dd></dl>
 
 <dl class="function">
@@ -530,6 +494,25 @@ apex.parallel.DistributedDataParallel.</p>
 <dt id="catalyst.utils.distributed.get_slurm_params">
 <code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">get_slurm_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/distributed.html#get_slurm_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.get_slurm_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.distributed.process_components">
+<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">process_components</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module</em>, <em class="sig-param">criterion: torch.nn.modules.module.Module = None</em>, <em class="sig-param">optimizer: torch.optim.optimizer.Optimizer = None</em>, <em class="sig-param">scheduler: torch.optim.lr_scheduler._LRScheduler = None</em>, <em class="sig-param">distributed_params: Dict = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.nn.modules.module.Module, torch.nn.modules.module.Module, torch.optim.optimizer.Optimizer, torch.optim.lr_scheduler._LRScheduler, Union[str, torch.device]]<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#process_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.process_components" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the processed model, criterion, optimizer, scheduler and device.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>Model</em>) – torch model</p></li>
+<li><p><strong>criterion</strong> (<em>Criterion</em>) – criterion function</p></li>
+<li><p><strong>optimizer</strong> (<a class="reference internal" href="#catalyst.utils.tools.typing.Optimizer" title="catalyst.utils.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer</p></li>
+<li><p><strong>scheduler</strong> (<em>Scheduler</em>) – scheduler</p></li>
+<li><p><strong>distributed_params</strong> (<em>dict</em><em>, </em><em>optional</em>) – dict with the parameters
+for distributed and FP16 method</p></li>
+<li><p><strong>device</strong> (<em>Device</em><em>, </em><em>optional</em>) – device</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -806,6 +789,16 @@ from <code class="docutils literal notranslate"><span class="pre">Bag</span> <sp
 <dd><p>&#64;TODO: Docs. Contribution is welcome</p>
 </dd></dl>
 
+<dl class="function">
+<dt id="catalyst.utils.scripts.distributed_cmd_run">
+<code class="sig-prename descclassname">catalyst.utils.scripts.</code><code class="sig-name descname">distributed_cmd_run</code><span class="sig-paren">(</span><em class="sig-param">distributed</em>, <em class="sig-param">worker_fn</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/scripts.html#distributed_cmd_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.scripts.distributed_cmd_run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Distributed run
+:param distributed:
+:param worker_fn:
+:param args:
+:param kwargs:</p>
+</dd></dl>
+
 </div>
 <div class="section" id="module-catalyst.utils.seed">
 <span id="seed"></span><h3><a class="toc-backref" href="#id11">Seed</a><a class="headerlink" href="#module-catalyst.utils.seed" title="Permalink to this headline">¶</a></h3>
@@ -993,16 +986,6 @@ Setting it to <code class="docutils literal notranslate"><span class="pre">False
 <dt id="catalyst.utils.torch.process_model_params">
 <code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">process_model_params</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module</em>, <em class="sig-param">layerwise_params: Dict[str</em>, <em class="sig-param">dict] = None</em>, <em class="sig-param">no_bias_weight_decay: bool = True</em>, <em class="sig-param">lr_scaling: float = 1.0</em><span class="sig-paren">)</span> &#x2192; List[Union[torch.nn.parameter.Parameter, dict]]<a class="reference internal" href="../_modules/catalyst/utils/torch.html#process_model_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.process_model_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gains model parameters for <code class="docutils literal notranslate"><span class="pre">torch.optim.Optimizer</span></code>.</p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">catalyst</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">segmentation</span><span class="o">.</span><span class="n">ResnetUnet</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">layerwise_params</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s2">&quot;conv1.*&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mf">0.0003</span><span class="p">)),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s2">&quot;conv.*&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">0.002</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="n">process_model_params</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">layerwise_params</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.0003</span><span class="p">)</span>
-</pre></div>
-</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1023,14 +1006,24 @@ if 1.0, learning rates will not be scaled</p></li>
 <dd class="field-odd"><p>iterable</p>
 </dd>
 </dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">catalyst</span><span class="o">.</span><span class="n">contrib</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">segmentation</span><span class="o">.</span><span class="n">ResnetUnet</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">layerwise_params</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s2">&quot;conv1.*&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">weight_decay</span><span class="o">=</span><span class="mf">0.0003</span><span class="p">)),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">(</span><span class="s2">&quot;conv.*&quot;</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">lr</span><span class="o">=</span><span class="mf">0.002</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">params</span> <span class="o">=</span> <span class="n">process_model_params</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">layerwise_params</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.0003</span><span class="p">)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.torch.set_requires_grad">
 <code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">set_requires_grad</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module</em>, <em class="sig-param">requires_grad: bool</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#set_requires_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.set_requires_grad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the <code class="docutils literal notranslate"><span class="pre">requires_grad</span></code> value for all model parameters.</p>
-<p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">SimpleModel</span><span class="p">()</span>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">SimpleModel</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">set_requires_grad</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>

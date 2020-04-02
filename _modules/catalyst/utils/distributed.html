@@ -254,20 +254,19 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.utils.distributed</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">socket</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 <span class="kn">import</span> <span class="nn">torch.distributed</span>
 
-<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.tools.typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Criterion</span><span class="p">,</span>
     <span class="n">Device</span><span class="p">,</span>
@@ -275,6 +274,12 @@
     <span class="n">Optimizer</span><span class="p">,</span>
     <span class="n">Scheduler</span><span class="p">,</span>
 <span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">.misc</span> <span class="kn">import</span> <span class="n">get_fn_default_params</span><span class="p">,</span> <span class="n">maybe_recursive_call</span>
+<span class="kn">from</span> <span class="nn">.torch</span> <span class="kn">import</span> <span class="n">get_available_gpus</span><span class="p">,</span> <span class="n">get_device</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;once&quot;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;once&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="is_wrapped_with_ddp"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.is_wrapped_with_ddp">[docs]</a><span class="k">def</span> <span class="nf">is_wrapped_with_ddp</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
@@ -356,7 +361,7 @@
         <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
 
 
-<div class="viewcode-block" id="get_distributed_mean"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.get_distributed_mean">[docs]</a><span class="k">def</span> <span class="nf">get_distributed_mean</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<div class="viewcode-block" id="get_distributed_mean"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.get_distributed_mean">[docs]</a><span class="k">def</span> <span class="nf">get_distributed_mean</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;Computes distributed mean among all nodes.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">is_torch_distributed_initialized</span><span class="p">():</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
@@ -429,56 +434,17 @@
     <span class="n">env</span><span class="p">[</span><span class="s2">&quot;WORLD_SIZE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">world_size</span><span class="p">)</span>
     <span class="n">env</span><span class="p">[</span><span class="s2">&quot;LOCAL_RANK&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">local_rank</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">use_cuda_visible_devices</span><span class="p">:</span>
-        <span class="n">available_gpus</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_available_gpus</span><span class="p">()</span>
+        <span class="n">available_gpus</span> <span class="o">=</span> <span class="n">get_available_gpus</span><span class="p">()</span>
         <span class="n">env</span><span class="p">[</span><span class="s2">&quot;LOCAL_RANK&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span>
         <span class="n">env</span><span class="p">[</span><span class="s2">&quot;CUDA_VISIBLE_DEVICES&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">available_gpus</span><span class="p">[</span><span class="n">local_rank</span><span class="p">])</span>
     <span class="k">return</span> <span class="n">env</span></div>
-
-
-<div class="viewcode-block" id="distributed_run"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.distributed_run">[docs]</a><span class="k">def</span> <span class="nf">distributed_run</span><span class="p">(</span><span class="n">distributed</span><span class="p">,</span> <span class="n">worker_fn</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Distributed run.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        distributed:</span>
-<span class="sd">        worker_fn:</span>
-<span class="sd">        args:</span>
-<span class="sd">        kwargs:</span>
-
-<span class="sd">    @TODO: Docs. Contribution is welcome.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">distributed_params</span> <span class="o">=</span> <span class="n">get_distributed_params</span><span class="p">()</span>
-    <span class="n">local_rank</span> <span class="o">=</span> <span class="n">distributed_params</span><span class="p">[</span><span class="s2">&quot;local_rank&quot;</span><span class="p">]</span>
-    <span class="n">world_size</span> <span class="o">=</span> <span class="n">distributed_params</span><span class="p">[</span><span class="s2">&quot;world_size&quot;</span><span class="p">]</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">distributed</span> <span class="ow">or</span> <span class="n">world_size</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">worker_fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">local_rank</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">set_device</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">local_rank</span><span class="p">))</span>
-
-        <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">init_process_group</span><span class="p">(</span>
-            <span class="n">backend</span><span class="o">=</span><span class="s2">&quot;nccl&quot;</span><span class="p">,</span> <span class="n">init_method</span><span class="o">=</span><span class="s2">&quot;env://&quot;</span>
-        <span class="p">)</span>
-        <span class="n">worker_fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">workers</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">local_rank</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()):</span>
-                <span class="n">rank</span> <span class="o">=</span> <span class="n">distributed_params</span><span class="p">[</span><span class="s2">&quot;start_rank&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">local_rank</span>
-                <span class="n">env</span> <span class="o">=</span> <span class="n">get_distributed_env</span><span class="p">(</span><span class="n">local_rank</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="n">world_size</span><span class="p">)</span>
-                <span class="n">cmd</span> <span class="o">=</span> <span class="p">[</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">]</span> <span class="o">+</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-                <span class="n">workers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">worker</span> <span class="ow">in</span> <span class="n">workers</span><span class="p">:</span>
-                <span class="n">worker</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
-        <span class="k">finally</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">worker</span> <span class="ow">in</span> <span class="n">workers</span><span class="p">:</span>
-                <span class="n">worker</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="initialize_apex"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.initialize_apex">[docs]</a><span class="k">def</span> <span class="nf">initialize_apex</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">distributed_params</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">apex</span>
 
-    <span class="n">amp_params</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_fn_default_params</span><span class="p">(</span>
+    <span class="n">amp_params</span> <span class="o">=</span> <span class="n">get_fn_default_params</span><span class="p">(</span>
         <span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">initialize</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;models&quot;</span><span class="p">,</span> <span class="s2">&quot;optimizers&quot;</span><span class="p">]</span>
     <span class="p">)</span>
     <span class="n">amp_params</span><span class="p">[</span><span class="s2">&quot;opt_level&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;O0&quot;</span>
@@ -511,30 +477,30 @@
 <span class="sd">        optimizer (Optimizer): optimizer</span>
 <span class="sd">        scheduler (Scheduler): scheduler</span>
 <span class="sd">        distributed_params (dict, optional): dict with the parameters</span>
-<span class="sd">            for distributed and FP16 methond</span>
+<span class="sd">            for distributed and FP16 method</span>
 <span class="sd">        device (Device, optional): device</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">distributed_params</span> <span class="o">=</span> <span class="n">distributed_params</span> <span class="ow">or</span> <span class="p">{}</span>
     <span class="n">distributed_params</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">distributed_params</span><span class="p">)</span>
     <span class="n">distributed_params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">get_distributed_params</span><span class="p">())</span>
     <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">device</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_device</span><span class="p">()</span>
+        <span class="n">device</span> <span class="o">=</span> <span class="n">get_device</span><span class="p">()</span>
 
     <span class="n">use_apex</span> <span class="o">=</span> <span class="n">distributed_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;apex&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_apex_available</span><span class="p">()</span>
 
-    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">maybe_recursive_call</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">maybe_recursive_call</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">utils</span><span class="o">.</span><span class="n">is_wrapped_with_ddp</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">is_wrapped_with_ddp</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
         <span class="k">pass</span>
     <span class="c1"># distributed data parallel run (ddp) (with apex support)</span>
     <span class="k">elif</span> <span class="n">get_rank</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
             <span class="n">model</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span>
-        <span class="p">),</span> <span class="s2">&quot;No support for dixtributed KV model yet&quot;</span>
+        <span class="p">),</span> <span class="s2">&quot;Distributed training is not available for KV model&quot;</span>
 
-        <span class="n">local_rank</span> <span class="o">=</span> <span class="n">distributed_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;local_rank&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">local_rank</span> <span class="o">=</span> <span class="n">distributed_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;local_rank&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="mi">0</span>
         <span class="n">device</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;cuda:</span><span class="si">{</span><span class="n">local_rank</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">maybe_recursive_call</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">maybe_recursive_call</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
 
         <span class="n">syncbn</span> <span class="o">=</span> <span class="n">distributed_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;syncbn&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
@@ -556,14 +522,15 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># apex issue https://github.com/deepset-ai/FARM/issues/210</span>
         <span class="n">can_use_apex</span> <span class="o">=</span> <span class="p">(</span><span class="n">use_apex</span> <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span>
+            <span class="n">use_apex</span>
+            <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span>
             <span class="ow">and</span> <span class="n">distributed_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;opt_level&quot;</span><span class="p">,</span> <span class="s2">&quot;O0&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;O1&quot;</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">can_use_apex</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
                 <span class="n">model</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span>
-            <span class="p">),</span> <span class="s2">&quot;No support for apex KV model yet&quot;</span>
+            <span class="p">),</span> <span class="s2">&quot;Apex training is not available for KV model&quot;</span>
 
             <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">initialize_apex</span><span class="p">(</span>
                 <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">distributed_params</span>
@@ -574,19 +541,19 @@
                 <span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">DataParallel</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                 <span class="n">model</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">DataParallel</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
-    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">maybe_recursive_call</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">maybe_recursive_call</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span><span class="p">,</span> <span class="n">device</span></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;get_rank&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;process_components&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_distributed_mean&quot;</span><span class="p">,</span>
     <span class="s2">&quot;is_apex_available&quot;</span><span class="p">,</span>
     <span class="s2">&quot;assert_fp16_available&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;distributed_run&quot;</span><span class="p">,</span>
     <span class="s2">&quot;is_slurm_available&quot;</span><span class="p">,</span>
     <span class="s2">&quot;is_torch_distributed_initialized&quot;</span><span class="p">,</span>
     <span class="s2">&quot;initialize_apex&quot;</span><span class="p">,</span>
@@ -595,6 +562,7 @@
     <span class="s2">&quot;get_distributed_params&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_nn_from_ddp_module&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_slurm_params&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;process_components&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

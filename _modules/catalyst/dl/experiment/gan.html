@@ -319,18 +319,12 @@
 
 <div class="viewcode-block" id="GanExperiment.wrap_callbacks"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.gan.GanExperiment.wrap_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">wrap_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase2callbacks</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Phase wrapping procedure for callbacks.&quot;&quot;&quot;</span>
-        <span class="n">discriminator_phase_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_additional_state_kwargs</span><span class="p">[</span>
+        <span class="n">discriminator_phase_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_kwargs</span><span class="p">[</span>
             <span class="s2">&quot;discriminator_train_phase&quot;</span>
         <span class="p">]</span>
-        <span class="n">discriminator_phase_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_additional_state_kwargs</span><span class="p">[</span>
-            <span class="s2">&quot;discriminator_train_num&quot;</span>
-        <span class="p">]</span>
-        <span class="n">generator_phase_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_additional_state_kwargs</span><span class="p">[</span>
-            <span class="s2">&quot;generator_train_phase&quot;</span>
-        <span class="p">]</span>
-        <span class="n">generator_phase_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_additional_state_kwargs</span><span class="p">[</span>
-            <span class="s2">&quot;generator_train_num&quot;</span>
-        <span class="p">]</span>
+        <span class="n">discriminator_phase_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_kwargs</span><span class="p">[</span><span class="s2">&quot;discriminator_train_num&quot;</span><span class="p">]</span>
+        <span class="n">generator_phase_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_kwargs</span><span class="p">[</span><span class="s2">&quot;generator_train_phase&quot;</span><span class="p">]</span>
+        <span class="n">generator_phase_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_kwargs</span><span class="p">[</span><span class="s2">&quot;generator_train_num&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">[</span><span class="s2">&quot;phase_manager&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PhaseManagerCallback</span><span class="p">(</span>
             <span class="n">train_phases</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">(</span>
                 <span class="p">[</span>

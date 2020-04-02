@@ -254,11 +254,16 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.core.utils.callbacks</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">CallbackNode</span>
 
-<div class="viewcode-block" id="process_callbacks"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.utils.callbacks.process_callbacks">[docs]</a><span class="k">def</span> <span class="nf">process_callbacks</span><span class="p">(</span><span class="n">callbacks</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
+
+<div class="viewcode-block" id="sort_callbacks_by_order"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.utils.callbacks.sort_callbacks_by_order">[docs]</a><span class="k">def</span> <span class="nf">sort_callbacks_by_order</span><span class="p">(</span>
+    <span class="n">callbacks</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Creates an sequence of callbacks and sort them.</span>
 
 <span class="sd">    Args:</span>
@@ -268,24 +273,56 @@
 <span class="sd">        sequence of callbacks sorted by ``callback order``</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">callbacks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callbacks</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">):</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="p">[(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">order</span><span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callbacks</span><span class="p">,</span> <span class="p">(</span><span class="n">Dict</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">)):</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">[(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">order</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callbacks</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">callbacks</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">order</span><span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="n">i</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">result</span><span class="p">)])</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">callbacks</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">order</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="n">i</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">output</span><span class="p">)])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Callbacks must be either OrderedDict or list, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Callbacks must be either Dict/OrderedDict or list, &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">result</span></div>
+    <span class="k">return</span> <span class="n">output</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;process_callbacks&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="filter_callbacks_by_node"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.utils.callbacks.filter_callbacks_by_node">[docs]</a><span class="k">def</span> <span class="nf">filter_callbacks_by_node</span><span class="p">(</span>
+    <span class="n">callbacks</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filters callbacks based on running node.</span>
+<span class="sd">    Deletes worker-only callbacks from ``CallbackNode.Master``</span>
+<span class="sd">    and master-only callbacks from ``CallbackNode.Worker``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        callbacks (Union[Dict, OrderedDict]): callbacks</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Union[Dict, OrderedDict]: filtered callbacks dictionary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># distributed run setting</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">rank</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># master node</span>
+        <span class="c1"># remove worker-only callbacks on master node</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">output</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">node</span> <span class="o">==</span> <span class="n">CallbackNode</span><span class="o">.</span><span class="n">Worker</span><span class="p">,</span> <span class="n">output</span><span class="p">,)</span>
+        <span class="p">):</span>
+            <span class="k">del</span> <span class="n">output</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">rank</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># worker node</span>
+        <span class="c1"># remove master-only callbacks on worker nodes</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">output</span><span class="p">[</span><span class="n">c</span><span class="p">]</span><span class="o">.</span><span class="n">node</span> <span class="o">==</span> <span class="n">CallbackNode</span><span class="o">.</span><span class="n">Master</span><span class="p">,</span> <span class="n">output</span><span class="p">,)</span>
+        <span class="p">):</span>
+            <span class="k">del</span> <span class="n">output</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">output</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;sort_callbacks_by_order&quot;</span><span class="p">,</span> <span class="s2">&quot;filter_callbacks_by_node&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

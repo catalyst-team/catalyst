@@ -317,7 +317,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            List[Callback]: list of callbacks for experiment</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">callbacks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span>
+        <span class="n">callbacks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span> <span class="ow">or</span> <span class="n">OrderedDict</span><span class="p">()</span>
 
         <span class="n">default_callbacks</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span>
@@ -355,6 +355,7 @@
             <span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">is_already_present</span><span class="p">:</span>
                 <span class="n">callbacks</span><span class="p">[</span><span class="n">callback_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">callback_fn</span><span class="p">()</span>
+
         <span class="k">return</span> <span class="n">callbacks</span></div></div>
 
 

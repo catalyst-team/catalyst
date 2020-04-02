@@ -258,9 +258,10 @@
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">Experiment</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.tools.settings</span> <span class="kn">import</span> <span class="n">STAGE_TRAIN_PREFIX</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.tools.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
 
 
@@ -272,7 +273,8 @@
 <div class="viewcode-block" id="BaseExperiment.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.base.BaseExperiment.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
-        <span class="n">loaders</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">,</span>
+        <span class="n">datasets</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, Union[Dataset, Dict, Any]]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">loaders</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">callbacks</span><span class="p">:</span> <span class="s2">&quot;Union[OrderedDict[str, Callback], List[Callback]]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;train&quot;</span><span class="p">,</span>
@@ -294,9 +296,16 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            model (Model): model</span>
-<span class="sd">            loaders (dict): dictionary containing one or several</span>
-<span class="sd">                ``torch.utils.data.DataLoader`` for training and validation</span>
-<span class="sd">            callbacks (List[catalyst.dl.Callback]): list of callbacks</span>
+<span class="sd">            datasets (OrderedDict[str, Union[Dataset, Dict, Any]]): dictionary</span>
+<span class="sd">                with one or several  ``torch.utils.data.Dataset``</span>
+<span class="sd">                for training, validation or inference</span>
+<span class="sd">                used for Loaders automatic creation</span>
+<span class="sd">                preferred way for distributed training setup</span>
+<span class="sd">            loaders (OrderedDict[str, DataLoader]): dictionary</span>
+<span class="sd">                with one or several ``torch.utils.data.DataLoader``</span>
+<span class="sd">                for training, validation or inference</span>
+<span class="sd">            callbacks (Union[List[Callback], OrderedDict[str, Callback]]):</span>
+<span class="sd">                list or dictionary with Catalyst callbacks</span>
 <span class="sd">            logdir (str): path to output directory</span>
 <span class="sd">            stage (str): current stage</span>
 <span class="sd">            criterion (Criterion): criterion function</span>
@@ -322,9 +331,27 @@
 <span class="sd">                for monitoring services</span>
 <span class="sd">            initial_seed (int): experiment&#39;s initial seed value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">datasets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">loaders</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">),</span> <span class="s2">&quot;Please specify the data sources&quot;</span>
+        <span class="k">if</span> <span class="n">datasets</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">loaders</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">stage</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">STAGE_TRAIN_PREFIX</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="n">valid_loader</span> <span class="ow">in</span> <span class="n">loaders</span><span class="p">,</span> <span class="p">(</span>
+                    <span class="s2">&quot;The validation loader must be present &quot;</span>
+                    <span class="s2">&quot;in the loaders used during experiment&quot;</span>
+                <span class="p">)</span>
+        <span class="k">if</span> <span class="n">loaders</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">datasets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="n">stage</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">STAGE_TRAIN_PREFIX</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="n">valid_loader</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">,</span> <span class="p">(</span>
+                    <span class="s2">&quot;The validation loader must be present &quot;</span>
+                    <span class="s2">&quot;in the loaders used during experiment&quot;</span>
+                <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_datasets</span> <span class="o">=</span> <span class="n">datasets</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span> <span class="o">=</span> <span class="n">loaders</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_callbacks</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">sort_callbacks_by_order</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span> <span class="o">=</span> <span class="n">criterion</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
@@ -339,7 +366,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_minimize_metric</span> <span class="o">=</span> <span class="n">minimize_metric</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="n">verbose</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_run</span> <span class="o">=</span> <span class="n">check_run</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_additional_state_kwargs</span> <span class="o">=</span> <span class="n">state_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state_kwargs</span> <span class="o">=</span> <span class="n">state_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_data</span> <span class="o">=</span> <span class="n">checkpoint_data</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_distributed_params</span> <span class="o">=</span> <span class="n">distributed_params</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_monitoring_params</span> <span class="o">=</span> <span class="n">monitoring_params</span> <span class="ow">or</span> <span class="p">{}</span></div>
@@ -380,7 +407,7 @@
             <span class="s2">&quot;minimize_metric&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimize_metric</span><span class="p">,</span>
             <span class="s2">&quot;checkpoint_data&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_data</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="n">state_params</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">default_params</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_additional_state_kwargs</span><span class="p">}</span>
+        <span class="n">state_params</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">default_params</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_kwargs</span><span class="p">}</span>
         <span class="k">return</span> <span class="n">state_params</span></div>
 
 <div class="viewcode-block" id="BaseExperiment.get_model"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.base.BaseExperiment.get_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
@@ -403,6 +430,10 @@
         <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the loaders for a given stage.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_datasets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_loaders_from_params</span><span class="p">(</span>
+                <span class="n">initial_seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_seed</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_datasets</span><span class="p">,</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span></div>
 
 <div class="viewcode-block" id="BaseExperiment.get_callbacks"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.base.BaseExperiment.get_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Callback]&quot;</span><span class="p">:</span>
