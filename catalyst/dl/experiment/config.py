@@ -6,7 +6,6 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader  # noqa F401
 
-from catalyst.core import utils
 from catalyst.data import Augmentor, AugmentorCompose
 from catalyst.dl import (
     Callback,
@@ -122,10 +121,6 @@ class ConfigExperiment(Experiment):
     @property
     def logdir(self):
         """Path to the directory where the experiment logs."""
-        logdir = self._logdir
-        distributed_rank = utils.get_rank()
-        if distributed_rank > -1:
-            logdir = f"{logdir}.rank{distributed_rank:02d}"
         return self._logdir
 
     @property

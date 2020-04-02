@@ -121,11 +121,7 @@ class BaseExperiment(Experiment):
     @property
     def logdir(self):
         """Path to the directory where the experiment logs."""
-        logdir = self._logdir
-        distributed_rank = utils.get_rank()
-        if distributed_rank > -1:
-            logdir = f"{logdir}.rank{distributed_rank:02d}"
-        return logdir
+        return self._logdir
 
     @property
     def stages(self) -> Iterable[str]:
@@ -171,12 +167,6 @@ class BaseExperiment(Experiment):
     def get_scheduler(self, stage: str, optimizer=None) -> Scheduler:
         """Returns the scheduler for a given stage."""
         return self._scheduler
-
-    def get_datasets(
-        self, stage: str, epoch: int = None, **kwargs,
-    ) -> "OrderedDict[str, Dataset]":
-        """Returns the datasets for a given stage."""
-        return self._datasets
 
     def get_loaders(
         self, stage: str, epoch: int = None,

@@ -34,7 +34,20 @@ def sort_callbacks_by_order(
     return output
 
 
-def filter_callbacks_by_node(callbacks: Dict) -> Dict:
+def filter_callbacks_by_node(
+    callbacks: Union[Dict, OrderedDict]
+) -> Union[Dict, OrderedDict]:
+    """
+    Filters callbacks based on running node.
+    Deletes worker-only callbacks from ``CallbackNode.Master``
+    and master-only callbacks from ``CallbackNode.Worker``.
+
+    Args:
+        callbacks (Union[Dict, OrderedDict]): callbacks
+
+    Returns:
+        Union[Dict, OrderedDict]: filtered callbacks dictionary.
+    """
     # distributed run setting
     output = callbacks.copy()
     rank = utils.get_rank()

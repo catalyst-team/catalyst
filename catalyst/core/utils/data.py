@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Union
+from typing import Any, Callable, Dict
 from collections import OrderedDict
 from copy import copy
 import warnings
@@ -11,10 +11,19 @@ from catalyst.contrib.registry import SAMPLERS
 from catalyst.data import DistributedSamplerWrapper
 
 
-def _force_make_distributed_loader(loader):
+def _force_make_distributed_loader(loader: DataLoader) -> DataLoader:
+    """
+    Transfers loader to distributed mode. Experimental feature.
+
+    Args:
+        loader (DataLoader): pytorch dataloder
+
+    Returns:
+        (DataLoader): pytorch dataloder with distributed sampler.
+    """
     sampler = (
         DistributedSampler(dataset=loader.dataset)
-        if loader.sampler is not None
+        if getattr(loader, "sampler", None) is not None
         else DistributedSamplerWrapper(sampler=loader.sampler)
     )
     loader = DataLoader(
@@ -31,7 +40,19 @@ def _force_make_distributed_loader(loader):
     return loader
 
 
-def validate_loaders(loaders):
+def validate_loaders(loaders: Dict[str, DataLoader]) -> Dict[str, DataLoader]:
+    """
+    Check pytorch dataloaders for distributed setup.
+    Transfers them to distirbuted mode if necessary.
+    (Experimental feature)
+
+    Args:
+        loaders (Dict[str, DataLoader]): dictionery with pytorch dataloaders
+
+    Returns:
+        (Dict[str, DataLoader]): dictionery
+            with pytorch dataloaders (with distributed samplers if necessary)
+    """
     rank = utils.get_rank()
     if rank >= 0:
         for key, value in loaders.items():
@@ -52,12 +73,38 @@ def get_loaders_from_params(
     num_workers: int = 0,
     drop_last: bool = False,
     per_gpu_scaling: bool = False,
-    loaders_params: Dict = None,
-    samplers_params: Dict = None,
+    loaders_params: Dict[str, Any] = None,
+    samplers_params: Dict[str, Any] = None,
     initial_seed: int = 42,
     datasets_fn: Callable = None,
     **data_params,
-):
+) -> OrderedDict[str, DataLoader]:
+    """
+    Creates pytorch dataloaders from datasets and additional parameters.
+
+    Args:
+        batch_size (int): ``batch_size`` parameter
+            from ``torch.utils.data.DataLoader``
+        num_workers (int): ``num_workers`` parameter
+            from ``torch.utils.data.DataLoader``
+        drop_last (bool): ``drop_last`` parameter
+            from ``torch.utils.data.DataLoader``
+        per_gpu_scaling (bool): boolean flag,
+            if ``True``, uses ``batch_size=batch_size*num_available_gpus``
+        loaders_params (Dict[str, Any]): additional loaders parameters
+        samplers_params (Dict[str, Any]): additional sampler parameters
+        initial_seed (int): initial seed for ``torch.utils.data.DataLoader``
+            workers
+        datasets_fn(Callable): callable function to get dictionary with
+            ``torch.utils.data.Datasets``
+        **data_params: additional data parameters
+            or dictionary with ``torch.utils.data.Datasets`` to use for
+            pytorch dataloaders creation
+
+    Returns:
+        OrderedDict[str, DataLoader]: dictionary with
+            ``torch.utils.data.DataLoader``
+    """
     default_batch_size = batch_size
     default_num_workers = num_workers
     loaders_params = loaders_params or {}

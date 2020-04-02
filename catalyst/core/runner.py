@@ -16,7 +16,7 @@ from catalyst.utils.tools.typing import (
     Scheduler,
 )
 
-from .callback import Callback, CallbackNode, CallbackScope
+from .callback import Callback, CallbackScope
 from .callbacks import ExceptionCallback
 from .experiment import _Experiment
 from .state import State
