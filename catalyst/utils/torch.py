@@ -235,6 +235,45 @@ def set_requires_grad(model: Model, requires_grad: bool):
         param.requires_grad = requires_grad
 
 
+def get_network_output(net: Model, *input_shapes_args, **input_shapes_kwargs):
+    """
+    For each input shape returns an output tensor
+
+    Args:
+        net (Model): the model
+        *input_shapes_args: variable length argument list of shapes
+        **input_shapes_kwargs:
+
+    Examples:
+        >>> net = nn.Linear(10, 5)
+        >>> utils.get_network_output(net, (1, 10))
+        tensor([[[-0.2665,  0.5792,  0.9757, -0.5782,  0.1530]]])
+    """
+
+    def _rand_sample(
+        input_shape,
+    ) -> Union[torch.Tensor, Dict[str, torch.Tensor]]:
+        if isinstance(input_shape, dict):
+            input_t = {
+                key: torch.Tensor(torch.randn((1,) + input_shape_))
+                for key, input_shape_ in input_shape.items()
+            }
+        else:
+            input_t = torch.Tensor(torch.randn((1,) + input_shape))
+        return input_t
+
+    input_args = [
+        _rand_sample(input_shape) for input_shape in input_shapes_args
+    ]
+    input_kwargs = {
+        key: _rand_sample(input_shape)
+        for key, input_shape in input_shapes_kwargs.items()
+    }
+
+    output_t = net(*input_args, **input_kwargs)
+    return output_t
+
+
 __all__ = [
     "get_optimizable_params",
     "get_optimizer_momentum",
@@ -246,4 +285,5 @@ __all__ = [
     "prepare_cudnn",
     "process_model_params",
     "set_requires_grad",
+    "get_network_output",
 ]
