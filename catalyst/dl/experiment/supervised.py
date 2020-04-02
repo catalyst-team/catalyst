@@ -61,7 +61,7 @@ class SupervisedExperiment(BaseExperiment):
         Returns:
             List[Callback]: list of callbacks for experiment
         """
-        callbacks = self._callbacks
+        callbacks = self._callbacks or OrderedDict()
 
         default_callbacks = []
         if self._verbose:
@@ -99,6 +99,7 @@ class SupervisedExperiment(BaseExperiment):
             )
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
+
         return callbacks
 
 

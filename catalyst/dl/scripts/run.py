@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 
 from catalyst.dl import utils
-from catalyst.utils import distributed_run, get_rank
+from catalyst.utils import distributed_cmd_run, get_rank
 
 
 def build_args(parser: ArgumentParser):
@@ -67,7 +67,7 @@ def build_args(parser: ArgumentParser):
         "distributed",
         shorthand="ddp",
         default=os.getenv("USE_DDP", "0") == "1",
-        help="Run inn distributed mode",
+        help="Run in distributed mode",
     )
     utils.boolean_flag(parser, "verbose", default=None)
     utils.boolean_flag(parser, "check", default=None)
@@ -115,7 +115,7 @@ def main_worker(args, unknown_args):
 
 def main(args, unknown_args):
     """Run the ``catalyst-dl run`` script."""
-    distributed_run(args.distributed, main_worker, args, unknown_args)
+    distributed_cmd_run(args.distributed, main_worker, args, unknown_args)
 
 
 if __name__ == "__main__":

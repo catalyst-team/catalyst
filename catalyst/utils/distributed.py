@@ -1,17 +1,16 @@
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Union
 from collections import OrderedDict
 import copy
 import os
 import random
 import socket
 import subprocess
-import sys
+import warnings
 
 import torch
 from torch import nn
 import torch.distributed
 
-from catalyst import utils
 from catalyst.utils.tools.typing import (
     Criterion,
     Device,
@@ -19,6 +18,12 @@ from catalyst.utils.tools.typing import (
     Optimizer,
     Scheduler,
 )
+
+from .misc import get_fn_default_params, maybe_recursive_call
+from .torch import get_available_gpus, get_device
+
+warnings.simplefilter("once")
+warnings.filterwarnings("once")
 
 
 def is_wrapped_with_ddp(model: nn.Module) -> bool:
@@ -100,7 +105,7 @@ def get_rank() -> int:
         return -1
 
 
-def get_distributed_mean(value: float):
+def get_distributed_mean(value: Union[float, torch.Tensor]):
     """Computes distributed mean among all nodes."""
     if is_torch_distributed_initialized():
         value = torch.tensor(
@@ -173,56 +178,17 @@ def get_distributed_env(
     env["WORLD_SIZE"] = str(world_size)
     env["LOCAL_RANK"] = str(local_rank)
     if use_cuda_visible_devices:
-        available_gpus = utils.get_available_gpus()
+        available_gpus = get_available_gpus()
         env["LOCAL_RANK"] = "0"
         env["CUDA_VISIBLE_DEVICES"] = str(available_gpus[local_rank])
     return env
-
-
-def distributed_run(distributed, worker_fn, *args, **kwargs):
-    """Distributed run.
-
-    Args:
-        distributed:
-        worker_fn:
-        args:
-        kwargs:
-
-    @TODO: Docs. Contribution is welcome.
-    """
-    distributed_params = get_distributed_params()
-    local_rank = distributed_params["local_rank"]
-    world_size = distributed_params["world_size"]
-
-    if not distributed or world_size <= 1:
-        worker_fn(*args, **kwargs)
-    elif local_rank is not None:
-        torch.cuda.set_device(int(local_rank))
-
-        torch.distributed.init_process_group(
-            backend="nccl", init_method="env://"
-        )
-        worker_fn(*args, **kwargs)
-    else:
-        workers = []
-        try:
-            for local_rank in range(torch.cuda.device_count()):
-                rank = distributed_params["start_rank"] + local_rank
-                env = get_distributed_env(local_rank, rank, world_size)
-                cmd = [sys.executable] + sys.argv.copy()
-                workers.append(subprocess.Popen(cmd, env=env))
-            for worker in workers:
-                worker.wait()
-        finally:
-            for worker in workers:
-                worker.kill()
 
 
 def initialize_apex(model, optimizer=None, **distributed_params):
     """@TODO: Docs. Contribution is welcome."""
     import apex
 
-    amp_params = utils.get_fn_default_params(
+    amp_params = get_fn_default_params(
         apex.amp.initialize, ["models", "optimizers"]
     )
     amp_params["opt_level"] = "O0"
@@ -255,30 +221,30 @@ def process_components(
         optimizer (Optimizer): optimizer
         scheduler (Scheduler): scheduler
         distributed_params (dict, optional): dict with the parameters
-            for distributed and FP16 methond
+            for distributed and FP16 method
         device (Device, optional): device
     """
     distributed_params = distributed_params or {}
     distributed_params = copy.deepcopy(distributed_params)
     distributed_params.update(get_distributed_params())
     if device is None:
-        device = utils.get_device()
+        device = get_device()
 
     use_apex = distributed_params.pop("apex", True) and is_apex_available()
 
-    model: Model = utils.maybe_recursive_call(model, "to", device=device)
+    model: Model = maybe_recursive_call(model, "to", device=device)
 
-    if utils.is_wrapped_with_ddp(model):
+    if is_wrapped_with_ddp(model):
         pass
     # distributed data parallel run (ddp) (with apex support)
     elif get_rank() >= 0:
         assert isinstance(
             model, nn.Module
-        ), "No support for dixtributed KV model yet"
+        ), "Distributed training is not available for KV model"
 
-        local_rank = distributed_params.pop("local_rank", 0)
+        local_rank = distributed_params.pop("local_rank", 0) or 0
         device = f"cuda:{local_rank}"
-        model = utils.maybe_recursive_call(model, "to", device=device)
+        model = maybe_recursive_call(model, "to", device=device)
 
         syncbn = distributed_params.pop("syncbn", False)
 
@@ -300,14 +266,15 @@ def process_components(
     else:
         # apex issue https://github.com/deepset-ai/FARM/issues/210
         can_use_apex = (use_apex and torch.cuda.device_count() == 1) or (
-            torch.cuda.device_count() > 1
+            use_apex
+            and torch.cuda.device_count() > 1
             and distributed_params.get("opt_level", "O0") == "O1"
         )
 
         if can_use_apex:
             assert isinstance(
                 model, nn.Module
-            ), "No support for apex KV model yet"
+            ), "Apex training is not available for KV model"
 
             model, optimizer = initialize_apex(
                 model, optimizer, **distributed_params
@@ -318,19 +285,19 @@ def process_components(
                 model = nn.DataParallel(model)
             elif isinstance(model, dict):
                 model = {k: nn.DataParallel(v) for k, v in model.items()}
+            else:
+                raise NotImplementedError()
 
-    model: Model = utils.maybe_recursive_call(model, "to", device=device)
+    model: Model = maybe_recursive_call(model, "to", device=device)
 
     return model, criterion, optimizer, scheduler, device
 
 
 __all__ = [
     "get_rank",
-    "process_components",
     "get_distributed_mean",
     "is_apex_available",
     "assert_fp16_available",
-    "distributed_run",
     "is_slurm_available",
     "is_torch_distributed_initialized",
     "initialize_apex",
@@ -339,4 +306,5 @@ __all__ = [
     "get_distributed_params",
     "get_nn_from_ddp_module",
     "get_slurm_params",
+    "process_components",
 ]

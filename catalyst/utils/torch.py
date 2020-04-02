@@ -10,8 +10,9 @@ from torch import nn
 import torch.backends
 from torch.backends import cudnn
 
-from catalyst import utils
 from catalyst.utils.tools.typing import Device, Model, Optimizer
+
+from .dict import merge_dicts
 
 
 def get_optimizable_params(model_or_params):
@@ -173,15 +174,6 @@ def process_model_params(
 ) -> List[Union[torch.nn.Parameter, dict]]:
     """Gains model parameters for ``torch.optim.Optimizer``.
 
-    Examples:
-        >>> model = catalyst.contrib.models.segmentation.ResnetUnet()
-        >>> layerwise_params = collections.OrderedDict([
-        >>>     ("conv1.*", dict(lr=0.001, weight_decay=0.0003)),
-        >>>     ("conv.*", dict(lr=0.002))
-        >>> ])
-        >>> params = process_model_params(model, layerwise_params)
-        >>> optimizer = torch.optim.Adam(params, lr=0.0003)
-
     Args:
         model (torch.nn.Module): Model to process
         layerwise_params (Dict): Order-sensitive dict where
@@ -194,6 +186,17 @@ def process_model_params(
 
     Returns:
         iterable: parameters for an optimizer
+
+    Example::
+
+        >>> model = catalyst.contrib.models.segmentation.ResnetUnet()
+        >>> layerwise_params = collections.OrderedDict([
+        >>>     ("conv1.*", dict(lr=0.001, weight_decay=0.0003)),
+        >>>     ("conv.*", dict(lr=0.002))
+        >>> ])
+        >>> params = process_model_params(model, layerwise_params)
+        >>> optimizer = torch.optim.Adam(params, lr=0.0003)
+
     """
     params = list(model.named_parameters())
     layerwise_params = layerwise_params or collections.OrderedDict()
@@ -204,7 +207,7 @@ def process_model_params(
         for pattern, options_ in layerwise_params.items():
             if re.match(pattern, name) is not None:
                 # all new LR rules write on top of the old ones
-                options = utils.merge_dicts(options, options_)
+                options = merge_dicts(options, options_)
 
         # no bias decay from https://arxiv.org/abs/1812.01187
         if no_bias_weight_decay and name.endswith("bias"):
@@ -222,7 +225,8 @@ def process_model_params(
 def set_requires_grad(model: Model, requires_grad: bool):
     """Sets the ``requires_grad`` value for all model parameters.
 
-    Examples:
+    Example::
+
         >>> model = SimpleModel()
         >>> set_requires_grad(model, requires_grad=True)
 

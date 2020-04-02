@@ -10,7 +10,7 @@ from catalyst.dl.core import Experiment, Runner
 from catalyst.dl.experiment import ConfigExperiment
 from catalyst.dl.runner import SupervisedRunner
 
-warnings.simplefilter("always")
+warnings.simplefilter("once")
 
 
 class NeptuneRunner(Runner):

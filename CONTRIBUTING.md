@@ -31,6 +31,7 @@ If you are not familiar with creating a Pull Request, here are some guides:
 
 1. Install requirements
     ```
+    brew install bash # for MacOS users
     pip install -r requirements/requirements-dev.txt
     ```
 2. Break your work into small, single-purpose updates if possible.

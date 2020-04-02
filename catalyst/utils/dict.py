@@ -2,8 +2,6 @@ from typing import Any, Callable, Dict, List, Optional, Union
 import collections
 import copy
 
-import numpy as np
-
 
 def get_key_str(
     dictionary: dict, key: Optional[Union[str, List[str]]],
@@ -138,13 +136,6 @@ def merge_dicts(*dicts: dict) -> dict:
     return dict_
 
 
-def append_dict(dict1, dict2):
-    """Appends dict2 with the same keys as dict1 to dict1."""
-    for key in dict1.keys():
-        dict1[key] = np.concatenate((dict1[key], dict2[key]))
-    return dict1
-
-
 def flatten_dict(
     dictionary: Dict[str, Any], parent_key: str = "", separator: str = "/"
 ) -> "collections.OrderedDict":
@@ -189,3 +180,16 @@ def split_dict_to_subdicts(dct: Dict, prefixes: List, extra_key: str):
             if k.startswith(prefix)
         }
     return subdicts
+
+
+__all__ = [
+    "get_dictkey_auto_fn",
+    "get_key_all",
+    "get_key_dict",
+    "get_key_list",
+    "get_key_none",
+    "get_key_str",
+    "merge_dicts",
+    "flatten_dict",
+    "split_dict_to_subdicts",
+]

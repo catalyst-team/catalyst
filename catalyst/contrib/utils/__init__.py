@@ -14,13 +14,6 @@ from .confusion_matrix import (
     calculate_confusion_matrix_from_tensors,
 )
 from .dataset import create_dataset, split_dataset_train_test, create_dataframe
-from .dict import (
-    append_dict,
-    flatten_dict,
-    merge_dicts,
-    get_dictkey_auto_fn,
-    split_dict_to_subdicts,
-)
 from .image import (
     has_image_extension,
     imread,
