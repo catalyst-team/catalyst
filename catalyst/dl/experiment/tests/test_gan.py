@@ -41,7 +41,10 @@ def test_defaults():
         "generator_train_num": 5,
     }
     exp = GanExperiment(
-        model=model, loaders=loaders, state_kwargs=state_kwargs,
+        model=model,
+        loaders=loaders,
+        state_kwargs=state_kwargs,
+        valid_loader="train",
     )
 
     assert exp.get_callbacks("train").keys() == DEFAULT_CALLBACKS.keys()
@@ -93,6 +96,7 @@ def test_callback_wrapping():
         callbacks=input_callbacks,
         state_kwargs=state_kwargs,
         phase2callbacks=phase2callbacks,
+        valid_loader="train",
     )
 
     callbacks = exp.get_callbacks("train")

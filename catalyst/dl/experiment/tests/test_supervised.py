@@ -58,7 +58,9 @@ def test_defaults():
         ]
     )
 
-    exp = SupervisedExperiment(model=model, loaders=loaders)
+    exp = SupervisedExperiment(
+        model=model, loaders=loaders, valid_loader="train",
+    )
     _test_callbacks(test_callbacks, exp)
 
 
@@ -83,7 +85,9 @@ def test_defaults_verbose():
     loaders = OrderedDict()
     loaders["train"] = dataloader
 
-    exp = SupervisedExperiment(model=model, loaders=loaders, verbose=True)
+    exp = SupervisedExperiment(
+        model=model, loaders=loaders, verbose=True, valid_loader="train",
+    )
     _test_callbacks(test_callbacks, exp)
 
 
@@ -108,7 +112,9 @@ def test_defaults_check():
     loaders = OrderedDict()
     loaders["train"] = dataloader
 
-    exp = SupervisedExperiment(model=model, loaders=loaders, check_run=True)
+    exp = SupervisedExperiment(
+        model=model, loaders=loaders, check_run=True, valid_loader="train",
+    )
     _test_callbacks(test_callbacks, exp)
 
 
@@ -142,6 +148,7 @@ def test_criterion():
         criterion=criterion,
         optimizer=optimizer,
         scheduler=scheduler,
+        valid_loader="train",
     )
     _test_callbacks(test_callbacks, exp)
 
@@ -176,6 +183,7 @@ def test_optimizer():
         criterion=criterion,
         optimizer=optimizer,
         scheduler=scheduler,
+        valid_loader="train",
     )
     _test_callbacks(test_callbacks, exp)
 
@@ -205,7 +213,11 @@ def test_scheduler():
     loaders["train"] = dataloader
 
     exp = SupervisedExperiment(
-        model=model, loaders=loaders, optimizer=optimizer, scheduler=scheduler,
+        model=model,
+        loaders=loaders,
+        optimizer=optimizer,
+        scheduler=scheduler,
+        valid_loader="train",
     )
     _test_callbacks(test_callbacks, exp)
 
@@ -246,6 +258,7 @@ def test_all():
         scheduler=scheduler,
         verbose=True,
         check_run=True,
+        valid_loader="train",
     )
     _test_callbacks(test_callbacks, exp)
 
@@ -269,6 +282,7 @@ def test_infer_defaults():
         criterion=criterion,
         optimizer=optimizer,
         scheduler=scheduler,
+        stage="infer",
     )
     _test_callbacks(test_callbacks, exp, "infer")
 
@@ -300,5 +314,6 @@ def test_infer_all():
         scheduler=scheduler,
         verbose=True,
         check_run=True,
+        stage="infer",
     )
     _test_callbacks(test_callbacks, exp, "infer")

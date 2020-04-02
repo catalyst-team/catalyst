@@ -78,7 +78,7 @@ def get_loaders_from_params(
     initial_seed: int = 42,
     datasets_fn: Callable = None,
     **data_params,
-) -> OrderedDict[str, DataLoader]:
+) -> "OrderedDict[str, DataLoader]":
     """
     Creates pytorch dataloaders from datasets and additional parameters.
 

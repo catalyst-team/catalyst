@@ -6,6 +6,7 @@ from torch.utils.data import DataLoader, Dataset
 
 from catalyst.core import utils
 from catalyst.dl import Callback, Experiment
+from catalyst.utils.tools.settings import STAGE_TRAIN_PREFIX
 from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
@@ -80,20 +81,22 @@ class BaseExperiment(Experiment):
         ), "Please specify the data sources"
         if datasets is None:
             assert loaders is not None
-            assert valid_loader in loaders, (
-                "The validation loader must be present "
-                "in the loaders used during experiment"
-            )
+            if stage.startswith(STAGE_TRAIN_PREFIX):
+                assert valid_loader in loaders, (
+                    "The validation loader must be present "
+                    "in the loaders used during experiment"
+                )
         if loaders is None:
             assert datasets is not None
-            assert valid_loader in datasets, (
-                "The validation loader must be present "
-                "in the loaders used during experiment"
-            )
+            if stage.startswith(STAGE_TRAIN_PREFIX):
+                assert valid_loader in datasets, (
+                    "The validation loader must be present "
+                    "in the loaders used during experiment"
+                )
         self._model = model
         self._datasets = datasets
         self._loaders = loaders
-        self._callbacks = callbacks
+        self._callbacks = callbacks or OrderedDict()
 
         self._criterion = criterion
         self._optimizer = optimizer
