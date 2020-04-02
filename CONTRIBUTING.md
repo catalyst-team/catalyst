@@ -29,17 +29,18 @@ If you are not familiar with creating a Pull Request, here are some guides:
 
 ##### Contribution best practices
 
-1. Install `catalyst-codestyle`
+1. Install requirements
     ```
     brew install bash # for MacOS users
-    pip install -U catalyst-codestyle
+    pip install -r requirements/requirements-dev.txt
     ```
-1. Break your work into small, single-purpose updates if possible.
+2. Break your work into small, single-purpose updates if possible.
 It's much harder to merge in a large change with a lot of disjoint features.
-2. Submit the update as a GitHub pull request against the `master` branch.
-3. Make sure that you provide docstrings for all your new methods and classes
-4. Make sure that your code passes the unit tests.
+3. Submit the update as a GitHub pull request against the `master` branch.
+4. Make sure that you provide docstrings for all your new methods and classes.
 5. Add new unit tests for your code.
+6. Check the [codestyle](#codestyle)
+7. Make sure that your code [passes the unit tests](#unit-tests)
 
 #### Codestyle
 
@@ -50,6 +51,14 @@ catalyst-make-codestyle && catalyst-check-codestyle
 ```
 
 Make sure to have your python packages complied with `requirements/requirements.txt` and `requirements/requirements-dev.txt` to get codestyle run clean.
+
+#### Unit tests
+
+Do not forget to check that your code passes the unit tests
+
+```bash
+pytest .
+```
 
 ## Documentation
 

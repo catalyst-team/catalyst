@@ -10,9 +10,7 @@ def _get_default_classwise_iou_args(num_classes: int) -> List[int]:
 
 
 class IouCallback(MetricCallback):
-    """
-    IoU (Jaccard) metric callback.
-    """
+    """IoU (Jaccard) metric callback."""
 
     def __init__(
         self,
@@ -26,14 +24,14 @@ class IouCallback(MetricCallback):
         """
         Args:
             input_key (str): input key to use for iou calculation
-                specifies our ``y_true``.
+                specifies our ``y_true``
             output_key (str): output key to use for iou calculation;
                 specifies our ``y_pred``
             prefix (str): key to store in logs
             eps (float): epsilon to avoid zero division
             threshold (float): threshold for outputs binarization
             activation (str): An torch.nn activation applied to the outputs.
-                Must be one of ['none', 'Sigmoid', 'Softmax2d']
+                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
         """
         super().__init__(
             prefix=prefix,
@@ -50,9 +48,7 @@ JaccardCallback = IouCallback
 
 
 class ClasswiseIouCallback(MultiMetricCallback):
-    """
-    Classwise IoU (Jaccard) metric callback.
-    """
+    """Classwise IoU (Jaccard) metric callback."""
 
     def __init__(
         self,
@@ -68,7 +64,7 @@ class ClasswiseIouCallback(MultiMetricCallback):
         """
         Args:
             input_key (str): input key to use for iou calculation
-                specifies our ``y_true``.
+                specifies our ``y_true``
             output_key (str): output key to use for iou calculation;
                 specifies our ``y_pred``
             prefix (str): key to store in logs (will be prefix_class_name)
@@ -79,7 +75,7 @@ class ClasswiseIouCallback(MultiMetricCallback):
             eps (float): epsilon to avoid zero division
             threshold (float): threshold for outputs binarization
             activation (str): An torch.nn activation applied to the outputs.
-                Must be one of ['none', 'Sigmoid', 'Softmax2d']
+                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
         """
         assert (
             classes is not None or num_classes is not None

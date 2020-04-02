@@ -11,6 +11,8 @@ from catalyst.utils import meters
 
 
 class ConfusionMatrixCallback(Callback):
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(
         self,
         input_key: str = "targets",
@@ -22,6 +24,10 @@ class ConfusionMatrixCallback(Callback):
         plot_params: Dict = None,
         tensorboard_callback_name: str = "_tensorboard",
     ):
+        """
+        Args:
+            @TODO: Docs. Contribution is welcome
+        """
         super().__init__(CallbackOrder.Metric, CallbackNode.All)
         self.prefix = prefix
         self.output_key = output_key
@@ -84,15 +90,30 @@ class ConfusionMatrixCallback(Callback):
         logger.add_image(f"{self.prefix}/epoch", fig, global_step=epoch)
 
     def on_loader_start(self, state: State):
+        """Loader start hook.
+
+        Args:
+            state (State): current state
+        """
         self._reset_stats()
 
     def on_batch_end(self, state: State):
+        """Batch end hook.
+
+        Args:
+            state (State): current state
+        """
         self._add_to_stats(
             state.batch_out[self.output_key].detach(),
             state.batch_in[self.input_key].detach(),
         )
 
     def on_loader_end(self, state: State):
+        """Loader end hook.
+
+        Args:
+            state (State): current state
+        """
         class_names = self.class_names or [
             str(i) for i in range(self.num_classes)
         ]

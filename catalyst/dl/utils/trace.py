@@ -12,8 +12,7 @@ from catalyst.utils.tools.typing import Device, Model
 
 
 class _ForwardOverrideModel(nn.Module):
-    """
-    Model that calls specified method instead of forward
+    """Model that calls specified method instead of forward.
 
     (Workaround, single method tracing is not supported)
     """
@@ -28,8 +27,7 @@ class _ForwardOverrideModel(nn.Module):
 
 
 class _TracingModelWrapper(nn.Module):
-    """
-    Wrapper that traces model with batch instead of calling it
+    """Wrapper that traces model with batch instead of calling it.
 
     (Workaround, to use native model batch handler)
     """
@@ -77,8 +75,7 @@ def trace_model(
     device: Device = "cpu",
     predict_params: dict = None,
 ) -> ScriptModule:
-    """
-    Traces model using runner and batch
+    """Traces model using runner and batch.
 
     Args:
         model: Model to trace
@@ -139,8 +136,7 @@ def get_trace_name(
     opt_level: str = None,
     additional_string: str = None,
 ):
-    """
-    Creates a file name for the traced model.
+    """Creates a file name for the traced model.
 
     Args:
         method_name (str): model's method name
@@ -173,8 +169,7 @@ def load_traced_model(
     device: Device = "cpu",
     opt_level: str = None,
 ) -> ScriptModule:
-    """
-    Loads a traced model
+    """Loads a traced model.
 
     Args:
         model_path: Path to traced model

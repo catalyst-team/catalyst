@@ -5,19 +5,19 @@ from catalyst.utils import metrics
 
 
 def _get_default_accuracy_args(num_classes: int) -> List[int]:
-    """
-    Calculate list params for Accuracy@k and mAP@k
-    Args:
-        num_classes (int): number of classes
-
-    Returns:
-        iterable: array of accuracy arguments
+    """Calculate list params for ``Accuracy@k`` and ``mAP@k``.
 
     Examples:
         >>> _get_default_accuracy_args(num_classes=4)
         >>> [1, 3]
         >>> _get_default_accuracy_args(num_classes=8)
         >>> [1, 3, 5]
+
+    Args:
+        num_classes (int): number of classes
+
+    Returns:
+        iterable: array of accuracy arguments
     """
     result = [1]
 
@@ -33,8 +33,7 @@ def _get_default_accuracy_args(num_classes: int) -> List[int]:
 
 
 class AccuracyCallback(MultiMetricCallback):
-    """
-    Accuracy metric callback.
+    """Accuracy metric callback.
 
     It can be used either for
         - multi-class task:
@@ -50,9 +49,9 @@ class AccuracyCallback(MultiMetricCallback):
             -input_key, output_key point on tensor: batch_size x num_classes.
             -output_key point on a tensor with binary vectors.
 
-
-    There is no need to choose a type (multi-class/multi label).
-    An appropriate type will be chosen automatically via shape of tensors.
+    .. note::
+        There is no need to choose a type (multi-class/multi label).
+        An appropriate type will be chosen automatically via shape of tensors.
     """
 
     def __init__(
@@ -68,11 +67,11 @@ class AccuracyCallback(MultiMetricCallback):
         """
         Args:
             input_key (str): input key to use for accuracy calculation;
-                specifies our `y_true`.
+                specifies our `y_true`
             output_key (str): output key to use for accuracy calculation;
-                specifies our `y_pred`.
+                specifies our `y_pred`
             prefix (str): key for the metric's name
-            accuracy_args (List[int]): specifies which accuracy@K to log.
+            accuracy_args (List[int]): specifies which accuracy@K to log:
                 [1] - accuracy
                 [1, 3] - accuracy at 1 and 3
                 [1, 3, 5] - accuracy at 1, 3 and 5
@@ -80,7 +79,7 @@ class AccuracyCallback(MultiMetricCallback):
                 if ``accuracy_args`` is None
             threshold (float): threshold for outputs binarization.
             activation (str): An torch.nn activation applied to the outputs.
-                Must be one of ["none", "Sigmoid", "Softmax"].
+                Must be one of ``"none"``, ``"Sigmoid"``, or ``"Softmax"``
         """
         list_args = accuracy_args or _get_default_accuracy_args(num_classes)
 
@@ -97,9 +96,7 @@ class AccuracyCallback(MultiMetricCallback):
 
 
 class MapKCallback(MultiMetricCallback):
-    """
-    mAP@k metric callback.
-    """
+    """mAP@k metric callback."""
 
     def __init__(
         self,
@@ -113,10 +110,10 @@ class MapKCallback(MultiMetricCallback):
         Args:
             input_key (str): input key to use for
                 calculation mean average accuracy at k;
-                specifies our `y_true`.
+                specifies our `y_true`
             output_key (str): output key to use for
                 calculation mean average accuracy at k;
-                specifies our `y_pred`.
+                specifies our `y_pred`
             prefix (str): key for the metric's name
             map_args (List[int]): specifies which map@K to log.
                 [1] - map@1

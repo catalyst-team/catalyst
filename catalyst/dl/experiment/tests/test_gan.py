@@ -51,9 +51,7 @@ def test_defaults():
 
 
 def test_callback_wrapping():
-    """
-    Test on callback wrapping for GanExperiment class.
-    """
+    """Test on callback wrapping for GanExperiment class."""
     model = torch.nn.Module()
     dataset = torch.utils.data.Dataset()
     dataloader = torch.utils.data.DataLoader(dataset)

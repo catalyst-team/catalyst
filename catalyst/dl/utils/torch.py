@@ -17,8 +17,7 @@ def get_loader(
     shuffle: bool = False,
     drop_last: bool = False,
 ):
-    """
-    Creates a DataLoader from given source and its open/transform params
+    """Creates a DataLoader from given source and its open/transform params.
 
     Args:
         data_source (Iterable[dict]): and iterable containing your

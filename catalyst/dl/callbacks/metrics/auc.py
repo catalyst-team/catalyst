@@ -5,9 +5,10 @@ from catalyst.utils import meters
 
 
 class AUCCallback(MeterMetricsCallback):
-    """
-    Calculates the AUC  per class for each loader.
-    Currently, supports binary and multi-label cases.
+    """Calculates the AUC  per class for each loader.
+
+    .. note::
+        Currently, supports binary and multi-label cases.
     """
 
     def __init__(
@@ -22,15 +23,15 @@ class AUCCallback(MeterMetricsCallback):
         """
         Args:
             input_key (str): input key to use for auc calculation
-                specifies our ``y_true``.
+                specifies our ``y_true``
             output_key (str): output key to use for auc calculation;
                 specifies our ``y_pred``
             prefix (str): name to display for auc when printing
             class_names (List[str]): class names to display in the logs.
-                If None, defaults to indices for each class, starting from 0.
+                If None, defaults to indices for each class, starting from 0
             num_classes (int): Number of classes; must be > 1
             activation (str): An torch.nn activation applied to the outputs.
-                Must be one of ['none', 'Sigmoid', 'Softmax2d']
+                Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax2d'``
         """
         num_classes = num_classes if class_names is None else len(class_names)
 

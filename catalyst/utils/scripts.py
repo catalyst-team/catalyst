@@ -13,6 +13,9 @@ from .misc import get_utcnow_time
 
 
 def import_module(expdir: pathlib.Path):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     # @TODO: better PYTHONPATH handling
     if not isinstance(expdir, pathlib.Path):
         expdir = pathlib.Path(expdir)
@@ -36,6 +39,9 @@ def _tricky_dir_copy(dir_from, dir_to):
 
 
 def dump_code(expdir, logdir):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     expdir = expdir[:-1] if expdir.endswith("/") else expdir
     new_src_dir = f"code"
 
@@ -51,6 +57,9 @@ def dump_code(expdir, logdir):
 
 
 def dump_python_files(src, dst):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     py_files = list(src.glob("*.py"))
     ipynb_files = list(src.glob("*.ipynb"))
 
@@ -61,6 +70,9 @@ def dump_python_files(src, dst):
 
 
 def import_experiment_and_runner(expdir: pathlib.Path):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     if not isinstance(expdir, pathlib.Path):
         expdir = pathlib.Path(expdir)
     m = import_module(expdir)
@@ -69,6 +81,9 @@ def import_experiment_and_runner(expdir: pathlib.Path):
 
 
 def dump_base_experiment_code(src: pathlib.Path, dst: pathlib.Path):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     utcnow = get_utcnow_time()
     dst_ = dst.joinpath("code")
     dst = dst.joinpath(f"code-{utcnow}") if dst_.exists() else dst_

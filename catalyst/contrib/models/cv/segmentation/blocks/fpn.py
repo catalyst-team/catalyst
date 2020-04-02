@@ -6,6 +6,8 @@ from .core import DecoderBlock
 
 
 class DecoderFPNBlock(DecoderBlock):
+    """@TODO: Docs (add description, `Example`). Contribution is welcome."""
+
     def __init__(
         self,
         in_channels: int,
@@ -18,6 +20,10 @@ class DecoderFPNBlock(DecoderBlock):
         aggregate_first: bool = False,
         **kwargs
     ):
+        """
+        Args:
+            @TODO: Docs. Contribution is welcome.
+        """
         self.upsample_scale = upsample_scale
         self.interpolation_mode = interpolation_mode
         self.align_corners = align_corners
@@ -32,6 +38,7 @@ class DecoderFPNBlock(DecoderBlock):
     def forward(
         self, bottom: torch.Tensor, left: torch.Tensor
     ) -> torch.Tensor:
+        """Forward call."""
         x = F.interpolate(
             bottom,
             scale_factor=self.upsample_scale,
@@ -44,6 +51,8 @@ class DecoderFPNBlock(DecoderBlock):
 
 
 class Conv3x3GNReLU(nn.Module):
+    """@TODO: Docs (add description, `Example`). Contribution is welcome."""
+
     def __init__(
         self,
         in_channels,
@@ -53,6 +62,10 @@ class Conv3x3GNReLU(nn.Module):
         interpolation_mode: str = "bilinear",
         align_corners: bool = True,
     ):
+        """
+        Args:
+            @TODO: Docs. Contribution is welcome.
+        """
         super().__init__()
         self.upsample = upsample
         self.upsample_scale = upsample_scale
@@ -72,7 +85,8 @@ class Conv3x3GNReLU(nn.Module):
             nn.ReLU(inplace=True),
         )
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward call."""
         x = self.block(x)
         if self.upsample:
             x = F.interpolate(
@@ -85,9 +99,12 @@ class Conv3x3GNReLU(nn.Module):
 
 
 class SegmentationBlock(nn.Module):
+    """@TODO: Docs (add description, `Example`). Contribution is welcome."""
+
     def __init__(
         self, in_channels: int, out_channels: int, num_upsamples: int = 0
     ):
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__()
 
         blocks = [
@@ -104,5 +121,6 @@ class SegmentationBlock(nn.Module):
 
         self.block = nn.Sequential(*blocks)
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward call."""
         return self.block(x)

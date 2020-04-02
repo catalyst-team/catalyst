@@ -6,12 +6,13 @@ from catalyst.core import CallbackNode
 
 
 def sort_callbacks_by_order(
-    callbacks: Union[list, Dict, OrderedDict]
+    callbacks: Union[list, OrderedDict]
 ) -> OrderedDict:
-    """
-    Creates an sequence of callbacks and sort them
+    """Creates an sequence of callbacks and sort them.
+
     Args:
         callbacks: either list of callbacks or ordered dict
+
     Returns:
         sequence of callbacks sorted by ``callback order``
     """

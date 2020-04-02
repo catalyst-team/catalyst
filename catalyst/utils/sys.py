@@ -14,8 +14,8 @@ from .misc import get_utcnow_time
 
 
 def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:
-    """
-    Decode bytes values in the dictionary to UTF-8
+    """Decode bytes values in the dictionary to UTF-8.
+
     Args:
         dictionary: a dict
 
@@ -30,8 +30,7 @@ def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:
 
 
 def get_environment_vars() -> Dict[str, Any]:
-    """
-    Creates a dictionary with environment variables
+    """Creates a dictionary with environment variables.
 
     Returns:
         dict: environment variables
@@ -83,6 +82,9 @@ def get_environment_vars() -> Dict[str, Any]:
 
 
 def list_pip_packages() -> str:
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     result = ""
     with open(os.devnull, "w") as devnull:
         try:
@@ -100,6 +102,9 @@ def list_pip_packages() -> str:
 
 
 def list_conda_packages() -> str:
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     result = ""
     conda_meta_path = Path(sys.prefix) / "conda-meta"
     if conda_meta_path.exists():
@@ -128,7 +133,7 @@ def dump_environment(
     experiment_config: Dict, logdir: str, configs_path: List[str] = None,
 ) -> None:
     """
-    Saves config, environment variables and package list in JSON into logdir
+    Saves config, environment variables and package list in JSON into logdir.
 
     Args:
         experiment_config (dict): experiment config

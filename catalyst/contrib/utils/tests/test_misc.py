@@ -4,6 +4,8 @@ from catalyst import utils
 
 
 def test_get_fn_argsnames():
+    """@TODO: Docs. Contribution is welcome."""
+
     class Net1(nn.Module):
         def forward(self, x):
             return x
@@ -52,6 +54,8 @@ def test_get_fn_argsnames():
 
 
 def test_fn_ends_with_pass():
+    """@TODO: Docs. Contribution is welcome."""
+
     def useless_fn():
         pass
 
@@ -63,6 +67,8 @@ def test_fn_ends_with_pass():
 
 
 def test_fn_ends_with_pass_on_callbacks():
+    """@TODO: Docs. Contribution is welcome."""
+
     def test_fn_ends_with_pass_on_callback(
         callback, events,
     ):

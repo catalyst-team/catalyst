@@ -17,8 +17,7 @@ yaml.add_representer(
 
 
 class Wizard:
-    """
-    Class for Catalyst Config API Wizard.
+    """Class for Catalyst Config API Wizard.
 
     The instance of this class will be created and called from cli command:
     ``catalyst-dl init --interactive``.
@@ -72,9 +71,7 @@ class Wizard:
 
     @staticmethod
     def __sep(step_name: str = None):
-        """
-        Separator between Wizard sections
-        """
+        """Separator between Wizard sections."""
         if step_name is None:
             print("\n" + "=" * 100 + "\n")
         else:
@@ -104,7 +101,7 @@ class Wizard:
     def __sorted_for_user(self, key):
         """
         Here we put user's modules of specific part of pipeline on top of
-        modules predefined in Catalyst
+        modules predefined in Catalyst.
         """
         modules = registry.__dict__[key].all()
         user_modules = list(set(modules) - set(self.__before_export[key]))
@@ -112,17 +109,13 @@ class Wizard:
         return user_modules + sorted(m for m in modules if m[0].isupper())
 
     def _preview(self):
-        """
-        Showing user final config in YAML format
-        """
+        """Showing user final config in YAML format."""
         self.__sep()
         print(yaml.dump(self._cfg, default_flow_style=False))
         self.__sep()
 
     def _dump_step(self):
-        """
-        Asking where and saving final config converted into YAML
-        """
+        """Asking where and saving final config converted into YAML."""
         path = prompt("Enter config path: ", default="./configs/config.yml")
         self.__res(path)
         path = pathlib.Path(path)
@@ -134,7 +127,7 @@ class Wizard:
         """
         Stages could have common params, in that case we will ask user if it
         should be overriden for specific step. If not - we'll just skip entire
-        params section for stage
+        params section for stage.
         """
         common = None
         if param_name in self._cfg["stages"]:
@@ -407,9 +400,7 @@ class Wizard:
         self.__res(f"{pipeline} cloned to {self.pipeline_path}")
 
     def run(self):
-        """
-        Walks user through predefined wizard steps
-        """
+        """Walks user through predefined wizard steps."""
         self._pipeline_step()
         self._args_step()
         self._model_step()
@@ -428,8 +419,6 @@ class Wizard:
 
 
 def run_wizard():
-    """
-    Method to initialize and run wizard
-    """
+    """Method to initialize and run wizard."""
     wiz = Wizard()
     wiz.run()

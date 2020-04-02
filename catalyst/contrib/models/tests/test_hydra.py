@@ -30,6 +30,7 @@ def _check_named_parameters(left, right):
 
 
 def test_config1():
+    """@TODO: Docs. Contribution is welcome."""
     config1 = {
         "encoder_params": {
             "hiddens": [16, 16],
@@ -265,6 +266,7 @@ def test_config1():
 
 
 def test_config2():
+    """@TODO: Docs. Contribution is welcome."""
     config2 = {
         "in_features": 16,
         "heads_params": {
@@ -430,6 +432,7 @@ def test_config2():
 
 
 def test_config3():
+    """@TODO: Docs. Contribution is welcome."""
     config_path = Path(__file__).absolute().parent / "config3.yml"
     config3 = utils.load_config(config_path)["model_params"]
 
@@ -628,6 +631,7 @@ def test_config3():
 
 
 def test_config4():
+    """@TODO: Docs. Contribution is welcome."""
     config_path = Path(__file__).absolute().parent / "config4.yml"
     config4 = utils.load_config(config_path)["model_params"]
 

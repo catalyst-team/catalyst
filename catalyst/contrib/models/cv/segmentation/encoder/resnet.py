@@ -35,6 +35,16 @@ RESNET_PARAMS = {
 
 
 class ResnetEncoder(EncoderSpec):
+    """Specifies ResNet encoders for segmentation network.
+
+    Examples:
+        >>> encoders = ResnetEncoder(
+        >>>    arch="resnet18",
+        >>>    pretrained=False,
+        >>>    state_dict="/model/path/resnet18-5c106cde.pth"
+        >>> )
+    """
+
     def __init__(
         self,
         arch: str = "resnet18",
@@ -44,7 +54,6 @@ class ResnetEncoder(EncoderSpec):
         state_dict: Union[dict, str, Path] = None,
     ):
         """
-        Specifies encoders for segmentation network
         Args:
             arch (str): Name for resnet. Have to be one of
                 resnet18, resnet34, resnet50, resnet101, resnet152
@@ -56,12 +65,6 @@ class ResnetEncoder(EncoderSpec):
                 If None, calculates as ``[1, 2, 3, 4]``
             state_dict (Union[dict, str, Path]): Path to ``torch.Model``
                 or a dict containing parameters and persistent buffers.
-        Examples:
-            >>> encoders = ResnetEncoder(
-            >>>    arch="resnet18",
-            >>>    pretrained=False,
-            >>>    state_dict="/model/path/resnet18-5c106cde.pth"
-            >>> )
         """
         super().__init__()
 
@@ -106,13 +109,16 @@ class ResnetEncoder(EncoderSpec):
 
     @property
     def out_channels(self) -> List[int]:
+        """Number of channels produced by the block."""
         return self._channels
 
     @property
     def out_strides(self) -> List[int]:
+        """@TODO: Docs. Contribution is welcome."""
         return self._strides
 
     def forward(self, x: torch.Tensor) -> List[torch.Tensor]:
+        """Forward call."""
         output = []
         for i, layer in enumerate(self._layers):
             layer_output = layer(x)

@@ -5,12 +5,13 @@ from catalyst.utils.meters.ppv_tpr_f1_meter import f1score, precision, recall
 
 
 def precision_recall_f1(tp, fp, fn):
-    """
-    Calculates precision, recall, and f1 score.
+    """Calculates precision, recall, and f1 score.
+
     Args:
         tp: number of true positives
         fp: number of false positives
         fn: number of false negatives
+
     Returns:
         precision value (0-1), recall_value (0-1), f1score (0-1)
     """
@@ -21,9 +22,7 @@ def precision_recall_f1(tp, fp, fn):
 
 
 def test_precision_recall_f1score():
-    """
-    Sanity checks for the `precision`, `recall`, `f1score` functions.
-    """
+    """Sanity checks for the `precision`, `recall`, `f1score` functions."""
     # case 1
     tp, fp, fn = (10, 0, 0)
     ppv, tpr, f1 = precision_recall_f1(tp, fp, fn)
@@ -48,27 +47,21 @@ def test_precision_recall_f1score():
 
 
 def create_dummy_tensors_single():
-    """
-    Binary: 1 actual, 1 predicted (tp: 1, fp: 0, fn: 0)
-    """
+    """Binary: 1 actual, 1 predicted (tp: 1, fp: 0, fn: 0)."""
     label = torch.tensor([1])
     pred = torch.tensor([1])
     return (label, pred)
 
 
 def create_dummy_tensors_batched(batch_size=16):
-    """
-    Binary: 1 actual, 1 predicted (tp: 1, fp: 0, fn: 0)
-    """
+    """Binary: 1 actual, 1 predicted (tp: 1, fp: 0, fn: 0)."""
     label = torch.ones((batch_size, 1))
     pred = torch.ones((batch_size, 1))
     return (label, pred)
 
 
 def create_dummy_tensors_seg(batch_size=16, channels=1):
-    """
-    Binary: 1 actual, 1 predicted (tp: 1, fp: 0, fn: 0)
-    """
+    """Binary: 1 actual, 1 predicted (tp: 1, fp: 0, fn: 0)."""
     base_shape = (channels, 15, 15)
     label = torch.ones((batch_size,) + base_shape)
     pred = torch.ones((batch_size,) + base_shape)

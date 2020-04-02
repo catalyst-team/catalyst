@@ -21,8 +21,7 @@ def trace_model_from_checkpoint(
     opt_level: str = None,
     device: Device = "cpu",
 ):
-    """
-    Traces model using created experiment and runner.
+    """Traces model using created experiment and runner.
 
     Args:
         logdir (Union[str, Path]): Path to Catalyst logdir with model
@@ -86,9 +85,7 @@ def trace_model_from_checkpoint(
 
 
 def build_args(parser: ArgumentParser):
-    """
-    Builds the command line parameters
-    """
+    """Builds the command line parameters."""
     parser.add_argument("logdir", type=Path, help="Path to model logdir")
     parser.add_argument(
         "--method", "-m", default="forward", help="Model method to trace"
@@ -150,9 +147,7 @@ def build_args(parser: ArgumentParser):
 
 
 def parse_args():
-    """
-    Parses the command line arguments for the main method
-    """
+    """Parses the command line arguments for the main method."""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args = parser.parse_args()
@@ -160,9 +155,7 @@ def parse_args():
 
 
 def main(args, _):
-    """
-    Main method for `catalyst-dl trace`
-    """
+    """Main method for ``catalyst-dl trace``."""
     logdir: Path = args.logdir
     method_name: str = args.method
     checkpoint_name: str = args.checkpoint

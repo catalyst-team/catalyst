@@ -61,15 +61,12 @@ class _Runner(ABC):
 
     @property
     def model(self) -> Model:
-        """
-        Returns the runner's model instance
-        """
+        """Returns the runner's model instance."""
         return self._model
 
     @model.setter
     def model(self, value: Union[Model, Dict[str, Model]]):
-        """
-        Setter for the runner's model, useful for experiment tracing.
+        """Setter for the runner's model, useful for experiment tracing.
 
         Args:
             value (Union[Model, Dict[str, Model]]): new model.
@@ -103,15 +100,12 @@ class _Runner(ABC):
 
     @property
     def device(self) -> Device:
-        """
-        Returns the runner's device instance
-        """
+        """Returns the runner's device instance."""
         return self._device
 
     @device.setter
     def device(self, value: Device):
-        """
-        Setter for the runner's device
+        """Setter for the runner's device.
 
         Args:
             value (Device): new torch device.
@@ -130,7 +124,7 @@ class _Runner(ABC):
                 self._model, "to", device=self._device
             )
 
-    def _init(self):
+    def _init(self) -> None:
         """
         Inner method for children's classes
         to specify types for Runners' Experiment and State.
@@ -153,8 +147,7 @@ class _Runner(ABC):
     def _get_experiment_components(
         self, stage: str = None
     ) -> Tuple[Model, Criterion, Optimizer, Scheduler, Device]:
-        """
-        Inner method for `Experiment` components preparation.
+        """Inner method for `Experiment` components preparation.
 
         Check available torch device, takes model from the experiment
         and creates stage-specified criterion, optimizer, scheduler for it.
@@ -202,8 +195,7 @@ class _Runner(ABC):
         device: Device,
         callbacks: Dict[str, Callback],
     ) -> State:
-        """
-        Inner method for `State` preparation.
+        """Inner method for `State` preparation.
 
         Migrates State parameters from previous stage if possible,
         create new State for current stage.
@@ -267,8 +259,7 @@ class _Runner(ABC):
         return state
 
     def _get_callbacks(self, stage: str) -> Dict[str, Callback]:
-        """
-        Inner method for `Callbacks` preparation.
+        """Inner method for `Callbacks` preparation.
 
         Takes callbacks from the Experiment
         and filters them for distributed master/worker cases.
@@ -286,9 +277,8 @@ class _Runner(ABC):
         callbacks = utils.sort_callbacks_by_order(callbacks)
         return callbacks
 
-    def _prepare_for_stage(self, stage: str):
-        """
-        Inner method to prepare `Runner` for the specified stage.
+    def _prepare_for_stage(self, stage: str) -> None:
+        """Inner method to prepare `Runner` for the specified stage.
 
         Sets `Experiment` initial seed.
         Prepares experiment components with `self._get_experiment_components`.
@@ -322,9 +312,8 @@ class _Runner(ABC):
             callbacks=callbacks,
         )
 
-    def _prepare_for_epoch(self, stage: str, epoch: int):
-        """
-        Inner method to prepare `Runner` for the specified stage and epoch.
+    def _prepare_for_epoch(self, stage: str, epoch: int) -> None:
+        """Inner method to prepare `Runner` for the specified stage and epoch.
 
         Args:
             stage (str): stage name of interest,
@@ -333,9 +322,8 @@ class _Runner(ABC):
         """
         pass
 
-    def _run_event(self, event: str):
-        """
-        Inner method to run specified event on Runners' callbacks.
+    def _run_event(self, event: str) -> None:
+        """Inner method to run specified event on Runners' callbacks.
 
         Args:
             event(str): event name to run on callbacks.
@@ -351,8 +339,7 @@ class _Runner(ABC):
     def _batch2device(
         self, batch: Mapping[str, Any], device: Device,
     ) -> Mapping[str, Any]:
-        """
-        Inner method to transfer incoming data batches to Runners' device.
+        """Inner method to transfer incoming data batches to Runners' device.
 
         Args:
             batch (Mapping[str, Any]): dictionary with data batches
@@ -366,9 +353,8 @@ class _Runner(ABC):
         output = utils.any2device(batch, device)
         return output
 
-    def _run_train_step(self, batch: Mapping[str, Any]):
-        """
-        Inner method to run train step on specified data batch.
+    def _run_train_step(self, batch: Mapping[str, Any]) -> None:
+        """Inner method to run train step on specified data batch.
 
         Args:
             batch (Mapping[str, Any]): dictionary with data batches
@@ -381,8 +367,7 @@ class _Runner(ABC):
     def predict_batch(
         self, batch: Mapping[str, Any], **kwargs
     ) -> Mapping[str, Any]:
-        """
-        Run model inference on specified data batch.
+        """Run model inference on specified data batch.
 
         .. warning::
             You should not override this method. If you need specific model
@@ -400,7 +385,7 @@ class _Runner(ABC):
         output = self.forward(batch, **kwargs)
         return output
 
-    def _run_batch(self, batch: Mapping[str, Any]):
+    def _run_batch(self, batch: Mapping[str, Any]) -> None:
         """
         Inner method to run train step on specified data batch,
         with batch callbacks events.
@@ -417,7 +402,7 @@ class _Runner(ABC):
         self._run_train_step(batch=batch)
         self._run_event("on_batch_end")
 
-    def _run_loader(self, loader: DataLoader):
+    def _run_loader(self, loader: DataLoader) -> None:
         """
         Inner method to pass whole DataLoader through Runner,
         with loader callbacks events.
@@ -442,7 +427,7 @@ class _Runner(ABC):
                 self.state.need_early_stop = False
                 break
 
-    def _run_epoch(self, stage: str, epoch: int):
+    def _run_epoch(self, stage: str, epoch: int) -> None:
         """
         Inner method to run epoch on Runner,
         with epoch callbacks events.
@@ -491,7 +476,7 @@ class _Runner(ABC):
                 self._run_loader(loader)
             self._run_event("on_loader_end")
 
-    def _run_stage(self, stage: str):
+    def _run_stage(self, stage: str) -> None:
         """
         Inner method to run stage on Runner,
         with stage callbacks events.
@@ -522,9 +507,8 @@ class _Runner(ABC):
             state.epoch += 1
         self._run_event("on_stage_end")
 
-    def run_experiment(self, experiment: _Experiment = None):
-        """
-        Starts the experiment.
+    def run_experiment(self, experiment: _Experiment = None) -> "_Runner":
+        """Starts the experiment.
 
         Args:
             experiment (_Experiment): Experiment instance to use for Runner.

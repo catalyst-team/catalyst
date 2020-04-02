@@ -9,15 +9,17 @@ from catalyst.dl import CriterionCallback, State
 
 class CutmixCallback(CriterionCallback):
     """
-    Callback to do Cutmix augmentation.
+    Callback to do Cutmix augmentation that has been proposed in
+    `CutMix: Regularization Strategy to Train Strong Classifiers
+    with Localizable Features`_.
 
-    Paper: https://arxiv.org/pdf/1905.04899.pdf
-
-    Note:
-        CutmixCallback is inherited from CriterionCallback and
-        does its work.
-
+    .. warning::
+        :class:`catalyst.contrib.dl.callbacks.CutmixCallback` is inherited from
+        :class:`catalyst.dl.CriterionCallback` and does its work.
         You may not use them together.
+
+    .. _CutMix\: Regularization Strategy to Train Strong Classifiers
+        with Localizable Features: https://arxiv.org/abs/1905.04899
     """
 
     def __init__(
@@ -50,14 +52,14 @@ class CutmixCallback(CriterionCallback):
         self.is_needed = True
 
     def _compute_loss(self, state: State, criterion):
-        """
-        Computes loss.
-        If self.is_needed is False then calls _compute_loss
-        from CriterionCallback,
-        otherwise computes loss value.
-        :param state: current state
-        :param criterion: that is used to compute loss
-        :return: loss value
+        """Computes loss.
+
+        If self.is_needed is ``False`` then calls ``_compute_loss``
+        from ``CriterionCallback``, otherwise computes loss value.
+
+        Args:
+            state (State): current state
+            criterion: that is used to compute loss
         """
         if not self.is_needed:
             return super()._compute_loss_value(state, criterion)
@@ -74,9 +76,13 @@ class CutmixCallback(CriterionCallback):
         """
         Generates top-left and bottom-right coordinates of the box
         of the given size.
-        :param size: size of the box
-        :param lam: lambda parameter
-        :return: top-left and bottom-right coordinates of the box
+
+        Args:
+            size: size of the box
+            lam: lambda parameter
+
+        Returns:
+            top-left and bottom-right coordinates of the box
         """
         w = size[2]
         h = size[3]
@@ -94,19 +100,19 @@ class CutmixCallback(CriterionCallback):
 
         return bbx1, bby1, bbx2, bby2
 
-    def on_loader_start(self, state: State):
-        """
-        Checks if it is needed for the loader.
-        :param state: current state
-        :return: void
+    def on_loader_start(self, state: State) -> None:
+        """Checks if it is needed for the loader.
+
+        Args:
+            state (State): current state
         """
         self.is_needed = not self.on_train_only or state.is_train_loader
 
-    def on_batch_start(self, state: State):
-        """
-        Mixes data according to Cutmix algorithm.
-        :param state: current state
-        :return: void
+    def on_batch_start(self, state: State) -> None:
+        """Mixes data according to Cutmix algorithm.
+
+        Args:
+            state (State): current state
         """
         if not self.is_needed:
             return

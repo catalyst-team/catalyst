@@ -6,6 +6,7 @@ from .dict import merge_dicts
 
 
 def parse_config_args(*, config, args, unknown_args):
+    """@TODO: Docs. Contribution is welcome."""
     for arg in unknown_args:
         arg_name, value = arg.split("=")
         arg_name = arg_name.lstrip("-").strip("/")
@@ -59,8 +60,7 @@ def parse_config_args(*, config, args, unknown_args):
 
 
 def parse_args_uargs(args, unknown_args):
-    """
-    Function for parsing configuration files
+    """Function for parsing configuration files.
 
     Args:
         args: recognized arguments

@@ -5,6 +5,7 @@ from catalyst.contrib.nn.optimizers import Lookahead
 
 
 def test_criterion_init():
+    """@TODO: Docs. Contribution is welcome."""
     model = nn.Linear(10, 10)
     for name, cls in module.__dict__.items():
         if isinstance(cls, type):

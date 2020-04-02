@@ -6,8 +6,7 @@ import copy
 def get_key_str(
     dictionary: dict, key: Optional[Union[str, List[str]]],
 ) -> Any:
-    """
-    Returns value from dict by key.
+    """Returns value from dict by key.
 
     Args:
         dictionary: dict
@@ -22,8 +21,7 @@ def get_key_str(
 def get_key_list(
     dictionary: dict, key: Optional[Union[str, List[str]]],
 ) -> Dict:
-    """
-    Returns sub-dict from dict by list of keys.
+    """Returns sub-dict from dict by list of keys.
 
     Args:
         dictionary: dict
@@ -39,8 +37,7 @@ def get_key_list(
 def get_key_dict(
     dictionary: dict, key: Optional[Union[str, List[str]]],
 ) -> Dict:
-    """
-    Returns sub-dict from dict by dict-mapping of keys.
+    """Returns sub-dict from dict by dict-mapping of keys.
 
     Args:
         dictionary: dict
@@ -56,8 +53,8 @@ def get_key_dict(
 def get_key_none(
     dictionary: dict, key: Optional[Union[str, List[str]]],
 ) -> Dict:
-    """
-    Returns empty dict.
+    """Returns empty dict.
+
     Args:
         dictionary: dict
         key: none
@@ -71,8 +68,8 @@ def get_key_none(
 def get_key_all(
     dictionary: dict, key: Optional[Union[str, List[str]]],
 ) -> Dict:
-    """
-    Returns whole dict.
+    """Returns whole dict.
+
     Args:
         dictionary: dict
         key: none
@@ -84,8 +81,7 @@ def get_key_all(
 
 
 def get_dictkey_auto_fn(key: Optional[Union[str, List[str]]]) -> Callable:
-    """
-    Function generator for sub-dict preparation from dict
+    """Function generator for sub-dict preparation from dict
     based on predefined keys.
 
     Args:
@@ -110,8 +106,7 @@ def get_dictkey_auto_fn(key: Optional[Union[str, List[str]]]) -> Callable:
 
 
 def merge_dicts(*dicts: dict) -> dict:
-    """
-    Recursive dict merge.
+    """Recursive dict merge.
     Instead of updating only top-level keys,
     ``merge_dicts`` recurses down into dicts nested
     to an arbitrary depth, updating keys.
@@ -144,8 +139,7 @@ def merge_dicts(*dicts: dict) -> dict:
 def flatten_dict(
     dictionary: Dict[str, Any], parent_key: str = "", separator: str = "/"
 ) -> "collections.OrderedDict":
-    """
-    Make the given dictionary flatten
+    """Make the given dictionary flatten.
 
     Args:
         dictionary (dict): giving dictionary
@@ -170,6 +164,7 @@ def flatten_dict(
 
 
 def split_dict_to_subdicts(dct: Dict, prefixes: List, extra_key: str):
+    """@TODO: Docs. Contribution is welcome."""
     subdicts = {}
     extra_subdict = {
         k: v

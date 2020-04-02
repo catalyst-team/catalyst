@@ -16,9 +16,7 @@ warnings.simplefilter("once")
 
 
 class WandbRunner(Runner):
-    """
-    Runner wrapper with wandb integration hooks.
-    """
+    """Runner wrapper with wandb integration hooks."""
 
     @staticmethod
     def _log_metrics(
@@ -166,7 +164,7 @@ class WandbRunner(Runner):
             wandb.log(commit=True)
 
     def run_experiment(self, experiment: Experiment):
-        """Starts experiment
+        """Starts experiment.
 
         Args:
             experiment (Experiment): experiment class
@@ -177,7 +175,7 @@ class WandbRunner(Runner):
 
 
 class SupervisedWandbRunner(WandbRunner, SupervisedRunner):
-    """SupervisedRunner with WandB"""
+    """SupervisedRunner with WandB."""
 
 
 __all__ = ["WandbRunner", "SupervisedWandbRunner"]

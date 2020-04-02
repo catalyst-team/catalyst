@@ -15,9 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 class OptimizerCallback(Callback):
-    """
-    Optimizer callback, abstraction over optimizer step.
-    """
+    """Optimizer callback, abstraction over optimizer step."""
 
     def __init__(
         self,
@@ -66,9 +64,8 @@ class OptimizerCallback(Callback):
         optimizer: Optimizer,
         optimizer_wds: List[float] = 0,
         grad_clip_fn: Callable = None,
-    ):
-        """
-        Makes a gradient step for a given optimizer
+    ) -> None:
+        """Makes a gradient step for a given optimizer.
 
         Args:
             optimizer (Optimizer): the optimizer
@@ -84,17 +81,19 @@ class OptimizerCallback(Callback):
                 grad_clip_fn(group["params"])
         optimizer.step()
 
-    def on_stage_start(self, state: State):
-        """
-        Checks that the current stage has correct optimizer
-        """
+    def on_stage_start(self, state: State) -> None:
+        """Checks that the current stage has correct optimizer."""
         self._optimizer = state.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
         assert self._optimizer is not None
 
-    def on_epoch_start(self, state: State):
-        """On epoch start event"""
+    def on_epoch_start(self, state: State) -> None:
+        """On epoch start event.
+
+        Args:
+            state (State): current state
+        """
         if self.decouple_weight_decay:
             self._optimizer_wd = [
                 group.get("weight_decay", 0.0)
@@ -105,8 +104,12 @@ class OptimizerCallback(Callback):
         else:
             self._optimizer_wd = [0.0] * len(self._optimizer.param_groups)
 
-    def on_epoch_end(self, state: State):
-        """On epoch end event"""
+    def on_epoch_end(self, state: State) -> None:
+        """On epoch end event.
+
+        Args:
+            state (State): current state
+        """
         if self.decouple_weight_decay:
             for i, wd in enumerate(self._optimizer_wd):
                 self._optimizer.param_groups[i]["weight_decay"] = wd
@@ -128,8 +131,12 @@ class OptimizerCallback(Callback):
             )
             state.epoch_metrics[momentum_name] = momentum
 
-    def on_batch_end(self, state: State):
-        """On batch end event"""
+    def on_batch_end(self, state: State) -> None:
+        """On batch end event
+
+        Args:
+            state (State): current state
+        """
         if not state.is_train_loader:
             return
 
