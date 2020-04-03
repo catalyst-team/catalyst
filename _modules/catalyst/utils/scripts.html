@@ -254,7 +254,8 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.utils.scripts</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">importlib.util</span> <span class="kn">import</span> <span class="n">module_from_spec</span><span class="p">,</span> <span class="n">spec_from_file_location</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span> <span class="nn">importlib.util</span> <span class="kn">import</span> <span class="n">module_from_spec</span><span class="p">,</span> <span class="n">spec_from_file_location</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pathlib</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
@@ -347,14 +348,17 @@
     <span class="n">dump_python_files</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="distributed_cmd_run"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.scripts.distributed_cmd_run">[docs]</a><span class="k">def</span> <span class="nf">distributed_cmd_run</span><span class="p">(</span><span class="n">distributed</span><span class="p">,</span> <span class="n">worker_fn</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="distributed_cmd_run"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.scripts.distributed_cmd_run">[docs]</a><span class="k">def</span> <span class="nf">distributed_cmd_run</span><span class="p">(</span>
+    <span class="n">worker_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">distributed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Distributed run</span>
+
 <span class="sd">    Args:</span>
-<span class="sd">        distributed:</span>
-<span class="sd">        worker_fn:</span>
-<span class="sd">        args:</span>
-<span class="sd">        kwargs:</span>
+<span class="sd">        worker_fn (Callable):</span>
+<span class="sd">        distributed (bool):</span>
+<span class="sd">        args: additional parameters for worker_fn</span>
+<span class="sd">        kwargs: additional key-value parameters for worker_fn</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">distributed_params</span> <span class="o">=</span> <span class="n">get_distributed_params</span><span class="p">()</span>
     <span class="n">local_rank</span> <span class="o">=</span> <span class="n">distributed_params</span><span class="p">[</span><span class="s2">&quot;local_rank&quot;</span><span class="p">]</span>

@@ -791,12 +791,18 @@ from <code class="docutils literal notranslate"><span class="pre">Bag</span> <sp
 
 <dl class="function">
 <dt id="catalyst.utils.scripts.distributed_cmd_run">
-<code class="sig-prename descclassname">catalyst.utils.scripts.</code><code class="sig-name descname">distributed_cmd_run</code><span class="sig-paren">(</span><em class="sig-param">distributed</em>, <em class="sig-param">worker_fn</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/scripts.html#distributed_cmd_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.scripts.distributed_cmd_run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Distributed run
-:param distributed:
-:param worker_fn:
-:param args:
-:param kwargs:</p>
+<code class="sig-prename descclassname">catalyst.utils.scripts.</code><code class="sig-name descname">distributed_cmd_run</code><span class="sig-paren">(</span><em class="sig-param">worker_fn: Callable</em>, <em class="sig-param">distributed: bool = True</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/scripts.html#distributed_cmd_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.scripts.distributed_cmd_run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Distributed run</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>worker_fn</strong> (<em>Callable</em>) – </p></li>
+<li><p><strong>distributed</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>args</strong> – additional parameters for worker_fn</p></li>
+<li><p><strong>kwargs</strong> – additional key-value parameters for worker_fn</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
