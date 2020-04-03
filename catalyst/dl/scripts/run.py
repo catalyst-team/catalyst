@@ -115,7 +115,7 @@ def main_worker(args, unknown_args):
 
 def main(args, unknown_args):
     """Run the ``catalyst-dl run`` script."""
-    distributed_cmd_run(args.distributed, main_worker, args, unknown_args)
+    distributed_cmd_run(main_worker, args.distributed, args, unknown_args)
 
 
 if __name__ == "__main__":

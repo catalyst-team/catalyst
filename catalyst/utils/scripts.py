@@ -1,3 +1,4 @@
+from typing import Callable
 from importlib.util import module_from_spec, spec_from_file_location
 import os
 import pathlib
@@ -91,14 +92,17 @@ def dump_base_experiment_code(src: pathlib.Path, dst: pathlib.Path):
     dump_python_files(src, dst)
 
 
-def distributed_cmd_run(distributed, worker_fn, *args, **kwargs):
+def distributed_cmd_run(
+    worker_fn: Callable, distributed: bool = True, *args, **kwargs
+) -> None:
     """
     Distributed run
+
     Args:
-        distributed:
-        worker_fn:
-        args:
-        kwargs:
+        worker_fn (Callable):
+        distributed (bool):
+        args: additional parameters for worker_fn
+        kwargs: additional key-value parameters for worker_fn
     """
     distributed_params = get_distributed_params()
     local_rank = distributed_params["local_rank"]
