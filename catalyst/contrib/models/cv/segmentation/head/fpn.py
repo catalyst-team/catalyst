@@ -1,15 +1,18 @@
-from typing import List  # isort:skip
+from typing import List
+
 import numpy as np
 
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
+from torch import nn
+from torch.nn import functional as F
 
 from ..blocks import EncoderUpsampleBlock, SegmentationBlock
 from .core import HeadSpec
 
 
 class FPNHead(HeadSpec):
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(
         self,
         in_channels: List[int],
@@ -22,6 +25,7 @@ class FPNHead(HeadSpec):
         interpolation_mode: str = "bilinear",
         align_corners: bool = True,
     ):
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__(in_channels, out_channels, in_strides)
         self.upsample_scale = upsample_scale
         self.interpolation_mode = interpolation_mode
@@ -30,13 +34,16 @@ class FPNHead(HeadSpec):
         segmentation_blocks = []
         for i, in_channels_ in enumerate(in_channels):
             if in_strides is not None:
-                i = np.log2(in_strides[i]) \
-                    - num_upsample_blocks - np.log2(upsample_scale)
+                i = (
+                    np.log2(in_strides[i])
+                    - num_upsample_blocks
+                    - np.log2(upsample_scale)
+                )
             segmentation_blocks.append(
                 SegmentationBlock(
                     in_channels=in_channels_,
                     out_channels=hid_channel,
-                    num_upsamples=int(i)
+                    num_upsamples=int(i),
                 )
             )
         self.segmentation_blocks = nn.ModuleList(segmentation_blocks)
@@ -51,10 +58,12 @@ class FPNHead(HeadSpec):
         )
 
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
+        """Forward call."""
         x = list(
             map(
                 lambda block, features: block(features),
-                self.segmentation_blocks, x
+                self.segmentation_blocks,
+                x,
             )
         )
         x = sum(x)
@@ -64,6 +73,6 @@ class FPNHead(HeadSpec):
                 x,
                 scale_factor=self.upsample_scale,
                 mode=self.interpolation_mode,
-                align_corners=self.align_corners
+                align_corners=self.align_corners,
             )
         return x

@@ -1,8 +1,8 @@
-from typing import Dict, List, Union  # isort:skip
+from typing import Dict, List, Union
 from pathlib import Path
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 from .bridge import BridgeSpec
 from .decoder import DecoderSpec
@@ -11,6 +11,8 @@ from .head import HeadSpec
 
 
 class UnetMetaSpec(nn.Module):
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(
         self,
         encoder: EncoderSpec,
@@ -19,6 +21,7 @@ class UnetMetaSpec(nn.Module):
         head: HeadSpec = None,
         state_dict: Union[dict, str, Path] = None,
     ):
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__()
         self.encoder = encoder
         self.bridge = bridge or (lambda x: x)
@@ -33,6 +36,7 @@ class UnetMetaSpec(nn.Module):
             self.load_state_dict(state_dict)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward call."""
         encoder_features: List[torch.Tensor] = self.encoder(x)
         bridge_features: List[torch.Tensor] = self.bridge(encoder_features)
         decoder_features: List[torch.Tensor] = self.decoder(bridge_features)
@@ -41,6 +45,8 @@ class UnetMetaSpec(nn.Module):
 
 
 class UnetSpec(UnetMetaSpec):
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(
         self,
         num_classes: int = 1,
@@ -53,6 +59,7 @@ class UnetSpec(UnetMetaSpec):
         head_params: Dict = None,
         state_dict: Union[dict, str, Path] = None,
     ):
+        """@TODO: Docs. Contribution is welcome."""
         encoder_params = encoder_params or {}
         bridge_params = bridge_params or {}
         decoder_params = decoder_params or {}
@@ -74,7 +81,7 @@ class UnetSpec(UnetMetaSpec):
             bridge=bridge,
             decoder=decoder,
             head=head,
-            state_dict=state_dict
+            state_dict=state_dict,
         )
 
     def _get_components(
@@ -89,6 +96,8 @@ class UnetSpec(UnetMetaSpec):
 
 
 class ResnetUnetSpec(UnetMetaSpec):
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(
         self,
         num_classes: int = 1,
@@ -100,6 +109,7 @@ class ResnetUnetSpec(UnetMetaSpec):
         head_params: Dict = None,
         state_dict: Union[dict, str, Path] = None,
     ):
+        """@TODO: Docs. Contribution is welcome."""
         encoder_params = encoder_params or {}
         bridge_params = bridge_params or {}
         decoder_params = decoder_params or {}
@@ -118,7 +128,7 @@ class ResnetUnetSpec(UnetMetaSpec):
             bridge=bridge,
             decoder=decoder,
             head=head,
-            state_dict=state_dict
+            state_dict=state_dict,
         )
 
     def _get_components(

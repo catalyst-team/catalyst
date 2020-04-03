@@ -8,19 +8,18 @@ from catalyst.utils import folds_to_list, split_dataframe
 
 
 def build_args(parser):
+    """Constructs the command-line arguments for
+    ``catalyst-data split-dataframe``.
+    """
     parser.add_argument(
         "--in-csv",
         type=Path,
         dest="in_csv",
         help="Path to the csv to split",
-        required=True
+        required=True,
     )
     parser.add_argument(
-        "-n",
-        "--num-folds",
-        type=int,
-        default=5,
-        help="Number of result folds"
+        "-n", "--num-folds", type=int, default=5, help="Number of result folds"
     )
     parser.add_argument(
         "-t",
@@ -28,7 +27,7 @@ def build_args(parser):
         type=str,
         dest="train_folds",
         help="Numbers separated by commas. They represent train folds",
-        required=True
+        required=True,
     )
     parser.add_argument(
         "-v",
@@ -36,7 +35,7 @@ def build_args(parser):
         type=str,
         dest="valid_folds",
         default=None,
-        help="Numbers separated by commas. They represent valid folds"
+        help="Numbers separated by commas. They represent valid folds",
     )
     parser.add_argument(
         "-i",
@@ -44,35 +43,35 @@ def build_args(parser):
         type=str,
         dest="infer_folds",
         default=None,
-        help="Numbers separated by commas. They represent infer folds"
+        help="Numbers separated by commas. They represent infer folds",
     )
 
     parser.add_argument(
         "--out-csv",
         type=str,
         help="Output CSV path for train and valid parts",
-        required=True
+        required=True,
     )
 
     parser.add_argument(
         "--tag2class",
         type=str,
         default=None,
-        help="Path to YAML or JSON of label mappings"
+        help="Path to YAML or JSON of label mappings",
     )
     parser.add_argument(
         "--tag-column",
         type=str,
         default=None,
         dest="tag_column",
-        help="Column of labels (works in pair with `--tag2class` flag)"
+        help="Column of labels (works in pair with `--tag2class` flag)",
     )
     parser.add_argument(
         "--class-column",
         type=str,
         default=None,
         dest="class_column",
-        help="Column of classes"
+        help="Column of classes",
     )
 
     parser.add_argument(
@@ -83,6 +82,7 @@ def build_args(parser):
 
 
 def parse_args():
+    """Parses the command line arguments for the main method."""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args, uargs = parser.parse_known_args()
@@ -90,20 +90,28 @@ def parse_args():
 
 
 def main(args, uargs=None):
+    """Run the ``catalyst-data split-dataframe`` script."""
     dataframe = pd.read_csv(args.in_csv)
 
-    train_folds = \
-        folds_to_list(args.train_folds) \
-        if args.train_folds is not None else None
-    valid_folds = \
-        folds_to_list(args.valid_folds) \
-        if args.valid_folds is not None else None
-    infer_folds = \
-        folds_to_list(args.infer_folds) \
-        if args.infer_folds is not None else None
+    train_folds = (
+        folds_to_list(args.train_folds)
+        if args.train_folds is not None
+        else None
+    )
+    valid_folds = (
+        folds_to_list(args.valid_folds)
+        if args.valid_folds is not None
+        else None
+    )
+    infer_folds = (
+        folds_to_list(args.infer_folds)
+        if args.infer_folds is not None
+        else None
+    )
 
-    tag2class = json.load(open(args.tag2class)) \
-        if args.tag2class is not None else None
+    tag2class = (
+        json.load(open(args.tag2class)) if args.tag2class is not None else None
+    )
 
     df_all, train, valid, infer = split_dataframe(
         dataframe,
@@ -114,7 +122,7 @@ def main(args, uargs=None):
         tag_column=args.tag_column,
         class_column=args.class_column,
         seed=args.seed,
-        n_folds=args.num_folds
+        n_folds=args.num_folds,
     )
 
     out_csv: str = args.out_csv

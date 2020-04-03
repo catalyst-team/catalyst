@@ -3,9 +3,8 @@ from catalyst.utils import metrics
 
 
 class F1ScoreCallback(MetricCallback):
-    """
-    F1 score metric callback.
-    """
+    """F1 score metric callback."""
+
     def __init__(
         self,
         input_key: str = "targets",
@@ -14,12 +13,12 @@ class F1ScoreCallback(MetricCallback):
         beta: float = 1.0,
         eps: float = 1e-7,
         threshold: float = None,
-        activation: str = "Sigmoid"
+        activation: str = "Sigmoid",
     ):
         """
         Args:
             input_key (str): input key to use for iou calculation
-                specifies our ``y_true``.
+                specifies our ``y_true``
             output_key (str): output key to use for iou calculation;
                 specifies our ``y_pred``
             prefix (str): key to store in logs
@@ -27,7 +26,7 @@ class F1ScoreCallback(MetricCallback):
             eps (float): epsilon to avoid zero division
             threshold (float): threshold for outputs binarization
             activation (str): An torch.nn activation applied to the outputs.
-                Must be one of ['none', 'Sigmoid', 'Softmax2d']
+                Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax2d'``
         """
         super().__init__(
             prefix=prefix,
@@ -37,7 +36,7 @@ class F1ScoreCallback(MetricCallback):
             beta=beta,
             eps=eps,
             threshold=threshold,
-            activation=activation
+            activation=activation,
         )
 
 

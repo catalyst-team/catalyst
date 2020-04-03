@@ -34,21 +34,25 @@ def check_unet(net_fn):
 # In[ ]:
 
 from catalyst.contrib.models.cv import Unet
+
 net = check_unet(Unet)
 
 # In[ ]:
 
 from catalyst.contrib.models.cv import Linknet
+
 net = check_unet(Linknet)
 
 # In[ ]:
 
 from catalyst.contrib.models.cv import FPNUnet
+
 net = check_unet(FPNUnet)
 
 # In[ ]:
 
 from catalyst.contrib.models.cv import PSPnet
+
 net = check_unet(PSPnet)
 
 # ---
@@ -58,19 +62,23 @@ net = check_unet(PSPnet)
 # In[ ]:
 
 from catalyst.contrib.models.cv import ResnetUnet
+
 net = check_unet(ResnetUnet)
 
 # In[ ]:
 
 from catalyst.contrib.models.cv import ResnetLinknet
+
 net = check_unet(ResnetLinknet)
 
 # In[ ]:
 
 from catalyst.contrib.models.cv import ResnetFPNUnet
+
 net = check_unet(ResnetFPNUnet)
 
 # In[ ]:
 
 from catalyst.contrib.models.cv import ResnetPSPnet
+
 net = check_unet(ResnetPSPnet)

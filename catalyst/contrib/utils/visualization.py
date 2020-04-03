@@ -1,4 +1,4 @@
-from typing import List, Optional, Union  # isort:skip
+from typing import List, Optional, Union
 import itertools
 from pathlib import Path
 
@@ -17,15 +17,17 @@ def plot_confusion_matrix(
     show=True,
     figsize=12,
     fontsize=32,
-    colormap="Blues"
+    colormap="Blues",
 ):
     """
     Render the confusion matrix and return matplotlib"s figure with it.
     Normalization can be applied by setting `normalize=True`.
     """
     import matplotlib
+
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+
     plt.ioff()
 
     cmap = plt.cm.__dict__[colormap]
@@ -51,14 +53,14 @@ def plot_confusion_matrix(
     plt.yticks(tick_marks, class_names)
 
     fmt = ".2f" if normalize else "d"
-    thresh = cm.max() / 2.
+    thresh = cm.max() / 2.0
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
         plt.text(
             j,
             i,
             format(cm[i, j], fmt),
             horizontalalignment="center",
-            color="white" if cm[i, j] > thresh else "black"
+            color="white" if cm[i, j] > thresh else "black",
         )
 
     plt.tight_layout()
@@ -75,9 +77,12 @@ def plot_confusion_matrix(
 
 
 def render_figure_to_tensor(figure):
+    """@TODO: Docs. Contribution is welcome."""
     import matplotlib
+
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+
     plt.ioff()
 
     figure.canvas.draw()
@@ -95,7 +100,7 @@ def plot_metrics(
     step: Optional[str] = "epoch",
     metrics: Optional[List[str]] = None,
     height: Optional[int] = None,
-    width: Optional[int] = None
+    width: Optional[int] = None,
 ) -> None:
     """Plots your learning results.
 
@@ -111,8 +116,10 @@ def plot_metrics(
         width: the width of the whole resulting plot
 
     """
-    assert step in ["batch", "epoch"], \
-        f"Step should be either 'batch' or 'epoch', got '{step}'"
+    assert step in [
+        "batch",
+        "epoch",
+    ], f"Step should be either 'batch' or 'epoch', got '{step}'"
     metrics = metrics or ["loss"]
     plot_tensorboard_log(logdir, step, metrics, height, width)
 

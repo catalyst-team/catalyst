@@ -1,4 +1,4 @@
-from typing import Dict, Union  # isort:skip
+from typing import Dict, Union
 import argparse
 from argparse import ArgumentParser
 from pathlib import Path
@@ -21,8 +21,7 @@ def trace_model_from_checkpoint(
     opt_level: str = None,
     device: Device = "cpu",
 ):
-    """
-    Traces model using created experiment and runner.
+    """Traces model using created experiment and runner.
 
     Args:
         logdir (Union[str, Path]): Path to Catalyst logdir with model
@@ -86,9 +85,7 @@ def trace_model_from_checkpoint(
 
 
 def build_args(parser: ArgumentParser):
-    """
-    Builds the command line parameters
-    """
+    """Builds the command line parameters."""
     parser.add_argument("logdir", type=Path, help="Path to model logdir")
     parser.add_argument(
         "--method", "-m", default="forward", help="Model method to trace"
@@ -98,61 +95,59 @@ def build_args(parser: ArgumentParser):
         "-c",
         default="best",
         help="Checkpoint's name to trace",
-        metavar="CHECKPOINT_NAME"
+        metavar="CHECKPOINT_NAME",
     )
     parser.add_argument(
         "--out-dir",
         type=Path,
         default=None,
-        help="Output directory to save traced model"
+        help="Output directory to save traced model",
     )
     parser.add_argument(
         "--out-model",
         type=Path,
         default=None,
-        help="Output path to save traced model (overrides --out-dir)"
+        help="Output path to save traced model (overrides --out-dir)",
     )
     parser.add_argument(
         "--mode",
         type=str,
         choices=["eval", "train"],
         default="eval",
-        help="Model's mode 'eval' or 'train'"
+        help="Model's mode 'eval' or 'train'",
     )
     parser.add_argument(
         "--with-grad",
         action="store_true",
         default=False,
-        help="If true, model will be traced with `requires_grad_(True)`"
+        help="If true, model will be traced with `requires_grad_(True)`",
     )
     parser.add_argument(
         "--opt-level",
         type=str,
         default=None,
-        help="Opt level for FP16 (optional)"
+        help="Opt level for FP16 (optional)",
     )
 
     parser.add_argument(
         "--stage",
         type=str,
         default=None,
-        help="Stage from experiment from which model and loader will be taken"
+        help="Stage from experiment from which model and loader will be taken",
     )
 
     parser.add_argument(
         "--loader",
         type=str,
         default=None,
-        help="Loader name to get the batch from"
+        help="Loader name to get the batch from",
     )
 
     return parser
 
 
 def parse_args():
-    """
-    Parses the command line arguments for the main method
-    """
+    """Parses the command line arguments for the main method."""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args = parser.parse_args()
@@ -160,9 +155,7 @@ def parse_args():
 
 
 def main(args, _):
-    """
-    Main method for `catalyst-dl trace`
-    """
+    """Main method for ``catalyst-dl trace``."""
     logdir: Path = args.logdir
     method_name: str = args.method
     checkpoint_name: str = args.checkpoint

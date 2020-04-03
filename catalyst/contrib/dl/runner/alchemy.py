@@ -1,5 +1,4 @@
-from typing import Dict  # isort:skip
-
+from typing import Dict
 import warnings
 
 from alchemy import Logger
@@ -9,17 +8,14 @@ from catalyst.dl import utils
 from catalyst.dl.core import Experiment, Runner
 from catalyst.dl.runner import SupervisedRunner
 
-warnings.simplefilter("always")
+warnings.simplefilter("once")
 
 
 class AlchemyRunner(Runner):
-    """
-    Runner wrapper with Alchemy integration hooks.
+    """Runner wrapper with Alchemy integration hooks.
     Read about Alchemy here https://alchemy.host
-    Powered by Catalyst.Ecosystem
 
     Example:
-
         .. code-block:: python
 
             from catalyst.dl import SupervisedAlchemyRunner
@@ -41,25 +37,28 @@ class AlchemyRunner(Runner):
                     "group": "your_experiment_group_name"
                 }
             )
+
+    Powered by Catalyst.Ecosystem.
     """
+
     def _init(
-        self,
-        log_on_batch_end: bool = False,
-        log_on_epoch_end: bool = True,
+        self, log_on_batch_end: bool = False, log_on_epoch_end: bool = True,
     ):
+        """@TODO: Docs. Contribution is welcome."""
         super()._init()
         the_warning = DeprecatedWarning(
             self.__class__.__name__,
             deprecated_in="20.03",
             removed_in="20.04",
-            details="Use AlchemyLogger instead."
+            details="Use AlchemyLogger instead.",
         )
         warnings.warn(the_warning, category=DeprecationWarning, stacklevel=2)
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
 
-        if (self.log_on_batch_end and not self.log_on_epoch_end) \
-                or (not self.log_on_batch_end and self.log_on_epoch_end):
+        if (self.log_on_batch_end and not self.log_on_epoch_end) or (
+            not self.log_on_batch_end and self.log_on_epoch_end
+        ):
             self.batch_log_suffix = ""
             self.epoch_log_suffix = ""
         else:
@@ -74,10 +73,12 @@ class AlchemyRunner(Runner):
     def _pre_experiment_hook(self, experiment: Experiment):
         monitoring_params = experiment.monitoring_params
 
-        log_on_batch_end: bool = \
-            monitoring_params.pop("log_on_batch_end", False)
-        log_on_epoch_end: bool = \
-            monitoring_params.pop("log_on_epoch_end", True)
+        log_on_batch_end: bool = monitoring_params.pop(
+            "log_on_batch_end", False
+        )
+        log_on_epoch_end: bool = monitoring_params.pop(
+            "log_on_epoch_end", True
+        )
 
         self._init(
             log_on_batch_end=log_on_batch_end,
@@ -111,7 +112,7 @@ class AlchemyRunner(Runner):
                 )
 
     def run_experiment(self, experiment: Experiment):
-        """Starts experiment
+        """Starts experiment.
 
         Args:
             experiment (Experiment): experiment class
@@ -122,8 +123,7 @@ class AlchemyRunner(Runner):
 
 
 class SupervisedAlchemyRunner(AlchemyRunner, SupervisedRunner):
-    """SupervisedRunner with Alchemy"""
-    pass
+    """SupervisedRunner with Alchemy."""
 
 
 __all__ = ["AlchemyRunner", "SupervisedAlchemyRunner"]

@@ -1,9 +1,16 @@
-import torch.nn as nn
-import torch.nn.functional as F
+from torch import nn
+from torch.nn import functional as F
 
 
 class SimpleNet(nn.Module):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
+
     def __init__(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         super().__init__()
         self.conv1 = nn.Conv2d(1, 20, 5, 1)
         self.conv2 = nn.Conv2d(20, 50, 5, 1)
@@ -11,6 +18,9 @@ class SimpleNet(nn.Module):
         self.fc2 = nn.Linear(500, 10)
 
     def forward(self, x):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         x = F.relu(self.conv1(x))
         x = F.max_pool2d(x, 2, 2)
         x = F.relu(self.conv2(x))

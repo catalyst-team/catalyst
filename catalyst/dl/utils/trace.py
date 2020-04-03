@@ -1,5 +1,4 @@
-from typing import Union  # isort:skip
-
+from typing import Union
 import inspect
 from pathlib import Path
 
@@ -7,16 +6,17 @@ import torch
 from torch import nn
 from torch.jit import ScriptModule
 
-from catalyst.dl import Runner, utils
+from catalyst import utils
+from catalyst.dl import Runner
 from catalyst.utils.tools.typing import Device, Model
 
 
 class _ForwardOverrideModel(nn.Module):
-    """
-    Model that calls specified method instead of forward
+    """Model that calls specified method instead of forward.
 
     (Workaround, single method tracing is not supported)
     """
+
     def __init__(self, model, method_name):
         super().__init__()
         self.model = model
@@ -27,11 +27,11 @@ class _ForwardOverrideModel(nn.Module):
 
 
 class _TracingModelWrapper(nn.Module):
-    """
-    Wrapper that traces model with batch instead of calling it
+    """Wrapper that traces model with batch instead of calling it.
 
     (Workaround, to use native model batch handler)
     """
+
     def __init__(self, model, method_name):
         super().__init__()
         self.model = model
@@ -46,8 +46,9 @@ class _TracingModelWrapper(nn.Module):
 
             fn = getattr(self.model, self.method_name)
             argspec = inspect.getfullargspec(fn)
-            assert argspec.varargs is None and argspec.varkw is None, \
-                "not supported by PyTorch tracing"
+            assert (
+                argspec.varargs is None and argspec.varkw is None
+            ), "not supported by PyTorch tracing"
 
             method_argnames = utils.get_fn_argsnames(fn, exclude=["self"])
             method_input = tuple(kwargs[name] for name in method_argnames)
@@ -74,8 +75,7 @@ def trace_model(
     device: Device = "cpu",
     predict_params: dict = None,
 ) -> ScriptModule:
-    """
-    Traces model using runner and batch
+    """Traces model using runner and batch.
 
     Args:
         model: Model to trace
@@ -107,6 +107,7 @@ def trace_model(
         # the jit
         # https://github.com/NVIDIA/apex/issues/303#issuecomment-493142950
         from apex import amp
+
         model = model.to(device)
         model = amp.initialize(model, optimizers=None, opt_level=opt_level)
         # TODO: remove `check_trace=False`
@@ -135,8 +136,7 @@ def get_trace_name(
     opt_level: str = None,
     additional_string: str = None,
 ):
-    """
-    Creates a file name for the traced model.
+    """Creates a file name for the traced model.
 
     Args:
         method_name (str): model's method name
@@ -169,8 +169,7 @@ def load_traced_model(
     device: Device = "cpu",
     opt_level: str = None,
 ) -> ScriptModule:
-    """
-    Loads a traced model
+    """Loads a traced model.
 
     Args:
         model_path: Path to traced model
@@ -191,6 +190,7 @@ def load_traced_model(
     if opt_level is not None:
         utils.assert_fp16_available()
         from apex import amp
+
         model = amp.initialize(model, optimizers=None, opt_level=opt_level)
 
     return model

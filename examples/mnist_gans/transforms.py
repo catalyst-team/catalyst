@@ -27,8 +27,9 @@ class AdditionalValue:
         self.output_key = output_key
 
     def __call__(self, force_apply=False, **dict_):
-        assert self.output_key not in dict_, \
-            "Output key is supposed not to be present in dict"
+        assert (
+            self.output_key not in dict_
+        ), "Output key is supposed not to be present in dict"
         dict_[self.output_key] = self._compute_output(dict_)
         return dict_
 
@@ -58,6 +59,7 @@ class OneHotTargetTransform:
     """Adds one-hot encoded target to input dict
     i.e. dict_[output_key] = one_hot_encode(dict_[input_key])
     """
+
     def __init__(self, input_key: str, output_key: str, num_classes: int):
         self.input_key = input_key
         self.output_key = output_key
@@ -65,10 +67,11 @@ class OneHotTargetTransform:
 
     def __call__(self, force_apply=False, **dict_):
         class_id = dict_[self.input_key]
-        assert self.output_key not in dict_, \
-            "Output key is supposed not to be present in dict"
+        assert (
+            self.output_key not in dict_
+        ), "Output key is supposed not to be present in dict"
 
-        target = np.zeros((self.num_classes, ), dtype=np.int64)
+        target = np.zeros((self.num_classes,), dtype=np.int64)
         target[class_id] = 1
         dict_[self.output_key] = target
 

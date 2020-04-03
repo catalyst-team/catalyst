@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Tuple  # isort:skip
+from typing import Any, Callable, Dict, List, Tuple
 import argparse
 from itertools import repeat
 import json
@@ -30,11 +30,12 @@ RANK_METRICS = [
 
 
 def build_args(parser):
+    """Constructs the command-line arguments."""
     parser.add_argument(
         "--in-csv",
         type=Path,
         help="Path to .csv with labels column",
-        required=True
+        required=True,
     )
     parser.add_argument(
         "--in-label-column",
@@ -47,13 +48,13 @@ def build_args(parser):
         "--in-npy",
         type=Path,
         help="Path to .npy with class logits",
-        required=True
+        required=True,
     )
     parser.add_argument(
         "--out-thresholds",
         type=Path,
         help="Path to save .json with thresholds",
-        required=True
+        required=True,
     )
 
     parser.add_argument(
@@ -62,7 +63,7 @@ def build_args(parser):
         help="Metric to use",
         required=False,
         choices=BINARY_PER_CLASS_METRICS,
-        default="roc_auc_score"
+        default="roc_auc_score",
     )
     # parser.add_argument(
     #     "--ignore-label", type=int,
@@ -77,14 +78,14 @@ def build_args(parser):
         type=int,
         help="NUM_REPEATS",
         required=False,
-        default=1
+        default=1,
     )
     parser.add_argument(
         "--num-workers",
         type=int,
         help="CPU pool size",
         required=False,
-        default=1
+        default=1,
     )
 
     utils.boolean_flag(parser, "verbose", default=False)
@@ -94,6 +95,7 @@ def build_args(parser):
 
 
 def parse_args():
+    """Parses the command line arguments for the main method."""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args = parser.parse_args()
@@ -101,6 +103,7 @@ def parse_args():
 
 
 def get_binary_labels(labels: np.array, label: int, ignore_label: int = None):
+    """@TODO: Docs. Contribution is welcome."""
     binary_labels = labels == label
     if ignore_label is not None:
         binary_labels[labels == ignore_label] = 0
@@ -108,10 +111,9 @@ def get_binary_labels(labels: np.array, label: int, ignore_label: int = None):
 
 
 def find_best_split_threshold(
-    y_pred: np.array,
-    y_true: np.array,
-    metric: Callable,
+    y_pred: np.array, y_true: np.array, metric: Callable,
 ):
+    """@TODO: Docs. Contribution is welcome."""
     thresholds = np.linspace(0.0, 1.0, num=100)
     metric_values = []
     for t in thresholds:
@@ -119,7 +121,7 @@ def find_best_split_threshold(
         if sum(predictions) > 0:
             metric_values.append(metric(y_true, predictions))
         else:
-            metric_values.append(0.)
+            metric_values.append(0.0)
 
     best_threshold = thresholds[np.argmax(metric_values)]
     return best_threshold
@@ -133,6 +135,7 @@ def find_best_threshold(
     num_repeats: int = 1,
     random_state: int = 42,
 ):
+    """@TODO: Docs. Contribution is welcome."""
     rkf = RepeatedStratifiedKFold(
         n_splits=num_splits, n_repeats=num_repeats, random_state=random_state
     )
@@ -154,7 +157,7 @@ def find_best_threshold(
                     y_true_test, best_predictions
                 )
             except ValueError:
-                metric_value = 0.
+                metric_value = 0.0
 
             fold_metrics[metric_name].append(metric_value)
         fold_thresholds.append(best_threshold)
@@ -167,6 +170,7 @@ def find_best_threshold(
 
 
 def wrap_find_best_threshold(args: Tuple[Any]):
+    """@TODO: Docs. Contribution is welcome."""
     class_id, function_args = args[0], args[1:]
     threshold, metrics = find_best_threshold(*function_args)
     return class_id, threshold, metrics
@@ -180,8 +184,9 @@ def optimize_thresholds(
     num_splits: int = 5,
     num_repeats: int = 1,
     num_workers: int = 0,
-    ignore_label: int = None
+    ignore_label: int = None,
 ) -> Tuple[Dict, Dict]:
+    """@TODO: Docs. Contribution is welcome."""
     pool = utils.get_pool(num_workers)
 
     predictions_ = predictions.copy()
@@ -202,7 +207,8 @@ def optimize_thresholds(
             repeat(metric_fn),
             repeat(num_splits),
             repeat(num_repeats),
-        ), pool
+        ),
+        pool,
     )
     results = [(r[1], r[2]) for r in sorted(results, key=lambda x: x[0])]
 
@@ -219,6 +225,8 @@ def get_model_confidences(
     classes: List[int] = None,
 ):
     """
+    @TODO: Docs (add description). Contribution is welcome
+
     Args:
         confidences (np.ndarray): model predictions of shape
             [dataset_len; class_confidences]
@@ -238,10 +246,8 @@ def get_model_confidences(
     return confidences_th
 
 
-def score_model_coverage(
-    confidences: np.ndarray,
-    labels: np.ndarray,
-):
+def score_model_coverage(confidences: np.ndarray, labels: np.ndarray):
+    """@TODO: Docs. Contribution is welcome."""
     candidates = np.argsort(-confidences, axis=1)
     confidences = -np.sort(-confidences, axis=1)
     candidates[confidences < 0] = -1
@@ -272,6 +278,7 @@ def _save_json(dct: Dict, outpath: Path, suffix: str = None):
 
 
 def main(args, _=None):
+    """Run ``catalyst-contrib find-thresholds`` script."""
     predictions = expit(np.load(args.in_npy))
     if args.sigmoid:
         predictions = expit(predictions)
@@ -289,7 +296,7 @@ def main(args, _=None):
         num_splits=args.num_splits,
         num_repeats=args.num_repeats,
         ignore_label=None,  # args.ignore_label,
-        num_workers=args.num_workers
+        num_workers=args.num_workers,
     )
     _save_json(class_thresholds, outpath=args.out_thresholds)
 
@@ -328,26 +335,30 @@ def main(args, _=None):
         }
         postfix = (
             ".rank.metrics"
-            if not thresholds_used else ".rank.metrics.thresholds"
+            if not thresholds_used
+            else ".rank.metrics.thresholds"
         )
         _save_json(rank_metrics, args.out_thresholds, suffix=postfix)
 
         coverage_metrics = score_model_coverage(confidences, labels)
         postfix = (
             ".coverage.metrics.json"
-            if not thresholds_used else ".coverage.metrics.thresholds.json"
+            if not thresholds_used
+            else ".coverage.metrics.thresholds.json"
         )
         _save_json(coverage_metrics, args.out_thresholds, suffix=postfix)
 
         if args.verbose:
             print(
                 "RANK METRICS"
-                if not thresholds_used else "RANK METRICS WITH THRESHOLD"
+                if not thresholds_used
+                else "RANK METRICS WITH THRESHOLD"
             )
             pprint(rank_metrics)
             print(
                 "COVERAGE METRICS"
-                if not thresholds_used else "COVERAGE METRICS WITH THRESHOLD"
+                if not thresholds_used
+                else "COVERAGE METRICS WITH THRESHOLD"
             )
             pprint(coverage_metrics)
 

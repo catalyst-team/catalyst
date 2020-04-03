@@ -1,21 +1,18 @@
-from typing import (  # isort:skip
-    Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
-)
+from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
 
 from catalyst.dl import GanExperiment, GanState, Runner
 from catalyst.utils.tools.typing import Criterion, Device, Model, Optimizer
 
 
 class MultiPhaseRunner(Runner):
-    """
-    Base Runner with multiple phases
-    """
+    """Base Runner with multiple phases."""
+
     def __init__(
         self,
         model: Union[Model, Dict[str, Model]] = None,
         device: Device = None,
         input_batch_keys: List[str] = None,
-        registered_phases: Tuple[Tuple[str, Union[str, Callable]], ...] = None
+        registered_phases: Tuple[Tuple[str, Union[str, Callable]], ...] = None,
     ):
         """
         Args:
@@ -35,7 +32,7 @@ class MultiPhaseRunner(Runner):
 
         self.input_batch_keys = input_batch_keys or []
 
-        self.registered_phases = dict()
+        self.registered_phases = {}
         for phase_name, phase_batch_forward_fn in registered_phases:
             if not (isinstance(phase_name, str) or phase_name is None):
                 raise ValueError(
@@ -56,13 +53,15 @@ class MultiPhaseRunner(Runner):
         if isinstance(batch, (list, tuple)):
             assert len(batch) >= len(self.input_batch_keys)
             batch = {
-                key: value
-                for key, value in zip(self.input_batch_keys, batch)
+                key: value for key, value in zip(self.input_batch_keys, batch)
             }
         return super()._batch2device(batch, device)
 
     def forward(self, batch, **kwargs):
-        """Forward call"""
+        """Forward call.
+
+        @TODO: Docs (add `batch` shapes). Contribution is welcome.
+        """
         if self.state.phase not in self.registered_phases:
             raise ValueError(f"Unknown phase: '{self.state.phase}'")
 
@@ -71,11 +70,12 @@ class MultiPhaseRunner(Runner):
 
 class GanRunner(MultiPhaseRunner):
     """
-    Runner with logic for single-generator single-discriminator GAN training
+    Runner with logic for single-generator single-discriminator GAN training.
 
     Various conditioning types, penalties and regularization (such as WGAN-GP)
     can be easily derived from this class
     """
+
     experiment: GanExperiment
     state: GanState
 
@@ -103,7 +103,7 @@ class GanRunner(MultiPhaseRunner):
         discriminator_train_phase: str = "discriminator_train",
         # model keys:
         generator_model_key: str = "generator",
-        discriminator_model_key: str = "discriminator"
+        discriminator_model_key: str = "discriminator",
     ):
         """
         Args:
@@ -135,7 +135,7 @@ class GanRunner(MultiPhaseRunner):
             discriminator_model_key: name for discriminator model,
                 e.g. "discriminator"
 
-        Note:
+        .. note::
             THIS RUNNER SUPPORTS ONLY EQUALLY CONDITIONED generator and
             discriminator (i.e. if generator is conditioned on 3 variables,
             discriminator must be conditioned on same 3 variables)
@@ -144,7 +144,7 @@ class GanRunner(MultiPhaseRunner):
         registered_phases = (
             (generator_train_phase, "_generator_train_phase"),
             (discriminator_train_phase, "_discriminator_train_phase"),
-            (None, "_discriminator_train_phase")
+            (None, "_discriminator_train_phase"),
         )
         super().__init__(model, device, input_batch_keys, registered_phases)
 
@@ -161,8 +161,8 @@ class GanRunner(MultiPhaseRunner):
         self.real_condition_keys = real_condition_keys or []
         # check that discriminator will have
         # same number of arguments for real/fake data
-        assert (
-            len(self.fake_condition_keys) == len(self.real_condition_keys)
+        assert len(self.fake_condition_keys) == len(
+            self.real_condition_keys
         ), "Number of real/fake conditions should be the same"
         # Note: this generator supports only
         # EQUALLY CONDITIONED generator (G) and discriminator (D)
@@ -201,7 +201,7 @@ class GanRunner(MultiPhaseRunner):
     # Common utility functions
 
     def _get_noise_and_conditions(self):
-        """Returns generator inputs"""
+        """Returns generator inputs."""
         z = self.state.batch_in[self.noise_input_key]
         conditions = [
             self.state.batch_in[key] for key in self.fake_condition_keys
@@ -209,17 +209,17 @@ class GanRunner(MultiPhaseRunner):
         return z, conditions
 
     def _get_real_data_conditions(self):
-        """Returns discriminator conditions (for real data)"""
+        """Returns discriminator conditions (for real data)."""
         return [self.state.batch_in[key] for key in self.real_condition_keys]
 
     def _get_fake_data_conditions(self):
-        """Returns discriminator conditions (for fake data)"""
+        """Returns discriminator conditions (for fake data)."""
         return [self.state.batch_in[key] for key in self.fake_condition_keys]
 
     # concrete phase methods
 
     def _generator_train_phase(self):
-        """Forward call on generator training phase"""
+        """Forward call on generator training phase."""
         z, g_conditions = self._get_noise_and_conditions()
         d_fake_conditions = self._get_fake_data_conditions()
 
@@ -227,11 +227,11 @@ class GanRunner(MultiPhaseRunner):
         fake_logits = self.discriminator(fake_data, *d_fake_conditions)
         return {
             self.fake_data_output_key: fake_data,
-            self.fake_logits_output_key: fake_logits
+            self.fake_logits_output_key: fake_logits,
         }
 
     def _discriminator_train_phase(self):
-        """Forward call on discriminator training phase"""
+        """Forward call on discriminator training phase."""
         z, g_conditions = self._get_noise_and_conditions()
         d_fake_conditions = self._get_fake_data_conditions()
         d_real_conditions = self._get_real_data_conditions()
@@ -246,7 +246,7 @@ class GanRunner(MultiPhaseRunner):
         return {
             self.fake_data_output_key: fake_data,
             self.fake_logits_output_key: fake_logits,
-            self.real_logits_output_key: real_logits
+            self.real_logits_output_key: real_logits,
         }
 
     def train(
@@ -269,7 +269,8 @@ class GanRunner(MultiPhaseRunner):
         initial_seed: int = 42,
         check: bool = False,
     ) -> None:
-        """
+        """Starts the training process of the model.
+
         Args:
             model: models, usually generator and discriminator
             loaders: dictionary containing one or several

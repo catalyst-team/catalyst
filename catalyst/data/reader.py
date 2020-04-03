@@ -1,4 +1,4 @@
-from typing import Callable, List, Type, Tuple, Union  # isort:skip
+from typing import Callable, List, Tuple, Type, Union
 import functools
 
 import numpy as np
@@ -7,12 +7,14 @@ from catalyst.utils import get_one_hot, imread, mimread
 
 
 class ReaderSpec:
-    """Reader abstraction for all Readers. Applies a function
-    to an element of your data.
+    """Reader abstraction for all Readers.
+
+    Applies a function to an element of your data.
     For example to a row from csv, or to an image, etc.
 
     All inherited classes have to implement `__call__`.
     """
+
     def __init__(self, input_key: str, output_key: str):
         """
         Args:
@@ -23,12 +25,13 @@ class ReaderSpec:
         self.output_key = output_key
 
     def __call__(self, element):
-        """Reads a row from your annotations dict and
-        transfer it to data, needed by your network
-        for example open image by path, or read string and tokenize it.
+        """
+        Reads a row from your annotations dict and transfer it to data,
+        needed by your network for example open image by path,
+        or read string and tokenize it.
 
         Args:
-            element: elem in your dataset.
+            element: elem in your dataset
 
         Returns:
             Data object used for your neural network
@@ -39,15 +42,14 @@ class ReaderSpec:
 
 
 class ImageReader(ReaderSpec):
-    """
-    Image reader abstraction. Reads images from a `csv` dataset.
-    """
+    """Image reader abstraction. Reads images from a ``csv`` dataset."""
+
     def __init__(
         self,
         input_key: str,
         output_key: str,
         rootpath: str = None,
-        grayscale: bool = False
+        grayscale: bool = False,
     ):
         """
         Args:
@@ -67,7 +69,7 @@ class ImageReader(ReaderSpec):
         transfer it to an image
 
         Args:
-            element: elem in your dataset.
+            element: elem in your dataset
 
         Returns:
             np.ndarray: Image
@@ -82,15 +84,14 @@ class ImageReader(ReaderSpec):
 
 
 class MaskReader(ReaderSpec):
-    """
-    Mask reader abstraction. Reads masks from a `csv` dataset.
-    """
+    """Mask reader abstraction. Reads masks from a `csv` dataset."""
+
     def __init__(
         self,
         input_key: str,
         output_key: str,
         rootpath: str = None,
-        clip_range: Tuple[Union[int, float], Union[int, float]] = (0, 1)
+        clip_range: Tuple[Union[int, float], Union[int, float]] = (0, 1),
     ):
         """
         Args:
@@ -128,6 +129,7 @@ class ScalarReader(ReaderSpec):
     Numeric data reader abstraction.
     Reads a single float, int, str or other from data
     """
+
     def __init__(
         self,
         input_key: str,
@@ -153,9 +155,10 @@ class ScalarReader(ReaderSpec):
         self.one_hot_classes = one_hot_classes
         self.smoothing = smoothing
         if self.one_hot_classes is not None and self.smoothing is not None:
-            assert 0.0 < smoothing < 1.0, \
-                f"If smoothing is specified it must be in (0; 1), " \
+            assert 0.0 < smoothing < 1.0, (
+                f"If smoothing is specified it must be in (0; 1), "
                 f"got {smoothing}"
+            )
 
     def __call__(self, element):
         """
@@ -163,7 +166,7 @@ class ScalarReader(ReaderSpec):
         transfer it to a single value
 
         Args:
-            element: elem in your dataset.
+            element: elem in your dataset
 
         Returns:
             dtype: Scalar value
@@ -180,14 +183,15 @@ class ScalarReader(ReaderSpec):
 class LambdaReader(ReaderSpec):
     """
     Reader abstraction with an lambda encoders.
-    Can read an elem from dataset and apply `encode_fn` function to it
+    Can read an elem from dataset and apply `encode_fn` function to it.
     """
+
     def __init__(
         self,
         input_key: str,
         output_key: str,
         lambda_fn: Callable = lambda x: x,
-        **kwargs
+        **kwargs,
     ):
         """
         Args:
@@ -201,8 +205,9 @@ class LambdaReader(ReaderSpec):
         self.lambda_fn = functools.partial(lambda_fn, **kwargs)
 
     def __call__(self, element):
-        """Reads a row from your annotations dict
-        and applies `encode_fn` function
+        """
+        Reads a row from your annotations dict
+        and applies `encode_fn` function.
 
         Args:
             element: elem in your dataset.
@@ -219,20 +224,20 @@ class LambdaReader(ReaderSpec):
 
 
 class ReaderCompose(object):
-    """
-    Abstraction to compose several readers into one open function.
-    """
-    def __init__(self, readers: List[ReaderSpec], mixins: [] = None):
+    """Abstraction to compose several readers into one open function."""
+
+    def __init__(self, readers: List[ReaderSpec], mixins: list = None):
         """
         Args:
             readers (List[ReaderSpec]): list of reader to compose
-            mixins: list of mixins to use
+            mixins (list): list of mixins to use
         """
         self.readers = readers
         self.mixins = mixins or []
 
     def __call__(self, element):
-        """Reads a row from your annotations dict
+        """
+        Reads a row from your annotations dict
         and applies all readers and mixins
 
         Args:
@@ -250,6 +255,9 @@ class ReaderCompose(object):
 
 
 __all__ = [
-    "ReaderSpec", "ImageReader", "ScalarReader", "LambdaReader",
-    "ReaderCompose"
+    "ReaderSpec",
+    "ImageReader",
+    "ScalarReader",
+    "LambdaReader",
+    "ReaderCompose",
 ]

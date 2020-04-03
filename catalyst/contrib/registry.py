@@ -12,12 +12,15 @@ logger = logging.getLogger(__name__)
 def _transforms_loader(r: Registry):
     try:
         import albumentations as m
+
         r.add_from_module(m, prefix=["A.", "albu.", "albumentations."])
 
         from albumentations import pytorch as p
+
         r.add_from_module(p, prefix=["A.", "albu.", "albumentations."])
 
         from catalyst.contrib.data.cv import transforms as t
+
         r.add_from_module(t, prefix=["catalyst.", "C."])
     except ImportError as ex:
         if os.environ.get("USE_ALBUMENTATIONS", "0") == "1":
@@ -35,12 +38,15 @@ Transform = TRANSFORMS.add
 
 def _samplers_loader(r: Registry):
     from torch.utils.data import sampler as s
+
     factories = {
         k: v
-        for k, v in s.__dict__.items() if "Sampler" in k and k != "Sampler"
+        for k, v in s.__dict__.items()
+        if "Sampler" in k and k != "Sampler"
     }
     r.add(**factories)
     from catalyst.data import sampler
+
     r.add_from_module(sampler)
 
 
@@ -61,6 +67,7 @@ class _GradClipperWrap:
 
 def _grad_clip_loader(r: Registry):
     from torch.nn.utils import clip_grad as m
+
     r.add_from_module(m)
 
 
@@ -70,6 +77,7 @@ GRAD_CLIPPERS.late_add(_grad_clip_loader)
 
 def _modules_loader(r: Registry):
     from catalyst.contrib.nn import modules as m
+
     r.add_from_module(m)
 
 
@@ -80,10 +88,12 @@ Module = MODULES.add
 
 def _model_loader(r: Registry):
     from catalyst.contrib import models as m
+
     r.add_from_module(m)
 
     try:
         import segmentation_models_pytorch as smp
+
         r.add_from_module(smp, prefix="smp.")
     except ImportError:
         pass
@@ -96,6 +106,7 @@ Model = MODELS.add
 
 def _criterion_loader(r: Registry):
     from catalyst.contrib.nn import criterion as m
+
     r.add_from_module(m)
 
 
@@ -106,6 +117,7 @@ Criterion = CRITERIONS.add
 
 def _optimizers_loader(r: Registry):
     from catalyst.contrib.nn import optimizers as m
+
     r.add_from_module(m)
 
 
@@ -116,6 +128,7 @@ Optimizer = OPTIMIZERS.add
 
 def _schedulers_loader(r: Registry):
     from catalyst.contrib.nn import schedulers as m
+
     r.add_from_module(m)
 
 

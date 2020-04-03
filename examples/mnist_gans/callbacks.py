@@ -18,7 +18,7 @@ class VisualizationCallback(Callback):
         concat_images=True,
         max_images=20,
         num_rows=1,
-        denorm="default"
+        denorm="default",
     ):
         super().__init__(CallbackOrder.External)
         if input_keys is None:
@@ -57,7 +57,7 @@ class VisualizationCallback(Callback):
         self.max_images = max_images
         if denorm.lower() == "default":
             # normalization from [-1, 1] to [0, 1] (the latter is valid for tb)
-            self.denorm = lambda x: x / 2 + .5
+            self.denorm = lambda x: x / 2 + 0.5
         elif denorm is None or denorm.lower() == "none":
             self.denorm = lambda x: x
         else:
@@ -91,16 +91,21 @@ class VisualizationCallback(Callback):
         visualizations = dict()
         if self.concat_images:
             viz_name = "|".join(self.input_keys + self.output_keys)
-            viz_tensor = self.denorm(
-                # concat by width
-                torch.cat(input_tensors + output_tensors, dim=3)
-            ).detach().cpu()
+            viz_tensor = (
+                self.denorm(
+                    # concat by width
+                    torch.cat(input_tensors + output_tensors, dim=3)
+                )
+                .detach()
+                .cpu()
+            )
             visualizations[viz_name] = viz_tensor
         else:
             visualizations = dict(
-                (k, self.denorm(v)) for k, v in zip(
-                    self.input_keys + self.output_keys, input_tensors +
-                    output_tensors
+                (k, self.denorm(v))
+                for k, v in zip(
+                    self.input_keys + self.output_keys,
+                    input_tensors + output_tensors,
                 )
             )
         return visualizations
@@ -108,7 +113,7 @@ class VisualizationCallback(Callback):
     def save_visualizations(self, state: State, visualizations):
         tb_logger = self._get_tensorboard_logger(state)
         for key, batch_images in visualizations.items():
-            batch_images = batch_images[:self.max_images]
+            batch_images = batch_images[: self.max_images]
             image = torchvision.utils.make_grid(
                 batch_images, nrow=self._num_rows
             )

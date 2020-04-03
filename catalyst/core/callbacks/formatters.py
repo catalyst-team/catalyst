@@ -1,5 +1,4 @@
-from typing import Dict  # isort:skip
-
+from typing import Dict
 from abc import ABC, abstractmethod
 import logging
 
@@ -8,9 +7,8 @@ from catalyst.core import State
 
 
 class MetricsFormatter(ABC, logging.Formatter):
-    """
-    Abstract metrics formatter
-    """
+    """Abstract metrics formatter."""
+
     def __init__(self, message_prefix):
         """
         Args:
@@ -24,9 +22,7 @@ class MetricsFormatter(ABC, logging.Formatter):
         pass
 
     def format(self, record: logging.LogRecord):
-        """
-        Format message string
-        """
+        """Format message string."""
         # noinspection PyUnresolvedReferences
         state = record.state
 
@@ -36,16 +32,16 @@ class MetricsFormatter(ABC, logging.Formatter):
 
 
 class TxtMetricsFormatter(MetricsFormatter):
-    """
-    Translate batch metrics in human-readable format.
+    """Translate batch metrics in human-readable format.
 
     This class is used by ``logging.Logger`` to make a string from record.
     For details refer to official docs for 'logging' module.
 
-    Note:
+    .. warning::
         This is inner class used by Logger callback,
         no need to use it directly!
     """
+
     def __init__(self):
         """
         Initializes the ``TxtMetricsFormatter``

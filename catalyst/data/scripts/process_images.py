@@ -8,7 +8,7 @@
 #   --clear-exif \
 #   --grayscale
 
-from typing import List  # isort:skip
+from typing import List
 import argparse
 from functools import wraps
 from multiprocessing.pool import Pool
@@ -19,8 +19,12 @@ import cv2
 import numpy as np
 
 from catalyst.utils import (
-    boolean_flag, get_pool, has_image_extension, imread, imwrite,
-    tqdm_parallel_imap
+    boolean_flag,
+    get_pool,
+    has_image_extension,
+    imread,
+    imwrite,
+    tqdm_parallel_imap,
 )
 
 # Limit cv2's processor usage
@@ -31,6 +35,9 @@ cv2.ocl.setUseOpenCL(False)
 
 
 def build_args(parser):
+    """
+    Constructs the command-line arguments for ``catalyst-data process-images``.
+    """
     parser.add_argument(
         "--in-dir", required=True, type=Path, help="Raw data folder path"
     )
@@ -39,7 +46,7 @@ def build_args(parser):
         "--out-dir",
         required=True,
         type=Path,
-        help="Processed images folder path"
+        help="Processed images folder path",
     )
 
     parser.add_argument(
@@ -47,7 +54,7 @@ def build_args(parser):
         "-j",
         default=1,
         type=int,
-        help="Number of workers to parallel the processing"
+        help="Number of workers to parallel the processing",
     )
 
     parser.add_argument(
@@ -55,7 +62,7 @@ def build_args(parser):
         default=None,
         required=False,
         type=int,
-        help="Output images size. E.g. 224, 448"
+        help="Output images size. E.g. 224, 448",
     )
 
     boolean_flag(parser, "clear-exif", default=True, help="Clear EXIF data")
@@ -68,13 +75,14 @@ def build_args(parser):
         parser,
         "expand-dims",
         default=True,
-        help="Expand array shape for grayscale images"
+        help="Expand array shape for grayscale images",
     )
 
     return parser
 
 
 def parse_args():
+    """Parses the command line arguments for the main method."""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args = parser.parse_args()
@@ -94,6 +102,7 @@ def py3round(number):
 
 def preserve_channel_dim(func):
     """Preserve dummy channel dim."""
+
     @wraps(func)
     def wrapped_function(img, *args, **kwargs):
         shape = img.shape
@@ -118,6 +127,7 @@ def _func_max_size(img, max_size, interpolation, func):
 
 @preserve_channel_dim
 def longest_max_size(img, max_size, interpolation):
+    """@TODO: Docs. Contribution is welcome."""
     return _func_max_size(img, max_size, interpolation, max)
 
 
@@ -125,6 +135,8 @@ def longest_max_size(img, max_size, interpolation):
 
 
 class Preprocessor:
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(
         self,
         in_dir: Path,
@@ -135,6 +147,7 @@ class Preprocessor:
         expand_dims: bool = True,
         interpolation=cv2.INTER_LANCZOS4,
     ):
+        """@TODO: Docs. Contribution is welcome."""
         self.in_dir = in_dir
         self.out_dir = out_dir
         self.grayscale = grayscale
@@ -144,11 +157,12 @@ class Preprocessor:
         self.interpolation = interpolation
 
     def preprocess(self, image_path: Path):
+        """@TODO: Docs. Contribution is welcome."""
         try:
             _, extension = os.path.splitext(image_path)
             kwargs = {
                 "grayscale": self.grayscale,
-                "expand_dims": self.expand_dims
+                "expand_dims": self.expand_dims,
             }
             if extension.lower() in {"jpg", "jpeg"}:
                 # imread does not have exifrotate for non-jpeg type
@@ -169,12 +183,14 @@ class Preprocessor:
         imwrite(target_path, image)
 
     def process_all(self, pool: Pool):
+        """@TODO: Docs. Contribution is welcome."""
         images: List[Path] = []
-        for root, dirs, files in os.walk(self.in_dir):
+        for root, _, files in os.walk(self.in_dir):
             root = Path(root)
             images.extend(
                 [
-                    root / filename for filename in files
+                    root / filename
+                    for filename in files
                     if has_image_extension(filename)
                 ]
             )
@@ -183,6 +199,7 @@ class Preprocessor:
 
 
 def main(args, _=None):
+    """Run the ``catalyst-data process-images`` script."""
     args = args.__dict__
     args.pop("command", None)
     num_workers = args.pop("num_workers")

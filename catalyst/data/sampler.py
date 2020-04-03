@@ -1,4 +1,4 @@
-from typing import Iterator, List  # isort:skip
+from typing import Iterator, List, Optional
 from operator import itemgetter
 
 import numpy as np
@@ -10,10 +10,11 @@ from catalyst.data import DatasetFromSampler
 
 
 class BalanceClassSampler(Sampler):
+    """Abstraction over data sampler.
+
+    Allows you to create stratified sample on unbalanced classes.
     """
-    Abstraction over data sampler. Allows you to create stratified sample
-    on unbalanced classes.
-    """
+
     def __init__(self, labels: List[int], mode: str = "downsampling"):
         """
         Args:
@@ -26,8 +27,7 @@ class BalanceClassSampler(Sampler):
 
         labels = np.array(labels)
         samples_per_class = {
-            label: (labels == label).sum()
-            for label in set(labels)
+            label: (labels == label).sum() for label in set(labels)
         }
 
         self.lbl2idx = {
@@ -39,9 +39,11 @@ class BalanceClassSampler(Sampler):
             assert mode in ["downsampling", "upsampling"]
 
         if isinstance(mode, int) or mode == "upsampling":
-            samples_per_class = mode \
-                if isinstance(mode, int) \
+            samples_per_class = (
+                mode
+                if isinstance(mode, int)
                 else max(samples_per_class.values())
+            )
         else:
             samples_per_class = min(samples_per_class.values())
 
@@ -60,7 +62,7 @@ class BalanceClassSampler(Sampler):
             indices += np.random.choice(
                 self.lbl2idx[key], self.samples_per_class, replace=replace_
             ).tolist()
-        assert (len(indices) == self.length)
+        assert len(indices) == self.length
         np.random.shuffle(indices)
 
         return iter(indices)
@@ -75,20 +77,7 @@ class BalanceClassSampler(Sampler):
 
 class MiniEpochSampler(Sampler):
     """
-    Sampler iterates mini epochs from the dataset
-    used by ``mini_epoch_len``
-
-    Args:
-        data_len (int): Size of the dataset
-        mini_epoch_len (int): Num samples from the dataset used in one
-            mini epoch.
-        drop_last (bool): If ``True``, sampler will drop the last batches if
-            its size would be less than ``batches_per_epoch``
-        shuffle (str): one of  ``["always", "real_epoch", None]``.
-            The sampler will shuffle indices
-            > "per_mini_epoch" -- every mini epoch (every ``__iter__`` call)
-            > "per_epoch" -- every real epoch
-            > None -- don't shuffle
+    Sampler iterates mini epochs from the dataset used by ``mini_epoch_len``.
 
     Example:
         >>> MiniEpochSampler(len(dataset), mini_epoch_len=100)
@@ -97,13 +86,27 @@ class MiniEpochSampler(Sampler):
         >>> MiniEpochSampler(len(dataset), mini_epoch_len=100,
         >>>     shuffle="per_epoch")
     """
+
     def __init__(
         self,
         data_len: int,
         mini_epoch_len: int,
         drop_last: bool = False,
-        shuffle: str = None
+        shuffle: str = None,
     ):
+        """
+        Args:
+            data_len (int): Size of the dataset
+            mini_epoch_len (int): Num samples from the dataset used in one
+                mini epoch.
+            drop_last (bool): If ``True``, sampler will drop the last batches
+                if its size would be less than ``batches_per_epoch``
+            shuffle (str): one of  ``"always"``, ``"real_epoch"``, or `None``.
+                The sampler will shuffle indices
+                > "per_mini_epoch" - every mini epoch (every ``__iter__`` call)
+                > "per_epoch" -- every real epoch
+                > None -- don't shuffle
+        """
         super().__init__(None)
 
         self.data_len = int(data_len)
@@ -131,9 +134,11 @@ class MiniEpochSampler(Sampler):
             )
         self.shuffle_type = shuffle
 
-    def shuffle(self):
-        if self.shuffle_type == "per_mini_epoch" or \
-                (self.shuffle_type == "per_epoch" and self.state_i == 0):
+    def shuffle(self) -> None:
+        """@TODO: Docs. Contribution is welcome."""
+        if self.shuffle_type == "per_mini_epoch" or (
+            self.shuffle_type == "per_epoch" and self.state_i == 0
+        ):
             if self.data_len >= self.mini_epoch_len:
                 self.indices = self._indices
                 np.random.shuffle(self.indices)
@@ -143,19 +148,26 @@ class MiniEpochSampler(Sampler):
                 )
 
     def __iter__(self) -> Iterator[int]:
+        """@TODO: Docs. Contribution is welcome."""
         self.state_i = self.state_i % self.divider
         self.shuffle()
 
         start = self.state_i * self.mini_epoch_len
-        stop = self.end_pointer \
-            if (self.state_i == self.steps) \
+        stop = (
+            self.end_pointer
+            if (self.state_i == self.steps)
             else (self.state_i + 1) * self.mini_epoch_len
+        )
         indices = self.indices[start:stop].tolist()
 
         self.state_i += 1
         return iter(indices)
 
     def __len__(self) -> int:
+        """
+        Returns:
+            int: length of the mini-epoch
+        """
         return self.mini_epoch_len
 
 
@@ -172,24 +184,35 @@ class DistributedSamplerWrapper(DistributedSampler):
 
     .. note::
         Sampler is assumed to be of constant size.
-
-    Arguments:
-        sampler: Sampler used for subsampling.
-        num_replicas (optional): Number of processes participating in
-            distributed training.
-        rank (optional): Rank of the current process within num_replicas.
-        shuffle (optional): If true (default), sampler will shuffle the indices
     """
-    def __init__(self, sampler, num_replicas=None, rank=None, shuffle=True):
+
+    def __init__(
+        self,
+        sampler,
+        num_replicas: Optional[int] = None,
+        rank: Optional[int] = None,
+        shuffle: bool = True,
+    ):
+        """
+        Args:
+            sampler: Sampler used for subsampling
+            num_replicas (int, optional): Number of processes participating in
+                distributed training
+            rank (int, optional): Rank of the current process
+                within ``num_replicas``
+            shuffle (bool, optional): If true (default),
+                sampler will shuffle the indices
+        """
         super(DistributedSamplerWrapper, self).__init__(
             DatasetFromSampler(sampler),
             num_replicas=num_replicas,
             rank=rank,
-            shuffle=shuffle
+            shuffle=shuffle,
         )
         self.sampler = sampler
 
     def __iter__(self):
+        """@TODO: Docs. Contribution is welcome."""
         self.dataset = DatasetFromSampler(self.sampler)
         indexes_of_indexes = super().__iter__()
         subsampler_indexes = self.dataset
@@ -197,5 +220,7 @@ class DistributedSamplerWrapper(DistributedSampler):
 
 
 __all__ = [
-    "BalanceClassSampler", "MiniEpochSampler", "DistributedSamplerWrapper"
+    "BalanceClassSampler",
+    "MiniEpochSampler",
+    "DistributedSamplerWrapper",
 ]

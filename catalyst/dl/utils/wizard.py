@@ -4,18 +4,20 @@ import pathlib
 from prompt_toolkit import prompt
 import yaml
 
+from catalyst import utils
 from catalyst.contrib.utils.pipelines import URLS
-from catalyst.dl import registry, utils
+from catalyst.dl import registry
 
 yaml.add_representer(
-    OrderedDict, lambda dumper, data: dumper.
-    represent_mapping("tag:yaml.org,2002:map", data.items())
+    OrderedDict,
+    lambda dumper, data: dumper.represent_mapping(
+        "tag:yaml.org,2002:map", data.items()
+    ),
 )
 
 
 class Wizard:
-    """
-    Class for Catalyst Config API Wizard.
+    """Class for Catalyst Config API Wizard.
 
     The instance of this class will be created and called from cli command:
     ``catalyst-dl init --interactive``.
@@ -24,6 +26,7 @@ class Wizard:
     templates and make choices of what predefined classes to use in different
     parts of pipeline.
     """
+
     def __init__(self):
         """
         Initialization of instance of this class will print welcome message and
@@ -51,8 +54,9 @@ class Wizard:
 
         self._cfg = OrderedDict(
             [
-                ("model_params", OrderedDict()), ("args", OrderedDict()),
-                ("stages", OrderedDict())
+                ("model_params", OrderedDict()),
+                ("args", OrderedDict()),
+                ("stages", OrderedDict()),
             ]
         )
 
@@ -62,14 +66,12 @@ class Wizard:
             "CRITERIONS": registry.__dict__["CRITERIONS"].all(),
             "OPTIMIZERS": registry.__dict__["OPTIMIZERS"].all(),
             "SCHEDULERS": registry.__dict__["SCHEDULERS"].all(),
-            "CALLBACKS": registry.__dict__["CALLBACKS"].all()
+            "CALLBACKS": registry.__dict__["CALLBACKS"].all(),
         }
 
     @staticmethod
     def __sep(step_name: str = None):
-        """
-        Separator between Wizard sections
-        """
+        """Separator between Wizard sections."""
         if step_name is None:
             print("\n" + "=" * 100 + "\n")
         else:
@@ -99,25 +101,21 @@ class Wizard:
     def __sorted_for_user(self, key):
         """
         Here we put user's modules of specific part of pipeline on top of
-        modules predefined in Catalyst
+        modules predefined in Catalyst.
         """
         modules = registry.__dict__[key].all()
         user_modules = list(set(modules) - set(self.__before_export[key]))
         user_modules = sorted(user_modules)
-        return user_modules + sorted([m for m in modules if m[0].isupper()])
+        return user_modules + sorted(m for m in modules if m[0].isupper())
 
     def _preview(self):
-        """
-        Showing user final config in YAML format
-        """
+        """Showing user final config in YAML format."""
         self.__sep()
         print(yaml.dump(self._cfg, default_flow_style=False))
         self.__sep()
 
     def _dump_step(self):
-        """
-        Asking where and saving final config converted into YAML
-        """
+        """Asking where and saving final config converted into YAML."""
         path = prompt("Enter config path: ", default="./configs/config.yml")
         self.__res(path)
         path = pathlib.Path(path)
@@ -129,14 +127,14 @@ class Wizard:
         """
         Stages could have common params, in that case we will ask user if it
         should be overriden for specific step. If not - we'll just skip entire
-        params section for stage
+        params section for stage.
         """
         common = None
         if param_name in self._cfg["stages"]:
             common = self._cfg["stages"][param_name]
             print(
-                "You have common setting for all stages:\n" +
-                yaml.dump(common, default_flow_style=False)
+                "You have common setting for all stages:\n"
+                + yaml.dump(common, default_flow_style=False)
             )
             res = prompt("Do you want to override it? (y/N): ", default="N")
             self.__res(res)
@@ -202,8 +200,7 @@ class Wizard:
                 self.__res(module)
         else:
             module = prompt(
-                f"Enter class name of {param} "
-                "you'll be using: "
+                f"Enter class name of {param} " "you'll be using: "
             )
             self.__res(module)
         opts[param] = module
@@ -233,8 +230,7 @@ class Wizard:
         opts = OrderedDict()
         opts["num_epochs"] = int(
             prompt(
-                "How much epochs you want to run this "
-                "stage: ", default="1"
+                "How much epochs you want to run this " "stage: ", default="1"
             )
         )
         self.__res(opts["num_epochs"])
@@ -302,7 +298,7 @@ class Wizard:
             res = prompt(
                 "Do you want to assign some common settings "
                 "for all stages? (y/N): ",
-                default="y"
+                default="y",
             )
             self.__res(res)
             if res.lower() == "y":
@@ -311,7 +307,7 @@ class Wizard:
         for stage_id in range(cnt):
             name = prompt(
                 "What would be the name of this stage: ",
-                default=f"stage{stage_id + 1}"
+                default=f"stage{stage_id + 1}",
             )
             self.__res(name)
             stage = OrderedDict()
@@ -359,13 +355,13 @@ class Wizard:
         self._cfg["args"]["expdir"] = prompt(
             "Provide expdir for your experiment "
             "(where is the `__init__.py` with your modules stored): ",
-            default=str(self.pipeline_path / "src")
+            default=str(self.pipeline_path / "src"),
         )
         self.__res(self._cfg["args"]["expdir"])
         self._cfg["args"]["logdir"] = prompt(
             "Provide logdir for your experiment "
             "(where Catalyst supposed to save its logs): ",
-            default=str(self.pipeline_path / "logs/experiment")
+            default=str(self.pipeline_path / "logs/experiment"),
         )
         self.__res(self._cfg["args"]["logdir"])
 
@@ -396,18 +392,15 @@ class Wizard:
         pipeline = opts[res - 1]
         self.__res(pipeline)
         out_dir = prompt(
-            f"Where we need to copy {pipeline} "
-            "template files?: ",
-            default="./"
+            f"Where we need to copy {pipeline} " "template files?: ",
+            default="./",
         )
         self.pipeline_path = pathlib.Path(out_dir)
         utils.clone_pipeline(pipeline.lower(), self.pipeline_path)
         self.__res(f"{pipeline} cloned to {self.pipeline_path}")
 
     def run(self):
-        """
-        Walks user through predefined wizard steps
-        """
+        """Walks user through predefined wizard steps."""
         self._pipeline_step()
         self._args_step()
         self._model_step()
@@ -426,8 +419,6 @@ class Wizard:
 
 
 def run_wizard():
-    """
-    Method to initialize and run wizard
-    """
+    """Method to initialize and run wizard."""
     wiz = Wizard()
     wiz.run()

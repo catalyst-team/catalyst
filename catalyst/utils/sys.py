@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Union  # isort:skip
+from typing import Any, Dict, List, Union
 import json
 import os
 from pathlib import Path
@@ -7,13 +7,15 @@ import shutil
 import subprocess
 import sys
 
-from catalyst import utils
 from catalyst.utils.tools.tensorboard import SummaryWriter
+
+from .config import save_config
+from .misc import get_utcnow_time
 
 
 def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:
-    """
-    Decode bytes values in the dictionary to UTF-8
+    """Decode bytes values in the dictionary to UTF-8.
+
     Args:
         dictionary: a dict
 
@@ -28,8 +30,7 @@ def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:
 
 
 def get_environment_vars() -> Dict[str, Any]:
-    """
-    Creates a dictionary with environment variables
+    """Creates a dictionary with environment variables.
 
     Returns:
         dict: environment variables
@@ -37,7 +38,7 @@ def get_environment_vars() -> Dict[str, Any]:
     result = {
         "python_version": sys.version,
         "conda_environment": os.environ.get("CONDA_DEFAULT_ENV", ""),
-        "creation_time": utils.get_utcnow_time(),
+        "creation_time": get_utcnow_time(),
         "sysname": platform.uname()[0],
         "nodename": platform.uname()[1],
         "release": platform.uname()[2],
@@ -49,25 +50,29 @@ def get_environment_vars() -> Dict[str, Any]:
 
     with open(os.devnull, "w") as devnull:
         try:
-            git_branch = subprocess.check_output(
-                "git rev-parse --abbrev-ref HEAD".split(),
-                shell=True,
-                stderr=devnull
-            ).strip().decode("UTF-8")
+            git_branch = (
+                subprocess.check_output(
+                    "git rev-parse --abbrev-ref HEAD".split(),
+                    shell=True,
+                    stderr=devnull,
+                )
+                .strip()
+                .decode("UTF-8")
+            )
             git_local_commit = subprocess.check_output(
                 "git rev-parse HEAD".split(), shell=True, stderr=devnull
             )
             git_origin_commit = subprocess.check_output(
                 f"git rev-parse origin/{git_branch}".split(),
                 shell=True,
-                stderr=devnull
+                stderr=devnull,
             )
 
-            git = dict(
-                branch=git_branch,
-                local_commit=git_local_commit,
-                origin_commit=git_origin_commit
-            )
+            git = {
+                "branch": git_branch,
+                "local_commit": git_local_commit,
+                "origin_commit": git_origin_commit,
+            }
             result["git"] = _decode_dict(git)
         except (subprocess.CalledProcessError, FileNotFoundError):
             pass
@@ -77,12 +82,17 @@ def get_environment_vars() -> Dict[str, Any]:
 
 
 def list_pip_packages() -> str:
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     result = ""
     with open(os.devnull, "w") as devnull:
         try:
-            result = subprocess.check_output(
-                "pip freeze".split(), stderr=devnull
-            ).strip().decode("UTF-8")
+            result = (
+                subprocess.check_output("pip freeze".split(), stderr=devnull)
+                .strip()
+                .decode("UTF-8")
+            )
         except FileNotFoundError:
             pass
         except subprocess.CalledProcessError as e:
@@ -92,15 +102,22 @@ def list_pip_packages() -> str:
 
 
 def list_conda_packages() -> str:
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     result = ""
     conda_meta_path = Path(sys.prefix) / "conda-meta"
     if conda_meta_path.exists():
         # We are currently in conda virtual env
         with open(os.devnull, "w") as devnull:
             try:
-                result = subprocess.check_output(
-                    "conda list --export".split(), stderr=devnull
-                ).strip().decode("UTF-8")
+                result = (
+                    subprocess.check_output(
+                        "conda list --export".split(), stderr=devnull
+                    )
+                    .strip()
+                    .decode("UTF-8")
+                )
             except FileNotFoundError:
                 pass
             except subprocess.CalledProcessError as e:
@@ -113,12 +130,10 @@ def list_conda_packages() -> str:
 
 
 def dump_environment(
-    experiment_config: Dict,
-    logdir: str,
-    configs_path: List[str] = None,
+    experiment_config: Dict, logdir: str, configs_path: List[str] = None,
 ) -> None:
     """
-    Saves config, environment variables and package list in JSON into logdir
+    Saves config, environment variables and package list in JSON into logdir.
 
     Args:
         experiment_config (dict): experiment config
@@ -134,8 +149,8 @@ def dump_environment(
 
     environment = get_environment_vars()
 
-    utils.save_config(experiment_config, config_dir / "_config.json")
-    utils.save_config(environment, config_dir / "_environment.json")
+    save_config(experiment_config, config_dir / "_config.json")
+    save_config(environment, config_dir / "_environment.json")
 
     pip_pkg = list_pip_packages()
     (config_dir / "pip-packages.txt").write_text(pip_pkg)
@@ -165,6 +180,8 @@ def dump_environment(
 
 
 __all__ = [
-    "get_environment_vars", "list_conda_packages", "list_pip_packages",
-    "dump_environment"
+    "get_environment_vars",
+    "list_conda_packages",
+    "list_pip_packages",
+    "dump_environment",
 ]

@@ -16,8 +16,7 @@ bs = 32
 num_workers = 0
 
 data_transform = transforms.Compose(
-    [transforms.ToTensor(),
-     transforms.Normalize((0.1307, ), (0.3081, ))]
+    [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
 )
 
 loaders = collections.OrderedDict()
@@ -108,7 +107,7 @@ runner.train(
     loaders=loaders,
     logdir=logdir,
     num_epochs=num_epochs,
-    check=True
+    check=True,
 )
 
 # In[ ]:
@@ -150,7 +149,7 @@ runner.train(
     loaders=loaders,
     logdir=logdir,
     num_epochs=num_epochs,
-    check=True
+    check=True,
 )
 
 # # Setup 3 - training with early stop
@@ -185,7 +184,7 @@ runner.train(
     callbacks=[EarlyStoppingCallback(patience=2, min_delta=0.01)],
     logdir=logdir,
     num_epochs=num_epochs,
-    check=True
+    check=True,
 )
 
 # In[ ]:
@@ -223,11 +222,11 @@ runner.train(
     loaders=loaders,
     callbacks=[
         AccuracyCallback(accuracy_args=[1, 3, 5]),
-        EarlyStoppingCallback(patience=2, min_delta=0.01)
+        EarlyStoppingCallback(patience=2, min_delta=0.01),
     ],
     logdir=logdir,
     num_epochs=num_epochs,
-    check=True
+    check=True,
 )
 
 # In[ ]:
@@ -257,7 +256,7 @@ scheduler = OneCycleLRWithWarmup(
     num_steps=num_epochs,
     lr_range=(0.005, 0.00005),
     warmup_steps=2,
-    momentum_range=(0.85, 0.95)
+    momentum_range=(0.85, 0.95),
 )
 
 # model runner
@@ -276,7 +275,7 @@ runner.train(
     ],
     logdir=logdir,
     num_epochs=num_epochs,
-    check=True
+    check=True,
 )
 
 # In[ ]:
@@ -316,12 +315,10 @@ runner.train(
     scheduler=scheduler,
     loaders={"train": loaders["train"]},
     valid_loader="train",
-    callbacks=[
-        AccuracyCallback(accuracy_args=[1, 3, 5]),
-    ],
+    callbacks=[AccuracyCallback(accuracy_args=[1, 3, 5]),],
     logdir=logdir,
     num_epochs=num_epochs,
-    check=True
+    check=True,
 )
 
 # In[ ]:
@@ -358,7 +355,7 @@ runner.train(
     loaders=loaders,
     logdir=logdir,
     num_epochs=num_epochs,
-    check=True  # here is the trick
+    check=True,  # here is the trick
 )
 
 # # Setup 8 - multi-stage training
@@ -392,11 +389,11 @@ runner.train(
     loaders=loaders,
     callbacks=[
         AccuracyCallback(accuracy_args=[1, 3, 5]),
-        EarlyStoppingCallback(patience=2, min_delta=0.01)
+        EarlyStoppingCallback(patience=2, min_delta=0.01),
     ],
     logdir=logdir,
     num_epochs=num_epochs,
-    check=True
+    check=True,
 )
 
 # model training - 2
@@ -410,7 +407,7 @@ runner.train(
     optimizer=optimizer,
     loaders=loaders,
     logdir=logdir,
-    num_epochs=num_epochs
+    num_epochs=num_epochs,
 )
 
 # # Setup 9 - predict_loader

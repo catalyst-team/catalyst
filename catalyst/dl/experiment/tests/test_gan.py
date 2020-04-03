@@ -3,8 +3,13 @@ from collections import OrderedDict
 import torch
 
 from catalyst.dl import (
-    CheckpointCallback, ConsoleLogger, ExceptionCallback, OptimizerCallback,
-    PhaseManagerCallback, PhaseWrapperCallback, TensorboardLogger
+    CheckpointCallback,
+    ConsoleLogger,
+    ExceptionCallback,
+    OptimizerCallback,
+    PhaseManagerCallback,
+    PhaseWrapperCallback,
+    TensorboardLogger,
 )
 from catalyst.dl.experiment.gan import GanExperiment
 
@@ -39,6 +44,7 @@ def test_defaults():
         model=model,
         loaders=loaders,
         state_kwargs=state_kwargs,
+        valid_loader="train",
     )
 
     assert exp.get_callbacks("train").keys() == DEFAULT_CALLBACKS.keys()
@@ -48,9 +54,7 @@ def test_defaults():
 
 
 def test_callback_wrapping():
-    """
-    Test on callback wrapping for GanExperiment class.
-    """
+    """Test on callback wrapping for GanExperiment class."""
     model = torch.nn.Module()
     dataset = torch.utils.data.Dataset()
     dataloader = torch.utils.data.DataLoader(dataset)
@@ -65,7 +69,7 @@ def test_callback_wrapping():
         {
             "optim_d": OptimizerCallback(
                 loss_key=discriminator_loss_key,
-                optimizer_key=discriminator_key
+                optimizer_key=discriminator_key,
             ),
             "optim_g": OptimizerCallback(
                 loss_key=generator_loss_key, optimizer_key=generator_key
@@ -92,6 +96,7 @@ def test_callback_wrapping():
         callbacks=input_callbacks,
         state_kwargs=state_kwargs,
         phase2callbacks=phase2callbacks,
+        valid_loader="train",
     )
 
     callbacks = exp.get_callbacks("train")

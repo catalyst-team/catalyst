@@ -9,5 +9,6 @@ pip install -r requirements/requirements-nlp.txt
 pip install -r requirements/requirements-dev.txt
 pip install -r docs/requirements.txt
 
-make check-codestyle
+catalyst-check-codestyle
+pytest .
 make check-docs

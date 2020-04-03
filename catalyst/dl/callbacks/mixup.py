@@ -1,4 +1,4 @@
-from typing import List  # isort:skip
+from typing import List
 
 import numpy as np
 
@@ -8,22 +8,25 @@ from catalyst.dl import CriterionCallback, State
 
 
 class MixupCallback(CriterionCallback):
-    """
-    Callback to do mixup augmentation.
+    """Callback to do mixup augmentation.
 
-    Paper: https://arxiv.org/abs/1710.09412
+    More details about mixin can be found in the paper
+    `mixup: Beyond Empirical Risk Minimization`_.
 
-    Note:
-        MixupCallback is inherited from CriterionCallback and
-        does its work.
-
+    .. warning::
+        :class:`catalyst.dl.callbacks.MixupCallback` is inherited from
+        :class:`catalyst.dl.CriterionCallback` and does its work.
         You may not use them together.
+
+    .. _mixup\: Beyond Empirical Risk Minimization:
+        https://arxiv.org/abs/1710.09412
     """
+
     def __init__(
         self,
         input_key: str = "targets",
         output_key: str = "logits",
-        fields: List[str] = ("features", ),
+        fields: List[str] = ("features",),
         alpha=1.0,
         on_train_only=True,
         **kwargs
@@ -41,8 +44,9 @@ class MixupCallback(CriterionCallback):
                 for validation.
         """
         assert isinstance(input_key, str) and isinstance(output_key, str)
-        assert len(fields) > 0, \
-            "At least one field for MixupCallback is required"
+        assert (
+            len(fields) > 0
+        ), "At least one field for MixupCallback is required"
         assert alpha >= 0, "alpha must be>=0"
 
         super().__init__(input_key=input_key, output_key=output_key, **kwargs)
@@ -62,15 +66,25 @@ class MixupCallback(CriterionCallback):
         y_a = state.batch_in[self.input_key]
         y_b = state.batch_in[self.input_key][self.index]
 
-        loss = self.lam * criterion(pred, y_a) + \
-            (1 - self.lam) * criterion(pred, y_b)
+        loss = self.lam * criterion(pred, y_a) + (1 - self.lam) * criterion(
+            pred, y_b
+        )
         return loss
 
     def on_loader_start(self, state: State):
-        self.is_needed = not self.on_train_only or \
-            state.is_train_loader
+        """Loader start hook.
+
+        Args:
+            state (State): current state
+        """
+        self.is_needed = not self.on_train_only or state.is_train_loader
 
     def on_batch_start(self, state: State):
+        """Batch start hook.
+
+        Args:
+            state (State): current state
+        """
         if not self.is_needed:
             return
 
@@ -83,8 +97,10 @@ class MixupCallback(CriterionCallback):
         self.index.to(state.device)
 
         for f in self.fields:
-            state.batch_in[f] = self.lam * state.batch_in[f] + \
-                                (1 - self.lam) * state.batch_in[f][self.index]
+            state.batch_in[f] = (
+                self.lam * state.batch_in[f]
+                + (1 - self.lam) * state.batch_in[f][self.index]
+            )
 
 
 __all__ = ["MixupCallback"]

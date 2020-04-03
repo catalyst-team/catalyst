@@ -10,10 +10,7 @@ net = get_linear_net(
     use_bias=[True, False, False],
     normalization=[None, "BatchNorm1d", "LayerNorm"],
     dropout_rate=[None, 0.5, 0.8],
-    activation=[None, "ReLU", {
-        "module": "ELU",
-        "alpha": 0.5
-    }],
+    activation=[None, "ReLU", {"module": "ELU", "alpha": 0.5}],
     residual="soft",
 )
 
@@ -28,10 +25,7 @@ net = get_convolution_net(
     use_bias=[True, False, False],
     normalization=[None, "BatchNorm2d", "BatchNorm2d"],
     dropout_rate=[None, 0.5, 0.8],
-    activation=[None, "ReLU", {
-        "module": "ELU",
-        "alpha": 0.5
-    }],
+    activation=[None, "ReLU", {"module": "ELU", "alpha": 0.5}],
     residual="soft",
 )
 

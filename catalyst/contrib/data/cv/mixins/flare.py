@@ -1,24 +1,24 @@
-from typing import Dict  # isort:skip
+from typing import Dict
 import random
 
 import albumentations as A
 
 
 class FlareMixin:
-    """
-    Calculates flare factor for augmented image
-    """
+    """Calculates flare factor for augmented image."""
+
     def __init__(
         self,
         input_key: str = "image",
         output_key: str = "flare_factor",
-        sunflare_params: Dict = None
+        sunflare_params: Dict = None,
     ):
         """
         Args:
             input_key (str): input key to use from annotation dict
             output_key (str): output key to use to store the result
-            sunflare_params (dict): params to init ``A.RandomSunFlare``
+            sunflare_params (dict): params to init
+                ``albumentations.RandomSunFlare``
         """
         self.input_key = input_key
         self.output_key = output_key
@@ -27,6 +27,7 @@ class FlareMixin:
         self.transform = A.RandomSunFlare(**self.sunflare_params)
 
     def __call__(self, dictionary):
+        """@TODO: Docs. Contribution is welcome."""
         image = dictionary[self.input_key]
         sunflare_factor = 0
 

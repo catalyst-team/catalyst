@@ -1,5 +1,4 @@
-from typing import Any, Callable, Dict, List, Union  # isort:skip
-
+from typing import Any, Callable, Dict, List, Union
 from abc import ABC, abstractmethod
 from collections import defaultdict
 import logging
@@ -14,6 +13,8 @@ logger = logging.getLogger(__name__)
 
 
 class _MetricCallback(ABC, Callback):
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(
         self,
         prefix: str,
@@ -22,6 +23,7 @@ class _MetricCallback(ABC, Callback):
         multiplier: float = 1.0,
         **metrics_kwargs,
     ):
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__(order=CallbackOrder.Metric, node=CallbackNode.All)
         self.prefix = prefix
         # self.metric_fn = partial(metric_fn, **metric_params)
@@ -34,12 +36,15 @@ class _MetricCallback(ABC, Callback):
         self._get_output = utils.get_dictkey_auto_fn(self.output_key)
         kv_types = (dict, tuple, list, type(None))
 
-        is_value_input = \
+        is_value_input = (
             isinstance(self.input_key, str) and self.input_key != "__all__"
-        is_value_output = \
+        )
+        is_value_output = (
             isinstance(self.output_key, str) and self.output_key != "__all__"
-        is_kv_input = \
+        )
+        is_kv_input = (
             isinstance(self.input_key, kv_types) or self.input_key == "__all__"
+        )
         is_kv_output = (
             isinstance(self.output_key, kv_types)
             or self.output_key == "__all__"
@@ -58,6 +63,7 @@ class _MetricCallback(ABC, Callback):
     @property
     @abstractmethod
     def metric_fn(self):
+        """@TODO: Docs. Contribution is welcome."""
         pass
 
     def _compute_metric_value(self, state: State):
@@ -74,18 +80,15 @@ class _MetricCallback(ABC, Callback):
         metric = self.metric_fn(**output, **input, **self.metrics_kwargs)
         return metric
 
-    def on_batch_end(self, state: State):
-        """
-        Computes the metric and add it to batch metrics
-        """
+    def on_batch_end(self, state: State) -> None:
+        """Computes the metric and add it to batch metrics."""
         metric = self._compute_metric(state) * self.multiplier
         state.batch_metrics[self.prefix] = metric
 
 
 class MetricCallback(_MetricCallback):
-    """
-    A callback that returns single metric on `state.on_batch_end`
-    """
+    """A callback that returns single metric on `state.on_batch_end`."""
+
     def __init__(
         self,
         prefix: str,
@@ -95,6 +98,7 @@ class MetricCallback(_MetricCallback):
         multiplier: float = 1.0,
         **metric_kwargs,
     ):
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__(
             prefix=prefix,
             input_key=input_key,
@@ -106,13 +110,13 @@ class MetricCallback(_MetricCallback):
 
     @property
     def metric_fn(self):
+        """@TODO: Docs. Contribution is welcome."""
         return self.metric
 
 
 class MultiMetricCallback(MetricCallback):
-    """
-    A callback that returns multiple metrics on `state.on_batch_end`
-    """
+    """A callback that returns multiple metrics on `state.on_batch_end`."""
+
     def __init__(
         self,
         prefix: str,
@@ -123,6 +127,7 @@ class MultiMetricCallback(MetricCallback):
         multiplier: float = 1.0,
         **metrics_kwargs,
     ):
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__(
             prefix=prefix,
             metric_fn=metric_fn,
@@ -133,7 +138,12 @@ class MultiMetricCallback(MetricCallback):
         )
         self.list_args = list_args
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: State) -> None:
+        """Batch end hook.
+
+        Args:
+            state (State): current state
+        """
         metrics_ = self._compute_metric(state)
 
         for arg, metric in zip(self.list_args, metrics_):
@@ -145,15 +155,14 @@ class MultiMetricCallback(MetricCallback):
 
 
 class MetricAggregationCallback(Callback):
-    """
-    A callback to aggregate several metrics in one value.
-    """
+    """A callback to aggregate several metrics in one value."""
+
     def __init__(
         self,
         prefix: str,
         metrics: Union[str, List[str], Dict[str, float]] = None,
         mode: str = "mean",
-        multiplier: float = 1.0
+        multiplier: float = 1.0,
     ) -> None:
         """
         Args:
@@ -200,8 +209,9 @@ class MetricAggregationCallback(Callback):
         self.multiplier = multiplier
 
         if mode in ("sum", "weighted_sum", "weighted_mean"):
-            self.aggregation_fn = \
+            self.aggregation_fn = (
                 lambda x: torch.sum(torch.stack(x)) * multiplier
+            )
             if mode == "weighted_mean":
                 weights_sum = sum(metrics.items())
                 self.metrics = {
@@ -209,8 +219,9 @@ class MetricAggregationCallback(Callback):
                     for key, weight in metrics.items()
                 }
         elif mode == "mean":
-            self.aggregation_fn = \
+            self.aggregation_fn = (
                 lambda x: torch.mean(torch.stack(x)) * multiplier
+            )
 
     def _preprocess(self, metrics: Any) -> List[float]:
         if self.metrics is not None:
@@ -225,8 +236,10 @@ class MetricAggregationCallback(Callback):
         return result
 
     def on_batch_end(self, state: State) -> None:
-        """
-        Computes the metric and add it to the metrics
+        """Computes the metric and add it to the metrics.
+
+        Args:
+            state (State): current state
         """
         metrics = self._preprocess(state.batch_metrics)
         metric = self.aggregation_fn(metrics)
@@ -235,12 +248,13 @@ class MetricAggregationCallback(Callback):
 
 class MetricManagerCallback(Callback):
     """
-    Prepares metrics for logging, transferring values from PyTorch to numpy
+    Prepares metrics for logging, transferring values from PyTorch to numpy.
     """
+
     def __init__(self):
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__(
-            order=CallbackOrder.Logging - 1,
-            node=CallbackNode.All,
+            order=CallbackOrder.Logging - 1, node=CallbackNode.All,
         )
         self.meters: Dict[str, meters.AverageValueMeter] = None
 
@@ -261,30 +275,58 @@ class MetricManagerCallback(Callback):
             output[key] = value
         return output
 
-    def on_epoch_start(self, state: State):
+    def on_epoch_start(self, state: State) -> None:
+        """Epoch start hook.
+
+        Args:
+            state (State): current state
+        """
         state.epoch_metrics = defaultdict(None)
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, state: State) -> None:
+        """Loader start hook.
+
+        Args:
+            state (State): current state
+        """
         state.loader_metrics = defaultdict(None)
         self.meters = defaultdict(meters.AverageValueMeter)
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, state: State) -> None:
+        """Loader end hook.
+
+        Args:
+            state (State): current state
+        """
         for key, value in self.meters.items():
             value = value.mean
             state.loader_metrics[key] = value
         for key, value in state.loader_metrics.items():
             state.epoch_metrics[f"{state.loader_name}_{key}"] = value
 
-    def on_batch_start(self, state: State):
+    def on_batch_start(self, state: State) -> None:
+        """Batch start hook.
+
+        Args:
+            state (State): current state
+        """
         state.batch_metrics = defaultdict(None)
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: State) -> None:
+        """Batch end hook.
+
+        Args:
+            state (State): current state
+        """
         state.batch_metrics = self._process_metrics(state.batch_metrics)
         for key, value in state.batch_metrics.items():
             self.meters[key].add(value)
 
 
 __all__ = [
-    "_MetricCallback", "MetricCallback", "MultiMetricCallback",
-    "MetricAggregationCallback", "MetricManagerCallback"
+    "_MetricCallback",
+    "MetricCallback",
+    "MultiMetricCallback",
+    "MetricAggregationCallback",
+    "MetricManagerCallback",
 ]

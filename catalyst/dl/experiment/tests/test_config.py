@@ -5,22 +5,21 @@ import pytest
 import torch
 
 from catalyst.dl import (
-    CheckpointCallback, ConsoleLogger, ExceptionCallback,
-    MetricManagerCallback, PhaseWrapperCallback, registry, TensorboardLogger,
-    TimerCallback, ValidationManagerCallback
+    CheckpointCallback,
+    ConsoleLogger,
+    ExceptionCallback,
+    MetricManagerCallback,
+    PhaseWrapperCallback,
+    registry,
+    TensorboardLogger,
+    TimerCallback,
+    ValidationManagerCallback,
 )
 from catalyst.dl.experiment.config import ConfigExperiment
 
 DEFAULT_MINIMAL_CONFIG = {
-    "model_params": {
-        "model": "SomeModel"
-    },
-    "stages": {
-        "data_params": {
-            "num_workers": 0
-        },
-        "train": {}
-    }
+    "model_params": {"model": "SomeModel"},
+    "stages": {"data_params": {"num_workers": 0}, "train": {}},
 }
 
 DEFAULT_CALLBACKS = OrderedDict(
@@ -37,9 +36,8 @@ DEFAULT_CALLBACKS = OrderedDict(
 
 
 class SomeModel(torch.nn.Module):
-    """
-    Dummy test torch model
-    """
+    """Dummy test torch model."""
+
     pass
 
 
@@ -96,9 +94,7 @@ def test_when_callback_defined():
     """
     config = DEFAULT_MINIMAL_CONFIG.copy()
     config["stages"]["callbacks_params"] = {
-        "my_criterion": {
-            "callback": "CriterionCallback"
-        }
+        "my_criterion": {"callback": "CriterionCallback"}
     }
     exp = ConfigExperiment(config=config)
 
@@ -116,9 +112,9 @@ def test_when_callback_wrapped():
         "my_wrapped_criterion": {
             "_wrapper": {
                 "callback": "PhaseBatchWrapperCallback",
-                "active_phases": [1]
+                "active_phases": [1],
             },
-            "callback": "CriterionCallback"
+            "callback": "CriterionCallback",
         }
     }
     exp = ConfigExperiment(config=config)

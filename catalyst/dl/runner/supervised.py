@@ -1,30 +1,36 @@
-from typing import (  # isort:skip
-    Any, Callable, Dict, List, Mapping, Tuple, Union  # isort:skip
-)  # isort:skip
+from typing import Any, Callable, Dict, List, Mapping, Tuple, Union
 from collections import OrderedDict
 import logging
 from pathlib import Path
 
 import torch
 from torch.jit import ScriptModule
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 
 from catalyst.dl import (
-    Callback, CheckpointCallback, InferCallback, Runner, State,
-    SupervisedExperiment, utils
+    Callback,
+    CheckpointCallback,
+    InferCallback,
+    Runner,
+    State,
+    SupervisedExperiment,
+    utils,
 )
 from catalyst.dl.utils import trace
 from catalyst.utils.tools.typing import (
-    Criterion, Device, Model, Optimizer, Scheduler
+    Criterion,
+    Device,
+    Model,
+    Optimizer,
+    Scheduler,
 )
 
 logger = logging.getLogger(__name__)
 
 
 class SupervisedRunner(Runner):
-    """
-    Runner for experiments with supervised model
-    """
+    """Runner for experiments with supervised model."""
+
     _experiment_fn: Callable = SupervisedExperiment
 
     def __init__(
@@ -89,7 +95,7 @@ class SupervisedRunner(Runner):
         return output
 
     def _process_input_list(self, batch: Mapping[str, Any], **kwargs):
-        input = dict((key, batch[key]) for key in self.input_key)
+        input = {key: batch[key] for key in self.input_key}
         output = self.model(**input, **kwargs)
         return output
 
@@ -102,9 +108,7 @@ class SupervisedRunner(Runner):
         return output
 
     def _process_output_list(self, output: Union[Tuple, List]):
-        output = dict(
-            (key, value) for key, value in zip(self.output_key, output)
-        )
+        output = {key: value for key, value in zip(self.output_key, output)}
         return output
 
     def _process_output_none(self, output: Mapping[str, Any]):
@@ -121,13 +125,15 @@ class SupervisedRunner(Runner):
 
     def train(
         self,
+        *,
+        logdir: str,
         model: Model,
         criterion: Criterion,
         optimizer: Optimizer,
-        loaders: "OrderedDict[str, DataLoader]",
-        logdir: str,
-        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
         scheduler: Scheduler = None,
+        datasets: "OrderedDict[str, Union[Dataset, Dict, Any]]" = None,
+        loaders: "OrderedDict[str, DataLoader]" = None,
+        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
         resume: str = None,
         num_epochs: int = 1,
         valid_loader: str = "valid",
@@ -137,6 +143,7 @@ class SupervisedRunner(Runner):
         state_kwargs: Dict = None,
         checkpoint_data: Dict = None,
         fp16: Union[Dict, bool] = None,
+        distributed: bool = False,
         monitoring_params: Dict = None,
         check: bool = False,
     ) -> None:
@@ -144,14 +151,21 @@ class SupervisedRunner(Runner):
         Starts the training process of the model.
 
         Args:
+            logdir (str): path to output directory
             model (Model): model to train
             criterion (Criterion): criterion function for training
             optimizer (Optimizer): optimizer for training
-            loaders (dict): dictionary containing one or several
-                ``torch.utils.data.DataLoader`` for training and validation
-            logdir (str): path to output directory
-            callbacks (List[catalyst.dl.Callback]): list of callbacks
             scheduler (Scheduler): scheduler for training
+            datasets (OrderedDict[str, Union[Dataset, Dict, Any]]): dictionary
+                with one or several  ``torch.utils.data.Dataset``
+                for training, validation or inference
+                used for Loaders automatic creation
+                preferred way for distributed training setup
+            loaders (OrderedDict[str, DataLoader]): dictionary
+                with one or several ``torch.utils.data.DataLoader``
+                for training, validation or inference
+            callbacks (Union[List[Callback], OrderedDict[str, Callback]]):
+                list or dictionary with Catalyst callbacks
             resume (str): path to checkpoint for model
             num_epochs (int): number of training epochs
             valid_loader (str): loader name used to calculate
@@ -162,7 +176,7 @@ class SupervisedRunner(Runner):
                 by which the checkpoints will be selected.
             minimize_metric (bool): flag to indicate whether
                 the ``main_metric`` should be minimized.
-            verbose (bool): ff true, it displays the status of the training
+            verbose (bool): if `True`, it displays the status of the training
                 to the console.
             state_kwargs (dict): additional state params to ``State``
             checkpoint_data (dict): additional data to save in checkpoint,
@@ -170,32 +184,49 @@ class SupervisedRunner(Runner):
             fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
                 See https://nvidia.github.io/apex/amp.html#properties
                 if fp16=True, params by default will be ``{"opt_level": "O1"}``
+            distributed (bool): if `True` will start training
+                in distributed mode.
+                Note: Works only with python scripts. No jupyter support.
             monitoring_params (dict): If not None, then create monitoring
-                through Alchemy or Weights&Biases.
+                through Alchemy or other tools.
                 For example,
                 ``{"token": "api_token", "experiment": "experiment_name"}``
             check (bool): if True, then only checks that pipeline is working
                 (3 epochs only)
         """
-        if len(loaders) == 1:
+        if loaders is not None and len(loaders) == 1:
             valid_loader = list(loaders.keys())[0]
             logger.warning(
-                "Attention, there is only one data loader - " +
-                str(valid_loader)
+                "Attention, there is only one dataloader - "
+                + str(valid_loader)
             )
+        if datasets is not None:
+            datasets_keys = set(datasets.keys())
+            default_datasets_keys = {
+                "batch_size",
+                "num_workers",
+                "drop_last",
+                "per_gpu_scaling",
+                "loaders_params",
+                "samplers_params",
+                "initial_seed",
+                "datasets_fn",
+            }
+            datasets_keys = datasets_keys - default_datasets_keys
+            if len(datasets_keys) == 1:
+                valid_loader = list(datasets_keys)[0]
+                logger.warning(
+                    "Attention, there is only one dataset - "
+                    + str(valid_loader)
+                )
+
         if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
 
-        if model is not None:
-            self.model = model
-
         if resume is not None:
-            callbacks = utils.process_callbacks(callbacks)
+            callbacks = utils.sort_callbacks_by_order(callbacks)
             checkpoint_callback_flag = any(
-                [
-                    isinstance(x, CheckpointCallback)
-                    for x in callbacks.values()
-                ]
+                isinstance(x, CheckpointCallback) for x in callbacks.values()
             )
             if not checkpoint_callback_flag:
                 callbacks["loader"] = CheckpointCallback(resume=resume)
@@ -206,6 +237,7 @@ class SupervisedRunner(Runner):
             stage="train",
             model=model,
             loaders=loaders,
+            datasets=datasets,
             callbacks=callbacks,
             logdir=logdir,
             criterion=criterion,
@@ -220,9 +252,10 @@ class SupervisedRunner(Runner):
             state_kwargs=state_kwargs,
             checkpoint_data=checkpoint_data,
             distributed_params=fp16,
-            monitoring_params=monitoring_params
+            monitoring_params=monitoring_params,
         )
-        self.run_experiment(experiment)
+        self.experiment = experiment
+        utils.distributed_cmd_run(self.run_experiment, distributed)
 
     def infer(
         self,
@@ -234,8 +267,7 @@ class SupervisedRunner(Runner):
         fp16: Union[Dict, bool] = None,
         check: bool = False,
     ) -> None:
-        """
-        Makes the inference on the model.
+        """Makes the inference on the model.
 
         Args:
             model (Model): model to infer
@@ -265,7 +297,7 @@ class SupervisedRunner(Runner):
             verbose=verbose,
             check_run=check,
             state_kwargs=state_kwargs,
-            distributed_params=fp16
+            distributed_params=fp16,
         )
         self.run_experiment(experiment)
 
@@ -279,8 +311,7 @@ class SupervisedRunner(Runner):
         fp16: Union[Dict, bool] = None,
         check: bool = False,
     ) -> Any:
-        """
-        Makes a prediction on the whole loader with the specified model.
+        """Makes a prediction on the whole loader with the specified model.
 
         Args:
             model (Model): model to infer
@@ -309,7 +340,7 @@ class SupervisedRunner(Runner):
             verbose=verbose,
             state_kwargs=state_kwargs,
             fp16=fp16,
-            check=check
+            check=check,
         )
 
         output = callbacks["inference"].predictions
@@ -331,8 +362,7 @@ class SupervisedRunner(Runner):
         device: Device = "cpu",
         predict_params: dict = None,
     ) -> ScriptModule:
-        """
-        Traces model using Torch Jit
+        """Traces model using Torch Jit.
 
         Args:
             model (Model): model to trace
@@ -346,7 +376,7 @@ class SupervisedRunner(Runner):
             requires_grad (bool): flag to trace with gradients
             fp16 (Union[Dict, bool]): If not None, then sets
                 tracing params to FP16
-            deivice (Device): Torch deivice or a string
+            device (Device): Torch deivice or a string
             predict_params (dict): additional parameters for model forward
         """
         if batch is None:
@@ -384,7 +414,7 @@ class SupervisedRunner(Runner):
             requires_grad=requires_grad,
             opt_level=opt_level,
             device=device,
-            predict_params=predict_params
+            predict_params=predict_params,
         )
 
         if logdir is not None:
@@ -392,7 +422,7 @@ class SupervisedRunner(Runner):
                 method_name=method_name,
                 mode=mode,
                 requires_grad=requires_grad,
-                opt_level=opt_level
+                opt_level=opt_level,
             )
 
             logdir = Path(logdir)

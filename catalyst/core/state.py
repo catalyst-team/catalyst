@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Union, TYPE_CHECKING  # isort:skip
+from typing import Any, Dict, Optional, TYPE_CHECKING, Union
 from collections import defaultdict, OrderedDict
 from pathlib import Path
 import warnings
@@ -10,10 +10,16 @@ from torch.utils.data import DataLoader
 from catalyst import utils
 from catalyst.utils.tools.frozen_class import FrozenClass
 from catalyst.utils.tools.settings import (
-    LOADER_VALID_PREFIX, STAGE_INFER_PREFIX, STATE_MAIN_METRIC
+    LOADER_VALID_PREFIX,
+    STAGE_INFER_PREFIX,
+    STATE_MAIN_METRIC,
 )
 from catalyst.utils.tools.typing import (
-    Criterion, Device, Model, Optimizer, Scheduler
+    Criterion,
+    Device,
+    Model,
+    Optimizer,
+    Scheduler,
 )
 
 if TYPE_CHECKING:
@@ -258,6 +264,7 @@ class State(FrozenClass):
 
     **state.exception** - python Exception instance to raise (or not ;) )
     """
+
     def __init__(
         self,
         *,
@@ -277,6 +284,10 @@ class State(FrozenClass):
         is_check_run: bool = False,
         **kwargs,
     ):
+        """
+        Args:
+            @TODO: Docs. Contribution is welcome
+        """
         # main part
         # data
         self.loaders: OrderedDict[str, DataLoader] = None
@@ -344,8 +355,9 @@ class State(FrozenClass):
         # other
         self.is_check_run: bool = is_check_run
         self.is_train_loader: bool = False
-        self.is_infer_stage: bool = \
-            self.stage_name.startswith(STAGE_INFER_PREFIX)
+        self.is_infer_stage: bool = self.stage_name.startswith(
+            STAGE_INFER_PREFIX
+        )
         self.need_early_stop: bool = False
         self.need_exception_reraise: bool = True
         self.exception: Optional[Exception] = None
@@ -358,38 +370,35 @@ class State(FrozenClass):
 
     @property
     def input(self):
-        """
-        Alias for `state.batch_in`.
+        """Alias for `state.batch_in`.
 
         .. warning::
             Deprecated, saved for backward compatibility.
             Please use `state.batch_in` instead.
         """
         warnings.warn(
-            "`input` was deprecated, "
-            "please use `batch_in` instead", DeprecationWarning
+            "`input` was deprecated, " "please use `batch_in` instead",
+            DeprecationWarning,
         )
         return self.batch_in
 
     @property
     def output(self):
-        """
-        Alias for `state.batch_out`.
+        """Alias for `state.batch_out`.
 
         .. warning::
             Deprecated, saved for backward compatibility.
             Please use `state.batch_out` instead.
         """
         warnings.warn(
-            "`output` was deprecated, "
-            "please use `batch_out` instead", DeprecationWarning
+            "`output` was deprecated, " "please use `batch_out` instead",
+            DeprecationWarning,
         )
         return self.batch_out
 
     @property
     def need_backward_pass(self):
-        """
-        Alias for `state.is_train_loader`.
+        """Alias for `state.is_train_loader`.
 
         .. warning::
             Deprecated, saved for backward compatibility.
@@ -397,7 +406,8 @@ class State(FrozenClass):
         """
         warnings.warn(
             "`need_backward_pass` was deprecated, "
-            "please use `is_train_loader` instead", DeprecationWarning
+            "please use `is_train_loader` instead",
+            DeprecationWarning,
         )
         return self.is_train_loader
 

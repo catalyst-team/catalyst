@@ -4,7 +4,7 @@ Tensorboard readers:
     * :py:class:`EventsFileReader`
     * :py:class:`SummaryReader`
 """
-from typing import BinaryIO, Optional, Union  # isort:skip
+from typing import BinaryIO, Optional, Union
 from collections import namedtuple
 from collections.abc import Iterable
 import os
@@ -21,11 +21,14 @@ import numpy as np  # noqa: E402
 # Native tensorboard support from 1.2.0 version of PyTorch
 from torch import __version__ as torch_version  # noqa: E402
 from packaging import version  # noqa: E402
+
 if version.parse(torch_version) < version.parse("1.2.0"):
     from tensorboardX import SummaryWriter as tensorboardX_SummaryWriter
+
     SummaryWriter = tensorboardX_SummaryWriter
 else:
     from torch.utils.tensorboard import SummaryWriter as torch_SummaryWriter
+
     SummaryWriter = torch_SummaryWriter
 if version.parse(torch_version) < version.parse("1.2.0"):
     from tensorboardX.proto.event_pb2 import Event
@@ -34,27 +37,23 @@ else:
 
 
 def _u32(x):
-    return x & 0xffffffff
+    return x & 0xFFFFFFFF
 
 
 def _masked_crc32c(data):
     x = _u32(crc32c(data))
-    return _u32(((x >> 15) | _u32(x << 17)) + 0xa282ead8)
+    return _u32(((x >> 15) | _u32(x << 17)) + 0xA282EAD8)
 
 
 class EventReadingException(Exception):
-    """
-    An exception that correspond to an event file reading error
-    """
+    """An exception that correspond to an event file reading error."""
 
 
 class EventsFileReader(Iterable):
-    """
-    An iterator over a Tensorboard events file
-    """
+    """An iterator over a Tensorboard events file."""
+
     def __init__(self, events_file: BinaryIO):
-        """
-        Initialize an iterator over an events file
+        """Initialize an iterator over an events file.
 
         Args:
             events_file: An opened file-like object.
@@ -62,8 +61,7 @@ class EventsFileReader(Iterable):
         self._events_file = events_file
 
     def _read(self, size: int) -> Optional[bytes]:
-        """
-        Read exactly next `size` bytes from the current stream.
+        """Read exactly next `size` bytes from the current stream.
 
         Args:
             size: A size in bytes to be read.
@@ -86,8 +84,7 @@ class EventsFileReader(Iterable):
         return data
 
     def _read_and_check(self, size: int) -> Optional[bytes]:
-        """
-        Read and check data described by a format string.
+        """Read and check data described by a format string.
 
         Args:
             size:  A size in bytes to be read.
@@ -110,8 +107,7 @@ class EventsFileReader(Iterable):
         return data
 
     def __iter__(self) -> Event:
-        """
-        Iterates over events in the current events file
+        """Iterates over events in the current events file.
 
         Returns:
             An Event object
@@ -136,8 +132,7 @@ SummaryItem = namedtuple(
 
 
 def _get_scalar(value) -> Optional[np.ndarray]:
-    """
-    Decode an scalar event
+    """Decode an scalar event.
 
     Args:
         value: A value field of an event
@@ -151,8 +146,7 @@ def _get_scalar(value) -> Optional[np.ndarray]:
 
 
 def _get_image(value) -> Optional[np.ndarray]:
-    """
-    Decode an image event
+    """Decode an image event.
 
     Args:
         value: A value field of an event
@@ -169,9 +163,10 @@ def _get_image(value) -> Optional[np.ndarray]:
 
 
 class SummaryReader(Iterable):
-    """
-    Iterates over events in all the files in the current logdir.
-    Only scalars and images are supported at the moment.
+    """Iterates over events in all the files in the current logdir.
+
+    .. note::
+        Only scalars and images are supported at the moment.
     """
 
     _DECODERS = {
@@ -183,10 +178,9 @@ class SummaryReader(Iterable):
         self,
         logdir: Union[str, Path],
         tag_filter: Optional[Iterable] = None,
-        types: Iterable = ("scalar", )
+        types: Iterable = ("scalar",),
     ):
-        """
-        Initalize new summary reader
+        """Initalize new summary reader.
 
         Args:
             logdir: A directory with Tensorboard summary data
@@ -209,8 +203,7 @@ class SummaryReader(Iterable):
             raise ValueError("Invalid type name")
 
     def _decode_events(self, events: Iterable) -> Optional[SummaryItem]:
-        """
-        Convert events to `SummaryItem` instances
+        """Convert events to `SummaryItem` instances.
 
         Args:
             events: An iterable with events objects
@@ -235,14 +228,13 @@ class SummaryReader(Iterable):
                             step=step,
                             wall_time=wall_time,
                             value=data,
-                            type=value_type
+                            type=value_type,
                         )
                 else:
                     yield None
 
     def _check_tag(self, tag: str) -> bool:
-        """
-        Check if a tag matches the current tag filter
+        """Check if a tag matches the current tag filter.
 
         Args:
             tag: A string with tag
@@ -253,8 +245,7 @@ class SummaryReader(Iterable):
         return self._tag_filter is None or tag in self._tag_filter
 
     def __iter__(self) -> SummaryItem:
-        """
-        Iterate over events in all the files in the current logdir
+        """Iterate over events in all the files in the current logdir.
 
         Returns:
             A generator with `SummaryItem` objects
@@ -264,7 +255,9 @@ class SummaryReader(Iterable):
             with open(file_path, "rb") as f:
                 reader = EventsFileReader(f)
                 yield from (
-                    item for item in self._decode_events(reader)
-                    if item is not None and self._check_tag(item.tag)
+                    item
+                    for item in self._decode_events(reader)
+                    if item is not None
+                    and self._check_tag(item.tag)
                     and item.type in self._types
                 )

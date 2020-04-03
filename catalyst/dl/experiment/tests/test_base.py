@@ -16,7 +16,7 @@ def test_defaults():
     loaders = OrderedDict()
     loaders["train"] = dataloader
 
-    exp = BaseExperiment(model=model, loaders=loaders)
+    exp = BaseExperiment(model=model, loaders=loaders, valid_loader="train")
 
     assert exp.initial_seed == 42
     assert exp.logdir is None
@@ -26,7 +26,7 @@ def test_defaults():
     assert exp.get_state_params("") == {
         "logdir": None,
         "num_epochs": 1,
-        "valid_loader": "valid",
+        "valid_loader": "train",
         "main_metric": "loss",
         "verbose": False,
         "minimize_metric": True,

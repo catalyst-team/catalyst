@@ -1,11 +1,14 @@
 from typing import List, Union
 
-import torch.nn as nn
+import torch
+from torch import nn
 
 from .functional import margin_loss
 
 
 class MarginLoss(nn.Module):
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(
         self,
         alpha: float = 0.2,
@@ -13,18 +16,25 @@ class MarginLoss(nn.Module):
         skip_labels: Union[int, List[int]] = -1,
     ):
         """
-        Constructor method for the MarginLoss class.
         Args:
-            alpha:
-            beta:
-            skip_labels:
+            alpha (float):
+            beta (float):
+            skip_labels (int or List[int]):
+
+        @TODO: Docs. Contribution is welcome.
         """
         super().__init__()
         self.alpha = alpha
         self.beta = beta
         self.skip_labels = skip_labels
 
-    def forward(self, embeddings, targets):
+    def forward(
+        self, embeddings: torch.Tensor, targets: torch.Tensor
+    ) -> torch.Tensor:
+        """Forward propagation method for the margin loss.
+
+        @TODO: Docs. Contribution is welcome.
+        """
         return margin_loss(
             embeddings,
             targets,

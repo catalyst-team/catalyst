@@ -28,18 +28,20 @@ class AUCMeter(meter.Meter):
     2. The `target` contains only values 0 (for
     negative examples) and 1 (for positive examples).
     """
+
     def __init__(self):
+        """Constructor method for the ``AUCMeter`` class."""
         super(AUCMeter, self).__init__()
         self.reset()
 
-    def reset(self):
+    def reset(self) -> None:
         """Reset stored scores and targets."""
         self.scores = torch.DoubleTensor(torch.DoubleStorage()).numpy()
         self.targets = torch.LongTensor(torch.LongStorage()).numpy()
 
-    def add(self, output, target):
-        """
-        Update stored scores and targets.
+    def add(self, output: torch.Tensor, target: torch.Tensor) -> None:
+        """Update stored scores and targets.
+
         Args:
             output (Tensor): one-dimensional tensor `output`
             target (Tensor): one-dimensional tensor `target`
@@ -50,21 +52,21 @@ class AUCMeter(meter.Meter):
             target = target.cpu().squeeze().numpy()
         elif isinstance(target, numbers.Number):
             target = np.asarray([target])
-        assert np.ndim(output) == 1, \
-            "wrong output size (1D expected)"
-        assert np.ndim(target) == 1, \
-            "wrong target size (1D expected)"
-        assert output.shape[0] == target.shape[0], \
-            "number of outputs and targets does not match"
-        assert np.all(np.add(np.equal(target, 1), np.equal(target, 0))), \
-            "targets should be binary (0, 1)"
+        assert np.ndim(output) == 1, "wrong output size (1D expected)"
+        assert np.ndim(target) == 1, "wrong target size (1D expected)"
+        assert (
+            output.shape[0] == target.shape[0]
+        ), "number of outputs and targets does not match"
+        assert np.all(
+            np.add(np.equal(target, 1), np.equal(target, 0))
+        ), "targets should be binary (0, 1)"
 
         self.scores = np.append(self.scores, output)
         self.targets = np.append(self.targets, target)
 
     def value(self):
-        """
-        Return metric values of AUC, TPR and FPR.
+        """Return metric values of AUC, TPR and FPR.
+
         Returns:
              tuple of floats: (AUC, TPR, FPR)
         """
@@ -91,14 +93,14 @@ class AUCMeter(meter.Meter):
                 tpr[i] = tpr[i - 1]
                 fpr[i] = fpr[i - 1] + 1
 
-        tpr /= (self.targets.sum() * 1.0)
-        fpr /= ((self.targets - 1.0).sum() * -1.0)
+        tpr /= self.targets.sum() * 1.0
+        fpr /= (self.targets - 1.0).sum() * -1.0
 
         # calculating area under curve using trapezoidal rule
         n = tpr.shape[0]
-        h = fpr[1:n] - fpr[0:n - 1]
+        h = fpr[1:n] - fpr[0 : n - 1]
         sum_h = np.zeros(fpr.shape)
-        sum_h[0:n - 1] = h
+        sum_h[0 : n - 1] = h
         sum_h[1:n] += h
         area = (sum_h * tpr).sum() / 2.0
 

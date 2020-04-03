@@ -4,14 +4,11 @@ from collections import OrderedDict
 from catalyst.__version__ import __version__
 from catalyst.dl.scripts import init, run, trace
 
-COMMANDS = OrderedDict([
-    ("init", init),
-    ("run", run),
-    ("trace", trace),
-])
+COMMANDS = OrderedDict([("init", init), ("run", run), ("trace", trace)])
 
 
 def build_parser() -> ArgumentParser:
+    """@TODO: Docs. Contribution is welcome."""
     parser = ArgumentParser(
         "catalyst-dl", formatter_class=RawTextHelpFormatter
     )
@@ -34,6 +31,7 @@ def build_parser() -> ArgumentParser:
 
 
 def main():
+    """@TODO: Docs. Contribution is welcome."""
     parser = build_parser()
 
     args, uargs = parser.parse_known_args()

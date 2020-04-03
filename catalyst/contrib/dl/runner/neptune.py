@@ -10,12 +10,11 @@ from catalyst.dl.core import Experiment, Runner
 from catalyst.dl.experiment import ConfigExperiment
 from catalyst.dl.runner import SupervisedRunner
 
-warnings.simplefilter("always")
+warnings.simplefilter("once")
 
 
 class NeptuneRunner(Runner):
-    """
-    Runner wrapper with Neptune integration hooks.
+    """Runner wrapper with Neptune integration hooks.
     Read about Neptune here https://neptune.ai
 
     Examples:
@@ -65,17 +64,16 @@ class NeptuneRunner(Runner):
                 })
 
     """
+
     def _init(
-        self,
-        log_on_batch_end: bool = False,
-        log_on_epoch_end: bool = True,
+        self, log_on_batch_end: bool = False, log_on_epoch_end: bool = True,
     ):
         super()._init()
         the_warning = DeprecatedWarning(
             self.__class__.__name__,
             deprecated_in="20.03",
             removed_in="20.04",
-            details="Use NeptuneLogger instead."
+            details="Use NeptuneLogger instead.",
         )
         warnings.warn(the_warning, category=DeprecationWarning, stacklevel=2)
         self.log_on_batch_end = log_on_batch_end
@@ -91,10 +89,12 @@ class NeptuneRunner(Runner):
             **monitoring_params["create_experiment"]
         )
 
-        log_on_batch_end: bool = \
-            monitoring_params.pop("log_on_batch_end", False)
-        log_on_epoch_end: bool = \
-            monitoring_params.pop("log_on_epoch_end", True)
+        log_on_batch_end: bool = monitoring_params.pop(
+            "log_on_batch_end", False
+        )
+        log_on_epoch_end: bool = monitoring_params.pop(
+            "log_on_epoch_end", True
+        )
 
         self._init(
             log_on_batch_end=log_on_batch_end,
@@ -148,13 +148,14 @@ class NeptuneRunner(Runner):
                     )
 
     def run_experiment(self, experiment: Experiment):
+        """@TODO: Docs. Contribution is welcome."""
         self._pre_experiment_hook(experiment=experiment)
         super().run_experiment(experiment=experiment)
         self._post_experiment_hook(experiment=experiment)
 
 
 class SupervisedNeptuneRunner(NeptuneRunner, SupervisedRunner):
-    pass
+    """@TODO: Docs. Contribution is welcome."""
 
 
 __all__ = ["NeptuneRunner", "SupervisedNeptuneRunner"]

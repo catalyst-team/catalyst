@@ -1,4 +1,4 @@
-from typing import List  # isort:skip
+from typing import List
 
 from catalyst.dl.core import MetricCallback, MultiMetricCallback
 from catalyst.utils import metrics
@@ -10,9 +10,8 @@ def _get_default_classwise_iou_args(num_classes: int) -> List[int]:
 
 
 class IouCallback(MetricCallback):
-    """
-    IoU (Jaccard) metric callback.
-    """
+    """IoU (Jaccard) metric callback."""
+
     def __init__(
         self,
         input_key: str = "targets",
@@ -25,14 +24,14 @@ class IouCallback(MetricCallback):
         """
         Args:
             input_key (str): input key to use for iou calculation
-                specifies our ``y_true``.
+                specifies our ``y_true``
             output_key (str): output key to use for iou calculation;
                 specifies our ``y_pred``
             prefix (str): key to store in logs
             eps (float): epsilon to avoid zero division
             threshold (float): threshold for outputs binarization
             activation (str): An torch.nn activation applied to the outputs.
-                Must be one of ['none', 'Sigmoid', 'Softmax2d']
+                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
         """
         super().__init__(
             prefix=prefix,
@@ -41,7 +40,7 @@ class IouCallback(MetricCallback):
             output_key=output_key,
             eps=eps,
             threshold=threshold,
-            activation=activation
+            activation=activation,
         )
 
 
@@ -49,9 +48,8 @@ JaccardCallback = IouCallback
 
 
 class ClasswiseIouCallback(MultiMetricCallback):
-    """
-    Classwise IoU (Jaccard) metric callback.
-    """
+    """Classwise IoU (Jaccard) metric callback."""
+
     def __init__(
         self,
         input_key: str = "targets",
@@ -66,7 +64,7 @@ class ClasswiseIouCallback(MultiMetricCallback):
         """
         Args:
             input_key (str): input key to use for iou calculation
-                specifies our ``y_true``.
+                specifies our ``y_true``
             output_key (str): output key to use for iou calculation;
                 specifies our ``y_pred``
             prefix (str): key to store in logs (will be prefix_class_name)
@@ -77,10 +75,11 @@ class ClasswiseIouCallback(MultiMetricCallback):
             eps (float): epsilon to avoid zero division
             threshold (float): threshold for outputs binarization
             activation (str): An torch.nn activation applied to the outputs.
-                Must be one of ['none', 'Sigmoid', 'Softmax2d']
+                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
         """
-        assert classes is not None or num_classes is not None, \
-            "You should specify either 'classes' or 'num_classes'"
+        assert (
+            classes is not None or num_classes is not None
+        ), "You should specify either 'classes' or 'num_classes'"
         list_args = classes or _get_default_classwise_iou_args(num_classes)
 
         super().__init__(
@@ -99,6 +98,8 @@ class ClasswiseIouCallback(MultiMetricCallback):
 ClasswiseJaccardCallback = ClasswiseIouCallback
 
 __all__ = [
-    "IouCallback", "JaccardCallback", "ClasswiseIouCallback",
-    "ClasswiseJaccardCallback"
+    "IouCallback",
+    "JaccardCallback",
+    "ClasswiseIouCallback",
+    "ClasswiseJaccardCallback",
 ]

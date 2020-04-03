@@ -12,11 +12,12 @@ from catalyst.utils.tools.tensorboard import SummaryWriter
 
 
 def build_args(parser):
+    """Constructs the command-line arguments."""
     parser.add_argument(
         "--in-npy",
         type=str,
         help="path to npy with project embeddings",
-        required=True
+        required=True,
     )
     parser.add_argument(
         "--in-csv", type=str, help="path to csv with photos", required=True
@@ -26,19 +27,19 @@ def build_args(parser):
         type=str,
         default=None,
         help="directory to output files",
-        required=True
+        required=True,
     )
     parser.add_argument(
         "--out-prefix",
         type=str,
         default=None,
-        help="additional prefix to saved files"
+        help="additional prefix to saved files",
     )
     parser.add_argument(
         "--img-col",
         type=str,
         default=None,
-        help="column in the table that contains image paths"
+        help="column in the table that contains image paths",
     )
     parser.add_argument(
         "--img-rootpath", type=str, help="path to photos directory"
@@ -48,26 +49,27 @@ def build_args(parser):
         type=int,
         default=16,
         help="if --img-col is defined, "
-        "then images will be resized to (img-size, img-size, 3)"
+        "then images will be resized to (img-size, img-size, 3)",
     )
     parser.add_argument(
         "--num-rows",
         type=int,
         default=None,
         help="count of rows to use in csv "
-        "(if not defined then it will use whole data)"
+        "(if not defined then it will use whole data)",
     )
     parser.add_argument(
         "--meta-cols",
         type=str,
         default=None,
-        help="columns in the table to save, separated by commas"
+        help="columns in the table to save, separated by commas",
     )
 
     return parser
 
 
 def parse_args():
+    """Parses the command line arguments for the main method."""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args = parser.parse_args()
@@ -75,12 +77,14 @@ def parse_args():
 
 
 def load_image(filename, size):
+    """@TODO: Docs. Contribution is welcome."""
     image = cv2.imread(filename)[..., ::-1]
     image = cv2.resize(image, (size, size), interpolation=cv2.INTER_NEAREST)
     return image
 
 
 def main(args, _=None):
+    """Run ``catalyst-data project-embeddings`` script."""
     df = pd.read_csv(args.in_csv)
     os.makedirs(args.out_dir, exist_ok=True)
 
@@ -114,7 +118,7 @@ def main(args, _=None):
         features,
         metadata=df[meta_header].astype(str).values,
         label_img=img_data,
-        metadata_header=meta_header
+        metadata_header=meta_header,
     )
     summary_writer.close()
 
