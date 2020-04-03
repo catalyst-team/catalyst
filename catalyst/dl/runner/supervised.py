@@ -255,7 +255,7 @@ class SupervisedRunner(Runner):
             monitoring_params=monitoring_params,
         )
         self.experiment = experiment
-        utils.distributed_cmd_run(distributed, self.run_experiment)
+        utils.distributed_cmd_run(self.run_experiment, distributed)
 
     def infer(
         self,
