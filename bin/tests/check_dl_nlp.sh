@@ -37,3 +37,21 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --logdir=./examples/logs/_tests_nlp_classification \
   --check
 rm -rf ./examples/logs/_tests_nlp_classification
+
+echo "test text2embedding script"
+mkdir ./tmp && \
+python ./catalyst/data/scripts/text2embedding.py \
+    --in-csv=examples/distilbert_text_classification/input/train.csv \
+    --txt-col="text" \
+    --in-huggingface="bert-base-uncased" \
+    --out-prefix="./tmp/embeddings" \
+    --output-hidden-states \
+    --strip \
+    --lowercase \
+    --remove-punctuation \
+    --verbose \
+    --batch-size=16 \
+    --num-workers=2 \
+    --max-length=40 \
+    --mask-for-max-length
+rm -r ./tmp
