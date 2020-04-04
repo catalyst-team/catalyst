@@ -76,7 +76,7 @@ def get_loaders_from_params(
     loaders_params: Dict[str, Any] = None,
     samplers_params: Dict[str, Any] = None,
     initial_seed: int = 42,
-    datasets_fn: Callable = None,
+    get_datasets_fn: Callable = None,
     **data_params,
 ) -> "OrderedDict[str, DataLoader]":
     """
@@ -95,7 +95,7 @@ def get_loaders_from_params(
         samplers_params (Dict[str, Any]): additional sampler parameters
         initial_seed (int): initial seed for ``torch.utils.data.DataLoader``
             workers
-        datasets_fn(Callable): callable function to get dictionary with
+        get_datasets_fn(Callable): callable function to get dictionary with
             ``torch.utils.data.Datasets``
         **data_params: additional data parameters
             or dictionary with ``torch.utils.data.Datasets`` to use for
@@ -119,8 +119,8 @@ def get_loaders_from_params(
     distributed_rank = utils.get_rank()
     distributed = distributed_rank > -1
 
-    if datasets_fn is not None:
-        datasets = datasets_fn(**data_params)
+    if get_datasets_fn is not None:
+        datasets = get_datasets_fn(**data_params)
     else:
         datasets = dict(**data_params)
 
