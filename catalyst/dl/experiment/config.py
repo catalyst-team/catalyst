@@ -426,7 +426,7 @@ class ConfigExperiment(Experiment):
         """Returns the loaders for a given stage."""
         data_params = dict(self.stages_config[stage]["data_params"])
         loaders = utils.get_loaders_from_params(
-            datasets_fn=self.get_datasets,
+            get_datasets_fn=self.get_datasets,
             initial_seed=self.initial_seed,
             stage=stage,
             **data_params,

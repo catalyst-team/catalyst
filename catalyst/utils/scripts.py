@@ -5,12 +5,16 @@ import pathlib
 import shutil
 import subprocess
 import sys
+import warnings
 
 import torch
 import torch.distributed
 
 from .distributed import get_distributed_env, get_distributed_params
 from .misc import get_utcnow_time
+
+warnings.simplefilter("once")
+warnings.filterwarnings("once")
 
 
 def import_module(expdir: pathlib.Path):
@@ -108,7 +112,17 @@ def distributed_cmd_run(
     local_rank = distributed_params["local_rank"]
     world_size = distributed_params["world_size"]
 
-    if not distributed or world_size <= 1:
+    if distributed and torch.distributed.is_initialized():
+        warnings.warn(
+            "Looks like you are trying to call distributed setup twice, "
+            "switching to normal run for correct distributed training."
+        )
+
+    if (
+        not distributed
+        or torch.distributed.is_initialized()
+        or world_size <= 1
+    ):
         worker_fn(*args, **kwargs)
     elif local_rank is not None:
         torch.cuda.set_device(int(local_rank))

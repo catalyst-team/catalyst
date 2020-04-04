@@ -59,7 +59,7 @@ def train():
         },
         criterion=nn.MSELoss(),
         optimizer=optim.Adam(model.parameters()),
-        logdir="log_example_10",
+        logdir="logs/log_example_10",
         num_epochs=10,
         verbose=True,
         check=True,
