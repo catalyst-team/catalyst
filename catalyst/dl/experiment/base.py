@@ -1,5 +1,6 @@
 from typing import Any, Dict, Iterable, List, Mapping, Union
 from collections import OrderedDict
+import warnings
 
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
@@ -166,9 +167,15 @@ class BaseExperiment(Experiment):
                 initial_seed=self.initial_seed, **self._datasets,
             )
         if self._stage.startswith(STAGE_TRAIN_PREFIX):
+            if len(self._loaders) == 1:
+                self._valid_loader = list(self._loaders.keys())[0]
+                warnings.warn(
+                    "Attention, there is only one dataloader - "
+                    + str(self._valid_loader)
+                )
             assert self._valid_loader in self._loaders, (
                 "The validation loader must be present "
-                "in the loaders used during experiment"
+                "in the loaders used during experiment."
             )
         return self._loaders
 

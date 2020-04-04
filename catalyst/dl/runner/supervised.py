@@ -194,32 +194,6 @@ class SupervisedRunner(Runner):
             check (bool): if True, then only checks that pipeline is working
                 (3 epochs only)
         """
-        if loaders is not None and len(loaders) == 1:
-            valid_loader = list(loaders.keys())[0]
-            logger.warning(
-                "Attention, there is only one dataloader - "
-                + str(valid_loader)
-            )
-        if datasets is not None:
-            datasets_keys = set(datasets.keys())
-            default_datasets_keys = {
-                "batch_size",
-                "num_workers",
-                "drop_last",
-                "per_gpu_scaling",
-                "loaders_params",
-                "samplers_params",
-                "initial_seed",
-                "datasets_fn",
-            }
-            datasets_keys = datasets_keys - default_datasets_keys
-            if len(datasets_keys) == 1:
-                valid_loader = list(datasets_keys)[0]
-                logger.warning(
-                    "Attention, there is only one dataset - "
-                    + str(valid_loader)
-                )
-
         if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
 
