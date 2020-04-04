@@ -1,5 +1,6 @@
 from typing import Any, Dict, Iterable, List, Mapping, Union
 from collections import OrderedDict
+import warnings
 
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
@@ -78,20 +79,7 @@ class BaseExperiment(Experiment):
         assert (
             datasets is not None or loaders is not None
         ), "Please specify the data sources"
-        if datasets is None:
-            assert loaders is not None
-            if stage.startswith(STAGE_TRAIN_PREFIX):
-                assert valid_loader in loaders, (
-                    "The validation loader must be present "
-                    "in the loaders used during experiment"
-                )
-        if loaders is None:
-            assert datasets is not None
-            if stage.startswith(STAGE_TRAIN_PREFIX):
-                assert valid_loader in datasets, (
-                    "The validation loader must be present "
-                    "in the loaders used during experiment"
-                )
+
         self._model = model
         self._datasets = datasets
         self._loaders = loaders
@@ -177,6 +165,17 @@ class BaseExperiment(Experiment):
         if self._datasets is not None:
             self._loaders = utils.get_loaders_from_params(
                 initial_seed=self.initial_seed, **self._datasets,
+            )
+        if self._stage.startswith(STAGE_TRAIN_PREFIX):
+            if len(self._loaders) == 1:
+                self._valid_loader = list(self._loaders.keys())[0]
+                warnings.warn(
+                    "Attention, there is only one dataloader - "
+                    + str(self._valid_loader)
+                )
+            assert self._valid_loader in self._loaders, (
+                "The validation loader must be present "
+                "in the loaders used during experiment."
             )
         return self._loaders
 

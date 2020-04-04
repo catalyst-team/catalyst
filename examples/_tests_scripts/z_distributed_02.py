@@ -54,7 +54,7 @@ runner.train(
     },
     criterion=nn.MSELoss(),
     optimizer=optim.Adam(model.parameters()),
-    logdir="log_example_02",
+    logdir="logs/log_example_02",
     num_epochs=10,
     verbose=True,
     check=True,
