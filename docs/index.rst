@@ -1,12 +1,9 @@
-Catalyst
-======================================
-
 .. image:: https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png
     :target: https://github.com/catalyst-team/catalyst
     :alt: Catalyst logo
 
 
-PyTorch framework for DL research and development.
+PyTorch framework for Deep Learning research and development.
 It was developed with a focus on reproducibility,
 fast experimentation and code/ideas reusing.
 Being able to research/develop something new,
@@ -14,59 +11,46 @@ rather than write another regular train loop.
 
 Break the cycle - use the Catalyst_!
 
+Project manifest_. Part of `PyTorch Ecosystem`_. Part of `Catalyst Ecosystem`_:
+    - Alchemy_ - Experiments logging & visualization
+    - Catalyst_ - Accelerated DL R&D
+    - Reaction_ - Convenient DL serving
+
+.. _PyTorch Ecosystem: https://pytorch.org/ecosystem/
+.. _Catalyst Ecosystem: https://docs.google.com/presentation/d/1D-yhVOg6OXzjo9K_-IS5vSHLPIUxp1PEkFGnpRcNCNU/edit?usp=sharing
+.. _Alchemy: https://github.com/catalyst-team/alchemy
 .. _Catalyst: https://github.com/catalyst-team/catalyst
-
-
-
-Installation
-------------
-Common installation:
-
-.. code:: bash
-
-   pip install -U catalyst
-
-
-More specific with additional requirements:
-
-.. code:: bash
-
-    pip install catalyst[ml]         # installs DL+ML based catalyst
-    pip install catalyst[cv]         # installs DL+CV based catalyst
-    pip install catalyst[nlp]        # installs DL+NLP based catalyst
-    pip install catalyst[ecosystem]  # installs Catalyst.Ecosystem for DL R&D
-    pip install catalyst[contrib]    # installs DL+contrib based catalyst
-    pip install catalyst[all]        # installs everything. Very convenient to deploy on a new server
-
-
-Catalyst is compatible with: Python 3.6+. PyTorch 1.0.0+.
-
+.. _Reaction: https://github.com/catalyst-team/reaction
+.. _manifest: https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md
 
 Getting started
-------------------------------------------------------
+----------------------------------------
 
 .. code:: python
 
     import torch
+    from torch.utils.data import DataLoader, TensorDataset
     from catalyst.dl import SupervisedRunner
 
     # experiment setup
     logdir = "./logdir"
-    num_epochs = 42
+    num_epochs = 8
 
     # data
-    loaders = {"train": ..., "valid": ...}
+    num_samples, num_features = int(1e4), int(1e1)
+    X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
+    dataset = TensorDataset(X, y)
+    loader = DataLoader(dataset, batch_size=32, num_workers=1)
+    loaders = {"train": loader, "valid": loader}
 
-    # model, criterion, optimizer
-    model = Net()
-    criterion = torch.nn.CrossEntropyLoss()
+    # model, criterion, optimizer, scheduler
+    model = torch.nn.Linear(num_features, 1)
+    criterion = torch.nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters())
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer)
-
-    # model runner
-    runner = SupervisedRunner()
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
 
     # model training
+    runner = SupervisedRunner()
     runner.train(
         model=model,
         criterion=criterion,
@@ -82,94 +66,101 @@ For Catalyst.RL introduction, please follow `Catalyst.RL repo`_.
 
 .. _Catalyst.RL repo: https://github.com/catalyst-team/catalyst-rl
 
+Overview
+----------------------------------------
+Catalyst helps you write compact
+but full-featured Deep Learning pipelines in a few lines of code.
+You get a training loop with metrics, early-stopping, model checkpointing
+and other features without the boilerplate.
 
-Docs and examples
-------------------------
-1. Detailed `classification tutorial`_
-#. Advanced `segmentation tutorial`_
-#. Comprehensive `classification pipeline`_
-#. Binary and semantic `segmentation pipeline`_
 
+Installation
+^^^^^^^^^^^^^^^^^^^^
+Common installation:
+
+.. code:: bash
+
+   pip install -U catalyst
+
+
+More specific with additional requirements:
+
+.. code:: bash
+
+    pip install catalyst[ml]         # installs DL+ML based catalyst
+    pip install catalyst[cv]         # installs DL+CV based catalyst
+    pip install catalyst[nlp]        # installs DL+NLP based catalyst
+    pip install catalyst[ecosystem]  # installs Catalyst.Ecosystem
+    pip install catalyst[contrib]    # installs DL+contrib based catalyst
+    pip install catalyst[all]        # installs everything
+    # and master version installation
+    pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
+
+
+Catalyst is compatible with: Python 3.6+. PyTorch 1.0.0+.
+
+Features
+^^^^^^^^^^^^^^^^^^^^
+- Universal train/inference loop.
+- Configuration files for model/data hyperparameters.
+- Reproducibility – all source code and environment variables will be saved.
+- Callbacks – reusable train/inference pipeline parts with easy customization.
+- Training stages support.
+- Deep Learning best practices - SWA, AdamW, Ranger optimizer, OneCycle, and more.
+- Developments best practices - fp16 support, distributed training, slurm.
+
+Structure
+^^^^^^^^^^^^^^^^^^^^
+- **contrib** - additional modules contributed by Catalyst users.
+- **core** - framework core with main abstractions - Experiment, Runner, Callback and State.
+- **data** - useful tools and scripts for data processing.
+- **DL** – runner for training and inference, all of the classic ML and CV/NLP/RecSys metrics and a variety of callbacks for training, validation and inference of neural networks.
+- **utils** - typical utils for Deep Learning research.
+
+Tests
+^^^^^^^^^^^^^^^^^^^^
+All the Catalyst code is `tested rigorously with every new PR`_.
+
+In fact, we train a number of different models for various of tasks -
+image classification, image segmentation, text classification, GAN training.
+During the tests, we compare their convergence metrics in order to verify
+the correctness of the training procedure and its reproducibility.
+
+Overall, Catalyst guarantees fully tested, correct and reproducible
+best practices for the automated parts.
+
+.. _tested rigorously with every new PR: https://github.com/catalyst-team/catalyst/tree/master/examples
+
+
+Tutorials
+^^^^^^^^^^^^^^^^^^^^
+
+- `Demo with minimal examples`_ for CV, NLP, RecSys and GANs
+- Detailed `classification tutorial`_
+- Advanced `segmentation tutorial`_
+- Comprehensive `classification pipeline`_
+- Binary and semantic `segmentation pipeline`_
+- `Beyond fashion: Deep Learning with Catalyst (Config API)`_
+- `Tutorial from Notebook API to Config API (RU)`_
+
+.. _Demo with minimal examples: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb
 .. _`classification tutorial`: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb
 .. _`segmentation tutorial`: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb
 .. _`classification pipeline`: https://github.com/catalyst-team/classification
 .. _`segmentation pipeline`: https://github.com/catalyst-team/segmentation
+.. _`Beyond fashion: Deep Learning with Catalyst (Config API)`: https://evilmartians.com/chronicles/beyond-fashion-deep-learning-with-catalyst
+.. _`Tutorial from Notebook API to Config API (RU)`: https://github.com/Bekovmi/Segmentation_tutorial
 
 In the examples_ of the repository, you can find advanced tutorials and Catalyst best practices.
 
 .. _examples: https://github.com/catalyst-team/catalyst/tree/master/examples
 
 
-Infos
-~~~~~~
-To learn more about Catalyst internals and to be aware of the most important features, you can read `Catalyst-info`_, our blog where we regularly write facts about the framework.
-
-.. _`Catalyst-info`: https://github.com/catalyst-team/catalyst-info
-
-
-We also supervise the `Awesome Catalyst list`_ – Catalyst-powered projects, tutorials and talks.
-Feel free to make a PR with your project to the list. And don't forget to check out current list, there are many interesting projects.
-
-.. _`Awesome Catalyst list`: https://github.com/catalyst-team/awesome-catalyst-list
-
-
-Releases
-~~~~~~~~~~~~
-We deploy a major release once a month with a name like ``YY.MM``.
-And micro-releases with framework improvements during a month in the format ``YY.MM.#``.
-
-You can view the changelog on the `GitHub Releases`_ page.
-
-.. _`GitHub Releases`: https://github.com/catalyst-team/catalyst/releases
-
-
-Overview
---------
-
-Catalyst helps you write compact
-but full-featured DL pipelines in a few lines of code.
-You get a training loop with metrics, early-stopping, model checkpointing
-and other features without the boilerplate.
-
-Features
-~~~~~~~~~~~~~~~~~
-
-- Universal train/inference loop.
-- Configuration files for model/data hyperparameters.
-- Reproducibility – all source code and environment variables will be saved.
-- Callbacks – reusable train/inference pipeline parts.
-- Training stages support.
-- Easy customization.
-- PyTorch best practices (SWA, AdamW, Ranger optimizer, OneCycle, and more).
-- Developments best practices - fp16 support, distributed training, slurm
-
-Structure
-~~~~~~~~~~~~~~~~~
-
-- **core** - framework core with main abstractions - Experiment, Runner, State, Callback.
-- **DL** – runner for training and inference,
-   all of the classic ML and CV/NLP metrics
-   and a variety of callbacks for training, validation
-   and inference of neural networks.
-- **contrib** - additional modules contributed by Catalyst users.
-- **data** - useful tools and scripts for data processing.
-
-
-Docker
-~~~~~~~~~~~~~~~~~
-
-Catalyst has its own `DockerHub page`_:
-
-.. _`DockerHub page`: https://hub.docker.com/r/catalystteam/catalyst/tags
-
-- ``catalystteam/catalyst:{CATALYST_VERSION}`` – simple image with Catalyst
-- ``catalystteam/catalyst:{CATALYST_VERSION}-fp16`` – Catalyst with FP16
-- ``catalystteam/catalyst:{CATALYST_VERSION}-dev`` – Catalyst for development with all the requirements
-- ``catalystteam/catalyst:{CATALYST_VERSION}-dev-fp16`` – Catalyst for development with FP16
-
+Community
+----------------------------------------
 
 Contribution guide
-------------------
+^^^^^^^^^^^^^^^^^^^^
 
 We appreciate all contributions.
 If you are planning to contribute back bug-fixes,
@@ -185,16 +176,20 @@ By participating in this project, you agree to abide by its `Code of Conduct`_.
 
 .. _`Code of Conduct`: https://github.com/catalyst-team/catalyst/blob/master/CODE_OF_CONDUCT.md
 
+User feedback
+^^^^^^^^^^^^^^^^^^^^
 
-License
-------------------
+We have created catalyst.team.core@gmail.com for "user feedback".
+    - If you like the project and want to say thanks, this the right place.
+    - If you would like to start a collaboration between your team and Catalyst team to do better Deep Learning R&D - you are always welcome.
+    - If you just don't like Github issues and this ways suits you better - feel free to email us.
+    - Finally, if you do not like something, please, share it with us and we can see how to improve it.
 
-This project is licensed under the Apache License, Version 2.0 see the LICENSE_ file for details
+We appreciate any type of feedback. Thank you!
 
-.. _LICENSE: https://github.com/catalyst-team/catalyst/blob/master/LICENSE
 
 Citation
-------------------
+^^^^^^^^^^^^^^^^^^^^
 
 Please use this bibtex if you want to cite this repository in your publications:
 
@@ -210,7 +205,7 @@ Please use this bibtex if you want to cite this repository in your publications:
     }
 
 Indices and tables
-==================
+----------------------------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
