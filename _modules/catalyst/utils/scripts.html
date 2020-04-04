@@ -261,12 +261,16 @@
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.distributed</span>
 
 <span class="kn">from</span> <span class="nn">.distributed</span> <span class="kn">import</span> <span class="n">get_distributed_env</span><span class="p">,</span> <span class="n">get_distributed_params</span>
 <span class="kn">from</span> <span class="nn">.misc</span> <span class="kn">import</span> <span class="n">get_utcnow_time</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;once&quot;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;once&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="import_module"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.scripts.import_module">[docs]</a><span class="k">def</span> <span class="nf">import_module</span><span class="p">(</span><span class="n">expdir</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
@@ -364,7 +368,17 @@
     <span class="n">local_rank</span> <span class="o">=</span> <span class="n">distributed_params</span><span class="p">[</span><span class="s2">&quot;local_rank&quot;</span><span class="p">]</span>
     <span class="n">world_size</span> <span class="o">=</span> <span class="n">distributed_params</span><span class="p">[</span><span class="s2">&quot;world_size&quot;</span><span class="p">]</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">distributed</span> <span class="ow">or</span> <span class="n">world_size</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">distributed</span> <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">():</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;Looks like you are trying to call distributed setup twice, &quot;</span>
+            <span class="s2">&quot;switching to normal run for correct distributed training.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="p">(</span>
+        <span class="ow">not</span> <span class="n">distributed</span>
+        <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">()</span>
+        <span class="ow">or</span> <span class="n">world_size</span> <span class="o">&lt;=</span> <span class="mi">1</span>
+    <span class="p">):</span>
         <span class="n">worker_fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">local_rank</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">set_device</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">local_rank</span><span class="p">))</span>

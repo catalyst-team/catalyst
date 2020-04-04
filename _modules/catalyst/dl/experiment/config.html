@@ -682,7 +682,7 @@
         <span class="sd">&quot;&quot;&quot;Returns the loaders for a given stage.&quot;&quot;&quot;</span>
         <span class="n">data_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;data_params&quot;</span><span class="p">])</span>
         <span class="n">loaders</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_loaders_from_params</span><span class="p">(</span>
-            <span class="n">datasets_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_datasets</span><span class="p">,</span>
+            <span class="n">get_datasets_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_datasets</span><span class="p">,</span>
             <span class="n">initial_seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_seed</span><span class="p">,</span>
             <span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">,</span>
             <span class="o">**</span><span class="n">data_params</span><span class="p">,</span>
