@@ -6,20 +6,45 @@ DL
     :undoc-members:
     :show-inheritance:
 
-Core
+Experiment
 --------------------
 
-.. automodule:: catalyst.dl.core.experiment
+.. automodule:: catalyst.dl.experiment.core
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.dl.core.runner
+.. automodule:: catalyst.dl.experiment.config
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.dl.core.callback
+.. automodule:: catalyst.dl.experiment.supervised
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.dl.experiment.gan
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Runner
+--------------------
+
+.. automodule:: catalyst.dl.runner.core
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.dl.runner.supervised
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+.. automodule:: catalyst.dl.runner.gan
     :members:
     :undoc-members:
     :show-inheritance:
@@ -92,45 +117,6 @@ Metrics
     :show-inheritance:
 
 .. automodule:: catalyst.dl.callbacks.metrics.ppv_tpr_f1
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Experiment
---------------------
-
-.. automodule:: catalyst.dl.experiment.base
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.experiment.config
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.experiment.supervised
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.experiment.gan
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Runner
---------------------
-
-.. automodule:: catalyst.dl.runner.supervised
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-.. automodule:: catalyst.dl.runner.gan
     :members:
     :undoc-members:
     :show-inheritance:

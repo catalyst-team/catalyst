@@ -12,7 +12,6 @@ from catalyst.dl import (
     PhaseWrapperCallback,
     registry,
     TensorboardLogger,
-    TimerCallback,
     ValidationManagerCallback,
 )
 from catalyst.dl.experiment.config import ConfigExperiment
@@ -20,11 +19,11 @@ from catalyst.dl.experiment.config import ConfigExperiment
 DEFAULT_MINIMAL_CONFIG = {
     "model_params": {"model": "SomeModel"},
     "stages": {"data_params": {"num_workers": 0}, "train": {}},
+    "args": {"logdir": "./logdir"},
 }
 
 DEFAULT_CALLBACKS = OrderedDict(
     [
-        ("_timer", TimerCallback),
         ("_metrics", MetricManagerCallback),
         ("_validation", ValidationManagerCallback),
         ("_saver", CheckpointCallback),
@@ -72,12 +71,12 @@ def test_defaults():
     exp = ConfigExperiment(config=DEFAULT_MINIMAL_CONFIG)
 
     assert exp.initial_seed == 42
-    assert exp.logdir is None
+    assert exp.logdir == "./logdir"
     assert exp.stages == ["train"]
     assert exp.distributed_params == {}
     assert exp.monitoring_params == {}
     assert exp.get_state_params("train") == {
-        "logdir": None,
+        "logdir": "./logdir",
     }
     assert isinstance(exp.get_model("train"), SomeModel)
     assert exp.get_criterion("train") is None

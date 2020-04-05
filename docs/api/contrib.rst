@@ -6,6 +6,18 @@ Contrib
     :undoc-members:
     :show-inheritance:
 
+DL
+--------------------
+
+
+Callbacks
+~~~~~~~~~~~~~~~~
+
+.. automodule:: catalyst.contrib.dl.callbacks
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 NN
 --------------------
@@ -153,28 +165,6 @@ Segmentation
     :show-inheritance:
 
 .. automodule:: catalyst.contrib.models.cv.segmentation.psp
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-DL
---------------------
-
-
-Runner
-~~~~~~~~~~~~~~~~
-
-.. automodule:: catalyst.contrib.dl.runner.alchemy
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.dl.runner.neptune
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.dl.runner.wandb
     :members:
     :undoc-members:
     :show-inheritance:

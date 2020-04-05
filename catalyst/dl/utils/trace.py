@@ -1,4 +1,4 @@
-from typing import Union
+from typing import TYPE_CHECKING, Union
 import inspect
 from pathlib import Path
 
@@ -7,8 +7,10 @@ from torch import nn
 from torch.jit import ScriptModule
 
 from catalyst import utils
-from catalyst.dl import Runner
 from catalyst.utils.tools.typing import Device, Model
+
+if TYPE_CHECKING:
+    from catalyst.dl import Runner  # noqa: F401
 
 
 class _ForwardOverrideModel(nn.Module):
@@ -66,7 +68,7 @@ class _TracingModelWrapper(nn.Module):
 
 def trace_model(
     model: Model,
-    runner: Runner,
+    runner: "Runner",
     batch=None,
     method_name: str = "forward",
     mode: str = "eval",

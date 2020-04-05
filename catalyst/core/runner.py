@@ -18,7 +18,7 @@ from catalyst.utils.tools.typing import (
 
 from .callback import Callback, CallbackScope
 from .callbacks import ExceptionCallback
-from .experiment import _Experiment
+from .experiment import _Experiment, StageBasedExperiment
 from .state import State
 
 
@@ -131,18 +131,6 @@ class _Runner(ABC):
         """
         self.experiment: _Experiment = None
         self.state: State = None
-
-    @abstractmethod
-    def forward(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
-        """
-        Forward method for your Runner.
-
-        Args:
-            batch (Mapping[str, Any]): dictionary with data batches
-                from DataLoaders.
-            **kwargs: additional parameters to pass to the model
-        """
-        pass
 
     def _get_experiment_components(
         self, stage: str = None
@@ -339,7 +327,8 @@ class _Runner(ABC):
     def _batch2device(
         self, batch: Mapping[str, Any], device: Device,
     ) -> Mapping[str, Any]:
-        """Inner method to transfer incoming data batches to Runners' device.
+        """
+        Inner method to transfer incoming data batches to Runners' device.
 
         Args:
             batch (Mapping[str, Any]): dictionary with data batches
@@ -353,37 +342,17 @@ class _Runner(ABC):
         output = utils.any2device(batch, device)
         return output
 
-    def _run_train_step(self, batch: Mapping[str, Any]) -> None:
-        """Inner method to run train step on specified data batch.
+    @abstractmethod
+    def _handle_batch(self, batch: Mapping[str, Any]) -> None:
+        """
+        Inner method to handle specified data batch.
+        Used to make a train/valid/infer step during Experiment run.
 
         Args:
             batch (Mapping[str, Any]): dictionary with data batches
                 from DataLoader.
-
         """
-        self.state.batch_out = self.forward(batch)
-
-    @torch.no_grad()
-    def predict_batch(
-        self, batch: Mapping[str, Any], **kwargs
-    ) -> Mapping[str, Any]:
-        """Run model inference on specified data batch.
-
-        .. warning::
-            You should not override this method. If you need specific model
-            call, override forward() method
-
-        Args:
-            batch (Mapping[str, Any]): dictionary with data batches
-                from DataLoader.
-            **kwargs: additional kwargs to pass to the model
-
-        Returns:
-            Mapping[str, Any]: model output dictionary
-        """
-        batch = self._batch2device(batch, self.device)
-        output = self.forward(batch, **kwargs)
-        return output
+        pass
 
     def _run_batch(self, batch: Mapping[str, Any]) -> None:
         """
@@ -399,7 +368,7 @@ class _Runner(ABC):
         self.state.batch_in = batch
 
         self._run_event("on_batch_start")
-        self._run_train_step(batch=batch)
+        self._handle_batch(batch=batch)
         self._run_event("on_batch_end")
 
     def _run_loader(self, loader: DataLoader) -> None:
@@ -539,4 +508,26 @@ class _Runner(ABC):
         return self
 
 
-__all__ = ["_Runner"]
+class StageBasedRunner(_Runner):
+    """
+    Runner that suppose to have constant
+    datasources during training/inference stage.
+    """
+
+    _experiment_fn: Callable = StageBasedExperiment
+    _state_fn: Callable = State
+
+    def _init(self):
+        self.experiment: StageBasedExperiment = None
+        self.state: State = None
+
+    def _prepare_for_stage(self, stage: str):
+        super()._prepare_for_stage(stage=stage)
+
+        utils.set_global_seed(self.experiment.initial_seed)
+        loaders = self.experiment.get_loaders(stage=stage)
+        loaders = utils.validate_loaders(loaders)
+        self.state.loaders = loaders
+
+
+__all__ = ["_Runner", "StageBasedRunner"]

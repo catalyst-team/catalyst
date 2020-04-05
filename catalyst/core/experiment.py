@@ -1,4 +1,4 @@
-from typing import Any, Dict, Iterable, Mapping, Tuple
+from typing import Any, Dict, Iterable, Mapping, Tuple, Union
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 
@@ -383,4 +383,38 @@ class _Experiment(ABC):
         pass
 
 
-__all__ = ["_Experiment"]
+class StageBasedExperiment(_Experiment):
+    """
+    Experiment that provides constant
+    datasources during training/inference stage.
+    """
+
+    def get_native_batch(
+        self, stage: str, loader: Union[str, int] = 0, data_index: int = 0
+    ):
+        """
+        Returns a batch from experiment loader.
+
+        Args:
+            stage (str): stage name
+            loader (Union[str, int]): loader name or its index,
+                default is the first loader
+            data_index (int): index in dataset from the loader
+        """
+        loaders = self.get_loaders(stage)
+        if isinstance(loader, str):
+            _loader = loaders[loader]
+        elif isinstance(loader, int):
+            _loader = list(loaders.values())[loader]
+        else:
+            raise TypeError("Loader parameter must be a string or an integer")
+
+        dataset = _loader.dataset
+        collate_fn = _loader.collate_fn
+
+        sample = collate_fn([dataset[data_index]])
+
+        return sample
+
+
+__all__ = ["_Experiment", "StageBasedExperiment"]

@@ -70,6 +70,7 @@ def build_args(parser: ArgumentParser):
         help="Run in distributed mode",
     )
     utils.boolean_flag(parser, "verbose", default=None)
+    utils.boolean_flag(parser, "timeit", default=None)
     utils.boolean_flag(parser, "check", default=None)
     utils.boolean_flag(
         parser,

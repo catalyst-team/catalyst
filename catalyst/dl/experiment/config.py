@@ -6,6 +6,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader  # noqa F401
 
+from catalyst.core import StageBasedExperiment
 from catalyst.data import Augmentor, AugmentorCompose
 from catalyst.dl import (
     Callback,
@@ -14,7 +15,6 @@ from catalyst.dl import (
     ConsoleLogger,
     CriterionCallback,
     ExceptionCallback,
-    Experiment,
     MetricManagerCallback,
     OptimizerCallback,
     PhaseWrapperCallback,
@@ -36,8 +36,10 @@ from catalyst.dl.registry import (
 from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
-class ConfigExperiment(Experiment):
-    """Experiment created from a configuration file."""
+class ConfigExperiment(StageBasedExperiment):
+    """
+    Experiment created from a configuration file.
+    """
 
     STAGE_KEYWORDS = [
         "criterion_params",
@@ -61,6 +63,9 @@ class ConfigExperiment(Experiment):
         )
         self._check_run: bool = self._config.get("args", {}).get(
             "check", False
+        )
+        self._check_time: bool = self._config.get("args", {}).get(
+            "timeit", False
         )
         self.__prepare_logdir()
 
@@ -456,10 +461,22 @@ class ConfigExperiment(Experiment):
         default_callbacks = []
         if self._verbose:
             default_callbacks.append(("_verbose", VerboseLogger))
+        if self._check_time:
+            default_callbacks.append(("_timer", TimerCallback))
         if self._check_run:
             default_callbacks.append(("_check", CheckRunCallback))
 
         if not stage.startswith("infer"):
+            default_callbacks.append(("_metrics", MetricManagerCallback))
+            default_callbacks.append(
+                ("_validation", ValidationManagerCallback)
+            )
+            default_callbacks.append(("_console", ConsoleLogger))
+
+            if self.logdir is not None:
+                default_callbacks.append(("_saver", CheckpointCallback))
+                default_callbacks.append(("_tensorboard", TensorboardLogger))
+
             if self.stages_config[stage].get("criterion_params", {}):
                 default_callbacks.append(("_criterion", CriterionCallback))
             if self.stages_config[stage].get("optimier_params", {}):
@@ -467,14 +484,6 @@ class ConfigExperiment(Experiment):
             if self.stages_config[stage].get("scheduler_params", {}):
                 default_callbacks.append(("_scheduler", SchedulerCallback))
 
-            default_callbacks.append(("_timer", TimerCallback))
-            default_callbacks.append(("_metrics", MetricManagerCallback))
-            default_callbacks.append(
-                ("_validation", ValidationManagerCallback)
-            )
-            default_callbacks.append(("_saver", CheckpointCallback))
-            default_callbacks.append(("_console", ConsoleLogger))
-            default_callbacks.append(("_tensorboard", TensorboardLogger))
         default_callbacks.append(("_exception", ExceptionCallback))
 
         for callback_name, callback_fn in default_callbacks:

@@ -1,4 +1,4 @@
-from catalyst.dl.core import State
+from catalyst.core import State
 
 
 class GanState(State):
@@ -7,15 +7,13 @@ class GanState(State):
     train/valid/infer in GAN Runners.
     """
 
-    def __init__(self, *, batch_consistant_metrics: bool = False, **kwargs):
+    def __init__(self, **kwargs):
         """
         Args:
             @TODO: Docs. Contribution is welcome
         """
         self.phase = None
-        super().__init__(
-            batch_consistant_metrics=batch_consistant_metrics, **kwargs,
-        )
+        super().__init__(**kwargs)
 
 
 __all__ = ["GanState"]

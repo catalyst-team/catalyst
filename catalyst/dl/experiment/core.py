@@ -5,13 +5,27 @@ import warnings
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from catalyst.dl import Callback, Experiment, utils
+from catalyst.core import StageBasedExperiment
+from catalyst.dl import (
+    Callback,
+    CheckpointCallback,
+    CheckRunCallback,
+    ConsoleLogger,
+    ExceptionCallback,
+    MetricManagerCallback,
+    TensorboardLogger,
+    TimerCallback,
+    utils,
+    ValidationManagerCallback,
+    VerboseLogger,
+)
 from catalyst.utils.tools.settings import STAGE_TRAIN_PREFIX
 from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
-class BaseExperiment(Experiment):
-    """Super-simple one-staged experiment,
+class Experiment(StageBasedExperiment):
+    """
+    Super-simple one-staged experiment,
     you can use to declare experiment in code.
     """
 
@@ -31,6 +45,7 @@ class BaseExperiment(Experiment):
         main_metric: str = "loss",
         minimize_metric: bool = True,
         verbose: bool = False,
+        check_time: bool = False,
         check_run: bool = False,
         state_kwargs: Dict = None,
         checkpoint_data: Dict = None,
@@ -65,8 +80,12 @@ class BaseExperiment(Experiment):
                 by which the checkpoints will be selected.
             minimize_metric (bool): flag to indicate whether
                 the ``main_metric`` should be minimized.
-            verbose (bool): ff true, it displays the status of the training
+            verbose (bool): if True, it displays the status of the training
                 to the console.
+            check_time (bool): if True, computes the execution time
+                of training process and displays it to the console.
+            check_run (bool): if True, we run only 3 batches per loader
+                and 3 epochs per stage to check pipeline correctness
             state_kwargs (dict): additional state params to ``State``
             checkpoint_data (dict): additional data to save in checkpoint,
                 for example: ``class_names``, ``date_of_training``, etc
@@ -97,6 +116,7 @@ class BaseExperiment(Experiment):
         self._main_metric = main_metric
         self._minimize_metric = minimize_metric
         self._verbose = verbose
+        self._check_time = check_time
         self._check_run = check_run
         self._state_kwargs = state_kwargs or {}
         self._checkpoint_data = checkpoint_data or {}
@@ -180,8 +200,38 @@ class BaseExperiment(Experiment):
         return self._loaders
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
-        """Returns the callbacks for a given stage."""
-        return self._callbacks
+        """
+        Returns the callbacks for a given stage.
+        """
+        callbacks = self._callbacks or OrderedDict()
+        default_callbacks = []
+
+        if self._verbose:
+            default_callbacks.append(("_verbose", VerboseLogger))
+        if self._check_time:
+            default_callbacks.append(("_timer", TimerCallback))
+        if self._check_run:
+            default_callbacks.append(("_check", CheckRunCallback))
+
+        if not stage.startswith("infer"):
+            default_callbacks.append(("_metrics", MetricManagerCallback))
+            default_callbacks.append(
+                ("_validation", ValidationManagerCallback)
+            )
+            default_callbacks.append(("_console", ConsoleLogger))
+            if self.logdir is not None:
+                default_callbacks.append(("_saver", CheckpointCallback))
+                default_callbacks.append(("_tensorboard", TensorboardLogger))
+        default_callbacks.append(("_exception", ExceptionCallback))
+
+        for callback_name, callback_fn in default_callbacks:
+            is_already_present = any(
+                isinstance(x, callback_fn) for x in callbacks.values()
+            )
+            if not is_already_present:
+                callbacks[callback_name] = callback_fn()
+
+        return callbacks
 
 
-__all__ = ["BaseExperiment"]
+__all__ = ["Experiment"]
