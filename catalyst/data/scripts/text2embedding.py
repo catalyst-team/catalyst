@@ -169,10 +169,21 @@ def main(args, _=None):
             mask = batch["attention_mask"].unsqueeze(-1) \
                 if args.mask_for_max_length \
                 else None
+
+            if isinstance(model, torch.nn.DataParallel):
+                # using several gpu
+                hidden_size = model.module.config.hidden_size
+                hidden_states = model.module.config.output_hidden_states
+
+            else:
+                # using cpu or one gpu
+                hidden_size = model.config.hidden_size
+                hidden_states = model.config.output_hidden_states
+
             features_ = process_bert_output(
                 bert_output=bert_output,
-                hidden_size=model.module.config.hidden_size,
-                output_hidden_states=model.module.config.output_hidden_states,
+                hidden_size=hidden_size,
+                output_hidden_states=hidden_states,
                 pooling_groups=pooling_groups,
                 mask=mask,
             )
