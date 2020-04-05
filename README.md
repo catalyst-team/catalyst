@@ -29,6 +29,8 @@ Project [manifest](https://github.com/catalyst-team/catalyst/blob/master/MANIFES
 - [Catalyst](https://github.com/catalyst-team/catalyst) - Accelerated Deep Learning Research and Development
 - [Reaction](https://github.com/catalyst-team/reaction) - Convenient Deep Learning models serving
 
+[Catalyst at AI Landscape](https://landscape.lfai.foundation/selected=catalyst).
+
 ----
 
 ## Getting started
@@ -80,8 +82,8 @@ For Catalyst.RL introduction, please follow [Catalyst.RL repo](https://github.co
   * [Tests](#tests)
 - [Catalyst](#catalyst)
   * [Tutorials](#tutorials)
-  * [Examples](#examples)
   * [Projects](#projects)
+  * [Tools and pipelines](#tools-and-pipelines)
   * [Talks and videos](#talks-and-videos)
 - [Community](#community)
   * [Contribution guide](#contribution-guide)
@@ -173,7 +175,7 @@ In the **[examples folder](examples)**
 of the repository, you can find advanced tutorials and Catalyst best practices.
 
 
-### Examples
+### Projects
 - [Kaggle Quick, Draw! Doodle Recognition Challenge](https://github.com/ngxbac/Kaggle-QuickDraw) - 11th place solution
 - [Catalyst.RL - NeurIPS 2018: AI for Prosthetics Challenge](https://github.com/Scitator/neurips-18-prosthetics-challenge) – 3rd place solution
 - [CamVid Segmentation Example](https://github.com/BloodAxe/Catalyst-CamVid-Segmentation-Example) - Example of semantic segmentation for CamVid dataset
@@ -201,11 +203,16 @@ of the repository, you can find advanced tutorials and Catalyst best practices.
 - [iglovikov_segmentation](https://github.com/ternaus/iglovikov_segmentation) - Semantic segmentation pipeline using Catalyst
 
 
-### Projects
+### Tools and pipelines
 - [Catalyst.RL](https://github.com/Scitator/catalyst-rl-framework) – A Distributed Framework for Reproducible RL Research by [Scitator](https://github.com/Scitator)
+- [Catalyst.Classification](https://github.com/catalyst-team/classification) - Comprehensive classification pipeline with Pseudo-Labeling by [Bagxi](https://github.com/bagxi) and [Pdanilov](https://github.com/pdanilov)
+- [Catalyst.Segmentation](https://github.com/catalyst-team/segmentation) - Semantic and Instance segmentation pipelines by [Bagxi](https://github.com/bagxi)
+- [Catalyst.Detection](https://github.com/catalyst-team/detection) - Anchor-free detection pipeline by [Avi2011class](https://github.com/Avi2011class) and [TezRomacH](https://github.com/TezRomacH) 
 - [MLComp](https://github.com/catalyst-team/mlcomp) – distributed DAG framework for machine learning with UI by [Lightforever](https://github.com/lightforever)
 - [Pytorch toolbelt](https://github.com/BloodAxe/pytorch-toolbelt) - PyTorch extensions for fast R&D prototyping and Kaggle farming by [BloodAxe](https://github.com/BloodAxe)
+- [Catalyst.GAN](https://github.com/catalyst-team/gan) - Reproducible GANs pipelines by [Asmekal](https://github.com/asmekal)
 - [Helper functions](https://github.com/ternaus/iglovikov_helper_functions) - An unstructured set of helper functions by [Ternaus](https://github.com/ternaus)
+- [Catalyst.Neuro](https://github.com/catalyst-team/neuro) - Brain image analysis project. In collaboration with [TReNDS Center](https://trendscenter.org)
 
 
 ### Talks and videos

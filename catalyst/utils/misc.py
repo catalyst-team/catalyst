@@ -144,7 +144,7 @@ def fn_ends_with_pass(fn: Callable[..., Any]):
 
     Returns:
         bool: True if there is pass in the first indentation level of fn
-            and nothing happens before it, False in any other case.
+        and nothing happens before it, False in any other case.
     """
     source_lines = inspect.getsourcelines(fn)[0]
     if source_lines[-1].strip() == "pass":

@@ -1,3 +1,6 @@
+Catalyst
+========================================
+
 .. image:: https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png
     :target: https://github.com/catalyst-team/catalyst
     :alt: Catalyst logo
@@ -16,12 +19,15 @@ Project manifest_. Part of `PyTorch Ecosystem`_. Part of `Catalyst Ecosystem`_:
     - Catalyst_ - Accelerated DL R&D
     - Reaction_ - Convenient DL serving
 
+`Catalyst at AI Landscape`_.
+
 .. _PyTorch Ecosystem: https://pytorch.org/ecosystem/
 .. _Catalyst Ecosystem: https://docs.google.com/presentation/d/1D-yhVOg6OXzjo9K_-IS5vSHLPIUxp1PEkFGnpRcNCNU/edit?usp=sharing
 .. _Alchemy: https://github.com/catalyst-team/alchemy
 .. _Catalyst: https://github.com/catalyst-team/catalyst
 .. _Reaction: https://github.com/catalyst-team/reaction
 .. _manifest: https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md
+.. _Catalyst at AI Landscape: https://landscape.lfai.foundation/selected=catalyst
 
 Getting started
 ----------------------------------------
@@ -75,7 +81,7 @@ and other features without the boilerplate.
 
 
 Installation
-^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~
 Common installation:
 
 .. code:: bash
@@ -100,7 +106,7 @@ More specific with additional requirements:
 Catalyst is compatible with: Python 3.6+. PyTorch 1.0.0+.
 
 Features
-^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~
 - Universal train/inference loop.
 - Configuration files for model/data hyperparameters.
 - Reproducibility – all source code and environment variables will be saved.
@@ -110,7 +116,7 @@ Features
 - Developments best practices - fp16 support, distributed training, slurm.
 
 Structure
-^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~
 - **contrib** - additional modules contributed by Catalyst users.
 - **core** - framework core with main abstractions - Experiment, Runner, Callback and State.
 - **data** - useful tools and scripts for data processing.
@@ -118,7 +124,7 @@ Structure
 - **utils** - typical utils for Deep Learning research.
 
 Tests
-^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~
 All the Catalyst code is `tested rigorously with every new PR`_.
 
 In fact, we train a number of different models for various of tasks -
@@ -133,7 +139,7 @@ best practices for the automated parts.
 
 
 Tutorials
-^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~
 
 - `Demo with minimal examples`_ for CV, NLP, RecSys and GANs
 - Detailed `classification tutorial`_
@@ -160,7 +166,7 @@ Community
 ----------------------------------------
 
 Contribution guide
-^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~
 
 We appreciate all contributions.
 If you are planning to contribute back bug-fixes,
@@ -177,7 +183,7 @@ By participating in this project, you agree to abide by its `Code of Conduct`_.
 .. _`Code of Conduct`: https://github.com/catalyst-team/catalyst/blob/master/CODE_OF_CONDUCT.md
 
 User feedback
-^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~
 
 We have created catalyst.team.core@gmail.com for "user feedback".
     - If you like the project and want to say thanks, this the right place.
@@ -189,7 +195,7 @@ We appreciate any type of feedback. Thank you!
 
 
 Citation
-^^^^^^^^^^^^^^^^^^^^
+~~~~~~~~~~~~~~~~~~~~~~
 
 Please use this bibtex if you want to cite this repository in your publications:
 

@@ -26,9 +26,6 @@ def f1_score(
 
     Returns:
         float: F_1 score
-
-    Main origins of inspiration:
-        https://github.com/qubvel/segmentation_models.pytorch
     """
     activation_fn = get_activation_fn(activation)
 

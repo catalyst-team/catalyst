@@ -93,11 +93,12 @@ def assert_fp16_available() -> None:
 
 
 def get_rank() -> int:
-    """Returns the rank of the current worker.
+    """
+    Returns the rank of the current worker.
 
     Returns:
-         int: ``rank`` if torch.distributed is initialized,
-              otherwise ``-1``
+        (int): ``rank`` if torch.distributed is initialized,
+        otherwise ``-1``
     """
     if is_torch_distributed_initialized():
         return torch.distributed.get_rank()

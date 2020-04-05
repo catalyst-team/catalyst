@@ -15,7 +15,8 @@ def sigmoid_focal_loss(
     alpha: float = 0.25,
     reduction: str = "mean",
 ):
-    """Compute binary focal loss between target and output logits.
+    """
+    Compute binary focal loss between target and output logits.
 
     Args:
         outputs: tensor of arbitrary shape
@@ -28,9 +29,7 @@ def sigmoid_focal_loss(
             elements in the output,
             ``"sum"``: the output will be summed.
 
-    Main origins of inspiration:
-        https://github.com/BloodAxe/pytorch-toolbelt
-        https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/loss/losses.py  # noqa: E501, W505
+    Source: https://github.com/BloodAxe/pytorch-toolbelt
     """
     targets = targets.type(outputs.type())
 
@@ -85,8 +84,7 @@ def reduced_focal_loss(
         deprecated, and in the meantime, specifying either of those two args
         will override ``reduction``.
 
-    Main origins of inspiration:
-        https://github.com/BloodAxe/pytorch-toolbelt
+    Source: https://github.com/BloodAxe/pytorch-toolbelt
 
     .. _Reduced Focal Loss\: 1st Place Solution to xView object detection
         in Satellite Imagery: https://arxiv.org/abs/1903.01347
