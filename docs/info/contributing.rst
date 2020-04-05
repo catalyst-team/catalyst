@@ -37,16 +37,20 @@ guides:
 Contribution best practices
 '''''''''''''''''''''''''''
 
-0. Install pre-commit hook:
-    .. code-block:: bash
+1. Install requirements
 
-        pip install pre-commit
+.. code-block:: bash
 
-1. Break your work into small, single-purpose updates if possible. It's much harder to merge in a large change with a lot of disjoint features.
-2. Submit the update as a GitHub pull request against the `master` branch.
-3. Make sure that you provide docstrings for all your new methods and classes
-4. Make sure that your code passes the unit tests.
+    brew install bash # for MacOS users
+    pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
+
+2. Break your work into small, single-purpose updates if possible. It's much harder to merge in a large change with a lot of disjoint features.
+3. Submit the update as a GitHub pull request against the `master` branch.
+4. Make sure that you provide docstrings for all your new methods and classes.
 5. Add new unit tests for your code.
+6. Check the codestyle
+7. Make sure that your code passes the unit tests
+
 
 Codestyle
 ^^^^^^^^^
@@ -55,8 +59,19 @@ Do not forget to check the codestyle for your PR with
 
 .. code-block:: bash
 
-    $ make codestyle
+    catalyst-make-codestyle && catalyst-check-codestyle
 
+Make sure to have your python packages complied with `requirements/requirements.txt` and `requirements/requirements-dev.txt` to get codestyle run clean.
+
+
+Unit tests
+^^^^^^^^^^
+
+Do not forget to check that your code passes the unit tests
+
+.. code-block:: bash
+
+    pytest .
 
 
 Documentation

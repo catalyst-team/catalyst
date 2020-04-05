@@ -5,14 +5,14 @@ set -eo pipefail -v
 
 
 ################################  pipeline 00  ################################
-rm -rf ./examples/logs
+rm -rf ./tests/logs
 
 ################################  pipeline 01  ################################
 if [[ "$USE_APEX" == "0" ]]; then
     # GAN (simple test)
     echo 'pipeline 01 -  GAN'
     EXPDIR=./examples/mnist_gans
-    LOGDIR=./examples/logs/mnist_gans
+    LOGDIR=./tests/logs/mnist_gans
     LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
@@ -52,7 +52,7 @@ if [[ "$USE_APEX" == "0" ]]; then
     # conditional Wasserstein GAN-GP (more complicated test)
     echo 'pipeline 02 - conditional WGAN-GP'
     EXPDIR=./examples/mnist_gans
-    LOGDIR=./examples/logs/mnist_gans
+    LOGDIR=./tests/logs/mnist_gans
     LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
     CHECK_BATCH_STEPS=30 \
@@ -92,4 +92,4 @@ assert -30 < w_dist < 30
     rm -rf ${LOGDIR}
 fi
 ################################  pipeline 99  ################################
-rm -rf ./examples/logs
+rm -rf ./tests/logs
