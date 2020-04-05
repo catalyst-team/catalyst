@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contribution &mdash; Catalyst 20.03.4 documentation</title>
+  <title>Contribution &mdash; Catalyst 20.04 documentation</title>
   
 
   
@@ -146,7 +146,7 @@
               
               
                 <div class="version">
-                  20.03
+                  20.04
                 </div>
               
             
@@ -294,26 +294,35 @@ guides:</p>
 </div>
 <div class="section" id="contribution-best-practices">
 <h4>Contribution best practices<a class="headerlink" href="#contribution-best-practices" title="Permalink to this headline">¶</a></h4>
-<ol class="arabic" start="0">
-<li><dl>
-<dt>Install pre-commit hook:</dt><dd><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install pre-commit
+<ol class="arabic simple">
+<li><p>Install requirements</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>brew install bash <span class="c1"># for MacOS users</span>
+pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
 </pre></div>
 </div>
-</dd>
-</dl>
-</li>
+<ol class="arabic simple" start="2">
 <li><p>Break your work into small, single-purpose updates if possible. It’s much harder to merge in a large change with a lot of disjoint features.</p></li>
 <li><p>Submit the update as a GitHub pull request against the <cite>master</cite> branch.</p></li>
-<li><p>Make sure that you provide docstrings for all your new methods and classes</p></li>
-<li><p>Make sure that your code passes the unit tests.</p></li>
+<li><p>Make sure that you provide docstrings for all your new methods and classes.</p></li>
 <li><p>Add new unit tests for your code.</p></li>
+<li><p>Check the codestyle</p></li>
+<li><p>Make sure that your code passes the unit tests</p></li>
 </ol>
 </div>
 </div>
 <div class="section" id="codestyle">
 <h3>Codestyle<a class="headerlink" href="#codestyle" title="Permalink to this headline">¶</a></h3>
 <p>Do not forget to check the codestyle for your PR with</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ make codestyle
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>catalyst-make-codestyle <span class="o">&amp;&amp;</span> catalyst-check-codestyle
+</pre></div>
+</div>
+<p>Make sure to have your python packages complied with <cite>requirements/requirements.txt</cite> and <cite>requirements/requirements-dev.txt</cite> to get codestyle run clean.</p>
+</div>
+<div class="section" id="unit-tests">
+<h3>Unit tests<a class="headerlink" href="#unit-tests" title="Permalink to this headline">¶</a></h3>
+<p>Do not forget to check that your code passes the unit tests</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest .
 </pre></div>
 </div>
 </div>
@@ -403,6 +412,7 @@ docker run <span class="se">\\</span>
 </ul>
 </li>
 <li><a class="reference internal" href="#codestyle">Codestyle</a></li>
+<li><a class="reference internal" href="#unit-tests">Unit tests</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#documentation">Documentation</a><ul>

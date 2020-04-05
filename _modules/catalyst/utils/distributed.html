@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.distributed &mdash; Catalyst 20.03.4 documentation</title>
+  <title>catalyst.utils.distributed &mdash; Catalyst 20.04 documentation</title>
   
 
   
@@ -144,7 +144,7 @@
               
               
                 <div class="version">
-                  20.03
+                  20.04
                 </div>
               
             
@@ -349,11 +349,12 @@
 
 
 <div class="viewcode-block" id="get_rank"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.get_rank">[docs]</a><span class="k">def</span> <span class="nf">get_rank</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Returns the rank of the current worker.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the rank of the current worker.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">         int: ``rank`` if torch.distributed is initialized,</span>
-<span class="sd">              otherwise ``-1``</span>
+<span class="sd">        (int): ``rank`` if torch.distributed is initialized,</span>
+<span class="sd">        otherwise ``-1``</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">is_torch_distributed_initialized</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()</span>

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Core &mdash; Catalyst 20.03.4 documentation</title>
+  <title>Core &mdash; Catalyst 20.04 documentation</title>
   
 
   
@@ -146,7 +146,7 @@
               
               
                 <div class="version">
-                  20.03
+                  20.04
                 </div>
               
             
@@ -259,8 +259,42 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <div class="section" id="module-catalyst.core">
-<span id="core"></span><h1>Core<a class="headerlink" href="#module-catalyst.core" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="core">
+<h1>Core<a class="headerlink" href="#core" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#id1" id="id3">Core</a></p>
+<ul>
+<li><p><a class="reference internal" href="#experiment" id="id4">Experiment</a></p></li>
+<li><p><a class="reference internal" href="#runner" id="id5">Runner</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callback" id="id6">Callback</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.state" id="id7">State</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#callbacks" id="id8">Callbacks</a></p>
+<ul>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.checkpoint" id="id9">Checkpoint</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.criterion" id="id10">Criterion</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.early_stop" id="id11">Early Stop</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.exception" id="id12">Exception</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.logging" id="id13">Logging</a></p></li>
+<li><p><a class="reference internal" href="#metrics" id="id14">Metrics</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.optimizer" id="id15">Optimizer</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.scheduler" id="id16">Scheduler</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.timer" id="id17">Timer</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.validation" id="id18">Validation</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#module-catalyst.core.registry" id="id19">Registry</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.utils" id="id20">Utils</a></p></li>
+</ul>
+</div>
+<div class="section" id="id1">
+<h2><a class="toc-backref" href="#id3">Core</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-catalyst.core"></span><div class="section" id="experiment">
+<h3><a class="toc-backref" href="#id4">Experiment</a><a class="headerlink" href="#experiment" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.core.experiment._Experiment">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.experiment.</code><code class="sig-name descname">_Experiment</code><a class="reference internal" href="../_modules/catalyst/core/experiment.html#_Experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.experiment._Experiment" title="Permalink to this definition">¶</a></dt>
@@ -695,7 +729,10 @@ for example, <a class="reference internal" href="#catalyst.core.callback.Callbac
 
 </dd></dl>
 
-<span class="target" id="module-catalyst.core.experiment"></span><dl class="class">
+<span class="target" id="module-catalyst.core.experiment"></span></div>
+<div class="section" id="runner">
+<h3><a class="toc-backref" href="#id5">Runner</a><a class="headerlink" href="#runner" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
 <dt id="catalyst.core.runner._Runner">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.runner.</code><code class="sig-name descname">_Runner</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#_Runner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner._Runner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
@@ -801,279 +838,10 @@ from DataLoader.</p></li>
 
 </dd></dl>
 
-<span class="target" id="module-catalyst.core.runner"></span><span class="target" id="module-catalyst.core.state"></span><dl class="class">
-<dt id="catalyst.core.state.State">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.state.</code><code class="sig-name descname">State</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">criterion: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">optimizer: Union[torch.optim.optimizer.Optimizer</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.optim.optimizer.Optimizer]] = None</em>, <em class="sig-param">scheduler: Union[torch.optim.lr_scheduler._LRScheduler</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.optim.lr_scheduler._LRScheduler]] = None</em>, <em class="sig-param">callbacks: Dict[str</em>, <em class="sig-param">Callback] = None</em>, <em class="sig-param">logdir: str = None</em>, <em class="sig-param">stage: str = 'infer'</em>, <em class="sig-param">num_epochs: int = None</em>, <em class="sig-param">main_metric: str = 'loss'</em>, <em class="sig-param">minimize_metric: bool = True</em>, <em class="sig-param">valid_loader: str = 'valid'</em>, <em class="sig-param">checkpoint_data: Dict = None</em>, <em class="sig-param">is_check_run: bool = False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/state.html#State"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.state.State" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="utils.html#catalyst.utils.tools.frozen_class.FrozenClass" title="catalyst.utils.tools.frozen_class.FrozenClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.utils.tools.frozen_class.FrozenClass</span></code></a></p>
-<p>Some intermediate storage between Experiment and Runner
-that saves the current state of the Experiments –
-model, criterion, optimizer, schedulers, metrics, loggers, loaders, etc</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>To learn more about Catalyst Core concepts, please check out</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><a class="reference internal" href="#catalyst.core.experiment._Experiment" title="catalyst.core.experiment._Experiment"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.experiment._Experiment</span></code></a></p></li>
-<li><p><a class="reference internal" href="#catalyst.core.runner._Runner" title="catalyst.core.runner._Runner"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.runner._Runner</span></code></a></p></li>
-<li><p><a class="reference internal" href="#catalyst.core.state.State" title="catalyst.core.state.State"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.state.State</span></code></a></p></li>
-<li><p><a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p></li>
-</ul>
-</div></blockquote>
-</div>
-<p><strong>state.loaders</strong> - ordered dictionary with torch.DataLoaders;     for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">MnistTrainLoader</span><span class="p">(),</span>
-    <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">MnistValidLoader</span><span class="p">()</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<ul class="simple">
-<li><p>“<em>train</em>” prefix is used for training loaders -           metrics computations, backward pass, optimization</p></li>
-<li><p>“<em>valid</em>” prefix is used for validation loaders -           metrics computations only</p></li>
-<li><p>“<em>infer</em>” prefix is used for inference loaders -           dataset prediction</p></li>
-</ul>
-</div>
-<p><strong>state.model</strong> - an instance of torch.nn.Module class,     (should implement <code class="docutils literal notranslate"><span class="pre">forward</span></code> method);     for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><strong>state.criterion</strong> - an instance of torch.nn.Module class    or torch.nn.modules.loss._Loss (should implement <code class="docutils literal notranslate"><span class="pre">forward</span></code> method);     for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
-</pre></div>
-</div>
-<p><strong>state.optimizer</strong> - an instance of torch.optim.optimizer.Optimizer    (should implement <code class="docutils literal notranslate"><span class="pre">step</span></code> method);     for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">()</span>
-</pre></div>
-</div>
-<p><strong>state.scheduler</strong> - an instance of torch.optim.lr_scheduler._LRScheduler    (should implement <code class="docutils literal notranslate"><span class="pre">step</span></code> method);     for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">=</span> <span class="n">htorch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">ReduceLROnPlateau</span><span class="p">()</span>
-</pre></div>
-</div>
-<p><strong>state.device</strong> - an instance of torch.device (CPU, GPU, TPU);     for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p><strong>state.callbacks</strong> - ordered dictionary with Catalyst.Callback instances;    for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">callbacks</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">AccuracyCallback</span><span class="p">(),</span>
-    <span class="s2">&quot;criterion&quot;</span><span class="p">:</span> <span class="n">CriterionCallback</span><span class="p">(),</span>
-    <span class="s2">&quot;optim&quot;</span><span class="p">:</span> <span class="n">OptimizerCallback</span><span class="p">(),</span>
-    <span class="s2">&quot;saver&quot;</span><span class="p">:</span> <span class="n">CheckpointCallback</span><span class="p">()</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>state.batch_in</strong> - dictionary,     containing batch of data from currents DataLoader;     for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">batch_in</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;images&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">),</span>
-    <span class="s2">&quot;targets&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>state.batch_out</strong> - dictionary,     containing model output for current batch;     for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">batch_out</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)}</span>
-</pre></div>
-</div>
-<p><strong>state.batch_metrics</strong> - dictionary, flatten storage for batch metrics;     for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">batch_metrics</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;iou&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>state.loader_metrics</strong> - dictionary with aggregated batch statistics     for loader (mean over all batches) and global loader metrics, like AUC;     for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">loader_metrics</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;auc&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>state.epoch_metrics</strong> - dictionary with summarized metrics     for different loaders and global epoch metrics, like lr, momentum;     for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">epoch_metrics</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;train_loss&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;train_auc&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;valid_loss&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span>
-    <span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;momentum&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span>
-<span class="p">}</span>
-</pre></div>
-</div>
-<p><strong>state.is_best_valid</strong> - bool, indicator flag</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if this training epoch is best over all epochs</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> if not</p></li>
-</ul>
-</div></blockquote>
-<p><strong>state.valid_metrics</strong> - dictionary with validation metrics    for currect epoch;     for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">valid_metrics</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;auc&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">}</span>
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>subdictionary of epoch_metrics</p>
-</div>
-<p><strong>state.best_valid_metrics</strong> - dictionary with best validation metrics     during whole training process</p>
-<p><strong>state.distributed_rank</strong> - distributed rank of current worker</p>
-<p><strong>state.is_distributed_worker</strong> - bool, indicator flag</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if is worker node (state.distributed_rank &gt; 0)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> if is master node (state.distributed_rank == 0)</p></li>
-</ul>
-</div></blockquote>
-<p><strong>state.stage_name</strong> - string, current stage name,    for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">stage_name</span> <span class="o">=</span> <span class="s2">&quot;pretraining&quot;</span> <span class="o">/</span> <span class="s2">&quot;training&quot;</span> <span class="o">/</span> <span class="s2">&quot;finetuning&quot;</span> <span class="o">/</span> <span class="n">etc</span>
-</pre></div>
-</div>
-<p><strong>state.epoch</strong> - int, numerical indicator for current stage epoch</p>
-<p><strong>state.num_epochs</strong> - int, maximum number of epochs,     required for this stage</p>
-<p><strong>state.loader_name</strong> - string, current loader name    for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">loader_name</span> <span class="o">=</span> <span class="s2">&quot;train_dataset1&quot;</span> <span class="o">/</span> <span class="s2">&quot;valid_data2&quot;</span> <span class="o">/</span> <span class="s2">&quot;infer_golden&quot;</span>
-</pre></div>
-</div>
-<p><strong>state.loader_step</strong> - int, numerical indicator     for batch index in current loader</p>
-<p><strong>state.loader_len</strong> - int, maximum number of batches in current loaders</p>
-<p><strong>state.batch_size</strong> - int, typical Deep Learning batch size parameter</p>
-<p><strong>state.global_step</strong> - int, numerical indicator, counter for all batches,    that passes through our model during training, validation and    inference stages</p>
-<p><strong>state.global_epoch</strong> - int, numerical indicator, counter for all epochs,    that have passed during model training, validation and    inference stages</p>
-<p><strong>state.main_metric</strong> - string, containing name of metric of interest     for optimization, validation and checkpointing during training</p>
-<p><strong>state.minimize_metric</strong> - bool, indicator flag</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if we need to minimize metric during training,          like <cite>Cross Entropy loss</cite></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> if we need to maximize metric during training,           like <cite>Accuracy</cite> or <cite>Intersection over Union</cite></p></li>
-</ul>
-</div></blockquote>
-<p><strong>state.valid_loader</strong> - string, name of validation loader     for metric selection, validation and model checkpoining</p>
-<p><strong>state.logdir</strong> - string, path to logging directory to save    all logs, metrics, checkpoints and artifacts</p>
-<p><strong>state.checkpoint_data</strong> - dictionary    with all extra data for experiment tracking</p>
-<p><strong>state.is_check_run</strong> - bool, indicator flag</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if you want to check you pipeline and           run only 2 batches per loader and 2 epochs per stage</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> (default) if you want to just the pipeline</p></li>
-</ul>
-</div></blockquote>
-<p><strong>state.is_train_loader</strong> - bool, indicator flag</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> for training loaders</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise</p></li>
-</ul>
-</div></blockquote>
-<p><strong>state.is_infer_stage</strong> - bool, indicator flag</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> for inference stages</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise</p></li>
-</ul>
-</div></blockquote>
-<p><strong>state.need_early_stop</strong> - bool, indicator flag     used for EarlyStopping and CheckRun Callbacks</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if we need to stop the training</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> (default) otherwise</p></li>
-</ul>
-</div></blockquote>
-<p><strong>state.need_exception_reraise</strong> - bool, indicator flag</p>
-<blockquote>
-<div><ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> (default) if you want to show exception           during pipeline and stop the training process</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise</p></li>
-</ul>
-</div></blockquote>
-<p><strong>state.exception</strong> - python Exception instance to raise (or not ;) )</p>
-<dl class="method">
-<dt id="catalyst.core.state.State.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">criterion: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">optimizer: Union[torch.optim.optimizer.Optimizer</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.optim.optimizer.Optimizer]] = None</em>, <em class="sig-param">scheduler: Union[torch.optim.lr_scheduler._LRScheduler</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.optim.lr_scheduler._LRScheduler]] = None</em>, <em class="sig-param">callbacks: Dict[str</em>, <em class="sig-param">Callback] = None</em>, <em class="sig-param">logdir: str = None</em>, <em class="sig-param">stage: str = 'infer'</em>, <em class="sig-param">num_epochs: int = None</em>, <em class="sig-param">main_metric: str = 'loss'</em>, <em class="sig-param">minimize_metric: bool = True</em>, <em class="sig-param">valid_loader: str = 'valid'</em>, <em class="sig-param">checkpoint_data: Dict = None</em>, <em class="sig-param">is_check_run: bool = False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/state.html#State.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.state.State.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&#64;TODO</strong> – Docs. Contribution is welcome</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.state.State.get_attr">
-<code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">key: str</em>, <em class="sig-param">inner_key: str = None</em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="../_modules/catalyst/core/state.html#State.get_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.state.State.get_attr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for python <cite>getattr</cite> method. Useful for Callbacks preparation
-and cases with multi-criterion, multi-optimizer setup.
-For example, when you would like to train multi-task classification.</p>
-<p>Used to get a named attribute from a <cite>State</cite> by <cite>key</cite> keyword;
-for example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># example 1</span>
-<span class="n">state</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;criterion&quot;</span><span class="p">)</span>
-<span class="c1"># is equivalent to</span>
-<span class="n">state</span><span class="o">.</span><span class="n">criterion</span>
-
-<span class="c1"># example 2</span>
-<span class="n">state</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;optimizer&quot;</span><span class="p">)</span>
-<span class="c1"># is equivalent to</span>
-<span class="n">state</span><span class="o">.</span><span class="n">optimizer</span>
-
-<span class="c1"># example 3</span>
-<span class="n">state</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;scheduler&quot;</span><span class="p">)</span>
-<span class="c1"># is equivalent to</span>
-<span class="n">state</span><span class="o">.</span><span class="n">scheduler</span>
-</pre></div>
-</div>
-<p>With <cite>inner_key</cite> usage, it suppose to find a dictionary under <cite>key</cite>        and would get <cite>inner_key</cite> from this dict; for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># example 1</span>
-<span class="n">state</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="s2">&quot;bce&quot;</span><span class="p">)</span>
-<span class="c1"># is equivalent to</span>
-<span class="n">state</span><span class="o">.</span><span class="n">criterion</span><span class="p">[</span><span class="s2">&quot;bce&quot;</span><span class="p">]</span>
-
-<span class="c1"># example 2</span>
-<span class="n">state</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;adam&quot;</span><span class="p">)</span>
-<span class="c1"># is equivalent to</span>
-<span class="n">state</span><span class="o">.</span><span class="n">optimizer</span><span class="p">[</span><span class="s2">&quot;adam&quot;</span><span class="p">]</span>
-
-<span class="c1"># example 3</span>
-<span class="n">state</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;scheduler&quot;</span><span class="p">,</span> <span class="s2">&quot;adam&quot;</span><span class="p">)</span>
-<span class="c1"># is equivalent to</span>
-<span class="n">state</span><span class="o">.</span><span class="n">scheduler</span><span class="p">[</span><span class="s2">&quot;adam&quot;</span><span class="p">]</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<em>str</em>) – name for attribute of interest,
-like <cite>criterion</cite>, <cite>optimizer</cite>, <cite>scheduler</cite></p></li>
-<li><p><strong>inner_key</strong> (<em>str</em>) – name of inner dictionary key</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.state.State.input">
-<em class="property">property </em><code class="sig-name descname">input</code><a class="headerlink" href="#catalyst.core.state.State.input" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for <cite>state.batch_in</cite>.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Deprecated, saved for backward compatibility.
-Please use <cite>state.batch_in</cite> instead.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.state.State.need_backward_pass">
-<em class="property">property </em><code class="sig-name descname">need_backward_pass</code><a class="headerlink" href="#catalyst.core.state.State.need_backward_pass" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for <cite>state.is_train_loader</cite>.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Deprecated, saved for backward compatibility.
-Please use <cite>state.is_train_loader</cite> instead.</p>
-</div>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.state.State.output">
-<em class="property">property </em><code class="sig-name descname">output</code><a class="headerlink" href="#catalyst.core.state.State.output" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for <cite>state.batch_out</cite>.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Deprecated, saved for backward compatibility.
-Please use <cite>state.batch_out</cite> instead.</p>
-</div>
-</dd></dl>
-
-</dd></dl>
-
-<span class="target" id="module-catalyst.core.callback"></span><dl class="class">
+<span class="target" id="module-catalyst.core.runner"></span></div>
+<div class="section" id="module-catalyst.core.callback">
+<span id="callback"></span><h3><a class="toc-backref" href="#id6">Callback</a><a class="headerlink" href="#module-catalyst.core.callback" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
 <dt id="catalyst.core.callback.Callback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callback.</code><code class="sig-name descname">Callback</code><span class="sig-paren">(</span><em class="sig-param">order: int</em>, <em class="sig-param">node: int = &lt;CallbackNode.All: 0&gt;</em>, <em class="sig-param">scope: int = &lt;CallbackScope.Stage: 0&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.Callback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -1366,8 +1134,287 @@ for example:</p>
 
 </dd></dl>
 
+</div>
+<div class="section" id="module-catalyst.core.state">
+<span id="state"></span><h3><a class="toc-backref" href="#id7">State</a><a class="headerlink" href="#module-catalyst.core.state" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.core.state.State">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.state.</code><code class="sig-name descname">State</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">criterion: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">optimizer: Union[torch.optim.optimizer.Optimizer</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.optim.optimizer.Optimizer]] = None</em>, <em class="sig-param">scheduler: Union[torch.optim.lr_scheduler._LRScheduler</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.optim.lr_scheduler._LRScheduler]] = None</em>, <em class="sig-param">callbacks: Dict[str</em>, <em class="sig-param">Callback] = None</em>, <em class="sig-param">logdir: str = None</em>, <em class="sig-param">stage: str = 'infer'</em>, <em class="sig-param">num_epochs: int = None</em>, <em class="sig-param">main_metric: str = 'loss'</em>, <em class="sig-param">minimize_metric: bool = True</em>, <em class="sig-param">valid_loader: str = 'valid'</em>, <em class="sig-param">checkpoint_data: Dict = None</em>, <em class="sig-param">is_check_run: bool = False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/state.html#State"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.state.State" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="utils.html#catalyst.utils.tools.frozen_class.FrozenClass" title="catalyst.utils.tools.frozen_class.FrozenClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.utils.tools.frozen_class.FrozenClass</span></code></a></p>
+<p>Some intermediate storage between Experiment and Runner
+that saves the current state of the Experiments –
+model, criterion, optimizer, schedulers, metrics, loggers, loaders, etc</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To learn more about Catalyst Core concepts, please check out</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><a class="reference internal" href="#catalyst.core.experiment._Experiment" title="catalyst.core.experiment._Experiment"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.experiment._Experiment</span></code></a></p></li>
+<li><p><a class="reference internal" href="#catalyst.core.runner._Runner" title="catalyst.core.runner._Runner"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.runner._Runner</span></code></a></p></li>
+<li><p><a class="reference internal" href="#catalyst.core.state.State" title="catalyst.core.state.State"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.state.State</span></code></a></p></li>
+<li><p><a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p></li>
+</ul>
+</div></blockquote>
+</div>
+<p><strong>state.loaders</strong> - ordered dictionary with torch.DataLoaders;     for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">MnistTrainLoader</span><span class="p">(),</span>
+    <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">MnistValidLoader</span><span class="p">()</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>“<em>train</em>” prefix is used for training loaders -           metrics computations, backward pass, optimization</p></li>
+<li><p>“<em>valid</em>” prefix is used for validation loaders -           metrics computations only</p></li>
+<li><p>“<em>infer</em>” prefix is used for inference loaders -           dataset prediction</p></li>
+</ul>
+</div>
+<p><strong>state.model</strong> - an instance of torch.nn.Module class,     (should implement <code class="docutils literal notranslate"><span class="pre">forward</span></code> method);     for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>state.criterion</strong> - an instance of torch.nn.Module class    or torch.nn.modules.loss._Loss (should implement <code class="docutils literal notranslate"><span class="pre">forward</span></code> method);     for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>state.optimizer</strong> - an instance of torch.optim.optimizer.Optimizer    (should implement <code class="docutils literal notranslate"><span class="pre">step</span></code> method);     for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>state.scheduler</strong> - an instance of torch.optim.lr_scheduler._LRScheduler    (should implement <code class="docutils literal notranslate"><span class="pre">step</span></code> method);     for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">=</span> <span class="n">htorch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">ReduceLROnPlateau</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>state.device</strong> - an instance of torch.device (CPU, GPU, TPU);     for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>state.callbacks</strong> - ordered dictionary with Catalyst.Callback instances;    for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">callbacks</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">AccuracyCallback</span><span class="p">(),</span>
+    <span class="s2">&quot;criterion&quot;</span><span class="p">:</span> <span class="n">CriterionCallback</span><span class="p">(),</span>
+    <span class="s2">&quot;optim&quot;</span><span class="p">:</span> <span class="n">OptimizerCallback</span><span class="p">(),</span>
+    <span class="s2">&quot;saver&quot;</span><span class="p">:</span> <span class="n">CheckpointCallback</span><span class="p">()</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>state.batch_in</strong> - dictionary,     containing batch of data from currents DataLoader;     for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">batch_in</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;images&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">),</span>
+    <span class="s2">&quot;targets&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>state.batch_out</strong> - dictionary,     containing model output for current batch;     for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">batch_out</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)}</span>
+</pre></div>
+</div>
+<p><strong>state.batch_metrics</strong> - dictionary, flatten storage for batch metrics;     for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">batch_metrics</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;iou&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>state.loader_metrics</strong> - dictionary with aggregated batch statistics     for loader (mean over all batches) and global loader metrics, like AUC;     for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">loader_metrics</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;auc&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>state.epoch_metrics</strong> - dictionary with summarized metrics     for different loaders and global epoch metrics, like lr, momentum;     for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">epoch_metrics</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;train_loss&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;train_auc&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;valid_loss&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span>
+    <span class="s2">&quot;lr&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;momentum&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>state.is_best_valid</strong> - bool, indicator flag</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if this training epoch is best over all epochs</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> if not</p></li>
+</ul>
+</div></blockquote>
+<p><strong>state.valid_metrics</strong> - dictionary with validation metrics    for currect epoch;     for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">valid_metrics</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;auc&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>subdictionary of epoch_metrics</p>
+</div>
+<p><strong>state.best_valid_metrics</strong> - dictionary with best validation metrics     during whole training process</p>
+<p><strong>state.distributed_rank</strong> - distributed rank of current worker</p>
+<p><strong>state.is_distributed_worker</strong> - bool, indicator flag</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if is worker node (state.distributed_rank &gt; 0)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> if is master node (state.distributed_rank == 0)</p></li>
+</ul>
+</div></blockquote>
+<p><strong>state.stage_name</strong> - string, current stage name,    for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">stage_name</span> <span class="o">=</span> <span class="s2">&quot;pretraining&quot;</span> <span class="o">/</span> <span class="s2">&quot;training&quot;</span> <span class="o">/</span> <span class="s2">&quot;finetuning&quot;</span> <span class="o">/</span> <span class="n">etc</span>
+</pre></div>
+</div>
+<p><strong>state.epoch</strong> - int, numerical indicator for current stage epoch</p>
+<p><strong>state.num_epochs</strong> - int, maximum number of epochs,     required for this stage</p>
+<p><strong>state.loader_name</strong> - string, current loader name    for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">loader_name</span> <span class="o">=</span> <span class="s2">&quot;train_dataset1&quot;</span> <span class="o">/</span> <span class="s2">&quot;valid_data2&quot;</span> <span class="o">/</span> <span class="s2">&quot;infer_golden&quot;</span>
+</pre></div>
+</div>
+<p><strong>state.loader_step</strong> - int, numerical indicator     for batch index in current loader</p>
+<p><strong>state.loader_len</strong> - int, maximum number of batches in current loaders</p>
+<p><strong>state.batch_size</strong> - int, typical Deep Learning batch size parameter</p>
+<p><strong>state.global_step</strong> - int, numerical indicator, counter for all batches,    that passes through our model during training, validation and    inference stages</p>
+<p><strong>state.global_epoch</strong> - int, numerical indicator, counter for all epochs,    that have passed during model training, validation and    inference stages</p>
+<p><strong>state.main_metric</strong> - string, containing name of metric of interest     for optimization, validation and checkpointing during training</p>
+<p><strong>state.minimize_metric</strong> - bool, indicator flag</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if we need to minimize metric during training,          like <cite>Cross Entropy loss</cite></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> if we need to maximize metric during training,           like <cite>Accuracy</cite> or <cite>Intersection over Union</cite></p></li>
+</ul>
+</div></blockquote>
+<p><strong>state.valid_loader</strong> - string, name of validation loader     for metric selection, validation and model checkpoining</p>
+<p><strong>state.logdir</strong> - string, path to logging directory to save    all logs, metrics, checkpoints and artifacts</p>
+<p><strong>state.checkpoint_data</strong> - dictionary    with all extra data for experiment tracking</p>
+<p><strong>state.is_check_run</strong> - bool, indicator flag</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if you want to check you pipeline and           run only 2 batches per loader and 2 epochs per stage</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> (default) if you want to just the pipeline</p></li>
+</ul>
+</div></blockquote>
+<p><strong>state.is_train_loader</strong> - bool, indicator flag</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> for training loaders</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise</p></li>
+</ul>
+</div></blockquote>
+<p><strong>state.is_infer_stage</strong> - bool, indicator flag</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> for inference stages</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise</p></li>
+</ul>
+</div></blockquote>
+<p><strong>state.need_early_stop</strong> - bool, indicator flag     used for EarlyStopping and CheckRun Callbacks</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if we need to stop the training</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> (default) otherwise</p></li>
+</ul>
+</div></blockquote>
+<p><strong>state.need_exception_reraise</strong> - bool, indicator flag</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> (default) if you want to show exception           during pipeline and stop the training process</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise</p></li>
+</ul>
+</div></blockquote>
+<p><strong>state.exception</strong> - python Exception instance to raise (or not ;) )</p>
+<dl class="method">
+<dt id="catalyst.core.state.State.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">criterion: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">optimizer: Union[torch.optim.optimizer.Optimizer</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.optim.optimizer.Optimizer]] = None</em>, <em class="sig-param">scheduler: Union[torch.optim.lr_scheduler._LRScheduler</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.optim.lr_scheduler._LRScheduler]] = None</em>, <em class="sig-param">callbacks: Dict[str</em>, <em class="sig-param">Callback] = None</em>, <em class="sig-param">logdir: str = None</em>, <em class="sig-param">stage: str = 'infer'</em>, <em class="sig-param">num_epochs: int = None</em>, <em class="sig-param">main_metric: str = 'loss'</em>, <em class="sig-param">minimize_metric: bool = True</em>, <em class="sig-param">valid_loader: str = 'valid'</em>, <em class="sig-param">checkpoint_data: Dict = None</em>, <em class="sig-param">is_check_run: bool = False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/state.html#State.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.state.State.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>&#64;TODO</strong> – Docs. Contribution is welcome</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.state.State.get_attr">
+<code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">key: str</em>, <em class="sig-param">inner_key: str = None</em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="../_modules/catalyst/core/state.html#State.get_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.state.State.get_attr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for python <cite>getattr</cite> method. Useful for Callbacks preparation
+and cases with multi-criterion, multi-optimizer setup.
+For example, when you would like to train multi-task classification.</p>
+<p>Used to get a named attribute from a <cite>State</cite> by <cite>key</cite> keyword;
+for example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># example 1</span>
+<span class="n">state</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;criterion&quot;</span><span class="p">)</span>
+<span class="c1"># is equivalent to</span>
+<span class="n">state</span><span class="o">.</span><span class="n">criterion</span>
+
+<span class="c1"># example 2</span>
+<span class="n">state</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;optimizer&quot;</span><span class="p">)</span>
+<span class="c1"># is equivalent to</span>
+<span class="n">state</span><span class="o">.</span><span class="n">optimizer</span>
+
+<span class="c1"># example 3</span>
+<span class="n">state</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;scheduler&quot;</span><span class="p">)</span>
+<span class="c1"># is equivalent to</span>
+<span class="n">state</span><span class="o">.</span><span class="n">scheduler</span>
+</pre></div>
+</div>
+<p>With <cite>inner_key</cite> usage, it suppose to find a dictionary under <cite>key</cite>        and would get <cite>inner_key</cite> from this dict; for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># example 1</span>
+<span class="n">state</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="s2">&quot;bce&quot;</span><span class="p">)</span>
+<span class="c1"># is equivalent to</span>
+<span class="n">state</span><span class="o">.</span><span class="n">criterion</span><span class="p">[</span><span class="s2">&quot;bce&quot;</span><span class="p">]</span>
+
+<span class="c1"># example 2</span>
+<span class="n">state</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;adam&quot;</span><span class="p">)</span>
+<span class="c1"># is equivalent to</span>
+<span class="n">state</span><span class="o">.</span><span class="n">optimizer</span><span class="p">[</span><span class="s2">&quot;adam&quot;</span><span class="p">]</span>
+
+<span class="c1"># example 3</span>
+<span class="n">state</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;scheduler&quot;</span><span class="p">,</span> <span class="s2">&quot;adam&quot;</span><span class="p">)</span>
+<span class="c1"># is equivalent to</span>
+<span class="n">state</span><span class="o">.</span><span class="n">scheduler</span><span class="p">[</span><span class="s2">&quot;adam&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>key</strong> (<em>str</em>) – name for attribute of interest,
+like <cite>criterion</cite>, <cite>optimizer</cite>, <cite>scheduler</cite></p></li>
+<li><p><strong>inner_key</strong> (<em>str</em>) – name of inner dictionary key</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.state.State.input">
+<em class="property">property </em><code class="sig-name descname">input</code><a class="headerlink" href="#catalyst.core.state.State.input" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for <cite>state.batch_in</cite>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Deprecated, saved for backward compatibility.
+Please use <cite>state.batch_in</cite> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.state.State.need_backward_pass">
+<em class="property">property </em><code class="sig-name descname">need_backward_pass</code><a class="headerlink" href="#catalyst.core.state.State.need_backward_pass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for <cite>state.is_train_loader</cite>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Deprecated, saved for backward compatibility.
+Please use <cite>state.is_train_loader</cite> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.state.State.output">
+<em class="property">property </em><code class="sig-name descname">output</code><a class="headerlink" href="#catalyst.core.state.State.output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for <cite>state.batch_out</cite>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Deprecated, saved for backward compatibility.
+Please use <cite>state.batch_out</cite> instead.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="callbacks">
+<h2><a class="toc-backref" href="#id8">Callbacks</a><a class="headerlink" href="#callbacks" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-catalyst.core.callbacks.checkpoint">
-<span id="callbacks"></span><h2>Callbacks<a class="headerlink" href="#module-catalyst.core.callbacks.checkpoint" title="Permalink to this headline">¶</a></h2>
+<span id="checkpoint"></span><h3><a class="toc-backref" href="#id9">Checkpoint</a><a class="headerlink" href="#module-catalyst.core.callbacks.checkpoint" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.core.callbacks.checkpoint.CheckpointCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.checkpoint.</code><code class="sig-name descname">CheckpointCallback</code><span class="sig-paren">(</span><em class="sig-param">save_n_best: int = 1</em>, <em class="sig-param">resume: str = None</em>, <em class="sig-param">resume_dir: str = None</em>, <em class="sig-param">metrics_filename: str = '_metrics.json'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback" title="Permalink to this definition">¶</a></dt>
@@ -1492,7 +1539,10 @@ in checkpoint folder. Must ends on <code class="docutils literal notranslate"><s
 
 </dd></dl>
 
-<span class="target" id="module-catalyst.core.callbacks.criterion"></span><dl class="class">
+</div>
+<div class="section" id="module-catalyst.core.callbacks.criterion">
+<span id="criterion"></span><h3><a class="toc-backref" href="#id10">Criterion</a><a class="headerlink" href="#module-catalyst.core.callbacks.criterion" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
 <dt id="catalyst.core.callbacks.criterion.CriterionCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.criterion.</code><code class="sig-name descname">CriterionCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', prefix: str = 'loss', criterion_key: str = None, multiplier: float = 1.0, **metric_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/criterion.html#CriterionCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.criterion.CriterionCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.callbacks.metrics._MetricCallback" title="catalyst.core.callbacks.metrics._MetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics._MetricCallback</span></code></a></p>
@@ -1540,7 +1590,10 @@ there are several of them and they are in a dictionary format.</p></li>
 
 </dd></dl>
 
-<span class="target" id="module-catalyst.core.callbacks.early_stop"></span><dl class="class">
+</div>
+<div class="section" id="module-catalyst.core.callbacks.early_stop">
+<span id="early-stop"></span><h3><a class="toc-backref" href="#id11">Early Stop</a><a class="headerlink" href="#module-catalyst.core.callbacks.early_stop" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
 <dt id="catalyst.core.callbacks.early_stop.CheckRunCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.early_stop.</code><code class="sig-name descname">CheckRunCallback</code><span class="sig-paren">(</span><em class="sig-param">num_batch_steps: int = 2</em>, <em class="sig-param">num_epoch_steps: int = 2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/early_stop.html#CheckRunCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.early_stop.CheckRunCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
@@ -1584,7 +1637,10 @@ there are several of them and they are in a dictionary format.</p></li>
 
 </dd></dl>
 
-<span class="target" id="module-catalyst.core.callbacks.exception"></span><dl class="class">
+</div>
+<div class="section" id="module-catalyst.core.callbacks.exception">
+<span id="exception"></span><h3><a class="toc-backref" href="#id12">Exception</a><a class="headerlink" href="#module-catalyst.core.callbacks.exception" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
 <dt id="catalyst.core.callbacks.exception.ExceptionCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.exception.</code><code class="sig-name descname">ExceptionCallback</code><a class="reference internal" href="../_modules/catalyst/core/callbacks/exception.html#ExceptionCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.exception.ExceptionCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
@@ -1603,7 +1659,10 @@ there are several of them and they are in a dictionary format.</p></li>
 
 </dd></dl>
 
-<span class="target" id="module-catalyst.core.callbacks.logging"></span><dl class="class">
+</div>
+<div class="section" id="module-catalyst.core.callbacks.logging">
+<span id="logging"></span><h3><a class="toc-backref" href="#id13">Logging</a><a class="headerlink" href="#module-catalyst.core.callbacks.logging" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
 <dt id="catalyst.core.callbacks.logging.ConsoleLogger">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.logging.</code><code class="sig-name descname">ConsoleLogger</code><a class="reference internal" href="../_modules/catalyst/core/callbacks/logging.html#ConsoleLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.logging.ConsoleLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
@@ -1734,6 +1793,9 @@ to remove always_show metrics set it to an empty list <code class="docutils lite
 
 </dd></dl>
 
+</div>
+<div class="section" id="metrics">
+<h3><a class="toc-backref" href="#id14">Metrics</a><a class="headerlink" href="#metrics" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.core.callbacks.metrics._MetricCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">_MetricCallback</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metrics_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#_MetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics._MetricCallback" title="Permalink to this definition">¶</a></dt>
@@ -1916,7 +1978,10 @@ Must be either <code class="docutils literal notranslate"><span class="pre">sum<
 
 </dd></dl>
 
-<span class="target" id="module-catalyst.core.callbacks.optimizer"></span><dl class="class">
+</div>
+<div class="section" id="module-catalyst.core.callbacks.optimizer">
+<span id="optimizer"></span><h3><a class="toc-backref" href="#id15">Optimizer</a><a class="headerlink" href="#module-catalyst.core.callbacks.optimizer" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
 <dt id="catalyst.core.callbacks.optimizer.OptimizerCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.optimizer.</code><code class="sig-name descname">OptimizerCallback</code><span class="sig-paren">(</span><em class="sig-param">loss_key: str = 'loss'</em>, <em class="sig-param">optimizer_key: str = None</em>, <em class="sig-param">accumulation_steps: int = 1</em>, <em class="sig-param">grad_clip_params: Dict = None</em>, <em class="sig-param">decouple_weight_decay: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/optimizer.html#OptimizerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.optimizer.OptimizerCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
@@ -2001,7 +2066,10 @@ for each param group</p></li>
 
 </dd></dl>
 
-<span class="target" id="module-catalyst.core.callbacks.scheduler"></span><dl class="class">
+</div>
+<div class="section" id="module-catalyst.core.callbacks.scheduler">
+<span id="scheduler"></span><h3><a class="toc-backref" href="#id16">Scheduler</a><a class="headerlink" href="#module-catalyst.core.callbacks.scheduler" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
 <dt id="catalyst.core.callbacks.scheduler.SchedulerCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.scheduler.</code><code class="sig-name descname">SchedulerCallback</code><span class="sig-paren">(</span><em class="sig-param">scheduler_key: str = None</em>, <em class="sig-param">mode: str = None</em>, <em class="sig-param">reduced_metric: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/scheduler.html#SchedulerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.scheduler.SchedulerCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
@@ -2154,7 +2222,10 @@ for learning rate scheduling</p>
 
 </dd></dl>
 
-<span class="target" id="module-catalyst.core.callbacks.timer"></span><dl class="class">
+</div>
+<div class="section" id="module-catalyst.core.callbacks.timer">
+<span id="timer"></span><h3><a class="toc-backref" href="#id17">Timer</a><a class="headerlink" href="#module-catalyst.core.callbacks.timer" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
 <dt id="catalyst.core.callbacks.timer.TimerCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.timer.</code><code class="sig-name descname">TimerCallback</code><a class="reference internal" href="../_modules/catalyst/core/callbacks/timer.html#TimerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.timer.TimerCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
@@ -2211,7 +2282,10 @@ for learning rate scheduling</p>
 
 </dd></dl>
 
-<span class="target" id="module-catalyst.core.callbacks.validation"></span><dl class="class">
+</div>
+<div class="section" id="module-catalyst.core.callbacks.validation">
+<span id="validation"></span><h3><a class="toc-backref" href="#id18">Validation</a><a class="headerlink" href="#module-catalyst.core.callbacks.validation" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
 <dt id="catalyst.core.callbacks.validation.ValidationManagerCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.validation.</code><code class="sig-name descname">ValidationManagerCallback</code><a class="reference internal" href="../_modules/catalyst/core/callbacks/validation.html#ValidationManagerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.validation.ValidationManagerCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
@@ -2247,8 +2321,9 @@ for learning rate scheduling</p>
 </dd></dl>
 
 </div>
+</div>
 <div class="section" id="module-catalyst.core.registry">
-<span id="registry"></span><h2>Registry<a class="headerlink" href="#module-catalyst.core.registry" title="Permalink to this headline">¶</a></h2>
+<span id="registry"></span><h2><a class="toc-backref" href="#id19">Registry</a><a class="headerlink" href="#module-catalyst.core.registry" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="catalyst.core.registry.Callback">
 <code class="sig-prename descclassname">catalyst.core.registry.</code><code class="sig-name descname">Callback</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.core.registry.Callback" title="Permalink to this definition">¶</a></dt>
@@ -2443,7 +2518,7 @@ single instance.</p></li>
 
 </div>
 <div class="section" id="module-catalyst.core.utils">
-<span id="utils"></span><h2>Utils<a class="headerlink" href="#module-catalyst.core.utils" title="Permalink to this headline">¶</a></h2>
+<span id="utils"></span><h2><a class="toc-backref" href="#id20">Utils</a><a class="headerlink" href="#module-catalyst.core.utils" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-catalyst.core.utils.callbacks"></span><dl class="function">
 <dt id="catalyst.core.utils.callbacks.sort_callbacks_by_order">
 <code class="sig-prename descclassname">catalyst.core.utils.callbacks.</code><code class="sig-name descname">sort_callbacks_by_order</code><span class="sig-paren">(</span><em class="sig-param">callbacks: Union[list, collections.OrderedDict]</em><span class="sig-paren">)</span> &#x2192; collections.OrderedDict<a class="reference internal" href="../_modules/catalyst/core/utils/callbacks.html#sort_callbacks_by_order"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.utils.callbacks.sort_callbacks_by_order" title="Permalink to this definition">¶</a></dt>
@@ -2520,7 +2595,26 @@ and master-only callbacks from <code class="docutils literal notranslate"><span 
             <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
               <ul>
 <li><a class="reference internal" href="#">Core</a><ul>
-<li><a class="reference internal" href="#module-catalyst.core.callbacks.checkpoint">Callbacks</a></li>
+<li><a class="reference internal" href="#id1">Core</a><ul>
+<li><a class="reference internal" href="#experiment">Experiment</a></li>
+<li><a class="reference internal" href="#runner">Runner</a></li>
+<li><a class="reference internal" href="#module-catalyst.core.callback">Callback</a></li>
+<li><a class="reference internal" href="#module-catalyst.core.state">State</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#callbacks">Callbacks</a><ul>
+<li><a class="reference internal" href="#module-catalyst.core.callbacks.checkpoint">Checkpoint</a></li>
+<li><a class="reference internal" href="#module-catalyst.core.callbacks.criterion">Criterion</a></li>
+<li><a class="reference internal" href="#module-catalyst.core.callbacks.early_stop">Early Stop</a></li>
+<li><a class="reference internal" href="#module-catalyst.core.callbacks.exception">Exception</a></li>
+<li><a class="reference internal" href="#module-catalyst.core.callbacks.logging">Logging</a></li>
+<li><a class="reference internal" href="#metrics">Metrics</a></li>
+<li><a class="reference internal" href="#module-catalyst.core.callbacks.optimizer">Optimizer</a></li>
+<li><a class="reference internal" href="#module-catalyst.core.callbacks.scheduler">Scheduler</a></li>
+<li><a class="reference internal" href="#module-catalyst.core.callbacks.timer">Timer</a></li>
+<li><a class="reference internal" href="#module-catalyst.core.callbacks.validation">Validation</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-catalyst.core.registry">Registry</a></li>
 <li><a class="reference internal" href="#module-catalyst.core.utils">Utils</a></li>
 </ul>

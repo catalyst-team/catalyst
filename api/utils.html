@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utilities &mdash; Catalyst 20.03.4 documentation</title>
+  <title>Utilities &mdash; Catalyst 20.04 documentation</title>
   
 
   
@@ -145,7 +145,7 @@
               
               
                 <div class="version">
-                  20.03
+                  20.04
                 </div>
               
             
@@ -408,14 +408,11 @@
 <dd><p>Returns the rank of the current worker.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">rank</span></code> if torch.distributed is initialized,</dt><dd><p>otherwise <code class="docutils literal notranslate"><span class="pre">-1</span></code></p>
-</dd>
-</dl>
-</p>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">rank</span></code> if torch.distributed is initialized,
+otherwise <code class="docutils literal notranslate"><span class="pre">-1</span></code></p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>int</p>
+<dd class="field-even"><p>(int)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -591,11 +588,8 @@ Mainly used to filter callbacks with empty on_{event} methods.</p>
 <dd class="field-odd"><p><strong>fn</strong> (<em>Callable</em><em>[</em><em>..</em><em>, </em><em>Any</em><em>]</em>) – target Callable</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>True if there is pass in the first indentation level of fn</dt><dd><p>and nothing happens before it, False in any other case.</p>
-</dd>
-</dl>
-</p>
+<dd class="field-even"><p>True if there is pass in the first indentation level of fn
+and nothing happens before it, False in any other case.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>bool</p>
@@ -1256,7 +1250,12 @@ register factories</p>
 <dl class="method">
 <dt id="catalyst.utils.tools.registry.RegistryException.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">message</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tools/registry.html#RegistryException.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.registry.RegistryException.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Init</p>
+<dd><p>Init.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>message</strong> – exception message</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1547,30 +1546,32 @@ dataset with non-integral indices/keys, a custom sampler must be provided.</p>
 <dt id="catalyst.utils.metrics.accuracy.accuracy">
 <code class="sig-prename descclassname">catalyst.utils.metrics.accuracy.</code><code class="sig-name descname">accuracy</code><span class="sig-paren">(</span><em class="sig-param">outputs</em>, <em class="sig-param">targets</em>, <em class="sig-param">topk=(1</em>, <em class="sig-param">)</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/metrics/accuracy.html#accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.metrics.accuracy.accuracy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the accuracy.</p>
-<dl class="simple">
-<dt>It can be used either for:</dt><dd><ul class="simple">
-<li><dl class="simple">
-<dt>multi-class task:</dt><dd><p>-you can use topk.
--threshold and activation are not required.
--targets is a tensor: batch_size
--outputs is a tensor: batch_size x num_classes
--computes the accuracy&#64;k for the specified values of k.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>OR multi-label task, in this case:</dt><dd><p>-you must specify threshold and activation
--topk will not be used
-(because of there is no method to apply top-k in
-multi-label classification).
--outputs, targets are tensors with shape: batch_size x num_classes
--targets is a tensor with binary vectors</p>
-</dd>
-</dl>
-</li>
+<p>It can be used either for:</p>
+<ol class="arabic simple">
+<li><p>Multi-class task, in this case:</p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>you can use topk.</p></li>
+<li><p>threshold and activation are not required.</p></li>
+<li><p>targets is a tensor: batch_size</p></li>
+<li><p>outputs is a tensor: batch_size x num_classes</p></li>
+<li><p>computes the accuracy&#64;k for the specified values of k.</p></li>
 </ul>
-</dd>
-</dl>
+</div></blockquote>
+<ol class="arabic simple" start="2">
+<li><p>Multi-label task, in this case:</p></li>
+</ol>
+<blockquote>
+<div><ul class="simple">
+<li><p>you must specify threshold and activation</p></li>
+<li><p>topk will not be used
+(because of there is no method to apply top-k in
+multi-label classification).</p></li>
+<li><p>outputs, targets are tensors with shape: batch_size x num_classes</p></li>
+<li><p>targets is a tensor with binary vectors</p></li>
+</ul>
+</div></blockquote>
 </dd></dl>
 
 <dl class="function">
@@ -1673,10 +1674,6 @@ Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
-<dl class="simple">
-<dt>Main origins of inspiration:</dt><dd><p><a class="reference external" href="https://github.com/qubvel/segmentation_models.pytorch">https://github.com/qubvel/segmentation_models.pytorch</a></p>
-</dd>
-</dl>
 </dd></dl>
 
 </div>
@@ -1707,11 +1704,7 @@ elements in the output,
 </ul>
 </dd>
 </dl>
-<dl class="simple">
-<dt>Main origins of inspiration:</dt><dd><p><a class="reference external" href="https://github.com/BloodAxe/pytorch-toolbelt">https://github.com/BloodAxe/pytorch-toolbelt</a>
-<a class="reference external" href="https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/loss/losses.py">https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/loss/losses.py</a>  # noqa: E501, W505</p>
-</dd>
-</dl>
+<p>Source: <a class="reference external" href="https://github.com/BloodAxe/pytorch-toolbelt">https://github.com/BloodAxe/pytorch-toolbelt</a></p>
 </dd></dl>
 
 <dl class="function">
@@ -1742,10 +1735,7 @@ Default: “mean”</p></li>
 deprecated, and in the meantime, specifying either of those two args
 will override <code class="docutils literal notranslate"><span class="pre">reduction</span></code>.</p>
 </div>
-<dl class="simple">
-<dt>Main origins of inspiration:</dt><dd><p><a class="reference external" href="https://github.com/BloodAxe/pytorch-toolbelt">https://github.com/BloodAxe/pytorch-toolbelt</a></p>
-</dd>
-</dl>
+<p>Source: <a class="reference external" href="https://github.com/BloodAxe/pytorch-toolbelt">https://github.com/BloodAxe/pytorch-toolbelt</a></p>
 </dd></dl>
 
 </div>

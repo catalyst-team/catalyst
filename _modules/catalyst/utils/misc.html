@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.misc &mdash; Catalyst 20.03.4 documentation</title>
+  <title>catalyst.utils.misc &mdash; Catalyst 20.04 documentation</title>
   
 
   
@@ -144,7 +144,7 @@
               
               
                 <div class="version">
-                  20.03
+                  20.04
                 </div>
               
             
@@ -400,7 +400,7 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        bool: True if there is pass in the first indentation level of fn</span>
-<span class="sd">            and nothing happens before it, False in any other case.</span>
+<span class="sd">        and nothing happens before it, False in any other case.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">source_lines</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getsourcelines</span><span class="p">(</span><span class="n">fn</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">source_lines</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;pass&quot;</span><span class="p">:</span>

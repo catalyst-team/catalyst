@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.metrics.focal &mdash; Catalyst 20.03.4 documentation</title>
+  <title>catalyst.utils.metrics.focal &mdash; Catalyst 20.04 documentation</title>
   
 
   
@@ -144,7 +144,7 @@
               
               
                 <div class="version">
-                  20.03
+                  20.04
                 </div>
               
             
@@ -271,7 +271,8 @@
     <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.25</span><span class="p">,</span>
     <span class="n">reduction</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Compute binary focal loss between target and output logits.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute binary focal loss between target and output logits.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        outputs: tensor of arbitrary shape</span>
@@ -284,9 +285,7 @@
 <span class="sd">            elements in the output,</span>
 <span class="sd">            ``&quot;sum&quot;``: the output will be summed.</span>
 
-<span class="sd">    Main origins of inspiration:</span>
-<span class="sd">        https://github.com/BloodAxe/pytorch-toolbelt</span>
-<span class="sd">        https://github.com/open-mmlab/mmdetection/blob/master/mmdet/core/loss/losses.py  # noqa: E501, W505</span>
+<span class="sd">    Source: https://github.com/BloodAxe/pytorch-toolbelt</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">targets</span> <span class="o">=</span> <span class="n">targets</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">type</span><span class="p">())</span>
 
@@ -341,8 +340,7 @@
 <span class="sd">        deprecated, and in the meantime, specifying either of those two args</span>
 <span class="sd">        will override ``reduction``.</span>
 
-<span class="sd">    Main origins of inspiration:</span>
-<span class="sd">        https://github.com/BloodAxe/pytorch-toolbelt</span>
+<span class="sd">    Source: https://github.com/BloodAxe/pytorch-toolbelt</span>
 
 <span class="sd">    .. _Reduced Focal Loss\: 1st Place Solution to xView object detection</span>
 <span class="sd">        in Satellite Imagery: https://arxiv.org/abs/1903.01347</span>
