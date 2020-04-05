@@ -21,7 +21,7 @@ stages:
   data_params:
     batch_size: 24
     num_workers: 1
-    path_to_data: './examples/_tests_nlp_classification/input'
+    path_to_data: './tests/_tests_nlp_classification/input'
     train_filename: "train.csv"
     valid_filename: "valid.csv"
     text_field: "text"

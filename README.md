@@ -12,7 +12,7 @@
 
 [![Twitter](https://img.shields.io/badge/news-on%20twitter-499feb)](https://twitter.com/catalyst_core)
 [![Telegram](https://img.shields.io/badge/channel-on%20telegram-blue)](https://t.me/catalyst_team)
-[![Slack](https://img.shields.io/badge/Catalyst-slack-red)](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw)
+[![Slack](https://img.shields.io/badge/Catalyst-slack-success)](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw)
 [![Github contributors](https://img.shields.io/github/contributors/catalyst-team/catalyst.svg?logo=github&logoColor=white)](https://github.com/catalyst-team/catalyst/graphs/contributors)
 
 </div>
@@ -148,7 +148,7 @@ Catalyst is compatible with: Python 3.6+. PyTorch 1.0.0+.
 
 
 ### Tests
-All the Catalyst code is [tested rigorously with every new PR](https://github.com/catalyst-team/catalyst/tree/master/examples).
+All the Catalyst code is [tested rigorously with every new PR](./tests).
 
 In fact, we train a number of different models for various of tasks - 
 image classification, image segmentation, text classification, GAN training.
@@ -206,13 +206,13 @@ of the repository, you can find advanced tutorials and Catalyst best practices.
 ### Tools and pipelines
 - [Catalyst.RL](https://github.com/Scitator/catalyst-rl-framework) – A Distributed Framework for Reproducible RL Research by [Scitator](https://github.com/Scitator)
 - [Catalyst.Classification](https://github.com/catalyst-team/classification) - Comprehensive classification pipeline with Pseudo-Labeling by [Bagxi](https://github.com/bagxi) and [Pdanilov](https://github.com/pdanilov)
-- [Catalyst.Segmentation](https://github.com/catalyst-team/segmentation) - Semantic and Instance segmentation pipelines by [Bagxi](https://github.com/bagxi)
-- [Catalyst.Detection](https://github.com/catalyst-team/detection) - Anchor-free detection pipeline by [Avi2011class](https://github.com/Avi2011class) and [TezRomacH](https://github.com/TezRomacH) 
+- [Catalyst.Segmentation](https://github.com/catalyst-team/segmentation) - Segmentation pipelines - binary, semantic and instance, by [Bagxi](https://github.com/bagxi)
+- [Catalyst.Detection](https://github.com/catalyst-team/detection) - Anchor-free detection pipeline by [Avi2011class](https://github.com/Avi2011class) and [TezRomacH](https://github.com/TezRomacH)
+- [Catalyst.GAN](https://github.com/catalyst-team/gan) - Reproducible GANs pipelines by [Asmekal](https://github.com/asmekal)
+- [Catalyst.Neuro](https://github.com/catalyst-team/neuro) - Brain image analysis project, in collaboration with [TReNDS Center](https://trendscenter.org)
 - [MLComp](https://github.com/catalyst-team/mlcomp) – distributed DAG framework for machine learning with UI by [Lightforever](https://github.com/lightforever)
 - [Pytorch toolbelt](https://github.com/BloodAxe/pytorch-toolbelt) - PyTorch extensions for fast R&D prototyping and Kaggle farming by [BloodAxe](https://github.com/BloodAxe)
-- [Catalyst.GAN](https://github.com/catalyst-team/gan) - Reproducible GANs pipelines by [Asmekal](https://github.com/asmekal)
 - [Helper functions](https://github.com/ternaus/iglovikov_helper_functions) - An unstructured set of helper functions by [Ternaus](https://github.com/ternaus)
-- [Catalyst.Neuro](https://github.com/catalyst-team/neuro) - Brain image analysis project. In collaboration with [TReNDS Center](https://trendscenter.org)
 
 
 ### Talks and videos
@@ -269,6 +269,7 @@ We appreciate any type of feedback. Thank you!
 - [Provectus](https://provectus.com)
 - Researchers@[Skolkovo Institute of Science and Technology](https://www.skoltech.ru/en)
 - [SoftConstruct](https://www.softconstruct.io/)
+- Researchers@[Tinkoff](https://www.tinkoff.ru/eng/)
 - Researchers@[Yandex.Research](https://research.yandex.com)
 
 

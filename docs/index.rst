@@ -135,7 +135,7 @@ the correctness of the training procedure and its reproducibility.
 Overall, Catalyst guarantees fully tested, correct and reproducible
 best practices for the automated parts.
 
-.. _tested rigorously with every new PR: https://github.com/catalyst-team/catalyst/tree/master/examples
+.. _tested rigorously with every new PR: https://github.com/catalyst-team/catalyst/tree/master/tests
 
 
 Tutorials

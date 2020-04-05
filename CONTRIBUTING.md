@@ -32,7 +32,7 @@ If you are not familiar with creating a Pull Request, here are some guides:
 1. Install requirements
     ```
     brew install bash # for MacOS users
-    pip install -r requirements/requirements-dev.txt
+    pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
     ```
 2. Break your work into small, single-purpose updates if possible.
 It's much harder to merge in a large change with a lot of disjoint features.

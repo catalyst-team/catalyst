@@ -5,13 +5,13 @@ set -eo pipefail -v
 
 
 ################################  pipeline 00  ################################
-rm -rf ./examples/logs
+rm -rf ./tests/logs
 
 
 ################################  pipeline 01  ################################
 echo 'pipeline 01'
-EXPDIR=./examples/_tests_cv_classification
-LOGDIR=./examples/logs/_tests_cv_classification
+EXPDIR=./tests/_tests_cv_classification
+LOGDIR=./tests/logs/_tests_cv_classification
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
@@ -45,8 +45,8 @@ rm -rf ${LOGDIR}
 
 ################################  pipeline 02  ################################
 echo 'pipeline 02'
-EXPDIR=./examples/_tests_cv_classification
-LOGDIR=./examples/logs/_tests_cv_classification
+EXPDIR=./tests/_tests_cv_classification
+LOGDIR=./tests/logs/_tests_cv_classification
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
@@ -94,8 +94,8 @@ fi
 
 ################################  pipeline 03  ################################
 echo 'pipeline 03'
-EXPDIR=./examples/_tests_cv_classification
-LOGDIR=./examples/logs/_tests_cv_classification
+EXPDIR=./tests/_tests_cv_classification
+LOGDIR=./tests/logs/_tests_cv_classification
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
@@ -124,8 +124,8 @@ rm -rf ${LOGDIR}
 
 ################################  pipeline 04  ################################
 echo 'pipeline 04'
-EXPDIR=./examples/_tests_cv_classification
-LOGDIR=./examples/logs/_tests_cv_classification
+EXPDIR=./tests/_tests_cv_classification
+LOGDIR=./tests/logs/_tests_cv_classification
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
@@ -154,8 +154,8 @@ rm -rf ${LOGDIR}
 
 ################################  pipeline 05  ################################
 echo 'pipeline 05'
-EXPDIR=./examples/_tests_cv_classification
-LOGDIR=./examples/logs/_tests_cv_classification
+EXPDIR=./tests/_tests_cv_classification
+LOGDIR=./tests/logs/_tests_cv_classification
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
@@ -185,8 +185,8 @@ rm -rf ${LOGDIR}
 ################################  pipeline 06  ################################
 if [[ "$USE_DDP" != "1" ]]; then
     echo 'pipeline 06 - LrFinder'
-    EXPDIR=./examples/_tests_cv_classification
-    LOGDIR=./examples/logs/_tests_cv_classification
+    EXPDIR=./tests/_tests_cv_classification
+    LOGDIR=./tests/logs/_tests_cv_classification
     LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
@@ -209,8 +209,8 @@ fi
 
 ################################  pipeline 11  ################################
 echo 'pipeline 11'
-EXPDIR=./examples/_tests_cv_classification_transforms
-LOGDIR=./examples/logs/_tests_cv_classification_transforms
+EXPDIR=./tests/_tests_cv_classification_transforms
+LOGDIR=./tests/logs/_tests_cv_classification_transforms
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
@@ -239,8 +239,8 @@ rm -rf ${LOGDIR}
 
 ################################  pipeline 12  ################################
 echo 'pipeline 12'
-EXPDIR=./examples/_tests_cv_classification_transforms
-LOGDIR=./examples/logs/_tests_cv_classification_transforms
+EXPDIR=./tests/_tests_cv_classification_transforms
+LOGDIR=./tests/logs/_tests_cv_classification_transforms
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
@@ -269,8 +269,8 @@ rm -rf ${LOGDIR}
 
 ################################  pipeline 13  ################################
 echo 'pipeline 13'
-EXPDIR=./examples/_tests_cv_classification_transforms
-LOGDIR=./examples/logs/_tests_cv_classification_transforms
+EXPDIR=./tests/_tests_cv_classification_transforms
+LOGDIR=./tests/logs/_tests_cv_classification_transforms
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
@@ -300,8 +300,8 @@ rm -rf ${LOGDIR}
 ################################  pipeline 14  ################################
 if [[ "$USE_DDP" != "1" ]]; then
     echo 'pipeline 14'
-    EXPDIR=./examples/_tests_cv_classification_transforms
-    LOGDIR=./examples/logs/_tests_cv_classification_transforms
+    EXPDIR=./tests/_tests_cv_classification_transforms
+    LOGDIR=./tests/logs/_tests_cv_classification_transforms
     LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
     PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
@@ -324,8 +324,8 @@ fi
 
 ################################  pipeline 15  ################################
 echo 'pipeline 15'
-EXPDIR=./examples/_tests_cv_classification_transforms
-LOGDIR=./examples/logs/_tests_cv_classification_transforms
+EXPDIR=./tests/_tests_cv_classification_transforms
+LOGDIR=./tests/logs/_tests_cv_classification_transforms
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
@@ -355,8 +355,8 @@ rm -rf ${LOGDIR}
 #################################  pipeline 21  ################################
 # SEGMENTATION
 echo 'pipeline 21 - SEGMENTATION'
-EXPDIR=./examples/_tests_cv_segmentation
-LOGDIR=./examples/logs/_tests_cv_segmentation
+EXPDIR=./tests/_tests_cv_segmentation
+LOGDIR=./tests/logs/_tests_cv_segmentation
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 ## train
@@ -392,8 +392,8 @@ assert loss < 1.4, f'loss must be < 1.4, got {loss}'
 """
 
 ## remove logs
-rm -rf ./examples/logs/_tests_cv_segmentation
+rm -rf ./tests/logs/_tests_cv_segmentation
 
 
 ################################  pipeline 99  ################################
-rm -rf ./examples/logs
+rm -rf ./tests/logs
