@@ -4,7 +4,7 @@ from collections import defaultdict
 import numpy as np
 
 from catalyst.core import Callback, CallbackOrder, State
-from catalyst.utils import get_activation_fn
+from catalyst.dl.utils import get_activation_fn
 
 
 class MeterMetricsCallback(Callback):

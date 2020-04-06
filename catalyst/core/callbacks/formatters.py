@@ -2,8 +2,7 @@ from typing import Dict
 from abc import ABC, abstractmethod
 import logging
 
-from catalyst import utils
-from catalyst.core import State
+from catalyst.core import State, utils
 
 
 class MetricsFormatter(ABC, logging.Formatter):

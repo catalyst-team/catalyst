@@ -55,3 +55,10 @@ def calculate_confusion_matrix_from_tensors(
     return calculate_confusion_matrix_from_arrays(
         ground_truth, prediction, num_classes
     )
+
+
+__all__ = [
+    "calculate_tp_fp_fn",
+    "calculate_confusion_matrix_from_arrays",
+    "calculate_confusion_matrix_from_tensors",
+]

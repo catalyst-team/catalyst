@@ -1,5 +1,6 @@
 # flake8: noqa
 
+from catalyst.contrib.utils import *
 from catalyst.core.utils import *
 from catalyst.utils import *
 

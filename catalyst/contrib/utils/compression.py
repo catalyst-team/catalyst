@@ -70,3 +70,5 @@ else:
     pack_if_needed = serialize
     unpack = deserialize
     unpack_if_needed = deserialize
+
+__all__ = ["pack", "pack_if_needed", "unpack", "unpack_if_needed"]

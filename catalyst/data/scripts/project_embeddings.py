@@ -8,7 +8,7 @@ import pandas as pd
 
 import torch
 
-from catalyst.utils.tools.tensorboard import SummaryWriter
+from catalyst.contrib.utils.tools.tensorboard import SummaryWriter
 
 
 def build_args(parser):

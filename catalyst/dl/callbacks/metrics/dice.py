@@ -1,7 +1,7 @@
 import numpy as np
 
-from catalyst import utils
-from catalyst.dl.core import Callback, CallbackOrder, MetricCallback, State
+from catalyst.core import Callback, CallbackOrder, MetricCallback, State
+from catalyst.dl import utils
 from catalyst.utils import metrics
 
 from .functional import calculate_dice

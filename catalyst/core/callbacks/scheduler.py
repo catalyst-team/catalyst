@@ -1,8 +1,7 @@
 import torch
 
-from catalyst import utils
 from catalyst.contrib.nn.schedulers import BatchScheduler, OneCycleLRWithWarmup
-from catalyst.core import Callback, CallbackNode, CallbackOrder, State
+from catalyst.core import Callback, CallbackNode, CallbackOrder, State, utils
 
 
 class SchedulerCallback(Callback):

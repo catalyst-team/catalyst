@@ -183,28 +183,28 @@ rm -rf ${LOGDIR}
 
 
 ################################  pipeline 06  ################################
-if [[ "$USE_DDP" != "1" ]]; then
-    echo 'pipeline 06 - LrFinder'
-    EXPDIR=./tests/_tests_cv_classification
-    LOGDIR=./tests/logs/_tests_cv_classification
-    LOGFILE=${LOGDIR}/checkpoints/_metrics.json
-
-    PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-      python catalyst/dl/scripts/run.py \
-      --expdir=${EXPDIR} \
-      --config=${EXPDIR}/config6_finder.yml \
-      --logdir=${LOGDIR} &
-
-    sleep 30
-    kill %1
-
-    if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-        echo "File $LOGFILE does not exist"
-        exit 1
-    fi
-
-    rm -rf ${LOGDIR}
-fi
+#if [[ "$USE_DDP" != "1" ]]; then
+#    echo 'pipeline 06 - LrFinder'
+#    EXPDIR=./tests/_tests_cv_classification
+#    LOGDIR=./tests/logs/_tests_cv_classification
+#    LOGFILE=${LOGDIR}/checkpoints/_metrics.json
+#
+#    PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+#      python catalyst/dl/scripts/run.py \
+#      --expdir=${EXPDIR} \
+#      --config=${EXPDIR}/config6_finder.yml \
+#      --logdir=${LOGDIR} &
+#
+#    sleep 30
+#    kill %1
+#
+#    if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
+#        echo "File $LOGFILE does not exist"
+#        exit 1
+#    fi
+#
+#    rm -rf ${LOGDIR}
+#fi
 
 
 ################################  pipeline 11  ################################

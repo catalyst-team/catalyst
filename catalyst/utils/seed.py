@@ -30,3 +30,6 @@ def set_global_seed(seed: int) -> None:
             tf.compat.v1.set_random_seed(seed)
     random.seed(seed)
     np.random.seed(seed)
+
+
+__all__ = ["set_global_seed"]

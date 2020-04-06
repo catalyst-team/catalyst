@@ -47,7 +47,6 @@ from .pandas import (
     balance_classes,
 )
 from .parallel import parallel_imap, tqdm_parallel_imap, get_pool
-from .pipelines import clone_pipeline
 from .plotly import plot_tensorboard_log
 from .serialization import deserialize, serialize
 

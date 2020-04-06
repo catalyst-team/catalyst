@@ -45,3 +45,6 @@ def get_one_hot(
     result[label] = 1.0
 
     return result
+
+
+__all__ = ["get_one_hot"]

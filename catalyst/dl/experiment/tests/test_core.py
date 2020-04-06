@@ -2,7 +2,28 @@ from collections import OrderedDict
 
 import torch
 
-from catalyst.dl.experiment.base import BaseExperiment
+from catalyst.dl import (
+    ConsoleLogger,
+    ExceptionCallback,
+    MetricManagerCallback,
+    ValidationManagerCallback,
+)
+from catalyst.dl.experiment.core import Experiment
+
+
+def _test_callbacks(test_callbacks, exp, stage="train"):
+    exp_callbacks = exp.get_callbacks(stage)
+    exp_callbacks = OrderedDict(
+        sorted(exp_callbacks.items(), key=lambda t: t[0])
+    )
+    test_callbacks = OrderedDict(
+        sorted(test_callbacks.items(), key=lambda t: t[0])
+    )
+
+    assert exp_callbacks.keys() == test_callbacks.keys()
+    cbs = zip(exp_callbacks.values(), test_callbacks.values())
+    for callback, klass in cbs:
+        assert isinstance(callback, klass)
 
 
 def test_defaults():
@@ -15,8 +36,16 @@ def test_defaults():
     dataloader = torch.utils.data.DataLoader(dataset)
     loaders = OrderedDict()
     loaders["train"] = dataloader
+    test_callbacks = OrderedDict(
+        [
+            ("_metrics", MetricManagerCallback),
+            ("_validation", ValidationManagerCallback),
+            ("_console", ConsoleLogger),
+            ("_exception", ExceptionCallback),
+        ]
+    )
 
-    exp = BaseExperiment(model=model, loaders=loaders, valid_loader="train")
+    exp = Experiment(model=model, loaders=loaders, valid_loader="train")
 
     assert exp.initial_seed == 42
     assert exp.logdir is None
@@ -36,5 +65,5 @@ def test_defaults():
     assert exp.get_criterion("") is None
     assert exp.get_optimizer("", model) is None
     assert exp.get_scheduler("") is None
-    assert exp.get_callbacks("") == OrderedDict()
+    _test_callbacks(test_callbacks, exp)
     assert exp.get_loaders("") == loaders

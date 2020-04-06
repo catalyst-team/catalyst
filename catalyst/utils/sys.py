@@ -6,8 +6,9 @@ import platform
 import shutil
 import subprocess
 import sys
+import warnings
 
-from catalyst.utils.tools.tensorboard import SummaryWriter
+from catalyst.contrib.utils.tools.tensorboard import SummaryWriter
 
 from .config import save_config
 from .misc import get_utcnow_time
@@ -93,10 +94,17 @@ def list_pip_packages() -> str:
                 .strip()
                 .decode("UTF-8")
             )
-        except FileNotFoundError:
+        except Exception as e:
+            warnings.warn(
+                f"Failed to freeze pip packages. "
+                f"Pip Output: ```{e.output}```."
+                f"Continue experiment without pip packages dumping."
+            )
             pass
-        except subprocess.CalledProcessError as e:
-            raise Exception("Failed to list packages") from e
+        # except FileNotFoundError:
+        #     pass
+        # except subprocess.CalledProcessError as e:
+        #     raise Exception("Failed to list packages") from e
 
     return result
 
@@ -118,14 +126,22 @@ def list_conda_packages() -> str:
                     .strip()
                     .decode("UTF-8")
                 )
-            except FileNotFoundError:
-                pass
-            except subprocess.CalledProcessError as e:
-                raise Exception(
+            except Exception as e:
+                warnings.warn(
                     f"Running from conda env, "
                     f"but failed to list conda packages. "
-                    f"Conda Output: {e.output}"
-                ) from e
+                    f"Conda Output: ```{e.output}```."
+                    f"Continue experiment without conda packages dumping."
+                )
+                pass
+            # except FileNotFoundError:
+            #     pass
+            # except subprocess.CalledProcessError as e:
+            #     raise Exception(
+            #         f"Running from conda env, "
+            #         f"but failed to list conda packages. "
+            #         f"Conda Output: {e.output}"
+            #     ) from e
     return result
 
 

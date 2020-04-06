@@ -6,9 +6,9 @@ import warnings
 import torch
 from torch.utils.data import DataLoader, Dataset, DistributedSampler
 
-from catalyst import utils
 from catalyst.contrib.registry import SAMPLERS
 from catalyst.data import DistributedSamplerWrapper
+from catalyst.utils import get_rank, merge_dicts, set_global_seed
 
 
 def _force_make_distributed_loader(loader: DataLoader) -> DataLoader:
@@ -53,7 +53,7 @@ def validate_loaders(loaders: Dict[str, DataLoader]) -> Dict[str, DataLoader]:
         (Dict[str, DataLoader]): dictionery
             with pytorch dataloaders (with distributed samplers if necessary)
     """
-    rank = utils.get_rank()
+    rank = get_rank()
     if rank >= 0:
         for key, value in loaders.items():
             if not isinstance(
@@ -116,7 +116,7 @@ def get_loaders_from_params(
         samplers_params, dict
     ), f"`samplers_params` should be a Dict. Got: {samplers_params}"
 
-    distributed_rank = utils.get_rank()
+    distributed_rank = get_rank()
     distributed = distributed_rank > -1
 
     if get_datasets_fn is not None:
@@ -168,7 +168,7 @@ def get_loaders_from_params(
             assert (
                 "dataset" in datasource
             ), "You need to specify dataset for dataloader"
-            loader_params = utils.merge_dicts(datasource, loader_params)
+            loader_params = merge_dicts(datasource, loader_params)
         else:
             raise NotImplementedError
 
@@ -194,10 +194,13 @@ def get_loaders_from_params(
                 loader_params.pop(k, None)
 
         if "worker_init_fn" not in loader_params:
-            loader_params["worker_init_fn"] = lambda x: utils.set_global_seed(
+            loader_params["worker_init_fn"] = lambda x: set_global_seed(
                 initial_seed + x
             )
 
         loaders[name] = DataLoader(**loader_params)
 
     return loaders
+
+
+__all__ = ["get_loaders_from_params", "validate_loaders"]

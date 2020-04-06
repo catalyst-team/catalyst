@@ -3,7 +3,7 @@ import shutil
 
 from git import Repo as repo
 
-from catalyst import utils
+from .misc import copy_directory
 
 URLS = {
     "classification": "https://github.com/catalyst-team/classification/",
@@ -25,7 +25,7 @@ def clone_pipeline(template: str, out_dir: Path,) -> None:
         out_dir (pathlib.Path): path where pipeline directory should be cloned
     """
     if template == "empty" or template is None:
-        utils.copy_directory(PATH_TO_TEMPLATE, out_dir)
+        copy_directory(PATH_TO_TEMPLATE, out_dir)
     else:
         url = URLS[template]
         repo.clone_from(url, out_dir / "__git_temp")
@@ -33,5 +33,8 @@ def clone_pipeline(template: str, out_dir: Path,) -> None:
         if (out_dir / "__git_temp" / ".gitignore").exists():
             (out_dir / "__git_temp" / ".gitignore").unlink()
 
-        utils.copy_directory(out_dir / "__git_temp", out_dir)
+        copy_directory(out_dir / "__git_temp", out_dir)
         shutil.rmtree(out_dir / "__git_temp")
+
+
+__all__ = ["clone_pipeline"]

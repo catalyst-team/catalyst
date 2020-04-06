@@ -10,6 +10,7 @@ from .gan import (
     WeightClampingOptimizerCallback,
 )
 from .inference import InferCallback, InferMaskCallback
+from .meter import MeterMetricsCallback
 from .metrics import (
     AccuracyCallback,
     AUCCallback,

@@ -48,12 +48,9 @@ def test_defaults():
 
     test_callbacks = OrderedDict(
         [
-            ("_timer", TimerCallback),
             ("_metrics", MetricManagerCallback),
             ("_validation", ValidationManagerCallback),
-            ("_saver", CheckpointCallback),
             ("_console", ConsoleLogger),
-            ("_tensorboard", TensorboardLogger),
             ("_exception", ExceptionCallback),
         ]
     )
@@ -69,7 +66,6 @@ def test_defaults_verbose():
     test_callbacks = OrderedDict(
         [
             ("_verbose", VerboseLogger),
-            ("_timer", TimerCallback),
             ("_metrics", MetricManagerCallback),
             ("_validation", ValidationManagerCallback),
             ("_saver", CheckpointCallback),
@@ -86,7 +82,11 @@ def test_defaults_verbose():
     loaders["train"] = dataloader
 
     exp = SupervisedExperiment(
-        model=model, loaders=loaders, verbose=True, valid_loader="train",
+        model=model,
+        loaders=loaders,
+        verbose=True,
+        valid_loader="train",
+        logdir="./logs",
     )
     _test_callbacks(test_callbacks, exp)
 
@@ -96,7 +96,6 @@ def test_defaults_check():
     test_callbacks = OrderedDict(
         [
             ("_check", CheckRunCallback),
-            ("_timer", TimerCallback),
             ("_metrics", MetricManagerCallback),
             ("_validation", ValidationManagerCallback),
             ("_saver", CheckpointCallback),
@@ -113,7 +112,11 @@ def test_defaults_check():
     loaders["train"] = dataloader
 
     exp = SupervisedExperiment(
-        model=model, loaders=loaders, check_run=True, valid_loader="train",
+        model=model,
+        loaders=loaders,
+        check_run=True,
+        valid_loader="train",
+        logdir="./logs",
     )
     _test_callbacks(test_callbacks, exp)
 
@@ -122,7 +125,6 @@ def test_criterion():
     """@TODO: Docs. Contribution is welcome."""
     test_callbacks = OrderedDict(
         [
-            ("_timer", TimerCallback),
             ("_metrics", MetricManagerCallback),
             ("_validation", ValidationManagerCallback),
             ("_saver", CheckpointCallback),
@@ -149,6 +151,7 @@ def test_criterion():
         optimizer=optimizer,
         scheduler=scheduler,
         valid_loader="train",
+        logdir="./logs",
     )
     _test_callbacks(test_callbacks, exp)
 
@@ -157,7 +160,6 @@ def test_optimizer():
     """@TODO: Docs. Contribution is welcome."""
     test_callbacks = OrderedDict(
         [
-            ("_timer", TimerCallback),
             ("_metrics", MetricManagerCallback),
             ("_validation", ValidationManagerCallback),
             ("_saver", CheckpointCallback),
@@ -184,6 +186,7 @@ def test_optimizer():
         optimizer=optimizer,
         scheduler=scheduler,
         valid_loader="train",
+        logdir="./logs",
     )
     _test_callbacks(test_callbacks, exp)
 
@@ -192,10 +195,10 @@ def test_scheduler():
     """@TODO: Docs. Contribution is welcome."""
     test_callbacks = OrderedDict(
         [
-            ("_timer", TimerCallback),
             ("_metrics", MetricManagerCallback),
             ("_validation", ValidationManagerCallback),
             ("_saver", CheckpointCallback),
+            ("_timer", TimerCallback),
             ("_console", ConsoleLogger),
             ("_tensorboard", TensorboardLogger),
             ("_exception", ExceptionCallback),
@@ -218,6 +221,8 @@ def test_scheduler():
         optimizer=optimizer,
         scheduler=scheduler,
         valid_loader="train",
+        logdir="./logs",
+        check_time=True,
     )
     _test_callbacks(test_callbacks, exp)
 
@@ -228,12 +233,9 @@ def test_all():
         [
             ("_verbose", VerboseLogger),
             ("_check", CheckRunCallback),
-            ("_timer", TimerCallback),
             ("_metrics", MetricManagerCallback),
             ("_validation", ValidationManagerCallback),
-            ("_saver", CheckpointCallback),
             ("_console", ConsoleLogger),
-            ("_tensorboard", TensorboardLogger),
             ("_exception", ExceptionCallback),
             ("_criterion", CriterionCallback),
             ("_optimizer", OptimizerCallback),

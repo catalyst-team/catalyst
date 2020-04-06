@@ -5,25 +5,19 @@ from pathlib import Path
 
 import torch
 from torch.jit import ScriptModule
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader
 
 from catalyst.dl import (
     Callback,
     CheckpointCallback,
     InferCallback,
-    Runner,
     State,
     SupervisedExperiment,
     utils,
 )
-from catalyst.dl.utils import trace
-from catalyst.utils.tools.typing import (
-    Criterion,
-    Device,
-    Model,
-    Optimizer,
-    Scheduler,
-)
+from catalyst.utils.tools.typing import Device, Model
+
+from .core import Runner
 
 logger = logging.getLogger(__name__)
 
@@ -114,122 +108,54 @@ class SupervisedRunner(Runner):
     def _process_output_none(self, output: Mapping[str, Any]):
         return output
 
-    def forward(self, batch, **kwargs):
+    def forward(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
         """
+        Forward method for your Runner.
         Should not be called directly outside of runner.
         If your model has specific interface, override this method to use it
+
+        Args:
+            batch (Mapping[str, Any]): dictionary with data batches
+                from DataLoaders.
+            **kwargs: additional parameters to pass to the model
         """
         output = self._process_input(batch, **kwargs)
         output = self._process_output(output)
         return output
 
-    def train(
-        self,
-        *,
-        logdir: str,
-        model: Model,
-        criterion: Criterion,
-        optimizer: Optimizer,
-        scheduler: Scheduler = None,
-        datasets: "OrderedDict[str, Union[Dataset, Dict, Any]]" = None,
-        loaders: "OrderedDict[str, DataLoader]" = None,
-        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
-        resume: str = None,
-        num_epochs: int = 1,
-        valid_loader: str = "valid",
-        main_metric: str = "loss",
-        minimize_metric: bool = True,
-        verbose: bool = False,
-        state_kwargs: Dict = None,
-        checkpoint_data: Dict = None,
-        fp16: Union[Dict, bool] = None,
-        distributed: bool = False,
-        monitoring_params: Dict = None,
-        check: bool = False,
-    ) -> None:
+    def _handle_batch(self, batch: Mapping[str, Any]) -> None:
         """
-        Starts the training process of the model.
+        Inner method to handle specified data batch.
+        Used to make a train/valid/infer step during Experiment run.
 
         Args:
-            logdir (str): path to output directory
-            model (Model): model to train
-            criterion (Criterion): criterion function for training
-            optimizer (Optimizer): optimizer for training
-            scheduler (Scheduler): scheduler for training
-            datasets (OrderedDict[str, Union[Dataset, Dict, Any]]): dictionary
-                with one or several  ``torch.utils.data.Dataset``
-                for training, validation or inference
-                used for Loaders automatic creation
-                preferred way for distributed training setup
-            loaders (OrderedDict[str, DataLoader]): dictionary
-                with one or several ``torch.utils.data.DataLoader``
-                for training, validation or inference
-            callbacks (Union[List[Callback], OrderedDict[str, Callback]]):
-                list or dictionary with Catalyst callbacks
-            resume (str): path to checkpoint for model
-            num_epochs (int): number of training epochs
-            valid_loader (str): loader name used to calculate
-                the metrics and save the checkpoints. For example,
-                you can pass `train` and then
-                the metrics will be taken from `train` loader.
-            main_metric (str): the key to the name of the metric
-                by which the checkpoints will be selected.
-            minimize_metric (bool): flag to indicate whether
-                the ``main_metric`` should be minimized.
-            verbose (bool): if `True`, it displays the status of the training
-                to the console.
-            state_kwargs (dict): additional state params to ``State``
-            checkpoint_data (dict): additional data to save in checkpoint,
-                for example: ``class_names``, ``date_of_training``, etc
-            fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
-                See https://nvidia.github.io/apex/amp.html#properties
-                if fp16=True, params by default will be ``{"opt_level": "O1"}``
-            distributed (bool): if `True` will start training
-                in distributed mode.
-                Note: Works only with python scripts. No jupyter support.
-            monitoring_params (dict): If not None, then create monitoring
-                through Alchemy or other tools.
-                For example,
-                ``{"token": "api_token", "experiment": "experiment_name"}``
-            check (bool): if True, then only checks that pipeline is working
-                (3 epochs only)
+            batch (Mapping[str, Any]): dictionary with data batches
+                from DataLoader.
         """
-        if isinstance(fp16, bool) and fp16:
-            fp16 = {"opt_level": "O1"}
+        self.state.batch_out = self.forward(batch)
 
-        if resume is not None:
-            callbacks = utils.sort_callbacks_by_order(callbacks)
-            checkpoint_callback_flag = any(
-                isinstance(x, CheckpointCallback) for x in callbacks.values()
-            )
-            if not checkpoint_callback_flag:
-                callbacks["loader"] = CheckpointCallback(resume=resume)
-            else:
-                raise NotImplementedError("CheckpointCallback already exist")
+    @torch.no_grad()
+    def predict_batch(
+        self, batch: Mapping[str, Any], **kwargs
+    ) -> Mapping[str, Any]:
+        """
+        Run model inference on specified data batch.
 
-        experiment = self._experiment_fn(
-            stage="train",
-            model=model,
-            loaders=loaders,
-            datasets=datasets,
-            callbacks=callbacks,
-            logdir=logdir,
-            criterion=criterion,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            num_epochs=num_epochs,
-            valid_loader=valid_loader,
-            main_metric=main_metric,
-            minimize_metric=minimize_metric,
-            verbose=verbose,
-            check_run=check,
-            state_kwargs=state_kwargs,
-            checkpoint_data=checkpoint_data,
-            distributed_params=fp16,
-            monitoring_params=monitoring_params,
-        )
-        self.experiment = experiment
-        utils.distributed_cmd_run(self.run_experiment, distributed)
+        .. warning::
+            You should not override this method. If you need specific model
+            call, override forward() method
+
+        Args:
+            batch (Mapping[str, Any]): dictionary with data batches
+                from DataLoader.
+            **kwargs: additional kwargs to pass to the model
+
+        Returns:
+            Mapping[str, Any]: model output dictionary
+        """
+        batch = self._batch2device(batch, self.device)
+        output = self.forward(batch, **kwargs)
+        return output
 
     def infer(
         self,
@@ -241,7 +167,8 @@ class SupervisedRunner(Runner):
         fp16: Union[Dict, bool] = None,
         check: bool = False,
     ) -> None:
-        """Makes the inference on the model.
+        """
+        Makes the inference on the model.
 
         Args:
             model (Model): model to infer
@@ -259,9 +186,6 @@ class SupervisedRunner(Runner):
         """
         if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
-
-        if model is not None:
-            self.model = model
 
         experiment = self._experiment_fn(
             stage="infer",
@@ -285,7 +209,8 @@ class SupervisedRunner(Runner):
         fp16: Union[Dict, bool] = None,
         check: bool = False,
     ) -> Any:
-        """Makes a prediction on the whole loader with the specified model.
+        """
+        Makes a prediction on the whole loader with the specified model.
 
         Args:
             model (Model): model to infer
@@ -336,7 +261,8 @@ class SupervisedRunner(Runner):
         device: Device = "cpu",
         predict_params: dict = None,
     ) -> ScriptModule:
-        """Traces model using Torch Jit.
+        """
+        Traces model using Torch Jit.
 
         Args:
             model (Model): model to trace
@@ -379,7 +305,7 @@ class SupervisedRunner(Runner):
                 self.device = utils.get_device()
             device = self.device
 
-        result = trace.trace_model(
+        result = utils.trace_model(
             model=self.model,
             runner=self,
             batch=batch,
@@ -392,7 +318,7 @@ class SupervisedRunner(Runner):
         )
 
         if logdir is not None:
-            filename = trace.get_trace_name(
+            filename = utils.get_trace_name(
                 method_name=method_name,
                 mode=mode,
                 requires_grad=requires_grad,

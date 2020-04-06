@@ -1,7 +1,9 @@
 from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
 
-from catalyst.dl import GanExperiment, GanState, Runner
+from catalyst.dl import GanExperiment, GanState
 from catalyst.utils.tools.typing import Criterion, Device, Model, Optimizer
+
+from .core import Runner
 
 
 class MultiPhaseRunner(Runner):
@@ -66,6 +68,17 @@ class MultiPhaseRunner(Runner):
             raise ValueError(f"Unknown phase: '{self.state.phase}'")
 
         return self.registered_phases[self.state.phase]()
+
+    def _handle_batch(self, batch: Mapping[str, Any]) -> None:
+        """
+        Inner method to handle specified data batch.
+        Used to make a train/valid/infer step during Experiment run.
+
+        Args:
+            batch (Mapping[str, Any]): dictionary with data batches
+                from DataLoader.
+        """
+        self.state.batch_out = self.forward(batch)
 
 
 class GanRunner(MultiPhaseRunner):
@@ -323,7 +336,7 @@ class GanRunner(MultiPhaseRunner):
             initial_seed=initial_seed,
             phase2callbacks=phase2callbacks,
         )
-        self.run_experiment(experiment=self.experiment, check=check)
+        self.run_experiment(experiment=self.experiment)
 
 
 __all__ = ["MultiPhaseRunner", "GanRunner"]

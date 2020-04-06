@@ -1,20 +1,12 @@
 from typing import Dict, List
 from collections import OrderedDict
 
-from catalyst.dl import (
-    Callback,
-    CheckpointCallback,
-    ConsoleLogger,
-    ExceptionCallback,
-    PhaseBatchWrapperCallback,
-    PhaseManagerCallback,
-    VerboseLogger,
-)
+from catalyst.dl import PhaseBatchWrapperCallback, PhaseManagerCallback
 
-from .base import BaseExperiment
+from .core import Experiment
 
 
-class GanExperiment(BaseExperiment):
+class GanExperiment(Experiment):
     """One-staged GAN experiment."""
 
     def __init__(
@@ -85,25 +77,6 @@ class GanExperiment(BaseExperiment):
                 self._callbacks[callback_name] = PhaseBatchWrapperCallback(
                     base_callback=callback, active_phases=[phase_name],
                 )
-
-    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
-        """@TODO: Docs. Contribution is welcome."""
-        callbacks = super().get_callbacks(stage=stage)
-        default_callbacks = []
-        if self._verbose:
-            default_callbacks.append(("verbose", VerboseLogger))
-        if not stage.startswith("infer"):
-            default_callbacks.append(("saver", CheckpointCallback))
-            default_callbacks.append(("console", ConsoleLogger))
-        default_callbacks.append(("exception", ExceptionCallback))
-        # Check for absent callbacks and add them
-        for callback_name, callback_fn in default_callbacks:
-            is_already_present = any(
-                isinstance(x, callback_fn) for x in callbacks.values()
-            )
-            if not is_already_present:
-                callbacks[callback_name] = callback_fn()
-        return callbacks
 
 
 __all__ = ["GanExperiment"]

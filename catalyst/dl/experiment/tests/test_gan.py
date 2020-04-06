@@ -3,22 +3,24 @@ from collections import OrderedDict
 import torch
 
 from catalyst.dl import (
-    CheckpointCallback,
     ConsoleLogger,
     ExceptionCallback,
+    MetricManagerCallback,
     OptimizerCallback,
     PhaseManagerCallback,
     PhaseWrapperCallback,
     TensorboardLogger,
+    ValidationManagerCallback,
 )
 from catalyst.dl.experiment.gan import GanExperiment
 
 DEFAULT_CALLBACKS = OrderedDict(
     [
         ("phase_manager", PhaseManagerCallback),
-        ("saver", CheckpointCallback),
-        ("console", ConsoleLogger),
-        ("exception", ExceptionCallback),
+        ("_metrics", MetricManagerCallback),
+        ("_validation", ValidationManagerCallback),
+        ("_console", ConsoleLogger),
+        ("_exception", ExceptionCallback),
     ]
 )
 

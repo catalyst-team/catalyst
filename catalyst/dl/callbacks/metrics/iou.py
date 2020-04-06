@@ -1,6 +1,6 @@
 from typing import List
 
-from catalyst.dl.core import MetricCallback, MultiMetricCallback
+from catalyst.core import MetricCallback, MultiMetricCallback
 from catalyst.utils import metrics
 
 

@@ -3,8 +3,7 @@ from collections import OrderedDict
 import os
 from pathlib import Path
 
-from catalyst import utils
-from catalyst.core import Callback, CallbackNode, CallbackOrder, State
+from catalyst.core import Callback, CallbackNode, CallbackOrder, State, utils
 
 
 def _pack_state(state: State):
@@ -29,34 +28,34 @@ def _pack_state(state: State):
 
 
 def _load_checkpoint(*, filename, state: State):
-    if os.path.isfile(filename):
-        print(f"=> loading checkpoint {filename}")
-        checkpoint = utils.load_checkpoint(filename)
-
-        if not state.stage_name.startswith("infer"):
-            state.stage_name = checkpoint["stage_name"]
-            state.epoch = checkpoint["epoch"]
-            state.global_epoch = checkpoint["global_epoch"]
-            # @TODO: should we also load,
-            # checkpoint_data, main_metric, minimize_metric, valid_loader ?
-            # epoch_metrics, valid_metrics ?
-
-        utils.unpack_checkpoint(
-            checkpoint,
-            model=state.model,
-            criterion=state.criterion,
-            optimizer=state.optimizer,
-            scheduler=state.scheduler,
-        )
-
-        print(
-            f"loaded checkpoint {filename} "
-            f"(global epoch {checkpoint['global_epoch']}, "
-            f"epoch {checkpoint['epoch']}, "
-            f"stage {checkpoint['stage_name']})"
-        )
-    else:
+    if not os.path.isfile(filename):
         raise Exception(f"No checkpoint found at {filename}")
+
+    print(f"=> loading checkpoint {filename}")
+    checkpoint = utils.load_checkpoint(filename)
+
+    if not state.stage_name.startswith("infer"):
+        state.stage_name = checkpoint["stage_name"]
+        state.epoch = checkpoint["epoch"]
+        state.global_epoch = checkpoint["global_epoch"]
+        # @TODO: should we also load,
+        # checkpoint_data, main_metric, minimize_metric, valid_loader ?
+        # epoch_metrics, valid_metrics ?
+
+    utils.unpack_checkpoint(
+        checkpoint,
+        model=state.model,
+        criterion=state.criterion,
+        optimizer=state.optimizer,
+        scheduler=state.scheduler,
+    )
+
+    print(
+        f"loaded checkpoint {filename} "
+        f"(global epoch {checkpoint['global_epoch']}, "
+        f"epoch {checkpoint['epoch']}, "
+        f"stage {checkpoint['stage_name']})"
+    )
 
 
 class BaseCheckpointCallback(Callback):

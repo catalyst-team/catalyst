@@ -3,8 +3,8 @@
 import torch
 import torchvision.utils
 
+from catalyst.contrib.utils.tools.tensorboard import SummaryWriter
 from catalyst.dl import Callback, CallbackOrder, State
-from catalyst.utils.tools.tensorboard import SummaryWriter
 
 
 class VisualizationCallback(Callback):
