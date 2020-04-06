@@ -1,40 +1,36 @@
 import torch
-import torch.nn as nn
+from torch import nn
 
 from .functional import triplet_loss
 
 
 class TripletLoss(nn.Module):
-    """
-    Triplet loss with hard positive/negative mining.
+    """Triplet loss with hard positive/negative mining.
+
     Reference:
-    Code imported from https://github.com/NegatioN/OnlineMiningTripletLoss.
-
-    Args:
-        margin (float): margin for triplet.
+        Code imported from https://github.com/NegatioN/OnlineMiningTripletLoss
     """
-    def __init__(self, margin=0.3):
-        """
-        Constructor method for the TripletLoss class.
 
+    def __init__(self, margin: float = 0.3):
+        """
         Args:
-            margin: margin parameter.
+            margin (float): margin for triplet
         """
         super().__init__()
         self.margin = margin
         self.ranking_loss = nn.MarginRankingLoss(margin=margin)
 
     def _pairwise_distances(self, embeddings, squared=False):
-        """
-        Compute the 2D matrix of distances between all the embeddings.
+        """Compute the 2D matrix of distances between all the embeddings.
 
         Args:
             embeddings: tensor of shape (batch_size, embed_dim)
-            squared: Boolean. If true, output is the pairwise
-                     squared euclidean distance matrix. If false, output
-                     is the pairwise euclidean distance matrix.
+            squared (bool): if true, output is the pairwise squared euclidean
+                distance matrix. If false, output is the pairwise euclidean
+                distance matrix
+
         Returns:
-            pairwise_distances: tensor of shape (batch_size, batch_size)
+            torch.Tensor: pairwise matrix of size (batch_size, batch_size)
         """
         # Get squared L2 norm for each embedding.
         # We can just take the diagonal of `dot_product`.
@@ -92,8 +88,7 @@ class TripletLoss(nn.Module):
         return labels_equal & indices_not_equal
 
     def _get_anchor_negative_triplet_mask(self, labels):
-        """
-        Return 2D mask where mask[a, n] is True if a and n have same label.
+        """Return 2D mask where mask[a, n] is True if a and n have same label.
 
         Args:
             labels: tf.int32 `Tensor` with shape [batch_size]
@@ -107,11 +102,7 @@ class TripletLoss(nn.Module):
         return ~(labels.unsqueeze(0) == labels.unsqueeze(1))
 
     def _batch_hard_triplet_loss(
-        self,
-        embeddings,
-        labels,
-        margin,
-        squared=True,
+        self, embeddings, labels, margin, squared=True,
     ):
         """
         Build the triplet loss over a batch of embeddings.
@@ -135,8 +126,9 @@ class TripletLoss(nn.Module):
         # For each anchor, get the hardest positive
         # First, we need to get a mask for every valid
         # positive (they should have same label)
-        mask_anchor_positive = self._get_anchor_positive_triplet_mask(labels
-                                                                      ).float()
+        mask_anchor_positive = self._get_anchor_positive_triplet_mask(
+            labels
+        ).float()
 
         # We put to 0 any element where (a, p) is not valid
         # (valid if a != p and label(a) == label(p))
@@ -148,14 +140,16 @@ class TripletLoss(nn.Module):
         # For each anchor, get the hardest negative
         # First, we need to get a mask for every valid negative
         # (they should have different labels)
-        mask_anchor_negative = \
-            self._get_anchor_negative_triplet_mask(labels).float()
+        mask_anchor_negative = self._get_anchor_negative_triplet_mask(
+            labels
+        ).float()
 
         # We add the maximum value in each row
         # to the invalid negatives (label(a) == label(n))
         max_anchor_negative_dist, _ = pairwise_dist.max(1, keepdim=True)
-        anchor_negative_dist = pairwise_dist + max_anchor_negative_dist * \
-            (1.0 - mask_anchor_negative)
+        anchor_negative_dist = pairwise_dist + max_anchor_negative_dist * (
+            1.0 - mask_anchor_negative
+        )
 
         # shape (batch_size,)
         hardest_negative_dist, _ = anchor_negative_dist.min(1, keepdim=True)
@@ -168,8 +162,7 @@ class TripletLoss(nn.Module):
         return triplet_loss
 
     def forward(self, embeddings, targets):
-        """
-        Forward propagation method for the triplet loss.
+        """Forward propagation method for the triplet loss.
 
         Args:
             embeddings: tensor of shape (batch_size, embed_dim)
@@ -182,40 +175,34 @@ class TripletLoss(nn.Module):
 
 
 class TripletLossV2(nn.Module):
-    """
-    Args:
-        margin (float): margin for triplet.
-    """
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(self, margin=0.3):
         """
-        Constructor method for the TripletLoss class.
-
         Args:
-            margin: margin parameter.
+            margin (float): margin for triplet.
         """
         super().__init__()
         self.margin = margin
 
     def forward(self, embeddings, targets):
-        return triplet_loss(
-            embeddings,
-            targets,
-            margin=self.margin,
-        )
+        """@TODO: Docs. Contribution is welcome."""
+        return triplet_loss(embeddings, targets, margin=self.margin,)
 
 
 class TripletPairwiseEmbeddingLoss(nn.Module):
-    """
-    TripletPairwiseEmbeddingLoss – proof of concept criterion.
-    Still work in progress.
-    """
-    def __init__(self, margin=0.3, reduction="mean"):
-        """
-        Constructor method for the TripletPairwiseEmbeddingLoss class.
+    """TripletPairwiseEmbeddingLoss – proof of concept criterion.
 
+    Still work in progress.
+
+    @TODO: Docs. Contribution is welcome.
+    """
+
+    def __init__(self, margin: float = 0.3, reduction: str = "mean"):
+        """
         Args:
-            margin: margin parameter.
-            reduction: criterion reduction type.
+            margin (float): margin parameter
+            reduction (str): criterion reduction type
         """
         super().__init__()
         self.margin = margin
@@ -245,15 +232,15 @@ class TripletPairwiseEmbeddingLoss(nn.Module):
         )
         bs = embeddings_pred.shape[0]
         batch_idx = torch.arange(bs, device=device)
-        negative_similarity = (
-            pairwise_similarity +
-            torch.diag(torch.full([bs], -10**9, device=device))
+        negative_similarity = pairwise_similarity + torch.diag(
+            torch.full([bs], -(10 ** 9), device=device)
         )
         # TODO argsort, take k worst
         hard_negative_ids = negative_similarity.argmax(dim=-1)
 
-        negative_similarities = \
-            pairwise_similarity[batch_idx, hard_negative_ids]
+        negative_similarities = pairwise_similarity[
+            batch_idx, hard_negative_ids
+        ]
         positive_similarities = pairwise_similarity[batch_idx, batch_idx]
         loss = torch.relu(
             self.margin - positive_similarities + negative_similarities

@@ -1,5 +1,4 @@
-from typing import Union  # isort:skip
-
+from typing import TYPE_CHECKING, Union
 import inspect
 from pathlib import Path
 
@@ -7,16 +6,23 @@ import torch
 from torch import nn
 from torch.jit import ScriptModule
 
-from catalyst.dl import Runner, utils
+from catalyst.utils import (
+    assert_fp16_available,
+    get_fn_argsnames,
+    set_requires_grad,
+)
 from catalyst.utils.tools.typing import Device, Model
+
+if TYPE_CHECKING:
+    from catalyst.dl import Runner  # noqa: F401
 
 
 class _ForwardOverrideModel(nn.Module):
-    """
-    Model that calls specified method instead of forward
+    """Model that calls specified method instead of forward.
 
     (Workaround, single method tracing is not supported)
     """
+
     def __init__(self, model, method_name):
         super().__init__()
         self.model = model
@@ -27,11 +33,11 @@ class _ForwardOverrideModel(nn.Module):
 
 
 class _TracingModelWrapper(nn.Module):
-    """
-    Wrapper that traces model with batch instead of calling it
+    """Wrapper that traces model with batch instead of calling it.
 
     (Workaround, to use native model batch handler)
     """
+
     def __init__(self, model, method_name):
         super().__init__()
         self.model = model
@@ -46,10 +52,11 @@ class _TracingModelWrapper(nn.Module):
 
             fn = getattr(self.model, self.method_name)
             argspec = inspect.getfullargspec(fn)
-            assert argspec.varargs is None and argspec.varkw is None, \
-                "not supported by PyTorch tracing"
+            assert (
+                argspec.varargs is None and argspec.varkw is None
+            ), "not supported by PyTorch tracing"
 
-            method_argnames = utils.get_fn_argsnames(fn, exclude=["self"])
+            method_argnames = get_fn_argsnames(fn, exclude=["self"])
             method_input = tuple(kwargs[name] for name in method_argnames)
 
             self.tracing_result = torch.jit.trace(method_model, method_input)
@@ -65,7 +72,7 @@ class _TracingModelWrapper(nn.Module):
 
 def trace_model(
     model: Model,
-    runner: Runner,
+    runner: "Runner",
     batch=None,
     method_name: str = "forward",
     mode: str = "eval",
@@ -74,8 +81,7 @@ def trace_model(
     device: Device = "cpu",
     predict_params: dict = None,
 ) -> ScriptModule:
-    """
-    Traces model using runner and batch
+    """Traces model using runner and batch.
 
     Args:
         model: Model to trace
@@ -102,11 +108,12 @@ def trace_model(
 
     tracer = _TracingModelWrapper(model, method_name)
     if opt_level is not None:
-        utils.assert_fp16_available()
+        assert_fp16_available()
         # If traced in AMP we need to initialize the model before calling
         # the jit
         # https://github.com/NVIDIA/apex/issues/303#issuecomment-493142950
         from apex import amp
+
         model = model.to(device)
         model = amp.initialize(model, optimizers=None, opt_level=opt_level)
         # TODO: remove `check_trace=False`
@@ -116,7 +123,7 @@ def trace_model(
         params = predict_params
 
     getattr(model, mode)()
-    utils.set_requires_grad(model, requires_grad=requires_grad)
+    set_requires_grad(model, requires_grad=requires_grad)
 
     _runner_model, _runner_device = runner.model, runner.device
 
@@ -135,8 +142,7 @@ def get_trace_name(
     opt_level: str = None,
     additional_string: str = None,
 ):
-    """
-    Creates a file name for the traced model.
+    """Creates a file name for the traced model.
 
     Args:
         method_name (str): model's method name
@@ -169,8 +175,7 @@ def load_traced_model(
     device: Device = "cpu",
     opt_level: str = None,
 ) -> ScriptModule:
-    """
-    Loads a traced model
+    """Loads a traced model.
 
     Args:
         model_path: Path to traced model
@@ -189,8 +194,9 @@ def load_traced_model(
     model = torch.jit.load(model_path, map_location=device)
 
     if opt_level is not None:
-        utils.assert_fp16_available()
+        assert_fp16_available()
         from apex import amp
+
         model = amp.initialize(model, optimizers=None, opt_level=opt_level)
 
     return model

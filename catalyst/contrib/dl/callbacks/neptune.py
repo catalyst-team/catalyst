@@ -1,19 +1,21 @@
-from typing import Dict, List  # isort:skip
+from typing import Dict, List
 
 import neptune
 
 from catalyst.core import (
-    Callback, CallbackNode, CallbackOrder, CallbackScope, State
+    Callback,
+    CallbackNode,
+    CallbackOrder,
+    CallbackScope,
+    State,
 )
 
 
 class NeptuneLogger(Callback):
-    """
-    Logger callback, translates ``state.*_metrics`` to Neptune
+    """Logger callback, translates ``state.*_metrics`` to Neptune.
     Read about Neptune here https://neptune.ai
 
     Example:
-
         .. code-block:: python
 
             from catalyst.dl import SupervisedRunner
@@ -59,6 +61,7 @@ class NeptuneLogger(Callback):
                     ]
                 )
     """
+
     def __init__(
         self,
         metric_names: List[str] = None,
@@ -74,7 +77,7 @@ class NeptuneLogger(Callback):
             log_on_batch_end (bool): logs per-batch metrics if set True
             log_on_epoch_end (bool): logs per-epoch metrics if set True
             offline_mode (bool): whether logging to Neptune server should
-                 be turned off. It is useful for debugging.
+                 be turned off. It is useful for debugging
         """
         super().__init__(
             order=CallbackOrder.Logging,
@@ -88,8 +91,9 @@ class NeptuneLogger(Callback):
         if not (self.log_on_batch_end or self.log_on_epoch_end):
             raise ValueError("You have to log something!")
 
-        if (self.log_on_batch_end and not self.log_on_epoch_end) \
-                or (not self.log_on_batch_end and self.log_on_epoch_end):
+        if (self.log_on_batch_end and not self.log_on_epoch_end) or (
+            not self.log_on_batch_end and self.log_on_epoch_end
+        ):
             self.batch_log_suffix = ""
             self.epoch_log_suffix = ""
         else:
@@ -99,7 +103,7 @@ class NeptuneLogger(Callback):
         if offline_mode:
             neptune.init(
                 project_qualified_name="dry-run/project",
-                backend=neptune.OfflineBackend()
+                backend=neptune.OfflineBackend(),
             )
         else:
             neptune.init(
@@ -113,6 +117,7 @@ class NeptuneLogger(Callback):
         self.experiment = neptune.create_experiment(**logging_params)
 
     def __del__(self):
+        """@TODO: Docs. Contribution is welcome"""
         if hasattr(self, "experiment"):
             self.experiment.stop()
 
@@ -120,7 +125,7 @@ class NeptuneLogger(Callback):
         self, metrics: Dict[str, float], step: int, mode: str, suffix=""
     ):
         if self.metrics_to_log is None:
-            metrics_to_log = sorted(list(metrics.keys()))
+            metrics_to_log = sorted(metrics.keys())
         else:
             metrics_to_log = self.metrics_to_log
 
@@ -131,7 +136,7 @@ class NeptuneLogger(Callback):
                 self.experiment.log_metric(metric_name, y=metric_value, x=step)
 
     def on_batch_end(self, state: State):
-        """Log batch metrics to Neptune"""
+        """Log batch metrics to Neptune."""
         if self.log_on_batch_end:
             mode = state.loader_name
             metrics_ = state.batch_metrics
@@ -143,7 +148,7 @@ class NeptuneLogger(Callback):
             )
 
     def on_loader_end(self, state: State):
-        """Translate epoch metrics to Neptune"""
+        """Translate epoch metrics to Neptune."""
         if self.log_on_epoch_end:
             mode = state.loader_name
             metrics_ = state.loader_metrics

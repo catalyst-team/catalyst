@@ -2,17 +2,27 @@
 
 from catalyst.core.callback import *
 from catalyst.core.callbacks import *
+
 from .confusion_matrix import ConfusionMatrixCallback
 from .gan import (
-    GradientPenaltyCallback, WassersteinDistanceCallback,
-    WeightClampingOptimizerCallback
+    GradientPenaltyCallback,
+    WassersteinDistanceCallback,
+    WeightClampingOptimizerCallback,
 )
 from .inference import InferCallback, InferMaskCallback
+from .meter import MeterMetricsCallback
 from .metrics import (
-    AccuracyCallback, AUCCallback, ClasswiseIouCallback,
-    ClasswiseJaccardCallback, DiceCallback, F1ScoreCallback, IouCallback,
-    JaccardCallback, MapKCallback, MulticlassDiceMetricCallback,
-    PrecisionRecallF1ScoreCallback
+    AccuracyCallback,
+    AUCCallback,
+    ClasswiseIouCallback,
+    ClasswiseJaccardCallback,
+    DiceCallback,
+    F1ScoreCallback,
+    IouCallback,
+    JaccardCallback,
+    MapKCallback,
+    MulticlassDiceMetricCallback,
+    PrecisionRecallF1ScoreCallback,
 )
 from .mixup import MixupCallback
 from .phase import PhaseManagerCallback

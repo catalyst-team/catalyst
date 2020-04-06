@@ -1,4 +1,4 @@
-from typing import Dict, Iterable, List, Union  # isort:skip
+from typing import Dict, Iterable, List, Union
 import collections
 import os
 import re
@@ -7,16 +7,16 @@ import numpy as np
 
 import torch
 from torch import nn
-import torch.backends.cudnn as cudnn
+import torch.backends
+from torch.backends import cudnn
 
-from catalyst import utils
 from catalyst.utils.tools.typing import Device, Model, Optimizer
+
+from .dict import merge_dicts
 
 
 def get_optimizable_params(model_or_params):
-    """
-    Returns all the parameters that requires gradients
-    """
+    """Returns all the parameters that requires gradients."""
     params: Iterable[torch.Tensor] = model_or_params
     if isinstance(model_or_params, nn.Module):
         params = model_or_params.parameters()
@@ -26,8 +26,7 @@ def get_optimizable_params(model_or_params):
 
 
 def get_optimizer_momentum(optimizer: Optimizer) -> float:
-    """
-    Get momentum of current optimizer.
+    """Get momentum of current optimizer.
 
     Args:
         optimizer: PyTorch optimizer
@@ -41,8 +40,7 @@ def get_optimizer_momentum(optimizer: Optimizer) -> float:
 
 
 def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
-    """
-    Set momentum of ``index`` 'th param group of optimizer to ``value``
+    """Set momentum of ``index`` 'th param group of optimizer to ``value``.
 
     Args:
         optimizer: PyTorch optimizer
@@ -60,33 +58,32 @@ def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
 
 
 def get_device() -> torch.device:
-    """
-    Simple returning the best available device (GPU or CPU)
-    """
+    """Simple returning the best available device (GPU or CPU)."""
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def get_available_gpus():
-    """
-    Array of available GPU ids
-    Returns:
-        iterable: available GPU ids
+    """Array of available GPU ids.
+
     Examples:
         >>> os.environ["CUDA_VISIBLE_DEVICES"] = "0,2"
         >>> get_available_gpus()
-        >>> [0, 2]
+        [0, 2]
 
         >>> os.environ["CUDA_VISIBLE_DEVICES"] = "0,-1,1"
         >>> get_available_gpus()
-        >>> [0]
+        [0]
 
         >>> os.environ["CUDA_VISIBLE_DEVICES"] = ""
         >>> get_available_gpus()
-        >>> []
+        []
 
         >>> os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
         >>> get_available_gpus()
-        >>> []
+        []
+
+    Returns:
+        iterable: available GPU ids
     """
     if "CUDA_VISIBLE_DEVICES" in os.environ:
         result = os.environ["CUDA_VISIBLE_DEVICES"].split(",")
@@ -104,9 +101,7 @@ def get_available_gpus():
 
 
 def get_activation_fn(activation: str = None):
-    """
-    Returns the activation function from ``torch.nn`` by its name
-    """
+    """Returns the activation function from ``torch.nn`` by its name."""
     if activation is None or activation.lower() == "none":
         activation_fn = lambda x: x  # noqa: E731
     else:
@@ -127,17 +122,18 @@ def any2device(value, device: Device):
         Same structure as value, but all tensors and np.arrays moved to device
     """
     if isinstance(value, dict):
-        return dict((k, any2device(v, device)) for k, v in value.items())
+        return {k: any2device(v, device) for k, v in value.items()}
     elif isinstance(value, (tuple, list)):
-        return list(any2device(v, device) for v in value)
+        return [any2device(v, device) for v in value]
     elif torch.is_tensor(value):
         return value.to(device, non_blocking=True)
-    elif isinstance(value, (np.ndarray, np.void)) \
-            and value.dtype.fields is not None:
-        return dict(
-            (k, any2device(value[k], device))
-            for k in value.dtype.fields.keys()
-        )
+    elif (
+        isinstance(value, (np.ndarray, np.void))
+        and value.dtype.fields is not None
+    ):
+        return {
+            k: any2device(value[k], device) for k in value.dtype.fields.keys()
+        }
     elif isinstance(value, np.ndarray):
         return torch.Tensor(value).to(device)
     return value
@@ -159,8 +155,9 @@ def prepare_cudnn(deterministic: bool = None, benchmark: bool = None) -> None:
         # CuDNN reproducibility
         # https://pytorch.org/docs/stable/notes/randomness.html#cudnn
         if deterministic is None:
-            deterministic = \
+            deterministic = (
                 os.environ.get("CUDNN_DETERMINISTIC", "True") == "True"
+            )
         cudnn.deterministic = deterministic
 
         # https://discuss.pytorch.org/t/how-should-i-disable-using-cudnn-in-my-code/38053/4
@@ -173,10 +170,9 @@ def process_model_params(
     model: Model,
     layerwise_params: Dict[str, dict] = None,
     no_bias_weight_decay: bool = True,
-    lr_scaling: float = 1.0
+    lr_scaling: float = 1.0,
 ) -> List[Union[torch.nn.Parameter, dict]]:
-    """
-    Gains model parameters for ``torch.optim.Optimizer``
+    """Gains model parameters for ``torch.optim.Optimizer``.
 
     Args:
         model (torch.nn.Module): Model to process
@@ -191,7 +187,8 @@ def process_model_params(
     Returns:
         iterable: parameters for an optimizer
 
-    Examples:
+    Example::
+
         >>> model = catalyst.contrib.models.segmentation.ResnetUnet()
         >>> layerwise_params = collections.OrderedDict([
         >>>     ("conv1.*", dict(lr=0.001, weight_decay=0.0003)),
@@ -199,6 +196,7 @@ def process_model_params(
         >>> ])
         >>> params = process_model_params(model, layerwise_params)
         >>> optimizer = torch.optim.Adam(params, lr=0.0003)
+
     """
     params = list(model.named_parameters())
     layerwise_params = layerwise_params or collections.OrderedDict()
@@ -209,7 +207,7 @@ def process_model_params(
         for pattern, options_ in layerwise_params.items():
             if re.match(pattern, name) is not None:
                 # all new LR rules write on top of the old ones
-                options = utils.merge_dicts(options, options_)
+                options = merge_dicts(options, options_)
 
         # no bias decay from https://arxiv.org/abs/1812.01187
         if no_bias_weight_decay and name.endswith("bias"):
@@ -225,20 +223,59 @@ def process_model_params(
 
 
 def set_requires_grad(model: Model, requires_grad: bool):
-    """
-    Sets the ``requires_grad`` value for all model parameters.
+    """Sets the ``requires_grad`` value for all model parameters.
 
-    Args:
-        model (torch.nn.Module): Model
-        requires_grad (bool): value
+    Example::
 
-    Examples:
         >>> model = SimpleModel()
         >>> set_requires_grad(model, requires_grad=True)
+
+    Args:
+        model (torch.nn.Module): model
+        requires_grad (bool): value
     """
     requires_grad = bool(requires_grad)
     for param in model.parameters():
         param.requires_grad = requires_grad
+
+
+def get_network_output(net: Model, *input_shapes_args, **input_shapes_kwargs):
+    """
+    For each input shape returns an output tensor
+
+    Args:
+        net (Model): the model
+        *input_shapes_args: variable length argument list of shapes
+        **input_shapes_kwargs:
+
+    Examples:
+        >>> net = nn.Linear(10, 5)
+        >>> utils.get_network_output(net, (1, 10))
+        tensor([[[-0.2665,  0.5792,  0.9757, -0.5782,  0.1530]]])
+    """
+
+    def _rand_sample(
+        input_shape,
+    ) -> Union[torch.Tensor, Dict[str, torch.Tensor]]:
+        if isinstance(input_shape, dict):
+            input_t = {
+                key: torch.Tensor(torch.randn((1,) + input_shape_))
+                for key, input_shape_ in input_shape.items()
+            }
+        else:
+            input_t = torch.Tensor(torch.randn((1,) + input_shape))
+        return input_t
+
+    input_args = [
+        _rand_sample(input_shape) for input_shape in input_shapes_args
+    ]
+    input_kwargs = {
+        key: _rand_sample(input_shape)
+        for key, input_shape in input_shapes_kwargs.items()
+    }
+
+    output_t = net(*input_args, **input_kwargs)
+    return output_t
 
 
 __all__ = [
@@ -252,4 +289,5 @@ __all__ = [
     "prepare_cudnn",
     "process_model_params",
     "set_requires_grad",
+    "get_network_output",
 ]

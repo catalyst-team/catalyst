@@ -1,15 +1,18 @@
-from typing import Dict, List  # isort:skip
+from typing import Dict, List
 
 import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 
 import torch
+import torch.distributed
 
 from catalyst.dl import Callback, CallbackNode, CallbackOrder, State, utils
 from catalyst.utils import meters
 
 
 class ConfusionMatrixCallback(Callback):
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(
         self,
         input_key: str = "targets",
@@ -21,6 +24,10 @@ class ConfusionMatrixCallback(Callback):
         plot_params: Dict = None,
         tensorboard_callback_name: str = "_tensorboard",
     ):
+        """
+        Args:
+            @TODO: Docs. Contribution is welcome
+        """
         super().__init__(CallbackOrder.Metric, CallbackNode.All)
         self.prefix = prefix
         self.output_key = output_key
@@ -32,9 +39,9 @@ class ConfusionMatrixCallback(Callback):
         self._plot_params = plot_params or {}
 
         self.class_names = class_names
-        self.num_classes = num_classes \
-            if class_names is None \
-            else len(class_names)
+        self.num_classes = (
+            num_classes if class_names is None else len(class_names)
+        )
 
         assert self.num_classes is not None
         self._reset_stats()
@@ -77,24 +84,39 @@ class ConfusionMatrixCallback(Callback):
             class_names=class_names,
             normalize=True,
             show=False,
-            **self._plot_params
+            **self._plot_params,
         )
         fig = utils.render_figure_to_tensor(fig)
         logger.add_image(f"{self.prefix}/epoch", fig, global_step=epoch)
 
     def on_loader_start(self, state: State):
+        """Loader start hook.
+
+        Args:
+            state (State): current state
+        """
         self._reset_stats()
 
     def on_batch_end(self, state: State):
+        """Batch end hook.
+
+        Args:
+            state (State): current state
+        """
         self._add_to_stats(
             state.batch_out[self.output_key].detach(),
-            state.batch_in[self.input_key].detach()
+            state.batch_in[self.input_key].detach(),
         )
 
     def on_loader_end(self, state: State):
-        class_names = \
-            self.class_names or \
-            [str(i) for i in range(self.num_classes)]
+        """Loader end hook.
+
+        Args:
+            state (State): current state
+        """
+        class_names = self.class_names or [
+            str(i) for i in range(self.num_classes)
+        ]
         confusion_matrix = self._compute_confusion_matrix()
 
         if state.distributed_rank >= 0:

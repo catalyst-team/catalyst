@@ -5,27 +5,25 @@ import pytest
 import torch
 
 from catalyst.dl import (
-    CheckpointCallback, ConsoleLogger, ExceptionCallback,
-    MetricManagerCallback, PhaseWrapperCallback, registry, TensorboardLogger,
-    TimerCallback, ValidationManagerCallback
+    CheckpointCallback,
+    ConsoleLogger,
+    ExceptionCallback,
+    MetricManagerCallback,
+    PhaseWrapperCallback,
+    registry,
+    TensorboardLogger,
+    ValidationManagerCallback,
 )
 from catalyst.dl.experiment.config import ConfigExperiment
 
 DEFAULT_MINIMAL_CONFIG = {
-    "model_params": {
-        "model": "SomeModel"
-    },
-    "stages": {
-        "data_params": {
-            "num_workers": 0
-        },
-        "train": {}
-    }
+    "model_params": {"model": "SomeModel"},
+    "stages": {"data_params": {"num_workers": 0}, "train": {}},
+    "args": {"logdir": "./logdir"},
 }
 
 DEFAULT_CALLBACKS = OrderedDict(
     [
-        ("_timer", TimerCallback),
         ("_metrics", MetricManagerCallback),
         ("_validation", ValidationManagerCallback),
         ("_saver", CheckpointCallback),
@@ -37,9 +35,8 @@ DEFAULT_CALLBACKS = OrderedDict(
 
 
 class SomeModel(torch.nn.Module):
-    """
-    Dummy test torch model
-    """
+    """Dummy test torch model."""
+
     pass
 
 
@@ -74,12 +71,12 @@ def test_defaults():
     exp = ConfigExperiment(config=DEFAULT_MINIMAL_CONFIG)
 
     assert exp.initial_seed == 42
-    assert exp.logdir is None
+    assert exp.logdir == "./logdir"
     assert exp.stages == ["train"]
     assert exp.distributed_params == {}
     assert exp.monitoring_params == {}
     assert exp.get_state_params("train") == {
-        "logdir": None,
+        "logdir": "./logdir",
     }
     assert isinstance(exp.get_model("train"), SomeModel)
     assert exp.get_criterion("train") is None
@@ -96,9 +93,7 @@ def test_when_callback_defined():
     """
     config = DEFAULT_MINIMAL_CONFIG.copy()
     config["stages"]["callbacks_params"] = {
-        "my_criterion": {
-            "callback": "CriterionCallback"
-        }
+        "my_criterion": {"callback": "CriterionCallback"}
     }
     exp = ConfigExperiment(config=config)
 
@@ -116,9 +111,9 @@ def test_when_callback_wrapped():
         "my_wrapped_criterion": {
             "_wrapper": {
                 "callback": "PhaseBatchWrapperCallback",
-                "active_phases": [1]
+                "active_phases": [1],
             },
-            "callback": "CriterionCallback"
+            "callback": "CriterionCallback",
         }
     }
     exp = ConfigExperiment(config=config)

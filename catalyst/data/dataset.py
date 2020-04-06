@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Union  # isort:skip
+from typing import Any, Callable, Dict, List, Union
 from pathlib import Path
 
 import numpy as np
@@ -11,9 +11,8 @@ _Path = Union[str, Path]
 
 
 class ListDataset(Dataset):
-    """
-    General purpose dataset class with several data sources `list_data`
-    """
+    """General purpose dataset class with several data sources `list_data`."""
+
     def __init__(
         self,
         list_data: List[Dict],
@@ -39,11 +38,11 @@ class ListDataset(Dataset):
         )
 
     def __getitem__(self, index: int) -> Any:
-        """
-        Gets element of the dataset
+        """Gets element of the dataset.
 
         Args:
             index (int): index of the element in the dataset
+
         Returns:
             Single element by index
         """
@@ -62,9 +61,8 @@ class ListDataset(Dataset):
 
 
 class MergeDataset(Dataset):
-    """
-    Abstraction to merge several datasets into one dataset.
-    """
+    """Abstraction to merge several datasets into one dataset."""
+
     def __init__(self, *datasets: Dataset, dict_transform: Callable = None):
         """
         Args:
@@ -73,12 +71,12 @@ class MergeDataset(Dataset):
                 (for example normalize image, add blur, crop/resize/etc)
         """
         self.len = len(datasets[0])
-        assert all([len(x) == self.len for x in datasets])
+        assert all(len(x) == self.len for x in datasets)
         self.datasets = datasets
         self.dict_transform = dict_transform
 
     def __getitem__(self, index: int) -> Any:
-        """Get item from all datasets
+        """Get item from all datasets.
 
         Args:
             index (int): index to value from all datasets
@@ -103,9 +101,8 @@ class MergeDataset(Dataset):
 
 
 class NumpyDataset(Dataset):
-    """
-    General purpose dataset class to use with `numpy_data`
-    """
+    """General purpose dataset class to use with `numpy_data`."""
+
     def __init__(
         self,
         numpy_data: np.ndarray,
@@ -128,11 +125,11 @@ class NumpyDataset(Dataset):
         )
 
     def __getitem__(self, index: int) -> Any:
-        """
-        Gets element of the dataset
+        """Gets element of the dataset.
 
         Args:
             index (int): index of the element in the dataset
+
         Returns:
             Single element by index
         """
@@ -151,13 +148,25 @@ class NumpyDataset(Dataset):
 class PathsDataset(ListDataset):
     """
     Dataset that derives features and targets from samples filesystem paths.
+
+    Examples:
+        >>> label_fn = lambda x: x.split("_")[0]
+        >>> dataset = PathsDataset(
+        >>>     filenames=Path("/path/to/images/").glob("*.jpg"),
+        >>>     label_fn=label_fn,
+        >>>     open_fn=open_fn,
+        >>> )
     """
+
     def __init__(
-        self, filenames: List[_Path], open_fn: Callable[[dict], dict],
-        label_fn: Callable[[_Path], Any], **list_dataset_params
+        self,
+        filenames: List[_Path],
+        open_fn: Callable[[dict], dict],
+        label_fn: Callable[[_Path], Any],
+        **list_dataset_params
     ):
         """
-         Args:
+        Args:
             filenames (List[str]): list of file paths that store information
                 about your dataset samples; it could be images, texts or
                 any other files in general.
@@ -172,17 +181,9 @@ class PathsDataset(ListDataset):
                 a part of file path)
             list_dataset_params (dict): base class initialization
                 parameters.
-
-        Examples:
-            >>> label_fn = lambda x: x.split("_")[0]
-            >>> dataset = PathsDataset(
-            >>>     filenames=Path("/path/to/images/").glob("*.jpg"),
-            >>>     label_fn=label_fn,
-            >>>     open_fn=open_fn,
-            >>> )
         """
         list_data = [
-            dict(features=filename, targets=label_fn(filename))
+            {"features": filename, "targets": label_fn(filename)}
             for filename in filenames
         ]
 
@@ -192,23 +193,41 @@ class PathsDataset(ListDataset):
 
 
 class DatasetFromSampler(Dataset):
-    """
-    Dataset of indexes from `Sampler`
-    """
+    """Dataset of indexes from `Sampler`."""
+
     def __init__(self, sampler: Sampler):
+        """
+        Args:
+            sampler (Sampler): @TODO: Docs. Contribution is welcome
+        """
         self.sampler = sampler
         self.sampler_list = None
 
     def __getitem__(self, index: int):
+        """Gets element of the dataset.
+
+        Args:
+            index (int): index of the element in the dataset
+
+        Returns:
+            Single element by index
+        """
         if self.sampler_list is None:
             self.sampler_list = list(self.sampler)
         return self.sampler_list[index]
 
     def __len__(self) -> int:
+        """
+        Returns:
+            int: length of the dataset
+        """
         return len(self.sampler)
 
 
 __all__ = [
-    "ListDataset", "MergeDataset", "NumpyDataset", "PathsDataset",
-    "DatasetFromSampler"
+    "ListDataset",
+    "MergeDataset",
+    "NumpyDataset",
+    "PathsDataset",
+    "DatasetFromSampler",
 ]

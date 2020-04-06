@@ -1,10 +1,12 @@
 import copy
 from pathlib import Path
 
-from catalyst import utils
+from .config import load_config
+from .dict import merge_dicts
 
 
 def parse_config_args(*, config, args, unknown_args):
+    """@TODO: Docs. Contribution is welcome."""
     for arg in unknown_args:
         arg_name, value = arg.split("=")
         arg_name = arg_name.lstrip("-").strip("/")
@@ -38,7 +40,7 @@ def parse_config_args(*, config, args, unknown_args):
 
     args_exists_ = config.get("args", None)
     if args_exists_ is None:
-        config["args"] = dict()
+        config["args"] = {}
 
     for key, value in args._get_kwargs():
         if value is not None:
@@ -58,8 +60,7 @@ def parse_config_args(*, config, args, unknown_args):
 
 
 def parse_args_uargs(args, unknown_args):
-    """
-    Function for parsing configuration files
+    """Function for parsing configuration files.
 
     Args:
         args: recognized arguments
@@ -73,8 +74,8 @@ def parse_args_uargs(args, unknown_args):
     # load params
     config = {}
     for config_path in args_.configs:
-        config_ = utils.load_config(config_path, ordered=True)
-        config = utils.merge_dicts(config, config_)
+        config_ = load_config(config_path, ordered=True)
+        config = merge_dicts(config, config_)
 
     config, args_ = parse_config_args(
         config=config, args=args_, unknown_args=unknown_args
@@ -85,8 +86,9 @@ def parse_args_uargs(args, unknown_args):
     if config_args is not None:
         for key, value in config_args.items():
             arg_value = getattr(args_, key, None)
-            if arg_value is None or \
-                    (key in ["logdir", "baselogdir"] and arg_value == ""):
+            if arg_value is None or (
+                key in ["logdir", "baselogdir"] and arg_value == ""
+            ):
                 arg_value = value
             setattr(args_, key, arg_value)
 

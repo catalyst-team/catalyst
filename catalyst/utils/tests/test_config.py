@@ -11,14 +11,8 @@ from catalyst.utils import config
 
 def test_parse_config_args():
     configuration = {
-        "stages": {
-            "one": "uno",
-            "two": "dos",
-            "three": "tres"
-        },
-        "key": {
-            "value": "key2"
-        }
+        "stages": {"one": "uno", "two": "dos", "three": "tres"},
+        "key": {"value": "key2"},
     }
 
     parser = argparse.ArgumentParser()
@@ -26,8 +20,11 @@ def test_parse_config_args():
 
     args, uargs = parser.parse_known_args(
         [
-            "--command", "run", "--path=test.yml:str",
-            "--stages/zero=cero:str", "-C=like:str"
+            "--command",
+            "run",
+            "--path=test.yml:str",
+            "--stages/zero=cero:str",
+            "-C=like:str",
         ]
     )
 

@@ -4,12 +4,18 @@ import json
 import pandas as pd
 
 from catalyst.utils import (
-    boolean_flag, create_dataframe, create_dataset, get_dataset_labeling,
-    separate_tags
+    boolean_flag,
+    create_dataframe,
+    create_dataset,
+    get_dataset_labeling,
+    separate_tags,
 )
 
 
 def build_args(parser):
+    """
+    Constructs the command-line arguments for ``catalyst-data tag2label``.
+    """
     parser.add_argument(
         "--in-csv", type=str, default=None, help="Path to data in `.csv`."
     )
@@ -18,7 +24,7 @@ def build_args(parser):
         type=str,
         default=None,
         help="Path to directory with dataset"
-        "or paths separated by commas for several datasets"
+        "or paths separated by commas for several datasets",
     )
 
     parser.add_argument(
@@ -26,14 +32,14 @@ def build_args(parser):
         type=str,
         default=None,
         required=True,
-        help="Path to output dataframe"
+        help="Path to output dataframe",
     )
     parser.add_argument(
         "--out-labeling",
         type=str,
         default=None,
         required=True,
-        help="Path to output JSON"
+        help="Path to output JSON",
     )
 
     parser.add_argument(
@@ -43,19 +49,17 @@ def build_args(parser):
         "--tag-delim",
         type=str,
         default=None,
-        help="Separator if you want to use several target columns"
+        help="Separator if you want to use several target columns",
     )
     boolean_flag(
-        parser,
-        "recursive",
-        default=False,
-        help="Include subdirs in dataset",
+        parser, "recursive", default=False, help="Include subdirs in dataset",
     )
 
     return parser
 
 
 def parse_args():
+    """Parses the command line arguments for the main method."""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args = parser.parse_args()
@@ -92,6 +96,7 @@ def _prepare_df_from_dirs(in_dirs, tag_column_name, recursive: bool = False):
 
 
 def main(args, _=None):
+    """Run the ``catalyst-data tag2label`` script."""
     if args.in_csv is not None:
         df = pd.read_csv(args.in_csv)
     elif args.in_dir is not None:

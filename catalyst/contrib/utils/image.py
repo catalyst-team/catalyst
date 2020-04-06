@@ -1,4 +1,4 @@
-from typing import List, Tuple, Union  # isort:skip
+from typing import List, Tuple, Union
 import logging
 import os
 import pathlib
@@ -45,19 +45,20 @@ def imread(
     expand_dims: bool = True,
     rootpath: Union[str, pathlib.Path] = None,
     **kwargs,
-):
-    """
+) -> np.ndarray:
+    """Reads an image from the specified file.
 
     Args:
-        uri: {str, pathlib.Path, bytes, file}
-        The resource to load the image from, e.g. a filename, pathlib.Path,
-        http address or file object, see the docs for more info.
-        grayscale:
-        expand_dims:
-        rootpath:
+        uri (str, pathlib.Path, bytes, file): the resource to load the image
+        from, e.g. a filename, ``pathlib.Path``, http address or file object,
+        see ``imageio.imread`` docs for more info
+        grayscale (bool):
+        expand_dims (bool):
+        rootpath (Union[str, pathlib.Path]): path to the resource with image
+            (allows to use relative path)
 
     Returns:
-
+        np.ndarray: image
     """
     uri = str(uri)
 
@@ -88,23 +89,22 @@ def mimread(
     clip_range: Tuple[int, int] = None,
     expand_dims: bool = True,
     rootpath: Union[str, pathlib.Path] = None,
-    **kwargs
-):
-    """
+    **kwargs,
+) -> np.ndarray:
+    """Reads multiple images from the specified file.
 
     Args:
-        uri: {str, pathlib.Path, bytes, file}
-        The resource to load the mask from, e.g. a filename, pathlib.Path,
-        http address or file object, see the docs for more info.
+        uri (str, pathlib.Path, bytes, file): the resource to load the image
+        from, e.g. a filename, ``pathlib.Path``, http address or file object,
+        see ``imageio.mimread`` docs for more info
         clip_range (Tuple[int, int]): lower and upper interval edges,
             image values outside the interval are clipped to the interval edges
         expand_dims (bool): if True, append channel axis to grayscale images
-        rootpath (Union[str, pathlib.Path]): path to an image
+        rootpath (Union[str, pathlib.Path]): path to the resource with image
             (allows to use relative path)
 
     Returns:
-        np.ndarray: Image
-
+        np.ndarray: image
     """
     if rootpath is not None:
         uri = uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
@@ -120,6 +120,7 @@ def mimread(
 
 
 def mimwrite_with_meta(uri, ims, meta, **kwargs):
+    """@TODO: Docs. Contribution is welcome."""
     writer = imageio.get_writer(uri, mode="I", **kwargs)
     writer.set_meta_data(meta)
     with writer:
@@ -128,6 +129,7 @@ def mimwrite_with_meta(uri, ims, meta, **kwargs):
 
 
 def tensor_from_rgb_image(image: np.ndarray) -> torch.Tensor:
+    """@TODO: Docs. Contribution is welcome."""
     image = np.moveaxis(image, -1, 0)
     image = np.ascontiguousarray(image)
     image = torch.from_numpy(image)
@@ -153,7 +155,8 @@ def tensor_to_ndimage(
         mean (Tuple[float, float, float]): per channel mean to add
         std (Tuple[float, float, float]): per channel std to multiply
         move_channels_dim (bool): if True, convert tensor to [B]xHxWxC format
-        dtype: result ndarray dtype. Only float32 and uint8 are supported.
+        dtype: result ndarray dtype. Only float32 and uint8 are supported
+
     Returns:
         [B]xHxWxC np.ndarray of dtype
     """
@@ -161,10 +164,10 @@ def tensor_to_ndimage(
         has_batch_dim = len(images.shape) == 4
 
         mean = images.new_tensor(mean).view(
-            *((1, ) if has_batch_dim else ()), len(mean), 1, 1
+            *((1,) if has_batch_dim else ()), len(mean), 1, 1
         )
         std = images.new_tensor(std).view(
-            *((1, ) if has_batch_dim else ()), len(std), 1, 1
+            *((1,) if has_batch_dim else ()), len(std), 1, 1
         )
 
         images = images * std + mean
@@ -186,19 +189,18 @@ def mask_to_overlay_image(
     image: np.ndarray,
     masks: List[np.ndarray],
     threshold: float = 0,
-    mask_strength: float = 0.5
+    mask_strength: float = 0.5,
 ) -> np.ndarray:
-    """
-    Draws every mask for with some color over image
+    """Draws every mask for with some color over image.
 
     Args:
         image (np.ndarray): RGB image used as underlay for masks
         masks (List[np.ndarray]): list of masks
         threshold (float): threshold for masks binarization
         mask_strength (float): opacity of colorized masks
+
     Returns:
         np.ndarray: HxWx3 image with overlay
-
     """
     h, w = image.shape[:2]
     labels = np.zeros((h, w), np.uint8)
@@ -218,15 +220,26 @@ def mask_to_overlay_image(
 
 
 def has_image_extension(uri) -> bool:
-    """
-    Check that file has image extension
+    """Check that file has image extension.
 
     Args:
-        uri (Union[str, pathlib.Path]): The resource to load the file from
+        uri (Union[str, pathlib.Path]): the resource to load the file from
 
     Returns:
         bool: True if file has image extension, False otherwise
-
     """
     _, ext = os.path.splitext(uri)
     return ext.lower() in {".bmp", ".png", ".jpeg", ".jpg", ".tif", ".tiff"}
+
+
+__all__ = [
+    "has_image_extension",
+    "imread",
+    "imwrite",
+    "imsave",
+    "mask_to_overlay_image",
+    "mimread",
+    "mimwrite_with_meta",
+    "tensor_from_rgb_image",
+    "tensor_to_ndimage",
+]

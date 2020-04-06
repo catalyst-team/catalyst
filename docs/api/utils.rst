@@ -115,13 +115,6 @@ Registry
     :undoc-members:
     :show-inheritance:
 
-Tensorboard
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.tools.tensorboard
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Time Manager
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.tools.time_manager

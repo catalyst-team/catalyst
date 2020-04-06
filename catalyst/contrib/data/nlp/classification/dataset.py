@@ -1,5 +1,5 @@
-import logging
 from typing import List, Mapping
+import logging
 
 import torch
 from torch.utils.data import Dataset
@@ -7,16 +7,15 @@ from transformers import AutoTokenizer
 
 
 class TextClassificationDataset(Dataset):
-    """
-    Wrapper around Torch Dataset to perform text classification
-    """
+    """Wrapper around Torch Dataset to perform text classification."""
+
     def __init__(
         self,
         texts: List[str],
         labels: List[str] = None,
         label_dict: Mapping[str, int] = None,
         max_seq_length: int = 512,
-        model_name: str = "distilbert-base-uncased"
+        model_name: str = "distilbert-base-uncased",
     ):
         """
         Args:
@@ -29,9 +28,7 @@ class TextClassificationDataset(Dataset):
                 texts will be stripped to this length
             model_name (str): transformer model name, needed to perform
                 appropriate tokenization
-
         """
-
         self.texts = texts
         self.labels = labels
         self.label_dict = label_dict
@@ -59,7 +56,7 @@ class TextClassificationDataset(Dataset):
         self.cls_vid = self.tokenizer.vocab["[CLS]"]
         self.pad_vid = self.tokenizer.vocab["[PAD]"]
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Returns:
             int: length of the dataset
@@ -67,14 +64,14 @@ class TextClassificationDataset(Dataset):
         return len(self.texts)
 
     def __getitem__(self, index) -> Mapping[str, torch.Tensor]:
-        """Gets element of the dataset
+        """Gets element of the dataset.
 
         Args:
             index (int): index of the element in the dataset
+
         Returns:
             Single element by index
         """
-
         # encoding the text
         x = self.texts[index]
         x_encoded = self.tokenizer.encode(
@@ -104,9 +101,9 @@ class TextClassificationDataset(Dataset):
         # encoding target
         if self.labels is not None:
             y = self.labels[index]
-            y_encoded = torch.Tensor(
-                [self.label_dict.get(y, -1)]
-            ).long().squeeze(0)
+            y_encoded = (
+                torch.Tensor([self.label_dict.get(y, -1)]).long().squeeze(0)
+            )
             output_dict["targets"] = y_encoded
 
         return output_dict
