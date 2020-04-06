@@ -1,6 +1,7 @@
 from collections import OrderedDict
 import copy
 import os
+import random
 import socket
 import subprocess
 import sys
@@ -124,17 +125,20 @@ def get_slurm_params():
     current_node = os.environ["SLURMD_NODENAME"]
     master_node = socket.gethostbyname(nodes[0])
     cur_node_idx = nodes.index(current_node)
-    return cur_node_idx, num_nodes, master_node
+    job_id = os.environ["SLURM_JOB_ID"]
+    master_port = str(5 * 10**4 + int(job_id) % 10**4)
+    return cur_node_idx, num_nodes, master_node, master_port
 
 
 def get_distributed_params():
+    master_port = str(random.randint(5 * 10**4, 6 * 10**4))
     master_addr = "127.0.0.1"
     cur_node, num_nodes = 0, 1
     if is_slurm_available():
-        cur_node, num_nodes, master_addr = get_slurm_params()
+        cur_node, num_nodes, master_addr, master_port = get_slurm_params()
 
     os.environ["MASTER_ADDR"] = os.getenv("MASTER_ADDR", master_addr)
-    os.environ["MASTER_PORT"] = os.getenv("MASTER_PORT", "424242")
+    os.environ["MASTER_PORT"] = os.getenv("MASTER_PORT", master_port)
 
     workers_per_node = torch.cuda.device_count()
     start_rank = cur_node * workers_per_node

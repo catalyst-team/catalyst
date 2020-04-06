@@ -4,11 +4,10 @@
 set -eo pipefail -v
 
 pip install -r requirements/requirements.txt
-
 pip install -r requirements/requirements-cv.txt
-
 pip install -r requirements/requirements-nlp.txt
-
 pip install -r requirements/requirements-dev.txt
+pip install -r docs/requirements.txt
 
 make check-codestyle
+make check-docs

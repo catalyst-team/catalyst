@@ -285,6 +285,6 @@ class MetricManagerCallback(Callback):
 
 
 __all__ = [
-    "MetricCallback", "MultiMetricCallback", "MetricAggregationCallback",
-    "MetricManagerCallback"
+    "_MetricCallback", "MetricCallback", "MultiMetricCallback",
+    "MetricAggregationCallback", "MetricManagerCallback"
 ]

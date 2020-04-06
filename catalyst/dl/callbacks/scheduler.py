@@ -51,7 +51,7 @@ class LRFinder(LRUpdater):
         return res
 
     def on_loader_start(self, state: State):
-        if state.need_backward_pass:
+        if state.is_train_loader:
             lr_ = self.final_lr / self.init_lr
             self.num_steps = self.num_steps or state.loader_len
             self.multiplier = lr_**(1 / self.num_steps)

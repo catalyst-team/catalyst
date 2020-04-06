@@ -1,3 +1,6 @@
+"""
+Dice metric.
+"""
 import torch
 
 from catalyst.utils import get_activation_fn

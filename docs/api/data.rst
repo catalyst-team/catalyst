@@ -24,11 +24,6 @@ For example:
 Augmentor
 --------------------
 
-Legacy classes for augmentations.
-For modern Catalyst use `albumentations`_.
-
-.. _albumentations: https://github.com/albu/albumentations
-
 .. automodule:: catalyst.data.augmentor
     :members:
     :undoc-members:
@@ -58,30 +53,7 @@ Reader
 Readers are the abstraction for your dataset. They can open an elem from the dataset and transform it to data, needed by your network.
 For example open image by path, or read string and tokenize it.
 
-
-.. currentmodule:: catalyst.data.reader
-
-.. autoclass:: ReaderSpec
-    :members:
-    :undoc-members:
-    :special-members: __init__, __call__
-
-.. autoclass:: LambdaReader
-    :members:
-    :undoc-members:
-    :special-members: __init__, __call__
-
-.. autoclass:: ScalarReader
-    :members:
-    :undoc-members:
-    :special-members: __init__, __call__
-
-.. autoclass:: ImageReader
-    :members:
-    :undoc-members:
-    :special-members: __init__, __call__
-
-.. autoclass:: ReaderCompose
+.. automodule:: catalyst.data.reader
     :members:
     :undoc-members:
     :special-members: __init__, __call__
