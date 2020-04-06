@@ -260,9 +260,9 @@
 <span class="kn">from</span> <span class="nn">prompt_toolkit</span> <span class="kn">import</span> <span class="n">prompt</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
 
-<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">catalyst.contrib.utils.pipelines</span> <span class="kn">import</span> <span class="n">URLS</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">registry</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="n">clone_pipeline</span><span class="p">,</span> <span class="n">import_module</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.pipelines</span> <span class="kn">import</span> <span class="n">URLS</span>
 
 <span class="n">yaml</span><span class="o">.</span><span class="n">add_representer</span><span class="p">(</span>
     <span class="n">OrderedDict</span><span class="p">,</span>
@@ -273,7 +273,8 @@
 
 
 <div class="viewcode-block" id="Wizard"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.wizard.Wizard">[docs]</a><span class="k">class</span> <span class="nc">Wizard</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Class for Catalyst Config API Wizard.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Class for Catalyst Config API Wizard.</span>
 
 <span class="sd">    The instance of this class will be created and called from cli command:</span>
 <span class="sd">    ``catalyst-dl init --interactive``.</span>
@@ -589,7 +590,7 @@
             <span class="n">expdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cfg</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">][</span><span class="s2">&quot;expdir&quot;</span><span class="p">]</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expdir</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
                 <span class="n">expdir</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
-            <span class="n">utils</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
+            <span class="n">import_module</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__res</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Modules from </span><span class="si">{</span><span class="n">expdir</span><span class="si">}</span><span class="s2"> exported&quot;</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">OSError</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;There is no modules to import found: </span><span class="si">{</span><span class="n">expdir</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -652,7 +653,7 @@
             <span class="n">default</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
-        <span class="n">utils</span><span class="o">.</span><span class="n">clone_pipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_path</span><span class="p">)</span>
+        <span class="n">clone_pipeline</span><span class="p">(</span><span class="n">pipeline</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipeline_path</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__res</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">pipeline</span><span class="si">}</span><span class="s2"> cloned to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">pipeline_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Wizard.run"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.wizard.Wizard.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -678,6 +679,9 @@
     <span class="sd">&quot;&quot;&quot;Method to initialize and run wizard.&quot;&quot;&quot;</span>
     <span class="n">wiz</span> <span class="o">=</span> <span class="n">Wizard</span><span class="p">()</span>
     <span class="n">wiz</span><span class="o">.</span><span class="n">run</span><span class="p">()</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;run_wizard&quot;</span><span class="p">,</span> <span class="s2">&quot;Wizard&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

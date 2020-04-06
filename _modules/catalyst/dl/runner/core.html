@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.experiment.gan &mdash; Catalyst 20.04 documentation</title>
+  <title>catalyst.dl.runner.core &mdash; Catalyst 20.04 documentation</title>
   
 
   
@@ -227,7 +227,7 @@
         
           <li><a href="../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.dl.experiment.gan</li>
+      <li>catalyst.dl.runner.core</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -253,34 +253,75 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.dl.experiment.gan</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+  <h1>Source code for catalyst.dl.runner.core</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">PhaseBatchWrapperCallback</span><span class="p">,</span> <span class="n">PhaseManagerCallback</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>
 
-<span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">Experiment</span>
+<span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">,</span> <span class="n">StageBasedRunner</span><span class="p">,</span> <span class="n">State</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">Experiment</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.tools.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
 
 
-<div class="viewcode-block" id="GanExperiment"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.gan.GanExperiment">[docs]</a><span class="k">class</span> <span class="nc">GanExperiment</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;One-staged GAN experiment.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Runner"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.core.Runner">[docs]</a><span class="k">class</span> <span class="nc">Runner</span><span class="p">(</span><span class="n">StageBasedRunner</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Deep Learning Runner for different supervised, unsupervised, gan, etc runs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="GanExperiment.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.gan.GanExperiment.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">phase2callbacks</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="n">_experiment_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">Experiment</span>
+    <span class="n">_state_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">State</span>
+
+    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">:</span> <span class="n">Experiment</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">:</span> <span class="n">State</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Runner.train"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.core.Runner.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+        <span class="n">criterion</span><span class="p">:</span> <span class="n">Criterion</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">scheduler</span><span class="p">:</span> <span class="n">Scheduler</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">datasets</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, Union[Dataset, Dict, Any]]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">loaders</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">callbacks</span><span class="p">:</span> <span class="s2">&quot;Union[List[Callback], OrderedDict[str, Callback]]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">resume</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">valid_loader</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;valid&quot;</span><span class="p">,</span>
+        <span class="n">main_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+        <span class="n">minimize_metric</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fp16</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">distributed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">monitoring_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">timeit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Starts the training process of the model.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">            model (Model or Dict[str, Model]): models,</span>
-<span class="sd">                usually generator and discriminator</span>
-<span class="sd">            loaders (dict): dictionary containing one or several</span>
-<span class="sd">                ``torch.utils.data.DataLoader`` for training and validation</span>
-<span class="sd">            callbacks (List[catalyst.dl.Callback]): list of callbacks</span>
+<span class="sd">            model (Model): model to train</span>
+<span class="sd">            criterion (Criterion): criterion function for training</span>
+<span class="sd">            optimizer (Optimizer): optimizer for training</span>
+<span class="sd">            scheduler (Scheduler): scheduler for training</span>
+<span class="sd">            datasets (OrderedDict[str, Union[Dataset, Dict, Any]]): dictionary</span>
+<span class="sd">                with one or several  ``torch.utils.data.Dataset``</span>
+<span class="sd">                for training, validation or inference</span>
+<span class="sd">                used for Loaders automatic creation</span>
+<span class="sd">                preferred way for distributed training setup</span>
+<span class="sd">            loaders (OrderedDict[str, DataLoader]): dictionary</span>
+<span class="sd">                with one or several ``torch.utils.data.DataLoader``</span>
+<span class="sd">                for training, validation or inference</span>
+<span class="sd">            callbacks (Union[List[Callback], OrderedDict[str, Callback]]):</span>
+<span class="sd">                list or dictionary with Catalyst callbacks</span>
 <span class="sd">            logdir (str): path to output directory</span>
-<span class="sd">            stage (str): current stage</span>
-<span class="sd">            criterion (Criterion): criterion function</span>
-<span class="sd">            optimizer (Optimizer): optimizer</span>
-<span class="sd">            scheduler (Scheduler): scheduler</span>
-<span class="sd">            num_epochs (int): number of experiment&#39;s epochs</span>
+<span class="sd">            resume (str): path to checkpoint for model</span>
+<span class="sd">            num_epochs (int): number of training epochs</span>
 <span class="sd">            valid_loader (str): loader name used to calculate</span>
 <span class="sd">                the metrics and save the checkpoints. For example,</span>
 <span class="sd">                you can pass `train` and then</span>
@@ -289,53 +330,66 @@
 <span class="sd">                by which the checkpoints will be selected.</span>
 <span class="sd">            minimize_metric (bool): flag to indicate whether</span>
 <span class="sd">                the ``main_metric`` should be minimized.</span>
-<span class="sd">            verbose (bool): ff true, it displays the status of the training</span>
+<span class="sd">            verbose (bool): if `True`, it displays the status of the training</span>
 <span class="sd">                to the console.</span>
-<span class="sd">            state_kwargs (dict): additional state params to ``RunnerState``</span>
+<span class="sd">            state_kwargs (dict): additional state params to ``State``</span>
 <span class="sd">            checkpoint_data (dict): additional data to save in checkpoint,</span>
 <span class="sd">                for example: ``class_names``, ``date_of_training``, etc</span>
-<span class="sd">            distributed_params (dict): dictionary with the parameters</span>
-<span class="sd">                for distributed and FP16 method</span>
-<span class="sd">            monitoring_params (dict): dict with the parameters</span>
-<span class="sd">                for monitoring services</span>
-<span class="sd">            initial_seed (int): experiment&#39;s initial seed value</span>
-<span class="sd">            phase2callbacks (dict): dictionary with lists of callback names</span>
-<span class="sd">                which should be wrapped for appropriate phase</span>
-<span class="sd">                for example: {&quot;generator_train&quot;: &quot;loss_g&quot;, &quot;optim_g&quot;}</span>
-<span class="sd">                &quot;loss_g&quot; and &quot;optim_g&quot; callbacks from callbacks dict</span>
-<span class="sd">                will be wrapped for &quot;generator_train&quot; phase</span>
-<span class="sd">                in wrap_callbacks method</span>
+<span class="sd">            fp16 (Union[Dict, bool]): If not None, then sets training to FP16.</span>
+<span class="sd">                See https://nvidia.github.io/apex/amp.html#properties</span>
+<span class="sd">                if fp16=True, params by default will be ``{&quot;opt_level&quot;: &quot;O1&quot;}``</span>
+<span class="sd">            distributed (bool): if `True` will start training</span>
+<span class="sd">                in distributed mode.</span>
+<span class="sd">                Note: Works only with python scripts. No jupyter support.</span>
+<span class="sd">            monitoring_params (dict): If not None, then create monitoring</span>
+<span class="sd">                through Alchemy or other tools.</span>
+<span class="sd">                For example,</span>
+<span class="sd">                ``{&quot;token&quot;: &quot;api_token&quot;, &quot;experiment&quot;: &quot;experiment_name&quot;}``</span>
+<span class="sd">            check (bool): if True, then only checks that pipeline is working</span>
+<span class="sd">                (3 epochs only)</span>
+<span class="sd">            timeit (bool): if True, computes the execution time</span>
+<span class="sd">                of training process and displays it to the console.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wrap_callbacks</span><span class="p">(</span><span class="n">phase2callbacks</span> <span class="ow">or</span> <span class="p">{})</span></div>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp16</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fp16</span><span class="p">:</span>
+            <span class="n">fp16</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;opt_level&quot;</span><span class="p">:</span> <span class="s2">&quot;O1&quot;</span><span class="p">}</span>
 
-<div class="viewcode-block" id="GanExperiment.wrap_callbacks"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.gan.GanExperiment.wrap_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">wrap_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">phase2callbacks</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Phase wrapping procedure for callbacks.&quot;&quot;&quot;</span>
-        <span class="n">discriminator_phase_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_kwargs</span><span class="p">[</span>
-            <span class="s2">&quot;discriminator_train_phase&quot;</span>
-        <span class="p">]</span>
-        <span class="n">discriminator_phase_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_kwargs</span><span class="p">[</span><span class="s2">&quot;discriminator_train_num&quot;</span><span class="p">]</span>
-        <span class="n">generator_phase_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_kwargs</span><span class="p">[</span><span class="s2">&quot;generator_train_phase&quot;</span><span class="p">]</span>
-        <span class="n">generator_phase_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_state_kwargs</span><span class="p">[</span><span class="s2">&quot;generator_train_num&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">[</span><span class="s2">&quot;phase_manager&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PhaseManagerCallback</span><span class="p">(</span>
-            <span class="n">train_phases</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">(</span>
-                <span class="p">[</span>
-                    <span class="p">(</span><span class="n">discriminator_phase_name</span><span class="p">,</span> <span class="n">discriminator_phase_num</span><span class="p">),</span>
-                    <span class="p">(</span><span class="n">generator_phase_name</span><span class="p">,</span> <span class="n">generator_phase_num</span><span class="p">),</span>
-                <span class="p">]</span>
-            <span class="p">),</span>
-            <span class="n">valid_mode</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span>
+        <span class="k">if</span> <span class="n">resume</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">callbacks</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">sort_callbacks_by_order</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
+            <span class="n">checkpoint_callback_flag</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">checkpoint_callback_flag</span><span class="p">:</span>
+                <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;loader&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CheckpointCallback</span><span class="p">(</span><span class="n">resume</span><span class="o">=</span><span class="n">resume</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;CheckpointCallback already exist&quot;</span><span class="p">)</span>
+
+        <span class="n">experiment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_experiment_fn</span><span class="p">(</span>
+            <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
+            <span class="n">datasets</span><span class="o">=</span><span class="n">datasets</span><span class="p">,</span>
+            <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
+            <span class="n">logdir</span><span class="o">=</span><span class="n">logdir</span><span class="p">,</span>
+            <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+            <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+            <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
+            <span class="n">num_epochs</span><span class="o">=</span><span class="n">num_epochs</span><span class="p">,</span>
+            <span class="n">valid_loader</span><span class="o">=</span><span class="n">valid_loader</span><span class="p">,</span>
+            <span class="n">main_metric</span><span class="o">=</span><span class="n">main_metric</span><span class="p">,</span>
+            <span class="n">minimize_metric</span><span class="o">=</span><span class="n">minimize_metric</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">check_run</span><span class="o">=</span><span class="n">check</span><span class="p">,</span>
+            <span class="n">check_time</span><span class="o">=</span><span class="n">timeit</span><span class="p">,</span>
+            <span class="n">state_kwargs</span><span class="o">=</span><span class="n">state_kwargs</span><span class="p">,</span>
+            <span class="n">checkpoint_data</span><span class="o">=</span><span class="n">checkpoint_data</span><span class="p">,</span>
+            <span class="n">distributed_params</span><span class="o">=</span><span class="n">fp16</span><span class="p">,</span>
+            <span class="n">monitoring_params</span><span class="o">=</span><span class="n">monitoring_params</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">for</span> <span class="n">phase_name</span><span class="p">,</span> <span class="n">callback_name_list</span> <span class="ow">in</span> <span class="n">phase2callbacks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="c1"># TODO: Check for phase in state_params?</span>
-            <span class="k">for</span> <span class="n">callback_name</span> <span class="ow">in</span> <span class="n">callback_name_list</span><span class="p">:</span>
-                <span class="n">callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">callback_name</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">[</span><span class="n">callback_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">PhaseBatchWrapperCallback</span><span class="p">(</span>
-                    <span class="n">base_callback</span><span class="o">=</span><span class="n">callback</span><span class="p">,</span> <span class="n">active_phases</span><span class="o">=</span><span class="p">[</span><span class="n">phase_name</span><span class="p">],</span>
-                <span class="p">)</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span> <span class="o">=</span> <span class="n">experiment</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">distributed_cmd_run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_experiment</span><span class="p">,</span> <span class="n">distributed</span><span class="p">)</span></div></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;GanExperiment&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Runner&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

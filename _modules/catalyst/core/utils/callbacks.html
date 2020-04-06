@@ -257,8 +257,8 @@
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
-<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">CallbackNode</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">CallbackNode</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.utils</span> <span class="kn">import</span> <span class="n">get_rank</span>
 
 
 <div class="viewcode-block" id="sort_callbacks_by_order"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.utils.callbacks.sort_callbacks_by_order">[docs]</a><span class="k">def</span> <span class="nf">sort_callbacks_by_order</span><span class="p">(</span>
@@ -306,7 +306,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># distributed run setting</span>
     <span class="n">output</span> <span class="o">=</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="n">rank</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()</span>
+    <span class="n">rank</span> <span class="o">=</span> <span class="n">get_rank</span><span class="p">()</span>
     <span class="k">if</span> <span class="n">rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># master node</span>
         <span class="c1"># remove worker-only callbacks on master node</span>
         <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span>

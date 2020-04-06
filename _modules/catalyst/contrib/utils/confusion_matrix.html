@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.core.runner &mdash; Catalyst 20.04 documentation</title>
+  <title>catalyst.contrib.utils.confusion_matrix &mdash; Catalyst 20.04 documentation</title>
   
 
   
@@ -227,7 +227,7 @@
         
           <li><a href="../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.dl.core.runner</li>
+      <li>catalyst.contrib.utils.confusion_matrix</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -253,37 +253,71 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.dl.core.runner</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+  <h1>Source code for catalyst.contrib.utils.confusion_matrix</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">_Runner</span><span class="p">,</span> <span class="n">State</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">utils</span>
-
-<span class="kn">from</span> <span class="nn">.experiment</span> <span class="kn">import</span> <span class="n">Experiment</span>
+<span class="kn">import</span> <span class="nn">torch</span>
 
 
-<div class="viewcode-block" id="Runner"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.core.runner.Runner">[docs]</a><span class="k">class</span> <span class="nc">Runner</span><span class="p">(</span><span class="n">_Runner</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Deep Learning Runner for different supervised, unsupervised, gan, etc runs.</span>
+<div class="viewcode-block" id="calculate_tp_fp_fn"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.utils.confusion_matrix.calculate_tp_fp_fn">[docs]</a><span class="k">def</span> <span class="nf">calculate_tp_fp_fn</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+    <span class="n">true_positives</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">)</span>
+    <span class="n">false_positives</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">true_positives</span>
+    <span class="n">false_negatives</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">true_positives</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;true_positives&quot;</span><span class="p">:</span> <span class="n">true_positives</span><span class="p">,</span>
+        <span class="s2">&quot;false_positives&quot;</span><span class="p">:</span> <span class="n">false_positives</span><span class="p">,</span>
+        <span class="s2">&quot;false_negatives&quot;</span><span class="p">:</span> <span class="n">false_negatives</span><span class="p">,</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="calculate_confusion_matrix_from_arrays"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.utils.confusion_matrix.calculate_confusion_matrix_from_arrays">[docs]</a><span class="k">def</span> <span class="nf">calculate_confusion_matrix_from_arrays</span><span class="p">(</span>
+    <span class="n">ground_truth</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculate confusion matrix for a given set of classes.</span>
+<span class="sd">    If GT value is outside of the [0, num_classes) it is excluded.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        ground_truth (np.ndarray):</span>
+<span class="sd">        prediction (np.ndarray):</span>
+<span class="sd">        num_classes (int):</span>
+
+<span class="sd">    @TODO: Docs . Contribution is welcome</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># a long 2xn array with each column being a pixel pair</span>
+    <span class="n">replace_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">ground_truth</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">prediction</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span>
 
-    <span class="n">_experiment_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">Experiment</span>
-    <span class="n">_state_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">State</span>
+    <span class="n">valid_index</span> <span class="o">=</span> <span class="n">replace_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">&lt;</span> <span class="n">num_classes</span>
+    <span class="n">replace_indices</span> <span class="o">=</span> <span class="n">replace_indices</span><span class="p">[:,</span> <span class="n">valid_index</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
 
-    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">:</span> <span class="n">Experiment</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">:</span> <span class="n">State</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">_prepare_for_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_prepare_for_stage</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">)</span>
-
-        <span class="n">utils</span><span class="o">.</span><span class="n">set_global_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">initial_seed</span><span class="p">)</span>
-        <span class="n">loaders</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">get_loaders</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">)</span>
-        <span class="n">loaders</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">validate_loaders</span><span class="p">(</span><span class="n">loaders</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">loaders</span> <span class="o">=</span> <span class="n">loaders</span></div>
+    <span class="c1"># add up confusion matrix</span>
+    <span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogramdd</span><span class="p">(</span>
+        <span class="n">replace_indices</span><span class="p">,</span>
+        <span class="n">bins</span><span class="o">=</span><span class="p">(</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">),</span>
+        <span class="nb">range</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)],</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Runner&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="calculate_confusion_matrix_from_tensors"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.utils.confusion_matrix.calculate_confusion_matrix_from_tensors">[docs]</a><span class="k">def</span> <span class="nf">calculate_confusion_matrix_from_tensors</span><span class="p">(</span>
+    <span class="n">y_pred_logits</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">y_true</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+    <span class="n">num_classes</span> <span class="o">=</span> <span class="n">y_pred_logits</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y_pred_logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ground_truth</span> <span class="o">=</span> <span class="n">y_true</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="n">prediction</span> <span class="o">=</span> <span class="n">y_pred</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">calculate_confusion_matrix_from_arrays</span><span class="p">(</span>
+        <span class="n">ground_truth</span><span class="p">,</span> <span class="n">prediction</span><span class="p">,</span> <span class="n">num_classes</span>
+    <span class="p">)</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;calculate_tp_fp_fn&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;calculate_confusion_matrix_from_arrays&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;calculate_confusion_matrix_from_tensors&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 </pre></div>
 
              </article>

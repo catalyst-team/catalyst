@@ -256,9 +256,8 @@
   <h1>Source code for catalyst.core.callbacks.scheduler</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">catalyst.contrib.nn.schedulers</span> <span class="kn">import</span> <span class="n">BatchScheduler</span><span class="p">,</span> <span class="n">OneCycleLRWithWarmup</span>
-<span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">State</span>
+<span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">State</span><span class="p">,</span> <span class="n">utils</span>
 
 
 <div class="viewcode-block" id="SchedulerCallback"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.scheduler.SchedulerCallback">[docs]</a><span class="k">class</span> <span class="nc">SchedulerCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>

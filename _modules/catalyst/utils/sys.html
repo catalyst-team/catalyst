@@ -262,8 +262,9 @@
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.utils.tools.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.utils.tools.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
 
 <span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">save_config</span>
 <span class="kn">from</span> <span class="nn">.misc</span> <span class="kn">import</span> <span class="n">get_utcnow_time</span>
@@ -349,10 +350,17 @@
                 <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
             <span class="p">)</span>
-        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Failed to freeze pip packages. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Pip Output: ```</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">output</span><span class="si">}</span><span class="s2">```.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Continue experiment without pip packages dumping.&quot;</span>
+            <span class="p">)</span>
             <span class="k">pass</span>
-        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Failed to list packages&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+        <span class="c1"># except FileNotFoundError:</span>
+        <span class="c1">#     pass</span>
+        <span class="c1"># except subprocess.CalledProcessError as e:</span>
+        <span class="c1">#     raise Exception(&quot;Failed to list packages&quot;) from e</span>
 
     <span class="k">return</span> <span class="n">result</span></div>
 
@@ -374,14 +382,22 @@
                     <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                     <span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
                 <span class="p">)</span>
-            <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
-                <span class="k">pass</span>
-            <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Running from conda env, &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;but failed to list conda packages. &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;Conda Output: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">output</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+                    <span class="sa">f</span><span class="s2">&quot;Conda Output: ```</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">output</span><span class="si">}</span><span class="s2">```.&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;Continue experiment without conda packages dumping.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">pass</span>
+            <span class="c1"># except FileNotFoundError:</span>
+            <span class="c1">#     pass</span>
+            <span class="c1"># except subprocess.CalledProcessError as e:</span>
+            <span class="c1">#     raise Exception(</span>
+            <span class="c1">#         f&quot;Running from conda env, &quot;</span>
+            <span class="c1">#         f&quot;but failed to list conda packages. &quot;</span>
+            <span class="c1">#         f&quot;Conda Output: {e.output}&quot;</span>
+            <span class="c1">#     ) from e</span>
     <span class="k">return</span> <span class="n">result</span></div>
 
 
