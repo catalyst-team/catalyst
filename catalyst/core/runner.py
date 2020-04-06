@@ -7,7 +7,11 @@ from torch import nn
 from torch.utils.data import DataLoader, DistributedSampler
 
 from catalyst.core import utils
-from catalyst.utils.tools.settings import LOADER_TRAIN_PREFIX
+from catalyst.utils.tools.settings import (
+    LOADER_INFER_PREFIX,
+    LOADER_TRAIN_PREFIX,
+    LOADER_VALID_PREFIX,
+)
 from catalyst.utils.tools.typing import (
     Criterion,
     Device,
@@ -429,6 +433,8 @@ class _Runner(ABC):
             state.loader_name = loader_name
             state.loader_len = len(loader)
             state.is_train_loader = loader_name.startswith(LOADER_TRAIN_PREFIX)
+            state.is_valid_loader = loader_name.startswith(LOADER_VALID_PREFIX)
+            state.is_infer_loader = loader_name.startswith(LOADER_INFER_PREFIX)
             self.model.train(state.is_train_loader)
 
             if (
