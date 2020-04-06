@@ -245,6 +245,16 @@ class State(FrozenClass):
         - ``True`` for training loaders
         - ``False`` otherwise
 
+    **state.is_valid_loader** - bool, indicator flag
+
+        - ``True`` for validation loaders
+        - ``False`` otherwise
+
+    **state.is_infer_loader** - bool, indicator flag
+
+        - ``True`` for inference loaders
+        - ``False`` otherwise
+
     **state.is_infer_stage** - bool, indicator flag
 
         - ``True`` for inference stages
@@ -355,6 +365,8 @@ class State(FrozenClass):
         # other
         self.is_check_run: bool = is_check_run
         self.is_train_loader: bool = False
+        self.is_valid_loader: bool = False
+        self.is_infer_loader: bool = False
         self.is_infer_stage: bool = self.stage_name.startswith(
             STAGE_INFER_PREFIX
         )
