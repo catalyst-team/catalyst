@@ -1,10 +1,12 @@
 Contrib
 ================================================
 
-.. automodule:: catalyst.contrib
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. toctree::
+   :titlesonly:
+
+.. contents::
+   :local:
+
 
 DL
 --------------------
@@ -174,6 +176,99 @@ Registry
 --------------------
 
 .. automodule:: catalyst.contrib.registry
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Utilities
+------------------------
+
+Argparse
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.argparse
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Compression
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.compression
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Confusion Matrix
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.confusion_matrix
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Dataset
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.dataset
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+
+Misc
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.misc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Pandas
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.pandas
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Parallel
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.parallel
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Plotly
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.plotly
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Serialization
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.serialization
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Text
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.text
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Visualization
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.visualization
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Tools
+------------------------
+
+Tensorboard
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.tools.tensorboard
     :members:
     :undoc-members:
     :show-inheritance:

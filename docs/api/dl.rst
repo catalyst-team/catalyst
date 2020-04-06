@@ -1,10 +1,11 @@
 DL
 ================================================
 
-.. automodule:: catalyst.dl
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. toctree::
+   :titlesonly:
+
+.. contents::
+   :local:
 
 Experiment
 --------------------

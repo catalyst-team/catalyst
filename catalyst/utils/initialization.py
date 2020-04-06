@@ -61,3 +61,6 @@ def outer_init(layer: nn.Module) -> None:
         nn.init.uniform_(layer.weight.data, -v, v)
         if layer.bias is not None:
             nn.init.uniform_(layer.bias.data, -v, v)
+
+
+__all__ = ["get_optimal_inner_init", "outer_init"]

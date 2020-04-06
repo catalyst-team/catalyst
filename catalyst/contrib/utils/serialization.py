@@ -72,3 +72,5 @@ if PYARROW_ENABLED:
 else:
     serialize = pickle_serialize
     deserialize = pickle_deserialize
+
+__all__ = ["serialize", "deserialize"]

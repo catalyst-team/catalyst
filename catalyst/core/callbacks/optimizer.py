@@ -1,13 +1,13 @@
 from typing import Callable, Dict, List
 import logging
 
-from catalyst import utils
 from catalyst.core import (
     Callback,
     CallbackNode,
     CallbackOrder,
     registry,
     State,
+    utils,
 )
 from catalyst.utils.tools.typing import Optimizer
 

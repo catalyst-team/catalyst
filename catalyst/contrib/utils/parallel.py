@@ -54,3 +54,6 @@ def get_pool(workers: int) -> Union[Pool, DumbPool]:
     """@TODO: Docs. Contribution is welcome."""
     pool = Pool(workers) if workers > 0 and workers is not None else DumbPool()
     return pool
+
+
+__all__ = ["parallel_imap", "tqdm_parallel_imap", "get_pool"]

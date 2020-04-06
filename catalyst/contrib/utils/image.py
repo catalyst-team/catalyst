@@ -230,3 +230,16 @@ def has_image_extension(uri) -> bool:
     """
     _, ext = os.path.splitext(uri)
     return ext.lower() in {".bmp", ".png", ".jpeg", ".jpg", ".tif", ".tiff"}
+
+
+__all__ = [
+    "has_image_extension",
+    "imread",
+    "imwrite",
+    "imsave",
+    "mask_to_overlay_image",
+    "mimread",
+    "mimwrite_with_meta",
+    "tensor_from_rgb_image",
+    "tensor_to_ndimage",
+]

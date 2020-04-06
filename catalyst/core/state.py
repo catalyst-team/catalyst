@@ -7,7 +7,7 @@ import numpy as np
 
 from torch.utils.data import DataLoader
 
-from catalyst import utils
+from catalyst.core import utils
 from catalyst.utils.tools.frozen_class import FrozenClass
 from catalyst.utils.tools.settings import (
     LOADER_VALID_PREFIX,

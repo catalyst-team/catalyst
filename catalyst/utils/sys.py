@@ -8,7 +8,7 @@ import subprocess
 import sys
 import warnings
 
-from catalyst.utils.tools.tensorboard import SummaryWriter
+from catalyst.contrib.utils.tools.tensorboard import SummaryWriter
 
 from .config import save_config
 from .misc import get_utcnow_time
@@ -97,7 +97,7 @@ def list_pip_packages() -> str:
         except Exception as e:
             warnings.warn(
                 f"Failed to freeze pip packages. "
-                f"Pip Output: {e.output}."
+                f"Pip Output: ```{e.output}```."
                 f"Continue experiment without pip packages dumping."
             )
             pass
@@ -130,7 +130,7 @@ def list_conda_packages() -> str:
                 warnings.warn(
                     f"Running from conda env, "
                     f"but failed to list conda packages. "
-                    f"Conda Output: {e.output}."
+                    f"Conda Output: ```{e.output}```."
                     f"Continue experiment without conda packages dumping."
                 )
                 pass

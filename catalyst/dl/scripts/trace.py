@@ -6,7 +6,6 @@ from pathlib import Path
 import torch
 
 from catalyst.dl import Experiment, utils
-from catalyst.dl.utils import trace
 from catalyst.utils.tools.typing import Device
 
 
@@ -69,7 +68,7 @@ def trace_model_from_checkpoint(
     batch = experiment.get_native_batch(stage, loader)
 
     print("Tracing")
-    traced = trace.trace_model(
+    traced = utils.trace_model(
         model=model,
         runner=runner,
         batch=batch,
@@ -183,7 +182,7 @@ def main(args, _):
     )
 
     if args.out_model is None:
-        file_name = trace.get_trace_name(
+        file_name = utils.get_trace_name(
             method_name=method_name,
             mode=mode,
             requires_grad=requires_grad,

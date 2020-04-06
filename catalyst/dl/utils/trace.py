@@ -6,7 +6,11 @@ import torch
 from torch import nn
 from torch.jit import ScriptModule
 
-from catalyst import utils
+from catalyst.utils import (
+    assert_fp16_available,
+    get_fn_argsnames,
+    set_requires_grad,
+)
 from catalyst.utils.tools.typing import Device, Model
 
 if TYPE_CHECKING:
@@ -52,7 +56,7 @@ class _TracingModelWrapper(nn.Module):
                 argspec.varargs is None and argspec.varkw is None
             ), "not supported by PyTorch tracing"
 
-            method_argnames = utils.get_fn_argsnames(fn, exclude=["self"])
+            method_argnames = get_fn_argsnames(fn, exclude=["self"])
             method_input = tuple(kwargs[name] for name in method_argnames)
 
             self.tracing_result = torch.jit.trace(method_model, method_input)
@@ -104,7 +108,7 @@ def trace_model(
 
     tracer = _TracingModelWrapper(model, method_name)
     if opt_level is not None:
-        utils.assert_fp16_available()
+        assert_fp16_available()
         # If traced in AMP we need to initialize the model before calling
         # the jit
         # https://github.com/NVIDIA/apex/issues/303#issuecomment-493142950
@@ -119,7 +123,7 @@ def trace_model(
         params = predict_params
 
     getattr(model, mode)()
-    utils.set_requires_grad(model, requires_grad=requires_grad)
+    set_requires_grad(model, requires_grad=requires_grad)
 
     _runner_model, _runner_device = runner.model, runner.device
 
@@ -190,7 +194,7 @@ def load_traced_model(
     model = torch.jit.load(model_path, map_location=device)
 
     if opt_level is not None:
-        utils.assert_fp16_available()
+        assert_fp16_available()
         from apex import amp
 
         model = amp.initialize(model, optimizers=None, opt_level=opt_level)

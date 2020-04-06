@@ -1,8 +1,8 @@
 from typing import Dict, Union
 from collections import OrderedDict
 
-from catalyst import utils
-from catalyst.core import CallbackNode
+from catalyst.core.callback import CallbackNode
+from catalyst.core.utils import get_rank
 
 
 def sort_callbacks_by_order(
@@ -50,7 +50,7 @@ def filter_callbacks_by_node(
     """
     # distributed run setting
     output = callbacks.copy()
-    rank = utils.get_rank()
+    rank = get_rank()
     if rank == 0:  # master node
         # remove worker-only callbacks on master node
         for k in list(

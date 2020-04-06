@@ -34,3 +34,6 @@ def boolean_flag(
         *names, action="store_true", default=default, dest=dest, help=help
     )
     parser.add_argument("--no-" + name, action="store_false", dest=dest)
+
+
+__all__ = ["boolean_flag"]

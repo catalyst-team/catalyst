@@ -5,7 +5,7 @@ from pathlib import Path
 import plotly.graph_objs as go
 from plotly.offline import init_notebook_mode, iplot
 
-from catalyst.utils.tools.tensorboard import SummaryItem, SummaryReader
+from .tools.tensorboard import SummaryItem, SummaryReader
 
 
 def _get_tensorboard_scalars(

@@ -3,8 +3,7 @@ from collections import OrderedDict
 import os
 from pathlib import Path
 
-from catalyst import utils
-from catalyst.core import Callback, CallbackNode, CallbackOrder, State
+from catalyst.core import Callback, CallbackNode, CallbackOrder, State, utils
 
 
 def _pack_state(state: State):

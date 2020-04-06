@@ -6,7 +6,9 @@ All utils are gathered in :py:mod:`catalyst.utils` for easier access.
 .. note::
     Everything from :py:mod:`catalyst.contrib.utils` is included in :py:mod:`catalyst.utils`
 """
+
 from catalyst.contrib.utils import *
+
 from .checkpoint import (
     load_checkpoint,
     pack_checkpoint,
@@ -54,6 +56,7 @@ from .misc import (
 )
 from .numpy import get_one_hot
 from .parser import parse_config_args, parse_args_uargs
+from .pipelines import clone_pipeline
 from .scripts import (
     import_module,
     dump_code,
