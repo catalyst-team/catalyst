@@ -7,10 +7,16 @@ from catalyst.dl.experiment import ConfigExperiment
 
 
 class TiledInferenceExperiment(ConfigExperiment):
+    """
+    Experiment class to use for tiled inference.
+    """
+
     def get_datasets(
         self, stage: str, epoch: int = None, **data_params
     ) -> OrderedDict[str, Dataset]:
-
+        """
+        Defines dataset with tiles of huge image.
+        """
         if not stage.startswith("infer"):
             raise ValueError(
                 f"Only inference stage is supported in "

@@ -1,5 +1,5 @@
-import os
 from typing import Tuple, Union
+import os
 
 import numpy as np
 
@@ -39,8 +39,8 @@ def pyramid_weights(height: int, width: int):
     d_edge_top = torch.pow(torch.arange(height) - y_top + 0.5, 2)
     d_edge_bottom = torch.pow(torch.arange(height) - y_bottom + 0.5, 2)
 
-    d_edge_x = torch.sqrt(torch.min(d_edge_left, d_edge_right) + 0.5**2)
-    d_edge_y = torch.sqrt(torch.min(d_edge_top, d_edge_bottom) + 0.5**2)
+    d_edge_x = torch.sqrt(torch.min(d_edge_left, d_edge_right) + 0.5 ** 2)
+    d_edge_y = torch.sqrt(torch.min(d_edge_top, d_edge_bottom) + 0.5 ** 2)
     d_edge = torch.min(d_edge_y.unsqueeze(0).transpose(0, 1), d_edge_x)
 
     frac = torch.div(d_edge, d_center + d_edge)
@@ -55,6 +55,7 @@ class TiledInferenceCallback(Callback):
     Callback for tiled inference, that stores resulting tensor in pre-allocated
     memory, updates its values via batch processing.
     """
+
     def __init__(
         self,
         save_path: str,
@@ -123,8 +124,12 @@ class TiledInferenceCallback(Callback):
             self.tile_step_h, self.tile_step_w = tile_step, tile_step
 
         margins = get_image_margins(
-            self.image_h, self.image_w, self.tile_size_h, self.tile_size_w,
-            self.tile_step_h, self.tile_step_w
+            self.image_h,
+            self.image_w,
+            self.tile_size_h,
+            self.tile_size_w,
+            self.tile_step_h,
+            self.tile_step_w,
         )
 
         self.margin_bottom = margins["margin_bottom"]
@@ -151,15 +156,18 @@ class TiledInferenceCallback(Callback):
         self.weights = self.weights.to(state.device)
 
         items = zip(
-            state.batch_out[self.output_key], state.batch_in["x"],
-            state.batch_in["y"]
+            state.batch_out[self.output_key],
+            state.batch_in["x"],
+            state.batch_in["y"],
         )
 
         for predictions, x_min, y_min in items:
             x_max = x_min + self.tile_size_w
             y_max = y_min + self.tile_size_h
             crop_slice = (
-                slice(None), slice(y_min, y_max), slice(x_min, x_max)
+                slice(None),
+                slice(y_min, y_max),
+                slice(x_min, x_max),
             )
             self.storage[crop_slice] += predictions * self.weights
             self.norm_mask[crop_slice] += self.weights
@@ -170,8 +178,9 @@ class TiledInferenceCallback(Callback):
         """
         output = self.storage / self.norm_mask
         crop_slice = (
-            slice(None), slice(self.margin_top, -self.margin_bottom),
-            slice(self.margin_left, -self.margin_right)
+            slice(None),
+            slice(self.margin_top, -self.margin_bottom),
+            slice(self.margin_left, -self.margin_right),
         )
         output = output[crop_slice].cpu()
         output = output.permute(1, 2, 0)

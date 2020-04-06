@@ -1,7 +1,7 @@
+from typing import Tuple, Union
 from collections import OrderedDict
 import math
 from pathlib import Path
-from typing import Tuple, Union
 
 import cv2
 import numpy as np
@@ -12,8 +12,12 @@ from torch.utils.data import Dataset
 
 
 def get_image_margins(
-    image_h: int, image_w: int, tile_size_h: int, tile_size_w: int,
-    tile_step_h: int, tile_step_w: int
+    image_h: int,
+    image_w: int,
+    tile_size_h: int,
+    tile_size_w: int,
+    tile_step_h: int,
+    tile_step_w: int,
 ):
     """
     Compute image margins to fit tile parameters.
@@ -35,8 +39,8 @@ def get_image_margins(
     num_tiles_h = math.ceil((image_h - overlap_h) / tile_step_h)
     num_tiles_w = math.ceil((image_w - overlap_w) / tile_step_w)
 
-    num_extra_pixels_h = (tile_step_h * num_tiles_h + overlap_h - image_h)
-    num_extra_pixels_w = (tile_step_w * num_tiles_w + overlap_w - image_w)
+    num_extra_pixels_h = tile_step_h * num_tiles_h + overlap_h - image_h
+    num_extra_pixels_w = tile_step_w * num_tiles_w + overlap_w - image_w
 
     margin_bottom = math.floor(num_extra_pixels_h / 2)
     margin_top = math.ceil(num_extra_pixels_h / 2)
@@ -47,7 +51,7 @@ def get_image_margins(
         margin_bottom=margin_bottom,
         margin_top=margin_top,
         margin_left=margin_left,
-        margin_right=margin_right
+        margin_right=margin_right,
     )
 
     return margins
@@ -57,6 +61,7 @@ class TiledImageDataset(Dataset):
     """
     Dataset for storing tiled parts of input image.
     """
+
     def __init__(
         self,
         image_path: Union[str, Path],
@@ -82,7 +87,7 @@ class TiledImageDataset(Dataset):
             self.margin_left,
             self.margin_right,
             borderType=cv2.BORDER_CONSTANT,
-            value=0
+            value=0,
         )
         image = np.moveaxis(image, -1, 0)
 
@@ -122,7 +127,7 @@ class TiledImageDataset(Dataset):
                 error_msg.format(
                     dim="height",
                     tile_step=self.tile_step_h,
-                    tile_size=self.tile_size_h
+                    tile_size=self.tile_size_h,
                 )
             )
 
@@ -131,7 +136,7 @@ class TiledImageDataset(Dataset):
                 error_msg.format(
                     dim="width",
                     tile_step=self.tile_step_w,
-                    tile_size=self.tile_size_w
+                    tile_size=self.tile_size_w,
                 )
             )
 
@@ -139,8 +144,12 @@ class TiledImageDataset(Dataset):
         overlap_w = self.tile_size_w - self.tile_step_w
 
         margins = get_image_margins(
-            self.image_h, self.image_w, self.tile_size_h, self.tile_size_w,
-            self.tile_step_h, self.tile_step_w
+            self.image_h,
+            self.image_w,
+            self.tile_size_h,
+            self.tile_size_w,
+            self.tile_step_h,
+            self.tile_step_w,
         )
 
         self.margin_bottom = margins["margin_bottom"]
@@ -176,7 +185,9 @@ class TiledImageDataset(Dataset):
         """
         x, y = self.crops[idx]
 
-        tile = self.image[:, y:y + self.tile_size_h, x:x + self.tile_size_w]
+        tile = self.image[
+            :, y : y + self.tile_size_h, x : x + self.tile_size_w
+        ]
         tile = tile.clone()
 
         item = OrderedDict(**{self.input_key: tile}, x=x, y=y)
