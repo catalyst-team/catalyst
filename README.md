@@ -166,6 +166,7 @@ runner.train(
 ```python
 import os
 import torch
+from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from torchvision.datasets import MNIST
@@ -173,12 +174,12 @@ from torchvision import transforms
 from catalyst import dl
 
 
-class ClassifyAE(torch.nn.Module):
+class ClassifyAE(nn.Module):
     def __init__(self, in_features, hid_features, out_features):
         super().__init__()
-        self.encoder = torch.nn.Linear(in_features, hid_features)
-        self.decoder = torch.nn.Linear(hid_features, in_features)
-        self.clf = torch.nn.Linear(hid_features, out_features)
+        self.encoder = nn.Sequential(nn.Linear(in_features, hid_features), nn.Tanh())
+        self.decoder = nn.Linear(hid_features, in_features)
+        self.clf = nn.Linear(hid_features, out_features)
     
     def forward(self, x):
         z = self.encoder(x)

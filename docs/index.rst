@@ -32,7 +32,7 @@ Project manifest_. Part of `PyTorch Ecosystem`_. Part of `Catalyst Ecosystem`_:
 Getting started
 ----------------------------------------
 
-.. code:: python
+.. code-block:: python
 
     import torch
     from torch.utils.data import DataLoader, TensorDataset
@@ -67,6 +67,10 @@ Getting started
         num_epochs=num_epochs,
         verbose=True,
     )
+
+`Demo with minimal examples for ML, CV, NLP, GANs and RecSys`_
+
+.. _Demo with minimal examples for ML, CV, NLP, GANs and RecSys: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb
 
 For Catalyst.RL introduction, please follow `Catalyst.RL repo`_.
 
@@ -141,7 +145,7 @@ best practices for the automated parts.
 Tutorials
 ~~~~~~~~~~~~~~~~~~~~~~
 
-- `Demo with minimal examples`_ for CV, NLP, RecSys and GANs
+- `Demo with minimal examples`_ for ML, CV, NLP, GANs and RecSys
 - Detailed `classification tutorial`_
 - Advanced `segmentation tutorial`_
 - Comprehensive `classification pipeline`_

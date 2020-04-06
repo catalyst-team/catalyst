@@ -9,42 +9,6 @@ from torchvision.datasets import MNIST
 
 from catalyst import dl
 
-generator = nn.Sequential(nn.Linear(128, 28 * 28), nn.Tanh())
-discriminator = nn.Sequential(nn.Linear(28 * 28, 1), nn.Sigmoid())
-model = nn.ModuleDict({"generator": generator, "discriminator": discriminator})
-
-generator_optimizer = torch.optim.Adam(
-    generator.parameters(), lr=0.0001, betas=(0.5, 0.999)
-)
-discriminator_optimizer = torch.optim.Adam(
-    discriminator.parameters(), lr=0.0001, betas=(0.5, 0.999)
-)
-optimizer = {
-    "generator": generator_optimizer,
-    "discriminator": discriminator_optimizer,
-}
-
-loaders = {
-    "train": DataLoader(
-        MNIST(
-            os.getcwd(),
-            train=False,
-            download=True,
-            transform=transforms.ToTensor(),
-        ),
-        batch_size=32,
-    ),
-    "valid": DataLoader(
-        MNIST(
-            os.getcwd(),
-            train=False,
-            download=True,
-            transform=transforms.ToTensor(),
-        ),
-        batch_size=32,
-    ),
-}
-
 
 class CustomRunner(dl.Runner):
     """
@@ -92,22 +56,71 @@ class CustomRunner(dl.Runner):
         state.batch_metrics["loss_discriminator"] = loss_discriminator
 
 
-runner = CustomRunner()
-runner.train(
-    model=model,
-    optimizer=optimizer,
-    loaders=loaders,
-    callbacks=[
-        dl.OptimizerCallback(
-            optimizer_key="generator", loss_key="loss_generator"
+def main():
+    """
+    Docs.
+    """
+    generator = nn.Sequential(nn.Linear(128, 28 * 28), nn.Tanh())
+    discriminator = nn.Sequential(nn.Linear(28 * 28, 1), nn.Sigmoid())
+    model = nn.ModuleDict(
+        {"generator": generator, "discriminator": discriminator}
+    )
+
+    generator_optimizer = torch.optim.Adam(
+        generator.parameters(), lr=0.0001, betas=(0.5, 0.999)
+    )
+    discriminator_optimizer = torch.optim.Adam(
+        discriminator.parameters(), lr=0.0001, betas=(0.5, 0.999)
+    )
+    optimizer = {
+        "generator": generator_optimizer,
+        "discriminator": discriminator_optimizer,
+    }
+
+    loaders = {
+        "train": DataLoader(
+            MNIST(
+                os.getcwd(),
+                train=False,
+                download=True,
+                transform=transforms.ToTensor(),
+            ),
+            batch_size=32,
         ),
-        dl.OptimizerCallback(
-            optimizer_key="discriminator", loss_key="loss_discriminator"
+        "valid": DataLoader(
+            MNIST(
+                os.getcwd(),
+                train=False,
+                download=True,
+                transform=transforms.ToTensor(),
+            ),
+            batch_size=32,
         ),
-    ],
-    main_metric="loss_generator",
-    num_epochs=5,
-    logdir="./logs/gan",
-    verbose=True,
-    check=True,
-)
+    }
+
+    runner = CustomRunner()
+    runner.train(
+        model=model,
+        optimizer=optimizer,
+        loaders=loaders,
+        callbacks=[
+            dl.OptimizerCallback(
+                optimizer_key="generator", loss_key="loss_generator"
+            ),
+            dl.OptimizerCallback(
+                optimizer_key="discriminator", loss_key="loss_discriminator"
+            ),
+        ],
+        main_metric="loss_generator",
+        num_epochs=5,
+        logdir="./logs/gan",
+        verbose=True,
+        check=True,
+    )
+
+
+if __name__ == "__main__":
+    no_apex = str(os.environ.get("USE_APEX", "0")) == "0"
+    no_ddp = str(os.environ.get("USE_DDP", "0")) == "0"
+    if no_apex and no_ddp:
+        main()
