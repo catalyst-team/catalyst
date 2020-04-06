@@ -178,15 +178,16 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../info/distributed.html">Distributed training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../info/contributing.html">Contribution</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Core</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contrib.html">Contrib</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contrib.html">Contrib</a></li>
 </ul>
 
             
@@ -1278,6 +1279,20 @@ model, criterion, optimizer, schedulers, metrics, loggers, loaders, etc</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> for training loaders</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise</p></li>
+</ul>
+</div></blockquote>
+<p><strong>state.is_valid_loader</strong> - bool, indicator flag</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> for validation loaders</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise</p></li>
+</ul>
+</div></blockquote>
+<p><strong>state.is_infer_loader</strong> - bool, indicator flag</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> for inference loaders</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise</p></li>
 </ul>
 </div></blockquote>

@@ -176,15 +176,16 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../info/distributed.html">Distributed training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../info/contributing.html">Contribution</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data.html">Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
 </ul>
 
             
@@ -501,6 +502,16 @@
 <span class="sd">        - ``True`` for training loaders</span>
 <span class="sd">        - ``False`` otherwise</span>
 
+<span class="sd">    **state.is_valid_loader** - bool, indicator flag</span>
+
+<span class="sd">        - ``True`` for validation loaders</span>
+<span class="sd">        - ``False`` otherwise</span>
+
+<span class="sd">    **state.is_infer_loader** - bool, indicator flag</span>
+
+<span class="sd">        - ``True`` for inference loaders</span>
+<span class="sd">        - ``False`` otherwise</span>
+
 <span class="sd">    **state.is_infer_stage** - bool, indicator flag</span>
 
 <span class="sd">        - ``True`` for inference stages</span>
@@ -611,6 +622,8 @@
         <span class="c1"># other</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_check_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">is_check_run</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_valid_loader</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_infer_loader</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_infer_stage</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
             <span class="n">STAGE_INFER_PREFIX</span>
         <span class="p">)</span>

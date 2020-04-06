@@ -177,15 +177,16 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info/distributed.html">Distributed training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="info/contributing.html">Contribution</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api/core.html">Core</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contrib</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/data.html">Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contrib</a></li>
 </ul>
 
             
@@ -313,6 +314,7 @@ rather than write another regular train loop.</p>
 <span class="p">)</span>
 </pre></div>
 </div>
+<p><a class="reference external" href="https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb">Demo with minimal examples for ML, CV, NLP, GANs and RecSys</a></p>
 <p>For Catalyst.RL introduction, please follow <a class="reference external" href="https://github.com/catalyst-team/catalyst-rl">Catalyst.RL repo</a>.</p>
 </div>
 <div class="section" id="overview">
@@ -375,7 +377,7 @@ best practices for the automated parts.</p>
 <div class="section" id="tutorials">
 <h3>Tutorials<a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p><a class="reference external" href="https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb">Demo with minimal examples</a> for CV, NLP, RecSys and GANs</p></li>
+<li><p><a class="reference external" href="https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb">Demo with minimal examples</a> for ML, CV, NLP, GANs and RecSys</p></li>
 <li><p>Detailed <a class="reference external" href="https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb">classification tutorial</a></p></li>
 <li><p>Advanced <a class="reference external" href="https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb">segmentation tutorial</a></p></li>
 <li><p>Comprehensive <a class="reference external" href="https://github.com/catalyst-team/classification">classification pipeline</a></p></li>
@@ -475,43 +477,6 @@ please first open an issue and discuss the feature with us.</p>
 <li class="toctree-l2"><a class="reference internal" href="api/dl.html#module-catalyst.dl.registry">Registry</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contrib</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#dl">DL</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks">Callbacks</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#nn">NN</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.nn.criterion.ce">Criterion</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.nn.modules.common">Modules</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.nn.optimizers.lamb">Optimizers</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.nn.schedulers.base">Schedulers</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#models">Models</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.models.cv.segmentation.unet">Segmentation</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.registry">Registry</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#utilities">Utilities</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.argparse">Argparse</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.compression">Compression</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.confusion_matrix">Confusion Matrix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.dataset">Dataset</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.misc">Misc</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.pandas">Pandas</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.parallel">Parallel</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.plotly">Plotly</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.serialization">Serialization</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.text">Text</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.visualization">Visualization</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#tools">Tools</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.tools.tensorboard">Tensorboard</a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="api/data.html">Data</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/data.html#scripts">Scripts</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.augmentor">Augmentor</a></li>
@@ -563,6 +528,43 @@ please first open an issue and discuss the feature with us.</p>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.meters.movingaveragevaluemeter">Moving Average Value Meter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.meters.msemeter">MSE Meter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.meters.ppv_tpr_f1_meter">Precision-Recall-F1 Meter</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contrib</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#dl">DL</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks">Callbacks</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#nn">NN</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.nn.criterion.ce">Criterion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.nn.modules.common">Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.nn.optimizers.lamb">Optimizers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.nn.schedulers.base">Schedulers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#models">Models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.models.cv.segmentation.unet">Segmentation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.registry">Registry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#utilities">Utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.argparse">Argparse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.compression">Compression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.confusion_matrix">Confusion Matrix</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.dataset">Dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.misc">Misc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.pandas">Pandas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.parallel">Parallel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.plotly">Plotly</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.serialization">Serialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.text">Text</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#tools">Tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.tools.tensorboard">Tensorboard</a></li>
 </ul>
 </li>
 </ul>

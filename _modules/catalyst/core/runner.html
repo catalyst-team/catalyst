@@ -176,15 +176,16 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../info/distributed.html">Distributed training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../info/contributing.html">Contribution</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data.html">Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
 </ul>
 
             
@@ -263,7 +264,11 @@
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">DistributedSampler</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.tools.settings</span> <span class="kn">import</span> <span class="n">LOADER_TRAIN_PREFIX</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.tools.settings</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">LOADER_INFER_PREFIX</span><span class="p">,</span>
+    <span class="n">LOADER_TRAIN_PREFIX</span><span class="p">,</span>
+    <span class="n">LOADER_VALID_PREFIX</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.tools.typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Criterion</span><span class="p">,</span>
     <span class="n">Device</span><span class="p">,</span>
@@ -685,6 +690,8 @@
             <span class="n">state</span><span class="o">.</span><span class="n">loader_name</span> <span class="o">=</span> <span class="n">loader_name</span>
             <span class="n">state</span><span class="o">.</span><span class="n">loader_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span>
             <span class="n">state</span><span class="o">.</span><span class="n">is_train_loader</span> <span class="o">=</span> <span class="n">loader_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">LOADER_TRAIN_PREFIX</span><span class="p">)</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">is_valid_loader</span> <span class="o">=</span> <span class="n">loader_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">LOADER_VALID_PREFIX</span><span class="p">)</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">is_infer_loader</span> <span class="o">=</span> <span class="n">loader_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">LOADER_INFER_PREFIX</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="p">(</span>
