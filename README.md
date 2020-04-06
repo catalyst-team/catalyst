@@ -71,6 +71,256 @@ runner.train(
 )
 ```
 
+### Minimal Examples
+
+<details>
+<summary>ML - Linear Regression is my profession</summary>
+<p>
+
+```python
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst.dl import SupervisedRunner
+
+# experiment setup
+logdir = "./logdir"
+num_epochs = 8
+
+# data
+num_samples, num_features = int(1e4), int(1e1)
+X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
+dataset = TensorDataset(X, y)
+loader = DataLoader(dataset, batch_size=32, num_workers=1)
+loaders = {"train": loader, "valid": loader}
+
+# model, criterion, optimizer, scheduler
+model = torch.nn.Linear(num_features, 1)
+criterion = torch.nn.MSELoss()
+optimizer = torch.optim.Adam(model.parameters())
+scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+
+# model training
+runner = SupervisedRunner()
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    scheduler=scheduler,
+    loaders=loaders,
+    logdir=logdir,
+    num_epochs=num_epochs,
+    verbose=True,
+)
+```
+</p>
+</details>
+
+<details>
+<summary>CV - MNIST one more time</summary>
+<p>
+
+```python
+import os
+import torch
+from torch.nn import functional as F
+from torch.utils.data import DataLoader
+from torchvision.datasets import MNIST
+from torchvision import transforms
+from catalyst import dl
+
+model = torch.nn.Linear(28 * 28, 10)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
+
+loaders = {
+    "train": DataLoader(MNIST(os.getcwd(), train=False, download=True,transform=transforms.ToTensor()), batch_size=32),
+    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True,transform=transforms.ToTensor()), batch_size=32),
+}
+
+class CustomRunner(dl.Runner):
+    def _handle_batch(self, batch):
+        x, y = batch
+        y_hat = self.model(x.view(x.size(0), -1))
+        loss = F.cross_entropy(y_hat, y)
+        self.state.batch_metrics["loss"] = loss
+        
+        if self.state.is_train_loader:
+            loss.backward()
+            self.state.optimizer.step()
+            self.state.optimizer.zero_grad()
+
+runner = CustomRunner()
+runner.train(
+    model=model, 
+    optimizer=optimizer, 
+    loaders=loaders, 
+    verbose=True,
+)
+```
+</p>
+</details>
+
+<details>
+<summary>CV - MNIST classification with AutoEncoder</summary>
+<p>
+
+```python
+import os
+import torch
+from torch import nn
+from torch.nn import functional as F
+from torch.utils.data import DataLoader
+from torchvision.datasets import MNIST
+from torchvision import transforms
+from catalyst import dl
+
+
+class ClassifyAE(nn.Module):
+    def __init__(self, in_features, hid_features, out_features):
+        super().__init__()
+        self.encoder = nn.Sequential(nn.Linear(in_features, hid_features), nn.Tanh())
+        self.decoder = nn.Linear(hid_features, in_features)
+        self.clf = nn.Linear(hid_features, out_features)
+    
+    def forward(self, x):
+        z = self.encoder(x)
+        y_hat = self.clf(z)
+        x_ = self.decoder(z)
+        return y_hat, x_
+
+
+model = ClassifyAE(28 * 28, 128, 10)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
+
+loaders = {
+    "train": DataLoader(MNIST(os.getcwd(), train=False, download=True,transform=transforms.ToTensor()), batch_size=32),
+    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True,transform=transforms.ToTensor()), batch_size=32),
+}
+
+class CustomRunner(dl.Runner):
+    def _handle_batch(self, batch):
+        x, y = batch
+        x = x.view(x.size(0), -1)
+        y_hat, x_ = self.model(x)
+        loss_clf = F.cross_entropy(y_hat, y)
+        loss_ae = F.mse_loss(x_, x)
+        loss = loss_clf + loss_ae
+        
+        self.state.batch_metrics = {
+            "loss_clf": loss_clf,
+            "loss_ae": loss_ae,
+            "loss": loss
+        }
+        
+        if self.state.is_train_loader:
+            loss.backward()
+            self.state.optimizer.step()
+            self.state.optimizer.zero_grad()
+
+runner = CustomRunner()
+runner.train(
+    model=model, 
+    optimizer=optimizer, 
+    loaders=loaders, 
+    verbose=True,
+)
+```
+</p>
+</details>
+
+<details>
+<summary>GAN - MNIST, flatten version</summary>
+<p>
+
+```python
+import os
+import torch
+from torch import nn
+from torch.nn import functional as F
+from torch.utils.data import DataLoader
+from torchvision.datasets import MNIST
+from torchvision import transforms
+from catalyst import dl
+
+
+generator = nn.Sequential(nn.Linear(128, 28 * 28), nn.Tanh())
+discriminator = nn.Sequential(nn.Linear(28 * 28, 1), nn.Sigmoid())
+model = nn.ModuleDict({"generator": generator, "discriminator": discriminator})
+
+generator_optimizer = torch.optim.Adam(
+    generator.parameters(), lr=0.0001, betas=(0.5, 0.999))
+discriminator_optimizer = torch.optim.Adam(
+    discriminator.parameters(), lr=0.0001, betas=(0.5, 0.999))
+optimizer = {
+    "generator": generator_optimizer,
+    "discriminator": discriminator_optimizer,
+}
+
+loaders = {
+    "train": DataLoader(MNIST(os.getcwd(), train=False, download=True,transform=transforms.ToTensor()), batch_size=32),
+    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True,transform=transforms.ToTensor()), batch_size=32),
+}
+
+class CustomRunner(dl.Runner):
+    
+    def _handle_batch(self, batch):
+        state = self.state
+        
+        images, _ = batch
+        images = images.view(images.size(0), -1)
+        bs = images.shape[0]
+        z = torch.randn(bs, 128).to(self.device)
+        generated_images = self.model["generator"](z)
+        
+        # generator step
+        ## predictions & labels
+        generated_labels = torch.ones(bs, 1).to(self.device)
+        generated_pred = self.model["discriminator"](generated_images)
+
+        ## loss
+        loss_generator = F.binary_cross_entropy(generated_pred, generated_labels)
+        state.batch_metrics["loss_generator"] = loss_generator
+
+        # discriminator step
+        ## real
+        images_labels = torch.ones(bs, 1).to(self.device)
+        images_pred = self.model["discriminator"](images)
+        real_loss = F.binary_cross_entropy(images_pred, images_labels)
+
+        ## fake
+        generated_labels_ = torch.zeros(bs, 1).to(self.device)
+        generated_pred_ = self.model["discriminator"](generated_images.detach())
+        fake_loss = F.binary_cross_entropy(generated_pred_, generated_labels_)
+
+        ## loss
+        loss_discriminator = (real_loss + fake_loss) / 2.0
+        state.batch_metrics["loss_discriminator"] = loss_discriminator
+
+runner = CustomRunner()
+runner.train(
+    model=model, 
+    optimizer=optimizer,
+    loaders=loaders,
+    callbacks=[
+        dl.OptimizerCallback(
+            optimizer_key="generator", 
+            loss_key="loss_generator"
+        ),
+        dl.OptimizerCallback(
+            optimizer_key="discriminator", 
+            loss_key="loss_discriminator"
+        ),
+    ],
+    main_metric="loss_generator",
+    num_epochs=5,
+    logdir="./logs/gan",
+    verbose=True,
+)
+```
+</p>
+</details>
+
+[Demo with minimal examples for ML, CV, NLP, GANs and RecSys](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
+
 For Catalyst.RL introduction, please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
 
 
@@ -161,7 +411,7 @@ best practices for the automated parts.
 ## Catalyst
 
 ### Tutorials
-- [Demo with minimal examples](./examples/notebooks/demo.ipynb) for CV, NLP, RecSys and GANs [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
+- [Demo with minimal examples](./examples/notebooks/demo.ipynb) for ML, CV, NLP, GANs and RecSys [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
 - Detailed [classification tutorial](./examples/notebooks/classification-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb)
 - Advanced [segmentation tutorial](./examples/notebooks/segmentation-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb)
 - Comprehensive [classification pipeline](https://github.com/catalyst-team/classification)

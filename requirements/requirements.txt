@@ -1,22 +1,32 @@
 # Framework must-haves
 numpy>=1.16.4
 torch>=1.0.0
+tqdm>=4.33.0
+PyYAML
+
+# packaging
+packaging
+deprecation
+
+# wizard
+ipython
+
+# logging
+tensorboard>=1.14.0
+tensorboardX
+crc32c>=1.7
+
+# cv -> cv
 torchvision>=0.2.1
 Pillow<7
 imageio
 opencv-python
 scikit-image>=0.14.2
-tqdm>=4.33.0
-PyYAML
-tensorboard>=1.14.0
-tensorboardX
-plotly>=4.1.0
-crc32c>=1.7
-ipython
-packaging
-deprecation
 
-# Used in scripts
+# logs -> contrib
+plotly>=4.1.0
+
+# Used in scripts  -> contrib
 matplotlib
 seaborn
 pandas>=0.22
