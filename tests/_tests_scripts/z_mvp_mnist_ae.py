@@ -88,5 +88,9 @@ class CustomRunner(dl.Runner):
 
 runner = CustomRunner()
 runner.train(
-    model=model, optimizer=optimizer, loaders=loaders, verbose=True,
+    model=model,
+    optimizer=optimizer,
+    loaders=loaders,
+    verbose=True,
+    check=True,
 )

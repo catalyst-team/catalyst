@@ -31,4 +31,5 @@ runner.train(
     logdir=logdir,
     num_epochs=num_epochs,
     verbose=True,
+    check=True,
 )

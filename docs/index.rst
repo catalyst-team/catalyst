@@ -225,7 +225,9 @@ Indices and tables
 
     self
     info/examples
+    info/distributed
     info/contributing
+
 
 .. toctree::
     :caption: API
@@ -233,6 +235,6 @@ Indices and tables
     api/core
     api/dl
 
-    api/contrib
     api/data
     api/utils
+    api/contrib

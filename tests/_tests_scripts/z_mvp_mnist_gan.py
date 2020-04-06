@@ -109,4 +109,5 @@ runner.train(
     num_epochs=5,
     logdir="./logs/gan",
     verbose=True,
+    check=True,
 )
