@@ -1,9 +1,9 @@
-from typing import Dict, List, Union  # isort:skip
+from typing import Dict, List, Union
 from collections import OrderedDict
 from copy import deepcopy
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 from catalyst import utils
 from catalyst.contrib.registry import MODULES
@@ -18,15 +18,21 @@ def _process_additional_params(params, layers):
 
 
 class ResidualWrapper(nn.Module):
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(self, net):
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__()
         self.net = net
 
     def forward(self, x):
+        """Forward call."""
         return x + self.net(x)
 
 
 class SequentialNet(nn.Module):
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(
         self,
         hiddens,
@@ -37,7 +43,7 @@ class SequentialNet(nn.Module):
         residual: Union[bool, str] = False,
         layer_order: List = None,
     ):
-
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__()
         assert len(hiddens) > 1, "No sequence found"
 
@@ -63,24 +69,25 @@ class SequentialNet(nn.Module):
 
         def _normalization_fn(normalization_fn, f_in, f_out, **kwargs):
             normalization_fn = MODULES.get_if_str(normalization_fn)
-            normalization_fn = \
-                normalization_fn(f_out, **kwargs) \
-                if normalization_fn is not None \
+            normalization_fn = (
+                normalization_fn(f_out, **kwargs)
+                if normalization_fn is not None
                 else None
+            )
             return normalization_fn
 
         def _dropout_fn(dropout_fn, f_in, f_out, **kwargs):
             dropout_fn = MODULES.get_if_str(dropout_fn)
-            dropout_fn = dropout_fn(**kwargs) \
-                if dropout_fn is not None \
-                else None
+            dropout_fn = (
+                dropout_fn(**kwargs) if dropout_fn is not None else None
+            )
             return dropout_fn
 
         def _activation_fn(activation_fn, f_in, f_out, **kwargs):
             activation_fn = MODULES.get_if_str(activation_fn)
-            activation_fn = activation_fn(**kwargs) \
-                if activation_fn is not None \
-                else None
+            activation_fn = (
+                activation_fn(**kwargs) if activation_fn is not None else None
+            )
             return activation_fn
 
         name2fn = {
@@ -118,8 +125,9 @@ class SequentialNet(nn.Module):
 
             if block_.get("act", None) is not None:
                 activation = block_["act"]
-                activation_init = \
-                    utils.get_optimal_inner_init(nonlinearity=activation)
+                activation_init = utils.get_optimal_inner_init(
+                    nonlinearity=activation
+                )
                 block.apply(activation_init)
 
             if residual == "hard" or (residual == "soft" and f_in == f_out):
@@ -129,6 +137,7 @@ class SequentialNet(nn.Module):
         self.net = torch.nn.Sequential(OrderedDict(net))
 
     def forward(self, x):
+        """Forward call."""
         x = self.net.forward(x)
         return x
 

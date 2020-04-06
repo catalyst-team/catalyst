@@ -11,6 +11,7 @@ logger = logging.getLogger(__name__)
 
 try:
     import lz4.frame
+
     LZ4_ENABLED = True
 except ImportError as ex:
     if os.environ.get("USE_LZ4", "0") == "1":
@@ -23,10 +24,12 @@ except ImportError as ex:
 
 
 def is_compressed(data):
-    return isinstance(data, bytes) or isinstance(data, string_types)
+    """@TODO: Docs. Contribution is welcome."""
+    return isinstance(data, (bytes, string_types))
 
 
 def compress(data):
+    """@TODO: Docs. Contribution is welcome."""
     if LZ4_ENABLED:
         data = serialize(data)
         data = lz4.frame.compress(data)
@@ -35,12 +38,14 @@ def compress(data):
 
 
 def compress_if_needed(data):
+    """@TODO: Docs. Contribution is welcome."""
     if isinstance(data, np.ndarray):
         data = compress(data)
     return data
 
 
 def decompress(data):
+    """@TODO: Docs. Contribution is welcome."""
     if LZ4_ENABLED:
         data = base64.b64decode(data)
         data = lz4.frame.decompress(data)
@@ -49,6 +54,7 @@ def decompress(data):
 
 
 def decompress_if_needed(data):
+    """@TODO: Docs. Contribution is welcome."""
     if is_compressed(data):
         data = decompress(data)
     return data
@@ -64,3 +70,5 @@ else:
     pack_if_needed = serialize
     unpack = deserialize
     unpack_if_needed = deserialize
+
+__all__ = ["pack", "pack_if_needed", "unpack", "unpack_if_needed"]

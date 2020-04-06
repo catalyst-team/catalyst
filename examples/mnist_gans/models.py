@@ -9,12 +9,13 @@ import torch.nn as nn
 
 class SimpleGenerator(nn.Module):
     """Simple fully-connected generator"""
+
     def __init__(
         self,
         noise_dim=10,
         hidden_dim=256,
         image_resolution=(28, 28),
-        channels=1
+        channels=1,
     ):
         """
 
@@ -29,10 +30,14 @@ class SimpleGenerator(nn.Module):
         self.channels = channels
 
         self.net = nn.Sequential(
-            nn.Linear(noise_dim, hidden_dim), nn.LeakyReLU(0.05),
-            nn.Linear(hidden_dim, hidden_dim), nn.LeakyReLU(0.05),
-            nn.Linear(hidden_dim, hidden_dim), nn.LeakyReLU(0.05),
-            nn.Linear(hidden_dim, np.prod(image_resolution)), nn.Tanh()
+            nn.Linear(noise_dim, hidden_dim),
+            nn.LeakyReLU(0.05),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.LeakyReLU(0.05),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.LeakyReLU(0.05),
+            nn.Linear(hidden_dim, np.prod(image_resolution)),
+            nn.Tanh(),
         )
 
     def forward(self, x):
@@ -49,10 +54,14 @@ class SimpleDiscriminator(nn.Module):
 
         self.net = nn.Sequential(
             nn.Linear(channels * np.prod(image_resolution), hidden_dim),
-            nn.LeakyReLU(0.05), nn.Linear(hidden_dim, hidden_dim),
-            nn.LeakyReLU(0.05), nn.Linear(hidden_dim, hidden_dim),
-            nn.LeakyReLU(0.05), nn.Linear(hidden_dim, hidden_dim),
-            nn.LeakyReLU(0.05), nn.Linear(hidden_dim, 1)
+            nn.LeakyReLU(0.05),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.LeakyReLU(0.05),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.LeakyReLU(0.05),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.LeakyReLU(0.05),
+            nn.Linear(hidden_dim, 1),
         )
 
     def forward(self, x):
@@ -67,7 +76,7 @@ class SimpleCGenerator(SimpleGenerator):
         num_classes=10,
         hidden_dim=256,
         image_resolution=(28, 28),
-        channels=1
+        channels=1,
     ):
         super().__init__(
             noise_dim + num_classes, hidden_dim, image_resolution, channels
@@ -85,7 +94,7 @@ class SimpleCDiscriminator(nn.Module):
         num_classes=10,
         image_resolution=(28, 28),
         channels=1,
-        hidden_dim=100
+        hidden_dim=100,
     ):
         super().__init__()
         self.image_resolution = image_resolution
@@ -93,10 +102,13 @@ class SimpleCDiscriminator(nn.Module):
 
         self.embedder = nn.Sequential(
             nn.Linear(channels * np.prod(image_resolution), hidden_dim),
-            nn.LeakyReLU(0.05), nn.Linear(hidden_dim, hidden_dim),
-            nn.LeakyReLU(0.05), nn.Linear(hidden_dim, hidden_dim),
-            nn.LeakyReLU(0.05), nn.Linear(hidden_dim, hidden_dim),
-            nn.LeakyReLU(0.05)
+            nn.LeakyReLU(0.05),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.LeakyReLU(0.05),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.LeakyReLU(0.05),
+            nn.Linear(hidden_dim, hidden_dim),
+            nn.LeakyReLU(0.05),
         )
         self.classifier = nn.Linear(hidden_dim + num_classes, 1)
 
@@ -107,6 +119,8 @@ class SimpleCDiscriminator(nn.Module):
 
 
 __all__ = [
-    "SimpleGenerator", "SimpleDiscriminator", "SimpleCGenerator",
-    "SimpleCDiscriminator"
+    "SimpleGenerator",
+    "SimpleDiscriminator",
+    "SimpleCGenerator",
+    "SimpleCDiscriminator",
 ]

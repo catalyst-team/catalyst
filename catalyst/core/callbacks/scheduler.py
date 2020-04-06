@@ -1,17 +1,19 @@
 import torch
 
-from catalyst import utils
 from catalyst.contrib.nn.schedulers import BatchScheduler, OneCycleLRWithWarmup
-from catalyst.core import Callback, CallbackNode, CallbackOrder, State
+from catalyst.core import Callback, CallbackNode, CallbackOrder, State, utils
 
 
 class SchedulerCallback(Callback):
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(
         self,
         scheduler_key: str = None,
         mode: str = None,
-        reduced_metric: str = None
+        reduced_metric: str = None,
     ):
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__(order=CallbackOrder.Scheduler, node=CallbackNode.All)
         self.scheduler_key = scheduler_key
         self.mode = mode
@@ -19,8 +21,7 @@ class SchedulerCallback(Callback):
 
     @staticmethod
     def _scheduler_step(
-        scheduler,
-        reduced_metric=None,
+        scheduler, reduced_metric=None,
     ):
         if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
             scheduler.step(reduced_metric)
@@ -33,20 +34,31 @@ class SchedulerCallback(Callback):
 
         return lr, momentum
 
-    def step_batch(self, state: State):
+    def step_batch(self, state: State) -> None:
+        """@TODO: Docs. Contribution is welcome.
+
+        Args:
+            state (State): current state
+        """
         lr, momentum = self._scheduler_step(scheduler=self._scheduler)
 
         if self.scheduler_key is not None:
             state.batch_metrics[f"lr/{self.scheduler_key}"] = lr
             if momentum is not None:
-                state.batch_metrics[f"momentum/{self.scheduler_key}"] = \
-                    momentum
+                state.batch_metrics[
+                    f"momentum/{self.scheduler_key}"
+                ] = momentum
         else:
             state.batch_metrics["lr"] = lr
             if momentum is not None:
                 state.batch_metrics["momentum"] = momentum
 
-    def step_epoch(self, state: State):
+    def step_epoch(self, state: State) -> None:
+        """@TODO: Docs. Contribution is welcome.
+
+        Args:
+            state (State): current state
+        """
         reduced_metric = state.valid_metrics[self.reduced_metric]
         lr, momentum = self._scheduler_step(
             scheduler=self._scheduler, reduced_metric=reduced_metric
@@ -55,14 +67,20 @@ class SchedulerCallback(Callback):
         if self.scheduler_key is not None:
             state.epoch_metrics[f"lr/{self.scheduler_key}"] = lr
             if momentum is not None:
-                state.epoch_metrics[f"momentum/{self.scheduler_key}"] = \
-                    momentum
+                state.epoch_metrics[
+                    f"momentum/{self.scheduler_key}"
+                ] = momentum
         else:
             state.epoch_metrics["lr"] = lr
             if momentum is not None:
                 state.epoch_metrics["momentum"] = momentum
 
-    def on_stage_start(self, state: State):
+    def on_stage_start(self, state: State) -> None:
+        """Stage start hook.
+
+        Args:
+            state (State): current state
+        """
         self.reduced_metric = self.reduced_metric or state.main_metric
 
         scheduler = state.get_attr(
@@ -77,34 +95,54 @@ class SchedulerCallback(Callback):
             else:
                 self.mode = "epoch"
 
-        if isinstance(scheduler, OneCycleLRWithWarmup) and \
-                self.mode == "batch":
+        if (
+            isinstance(scheduler, OneCycleLRWithWarmup)
+            and self.mode == "batch"
+        ):
             scheduler.reset()
         assert self.mode is not None
 
-    def on_loader_start(self, state: State):
-        if state.is_train_loader and \
-                isinstance(self._scheduler, OneCycleLRWithWarmup) and \
-                self.mode == "batch":
+    def on_loader_start(self, state: State) -> None:
+        """Loader start hook.
+
+        Args:
+            state (State): current state
+        """
+        if (
+            state.is_train_loader
+            and isinstance(self._scheduler, OneCycleLRWithWarmup)
+            and self.mode == "batch"
+        ):
             self._scheduler.recalculate(
                 loader_len=state.loader_len, current_step=state.epoch
             )
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: State) -> None:
+        """Batch end hook.
+
+        Args:
+            state (State): current state
+        """
         if state.is_train_loader and self.mode == "batch":
             self.step_batch(state=state)
 
-    def on_epoch_end(self, state: State):
+    def on_epoch_end(self, state: State) -> None:
+        """Epoch end hook.
+
+        Args:
+            state (State): current state
+        """
         if self.mode == "epoch":
             self.step_epoch(state=state)
 
 
 class LRUpdater(Callback):
-    """Basic class that all Lr updaters inherit from"""
+    """Basic class that all Lr updaters inherit from."""
+
     def __init__(self, optimizer_key: str = None):
         """
         Args:
-            optimizer_key: which optimizer key to use
+            optimizer_key (str): which optimizer key to use
                 for learning rate scheduling
         """
         super().__init__(order=CallbackOrder.Scheduler, node=CallbackNode.All)
@@ -112,18 +150,20 @@ class LRUpdater(Callback):
         self.optimizer_key = optimizer_key
 
     def calc_lr(self):
+        """@TODO: Docs. Contribution is welcome."""
         return None
 
     def calc_momentum(self):
+        """@TODO: Docs. Contribution is welcome."""
         return None
 
     @staticmethod
-    def _update_lr(optimizer, new_lr):
+    def _update_lr(optimizer, new_lr) -> None:
         for pg in optimizer.param_groups:
             pg["lr"] = new_lr
 
     @staticmethod
-    def _update_momentum(optimizer, new_momentum):
+    def _update_momentum(optimizer, new_momentum) -> None:
         if "betas" in optimizer.param_groups[0]:
             for pg in optimizer.param_groups:
                 pg["betas"] = (new_momentum, pg["betas"][1])
@@ -131,7 +171,7 @@ class LRUpdater(Callback):
             for pg in optimizer.param_groups:
                 pg["momentum"] = new_momentum
 
-    def _update_optimizer(self, optimizer):
+    def _update_optimizer(self, optimizer) -> None:
         new_lr = self.calc_lr()
         if new_lr is not None:
             self._update_lr(optimizer, new_lr)
@@ -144,7 +184,12 @@ class LRUpdater(Callback):
 
         return new_lr, new_momentum
 
-    def update_optimizer(self, state: State):
+    def update_optimizer(self, state: State) -> None:
+        """@TODO: Docs. Contribution is welcome.
+
+        Args:
+            state (State): current state
+        """
         lr, momentum = self._update_optimizer(optimizer=self._optimizer)
 
         if self.optimizer_key is not None:
@@ -154,7 +199,12 @@ class LRUpdater(Callback):
             state.batch_metrics["lr"] = lr
             state.batch_metrics["momentum"] = momentum
 
-    def on_stage_start(self, state: State):
+    def on_stage_start(self, state: State) -> None:
+        """Stage start hook.
+
+        Args:
+            state (State): current state
+        """
         optimizer = state.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
@@ -162,11 +212,21 @@ class LRUpdater(Callback):
         self._optimizer = optimizer
         self.init_lr = optimizer.defaults["lr"]
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, state: State) -> None:
+        """Loader start hook.
+
+        Args:
+            state (State): current state
+        """
         if state.is_train_loader:
             self.update_optimizer(state=state)
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: State) -> None:
+        """Batch end hook.
+
+        Args:
+            state (State): current state
+        """
         if state.is_train_loader:
             self.update_optimizer(state=state)
 

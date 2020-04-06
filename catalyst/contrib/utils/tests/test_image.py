@@ -8,9 +8,7 @@ from catalyst.contrib.utils.image import _IMAGENET_MEAN, _IMAGENET_STD
 
 
 def test_imread():
-    """
-    Tests imread functionality
-    """
+    """Tests ``imread`` functionality."""
     jpg_rgb_uri = (
         "https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master"
         "/test_images/catalyst_icon.jpg"
@@ -36,9 +34,7 @@ def test_imread():
 
 
 def test_tensor_to_ndimage():
-    """
-    Tests tensor_to_ndimage functionality
-    """
+    """Tests ``tensor_to_ndimage`` functionality."""
     orig_images = np.random.randint(0, 255, (2, 20, 10, 3), np.uint8)
 
     torch_images = torch.stack(
@@ -46,7 +42,7 @@ def test_tensor_to_ndimage():
             normalize(to_tensor(im), _IMAGENET_MEAN, _IMAGENET_STD)
             for im in orig_images
         ],
-        dim=0
+        dim=0,
     )
 
     byte_images = utils.tensor_to_ndimage(torch_images, dtype=np.uint8)
@@ -59,5 +55,5 @@ def test_tensor_to_ndimage():
         utils.tensor_to_ndimage(torch_images[0]),
         orig_images[0] / 255,
         atol=1e-3,
-        rtol=1e-3
+        rtol=1e-3,
     )

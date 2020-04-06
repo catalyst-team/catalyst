@@ -1,12 +1,19 @@
-from typing import List  # isort:skip
+from typing import List
 from abc import ABC, abstractmethod
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 
 class DecoderSpec(ABC, nn.Module):
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(self, in_channels: List[int], in_strides: List[int]):
+        """
+        Args:
+            in_channels (List[int]): number of channels in the input sample
+            in_strides (List[int]): the stride of the block
+        """
         super().__init__()
         self.in_channels = in_channels
         self.in_strides = in_strides
@@ -14,13 +21,16 @@ class DecoderSpec(ABC, nn.Module):
     @property
     @abstractmethod
     def out_channels(self) -> List[int]:
+        """Number of channels produced by the block."""
         pass
 
     @property
     @abstractmethod
     def out_strides(self) -> List[int]:
+        """@TODO: Docs. Contribution is welcome."""
         pass
 
     @abstractmethod
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
+        """Forward call."""
         pass

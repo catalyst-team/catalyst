@@ -34,7 +34,7 @@ def _get_loaders(batch_size=1, num_workers=1):
     data_transform = transforms.Compose(
         [
             transforms.ToTensor(),
-            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+            transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
         ]
     )
 
@@ -62,7 +62,7 @@ def test_save_model_grads():
     loaders = _get_loaders(batch_size=4, num_workers=1)
     callbacks = collections.OrderedDict(
         loss=CriterionCallback(),
-        optimizer=OptimizerCallback(save_model_grads=True)
+        optimizer=OptimizerCallback(save_model_grads=True),
     )
     runner = SupervisedRunner()
     runner.train(

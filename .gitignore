@@ -117,8 +117,8 @@ logs/
 dataset/
 # Examples - mock data
 !examples/distilbert_text_classification/input/*.csv
-!examples/_tests_nlp_classification/input/*.csv
-examples/logs/
+!tests/_tests_nlp_classification/input/*.csv
+tests/logs/
 notebooks/
 
 _nogit*

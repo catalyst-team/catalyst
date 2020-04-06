@@ -6,8 +6,10 @@ from .early_stop import CheckRunCallback, EarlyStoppingCallback
 from .exception import ExceptionCallback
 from .logging import ConsoleLogger, TensorboardLogger, VerboseLogger
 from .metrics import (
-    MetricAggregationCallback, MetricCallback, MetricManagerCallback,
-    MultiMetricCallback
+    MetricAggregationCallback,
+    MetricCallback,
+    MetricManagerCallback,
+    MultiMetricCallback,
 )
 from .optimizer import OptimizerCallback
 from .scheduler import LRUpdater, SchedulerCallback

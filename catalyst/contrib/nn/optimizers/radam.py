@@ -1,3 +1,4 @@
+from typing import Callable, Optional
 import math
 
 import torch
@@ -5,21 +6,44 @@ from torch.optim.optimizer import Optimizer
 
 
 class RAdam(Optimizer):
+    """Implements RAdam algorithm.
+
+    It has been proposed in `On the Variance of the Adaptive Learning Rate
+    and Beyond`_.
+
+    @TODO: Docs (add `Example`). Contribution is welcome
+
+    Main origins of inspiration:
+        https://github.com/LiyuanLucasLiu/RAdam (Apache-2.0 License)
+
+    .. _On the Variance of the Adaptive Learning Rate and Beyond:
+        https://arxiv.org/abs/1908.03265
+    """
+
     def __init__(
         self, params, lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=0
     ):
-        """
-        Taken from https://github.com/LiyuanLucasLiu/RAdam
-        """
-        defaults = dict(lr=lr, betas=betas, eps=eps, weight_decay=weight_decay)
+        """@TODO: Docs. Contribution is welcome."""
+        defaults = {
+            "lr": lr,
+            "betas": betas,
+            "eps": eps,
+            "weight_decay": weight_decay,
+        }
         self.buffer = [[None, None, None] for _ in range(10)]
         super(RAdam, self).__init__(params, defaults)
 
     def __setstate__(self, state):
+        """@TODO: Docs. Contribution is welcome."""
         super(RAdam, self).__setstate__(state)
 
-    def step(self, closure=None):
+    def step(self, closure: Optional[Callable] = None):
+        """Makes optimizer step.
 
+        Args:
+            closure (callable, optional): A closure that reevaluates
+                the model and returns the loss.
+        """
         loss = None
         if closure is not None:
             loss = closure()
@@ -61,20 +85,30 @@ class RAdam(Optimizer):
                     N_sma, step_size = buffered[1], buffered[2]
                 else:
                     buffered[0] = state["step"]
-                    beta2_t = beta2**state["step"]
+                    beta2_t = beta2 ** state["step"]
                     N_sma_max = 2 / (1 - beta2) - 1
-                    N_sma = \
-                        N_sma_max - 2 * state["step"] * beta2_t / (1 - beta2_t)
+                    N_sma = N_sma_max - 2 * state["step"] * beta2_t / (
+                        1 - beta2_t
+                    )
                     buffered[1] = N_sma
 
                     # more conservative since it's an approximated value
                     if N_sma >= 5:
-                        step_size = group["lr"] * math.sqrt(
-                            (1 - beta2_t) * (N_sma - 4) / (N_sma_max - 4) *
-                            (N_sma - 2) / N_sma * N_sma_max / (N_sma_max - 2)
-                        ) / (1 - beta1**state["step"])
+                        step_size = (
+                            group["lr"]
+                            * math.sqrt(
+                                (1 - beta2_t)
+                                * (N_sma - 4)
+                                / (N_sma_max - 4)
+                                * (N_sma - 2)
+                                / N_sma
+                                * N_sma_max
+                                / (N_sma_max - 2)
+                            )
+                            / (1 - beta1 ** state["step"])
+                        )
                     else:
-                        step_size = group["lr"] / (1 - beta1**state["step"])
+                        step_size = group["lr"] / (1 - beta1 ** state["step"])
                     buffered[2] = step_size
 
                 if group["weight_decay"] != 0:

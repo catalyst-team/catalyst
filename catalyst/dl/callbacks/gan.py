@@ -1,18 +1,14 @@
-from typing import Dict, List  # isort:skip
+from typing import Dict, List, Optional
 
 from catalyst.core import CriterionCallback, OptimizerCallback
 from catalyst.dl import MetricCallback, State
 
-
-"""
-MetricCallbacks alternatives for input/output keys
-"""
+# MetricCallbacks alternatives for input/output keys
 
 
 class WassersteinDistanceCallback(MetricCallback):
-    """
-    Callback to compute Wasserstein distance metric
-    """
+    """Callback to compute Wasserstein distance metric."""
+
     def __init__(
         self,
         prefix: str = "wasserstein_distance",
@@ -21,10 +17,10 @@ class WassersteinDistanceCallback(MetricCallback):
         multiplier: float = 1.0,
     ):
         """
-
-        :param prefix:
-        :param real_validity_output_key:
-        :param fake_validity_output_key:
+        Args:
+            prefix (str):
+            real_validity_output_key (str):
+            fake_validity_output_key (str):
         """
         super().__init__(
             prefix,
@@ -32,62 +28,58 @@ class WassersteinDistanceCallback(MetricCallback):
             input_key={},
             output_key={
                 real_validity_output_key: "real_validity",
-                fake_validity_output_key: "fake_validity"
+                fake_validity_output_key: "fake_validity",
             },
-            multiplier=multiplier
+            multiplier=multiplier,
         )
 
     def get_wasserstein_distance(self, real_validity, fake_validity):
-        """
-        Computes Wasserstein distance
-        """
+        """Computes Wasserstein distance."""
         return real_validity.mean() - fake_validity.mean()
 
 
-"""
-CriterionCallback extended
-"""
+# CriterionCallback extended
 
 
 class GradientPenaltyCallback(CriterionCallback):
-    """
-    Criterion Callback to compute Gradient Penalty
-    """
+    """Criterion Callback to compute Gradient Penalty."""
+
     def __init__(
         self,
         real_input_key: str = "data",
         fake_output_key: str = "fake_data",
-        condition_keys: List[str] = None,
+        condition_keys: Optional[List[str]] = None,
         critic_model_key: str = "critic",
         critic_criterion_key: str = "critic",
         real_data_criterion_key: str = "real_data",
         fake_data_criterion_key: str = "fake_data",
         condition_args_criterion_key: str = "critic_condition_args",
         prefix: str = "loss",
-        criterion_key: str = None,
+        criterion_key: Optional[str] = None,
         multiplier: float = 1.0,
     ):
         """
-
-        :param real_input_key: real data key in state.input
-        :param fake_output_key: fake data key in state.output
-        :param condition_keys: all condition keys in state.input for critic
-        :param critic_model_key: key for critic model in state.model
-        :param critic_criterion_key: key for critic model in criterion
-        :param real_data_criterion_key: key for real data in criterion
-        :param fake_data_criterion_key: key for fake data in criterion
-        :param condition_args_criterion_key: key for all condition args
-            in criterion
-        :param prefix:
-        :param criterion_key:
-        :param multiplier:
+        Args:
+            real_input_key (str): real data key in ``state.input``
+            fake_output_key (str): fake data key in ``state.output``
+            condition_keys (List[str], optional): all condition keys
+                in ``state.input`` for critic
+            critic_model_key (str): key for critic model in ``state.model``
+            critic_criterion_key (str): key for critic model in criterion
+            real_data_criterion_key (str): key for real data in criterion
+            fake_data_criterion_key (str): key for fake data in criterion
+            condition_args_criterion_key (str): key for all condition args
+                in criterion
+            prefix (str):
+            criterion_key (str):
+            multiplier (float):
         """
         super().__init__(
             input_key=real_input_key,
             output_key=fake_output_key,
             prefix=prefix,
             criterion_key=criterion_key,
-            multiplier=multiplier
+            multiplier=multiplier,
         )
         self.condition_keys = condition_keys or []
         self.critic_model_key = critic_model_key
@@ -103,52 +95,55 @@ class GradientPenaltyCallback(CriterionCallback):
             self.critic_criterion_key: state.model[self.critic_model_key],
             self.condition_args_criterion_key: [
                 state.batch_in[key] for key in self.condition_keys
-            ]
+            ],
         }
         criterion = state.get_attr("criterion", self.criterion_key)
         return criterion(**criterion_kwargs)
 
 
-"""
-Optimizer Callback with weights clamp after update
-"""
+# Optimizer Callback with weights clamp after update
 
 
 class WeightClampingOptimizerCallback(OptimizerCallback):
-    """
-    Optimizer callback + weights clipping after step is finished
-    """
+    """Optimizer callback + weights clipping after step is finished."""
+
     def __init__(
         self,
-        grad_clip_params: Dict = None,
+        grad_clip_params: Optional[Dict] = None,
         accumulation_steps: int = 1,
-        optimizer_key: str = None,
+        optimizer_key: Optional[str] = None,
         loss_key: str = "loss",
         decouple_weight_decay: bool = True,
-        weight_clamp_value: float = 0.01
+        weight_clamp_value: float = 0.01,
     ):
         """
+        Args:
+            grad_clip_params (dict, optional):
+            accumulation_steps (int):
+            optimizer_key (str, optional):
+            loss_key (str):
+            decouple_weight_decay (bool):
+            weight_clamp_value (float): value to clamp weights after each
+                optimization iteration
 
-        :param grad_clip_params:
-        :param accumulation_steps:
-        :param optimizer_key:
-        :param loss_key:
-        :param decouple_weight_decay:
-        :param weight_clamp_value:
-            value to clamp weights after each optimization iteration
-            Attention: will clamp WEIGHTS, not GRADIENTS
+        .. note::
+            ``weight_clamp_value`` will clamp WEIGHTS, not GRADIENTS
         """
         super().__init__(
             grad_clip_params=grad_clip_params,
             accumulation_steps=accumulation_steps,
             optimizer_key=optimizer_key,
             loss_key=loss_key,
-            decouple_weight_decay=decouple_weight_decay
+            decouple_weight_decay=decouple_weight_decay,
         )
         self.weight_clamp_value = weight_clamp_value
 
-    def on_batch_end(self, state: State):
-        """On batch end event"""
+    def on_batch_end(self, state: State) -> None:
+        """On batch end event.
+
+        Args:
+            state (State): current state
+        """
         super().on_batch_end(state)
         if not state.is_train_loader:
             return
@@ -157,19 +152,21 @@ class WeightClampingOptimizerCallback(OptimizerCallback):
             key="optimizer", inner_key=self.optimizer_key
         )
 
-        need_gradient_step = \
+        need_gradient_step = (
             self._accumulation_counter % self.accumulation_steps == 0
+        )
 
         if need_gradient_step:
             for group in optimizer.param_groups:
                 for param in group["params"]:
                     param.data.clamp_(
                         min=-self.weight_clamp_value,
-                        max=self.weight_clamp_value
+                        max=self.weight_clamp_value,
                     )
 
 
 __all__ = [
-    "WassersteinDistanceCallback", "GradientPenaltyCallback",
-    "WeightClampingOptimizerCallback"
+    "WassersteinDistanceCallback",
+    "GradientPenaltyCallback",
+    "WeightClampingOptimizerCallback",
 ]

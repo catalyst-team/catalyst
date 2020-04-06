@@ -1,11 +1,11 @@
-from typing import Dict, List, Optional, Union  # isort:skip
+from typing import Dict, List, Optional, Union
 from collections import defaultdict
 from pathlib import Path
 
 import plotly.graph_objs as go
 from plotly.offline import init_notebook_mode, iplot
 
-from catalyst.utils.tools.tensorboard import SummaryItem, SummaryReader
+from .tools.tensorboard import SummaryItem, SummaryReader
 
 
 def _get_tensorboard_scalars(
@@ -33,14 +33,16 @@ def plot_tensorboard_log(
     step: Optional[str] = "batch",
     metrics: Optional[List[str]] = None,
     height: Optional[int] = None,
-    width: Optional[int] = None
+    width: Optional[int] = None,
 ) -> None:
+    """@TODO: Docs. Contribution is welcome."""
     init_notebook_mode()
     logdir = Path(logdir)
 
     logdirs = {
         x.name.replace("_log", ""): x
-        for x in logdir.glob("**/*") if x.is_dir() and str(x).endswith("_log")
+        for x in logdir.glob("**/*")
+        if x.is_dir() and str(x).endswith("_log")
     }
 
     scalars_per_loader = {
@@ -66,7 +68,7 @@ def plot_tensorboard_log(
             title=metric_name,
             height=height,
             width=width,
-            yaxis=dict(hoverformat=".5f")
+            yaxis={"hoverformat": ".5f"},
         )
         iplot(go.Figure(data=metric_data, layout=layout))
 

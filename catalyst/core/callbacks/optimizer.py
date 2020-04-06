@@ -1,11 +1,15 @@
-from typing import Callable, Dict, List  # isort:skip
+from typing import Callable, Dict, List
 import logging
 
 from torch.nn.parallel import DataParallel, DistributedDataParallel
 
-from catalyst import utils
 from catalyst.core import (
-    Callback, CallbackNode, CallbackOrder, registry, State
+    Callback,
+    CallbackNode,
+    CallbackOrder,
+    registry,
+    State,
+    utils,
 )
 from catalyst.utils.tools.typing import Optimizer
 
@@ -13,9 +17,8 @@ logger = logging.getLogger(__name__)
 
 
 class OptimizerCallback(Callback):
-    """
-    Optimizer callback, abstraction over optimizer step.
-    """
+    """Optimizer callback, abstraction over optimizer step."""
+
     def __init__(
         self,
         loss_key: str = "loss",
@@ -47,8 +50,8 @@ class OptimizerCallback(Callback):
         self._accumulation_counter: int = 0
 
         grad_clip_params: dict = grad_clip_params or {}
-        self.grad_clip_fn = (
-            registry.GRAD_CLIPPERS.get_from_params(**grad_clip_params)
+        self.grad_clip_fn = registry.GRAD_CLIPPERS.get_from_params(
+            **grad_clip_params
         )
         self.norm_type = grad_clip_params.get("norm_type", 2)
 
@@ -64,10 +67,9 @@ class OptimizerCallback(Callback):
         *,
         optimizer: Optimizer,
         optimizer_wds: List[float] = 0,
-        grad_clip_fn: Callable = None
-    ):
-        """
-        Makes a gradient step for a given optimizer
+        grad_clip_fn: Callable = None,
+    ) -> None:
+        """Makes a gradient step for a given optimizer.
 
         Args:
             optimizer (Optimizer): the optimizer
@@ -83,18 +85,19 @@ class OptimizerCallback(Callback):
                 grad_clip_fn(group["params"])
         optimizer.step()
 
-    def on_stage_start(self, state: State):
-        """
-        Checks that the current stage has correct optimizer
-        """
+    def on_stage_start(self, state: State) -> None:
+        """Checks that the current stage has correct optimizer."""
         self._optimizer = state.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
         assert self._optimizer is not None
 
-    def on_epoch_start(self, state: State):
-        """On epoch start event"""
+    def on_epoch_start(self, state: State) -> None:
+        """On epoch start event.
 
+        Args:
+            state (State): current state
+        """
         if self.decouple_weight_decay:
             self._optimizer_wd = [
                 group.get("weight_decay", 0.0)
@@ -105,23 +108,31 @@ class OptimizerCallback(Callback):
         else:
             self._optimizer_wd = [0.0] * len(self._optimizer.param_groups)
 
-    def on_epoch_end(self, state: State):
-        """On epoch end event"""
+    def on_epoch_end(self, state: State) -> None:
+        """On epoch end event.
+
+        Args:
+            state (State): current state
+        """
         if self.decouple_weight_decay:
             for i, wd in enumerate(self._optimizer_wd):
                 self._optimizer.param_groups[i]["weight_decay"] = wd
 
         lr = self._optimizer.param_groups[0]["lr"]
-        lr_name = f"lr/{self.optimizer_key}" \
-            if self.optimizer_key is not None \
+        lr_name = (
+            f"lr/{self.optimizer_key}"
+            if self.optimizer_key is not None
             else "lr"
+        )
         state.epoch_metrics[lr_name] = lr
 
         momentum = utils.get_optimizer_momentum(self._optimizer)
         if momentum is not None:
-            momentum_name = f"momentum/{self.optimizer_key}" \
-                if self.optimizer_key is not None \
+            momentum_name = (
+                f"momentum/{self.optimizer_key}"
+                if self.optimizer_key is not None
                 else "momentum"
+            )
             state.epoch_metrics[momentum_name] = momentum
 
     def _store_grad_norm(self, state: State):
@@ -130,31 +141,36 @@ class OptimizerCallback(Callback):
         if isinstance(model, (DataParallel, DistributedDataParallel)):
             model = model.module
 
-        total_norm = 0.
+        total_norm = 0.0
 
         for tag, value in model.named_parameters():
             tag = tag.replace(".", "/")
             metrics_tag = f"{self.model_grad_norm_prefix}/{tag}"
             param_norm = value.grad.data.norm(self.norm_type).item()
-            total_norm += param_norm**self.norm_type
+            total_norm += param_norm ** self.norm_type
 
             state.batch_metrics[metrics_tag] = param_norm
 
-        total_norm = total_norm**(1. / self.norm_type)
+        total_norm = total_norm ** (1.0 / self.norm_type)
         tag = "total"
         metrics_tag = f"{self.model_grad_norm_prefix}/{tag}"
         state.batch_metrics[metrics_tag] = total_norm
 
-    def on_batch_end(self, state: State):
-        """On batch end event"""
+    def on_batch_end(self, state: State) -> None:
+        """On batch end event
+
+        Args:
+            state (State): current state
+        """
         if not state.is_train_loader:
             return
 
         loss = state.batch_metrics[self.loss_key]
 
         self._accumulation_counter += 1
-        need_gradient_step = \
-            (self._accumulation_counter + 1) % self.accumulation_steps == 0
+        need_gradient_step = (
+            self._accumulation_counter + 1
+        ) % self.accumulation_steps == 0
 
         # This is very hacky check whether we have AMP optimizer and this may
         # change in future.
@@ -162,6 +178,7 @@ class OptimizerCallback(Callback):
         # or expose another c'tor argument.
         if hasattr(self._optimizer, "_amp_stash"):
             from apex import amp
+
             # Need to set ``delay_unscale``
             # according to
             # https://nvidia.github.io/apex/advanced.html#gradient-accumulation-across-iterations
@@ -177,7 +194,7 @@ class OptimizerCallback(Callback):
             self.grad_step(
                 optimizer=self._optimizer,
                 optimizer_wds=self._optimizer_wd,
-                grad_clip_fn=self.grad_clip_fn
+                grad_clip_fn=self.grad_clip_fn,
             )
 
             if self.save_model_grads:

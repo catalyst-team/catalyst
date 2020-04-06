@@ -10,5 +10,5 @@
 from .state import State
 from .callback import Callback, CallbackOrder, CallbackNode, CallbackScope
 from .callbacks import *
-from .experiment import _Experiment
-from .runner import _Runner
+from .experiment import _Experiment, StageBasedExperiment
+from .runner import _Runner, StageBasedRunner
