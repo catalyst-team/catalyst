@@ -81,7 +81,11 @@ def import_experiment_and_runner(expdir: pathlib.Path):
     if not isinstance(expdir, pathlib.Path):
         expdir = pathlib.Path(expdir)
     m = import_module(expdir)
-    Experiment, Runner = m.Experiment, m.Runner
+    Runner = m.Runner
+    if hasattr(m, "Experiment"):
+        Experiment = m.Experiment
+    else:
+        Experiment = None
     return Experiment, Runner
 
 

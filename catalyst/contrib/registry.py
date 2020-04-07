@@ -136,6 +136,11 @@ SCHEDULERS = Registry("scheduler")
 SCHEDULERS.late_add(_schedulers_loader)
 Scheduler = SCHEDULERS.add
 
+
+EXPERIMENTS = Registry("experiment")
+Experiment = EXPERIMENTS.add
+
+
 __all__ = [
     "Criterion",
     "Optimizer",
@@ -144,6 +149,7 @@ __all__ = [
     "Model",
     "Sampler",
     "Transform",
+    "Experiment",
     "CRITERIONS",
     "GRAD_CLIPPERS",
     "MODELS",
@@ -152,4 +158,5 @@ __all__ = [
     "SAMPLERS",
     "SCHEDULERS",
     "TRANSFORMS",
+    "EXPERIMENTS",
 ]
