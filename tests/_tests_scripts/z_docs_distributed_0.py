@@ -1,7 +1,13 @@
+# alias for https://catalyst-team.github.io/catalyst/info/distributed.html#prepare-your-script  # noqa: E501 W505
+
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
 from catalyst.dl import SupervisedRunner
+
+# experiment setup
+logdir = "./logdir"
+num_epochs = 8
 
 # data
 num_samples, num_features = int(1e4), int(1e1)
@@ -16,18 +22,16 @@ criterion = torch.nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters())
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
 
-runner = SupervisedRunner()
 # model training
+runner = SupervisedRunner()
 runner.train(
     model=model,
     criterion=criterion,
     optimizer=optimizer,
     scheduler=scheduler,
     loaders=loaders,
-    logdir="./logdir",
-    num_epochs=8,
+    logdir=logdir,
+    num_epochs=num_epochs,
     verbose=True,
     check=True,
 )
-# model inference
-loader_logits = runner.predict_loader(model=model, loader=loader, verbose=True)

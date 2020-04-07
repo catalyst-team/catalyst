@@ -40,10 +40,6 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import SupervisedRunner
 
-# experiment setup
-logdir = "./logdir"
-num_epochs = 8
-
 # data
 num_samples, num_features = int(1e4), int(1e1)
 X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
@@ -57,18 +53,20 @@ criterion = torch.nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters())
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
 
-# model training
 runner = SupervisedRunner()
+# model training
 runner.train(
     model=model,
     criterion=criterion,
     optimizer=optimizer,
     scheduler=scheduler,
     loaders=loaders,
-    logdir=logdir,
-    num_epochs=num_epochs,
+    logdir="./logdir",
+    num_epochs=8,
     verbose=True,
 )
+# model inference
+loader_logits = runner.predict_loader(model=model, loader=loader, verbose=True)
 ```
 
 ### Minimal Examples
@@ -82,10 +80,6 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import SupervisedRunner
 
-# experiment setup
-logdir = "./logdir"
-num_epochs = 8
-
 # data
 num_samples, num_features = int(1e4), int(1e1)
 X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
@@ -107,8 +101,8 @@ runner.train(
     optimizer=optimizer,
     scheduler=scheduler,
     loaders=loaders,
-    logdir=logdir,
-    num_epochs=num_epochs,
+    logdir="./logdir",
+    num_epochs=8,
     verbose=True,
 )
 ```
@@ -319,7 +313,135 @@ runner.train(
 </p>
 </details>
 
+<details>
+<summary>ML - Linear Regression is my profession (distributed version)</summary>
+<p>
+
+```python
+#!/usr/bin/env python
+import torch
+from torch.utils.data import TensorDataset
+from catalyst.dl import SupervisedRunner, utils
+
+
+def datasets_fn(num_features: int):
+    X = torch.rand(int(1e4), num_features)
+    y = torch.rand(X.shape[0])
+    dataset = TensorDataset(X, y)
+    return {"train": dataset, "valid": dataset}
+
+
+def train():
+    num_features = int(1e1)
+    # model, criterion, optimizer, scheduler
+    model = torch.nn.Linear(num_features, 1)
+    criterion = torch.nn.MSELoss()
+    optimizer = torch.optim.Adam(model.parameters())
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+
+    runner = SupervisedRunner()
+    runner.train(
+        model=model,
+        datasets={
+            "batch_size": 32,
+            "num_workers": 1,
+            "get_datasets_fn": datasets_fn,
+            "num_features": num_features,
+        },
+        criterion=criterion,
+        optimizer=optimizer,
+        scheduler=scheduler,
+        logdir="./logs/example_distributed_ml",
+        num_epochs=8,
+        verbose=True,
+        distributed=False,
+    )
+
+
+utils.distributed_cmd_run(train)
+```
+</p>
+</details>
+
+<details>
+<summary>CV - MNIST classification with AutoEncoder (distributed version)</summary>
+<p>
+
+```python
+#!/usr/bin/env python
+import os
+import torch
+from torch import nn
+from torch.nn import functional as F
+from torchvision.datasets import MNIST
+from torchvision import transforms
+from catalyst import dl, utils
+
+
+class ClassifyAE(nn.Module):
+    def __init__(self, in_features, hid_features, out_features):
+        super().__init__()
+        self.encoder = nn.Sequential(nn.Linear(in_features, hid_features), nn.Tanh())
+        self.decoder = nn.Linear(hid_features, in_features)
+        self.clf = nn.Linear(hid_features, out_features)
+
+    def forward(self, x):
+        z = self.encoder(x)
+        y_hat = self.clf(z)
+        x_ = self.decoder(z)
+        return y_hat, x_
+
+class CustomRunner(dl.Runner):
+    def _handle_batch(self, batch):
+        x, y = batch
+        x = x.view(x.size(0), -1)
+        y_hat, x_ = self.model(x)
+        loss_clf = F.cross_entropy(y_hat, y)
+        loss_ae = F.mse_loss(x_, x)
+        loss = loss_clf + loss_ae
+
+        self.state.batch_metrics = {
+            "loss_clf": loss_clf,
+            "loss_ae": loss_ae,
+            "loss": loss
+        }
+
+        if self.state.is_train_loader:
+            loss.backward()
+            self.state.optimizer.step()
+            self.state.optimizer.zero_grad()
+
+def datasets_fn():
+    dataset = MNIST(os.getcwd(), train=False, download=True, transform=transforms.ToTensor())
+    return {"train": dataset, "valid": dataset}
+
+
+def train():
+    model = ClassifyAE(28 * 28, 128, 10)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
+
+    runner = CustomRunner()
+    runner.train(
+        model=model,
+        optimizer=optimizer,
+        datasets={
+            "batch_size": 32,
+            "num_workers": 1,
+            "get_datasets_fn": datasets_fn,
+        },
+        logdir="./logs/distributed_ae",
+        num_epochs=8,
+        verbose=True,
+    )
+
+utils.distributed_cmd_run(train)
+```
+</p>
+</details>
+
 [Demo with minimal examples for ML, CV, NLP, GANs and RecSys](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
+
+[Distributed training best practices](https://catalyst-team.github.io/catalyst/info/distributed.html)
 
 For Catalyst.RL introduction, please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
 

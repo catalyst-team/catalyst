@@ -51,6 +51,9 @@ For instance, here is a minimal script that trains a linear regression model.
         verbose=True,
     )
 
+`Link to the projector script.`_
+
+.. _Link to the projector script.: https://github.com/catalyst-team/catalyst/blob/master/tests/_tests_scripts/z_docs_distributed_0.py
 
 Stage 1 - I just want distributed
 ------------------------------------------------
@@ -92,6 +95,10 @@ you can just pass ``distributed=True`` to ``.train`` call
         distributed=True,
     )
 
+`Link to the stage-1 script.`_
+
+.. _Link to the stage-1 script.: https://github.com/catalyst-team/catalyst/blob/master/tests/_tests_scripts/z_docs_distributed_1.py
+
 In this way Catalyst
 will try to automatically make your loaders work in distributed setup
 and will run experiment training.
@@ -102,7 +109,6 @@ Nevertheless it has several disadvantages,
     - you can't understand what is going under the hood of ``distributed=True``
     - we can't always transfer your loaders to distributed mode correctly
 
-
 Case 2 - We are going deeper
 ------------------------------------------------
 
@@ -111,7 +117,7 @@ Let's make it more reusable:
 .. code-block:: python
 
     import torch
-    from torch.utils.data import DataLoader, TensorDataset
+    from torch.utils.data import TensorDataset
 
     from catalyst.dl import SupervisedRunner
 
@@ -127,7 +133,7 @@ Let's make it more reusable:
     optimizer = torch.optim.Adam(model.parameters())
     scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
 
-    runner = dl.SupervisedRunner()
+    runner = SupervisedRunner()
     runner.train(
         model=model,
         datasets={
@@ -136,13 +142,17 @@ Let's make it more reusable:
             "train": dataset,
             "valid": dataset,
         },
-        criterion=nn.MSELoss(),
-        optimizer=optim.Adam(model.parameters()),
+        criterion=criterion,
+        optimizer=optimizer,
         logdir="./logs/example_2",
         num_epochs=8,
         verbose=True,
         distributed=True,
     )
+
+`Link to the stage-2 script.`_
+
+.. _Link to the stage-2 script.: https://github.com/catalyst-team/catalyst/blob/master/tests/_tests_scripts/z_docs_distributed_2.py
 
 By this way we easily can transfer your datasets to distributed mode.
 But again, you recreate your dataset with each worker. Can we make it better?
@@ -155,9 +165,9 @@ Yup, check this one, distributed training like a pro:
 .. code-block:: python
 
     import torch
-    from torch.utils.data import DataLoader, TensorDataset
+    from torch.utils.data import TensorDataset
 
-    from catalyst.dl import SupervisedRunner
+    from catalyst.dl import SupervisedRunner, utils
 
     def datasets_fn(num_features: int):
         X = torch.rand(int(1e4), num_features)
@@ -173,7 +183,7 @@ Yup, check this one, distributed training like a pro:
         optimizer = torch.optim.Adam(model.parameters())
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
 
-        runner = dl.SupervisedRunner()
+        runner = SupervisedRunner()
         runner.train(
             model=model,
             datasets={
@@ -182,8 +192,9 @@ Yup, check this one, distributed training like a pro:
                 "get_datasets_fn": datasets_fn,
                 "num_features": num_features,
             },
-            criterion=nn.MSELoss(),
-            optimizer=optim.Adam(model.parameters()),
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
             logdir="./logs/example_3",
             num_epochs=8,
             verbose=True,
@@ -191,6 +202,10 @@ Yup, check this one, distributed training like a pro:
         )
 
     utils.distributed_cmd_run(train)
+
+`Link to the stage-3 script.`_
+
+.. _Link to the stage-3 script.: https://github.com/catalyst-team/catalyst/blob/master/tests/_tests_scripts/z_docs_distributed_3.py
 
 Advantages,
     - you have control about what is going on with manual call of
