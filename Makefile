@@ -36,3 +36,18 @@ clean:
 	docker rmi -f catalyst-base-fp16:latest
 	docker rmi -f catalyst-dev:latest
 	docker rmi -f catalyst-dev-fp16:latest
+
+
+run: ## Run container
+	nvidia-docker run \
+		-e DISPLAY=unix${DISPLAY} -v /tmp/.X11-unix:/tmp/.X11-unix --privileged \
+		--ipc=host \
+		-itd \
+		--name=catalystdev \
+		-v $(shell pwd):/workspace/ catalystteam/catalyst:20.03-dev-fp16 bash
+
+exec: ## Run a bash in a running container
+	nvidia-docker exec -it catalystdev bash
+
+stop: ## Stop and remove a running container
+	docker stop catalystdev; docker rm catalystdev
