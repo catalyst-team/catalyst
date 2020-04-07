@@ -1,6 +1,8 @@
 from catalyst.contrib.registry import (
     Criterion,
     CRITERIONS,
+    Experiment,
+    EXPERIMENTS,
     GRAD_CLIPPERS,
     Model,
     MODELS,
@@ -36,6 +38,7 @@ __all__ = [
     "Model",
     "Sampler",
     "Transform",
+    "Experiment",
     "CALLBACKS",
     "CRITERIONS",
     "GRAD_CLIPPERS",
@@ -45,4 +48,5 @@ __all__ = [
     "SAMPLERS",
     "SCHEDULERS",
     "TRANSFORMS",
+    "EXPERIMENTS",
 ]
