@@ -31,7 +31,7 @@ If you are not familiar with creating a Pull Request, here are some guides:
 
 1. Install requirements
     ```
-    brew install bash # for MacOS users
+    brew install bash # for MacOS users, as we need bash version >= 4.0.0
     pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
     ```
 2. Break your work into small, single-purpose updates if possible.
@@ -64,6 +64,10 @@ pytest .
 
 Catalyst uses [Google style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for formatting [docstrings](https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings).
 Length of line inside docstrings block must be limited to 80 characters to fit into Jupyter documentation popups.
+
+How to setup Google style documentation style in PyCharm:
+[![Catalyst logo](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/third_party_pics/pycharm-google-style.png)](https://github.com/catalyst-team/catalyst)
+
 
 #### Check that you have written working docs
 ```bash
