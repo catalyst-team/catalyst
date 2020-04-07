@@ -255,7 +255,6 @@ loaders = {
 }
 
 class CustomRunner(dl.Runner):
-    
     def _handle_batch(self, batch):
         state = self.state
         
@@ -330,7 +329,6 @@ def datasets_fn(num_features: int):
     dataset = TensorDataset(X, y)
     return {"train": dataset, "valid": dataset}
 
-
 def train():
     num_features = int(1e1)
     # model, criterion, optimizer, scheduler
@@ -356,7 +354,6 @@ def train():
         verbose=True,
         distributed=False,
     )
-
 
 utils.distributed_cmd_run(train)
 ```
@@ -414,7 +411,6 @@ class CustomRunner(dl.Runner):
 def datasets_fn():
     dataset = MNIST(os.getcwd(), train=False, download=True, transform=transforms.ToTensor())
     return {"train": dataset, "valid": dataset}
-
 
 def train():
     model = ClassifyAE(28 * 28, 128, 10)
