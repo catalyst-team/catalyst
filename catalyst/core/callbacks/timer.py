@@ -48,7 +48,7 @@ class TimerCallback(Callback):
 
         # @TODO: just a trick
         self.timer.elapsed["_timer/_fps"] = (
-            state.batch_size / self.timer.elapsed["_timer/batch_time"]
+            state.batch_size / (self.timer.elapsed["_timer/batch_time"] + 1e-8)
         )
         for key, value in self.timer.elapsed.items():
             state.batch_metrics[key] = value
