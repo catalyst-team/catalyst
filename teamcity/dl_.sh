@@ -12,7 +12,7 @@ pip install -r requirements/requirements-cv.txt
 
 pip install -r requirements/requirements-nlp.txt
 
-pip install alchemy-catalyst
+pip install alchemy
 
 
 ###################################  ENV  #####################################
