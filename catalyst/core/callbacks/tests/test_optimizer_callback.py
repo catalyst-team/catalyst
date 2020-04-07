@@ -9,7 +9,13 @@ from torchvision.datasets import CIFAR10
 import torchvision.transforms as transforms
 
 from catalyst.contrib import registry
-from catalyst.core import CriterionCallback, OptimizerCallback
+from catalyst.core import (
+    Callback,
+    CallbackOrder,
+    CriterionCallback,
+    OptimizerCallback,
+    State,
+)
 from catalyst.dl import SupervisedRunner
 
 
@@ -43,12 +49,39 @@ def _get_loaders(batch_size=1, num_workers=1):
     )
     trainset.data = trainset.data[:batch_size]
     trainloader = DataLoader(
-        trainset, batch_size=batch_size, shuffle=True, num_workers=num_workers
+        trainset, batch_size=batch_size, num_workers=num_workers
+    )
+    testset = CIFAR10(
+        root="./dataset", train=False, download=True, transform=data_transform
+    )
+    testset.data = testset.data[:batch_size]
+    testloader = DataLoader(
+        testset, batch_size=batch_size, num_workers=num_workers
     )
 
-    loaders = collections.OrderedDict(train=trainloader)
+    loaders = collections.OrderedDict(train=trainloader, valid=testloader)
 
     return loaders
+
+
+class _OnBatchEndCheckGradsCallback(Callback):
+    def __init__(self, prefix: str):
+        super().__init__(CallbackOrder.External)
+        self.prefix = prefix
+
+    def on_batch_end(self, state: State):
+        if not state.is_train_loader:
+            return
+
+        for layer in ["conv1", "conv2", "fc1"]:
+            for weights in ["weight", "bias"]:
+                tag = f"{self.prefix}/{layer}/{weights}"
+                assert tag in state.batch_metrics
+                assert isinstance(state.batch_metrics[tag], Number)
+
+        tag = f"{self.prefix}/total"
+        assert tag in state.batch_metrics
+        assert isinstance(state.batch_metrics[tag], Number)
 
 
 def test_save_model_grads():
@@ -60,23 +93,24 @@ def test_save_model_grads():
     optimizer = Adam(model.parameters())
     logdir = "./logs"
     loaders = _get_loaders(batch_size=4, num_workers=1)
+
+    criterion_callback = CriterionCallback()
+    optimizer_callback = OptimizerCallback(save_model_grads=True)
+    prefix = optimizer_callback.model_grad_norm_prefix
+    test_callback = _OnBatchEndCheckGradsCallback(prefix)
+
     callbacks = collections.OrderedDict(
-        loss=CriterionCallback(),
-        optimizer=OptimizerCallback(save_model_grads=True),
+        loss=criterion_callback,
+        optimizer=optimizer_callback,
+        test_callback=test_callback,
     )
+
     runner = SupervisedRunner()
     runner.train(
-        model, criterion, optimizer, loaders, logdir, callbacks=callbacks
+        model=model,
+        criterion=criterion,
+        optimizer=optimizer,
+        loaders=loaders,
+        logdir=logdir,
+        callbacks=callbacks,
     )
-
-    prefix = callbacks["optimizer"].model_grad_norm_prefix
-
-    for layer in ["conv1", "conv2", "fc1"]:
-        for weights in ["weight", "bias"]:
-            tag = f"{prefix}/{layer}/{weights}"
-            assert tag in runner.state.batch_metrics
-            assert isinstance(runner.state.batch_metrics[tag], Number)
-
-    tag = f"{prefix}/total"
-    assert tag in runner.state.batch_metrics
-    assert isinstance(runner.state.batch_metrics[tag], Number)
