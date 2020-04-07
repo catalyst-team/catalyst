@@ -1,198 +1,164 @@
-from typing import Iterable, Any, Optional
-
-import copy
-import random
-import collections
-import numpy as np
-from itertools import tee
+from typing import Any, Callable, List
+from datetime import datetime
+import inspect
+from pathlib import Path
+import shutil
 
 
-def pairwise(iterable: Iterable[Any]) -> Iterable[Any]:
-    """
-    Iterate sequences by pairs
-
-    Args:
-        iterable: Any iterable sequence
-
-    Returns:
-        pairwise iterator
-
-    Examples:
-        >>> for i in pairwise([1, 2, 5, -3]):
-        >>>     print(i)
-        (1, 2)
-        (2, 5)
-        (5, -3)
-    """
-    a, b = tee(iterable)
-    next(b, None)
-    return zip(a, b)
-
-
-def merge_dicts(*dicts: dict) -> dict:
-    """
-    Recursive dict merge.
-    Instead of updating only top-level keys,
-    ``merge_dicts`` recurses down into dicts nested
-    to an arbitrary depth, updating keys.
+def maybe_recursive_call(
+    object_or_dict,
+    method: str,
+    recursive_args=None,
+    recursive_kwargs=None,
+    **kwargs,
+):
+    """Calls the ``method`` recursively for the ``object_or_dict``.
 
     Args:
-        *dicts: several dictionaries to merge
-
-    Returns:
-        dict: deep-merged dictionary
+        object_or_dict (Any): some object or a dictionary of objects
+        method (str): method name to call
+        recursive_args: list of arguments to pass to the ``method``
+        recursive_kwargs: list of key-arguments to pass to the ``method``
+        **kwargs: Arbitrary keyword arguments
     """
-    assert len(dicts) > 1
-
-    dict_ = copy.deepcopy(dicts[0])
-
-    for merge_dict in dicts[1:]:
-        for k, v in merge_dict.items():
-            if (
-                k in dict_ and isinstance(dict_[k], dict)
-                and isinstance(merge_dict[k], collections.Mapping)
-            ):
-                dict_[k] = merge_dicts(dict_[k], merge_dict[k])
-            else:
-                dict_[k] = merge_dict[k]
-
-    return dict_
-
-
-def set_global_seed(seed: int) -> None:
-    """
-    Sets random seed into PyTorch, TensorFlow, Numpy and Random
-
-    Args:
-        seed: random seed
-    """
-    try:
-        import torch
-    except ImportError:
-        pass
-    else:
-        torch.manual_seed(seed)
-        torch.cuda.manual_seed_all(seed)
-    try:
-        import tensorflow as tf
-    except ImportError:
-        pass
-    else:
-        tf.set_random_seed(seed)
-    random.seed(seed)
-    np.random.seed(seed)
-
-
-def args_are_not_none(*args: Optional[Any]) -> bool:
-    """
-    Check that all arguments are not None
-    Args:
-        *args (Any): values
-    Returns:
-         bool: True if all value were not None, False otherwise
-    """
-    result = args is not None
-    if not result:
+    if isinstance(object_or_dict, dict):
+        result = type(object_or_dict)()
+        for k, v in object_or_dict.items():
+            r_args = None if recursive_args is None else recursive_args[k]
+            r_kwargs = (
+                None if recursive_kwargs is None else recursive_kwargs[k]
+            )
+            result[k] = maybe_recursive_call(
+                v,
+                method,
+                recursive_args=r_args,
+                recursive_kwargs=r_kwargs,
+                **kwargs,
+            )
         return result
 
-    for arg in args:
-        if arg is None:
-            result = False
-            break
+    r_args = recursive_args or []
+    if not isinstance(r_args, (list, tuple)):
+        r_args = [r_args]
+    r_kwargs = recursive_kwargs or {}
+    return getattr(object_or_dict, method)(*r_args, **r_kwargs, **kwargs)
 
+
+def is_exception(ex: Any) -> bool:
+    """Check if the argument is of ``Exception`` type."""
+    result = (ex is not None) and isinstance(ex, BaseException)
     return result
 
 
-def boolean_flag(
-    parser, name: str, default: bool = False, help: str = None
-) -> None:
-    """
-    Add a boolean flag to argparse parser.
+def copy_directory(input_dir: Path, output_dir: Path) -> None:
+    """Recursively copies the input directory.
 
     Args:
-        parser (argparse.Parser): parser to add the flag to
-        name (str): --<name> will enable the flag,
-            while --no-<name> will disable it
-        default (bool, optional): default value of the flag
-        help (str): help string for the flag
+        input_dir (Path): input directory
+        output_dir (Path): output directory
     """
-    dest = name.replace("-", "_")
-    parser.add_argument(
-        "--" + name,
-        action="store_true",
-        default=default,
-        dest=dest,
-        help=help
+    output_dir.mkdir(exist_ok=True, parents=True)
+    for path in input_dir.iterdir():
+        if path.is_dir():
+            path_name = path.name
+            copy_directory(path, output_dir / path_name)
+        else:
+            shutil.copy2(path, output_dir)
+
+
+def get_utcnow_time(format: str = None) -> str:
+    """Return string with current utc time in chosen format.
+
+    Args:
+        format (str): format string. if None "%y%m%d.%H%M%S" will be used.
+
+    Returns:
+        str: formatted utc time string
+    """
+    if format is None:
+        format = "%y%m%d.%H%M%S"
+    result = datetime.utcnow().strftime(format)
+    return result
+
+
+def format_metric(name: str, value: float) -> str:
+    """Format metric.
+
+    Metric will be returned in the scientific format if 4
+    decimal chars are not enough (metric value lower than 1e-4).
+
+    Args:
+        name (str): metric name
+        value (float): value of metric
+    """
+    if value < 1e-4:
+        return f"{name}={value:1.3e}"
+    return f"{name}={value:.4f}"
+
+
+def get_fn_default_params(fn: Callable[..., Any], exclude: List[str] = None):
+    """Return default parameters of Callable.
+
+    Args:
+        fn (Callable[..., Any]): target Callable
+        exclude (List[str]): exclude list of parameters
+
+    Returns:
+        dict: contains default parameters of `fn`
+    """
+    argspec = inspect.getfullargspec(fn)
+    default_params = zip(
+        argspec.args[-len(argspec.defaults) :], argspec.defaults
     )
-    parser.add_argument("--no-" + name, action="store_false", dest=dest)
+    if exclude is not None:
+        default_params = filter(lambda x: x[0] not in exclude, default_params)
+    default_params = dict(default_params)
+    return default_params
 
 
-class FrozenClass(object):
+def get_fn_argsnames(fn: Callable[..., Any], exclude: List[str] = None):
+    """Return parameter names of Callable.
+
+    Args:
+        fn (Callable[..., Any]): target Callable
+        exclude (List[str]): exclude list of parameters
+
+    Returns:
+        list: contains parameter names of `fn`
     """
-    Class which prohibit ``__setattr__`` on existing attributes
+    argspec = inspect.getfullargspec(fn)
+    params = argspec.args + argspec.kwonlyargs
+    if exclude is not None:
+        params = list(filter(lambda x: x not in exclude, params))
+    return params
 
-    Examples:
-        >>> class RunnerState(FrozenClass):
+
+def fn_ends_with_pass(fn: Callable[..., Any]):
     """
-    __isfrozen = False
+    Check that function end with pass statement
+    (probably does nothing in any way).
+    Mainly used to filter callbacks with empty on_{event} methods.
 
-    def __setattr__(self, key, value):
-        if self.__isfrozen and not hasattr(self, key):
-            raise TypeError("%r is a frozen class" % self)
-        object.__setattr__(self, key, value)
+    Args:
+        fn (Callable[..., Any]): target Callable
 
-    def _freeze(self):
-        self.__isfrozen = True
-
-
-class Seeder:
+    Returns:
+        bool: True if there is pass in the first indentation level of fn
+        and nothing happens before it, False in any other case.
     """
-    A random seed generator.
+    source_lines = inspect.getsourcelines(fn)[0]
+    if source_lines[-1].strip() == "pass":
+        return True
+    return False
 
-    Given an initial seed,
-    the seeder can be called continuously to sample a single
-    or a batch of random seeds.
 
-    .. note::
-
-        The seeder creates an independent RandomState to generate random
-        numbers. It does not affect the RandomState in ``np.random``.
-
-    Example::
-        >>> seeder = Seeder(init_seed=0)
-        >>> seeder(size=5)
-        [209652396, 398764591, 924231285, 1478610112, 441365315]
-
-    """
-
-    def __init__(self, init_seed: int = 0, max_seed: int = None):
-        """
-        Initialize the seeder.
-
-        Args:
-            init_seed (int, optional):
-                Initial seed for generating random seeds. Default: ``0``.
-        """
-        assert isinstance(init_seed, int) and init_seed >= 0, \
-            f"expected non-negative integer, got {init_seed}"
-
-        self.rng = np.random.RandomState(seed=init_seed)
-
-        # Upper bound for sampling new random seeds
-        self.max = max_seed or np.iinfo(np.int32).max
-
-    def __call__(self, size=1):
-        """
-        Return the sampled random seeds according to the given size.
-
-        Args:
-            size (int or list): The size of random seeds to sample.
-
-        Returns
-        -------
-        seeds : list
-            a list of sampled random seeds.
-        """
-        seeds = self.rng.randint(low=0, high=self.max, size=size).tolist()
-
-        return seeds
+__all__ = [
+    "copy_directory",
+    "format_metric",
+    "get_fn_default_params",
+    "get_fn_argsnames",
+    "get_utcnow_time",
+    "is_exception",
+    "maybe_recursive_call",
+    "fn_ends_with_pass",
+]

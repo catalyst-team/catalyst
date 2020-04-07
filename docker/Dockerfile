@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:1.1.0-cuda10.0-cudnn7.5-devel
+FROM pytorch/pytorch:1.4-cuda10.1-cudnn7-devel
 
 RUN apt-get update && apt-get install -y \
     build-essential \

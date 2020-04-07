@@ -10,6 +10,7 @@ __pycache__/
 .Python
 env/
 build/
+builds/
 develop-eggs/
 dist/
 downloads/
@@ -113,7 +114,25 @@ ENV/
 
 tmp/
 logs/
-data/
-examples/data/
-examples/logs/
+# Examples - mock data
+!examples/distilbert_text_classification/input/*.csv
+!tests/_tests_nlp_classification/input/*.csv
+tests/logs/
 notebooks/
+
+_nogit*
+
+### VisualStudioCode ###
+.vscode/*
+.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+### VisualStudioCode Patch ###
+# Ignore all local history of files
+.history
+
+# End of https://www.gitignore.io/api/visualstudiocode
+
+presets/

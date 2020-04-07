@@ -1,126 +1,62 @@
 Catalyst
-======================================
+========================================
 
-.. image:: https://travis-ci.com/catalyst-team/catalyst.svg?branch=master
-    :target: https://travis-ci.com/catalyst-team/catalyst
-    :alt: Build Status
-
-.. image:: https://img.shields.io/github/license/catalyst-team/catalyst.svg
-    :alt: License
-
-.. image:: https://img.shields.io/pypi/v/catalyst.svg
-    :target: https://pypi.org/project/catalyst/
-    :alt: Pipi version
-
-.. image:: https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v
-    :target: https://catalyst-team.github.io/catalyst/index.html
-    :alt: Docs
-
-
-.. image:: https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst\_logo.png
+.. image:: https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png
     :target: https://github.com/catalyst-team/catalyst
     :alt: Catalyst logo
 
 
-High-level utils for PyTorch DL & RL research.
+PyTorch framework for Deep Learning research and development.
 It was developed with a focus on reproducibility,
 fast experimentation and code/ideas reusing.
 Being able to research/develop something new,
-rather then write another regular train loop.
+rather than write another regular train loop.
 
 Break the cycle - use the Catalyst_!
 
+Project manifest_. Part of `PyTorch Ecosystem`_. Part of `Catalyst Ecosystem`_:
+    - Alchemy_ - Experiments logging & visualization
+    - Catalyst_ - Accelerated DL R&D
+    - Reaction_ - Convenient DL serving
+
+`Catalyst at AI Landscape`_.
+
+.. _PyTorch Ecosystem: https://pytorch.org/ecosystem/
+.. _Catalyst Ecosystem: https://docs.google.com/presentation/d/1D-yhVOg6OXzjo9K_-IS5vSHLPIUxp1PEkFGnpRcNCNU/edit?usp=sharing
+.. _Alchemy: https://github.com/catalyst-team/alchemy
 .. _Catalyst: https://github.com/catalyst-team/catalyst
+.. _Reaction: https://github.com/catalyst-team/reaction
+.. _manifest: https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md
+.. _Catalyst at AI Landscape: https://landscape.lfai.foundation/selected=catalyst
 
-------------
+Getting started
+----------------------------------------
 
-
-.. toctree::
-   :caption: Overview
-   :maxdepth: 1
-
-   self
-   info/examples
-   info/contributing
-   info/license
-
-Catalyst is compatible with: Python 3.6+. PyTorch 0.4.1+.
-
-API documentation and an overview of the library can be found here.
-
-
-Examples
---------
-Examples and tutorials could be found :doc:`here </info/examples>`.
-In the examples folder of the repository,
-you can find advanced tutorials and Catalyst best practices.
-
-
-Installation
-------------
-
-.. code:: bash
-
-   pip install catalyst
-
-Overview
---------
-
-Catalyst helps you write compact
-but full-featured DL & RL pipelines in a few lines of code.
-You get a training loop with metrics, early-stopping, model checkpointing
-and other features without the boilerplate.
-
-Features
-^^^^^^^^
-
--  Universal train/inference loop.
--  Configuration files for model/data hyperparameters.
--  Reproducibility – even source code will be saved.
--  Callbacks – reusable train/inference pipeline parts.
--  Training stages support.
--  Easy customization.
--  PyTorch best practices (SWA, AdamW, 1Cycle, FP16 and more).
-
-Structure
-^^^^^^^^^
-
--  **DL** – runner for training and inference,
-   all of the classic machine learning and computer vision metrics
-   and a variety of callbacks for training, validation
-   and inference of neural networks.
--  **RL** – scalable Reinforcement Learning,
-   on-policy & off-policy algorithms and their improvements
-   with distributed training support.
--  **contrib** - additional modules contributed by Catalyst users.
--  **data** - useful tools and scripts for data processing.
-
-
-Getting started: 30 seconds with Catalyst
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code:: python
+.. code-block:: python
 
     import torch
-    from catalyst.dl.experiments import SupervisedRunner
+    from torch.utils.data import DataLoader, TensorDataset
+    from catalyst.dl import SupervisedRunner
 
     # experiment setup
     logdir = "./logdir"
-    num_epochs = 42
+    num_epochs = 8
 
     # data
-    loaders = {"train": ..., "valid": ...}
+    num_samples, num_features = int(1e4), int(1e1)
+    X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
+    dataset = TensorDataset(X, y)
+    loader = DataLoader(dataset, batch_size=32, num_workers=1)
+    loaders = {"train": loader, "valid": loader}
 
-    # model, criterion, optimizer
-    model = Net()
-    criterion = torch.nn.CrossEntropyLoss()
+    # model, criterion, optimizer, scheduler
+    model = torch.nn.Linear(num_features, 1)
+    criterion = torch.nn.MSELoss()
     optimizer = torch.optim.Adam(model.parameters())
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer)
-
-    # model runner
-    runner = SupervisedRunner()
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
 
     # model training
+    runner = SupervisedRunner()
     runner.train(
         model=model,
         criterion=criterion,
@@ -129,24 +65,112 @@ Getting started: 30 seconds with Catalyst
         loaders=loaders,
         logdir=logdir,
         num_epochs=num_epochs,
-        verbose=True
+        verbose=True,
     )
 
+`Demo with minimal examples for ML, CV, NLP, GANs and RecSys`_
 
-.. toctree::
-   :maxdepth: 2
-   :caption: API
+.. _Demo with minimal examples for ML, CV, NLP, GANs and RecSys: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb
 
-   api/dl
-   api/rl
+For Catalyst.RL introduction, please follow `Catalyst.RL repo`_.
 
-   api/contrib
-   api/data
-   api/utils
+.. _Catalyst.RL repo: https://github.com/catalyst-team/catalyst-rl
 
+Overview
+----------------------------------------
+Catalyst helps you write compact
+but full-featured Deep Learning pipelines in a few lines of code.
+You get a training loop with metrics, early-stopping, model checkpointing
+and other features without the boilerplate.
+
+
+Installation
+~~~~~~~~~~~~~~~~~~~~~~
+Common installation:
+
+.. code:: bash
+
+   pip install -U catalyst
+
+
+More specific with additional requirements:
+
+.. code:: bash
+
+    pip install catalyst[ml]         # installs DL+ML based catalyst
+    pip install catalyst[cv]         # installs DL+CV based catalyst
+    pip install catalyst[nlp]        # installs DL+NLP based catalyst
+    pip install catalyst[ecosystem]  # installs Catalyst.Ecosystem
+    pip install catalyst[contrib]    # installs DL+contrib based catalyst
+    pip install catalyst[all]        # installs everything
+    # and master version installation
+    pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
+
+
+Catalyst is compatible with: Python 3.6+. PyTorch 1.0.0+.
+
+Features
+~~~~~~~~~~~~~~~~~~~~~~
+- Universal train/inference loop.
+- Configuration files for model/data hyperparameters.
+- Reproducibility – all source code and environment variables will be saved.
+- Callbacks – reusable train/inference pipeline parts with easy customization.
+- Training stages support.
+- Deep Learning best practices - SWA, AdamW, Ranger optimizer, OneCycle, and more.
+- Developments best practices - fp16 support, distributed training, slurm.
+
+Structure
+~~~~~~~~~~~~~~~~~~~~~~
+- **contrib** - additional modules contributed by Catalyst users.
+- **core** - framework core with main abstractions - Experiment, Runner, Callback and State.
+- **data** - useful tools and scripts for data processing.
+- **DL** – runner for training and inference, all of the classic ML and CV/NLP/RecSys metrics and a variety of callbacks for training, validation and inference of neural networks.
+- **utils** - typical utils for Deep Learning research.
+
+Tests
+~~~~~~~~~~~~~~~~~~~~~~
+All the Catalyst code is `tested rigorously with every new PR`_.
+
+In fact, we train a number of different models for various of tasks -
+image classification, image segmentation, text classification, GAN training.
+During the tests, we compare their convergence metrics in order to verify
+the correctness of the training procedure and its reproducibility.
+
+Overall, Catalyst guarantees fully tested, correct and reproducible
+best practices for the automated parts.
+
+.. _tested rigorously with every new PR: https://github.com/catalyst-team/catalyst/tree/master/tests
+
+
+Tutorials
+~~~~~~~~~~~~~~~~~~~~~~
+
+- `Demo with minimal examples`_ for ML, CV, NLP, GANs and RecSys
+- Detailed `classification tutorial`_
+- Advanced `segmentation tutorial`_
+- Comprehensive `classification pipeline`_
+- Binary and semantic `segmentation pipeline`_
+- `Beyond fashion: Deep Learning with Catalyst (Config API)`_
+- `Tutorial from Notebook API to Config API (RU)`_
+
+.. _Demo with minimal examples: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb
+.. _`classification tutorial`: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb
+.. _`segmentation tutorial`: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb
+.. _`classification pipeline`: https://github.com/catalyst-team/classification
+.. _`segmentation pipeline`: https://github.com/catalyst-team/segmentation
+.. _`Beyond fashion: Deep Learning with Catalyst (Config API)`: https://evilmartians.com/chronicles/beyond-fashion-deep-learning-with-catalyst
+.. _`Tutorial from Notebook API to Config API (RU)`: https://github.com/Bekovmi/Segmentation_tutorial
+
+In the examples_ of the repository, you can find advanced tutorials and Catalyst best practices.
+
+.. _examples: https://github.com/catalyst-team/catalyst/tree/master/examples
+
+
+Community
+----------------------------------------
 
 Contribution guide
-------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
 We appreciate all contributions.
 If you are planning to contribute back bug-fixes,
@@ -154,12 +178,28 @@ please do so without any further discussion.
 If you plan to contribute new features, utility functions or extensions,
 please first open an issue and discuss the feature with us.
 
-Please see the :doc:`contribution guide </info/contributing>`
-for more information.
+Please see the `contribution guide`_ for more information.
+
+.. _`contribution guide`: https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md
+
+By participating in this project, you agree to abide by its `Code of Conduct`_.
+
+.. _`Code of Conduct`: https://github.com/catalyst-team/catalyst/blob/master/CODE_OF_CONDUCT.md
+
+User feedback
+~~~~~~~~~~~~~~~~~~~~~~
+
+We have created catalyst.team.core@gmail.com for "user feedback".
+    - If you like the project and want to say thanks, this the right place.
+    - If you would like to start a collaboration between your team and Catalyst team to do better Deep Learning R&D - you are always welcome.
+    - If you just don't like Github issues and this ways suits you better - feel free to email us.
+    - Finally, if you do not like something, please, share it with us and we can see how to improve it.
+
+We appreciate any type of feedback. Thank you!
 
 
 Citation
-------------------
+~~~~~~~~~~~~~~~~~~~~~~
 
 Please use this bibtex if you want to cite this repository in your publications:
 
@@ -167,22 +207,38 @@ Please use this bibtex if you want to cite this repository in your publications:
 
     @misc{catalyst,
         author = {Kolesnikov, Sergey},
-        title = {Reproducible and fast DL & RL.},
+        title = {Accelerated DL R&D},
         year = {2018},
         publisher = {GitHub},
         journal = {GitHub repository},
         howpublished = {\url{https://github.com/catalyst-team/catalyst}},
     }
 
-
-Changelog
-----------
-
-Please see :doc:`the changelog </changelog>`.
-
 Indices and tables
-==================
+----------------------------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+.. toctree::
+    :caption: Overview
+    :maxdepth: 2
+    :hidden:
+
+    self
+    info/examples
+    info/distributed
+    info/contributing
+
+
+.. toctree::
+    :caption: API
+
+    api/core
+    api/dl
+
+    api/data
+    api/utils
+    api/contrib

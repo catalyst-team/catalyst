@@ -1,13 +1,15 @@
 import argparse
-import numpy as np
 import pickle
-from sklearn.preprocessing import StandardScaler, Normalizer
+
+import nmslib
+import numpy as np
 from sklearn.decomposition import PCA
 from sklearn.pipeline import Pipeline
-import nmslib
+from sklearn.preprocessing import Normalizer, StandardScaler
 
 
 def build_args(parser):
+    """Constructs the command-line arguments."""
     parser.add_argument("--in-npy", type=str, default=None)
 
     parser.add_argument("--n-hidden", type=int, default=None)
@@ -15,7 +17,7 @@ def build_args(parser):
         "--knn-metric",
         type=str,
         default="l2",
-        choices=["l2", "angulardist", "cosinesimil"]
+        choices=["l2", "angulardist", "cosinesimil"],
     )
 
     parser.add_argument("--out-npy", type=str, default=None)
@@ -29,6 +31,7 @@ def build_args(parser):
 
 
 def parse_args():
+    """Parses the command line arguments for the main method."""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args = parser.parse_args()
@@ -36,6 +39,7 @@ def parse_args():
 
 
 def main(args, _=None):
+    """Run ``catalyst-contrib create-index-model`` script."""
     print("[==       Loading features       ==]")
     features = None
     for in_npy in args.in_npy.split(","):
@@ -60,8 +64,9 @@ def main(args, _=None):
 
         print(
             "[ Explained variance ratio: {ratio:.4} ]".format(
-                ratio=pipeline.named_steps["pca"].explained_variance_ratio_.
-                sum()
+                ratio=pipeline.named_steps[
+                    "pca"
+                ].explained_variance_ratio_.sum()
             )
         )
 
@@ -71,7 +76,7 @@ def main(args, _=None):
     index = nmslib.init(
         method="hnsw",
         space=args.knn_metric,
-        data_type=nmslib.DataType.DENSE_VECTOR
+        data_type=nmslib.DataType.DENSE_VECTOR,
     )
     print("[==  Adding features to indexer  ==]")
     index.addDataPointBatch(features)

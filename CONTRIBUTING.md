@@ -29,44 +29,49 @@ If you are not familiar with creating a Pull Request, here are some guides:
 
 ##### Contribution best practices
 
-1. Break your work into small, single-purpose updates if possible. 
+1. Install requirements
+    ```
+    brew install bash # for MacOS users
+    pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
+    ```
+2. Break your work into small, single-purpose updates if possible.
 It's much harder to merge in a large change with a lot of disjoint features.
-2. Submit the update as a GitHub pull request against the `master` branch.
-3. Make sure that you provide docstrings for all your new methods and classes
-4. Make sure that your code passes the unit tests.
+3. Submit the update as a GitHub pull request against the `master` branch.
+4. Make sure that you provide docstrings for all your new methods and classes.
 5. Add new unit tests for your code.
+6. Check the [codestyle](#codestyle)
+7. Make sure that your code [passes the unit tests](#unit-tests)
 
 #### Codestyle
 
 Do not forget to check the codestyle for your PR with
 
-- flake
-    ```bash
-    flake8 . --count --ignore=E126,E226,E704,E731,W503,W504 --max-complexity=16 --show-source --statistics
-    ```
-- yapf
-    ```bash
-    ./yapf.sh --all-in-place
-    ```
+```bash
+catalyst-make-codestyle && catalyst-check-codestyle
+```
 
-or with
+Make sure to have your python packages complied with `requirements/requirements.txt` and `requirements/requirements-dev.txt` to get codestyle run clean.
+
+#### Unit tests
+
+Do not forget to check that your code passes the unit tests
 
 ```bash
-$ make check-style
+pytest .
 ```
 
 ## Documentation
 
-Catalyst uses [Google style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for formatting [docstrings](https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings). 
+Catalyst uses [Google style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for formatting [docstrings](https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings).
 Length of line inside docstrings block must be limited to 80 characters to fit into Jupyter documentation popups.
 
-Check that you wrote working docs with:
+#### Check that you have written working docs
 ```bash
-$ make check-docs
+make check-docs
 ```
 
 The command requires `Sphinx` and some sphinx-specific libraries.
-If you don't want to install them, you may make a catalyst-dev container
+If you don't want to install them, you may make a `catalyst-dev` container
 ```bash
 make docker-dev
 # and then run test
@@ -75,3 +80,17 @@ docker run \
     catalyst-dev:latest \
     bash -c "make check-docs"
 ```
+
+#### To build docs add environment variable `REMOVE_BUILDS=0`
+```bash
+REMOVE_BUILDS=0 make check-docs
+```
+
+or through docker
+```bash
+docker run \
+    -v `pwd`/:/workspace/ \
+    catalyst-dev:latest \
+    bash -c "REMOVE_BUILDS=0 make check-docs"
+```
+The docs will be stored in `builds/` folder.

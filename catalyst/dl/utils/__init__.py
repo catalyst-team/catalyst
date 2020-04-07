@@ -1,15 +1,9 @@
-from .utils import \
-    UtilsFactory, \
-    get_activation_by_name, \
-    get_optimizer_momentum, \
-    set_optimizer_momentum, \
-    get_optimizable_params, \
-    assert_fp16_available
+# flake8: noqa
 
-# from .trace import trace_model
+from catalyst.contrib.utils import *
+from catalyst.core.utils import *
+from catalyst.utils import *
 
-__all__ = [
-    "UtilsFactory", "get_activation_by_name", "set_optimizer_momentum",
-    "get_optimizer_momentum", "get_optimizable_params",
-    "assert_fp16_available",
-]
+from .torch import get_loader
+from .trace import get_trace_name, load_traced_model, trace_model
+from .wizard import run_wizard, Wizard

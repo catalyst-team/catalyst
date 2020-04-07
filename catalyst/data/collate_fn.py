@@ -1,4 +1,5 @@
 import collections
+
 from torch.utils.data.dataloader import default_collate
 
 
@@ -17,13 +18,13 @@ class FilteringCollateFn:
             keys: Keys for values that will not be
                 converted to tensor and stacked
         """
-
         self.keys = keys
 
     def __call__(self, batch):
         """
         Args:
             batch: current batch
+
         Returns:
             batch values filtered by `keys`
         """
@@ -37,3 +38,6 @@ class FilteringCollateFn:
             return result
         else:
             return default_collate(batch)
+
+
+__all__ = ["FilteringCollateFn"]

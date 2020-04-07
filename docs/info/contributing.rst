@@ -37,13 +37,20 @@ guides:
 Contribution best practices
 '''''''''''''''''''''''''''
 
-1. Break your work into small, single-purpose updates if possible. It’s
-   much harder to merge in a large change with a lot of disjoint
-   features.
-2. Submit the update as a GitHub pull request against the ``dev``
-   branch.
-3. Make sure that your code passes the unit tests.
-4. Add new unit tests for your code.
+1. Install requirements
+
+.. code-block:: bash
+
+    brew install bash # for MacOS users
+    pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
+
+2. Break your work into small, single-purpose updates if possible. It's much harder to merge in a large change with a lot of disjoint features.
+3. Submit the update as a GitHub pull request against the `master` branch.
+4. Make sure that you provide docstrings for all your new methods and classes.
+5. Add new unit tests for your code.
+6. Check the codestyle
+7. Make sure that your code passes the unit tests
+
 
 Codestyle
 ^^^^^^^^^
@@ -52,8 +59,19 @@ Do not forget to check the codestyle for your PR with
 
 .. code-block:: bash
 
-    $ make check-style
+    catalyst-make-codestyle && catalyst-check-codestyle
 
+Make sure to have your python packages complied with `requirements/requirements.txt` and `requirements/requirements-dev.txt` to get codestyle run clean.
+
+
+Unit tests
+^^^^^^^^^^
+
+Do not forget to check that your code passes the unit tests
+
+.. code-block:: bash
+
+    pytest .
 
 
 Documentation
@@ -62,6 +80,43 @@ Documentation
 Catalyst uses `Google style`_ for formatting `docstrings`_. Length of line
 inside docstrings block must be limited to 80 characters to fit into
 Jupyter documentation popups.
+
+Check that you have written working docs
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: bash
+
+    make check-docs
+
+The command requires Sphinx and some sphinx-specific libraries.
+If you don't want to install them, you may make a catalyst-dev container
+
+.. code-block:: bash
+
+    make docker-dev
+    docker run \\
+        -v `pwd`/:/workspace/ \\
+        catalyst-dev:latest \\
+        bash -c "make check-docs"
+
+To build docs add environment variable REMOVE_BUILDS=0
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: bash
+
+    REMOVE_BUILDS=0 make check-docs
+
+or through docker
+
+.. code-block:: bash
+
+    docker run \\
+        -v `pwd`/:/workspace/ \\
+        catalyst-dev:latest \\
+        bash -c "REMOVE_BUILDS=0 make check-docs"
+
+The docs will be stored in `builds/` folder.
+
 
 .. _GitHub issues: https://github.com/catalyst-team/catalyst/issues
 .. _Google style: http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html

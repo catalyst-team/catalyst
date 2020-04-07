@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+#title           :catalyst-parallel-run
+#description     :script to run experiments in parallel over several gpus
+#author          :David Kuryakin, Sergey Kolesnikov
+#author_email    :dkuryakin@gmail.com, scitator@gmail.com
+#date            :20190807
+#version         :19.08.1
+#==============================================================================
+
+set -e
+
+# usage:
+# cat ./runs.txt | catalyst-parallel-run {NUM_GPUS} {LOGDIR} {NUM_JOBS_PER_GPU}
+
+# example:
+# cat ./runs.txt | catalyst-parallel-run 2 ./logs/"$(date +%s)" 4
+
+NUM_GPUS=${1:-4}
+LOGDIR=${2:-logs/$(date +%s)}
+NUM_JOBS_PER_GPU=${3:-1}
+NUM_GPU_JOBS=$((NUM_GPUS*NUM_JOBS_PER_GPU))
+SLEEP_TIME=5
+
+mkdir -p "$LOGDIR"
+
+PIDS=()
+CMD=
+IDX=0
+echo "$(cat)" | while read cmd ; do
+    CMD="$CMD $cmd"
+    lastchar="${cmd: -1}"
+    if [[ '\' == "$lastchar" ]] ; then
+        continue
+    fi
+    CMD="${CMD#"${CMD%%[![:space:]]*}"}"
+    CMD="${CMD%"${CMD##*[![:space:]]}"}"
+    if [[ -z "$CMD" ]] ; then
+        continue
+    fi
+    started=
+    while [[ -z "$started" ]] ; do
+        for ((gpu_job_id=0; gpu_job_id<NUM_GPU_JOBS; gpu_job_id++)) ; do
+            pid=${PIDS[$gpu_job_id]}
+            if [[ -n "$pid" ]] && ps -p $pid > /dev/null; then
+                continue
+            fi
+            gpu=$((gpu_job_id / NUM_JOBS_PER_GPU))
+            echo "RUN [GPU $gpu]: $CMD" | tee "$LOGDIR/$IDX.log"
+            CUDA_VISIBLE_DEVICES=$gpu \
+                bash -c "$CMD" >>"$LOGDIR/$IDX.log" 2>>"$LOGDIR/$IDX.err" || \
+                echo $IDX >> "$LOGDIR/$IDX.die" &
+            pid=$!
+            echo $pid >> "$LOGDIR/pids.txt"
+            PIDS[$gpu_job_id]=$pid
+            started=1
+            IDX=$((IDX+1))
+            break
+        done
+        if [[ -z "$started" ]] ; then
+            sleep $SLEEP_TIME
+        fi
+    done
+    CMD=""
+done
+
+for pid in $(cat "$LOGDIR/pids.txt") ; do
+    while ps -p $pid > /dev/null ; do
+        sleep $SLEEP_TIME
+    done
+done
+rm "$LOGDIR/pids.txt"

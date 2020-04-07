@@ -12,10 +12,10 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-import os
 import datetime
-import sys
+import os
 import re
+import sys
 
 catalyst_root_path = "../"
 sys.path.insert(0, os.path.abspath(catalyst_root_path))
@@ -33,6 +33,9 @@ releases_github_path = "catalyst-team/catalyst"
 
 
 def get_version(mode: str = "full") -> str:
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     current_dir = os.path.abspath(os.path.dirname(__file__))
     root = os.path.dirname(current_dir)
     version_file = os.path.join(root, "catalyst", "__version__.py")
@@ -79,11 +82,10 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.githubpages",
     "sphinx.ext.napoleon",
-    "releases",
+    # "releases",
 ]
 
 autodoc_inherit_docstrings = False
-
 napoleon_google_docstring = True
 napoleon_include_init_with_doc = True
 napoleon_numpy_docstring = False
@@ -112,6 +114,23 @@ language = None
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
+# Ignoring Third-party packages
+
+autodoc_mock_imports = [
+    "alchemy",
+    "neptune",
+    "wandb",
+    "gym",
+    "gridfs",
+    "pymongo",
+    "redis",
+]
+
+# autodoc_default_flags = [
+#     "members", "undoc-members", "private-members",
+#     "special-members", "inherited-members", "show-inheritance"
+# ]
+
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
 
@@ -120,25 +139,27 @@ pygments_style = None
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "sphinx_rtd_theme"
+html_theme = "catalyst_sphinx_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 #
-html_theme_options = {
-    "display_version": True,
-    "prev_next_buttons_location": "bottom",
-    "collapse_navigation": True,
-    "sticky_navigation": True
-}
+html_theme_options = {}
+# html_theme_options = {
+#     "display_version": True,
+#     "prev_next_buttons_location": "bottom",
+#     "collapse_navigation": False,
+#     "sticky_navigation": True,
+#     "navigation_depth": 4,
+# }
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 # html_static_path = ["_static"]
 
-html_short_title = "Catalyst RL/DL"
+html_short_title = "Catalyst DL R&D"
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
@@ -160,7 +181,7 @@ html_context = {
     "github_repo": docs_repo,
     "github_version": "master",
     "conf_py_path": "/docs/",
-    "source_suffix": ".rst"
+    "source_suffix": ".rst",
 }
 
 # -- Options for HTMLHelp output ---------------------------------------------
@@ -174,15 +195,12 @@ latex_elements = {
     # The paper size ("letterpaper" or "a4paper").
     #
     # "papersize": "letterpaper",
-
     # The font size ("10pt", "11pt" or "12pt").
     #
     # "pointsize": "10pt",
-
     # Additional stuff for the LaTeX preamble.
     #
     # "preamble": "",
-
     # Latex figure (float) alignment
     #
     # "figure_align": "htbp",
@@ -193,8 +211,11 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (
-        master_doc, "Catalyst.tex", "Catalyst Documentation", "Scitator",
-        "manual"
+        master_doc,
+        "Catalyst.tex",
+        "Catalyst Documentation",
+        "Scitator",
+        "manual",
     ),
 ]
 
@@ -211,8 +232,13 @@ man_pages = [(master_doc, "catalyst", "Catalyst Documentation", [author], 1)]
 #  dir menu entry, description, category)
 texinfo_documents = [
     (
-        master_doc, "Catalyst", "Catalyst Documentation", author, "Catalyst",
-        "One line description of project.", "Miscellaneous"
+        master_doc,
+        "Catalyst",
+        "Catalyst Documentation",
+        author,
+        "Catalyst",
+        "One line description of project.",
+        "Miscellaneous",
     ),
 ]
 

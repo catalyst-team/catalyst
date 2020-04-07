@@ -1,151 +1,147 @@
-from typing import Dict, List
-
-import os
-import copy
-import shutil
+from typing import Dict, List, Union
 from collections import OrderedDict
 import json
+from logging import getLogger
+from pathlib import Path
+import re
+
 import yaml
 
-from catalyst.utils.misc import merge_dicts
+LOG = getLogger(__name__)
 
 
-def load_ordered_yaml(
-    stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict
-):
-    """
-    Loads `yaml` config into OrderedDict
+class OrderedLoader(yaml.Loader):
+    pass
 
-    Args:
-        stream: opened file with yaml
-        Loader: base class for yaml Loader
-        object_pairs_hook: type of mapping
 
-    Returns:
-        dict: configuration
-    """
+def construct_mapping(loader, node):
+    loader.flatten_mapping(node)
+    return OrderedDict(loader.construct_pairs(node))
 
-    class OrderedLoader(Loader):
-        pass
 
-    def construct_mapping(loader, node):
-        loader.flatten_mapping(node)
-        return object_pairs_hook(loader.construct_pairs(node))
+OrderedLoader.add_constructor(
+    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, construct_mapping
+)
+OrderedLoader.add_implicit_resolver(
+    "tag:yaml.org,2002:float",
+    re.compile(
+        """^(?:
+        [-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+]?[0-9]+)?
+        |[-+]?(?:[0-9][0-9_]*)(?:[eE][-+]?[0-9]+)
+        |\\.[0-9_]+(?:[eE][-+][0-9]+)?
+        |[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*
+        |[-+]?\\.(?:inf|Inf|INF)
+        |\\.(?:nan|NaN|NAN))$""",
+        re.X,
+    ),
+    list("-+0123456789."),
+)
 
-    OrderedLoader.add_constructor(
-        yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, construct_mapping
-    )
+
+def _load_ordered_yaml(stream,):
     return yaml.load(stream, OrderedLoader)
 
 
-def dump_config(
-    experiment_config: Dict,
-    logdir: str,
-    configs_path: List = None,
-) -> None:
-    """
-    Saves config into JSON in logdir
+def load_config(
+    path: Union[str, Path],
+    ordered: bool = False,
+    data_format: str = None,
+    encoding: str = "utf-8",
+) -> Union[Dict, List]:
+    """Loads config by giving path. Supports YAML and JSON files.
+
+    Examples:
+        >>> load(path="./config.yml", ordered=True)
 
     Args:
-        experiment_config (dict): experiment config
-        logdir (str): path to logdir
-        configs_path: path(s) to config
-    """
-    configs_path = configs_path or []
-    config_dir = f"{logdir}/configs/"
-    os.makedirs(config_dir, exist_ok=True)
-
-    with open(f"{config_dir}/_config.json", "w") as fout:
-        json.dump(experiment_config, fout, indent=2, ensure_ascii=False)
-
-    for config_path_in in configs_path:
-        config_name = config_path_in.rsplit("/", 1)[-1]
-        config_path_out = f"{config_dir}/{config_name}"
-        shutil.copyfile(config_path_in, config_path_out)
-
-
-def parse_config_args(*, config, args, unknown_args):
-    for arg in unknown_args:
-        arg_name, value = arg.split("=")
-        arg_name = arg_name.lstrip("-").strip('/')
-
-        value_content, value_type = value.rsplit(":", 1)
-
-        if "/" in arg_name:
-            arg_names = arg_name.split("/")
-            if value_type == "str":
-                arg_value = value_content
-
-                if arg_value.lower() == "none":
-                    arg_value = None
-            else:
-                arg_value = eval("%s(%s)" % (value_type, value_content))
-
-            config_ = config
-            for arg_name in arg_names[:-1]:
-                if arg_name not in config_:
-                    config_[arg_name] = {}
-
-                config_ = config_[arg_name]
-
-            config_[arg_names[-1]] = arg_value
-        else:
-            if value_type == "str":
-                arg_value = value_content
-            else:
-                arg_value = eval("%s(%s)" % (value_type, value_content))
-            args.__setattr__(arg_name, arg_value)
-
-    args_exists_ = config.get("args")
-    if args_exists_ is None:
-        config["args"] = dict()
-
-    for key, value in args._get_kwargs():
-        if value is not None:
-            if key in ["logdir", "baselogdir"] and value == "":
-                continue
-            config["args"][key] = value
-
-    return config, args
-
-
-def parse_args_uargs(args, unknown_args):
-    """
-    Function for parsing configuration files
-
-    Args:
-        args: recognized arguments
-        unknown_args: unrecognized arguments
+        path (str): path to config file (YAML or JSON)
+        ordered (bool): if true the config will be loaded as ``OrderedDict``
+        data_format (str): ``yaml``, ``yml`` or ``json``.
+        encoding (str): encoding to read the config
 
     Returns:
-        tuple: updated arguments, dict with config
+        (Union[Dict, List]): config
+
+    Raises:
+        Exception: if path ``path`` doesn't exists
+            or file format is not YAML or JSON
     """
-    args_ = copy.deepcopy(args)
+    path = Path(path)
 
-    # load params
-    config = {}
-    for config_path in args_.configs:
-        with open(config_path, "r") as fin:
-            if config_path.endswith("json"):
-                config_ = json.load(fin, object_pairs_hook=OrderedDict)
-            elif config_path.endswith("yml"):
-                config_ = load_ordered_yaml(fin)
-            else:
-                raise Exception("Unknown file format")
-        config = merge_dicts(config, config_)
+    if not path.exists():
+        raise Exception(f"Path '{path}' doesn't exist!")
 
-    config, args_ = parse_config_args(
-        config=config, args=args_, unknown_args=unknown_args
-    )
+    if data_format is not None:
+        suffix = data_format.lower()
+        if not suffix.startswith("."):
+            suffix = f".{suffix}"
+    else:
+        suffix = path.suffix
 
-    # hack with argparse in config
-    config_args = config.get("args", None)
-    if config_args is not None:
-        for key, value in config_args.items():
-            arg_value = getattr(args_, key, None)
-            if arg_value is None \
-                    or (key in ["logdir", "baselogdir"] and arg_value == ""):
-                arg_value = value
-            setattr(args_, key, arg_value)
+    assert suffix in [
+        ".json",
+        ".yml",
+        ".yaml",
+    ], f"Unknown file format '{suffix}'"
 
-    return args_, config
+    config = None
+    with path.open(encoding=encoding) as stream:
+        if suffix == ".json":
+            object_pairs_hook = OrderedDict if ordered else None
+            file = "\n".join(stream.readlines())
+            if file != "":
+                config = json.loads(file, object_pairs_hook=object_pairs_hook)
+
+        elif suffix in [".yml", ".yaml"]:
+            loader = OrderedLoader if ordered else yaml.Loader
+            config = yaml.load(stream, loader)
+
+    if config is None:
+        return {}
+
+    return config
+
+
+def save_config(
+    config: Union[Dict, List],
+    path: Union[str, Path],
+    data_format: str = None,
+    encoding: str = "utf-8",
+    ensure_ascii: bool = False,
+    indent: int = 2,
+) -> None:
+    """Saves config to file. Path must be either YAML or JSON.
+
+    Args:
+        config (Union[Dict, List]): config to save
+        path (Union[str, Path]): path to save
+        data_format (str): ``yaml``, ``yml`` or ``json``.
+        encoding (str): Encoding to write file. Default is ``utf-8``
+        ensure_ascii (bool): Used for JSON, if True non-ASCII
+        characters are escaped in JSON strings.
+        indent (int): Used for JSON
+    """
+    path = Path(path)
+
+    if data_format is not None:
+        suffix = data_format
+    else:
+        suffix = path.suffix
+
+    assert suffix in [
+        ".json",
+        ".yml",
+        ".yaml",
+    ], f"Unknown file format '{suffix}'"
+
+    with path.open(encoding=encoding, mode="w") as stream:
+        if suffix == ".json":
+            json.dump(config, stream, indent=indent, ensure_ascii=ensure_ascii)
+        elif suffix in [".yml", ".yaml"]:
+            yaml.dump(config, stream)
+
+
+__all__ = [
+    "load_config",
+    "save_config",
+]

@@ -2,25 +2,20 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
 
 from catalyst.__version__ import __version__
-from .scripts import trace, run, make_report
+from catalyst.dl.scripts import init, run, trace
 
-COMMANDS = OrderedDict(
-    [
-        ("run", run),
-        ("trace", trace),
-        ("make-report", make_report),
-    ]
-)
+COMMANDS = OrderedDict([("init", init), ("run", run), ("trace", trace)])
 
 
 def build_parser() -> ArgumentParser:
+    """@TODO: Docs. Contribution is welcome."""
     parser = ArgumentParser(
         "catalyst-dl", formatter_class=RawTextHelpFormatter
     )
     parser.add_argument(
         "-v", "--version", action="version", version=f"%(prog)s {__version__}"
     )
-    all_commands = ', \n'.join(map(lambda x: f"    {x}", COMMANDS.keys()))
+    all_commands = ", \n".join(map(lambda x: f"    {x}", COMMANDS.keys()))
 
     subparsers = parser.add_subparsers(
         metavar="{command}",
@@ -36,6 +31,7 @@ def build_parser() -> ArgumentParser:
 
 
 def main():
+    """@TODO: Docs. Contribution is welcome."""
     parser = build_parser()
 
     args, uargs = parser.parse_known_args()

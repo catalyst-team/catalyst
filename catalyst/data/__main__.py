@@ -1,9 +1,23 @@
 # -*- coding: utf-8 -*-
-"""Catalyst-data scripts.
+r"""Catalyst-data scripts.
 
 Examples:
+    1.  **process-images** reads raw data and outputs
+    preprocessed resized images
 
-    1. **tag2label** prepares a dataset to json like
+    .. code:: bash
+
+        $ catalyst-data process-images \\
+            --in-dir /path/to/raw/data/ \\
+            --out-dir=./data/dataset \\
+            --num-workers=6 \\
+            --max-size=224 \\
+            --extension=png \\
+            --clear-exif \\
+            --grayscale \\
+            --expand-dims
+
+    2. **tag2label** prepares a dataset to json like
     `{"class_id":  class_column_from_dataset}`
 
     .. code:: bash
@@ -13,7 +27,7 @@ Examples:
             --out-dataset=./data/dataset_raw.csv \\
             --out-labeling=./data/tag2cls.json
 
-    2. **check-images** checks images in your data
+    3. **check-images** checks images in your data
     to be non-broken and writes a flag:
     `true` if image opened without an error and `false` otherwise
 
@@ -21,16 +35,16 @@ Examples:
 
         $ catalyst-data check-images \\
             --in-csv=./data/dataset_raw.csv \\
-            --img-datapath=./data/dataset \\
+            --img-rootpath=./data/dataset \\
             --img-col="tag" \\
             --out-csv=./data/dataset_checked.csv \\
             --n-cpu=4
 
-    3. **split-dataframe** split your dataset into train/valid folds
+    4. **split-dataframe** split your dataset into train/valid folds
 
-     .. code:: bash
+    .. code:: bash
 
-         $ catalyst-data split-dataframe \\
+        $ catalyst-data split-dataframe \\
             --in-csv=./data/dataset_raw.csv \\
             --tag2class=./data/tag2cls.json \\
             --tag-column=tag \\
@@ -39,7 +53,7 @@ Examples:
             --train-folds=0,1,2,3 \\
             --out-csv=./data/dataset.csv
 
-    4. **image2embedding** embeds images from your csv
+    5. **image2embedding** embeds images from your csv
     or image directory with specified neural net architecture
 
     .. code:: bash
@@ -54,34 +68,59 @@ Examples:
             --batch-size=8 \\
             --num-workers=16 \\
             --verbose
-
 """
 
 from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
+import logging
+import os
 
 from catalyst.__version__ import __version__
-from catalyst.contrib.scripts import check_images, \
-    image2embedding, tag2label, split_dataframe
+from catalyst.data.scripts import (
+    image2embedding,
+    process_images,
+    project_embeddings,
+    split_dataframe,
+    tag2label,
+)
+
+logger = logging.getLogger(__name__)
 
 COMMANDS = OrderedDict(
     [
         ("tag2label", tag2label),
-        ("check-images", check_images),
+        ("process-images", process_images),
         ("split-dataframe", split_dataframe),
         ("image2embedding", image2embedding),
+        ("project-embeddings", project_embeddings),
     ]
 )
 
+try:
+    import transformers  # noqa: F401
+    from catalyst.data.scripts import text2embedding
+
+    COMMANDS["text2embedding"] = text2embedding
+except ImportError as ex:
+    if os.environ.get("USE_TRANSFORMERS", "0") == "1":
+        logger.warning(
+            "transformers not available, to install transformers,"
+            " run `pip install transformers`."
+        )
+        raise ex
+
 
 def build_parser() -> ArgumentParser:
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     parser = ArgumentParser(
         "catalyst-data", formatter_class=RawTextHelpFormatter
     )
     parser.add_argument(
         "-v", "--version", action="version", version=f"%(prog)s {__version__}"
     )
-    all_commands = ', \n'.join(map(lambda x: f"    {x}", COMMANDS.keys()))
+    all_commands = ", \n".join(map(lambda x: f"    {x}", COMMANDS.keys()))
 
     subparsers = parser.add_subparsers(
         metavar="{command}",
@@ -97,6 +136,9 @@ def build_parser() -> ArgumentParser:
 
 
 def main():
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     parser = build_parser()
 
     args, uargs = parser.parse_known_args()

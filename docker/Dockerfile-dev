@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:1.1.0-cuda10.0-cudnn7.5-devel
+FROM pytorch/pytorch:1.3-cuda10.1-cudnn7-devel
 
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -22,10 +22,9 @@ RUN apt-get update && apt-get install -y \
 
 CMD mkdir -p /workspace
 
-COPY requirements.txt /workspace/requirements.txt
-RUN pip install -r /workspace/requirements.txt --no-cache-dir
-
-COPY requirements-dev.txt /workspace/requirements-dev.txt
-RUN pip install -r /workspace/requirements-dev.txt --no-cache-dir
+COPY requirements/ /workspace/
+RUN pip install -r /workspace/requirements.txt --no-cache-dir \
+    && pip install -r /workspace/requirements-contrib.txt --no-cache-dir \
+    && pip install -r /workspace/requirements-dev.txt --no-cache-dir
 
 WORKDIR /workspace

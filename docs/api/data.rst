@@ -20,36 +20,19 @@ For example:
 .. automodule:: catalyst.data.__main__
     :members:
 
-Reader
+
+Augmentor
 --------------------
 
-Readers are the abstraction for your dataset. They can open an elem from the dataset and transform it to data, needed by your network.
-For example open image by path, or read string and tokenize it.
-
-
-.. currentmodule:: catalyst.data.reader
-
-.. autoclass:: BaseReader
+.. automodule:: catalyst.data.augmentor
     :members:
     :undoc-members:
-    :special-members: __init__, __call__
 
-.. autoclass:: LambdaReader
-    :members:
-    :undoc-members:
-    :special-members: __init__, __call__
 
-.. autoclass:: ScalarReader
-    :members:
-    :undoc-members:
-    :special-members: __init__, __call__
+Collate Functions
+--------------------
 
-.. autoclass:: ImageReader
-    :members:
-    :undoc-members:
-    :special-members: __init__, __call__
-
-.. autoclass:: ReaderCompose
+.. automodule:: catalyst.data.collate_fn
     :members:
     :undoc-members:
     :special-members: __init__, __call__
@@ -63,6 +46,19 @@ Dataset
     :members:
     :special-members: __getitem__, __len__
 
+
+Reader
+--------------------
+
+Readers are the abstraction for your dataset. They can open an elem from the dataset and transform it to data, needed by your network.
+For example open image by path, or read string and tokenize it.
+
+.. automodule:: catalyst.data.reader
+    :members:
+    :undoc-members:
+    :special-members: __init__, __call__
+
+
 Sampler
 --------------------
 
@@ -72,31 +68,6 @@ Sampler
     :special-members: __iter__, __len__
 
 
-Collate Functions
---------------------
-
-.. automodule:: catalyst.data.collate_fn
-    :members:
-    :undoc-members:
-    :special-members: __init__, __call__
 
 
-Mixins
---------------------
 
-.. automodule:: catalyst.data.mixin
-    :members:
-    :undoc-members:
-
-
-Augmentor
---------------------
-
-Legacy classes for augmentations.
-For modern Catalyst use `albumentations`_.
-
-.. _albumentations: https://github.com/albu/albumentations
-
-.. automodule:: catalyst.data.augmentor
-    :members:
-    :undoc-members:
