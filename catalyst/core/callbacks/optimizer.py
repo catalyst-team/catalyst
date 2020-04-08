@@ -11,7 +11,7 @@ from catalyst.core import (
     State,
     utils,
 )
-from catalyst.utils.tools.typing import Optimizer
+from catalyst.utils.tools.typing import Model, Optimizer
 
 logger = logging.getLogger(__name__)
 
@@ -26,21 +26,17 @@ class OptimizerCallback(Callback):
         accumulation_steps: int = 1,
         grad_clip_params: Dict = None,
         decouple_weight_decay: bool = True,
-        save_model_grads: bool = False,
     ):
         """
         Args:
-            grad_clip_params (dict): params for gradient clipping
-            accumulation_steps (int): number of steps before
-                ``model.zero_grad()``
+            loss_key (str): key to get loss from ``state.loss``
             optimizer_key (str): A key to take a optimizer in case
                 there are several of them and they are in a dictionary format.
-            loss_key (str): key to get loss from ``state.loss``
+            accumulation_steps (int): number of steps before
+                ``model.zero_grad()``
+            grad_clip_params (dict): params for gradient clipping
             decouple_weight_decay (bool): If True - decouple weight decay
                 regularization.
-            save_model_grads (bool): If True - State.model_grads will
-                contain gradients calculated on backward propagation
-                on current batch
         """
         super().__init__(order=CallbackOrder.Optimizer, node=CallbackNode.All)
         self.loss_key: str = loss_key
@@ -53,13 +49,8 @@ class OptimizerCallback(Callback):
         self.grad_clip_fn = registry.GRAD_CLIPPERS.get_from_params(
             **grad_clip_params
         )
-        self.norm_type = grad_clip_params.get("norm_type", 2)
 
         self.decouple_weight_decay = decouple_weight_decay
-
-        self.save_model_grads = save_model_grads
-        self.model_grad_norm_prefix = "_grad_norm"
-
         self._optimizer_wd: List[float] = [0.0]
 
     @staticmethod
@@ -135,27 +126,6 @@ class OptimizerCallback(Callback):
             )
             state.epoch_metrics[momentum_name] = momentum
 
-    def _store_grad_norm(self, state: State):
-        model = state.model
-
-        if isinstance(model, (DataParallel, DistributedDataParallel)):
-            model = model.module
-
-        total_norm = 0.0
-
-        for tag, value in model.named_parameters():
-            tag = tag.replace(".", "/")
-            metrics_tag = f"{self.model_grad_norm_prefix}/{tag}"
-            param_norm = value.grad.data.norm(self.norm_type).item()
-            total_norm += param_norm ** self.norm_type
-
-            state.batch_metrics[metrics_tag] = param_norm
-
-        total_norm = total_norm ** (1.0 / self.norm_type)
-        tag = "total"
-        metrics_tag = f"{self.model_grad_norm_prefix}/{tag}"
-        state.batch_metrics[metrics_tag] = total_norm
-
     def on_batch_end(self, state: State) -> None:
         """On batch end event
 
@@ -169,8 +139,8 @@ class OptimizerCallback(Callback):
 
         self._accumulation_counter += 1
         need_gradient_step = (
-            self._accumulation_counter + 1
-        ) % self.accumulation_steps == 0
+            self._accumulation_counter % self.accumulation_steps == 0
+        )
 
         # This is very hacky check whether we have AMP optimizer and this may
         # change in future.
@@ -197,12 +167,88 @@ class OptimizerCallback(Callback):
                 grad_clip_fn=self.grad_clip_fn,
             )
 
-            if self.save_model_grads:
-                self._store_grad_norm(state)
-
             utils.maybe_recursive_call(self._optimizer, "zero_grad")
+            self._accumulation_counter = 0
+
+
+class SaveModelGradsCallback(Callback):
+    """Callback for logging model gradients."""
+
+    def __init__(
+        self, norm_type: int = 2, accumulation_steps: int = 1,
+    ):
+        """
+        Args:
+            norm_type (int): norm type used to calculate norm of gradients.
+                If `OptimizerCallback` provides non-default argument
+                `grad_clip_params` with custom norm type, then corresponding
+                norm type should be used in this class.
+            accumulation_steps (int): number of steps before
+                ``model.zero_grad()``.
+                Should be the same as in `OptimizerCallback`.
+        """
+        super().__init__(
+            order=CallbackOrder.Optimizer + 1, node=CallbackNode.All
+        )
+
+        self.grad_norm_prefix = "_grad_norm"
+        self.norm_type = norm_type
+
+        self.accumulation_steps: int = accumulation_steps
+        self._accumulation_counter: int = 0
+
+    @staticmethod
+    def save_grad_norm(
+        *, model: Model, prefix: str, norm_type: int, output: Dict,
+    ) -> None:
+        """Stores gradient norms for a given model into `output` dict
+
+        Args:
+            model (Model): model which gradients to be saved.
+            prefix (str): prefix for keys in `output` dictionary.
+            norm_type (int): norm type of gradient norm.
+            output (dict): dictionary where to store gradient norms.
+        """
+        if isinstance(model, (DataParallel, DistributedDataParallel)):
+            model = model.module
+
+        total_norm = 0.0
+
+        for tag, value in model.named_parameters():
+            tag = tag.replace(".", "/")
+            metrics_tag = f"{prefix}/{tag}"
+            param_norm = value.grad.data.norm(norm_type).item()
+            total_norm += param_norm ** norm_type
+            output[metrics_tag] = param_norm
+
+        total_norm = total_norm ** (1.0 / norm_type)
+        tag = "total"
+        metrics_tag = f"{prefix}/{tag}"
+        output[metrics_tag] = total_norm
+
+    def on_batch_end(self, state: State) -> None:
+        """On batch end event
+
+        Args:
+            state (State): current state
+        """
+        if not state.is_train_loader:
+            return
+
+        self._accumulation_counter += 1
+        need_gradient_step = (
+            self._accumulation_counter % self.accumulation_steps == 0
+        )
+
+        if need_gradient_step:
+            self.save_grad_norm(
+                model=state.model,
+                prefix=self.grad_norm_prefix,
+                norm_type=self.norm_type,
+                output=state.batch_metrics,
+            )
 
             self._accumulation_counter = 0
 
 
-__all__ = ["OptimizerCallback"]
+__all__ = ["OptimizerCallback", "SaveModelGradsCallback"]

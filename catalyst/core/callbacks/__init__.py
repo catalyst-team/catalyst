@@ -11,7 +11,7 @@ from .metrics import (
     MetricManagerCallback,
     MultiMetricCallback,
 )
-from .optimizer import OptimizerCallback
+from .optimizer import OptimizerCallback, SaveModelGradsCallback
 from .scheduler import LRUpdater, SchedulerCallback
 from .timer import TimerCallback
 from .validation import ValidationManagerCallback

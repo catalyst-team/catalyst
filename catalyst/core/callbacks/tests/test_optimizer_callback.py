@@ -14,6 +14,7 @@ from catalyst.core import (
     CallbackOrder,
     CriterionCallback,
     OptimizerCallback,
+    SaveModelGradsCallback,
     State,
 )
 from catalyst.dl import SupervisedRunner
@@ -95,13 +96,15 @@ def test_save_model_grads():
     loaders = _get_loaders(batch_size=4, num_workers=1)
 
     criterion_callback = CriterionCallback()
-    optimizer_callback = OptimizerCallback(save_model_grads=True)
-    prefix = optimizer_callback.model_grad_norm_prefix
+    optimizer_callback = OptimizerCallback()
+    save_model_grads_callback = SaveModelGradsCallback()
+    prefix = save_model_grads_callback.grad_norm_prefix
     test_callback = _OnBatchEndCheckGradsCallback(prefix)
 
     callbacks = collections.OrderedDict(
         loss=criterion_callback,
         optimizer=optimizer_callback,
+        grad_norm=save_model_grads_callback,
         test_callback=test_callback,
     )
 
