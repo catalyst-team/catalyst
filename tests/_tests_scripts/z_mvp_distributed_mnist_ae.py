@@ -7,6 +7,7 @@ from torchvision import transforms
 from torchvision.datasets import MNIST
 
 from catalyst import dl, utils
+from catalyst.utils import metrics
 
 
 class ClassifyAE(nn.Module):
@@ -50,11 +51,17 @@ class CustomRunner(dl.Runner):
         loss_clf = F.cross_entropy(y_hat, y)
         loss_ae = F.mse_loss(x_, x)
         loss = loss_clf + loss_ae
+        accuracy01, accuracy03, accuracy05 = metrics.accuracy(
+            y_hat, y, topk=(1, 3, 5)
+        )
 
         self.state.batch_metrics = {
             "loss_clf": loss_clf,
             "loss_ae": loss_ae,
             "loss": loss,
+            "accuracy01": accuracy01,
+            "accuracy03": accuracy03,
+            "accuracy05": accuracy05,
         }
 
         if self.state.is_train_loader:

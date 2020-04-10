@@ -19,8 +19,6 @@ class CustomRunner(dl.Runner):
         """
         Docs.
         """
-        state = self.state
-
         images, _ = batch
         images = images.view(images.size(0), -1)
         bs = images.shape[0]
@@ -36,7 +34,7 @@ class CustomRunner(dl.Runner):
         loss_generator = F.binary_cross_entropy(
             generated_pred, generated_labels
         )
-        state.batch_metrics["loss_generator"] = loss_generator
+        self.state.batch_metrics["loss_generator"] = loss_generator
 
         # discriminator step
         # real
@@ -53,7 +51,7 @@ class CustomRunner(dl.Runner):
 
         # loss
         loss_discriminator = (real_loss + fake_loss) / 2.0
-        state.batch_metrics["loss_discriminator"] = loss_discriminator
+        self.state.batch_metrics["loss_discriminator"] = loss_discriminator
 
 
 def main():
