@@ -110,7 +110,7 @@ runner.train(
 </details>
 
 <details>
-<summary>CV - MNIST one more time</summary>
+<summary>CV - MNIST classification one more time</summary>
 <p>
 
 ```python
@@ -121,6 +121,7 @@ from torch.utils.data import DataLoader
 from torchvision.datasets import MNIST
 from torchvision import transforms
 from catalyst import dl
+from catalyst.utils import metrics
 
 model = torch.nn.Linear(28 * 28, 10)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
@@ -135,7 +136,14 @@ class CustomRunner(dl.Runner):
         x, y = batch
         y_hat = self.model(x.view(x.size(0), -1))
         loss = F.cross_entropy(y_hat, y)
-        self.state.batch_metrics["loss"] = loss
+        accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
+
+        self.state.batch_metrics = {
+            "loss": loss,
+            "accuracy01": accuracy01,
+            "accuracy03": accuracy03,
+            "accuracy05": accuracy05,
+        }
         
         if self.state.is_train_loader:
             loss.backward()
@@ -154,7 +162,7 @@ runner.train(
 </details>
 
 <details>
-<summary>CV - MNIST classification with AutoEncoder</summary>
+<summary>CV - classification with AutoEncoder</summary>
 <p>
 
 ```python
@@ -166,7 +174,7 @@ from torch.utils.data import DataLoader
 from torchvision.datasets import MNIST
 from torchvision import transforms
 from catalyst import dl
-
+from catalyst.utils import metrics
 
 class ClassifyAE(nn.Module):
     def __init__(self, in_features, hid_features, out_features):
@@ -174,13 +182,12 @@ class ClassifyAE(nn.Module):
         self.encoder = nn.Sequential(nn.Linear(in_features, hid_features), nn.Tanh())
         self.decoder = nn.Linear(hid_features, in_features)
         self.clf = nn.Linear(hid_features, out_features)
-    
+
     def forward(self, x):
         z = self.encoder(x)
         y_hat = self.clf(z)
         x_ = self.decoder(z)
         return y_hat, x_
-
 
 model = ClassifyAE(28 * 28, 128, 10)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
@@ -198,11 +205,90 @@ class CustomRunner(dl.Runner):
         loss_clf = F.cross_entropy(y_hat, y)
         loss_ae = F.mse_loss(x_, x)
         loss = loss_clf + loss_ae
-        
+        accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
+
         self.state.batch_metrics = {
             "loss_clf": loss_clf,
             "loss_ae": loss_ae,
-            "loss": loss
+            "loss": loss,
+            "accuracy01": accuracy01,
+            "accuracy03": accuracy03,
+            "accuracy05": accuracy05,
+        }
+
+        if self.state.is_train_loader:
+            loss.backward()
+            self.state.optimizer.step()
+            self.state.optimizer.zero_grad()
+
+runner = CustomRunner()
+runner.train(
+    model=model,
+    optimizer=optimizer,
+    loaders=loaders,
+    verbose=True,
+)
+```
+</p>
+</details>
+
+<details>
+<summary>CV - segmentation with classification auxiliary task</summary>
+<p>
+
+```python
+import os
+import torch
+from torch import nn
+from torch.nn import functional as F
+from torch.utils.data import DataLoader
+from torchvision.datasets import MNIST
+from torchvision import transforms
+from catalyst import dl
+from catalyst.utils import metrics
+
+class ClassifyUnet(nn.Module):
+    def __init__(self, in_channels, in_hw, out_features):
+        super().__init__()
+        self.encoder = nn.Sequential(nn.Conv2d(in_channels, in_channels, 3, 1, 1), nn.Tanh())
+        self.decoder = nn.Conv2d(in_channels, in_channels, 3, 1, 1)
+        self.clf = nn.Linear(in_channels * in_hw * in_hw, out_features)
+
+    def forward(self, x):
+        z = self.encoder(x)
+        z_ = z.view(z.size(0), -1)
+        y_hat = self.clf(z_)
+        x_ = self.decoder(z)
+        return y_hat, x_
+
+model = ClassifyUnet(1, 28, 10)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
+
+loaders = {
+    "train": DataLoader(MNIST(os.getcwd(), train=False, download=True,transform=transforms.ToTensor()), batch_size=32),
+    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True,transform=transforms.ToTensor()), batch_size=32),
+}
+
+class CustomRunner(dl.Runner):
+    def _handle_batch(self, batch):
+        x, y = batch
+        x_noise = (x + torch.rand_like(x)).clamp_(0, 1)
+        y_hat, x_ = self.model(x_noise)
+
+        loss_clf = F.cross_entropy(y_hat, y)
+        iou = metrics.iou(x_, x)
+        loss_iou = 1 - iou
+        loss = loss_clf + loss_iou
+        accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
+
+        self.state.batch_metrics = {
+            "loss_clf": loss_clf,
+            "loss_iou": loss_iou,
+            "loss": loss,
+            "iou": iou,
+            "accuracy01": accuracy01,
+            "accuracy03": accuracy03,
+            "accuracy05": accuracy05,
         }
         
         if self.state.is_train_loader:
@@ -235,7 +321,6 @@ from torchvision.datasets import MNIST
 from torchvision import transforms
 from catalyst import dl
 
-
 generator = nn.Sequential(nn.Linear(128, 28 * 28), nn.Tanh())
 discriminator = nn.Sequential(nn.Linear(28 * 28, 1), nn.Sigmoid())
 model = nn.ModuleDict({"generator": generator, "discriminator": discriminator})
@@ -255,10 +340,7 @@ loaders = {
 }
 
 class CustomRunner(dl.Runner):
-    
     def _handle_batch(self, batch):
-        state = self.state
-        
         images, _ = batch
         images = images.view(images.size(0), -1)
         bs = images.shape[0]
@@ -272,7 +354,7 @@ class CustomRunner(dl.Runner):
 
         ## loss
         loss_generator = F.binary_cross_entropy(generated_pred, generated_labels)
-        state.batch_metrics["loss_generator"] = loss_generator
+        self.state.batch_metrics["loss_generator"] = loss_generator
 
         # discriminator step
         ## real
@@ -287,7 +369,7 @@ class CustomRunner(dl.Runner):
 
         ## loss
         loss_discriminator = (real_loss + fake_loss) / 2.0
-        state.batch_metrics["loss_discriminator"] = loss_discriminator
+        self.state.batch_metrics["loss_discriminator"] = loss_discriminator
 
 runner = CustomRunner()
 runner.train(
@@ -323,13 +405,11 @@ import torch
 from torch.utils.data import TensorDataset
 from catalyst.dl import SupervisedRunner, utils
 
-
 def datasets_fn(num_features: int):
     X = torch.rand(int(1e4), num_features)
     y = torch.rand(X.shape[0])
     dataset = TensorDataset(X, y)
     return {"train": dataset, "valid": dataset}
-
 
 def train():
     num_features = int(1e1)
@@ -346,7 +426,7 @@ def train():
             "batch_size": 32,
             "num_workers": 1,
             "get_datasets_fn": datasets_fn,
-            "num_features": num_features,
+            "num_features": num_features,  # will be passed to datasets_fn
         },
         criterion=criterion,
         optimizer=optimizer,
@@ -357,14 +437,13 @@ def train():
         distributed=False,
     )
 
-
 utils.distributed_cmd_run(train)
 ```
 </p>
 </details>
 
 <details>
-<summary>CV - MNIST classification with AutoEncoder (distributed version)</summary>
+<summary>CV - classification with AutoEncoder (distributed version)</summary>
 <p>
 
 ```python
@@ -376,7 +455,7 @@ from torch.nn import functional as F
 from torchvision.datasets import MNIST
 from torchvision import transforms
 from catalyst import dl, utils
-
+from catalyst.utils import metrics
 
 class ClassifyAE(nn.Module):
     def __init__(self, in_features, hid_features, out_features):
@@ -399,11 +478,15 @@ class CustomRunner(dl.Runner):
         loss_clf = F.cross_entropy(y_hat, y)
         loss_ae = F.mse_loss(x_, x)
         loss = loss_clf + loss_ae
+        accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
 
         self.state.batch_metrics = {
             "loss_clf": loss_clf,
             "loss_ae": loss_ae,
-            "loss": loss
+            "loss": loss,
+            "accuracy01": accuracy01,
+            "accuracy03": accuracy03,
+            "accuracy05": accuracy05,
         }
 
         if self.state.is_train_loader:
@@ -414,7 +497,6 @@ class CustomRunner(dl.Runner):
 def datasets_fn():
     dataset = MNIST(os.getcwd(), train=False, download=True, transform=transforms.ToTensor())
     return {"train": dataset, "valid": dataset}
-
 
 def train():
     model = ClassifyAE(28 * 28, 128, 10)
