@@ -23,7 +23,9 @@ class ClassifyAE(nn.Module):
         self.encoder = nn.Sequential(
             nn.Linear(in_features, hid_features), nn.Tanh()
         )
-        self.decoder = nn.Linear(hid_features, in_features)
+        self.decoder = nn.Sequential(
+            nn.Linear(hid_features, in_features), nn.Sigmoid()
+        )
         self.clf = nn.Linear(hid_features, out_features)
 
     def forward(self, x):
