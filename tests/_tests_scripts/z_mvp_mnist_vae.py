@@ -1,5 +1,7 @@
 import os
 
+import numpy as np
+
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -10,8 +12,29 @@ from torchvision.datasets import MNIST
 from catalyst import dl
 from catalyst.utils import metrics
 
+LOG_SCALE_MAX = 2
+LOG_SCALE_MIN = -10
 
-class ClassifyAE(torch.nn.Module):
+
+def normal_sample(mu, sigma):
+    """
+    Docs.
+    """
+    return mu + sigma * torch.randn_like(sigma)
+
+
+def normal_logprob(mu, sigma, z):
+    """
+    Docs.
+    """
+    normalization_constant = -sigma.log() - 0.5 * np.log(2 * np.pi)
+    square_term = -0.5 * ((z - mu) / sigma) ** 2
+    logprob_vec = normalization_constant + square_term
+    logprob = logprob_vec.sum(1)
+    return logprob
+
+
+class ClassifyVAE(torch.nn.Module):
     """
     Docs.
     """
@@ -21,25 +44,32 @@ class ClassifyAE(torch.nn.Module):
         Docs.
         """
         super().__init__()
-        self.encoder = nn.Sequential(
-            nn.Linear(in_features, hid_features), nn.Tanh()
-        )
+        self.encoder = torch.nn.Linear(in_features, hid_features * 2)
         self.decoder = nn.Sequential(
             nn.Linear(hid_features, in_features), nn.Sigmoid()
         )
-        self.clf = nn.Linear(hid_features, out_features)
+        self.clf = torch.nn.Linear(hid_features, out_features)
 
-    def forward(self, x):
+    def forward(self, x, deterministic=False):
         """
         Docs.
         """
         z = self.encoder(x)
-        y_hat = self.clf(z)
-        x_ = self.decoder(z)
-        return y_hat, x_
+        bs, z_dim = z.shape
+
+        loc, log_scale = z[:, : z_dim // 2], z[:, z_dim // 2 :]
+        log_scale = torch.clamp(log_scale, LOG_SCALE_MIN, LOG_SCALE_MAX)
+        scale = torch.exp(log_scale)
+        z_ = loc if deterministic else normal_sample(loc, scale)
+        z_logprob = normal_logprob(loc, scale, z_)
+        z_ = z_.view(bs, -1)
+        x_ = self.decoder(z_)
+        y_hat = self.clf(z_)
+
+        return y_hat, x_, z_logprob, loc, log_scale
 
 
-model = ClassifyAE(28 * 28, 128, 10)
+model = ClassifyVAE(28 * 28, 64, 10)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
 loaders = {
@@ -75,10 +105,17 @@ class CustomRunner(dl.Runner):
         """
         x, y = batch
         x = x.view(x.size(0), -1)
-        y_hat, x_ = self.model(x)
+        y_hat, x_, z_logprob, loc, log_scale = self.model(x)
+
         loss_clf = F.cross_entropy(y_hat, y)
         loss_ae = F.mse_loss(x_, x)
-        loss = loss_clf + loss_ae
+        loss_kld = (
+            -0.5
+            * torch.mean(1 + log_scale - loc.pow(2) - log_scale.exp())
+            * 0.1
+        )
+        loss_logprob = torch.mean(z_logprob) * 0.01
+        loss = loss_clf + loss_ae + loss_kld + loss_logprob
         accuracy01, accuracy03, accuracy05 = metrics.accuracy(
             y_hat, y, topk=(1, 3, 5)
         )
@@ -86,6 +123,8 @@ class CustomRunner(dl.Runner):
         self.state.batch_metrics = {
             "loss_clf": loss_clf,
             "loss_ae": loss_ae,
+            "loss_kld": loss_kld,
+            "loss_logprob": loss_logprob,
             "loss": loss,
             "accuracy01": accuracy01,
             "accuracy03": accuracy03,
