@@ -1,21 +1,22 @@
-from typing import Dict, List  # isort:skip
+from typing import Dict, List
 
 from alchemy import Logger
 
 from catalyst import utils
 from catalyst.core import (
-    Callback, CallbackNode, CallbackOrder, CallbackScope, State
+    Callback,
+    CallbackNode,
+    CallbackOrder,
+    CallbackScope,
+    State,
 )
 
 
 class AlchemyLogger(Callback):
-    """
-    Logger callback, translates ``state.*_metrics`` to Alchemy
+    """Logger callback, translates ``state.*_metrics`` to Alchemy.
     Read about Alchemy here https://alchemy.host
-    Powered by Catalyst.Ecosystem
 
     Example:
-
         .. code-block:: python
 
             from catalyst.dl import SupervisedRunner, AlchemyLogger
@@ -32,14 +33,17 @@ class AlchemyLogger(Callback):
                 verbose=True,
                 callbacks={
                     "logger": AlchemyLogger(
-                        "token": "...", # your Alchemy token
-                        "project": "your_project_name",
-                        "experiment": "your_experiment_name",
-                        "group": "your_experiment_group_name",
+                        token="...", # your Alchemy token
+                        project="your_project_name",
+                        experiment="your_experiment_name",
+                        group="your_experiment_group_name",
                     )
                 }
             )
+
+    Powered by Catalyst.Ecosystem.
     """
+
     def __init__(
         self,
         metric_names: List[str] = None,
@@ -66,8 +70,9 @@ class AlchemyLogger(Callback):
         if not (self.log_on_batch_end or self.log_on_epoch_end):
             raise ValueError("You have to log something!")
 
-        if (self.log_on_batch_end and not self.log_on_epoch_end) \
-                or (not self.log_on_batch_end and self.log_on_epoch_end):
+        if (self.log_on_batch_end and not self.log_on_epoch_end) or (
+            not self.log_on_batch_end and self.log_on_epoch_end
+        ):
             self.batch_log_suffix = ""
             self.epoch_log_suffix = ""
         else:
@@ -77,13 +82,14 @@ class AlchemyLogger(Callback):
         self.logger = Logger(**logging_params)
 
     def __del__(self):
+        """@TODO: Docs. Contribution is welcome."""
         self.logger.close()
 
     def _log_metrics(
         self, metrics: Dict[str, float], step: int, mode: str, suffix=""
     ):
         if self.metrics_to_log is None:
-            metrics_to_log = sorted(list(metrics.keys()))
+            metrics_to_log = sorted(metrics.keys())
         else:
             metrics_to_log = self.metrics_to_log
 
@@ -92,13 +98,11 @@ class AlchemyLogger(Callback):
                 metric_name = f"{name}/{mode}{suffix}"
                 metric_value = metrics[name]
                 self.logger.log_scalar(
-                    name=metric_name,
-                    value=metric_value,
-                    step=step,
+                    name=metric_name, value=metric_value, step=step,
                 )
 
     def on_batch_end(self, state: State):
-        """Translate batch metrics to Alchemy"""
+        """Translate batch metrics to Alchemy."""
         if self.log_on_batch_end:
             mode = state.loader_name
             metrics_ = state.batch_metrics
@@ -110,7 +114,7 @@ class AlchemyLogger(Callback):
             )
 
     def on_loader_end(self, state: State):
-        """Translate loader metrics to Alchemy"""
+        """Translate loader metrics to Alchemy."""
         if self.log_on_epoch_end:
             mode = state.loader_name
             metrics_ = state.loader_metrics
@@ -122,7 +126,7 @@ class AlchemyLogger(Callback):
             )
 
     def on_epoch_end(self, state: State):
-        """Translate epoch metrics to Alchemy"""
+        """Translate epoch metrics to Alchemy."""
         extra_mode = "_base"
         splitted_epoch_metrics = utils.split_dict_to_subdicts(
             dct=state.epoch_metrics,

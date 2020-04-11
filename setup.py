@@ -13,8 +13,7 @@ from setuptools import Command, find_packages, setup
 
 # Package meta-data.
 NAME = "catalyst"
-DESCRIPTION = \
-    "Catalyst. PyTorch framework for DL research and development."
+DESCRIPTION = "Catalyst. PyTorch framework for DL research and development."
 URL = "https://github.com/catalyst-team/catalyst"
 EMAIL = "scitator@gmail.com"
 AUTHOR = "Sergey Kolesnikov"
@@ -24,17 +23,26 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 
 def load_requirements(filename):
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     with open(os.path.join(PROJECT_ROOT, filename), "r") as f:
         return f.read().splitlines()
 
 
 def load_readme():
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     readme_path = os.path.join(PROJECT_ROOT, "README.md")
     with io.open(readme_path, encoding="utf-8") as f:
         return "\n" + f.read()
 
 
 def load_version():
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     context = {}
     with open(os.path.join(PROJECT_ROOT, "catalyst", "__version__.py")) as f:
         exec(f.read(), context)
@@ -53,12 +61,21 @@ class UploadCommand(Command):
         print("\033[1m{0}\033[0m".format(s))
 
     def initialize_options(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         pass
 
     def finalize_options(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         pass
 
     def run(self):
+        """
+        @TODO: Docs. Contribution is welcome
+        """
         try:
             self.status("Removing previous builds…")
             rmtree(os.path.join(PROJECT_ROOT, "dist"))
@@ -67,9 +84,7 @@ class UploadCommand(Command):
 
         self.status("Building Source and Wheel (universal) distribution…")
         os.system(
-            "{0} setup.py sdist bdist_wheel --universal".format(
-                sys.executable
-            )
+            "{0} setup.py sdist bdist_wheel --universal".format(sys.executable)
         )
 
         self.status("Uploading the package to PyPI via Twine…")
@@ -126,7 +141,7 @@ setup(
         "Documentation": "https://catalyst-team.github.io/catalyst",
         "Source Code": "https://github.com/catalyst-team/catalyst",
     },
-    packages=find_packages(exclude=("tests", )),
+    packages=find_packages(exclude=("tests",)),
     entry_points={
         "console_scripts": [
             "catalyst-dl=catalyst.dl.__main__:main",
@@ -163,7 +178,5 @@ setup(
         "Programming Language :: Python :: Implementation :: CPython",
     ],
     # $ setup.py publish support.
-    cmdclass={
-        "upload": UploadCommand,
-    },
+    cmdclass={"upload": UploadCommand},
 )

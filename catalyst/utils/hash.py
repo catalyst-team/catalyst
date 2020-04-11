@@ -1,4 +1,4 @@
-from typing import Any  # isort:skip
+from typing import Any
 from base64 import urlsafe_b64encode
 from hashlib import sha256
 
@@ -36,5 +36,11 @@ def get_hash(obj: Any) -> str:
 
 
 def get_short_hash(o) -> str:
+    """
+    @TODO: Docs. Contribution is welcome.
+    """
     hash = get_hash(o)[:6]
     return hash
+
+
+__all__ = ["get_hash", "get_short_hash"]

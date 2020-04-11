@@ -1,3 +1,9 @@
+"""
+Various accuracy metrics:
+    * :func:`accuracy`
+    * :func:`average_accuracy`
+    * :func:`mean_average_accuracy`
+"""
 import numpy as np
 
 from catalyst.utils import get_activation_fn
@@ -6,27 +12,31 @@ from catalyst.utils import get_activation_fn
 def accuracy(
     outputs,
     targets,
-    topk=(1, ),
+    topk=(1,),
     threshold: float = None,
-    activation: str = None
+    activation: str = None,
 ):
     """
     Computes the accuracy.
 
     It can be used either for:
-        - multi-class task:
-            -you can use topk.
-            -threshold and activation are not required.
-            -targets is a tensor: batch_size
-            -outputs is a tensor: batch_size x num_classes
-            -computes the accuracy@k for the specified values of k.
-        - OR multi-label task, in this case:
-            -you must specify threshold and activation
-            -topk will not be used
-            (because of there is no method to apply top-k in
-            multi-label classification).
-            -outputs, targets are tensors with shape: batch_size x num_classes
-            -targets is a tensor with binary vectors
+
+    1. Multi-class task, in this case:
+
+      - you can use topk.
+      - threshold and activation are not required.
+      - targets is a tensor: batch_size
+      - outputs is a tensor: batch_size x num_classes
+      - computes the accuracy@k for the specified values of k.
+
+    2. Multi-label task, in this case:
+
+      - you must specify threshold and activation
+      - topk will not be used
+        (because of there is no method to apply top-k in
+        multi-label classification).
+      - outputs, targets are tensors with shape: batch_size x num_classes
+      - targets is a tensor with binary vectors
     """
     activation_fn = get_activation_fn(activation)
     outputs = activation_fn(outputs)
@@ -59,8 +69,8 @@ def accuracy(
 
 
 def average_accuracy(outputs, targets, k=10):
-    """
-    Computes the average accuracy at k.
+    """Computes the average accuracy at k.
+
     This function computes the average
     accuracy at k between two lists of items.
 
@@ -68,6 +78,7 @@ def average_accuracy(outputs, targets, k=10):
         outputs (list): A list of predicted elements
         targets (list):  A list of elements that are to be predicted
         k (int, optional): The maximum number of predicted elements
+
     Returns:
         double: The average accuracy at k over the input lists
     """
@@ -88,9 +99,9 @@ def average_accuracy(outputs, targets, k=10):
     return score / min(len(targets), k)
 
 
-def mean_average_accuracy(outputs, targets, topk=(1, )):
-    """
-    Computes the mean average accuracy at k.
+def mean_average_accuracy(outputs, targets, topk=(1,)):
+    """Computes the mean average accuracy at k.
+
     This function computes the mean average accuracy at k between two lists
     of lists of items.
 

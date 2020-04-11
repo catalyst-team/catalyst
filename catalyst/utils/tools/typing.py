@@ -1,4 +1,7 @@
-from typing import Union  # isort:skip
+"""
+All Catalyst custom types are defined in this module.
+"""
+from typing import Union
 
 import torch
 from torch import nn, optim

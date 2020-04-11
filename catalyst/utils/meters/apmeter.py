@@ -1,3 +1,6 @@
+"""
+The APMeter measures the average precision per class.
+"""
 import math
 
 import torch
@@ -7,31 +10,40 @@ from . import meter
 
 class APMeter(meter.Meter):
     """
-    The APMeter measures the average precision per class.
-
     The APMeter is designed to operate on `NxK` Tensors `output` and
-    `target`, and optionally a `Nx1` Tensor weight where (1) the `output`
-    contains model output scores for `N` examples and `K` classes that ought to
-    be higher when the model is more convinced that the example should be
-    positively labeled, and smaller when the model believes the example should
-    be negatively labeled (for instance, the output of a sigmoid function); (2)
-    the `target` contains only values 0 (for negative examples) and 1
-    (for positive examples); and (3) the `weight` ( > 0) represents weight for
-    each sample.
+    `target`, and optionally a `Nx1` Tensor weight where:
 
+    1. The `output` contains model output scores for `N` examples and
+    `K` classes that ought to be higher when the model is more convinced
+    that the example should be positively labeled, and smaller when the
+    model believes the example should be negatively labeled
+    (for instance, the output of a sigmoid function).
+
+    2. The `target` contains only values 0 (for negative examples)
+    and 1 (for positive examples).
+
+    3. The `weight` ( > 0) represents weight
+    for each sample.
     """
+
     def __init__(self):
+        """Constructor method for the ``APMeter`` class."""
         super(APMeter, self).__init__()
         self.reset()
 
     def reset(self):
-        """Resets the meter with empty member variables"""
+        """Resets the meter with empty member variables."""
         self.scores = torch.FloatTensor(torch.FloatStorage())
         self.targets = torch.LongTensor(torch.LongStorage())
         self.weights = torch.FloatTensor(torch.FloatStorage())
 
-    def add(self, output, target, weight=None):
-        """Add a new observation
+    def add(
+        self,
+        output: torch.Tensor,
+        target: torch.Tensor,
+        weight: torch.Tensor = None,
+    ) -> None:
+        """Add a new observation.
 
         Args:
             output (Tensor): NxK tensor that for each of the N examples
@@ -44,7 +56,6 @@ class APMeter(meter.Meter):
                 associated with classes 2 and 4)
             weight (optional, Tensor): Nx1 tensor representing the weight for
                 each example (each weight > 0)
-
         """
         if not torch.is_tensor(output):
             output = torch.from_numpy(output)
@@ -58,27 +69,32 @@ class APMeter(meter.Meter):
         if output.dim() == 1:
             output = output.view(-1, 1)
         else:
-            assert output.dim() == 2, \
-                "wrong output size (should be 1D or 2D with one column \
+            assert (
+                output.dim() == 2
+            ), "wrong output size (should be 1D or 2D with one column \
                 per class)"
 
         if target.dim() == 1:
             target = target.view(-1, 1)
         else:
-            assert target.dim() == 2, \
-                "wrong target size (should be 1D or 2D with one column \
+            assert (
+                target.dim() == 2
+            ), "wrong target size (should be 1D or 2D with one column \
                 per class)"
 
         if weight is not None:
             assert weight.dim() == 1, "Weight dimension should be 1"
-            assert weight.numel() == target.size(0), \
-                "Weight dimension 1 should be the same as that of target"
+            assert weight.numel() == target.size(
+                0
+            ), "Weight dimension 1 should be the same as that of target"
             assert torch.min(weight) >= 0, "Weight should be non-negative only"
-        assert torch.equal(target ** 2, target), \
-            "targets should be binary (0 or 1)"
+        assert torch.equal(
+            target ** 2, target
+        ), "targets should be binary (0 or 1)"
         if self.scores.numel() > 0:
-            assert target.size(1) == self.targets.size(1), \
-                "dimensions for output should match previously added examples."
+            assert target.size(1) == self.targets.size(
+                1
+            ), "dimensions for output should match previously added examples."
 
         # make sure storage is of sufficient size
         if self.scores.storage().size() < self.scores.numel() + output.numel():
@@ -103,13 +119,11 @@ class APMeter(meter.Meter):
             self.weights.narrow(0, offset, weight.size(0)).copy_(weight)
 
     def value(self):
-        """Returns the model"s average precision for each class
+        """Returns the model"s average precision for each class.
 
         Return:
-            ap (FloatTensor): 1xK tensor, with avg precision for each class k
-
+            FloatTensor: 1xK tensor, with avg precision for each class k
         """
-
         if self.scores.numel() == 0:
             return 0
         ap = torch.zeros(self.scores.size(1))

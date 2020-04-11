@@ -1,4 +1,4 @@
-from typing import Dict, List, Union  # isort:skip
+from typing import Dict, List, Union
 from collections import OrderedDict
 import json
 from logging import getLogger
@@ -25,18 +25,20 @@ OrderedLoader.add_constructor(
 OrderedLoader.add_implicit_resolver(
     "tag:yaml.org,2002:float",
     re.compile(
-        u"""^(?:
+        """^(?:
         [-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+]?[0-9]+)?
         |[-+]?(?:[0-9][0-9_]*)(?:[eE][-+]?[0-9]+)
         |\\.[0-9_]+(?:[eE][-+][0-9]+)?
         |[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*
         |[-+]?\\.(?:inf|Inf|INF)
-        |\\.(?:nan|NaN|NAN))$""", re.X
-    ), list(u"-+0123456789.")
+        |\\.(?:nan|NaN|NAN))$""",
+        re.X,
+    ),
+    list("-+0123456789."),
 )
 
 
-def _load_ordered_yaml(stream, ):
+def _load_ordered_yaml(stream,):
     return yaml.load(stream, OrderedLoader)
 
 
@@ -44,22 +46,25 @@ def load_config(
     path: Union[str, Path],
     ordered: bool = False,
     data_format: str = None,
-    encoding: str = "utf-8"
+    encoding: str = "utf-8",
 ) -> Union[Dict, List]:
-    """
-    Loads config by giving path. Supports YAML and JSON files.
+    """Loads config by giving path. Supports YAML and JSON files.
+
+    Examples:
+        >>> load(path="./config.yml", ordered=True)
+
     Args:
         path (str): path to config file (YAML or JSON)
         ordered (bool): if true the config will be loaded as ``OrderedDict``
         data_format (str): ``yaml``, ``yml`` or ``json``.
         encoding (str): encoding to read the config
+
     Returns:
-        (Union[Dict, List]): Config
+        (Union[Dict, List]): config
+
     Raises:
         Exception: if path ``path`` doesn't exists
             or file format is not YAML or JSON
-    Examples:
-        >>> load(path="./config.yml", ordered=True)
     """
     path = Path(path)
 
@@ -73,8 +78,11 @@ def load_config(
     else:
         suffix = path.suffix
 
-    assert suffix in [".json", ".yml", ".yaml"], \
-        f"Unknown file format '{suffix}'"
+    assert suffix in [
+        ".json",
+        ".yml",
+        ".yaml",
+    ], f"Unknown file format '{suffix}'"
 
     config = None
     with path.open(encoding=encoding) as stream:
@@ -89,7 +97,7 @@ def load_config(
             config = yaml.load(stream, loader)
 
     if config is None:
-        return dict()
+        return {}
 
     return config
 
@@ -102,8 +110,8 @@ def save_config(
     ensure_ascii: bool = False,
     indent: int = 2,
 ) -> None:
-    """
-    Saves config to file. Path must be either YAML or JSON
+    """Saves config to file. Path must be either YAML or JSON.
+
     Args:
         config (Union[Dict, List]): config to save
         path (Union[str, Path]): path to save
@@ -120,8 +128,11 @@ def save_config(
     else:
         suffix = path.suffix
 
-    assert suffix in [".json", ".yml", ".yaml"], \
-        f"Unknown file format '{suffix}'"
+    assert suffix in [
+        ".json",
+        ".yml",
+        ".yaml",
+    ], f"Unknown file format '{suffix}'"
 
     with path.open(encoding=encoding, mode="w") as stream:
         if suffix == ".json":

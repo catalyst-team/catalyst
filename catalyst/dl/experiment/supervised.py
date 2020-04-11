@@ -3,20 +3,21 @@ from collections import OrderedDict
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from catalyst.dl import (
-    Callback, CheckpointCallback, CheckRunCallback, ConsoleLogger,
-    CriterionCallback, ExceptionCallback, MetricManagerCallback,
-    OptimizerCallback, SchedulerCallback, TensorboardLogger, TimerCallback,
-    ValidationManagerCallback, VerboseLogger
+    Callback,
+    CriterionCallback,
+    OptimizerCallback,
+    SchedulerCallback,
 )
 from catalyst.utils.tools.typing import Criterion, Optimizer, Scheduler
-from .base import BaseExperiment
+
+from .core import Experiment
 
 
-class SupervisedExperiment(BaseExperiment):
+class SupervisedExperiment(Experiment):
     """
-    Supervised experiment
+    Supervised experiment.
 
-    The main difference with BaseExperiment that it will
+    The main difference with Experiment that it will
     add several callbacks by default if you haven't.
 
     Here are list of callbacks by default:
@@ -38,6 +39,7 @@ class SupervisedExperiment(BaseExperiment):
         RaiseExceptionCallback:
             will raise exception if needed
     """
+
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """
         Override of ``BaseExperiment.get_callbacks`` method.
@@ -47,38 +49,28 @@ class SupervisedExperiment(BaseExperiment):
             stage (str): name of stage. It should start with `infer` if you
                 don't need default callbacks, as they required only for
                 training stages.
+
         Returns:
-            List[Callback]: list of callbacks for experiment
+            (OrderedDict[str, Callback]): Ordered dictionary of callbacks
+                for experiment
         """
-        callbacks = self._callbacks
+        callbacks = super().get_callbacks(stage=stage) or OrderedDict()
 
         default_callbacks = []
-        if self._verbose:
-            default_callbacks.append(("_verbose", VerboseLogger))
-        if self._check_run:
-            default_callbacks.append(("_check", CheckRunCallback))
 
         if not stage.startswith("infer"):
-            if self._criterion is not None \
-                    and isinstance(self._criterion, Criterion):
+            if self._criterion is not None and isinstance(
+                self._criterion, Criterion
+            ):
                 default_callbacks.append(("_criterion", CriterionCallback))
-            if self._optimizer is not None \
-                    and isinstance(self._optimizer, Optimizer):
+            if self._optimizer is not None and isinstance(
+                self._optimizer, Optimizer
+            ):
                 default_callbacks.append(("_optimizer", OptimizerCallback))
-            if self._scheduler is not None \
-                    and isinstance(
-                    self._scheduler, (Scheduler, ReduceLROnPlateau)):
+            if self._scheduler is not None and isinstance(
+                self._scheduler, (Scheduler, ReduceLROnPlateau)
+            ):
                 default_callbacks.append(("_scheduler", SchedulerCallback))
-
-            default_callbacks.append(("_timer", TimerCallback))
-            default_callbacks.append(("_metrics", MetricManagerCallback))
-            default_callbacks.append(
-                ("_validation", ValidationManagerCallback)
-            )
-            default_callbacks.append(("_saver", CheckpointCallback))
-            default_callbacks.append(("_console", ConsoleLogger))
-            default_callbacks.append(("_tensorboard", TensorboardLogger))
-        default_callbacks.append(("_exception", ExceptionCallback))
 
         for callback_name, callback_fn in default_callbacks:
             is_already_present = any(
@@ -86,6 +78,7 @@ class SupervisedExperiment(BaseExperiment):
             )
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
+
         return callbacks
 
 

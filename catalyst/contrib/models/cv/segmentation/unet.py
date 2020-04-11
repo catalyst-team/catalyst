@@ -1,10 +1,12 @@
-from typing import Dict  # isort:skip
+from typing import Dict
 from functools import partial
 
 import numpy as np
 
 from .blocks import (
-    DecoderConcatBlock, EncoderDownsampleBlock, EncoderUpsampleBlock
+    DecoderConcatBlock,
+    EncoderDownsampleBlock,
+    EncoderUpsampleBlock,
 )
 from .bridge import UnetBridge
 from .core import ResnetUnetSpec, UnetSpec
@@ -14,6 +16,8 @@ from .head import UnetHead
 
 
 class Unet(UnetSpec):
+    """@TODO: Docs. Contribution is welcome."""
+
     def _get_components(
         self,
         encoder: UnetEncoder,
@@ -27,7 +31,7 @@ class Unet(UnetSpec):
             in_strides=encoder.out_strides,
             out_channels=encoder.out_channels[-1] * 2,
             block_fn=EncoderDownsampleBlock,
-            **bridge_params
+            **bridge_params,
         )
         decoder = UNetDecoder(
             in_channels=bridge.out_channels,
@@ -40,13 +44,15 @@ class Unet(UnetSpec):
             in_strides=decoder.out_strides,
             out_channels=num_classes,
             num_upsample_blocks=int(np.log2(decoder.out_strides[-1])),
-            **head_params
+            **head_params,
         )
 
         return encoder, bridge, decoder, head
 
 
 class ResnetUnet(ResnetUnetSpec):
+    """@TODO: Docs. Contribution is welcome."""
+
     def _get_components(
         self,
         encoder: ResnetEncoder,
@@ -60,7 +66,7 @@ class ResnetUnet(ResnetUnetSpec):
             in_strides=encoder.out_strides,
             out_channels=encoder.out_channels[-1],
             block_fn=partial(EncoderUpsampleBlock, pool_first=True),
-            **bridge_params
+            **bridge_params,
         )
         decoder = UNetDecoder(
             in_channels=bridge.out_channels,
@@ -68,13 +74,13 @@ class ResnetUnet(ResnetUnetSpec):
             block_fn=partial(
                 DecoderConcatBlock, aggregate_first=True, upsample_scale=2
             ),
-            **decoder_params
+            **decoder_params,
         )
         head = UnetHead(
             in_channels=decoder.out_channels,
             in_strides=decoder.out_strides,
             out_channels=num_classes,
             num_upsample_blocks=int(np.log2(decoder.out_strides[-1])),
-            **head_params
+            **head_params,
         )
         return encoder, bridge, decoder, head

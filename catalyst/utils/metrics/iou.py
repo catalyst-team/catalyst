@@ -1,4 +1,8 @@
-from typing import List, Union  # isort:skip
+"""
+IoU metric. Jaccard metric refers to IoU here, same functionality.
+"""
+
+from typing import List, Union
 from functools import partial
 
 import torch
@@ -14,7 +18,7 @@ def iou(
     classes: List[str] = None,
     eps: float = 1e-7,
     threshold: float = None,
-    activation: str = "Sigmoid"
+    activation: str = "Sigmoid",
 ) -> Union[float, List[float]]:
     """
     Args:

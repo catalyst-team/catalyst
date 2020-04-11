@@ -7,32 +7,40 @@ _NUM_EPOCH_STEPS = int(os.environ.get("CHECK_EPOCH_STEPS", 2))
 
 
 class CheckRunCallback(Callback):
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(
         self,
         num_batch_steps: int = _NUM_BATCH_STEPS,
         num_epoch_steps: int = _NUM_EPOCH_STEPS,
     ):
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__(order=CallbackOrder.External, node=CallbackNode.All)
         self.num_batch_steps = num_batch_steps
         self.num_epoch_steps = num_epoch_steps
 
     def on_epoch_end(self, state: State):
+        """@TODO: Docs. Contribution is welcome."""
         if state.epoch >= self.num_epoch_steps:
             state.need_early_stop = True
 
     def on_batch_end(self, state: State):
+        """@TODO: Docs. Contribution is welcome."""
         if state.loader_step >= self.num_batch_steps:
             state.need_early_stop = True
 
 
 class EarlyStoppingCallback(Callback):
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(
         self,
         patience: int,
         metric: str = "loss",
         minimize: bool = True,
-        min_delta: float = 1e-6
+        min_delta: float = 1e-6,
     ):
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__(order=CallbackOrder.External, node=CallbackNode.All)
         self.best_score = None
         self.metric = metric
@@ -46,6 +54,7 @@ class EarlyStoppingCallback(Callback):
             self.is_better = lambda score, best: score >= (best + min_delta)
 
     def on_epoch_end(self, state: State) -> None:
+        """@TODO: Docs. Contribution is welcome."""
         if state.stage_name.startswith("infer"):
             return
 

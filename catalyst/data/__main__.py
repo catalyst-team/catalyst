@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-"""Catalyst-data scripts.
+r"""Catalyst-data scripts.
 
 Examples:
-
     1.  **process-images** reads raw data and outputs
     preprocessed resized images
 
@@ -43,9 +42,9 @@ Examples:
 
     4. **split-dataframe** split your dataset into train/valid folds
 
-     .. code:: bash
+    .. code:: bash
 
-         $ catalyst-data split-dataframe \\
+        $ catalyst-data split-dataframe \\
             --in-csv=./data/dataset_raw.csv \\
             --tag2class=./data/tag2cls.json \\
             --tag-column=tag \\
@@ -69,7 +68,6 @@ Examples:
             --batch-size=8 \\
             --num-workers=16 \\
             --verbose
-
 """
 
 from argparse import ArgumentParser, RawTextHelpFormatter
@@ -79,8 +77,11 @@ import os
 
 from catalyst.__version__ import __version__
 from catalyst.data.scripts import (
-    image2embedding, process_images, project_embeddings, split_dataframe,
-    tag2label
+    image2embedding,
+    process_images,
+    project_embeddings,
+    split_dataframe,
+    tag2label,
 )
 
 logger = logging.getLogger(__name__)
@@ -110,6 +111,9 @@ except ImportError as ex:
 
 
 def build_parser() -> ArgumentParser:
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     parser = ArgumentParser(
         "catalyst-data", formatter_class=RawTextHelpFormatter
     )
@@ -132,6 +136,9 @@ def build_parser() -> ArgumentParser:
 
 
 def main():
+    """
+    @TODO: Docs. Contribution is welcome
+    """
     parser = build_parser()
 
     args, uargs = parser.parse_known_args()

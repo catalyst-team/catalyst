@@ -1,3 +1,6 @@
+"""
+Dice metric.
+"""
 import torch
 
 from catalyst.utils import get_activation_fn
@@ -8,14 +11,13 @@ def dice(
     targets: torch.Tensor,
     eps: float = 1e-7,
     threshold: float = None,
-    activation: str = "Sigmoid"
+    activation: str = "Sigmoid",
 ):
-    """
-    Computes the dice metric
+    """Computes the dice metric.
 
     Args:
-        outputs (list):  A list of predicted elements
-        targets (list): A list of elements that are to be predicted
+        outputs (list):  a list of predicted elements
+        targets (list): a list of elements that are to be predicted
         eps (float): epsilon
         threshold (float): threshold for outputs binarization
         activation (str): An torch.nn activation applied to the outputs.
@@ -36,7 +38,7 @@ def dice(
     # makes sure that if I and U are both 0, than Dice == 1
     # and if U != 0 and I == 0 the eps term in numerator is zeroed out
     # i.e. (0 + eps) / (U - 0 + eps) doesn't happen
-    dice = 2 * (intersection + eps * (union == 0)) / (union + eps)
+    dice = (2 * intersection + eps * (union == 0)) / (union + eps)
 
     return dice
 

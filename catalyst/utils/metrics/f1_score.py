@@ -1,3 +1,6 @@
+"""
+F1 score.
+"""
 import torch
 
 from catalyst.utils import get_activation_fn
@@ -9,11 +12,9 @@ def f1_score(
     beta: float = 1.0,
     eps: float = 1e-7,
     threshold: float = None,
-    activation: str = "Sigmoid"
+    activation: str = "Sigmoid",
 ):
     """
-    Source https://github.com/qubvel/segmentation_models.pytorch
-
     Args:
         outputs (torch.Tensor): A list of predicted elements
         targets (torch.Tensor):  A list of elements that are to be predicted
@@ -37,10 +38,14 @@ def f1_score(
     false_positive = torch.sum(outputs) - true_positive
     false_negative = torch.sum(targets) - true_positive
 
-    precision_plus_recall = (1 + beta ** 2) * true_positive + \
-        beta ** 2 * false_negative + false_positive + eps
+    precision_plus_recall = (
+        (1 + beta ** 2) * true_positive
+        + beta ** 2 * false_negative
+        + false_positive
+        + eps
+    )
 
-    score = ((1 + beta**2) * true_positive + eps) / precision_plus_recall
+    score = ((1 + beta ** 2) * true_positive + eps) / precision_plus_recall
 
     return score
 

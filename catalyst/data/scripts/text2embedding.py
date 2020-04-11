@@ -16,6 +16,9 @@ from catalyst.dl import utils
 
 
 def build_args(parser):
+    """Constructs the command-line arguments for
+    ``catalyst-data text2embeddings``.
+    """
     parser.add_argument(
         "--in-csv", type=str, help="Path to csv with text", required=True
     )
@@ -46,9 +49,7 @@ def build_args(parser):
         )
 
     parser.add_argument(
-        "--out-prefix",
-        type=str,
-        required=True,
+        "--out-prefix", type=str, required=True,
     )
     parser.add_argument("--max-length", type=int, default=512)
     utils.boolean_flag(parser, "mask-for-max-length", default=False)
@@ -62,28 +63,28 @@ def build_args(parser):
         type=int,
         dest="num_workers",
         help="Count of workers for dataloader",
-        default=0
+        default=0,
     )
     parser.add_argument(
         "--batch-size",
         type=int,
         dest="batch_size",
         help="Dataloader batch size",
-        default=32
+        default=32,
     )
     parser.add_argument(
         "--verbose",
         dest="verbose",
         action="store_true",
         default=False,
-        help="Print additional information"
+        help="Print additional information",
     )
     parser.add_argument("--seed", type=int, default=42)
     utils.boolean_flag(
         parser,
         "deterministic",
         default=None,
-        help="Deterministic mode if running in CuDNN backend"
+        help="Deterministic mode if running in CuDNN backend",
     )
     utils.boolean_flag(
         parser, "benchmark", default=None, help="Use CuDNN benchmark"
@@ -93,6 +94,7 @@ def build_args(parser):
 
 
 def parse_args():
+    """Parses the command line arguments for the main method."""
     parser = argparse.ArgumentParser()
     build_args(parser)
     args = parser.parse_args()
@@ -105,6 +107,7 @@ def _detach(tensor):
 
 @torch.no_grad()
 def main(args, _=None):
+    """Run the ``catalyst-data text2embeddings`` script."""
     batch_size = args.batch_size
     num_workers = args.num_workers
     max_length = args.max_length
@@ -154,10 +157,7 @@ def main(args, _=None):
     )
 
     dataloader = utils.get_loader(
-        df,
-        open_fn,
-        batch_size=batch_size,
-        num_workers=num_workers,
+        df, open_fn, batch_size=batch_size, num_workers=num_workers,
     )
 
     features = {}
@@ -166,8 +166,9 @@ def main(args, _=None):
         for idx, batch in enumerate(dataloader):
             batch = utils.any2device(batch, device)
             bert_output = model(**batch)
-            mask = batch["attention_mask"].unsqueeze(-1) \
-                if args.mask_for_max_length \
+            mask = (
+                batch["attention_mask"].unsqueeze(-1)
+                if args.mask_for_max_length
                 else None
 
             if utils.is_wrapped_with_ddp(model):

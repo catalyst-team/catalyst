@@ -1,20 +1,22 @@
-from typing import Dict, List  # isort:skip
+from typing import Dict, List
 
 import wandb
 
 from catalyst import utils
 from catalyst.core import (
-    Callback, CallbackNode, CallbackOrder, CallbackScope, State
+    Callback,
+    CallbackNode,
+    CallbackOrder,
+    CallbackScope,
+    State,
 )
 
 
 class WandbLogger(Callback):
-    """
-    Logger callback, translates ``state.*_metrics`` to Weights & Biases
+    """Logger callback, translates ``state.*_metrics`` to Weights & Biases.
     Read about Weights & Biases here https://docs.wandb.com/
 
     Example:
-
         .. code-block:: python
 
             from catalyst import dl
@@ -55,6 +57,7 @@ class WandbLogger(Callback):
                 num_epochs=10
             )
     """
+
     def __init__(
         self,
         metric_names: List[str] = None,
@@ -84,8 +87,9 @@ class WandbLogger(Callback):
         if not (self.log_on_batch_end or self.log_on_epoch_end):
             raise ValueError("You have to log something!")
 
-        if (self.log_on_batch_end and not self.log_on_epoch_end) \
-                or (not self.log_on_batch_end and self.log_on_epoch_end):
+        if (self.log_on_batch_end and not self.log_on_epoch_end) or (
+            not self.log_on_batch_end and self.log_on_epoch_end
+        ):
             self.batch_log_suffix = ""
             self.epoch_log_suffix = ""
         else:
@@ -100,10 +104,10 @@ class WandbLogger(Callback):
         step: int,
         mode: str,
         suffix="",
-        commit=True
+        commit=True,
     ):
         if self.metrics_to_log is None:
-            metrics_to_log = sorted(list(metrics.keys()))
+            metrics_to_log = sorted(metrics.keys())
         else:
             metrics_to_log = self.metrics_to_log
 
@@ -114,6 +118,7 @@ class WandbLogger(Callback):
 
             Args:
                 key: metric name
+
             Returns:
                 formatted metric name
             """
@@ -123,24 +128,21 @@ class WandbLogger(Callback):
 
         metrics = {
             f"{key_locate(key)}/{mode}{suffix}": value
-            for key, value in metrics.items() if key in metrics_to_log
+            for key, value in metrics.items()
+            if key in metrics_to_log
         }
         wandb.log(metrics, step=step, commit=commit)
 
     def on_stage_start(self, state: State):
-        """Initialize Weights & Biases"""
-        wandb.init(
-            **self.logging_params,
-            reinit=True,
-            dir=str(state.logdir)
-        )
+        """Initialize Weights & Biases."""
+        wandb.init(**self.logging_params, reinit=True, dir=str(state.logdir))
 
     def on_stage_end(self, state: State):
-        """Finish logging to Weights & Biases"""
+        """Finish logging to Weights & Biases."""
         wandb.join()
 
     def on_batch_end(self, state: State):
-        """Translate batch metrics to Weights & Biases"""
+        """Translate batch metrics to Weights & Biases."""
         if self.log_on_batch_end:
             mode = state.loader_name
             metrics_ = state.batch_metrics
@@ -149,11 +151,11 @@ class WandbLogger(Callback):
                 step=state.global_step,
                 mode=mode,
                 suffix=self.batch_log_suffix,
-                commit=True
+                commit=True,
             )
 
     def on_loader_end(self, state: State):
-        """Translate loader metrics to Weights & Biases"""
+        """Translate loader metrics to Weights & Biases."""
         if self.log_on_epoch_end:
             mode = state.loader_name
             metrics_ = state.loader_metrics
@@ -162,11 +164,11 @@ class WandbLogger(Callback):
                 step=state.global_epoch,
                 mode=mode,
                 suffix=self.epoch_log_suffix,
-                commit=False
+                commit=False,
             )
 
     def on_epoch_end(self, state: State):
-        """Translate epoch metrics to Weights & Biases"""
+        """Translate epoch metrics to Weights & Biases."""
         extra_mode = "_base"
         splitted_epoch_metrics = utils.split_dict_to_subdicts(
             dct=state.epoch_metrics,
@@ -180,5 +182,5 @@ class WandbLogger(Callback):
                 step=state.global_epoch,
                 mode=extra_mode,
                 suffix=self.epoch_log_suffix,
-                commit=True
+                commit=True,
             )

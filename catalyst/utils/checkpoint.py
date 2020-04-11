@@ -1,4 +1,4 @@
-from typing import Dict, Union  # isort:skip
+from typing import Dict, Union
 from collections import OrderedDict
 import os
 from pathlib import Path
@@ -13,6 +13,7 @@ from .misc import maybe_recursive_call
 def pack_checkpoint(
     model=None, criterion=None, optimizer=None, scheduler=None, **kwargs
 ):
+    """@TODO: Docs. Contribution is welcome."""
     checkpoint = kwargs
 
     if isinstance(model, OrderedDict):
@@ -25,7 +26,7 @@ def pack_checkpoint(
 
     for dict2save, name2save in zip(
         [criterion, optimizer, scheduler],
-        ["criterion", "optimizer", "scheduler"]
+        ["criterion", "optimizer", "scheduler"],
     ):
         if dict2save is None:
             continue
@@ -48,17 +49,18 @@ def pack_checkpoint(
 def unpack_checkpoint(
     checkpoint, model=None, criterion=None, optimizer=None, scheduler=None
 ):
+    """@TODO: Docs. Contribution is welcome."""
     if model is not None:
         model = get_nn_from_ddp_module(model)
         maybe_recursive_call(
             model,
             "load_state_dict",
-            recursive_args=checkpoint["model_state_dict"]
+            recursive_args=checkpoint["model_state_dict"],
         )
 
     for dict2load, name2load in zip(
         [criterion, optimizer, scheduler],
-        ["criterion", "optimizer", "scheduler"]
+        ["criterion", "optimizer", "scheduler"],
     ):
         if dict2load is None:
             continue
@@ -79,8 +81,9 @@ def save_checkpoint(
     suffix: str,
     is_best: bool = False,
     is_last: bool = False,
-    special_suffix: str = ""
+    special_suffix: str = "",
 ):
+    """@TODO: Docs. Contribution is welcome."""
     os.makedirs(logdir, exist_ok=True)
     filename = f"{logdir}/{suffix}.pth"
     torch.save(checkpoint, filename)
@@ -92,6 +95,7 @@ def save_checkpoint(
 
 
 def load_checkpoint(filepath):
+    """@TODO: Docs. Contribution is welcome."""
     checkpoint = torch.load(
         filepath, map_location=lambda storage, loc: storage
     )
