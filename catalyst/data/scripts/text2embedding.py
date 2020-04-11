@@ -170,7 +170,7 @@ def main(args, _=None):
                 if args.mask_for_max_length \
                 else None
 
-            if isinstance(model, torch.nn.DataParallel):
+            if utils.is_wrapped_with_ddp(model):
                 # using several gpu
                 hidden_size = model.module.config.hidden_size
                 hidden_states = model.module.config.output_hidden_states
