@@ -17,7 +17,7 @@ except ImportError as ex:
     if os.environ.get("USE_ALCHEMY", "0") == "1":
         logger.warning(
             "alchemy not available, to install alchemy, "
-            "run `pip install alchemy-catalyst`."
+            "run `pip install alchemy`."
         )
         raise ex
 
