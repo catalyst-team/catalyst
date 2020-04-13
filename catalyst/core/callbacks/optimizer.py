@@ -24,23 +24,17 @@ class OptimizerCallback(Callback):
         accumulation_steps: int = 1,
         grad_clip_params: Dict = None,
         decouple_weight_decay: bool = True,
-        # @TODO: add model grads support and visualization
-        # save_model_grads: bool = False,
     ):
         """
         Args:
-            grad_clip_params (dict): params for gradient clipping
-            accumulation_steps (int): number of steps before
-                ``model.zero_grad()``
+            loss_key (str): key to get loss from ``state.loss``
             optimizer_key (str): A key to take a optimizer in case
                 there are several of them and they are in a dictionary format.
-            loss_key (str): key to get loss from ``state.loss``
+            accumulation_steps (int): number of steps before
+                ``model.zero_grad()``
+            grad_clip_params (dict): params for gradient clipping
             decouple_weight_decay (bool): If True - decouple weight decay
                 regularization.
-            # save_model_grads (bool): If True - State.model_grads will
-            #     contain gradients calculated
-            # on backward propagation on current
-            #     batch
         """
         super().__init__(order=CallbackOrder.Optimizer, node=CallbackNode.All)
         self.loss_key: str = loss_key
@@ -56,7 +50,6 @@ class OptimizerCallback(Callback):
 
         self.decouple_weight_decay = decouple_weight_decay
         self._optimizer_wd: List[float] = [0.0]
-        # self.save_model_grads = save_model_grads
 
     @staticmethod
     def grad_step(
@@ -144,8 +137,8 @@ class OptimizerCallback(Callback):
 
         self._accumulation_counter += 1
         need_gradient_step = (
-            self._accumulation_counter + 1
-        ) % self.accumulation_steps == 0
+            self._accumulation_counter % self.accumulation_steps == 0
+        )
 
         # This is very hacky check whether we have AMP optimizer and this may
         # change in future.
@@ -172,13 +165,7 @@ class OptimizerCallback(Callback):
                 grad_clip_fn=self.grad_clip_fn,
             )
 
-            # if self.save_model_grads:
-            #     for tag, value in model.named_parameters():
-            #         tag = tag.replace(".", "/")
-            #         state.model_grads[tag] = value.grad.cpu().numpy()
-
             utils.maybe_recursive_call(self._optimizer, "zero_grad")
-
             self._accumulation_counter = 0
 
 
