@@ -1,6 +1,7 @@
 import argparse
 from functools import partial
 from pathlib import Path
+import sys
 
 import numpy as np
 import pandas as pd
@@ -9,6 +10,7 @@ from tqdm import tqdm
 import torch
 from transformers import BertConfig, BertModel, BertTokenizer
 
+from catalyst.contrib.utils.text import process_bert_output, tokenize_text
 from catalyst.data import LambdaReader
 from catalyst.dl import utils
 
@@ -23,9 +25,29 @@ def build_args(parser):
     parser.add_argument(
         "--txt-col", type=str, help="Column in table that contain text"
     )
-    parser.add_argument("--in-config", type=Path, required=True)
-    parser.add_argument("--in-model", type=Path, required=True)
-    parser.add_argument("--in-vocab", type=Path, required=True)
+    parser.add_argument(
+        "--in-huggingface",
+        type=str,
+        required=False,
+        help="model from huggingface hub"
+    )
+    required_path_to_model = True
+
+    for arg in sys.argv:
+        if "--in-huggingface" in arg:
+            required_path_to_model = False
+
+    if required_path_to_model:
+        parser.add_argument(
+            "--in-config", type=Path, required=required_path_to_model
+        )
+        parser.add_argument(
+            "--in-model", type=Path, required=required_path_to_model
+        )
+        parser.add_argument(
+            "--in-vocab", type=Path, required=required_path_to_model
+        )
+
     parser.add_argument(
         "--out-prefix", type=str, required=True,
     )
@@ -94,18 +116,25 @@ def main(args, _=None):
     utils.set_global_seed(args.seed)
     utils.prepare_cudnn(args.deterministic, args.benchmark)
 
-    model_config = BertConfig.from_pretrained(args.in_config)
-    model_config.output_hidden_states = args.output_hidden_states
-    model = BertModel(config=model_config)
-
-    checkpoint = utils.load_checkpoint(args.in_model)
-    checkpoint = {"model_state_dict": checkpoint}
-    utils.unpack_checkpoint(checkpoint=checkpoint, model=model)
+    if hasattr(args, "in_huggingface"):
+        model_config = BertConfig.from_pretrained(args.in_huggingface)
+        model_config.output_hidden_states = args.output_hidden_states
+        model = BertModel.from_pretrained(
+            args.in_huggingface, config=model_config
+        )
+        tokenizer = BertTokenizer.from_pretrained(args.in_huggingface)
+    else:
+        model_config = BertConfig.from_pretrained(args.in_config)
+        model_config.output_hidden_states = args.output_hidden_states
+        model = BertModel(config=model_config)
+        tokenizer = BertTokenizer.from_pretrained(args.in_vocab)
+    if hasattr(args, "in_model"):
+        checkpoint = utils.load_checkpoint(args.in_model)
+        checkpoint = {"model_state_dict": checkpoint}
+        utils.unpack_checkpoint(checkpoint=checkpoint, model=model)
 
     model = model.eval()
     model, _, _, _, device = utils.process_components(model=model)
-
-    tokenizer = BertTokenizer.from_pretrained(args.in_vocab)
 
     df = pd.read_csv(args.in_csv)
     df = df.dropna(subset=[args.txt_col])
@@ -118,7 +147,7 @@ def main(args, _=None):
         input_key=args.txt_col,
         output_key=None,
         lambda_fn=partial(
-            utils.tokenize_text,
+            tokenize_text,
             strip=args.strip,
             lowercase=args.lowercase,
             remove_punctuation=args.remove_punctuation,
@@ -141,11 +170,21 @@ def main(args, _=None):
                 batch["attention_mask"].unsqueeze(-1)
                 if args.mask_for_max_length
                 else None
-            )
-            features_ = utils.process_bert_output(
+
+            if utils.is_wrapped_with_ddp(model):
+                # using several gpu
+                hidden_size = model.module.config.hidden_size
+                hidden_states = model.module.config.output_hidden_states
+
+            else:
+                # using cpu or one gpu
+                hidden_size = model.config.hidden_size
+                hidden_states = model.config.output_hidden_states
+
+            features_ = process_bert_output(
                 bert_output=bert_output,
-                hidden_size=model.config.hidden_size,
-                output_hidden_states=model.config.output_hidden_states,
+                hidden_size=hidden_size,
+                output_hidden_states=hidden_states,
                 pooling_groups=pooling_groups,
                 mask=mask,
             )
