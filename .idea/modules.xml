@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/catalyst-docs-version-update.iml" filepath="$PROJECT_DIR$/.idea/catalyst-docs-version-update.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/catalyst.iml" filepath="$PROJECT_DIR$/.idea/catalyst.iml" />
     </modules>
   </component>
 </project>
