@@ -1,0 +1,1487 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="bbcdac7c-787d-45e2-990c-30e262d49786" name="Revert &quot;Experimental versions&quot;" comment="Experimental versions">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/.buildinfo" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/.doctrees/api/contrib.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/.doctrees/api/data.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/.doctrees/api/dl.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/.doctrees/api/rl.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/.doctrees/api/utils.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/.doctrees/changelog.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/.doctrees/environment.pickle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/.doctrees/index.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/.doctrees/info/contributing.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/.doctrees/info/examples.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/.doctrees/info/license.doctree" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/.nojekyll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/models/cv/segmentation/fpn.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/models/cv/segmentation/linknet.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/models/cv/segmentation/psp.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/models/cv/segmentation/unet.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/criterion/ce.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/criterion/contrastive.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/criterion/dice.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/criterion/focal.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/criterion/gan.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/criterion/huber.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/criterion/iou.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/criterion/lovasz.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/criterion/margin.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/criterion/triplet.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/criterion/wing.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/modules/common.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/modules/lama.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/modules/pooling.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/optimizers/lamb.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/optimizers/lookahead.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/optimizers/qhadamw.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/optimizers/radam.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/optimizers/ralamb.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/schedulers/base.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/nn/schedulers/onecycle.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/utils/argparse.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/utils/confusion_matrix.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/utils/dataset.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/utils/misc.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/utils/pandas.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/utils/parallel.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/utils/plotly.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/utils/serialization.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/utils/text.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/utils/tools/tensorboard.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/contrib/utils/visualization.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/core/callback.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/core/callbacks/checkpoint.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/core/callbacks/criterion.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/core/callbacks/early_stop.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/core/callbacks/exception.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/core/callbacks/logging.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/core/callbacks/metrics.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/core/callbacks/optimizer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/core/callbacks/scheduler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/core/callbacks/timer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/core/callbacks/validation.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/core/experiment.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/core/runner.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/core/state.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/core/utils/callbacks.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/data/__main__.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/data/augmentor.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/data/collate_fn.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/data/dataset.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/data/reader.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/data/sampler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/callbacks/confusion_matrix.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/callbacks/gan.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/callbacks/inference.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/callbacks/metrics/accuracy.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/callbacks/metrics/auc.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/callbacks/metrics/dice.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/callbacks/metrics/f1_score.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/callbacks/metrics/iou.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/callbacks/metrics/ppv_tpr_f1.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/callbacks/mixup.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/callbacks/phase.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/callbacks/scheduler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/callbacks/wrappers.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/experiment/config.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/experiment/core.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/experiment/gan.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/experiment/supervised.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/runner/core.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/runner/gan.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/runner/supervised.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/state/gan.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/utils/torch.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/utils/trace.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/dl/utils/wizard.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/checkpoint.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/config.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/distributed.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/hash.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/initialization.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/meters/apmeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/meters/aucmeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/meters/averagevaluemeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/meters/classerrormeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/meters/confusionmeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/meters/mapmeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/meters/meter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/meters/movingaveragevaluemeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/meters/msemeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/meters/ppv_tpr_f1_meter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/metrics/accuracy.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/metrics/dice.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/metrics/f1_score.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/metrics/focal.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/metrics/iou.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/misc.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/numpy.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/parser.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/scripts.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/seed.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/sys.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/tools/frozen_class.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/tools/registry.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/tools/time_manager.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/catalyst/utils/torch.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/torch/nn/modules/module.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/torch/optim/lr_scheduler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/torch/optim/optimizer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_modules/torch/utils/data/dataset.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_sources/api/contrib.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_sources/api/core.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_sources/api/data.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_sources/api/dl.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_sources/api/utils.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_sources/index.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_sources/info/contributing.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_sources/info/distributed.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_sources/info/examples.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/basic.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/css/theme.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/doctools.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/documentation_options.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/file.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/FreightSans/freight-sans-bold-italic.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/FreightSans/freight-sans-bold-italic.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/FreightSans/freight-sans-bold.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/FreightSans/freight-sans-bold.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/FreightSans/freight-sans-book-italic.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/FreightSans/freight-sans-book-italic.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/FreightSans/freight-sans-book.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/FreightSans/freight-sans-book.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/FreightSans/freight-sans-light-italic.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/FreightSans/freight-sans-light-italic.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/FreightSans/freight-sans-light.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/FreightSans/freight-sans-light.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/FreightSans/freight-sans-medium-italic.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/FreightSans/freight-sans-medium-italic.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/FreightSans/freight-sans-medium.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/FreightSans/freight-sans-medium.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/IBMPlexMono/IBMPlexMono-Light.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/IBMPlexMono/IBMPlexMono-Light.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/IBMPlexMono/IBMPlexMono-Regular.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/IBMPlexMono/IBMPlexMono-Regular.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/arrow-down-orange.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/arrow-right-with-tail.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/catalyst-colab.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/catalyst-download.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/catalyst-github.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/catalyst-x.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/chevron-down-grey.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/chevron-down-orange.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/chevron-right-orange.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/chevron-right-white.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/home-footer-background.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/icon-close.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/icon-menu-dots-dark.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/logo-dark.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/logo-facebook-dark.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/logo-icon.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/logo-ods-dark.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/logo-telegram-dark.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/logo-twitter-dark.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/logo.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/search-icon.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/images/view-page-source-icon.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/jquery-3.4.1.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/jquery.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/js/modernizr.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/js/theme.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/js/vendor/anchor.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/js/vendor/bootstrap.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/js/vendor/popper.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/language_data.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/minus.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/plus.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/pygments.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/searchtools.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/underscore-1.3.1.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/_static/underscore.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/api/contrib.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/api/core.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/api/data.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/api/dl.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/api/utils.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/genindex.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/info/contributing.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/info/distributed.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/info/examples.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/objects.inv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/py-modindex.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/search.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/master/searchindex.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/.buildinfo" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/.nojekyll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/dl/runner/alchemy.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/dl/runner/neptune.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/dl/runner/wandb.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/models/cv/segmentation/fpn.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/models/cv/segmentation/linknet.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/models/cv/segmentation/psp.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/models/cv/segmentation/unet.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/criterion/ce.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/criterion/contrastive.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/criterion/dice.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/criterion/focal.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/criterion/gan.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/criterion/huber.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/criterion/iou.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/criterion/lovasz.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/criterion/margin.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/criterion/triplet.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/criterion/wing.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/modules/common.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/modules/lama.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/modules/noisy.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/modules/pooling.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/modules/real_nvp.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/optimizers/lamb.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/optimizers/lookahead.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/optimizers/qhadamw.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/optimizers/radam.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/optimizers/ralamb.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/schedulers/base.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/contrib/nn/schedulers/onecycle.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/core/callback.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/core/callbacks/checkpoint.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/core/callbacks/criterion.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/core/callbacks/formatters.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/core/callbacks/logging.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/core/callbacks/optimizer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/core/callbacks/phase.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/core/callbacks/scheduler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/core/callbacks/wrappers.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/data/augmentor.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/data/collate_fn.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/data/dataset.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/data/reader.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/data/sampler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/callbacks/gan.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/callbacks/inference.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/callbacks/metrics/accuracy.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/callbacks/metrics/auc.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/callbacks/metrics/dice.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/callbacks/metrics/f1_score.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/callbacks/metrics/iou.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/callbacks/metrics/ppv_tpr_f1.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/callbacks/misc.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/callbacks/mixup.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/callbacks/scheduler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/core/callback.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/core/experiment.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/core/runner.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/core/state.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/experiment/base.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/experiment/config.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/experiment/gan.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/experiment/supervised.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/runner/gan.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/runner/supervised.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/state/gan.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/utils/pipelines.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/utils/text.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/utils/torch.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/utils/trace.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/utils/visualization.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/dl/utils/wizard.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/agent/actor.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/agent/critic.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/agent/head.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/agent/network.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/agent/policy.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/core/agent.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/core/algorithm.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/core/db.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/core/environment.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/core/exploration.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/core/policy_handler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/core/sampler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/core/trainer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/core/trajectory_sampler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/db/mongo.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/db/redis.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/environment/gym.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/exploration/boltzman.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/exploration/gauss.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/exploration/greedy.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/exploration/param_noise.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/offpolicy/algorithms/actor_critic.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/offpolicy/algorithms/critic.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/offpolicy/algorithms/ddpg.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/offpolicy/algorithms/dqn.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/offpolicy/algorithms/sac.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/offpolicy/algorithms/td3.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/offpolicy/trainer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/onpolicy/algorithms/actor.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/onpolicy/algorithms/actor_critic.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/onpolicy/algorithms/ppo.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/onpolicy/algorithms/reinforce.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/rl/onpolicy/trainer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/argparse.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/callbacks.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/checkpoint.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/compression.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/config.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/confusion_matrix.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/criterion/accuracy.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/criterion/dice.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/criterion/f1_score.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/criterion/focal.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/criterion/iou.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/dataset.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/ddp.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/dict.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/hash.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/image.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/initialization.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/meters/apmeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/meters/aucmeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/meters/averagevaluemeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/meters/classerrormeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/meters/confusionmeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/meters/mapmeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/meters/meter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/meters/movingaveragevaluemeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/meters/msemeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/misc.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/notebook.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/numpy.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/pandas.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/parallel.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/plotly.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/scripts.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/seed.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/serialization.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/tools/dynamic_array.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/tools/frozen_class.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/tools/metric_manager.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/tools/registry.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/tools/seeder.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/tools/tensorboard.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/torch.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/catalyst/utils/visualization.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/torch/nn/modules/module.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/torch/optim/lr_scheduler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/torch/optim/optimizer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_modules/torch/utils/data/dataset.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_sources/api/contrib.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_sources/api/core.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_sources/api/data.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_sources/api/dl.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_sources/api/rl.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_sources/api/utils.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_sources/index.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_sources/info/contributing.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_sources/info/examples.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_sources/info/license.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/alabaster.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/basic.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/css/badge_only.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/css/theme.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/custom.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/doctools.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/documentation_options.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/file.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Inconsolata-Bold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Inconsolata-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Inconsolata.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Lato-Bold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Lato-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Lato/lato-bold.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Lato/lato-bold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Lato/lato-bold.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Lato/lato-bold.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Lato/lato-bolditalic.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Lato/lato-bolditalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Lato/lato-bolditalic.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Lato/lato-bolditalic.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Lato/lato-italic.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Lato/lato-italic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Lato/lato-italic.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Lato/lato-italic.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Lato/lato-regular.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Lato/lato-regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Lato/lato-regular.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/Lato/lato-regular.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/RobotoSlab-Bold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/RobotoSlab-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/RobotoSlab/roboto-slab-v7-bold.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/RobotoSlab/roboto-slab-v7-bold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/RobotoSlab/roboto-slab-v7-bold.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/RobotoSlab/roboto-slab-v7-bold.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/RobotoSlab/roboto-slab-v7-regular.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/RobotoSlab/roboto-slab-v7-regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/RobotoSlab/roboto-slab-v7-regular.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/RobotoSlab/roboto-slab-v7-regular.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/fontawesome-webfont.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/fontawesome-webfont.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/fontawesome-webfont.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/fontawesome-webfont.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/fonts/fontawesome-webfont.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/jquery-3.4.1.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/jquery.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/js/modernizr.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/js/theme.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/language_data.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/minus.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/plus.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/pygments.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/searchtools.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/underscore-1.3.1.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/_static/underscore.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/api/contrib.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/api/core.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/api/data.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/api/dl.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/api/rl.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/api/utils.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/genindex.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/info/contributing.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/info/examples.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/info/license.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/objects.inv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/py-modindex.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/search.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.02/searchindex.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/.buildinfo" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/.nojekyll" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/dl/runner/alchemy.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/dl/runner/neptune.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/dl/runner/wandb.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/models/cv/segmentation/fpn.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/models/cv/segmentation/linknet.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/models/cv/segmentation/psp.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/models/cv/segmentation/unet.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/criterion/ce.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/criterion/contrastive.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/criterion/dice.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/criterion/focal.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/criterion/gan.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/criterion/huber.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/criterion/iou.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/criterion/lovasz.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/criterion/margin.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/criterion/triplet.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/criterion/wing.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/modules/common.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/modules/lama.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/modules/noisy.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/modules/pooling.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/modules/real_nvp.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/optimizers/lamb.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/optimizers/lookahead.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/optimizers/qhadamw.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/optimizers/radam.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/optimizers/ralamb.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/schedulers/base.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/contrib/nn/schedulers/onecycle.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/core/callback.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/core/callbacks/checkpoint.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/core/callbacks/criterion.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/core/callbacks/formatters.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/core/callbacks/logging.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/core/callbacks/optimizer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/core/callbacks/phase.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/core/callbacks/scheduler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/core/callbacks/wrappers.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/data/augmentor.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/data/collate_fn.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/data/dataset.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/data/reader.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/data/sampler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/callbacks/gan.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/callbacks/inference.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/callbacks/metrics/accuracy.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/callbacks/metrics/auc.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/callbacks/metrics/dice.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/callbacks/metrics/f1_score.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/callbacks/metrics/iou.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/callbacks/metrics/ppv_tpr_f1.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/callbacks/mixup.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/callbacks/scheduler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/core/callback.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/core/experiment.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/core/runner.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/core/state.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/experiment/base.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/experiment/config.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/experiment/supervised.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/runner/gan.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/runner/supervised.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/utils/pipelines.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/utils/text.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/utils/torch.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/utils/trace.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/utils/visualization.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/dl/utils/wizard.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/agent/actor.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/agent/critic.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/agent/head.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/agent/network.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/agent/policy.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/core/agent.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/core/algorithm.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/core/db.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/core/environment.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/core/exploration.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/core/policy_handler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/core/sampler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/core/trainer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/core/trajectory_sampler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/db/mongo.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/db/redis.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/environment/gym.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/exploration/boltzman.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/exploration/gauss.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/exploration/greedy.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/exploration/param_noise.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/offpolicy/algorithms/actor_critic.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/offpolicy/algorithms/critic.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/offpolicy/algorithms/ddpg.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/offpolicy/algorithms/dqn.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/offpolicy/algorithms/sac.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/offpolicy/algorithms/td3.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/offpolicy/trainer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/onpolicy/algorithms/actor.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/onpolicy/algorithms/actor_critic.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/onpolicy/algorithms/ppo.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/onpolicy/algorithms/reinforce.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/rl/onpolicy/trainer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/argparse.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/callbacks.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/checkpoint.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/compression.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/config.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/confusion_matrix.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/dataset.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/ddp.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/dict.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/hash.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/image.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/initialization.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/meters/apmeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/meters/aucmeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/meters/averagevaluemeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/meters/classerrormeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/meters/confusionmeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/meters/mapmeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/meters/meter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/meters/movingaveragevaluemeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/meters/msemeter.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/misc.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/notebook.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/numpy.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/pandas.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/parallel.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/plotly.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/scripts.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/seed.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/serialization.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/tools/dynamic_array.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/tools/frozen_class.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/tools/metric_manager.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/tools/registry.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/tools/seeder.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/tools/tensorboard.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/torch.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/catalyst/utils/visualization.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/torch/nn/modules/module.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/torch/optim/lr_scheduler.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/torch/optim/optimizer.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_modules/torch/utils/data/dataset.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_sources/api/contrib.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_sources/api/core.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_sources/api/data.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_sources/api/dl.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_sources/api/rl.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_sources/api/utils.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_sources/index.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_sources/info/contributing.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_sources/info/examples.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_sources/info/license.rst.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/basic.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/css/badge_only.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/css/theme.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/doctools.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/documentation_options.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/file.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Inconsolata-Bold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Inconsolata-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Inconsolata.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Lato-Bold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Lato-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Lato/lato-bold.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Lato/lato-bold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Lato/lato-bold.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Lato/lato-bold.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Lato/lato-bolditalic.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Lato/lato-bolditalic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Lato/lato-bolditalic.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Lato/lato-bolditalic.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Lato/lato-italic.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Lato/lato-italic.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Lato/lato-italic.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Lato/lato-italic.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Lato/lato-regular.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Lato/lato-regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Lato/lato-regular.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/Lato/lato-regular.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/RobotoSlab-Bold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/RobotoSlab-Regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/RobotoSlab/roboto-slab-v7-bold.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/RobotoSlab/roboto-slab-v7-bold.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/RobotoSlab/roboto-slab-v7-bold.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/RobotoSlab/roboto-slab-v7-bold.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/RobotoSlab/roboto-slab-v7-regular.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/RobotoSlab/roboto-slab-v7-regular.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/RobotoSlab/roboto-slab-v7-regular.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/RobotoSlab/roboto-slab-v7-regular.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/fontawesome-webfont.eot" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/fontawesome-webfont.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/fontawesome-webfont.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/fontawesome-webfont.woff" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/fonts/fontawesome-webfont.woff2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/jquery-3.4.1.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/jquery.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/js/modernizr.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/js/theme.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/language_data.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/minus.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/plus.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/pygments.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/searchtools.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/underscore-1.3.1.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/_static/underscore.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/api/contrib.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/api/core.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/api/data.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/api/dl.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/api/rl.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/api/utils.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/genindex.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/info/contributing.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/info/examples.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/info/license.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/objects.inv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/py-modindex.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/search.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/v20.03/searchindex.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/versions.html" beforeDir="false" />
+    </list>
+    <list id="ad1b0216-21c5-4f5d-afeb-40e00ce32c06" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+        <option value="Jupyter Notebook" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <favorite-branches>
+      <branch-storage>
+        <map>
+          <entry type="REMOTE">
+            <value>
+              <list>
+                <branch-info repo="$PROJECT_DIR$" source="origin/gh-pages" />
+              </list>
+            </value>
+          </entry>
+        </map>
+      </branch-storage>
+    </favorite-branches>
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="Artem Zolkin &lt;arquestro93@gmail.com&gt;" />
+        <option value="Tezikov Roman &lt;tez.romach@gmail.com&gt;" />
+      </list>
+    </option>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="a07e4dbd6c8a7be62dea1eb276c877c199bafa5e" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1OUxaEa6o3bdcxnc5W53V0wt5v0" />
+  <component name="PropertiesComponent">
+    <property name="Git.Branch.Popup.ShowAllRemotes" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="add_unversioned_files" value="$PROJECT_DIR$/examples/cifar_simple/__init__.py&#10;/Users/romach/Documents/aiml/catalyst/examples/notebook-example.ipynb" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/checks" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python tests.pytest for scripts.tests.djd.test_prepare_df_from_dirs_multi">
+    <configuration default="true" type="DjangoTestsConfigurationType">
+      <module name="catalyst" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="TARGET" value="" />
+      <option name="SETTINGS_FILE" value="" />
+      <option name="CUSTOM_SETTINGS" value="false" />
+      <option name="USE_OPTIONS" value="false" />
+      <option name="OPTIONS" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <module name="catalyst" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="Python.FlaskServer">
+      <module name="catalyst" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="Tox" factoryName="Tox">
+      <module name="catalyst" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Doctests">
+      <module name="catalyst" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for catalyst.contrib.scripts.tests.djd.test_prepare_df_from_dirs_one" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="catalyst" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/catalyst/contrib" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;catalyst.contrib.scripts.tests.djd.test_prepare_df_from_dirs_one&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for scripts.tests.djd.test_prepare_df_from_dirs_multi" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="catalyst" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/catalyst/contrib" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;scripts.tests.djd.test_prepare_df_from_dirs_multi&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for scripts.tests.djd.test_prepare_df_from_dirs_one" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="catalyst" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/catalyst/contrib" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;scripts.tests.djd.test_prepare_df_from_dirs_one&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for test_data.test_stratified_fold_split" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="catalyst" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/catalyst/utils/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_data.test_stratified_fold_split&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for test_data.test_stratified_fold_split_num_folds" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="catalyst" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/catalyst/utils/tests" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_data.test_stratified_fold_split_num_folds&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python tests.pytest for test_data.test_stratified_fold_split_num_folds" />
+        <item itemvalue="Python tests.pytest for test_data.test_stratified_fold_split" />
+        <item itemvalue="Python tests.pytest for scripts.tests.djd.test_prepare_df_from_dirs_one" />
+        <item itemvalue="Python tests.pytest for scripts.tests.djd.test_prepare_df_from_dirs_multi" />
+        <item itemvalue="Python tests.pytest for catalyst.contrib.scripts.tests.djd.test_prepare_df_from_dirs_one" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="ad1b0216-21c5-4f5d-afeb-40e00ce32c06" name="Default Changelist" comment="" />
+      <created>1553100051736</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1553100051736</updated>
+      <workItem from="1553100055404" duration="1956000" />
+      <workItem from="1553328448953" duration="794000" />
+      <workItem from="1553499928381" duration="60000" />
+      <workItem from="1553500006448" duration="402000" />
+      <workItem from="1553500915777" duration="423000" />
+      <workItem from="1553535342453" duration="2403000" />
+      <workItem from="1553605690275" duration="386000" />
+      <workItem from="1553704380584" duration="2319000" />
+      <workItem from="1554137748769" duration="1492000" />
+      <workItem from="1554186404418" duration="653000" />
+      <workItem from="1554522963981" duration="7295000" />
+      <workItem from="1554714715112" duration="2047000" />
+      <workItem from="1554803461450" duration="5228000" />
+      <workItem from="1554890015093" duration="8257000" />
+      <workItem from="1554971879985" duration="5601000" />
+      <workItem from="1555141974465" duration="17671000" />
+      <workItem from="1555492361343" duration="284000" />
+      <workItem from="1555582671508" duration="6465000" />
+      <workItem from="1555598930853" duration="1308000" />
+      <workItem from="1555660603696" duration="16144000" />
+      <workItem from="1555935556941" duration="9810000" />
+      <workItem from="1556291820163" duration="1071000" />
+      <workItem from="1556370017603" duration="30951000" />
+      <workItem from="1556785550427" duration="404000" />
+      <workItem from="1556787477767" duration="6789000" />
+      <workItem from="1556867587445" duration="13176000" />
+      <workItem from="1557126515971" duration="1127000" />
+      <workItem from="1557213747223" duration="2780000" />
+      <workItem from="1557489355077" duration="2238000" />
+      <workItem from="1557519155072" duration="3303000" />
+      <workItem from="1557529473630" duration="376000" />
+      <workItem from="1557555179149" duration="1098000" />
+      <workItem from="1557746424285" duration="383000" />
+      <workItem from="1557827173373" duration="155000" />
+      <workItem from="1557905072421" duration="2763000" />
+      <workItem from="1558004713280" duration="8046000" />
+      <workItem from="1558073476327" duration="6826000" />
+      <workItem from="1558261935109" duration="1735000" />
+      <workItem from="1558293992693" duration="200000" />
+      <workItem from="1558337247896" duration="601000" />
+      <workItem from="1558426494723" duration="217000" />
+      <workItem from="1558793279970" duration="3718000" />
+      <workItem from="1559073511779" duration="9380000" />
+      <workItem from="1559150326277" duration="13000" />
+      <workItem from="1559199711402" duration="2560000" />
+      <workItem from="1559246437322" duration="6390000" />
+      <workItem from="1559292630630" duration="2386000" />
+      <workItem from="1559295703997" duration="2009000" />
+      <workItem from="1559409131762" duration="9000" />
+      <workItem from="1559409158122" duration="707000" />
+      <workItem from="1559411373921" duration="1084000" />
+      <workItem from="1559503301703" duration="366000" />
+      <workItem from="1559547710836" duration="219000" />
+      <workItem from="1559633667923" duration="448000" />
+      <workItem from="1559823736878" duration="166000" />
+      <workItem from="1559892860126" duration="3337000" />
+      <workItem from="1559902459206" duration="285000" />
+      <workItem from="1559925687703" duration="809000" />
+      <workItem from="1559994110225" duration="631000" />
+      <workItem from="1559995913433" duration="1187000" />
+      <workItem from="1560438938654" duration="284000" />
+      <workItem from="1560513543713" duration="375000" />
+      <workItem from="1560723652544" duration="2915000" />
+      <workItem from="1560771029084" duration="1477000" />
+      <workItem from="1560856817726" duration="1698000" />
+      <workItem from="1561040639365" duration="744000" />
+      <workItem from="1561194282989" duration="690000" />
+      <workItem from="1561230504385" duration="1853000" />
+      <workItem from="1561368821229" duration="1088000" />
+      <workItem from="1561471122367" duration="1544000" />
+      <workItem from="1561645856932" duration="383000" />
+      <workItem from="1561838512488" duration="7296000" />
+      <workItem from="1561932083059" duration="2387000" />
+      <workItem from="1563301360362" duration="1513000" />
+      <workItem from="1563559815611" duration="672000" />
+      <workItem from="1563879137181" duration="4515000" />
+      <workItem from="1563957012562" duration="3932000" />
+      <workItem from="1564046041601" duration="3347000" />
+      <workItem from="1564133925361" duration="1792000" />
+      <workItem from="1564416764163" duration="24889000" />
+      <workItem from="1564601226142" duration="7996000" />
+      <workItem from="1566126292016" duration="252000" />
+      <workItem from="1567446809099" duration="1090000" />
+    </task>
+    <task id="LOCAL-00021" summary="update docs">
+      <created>1556615110623</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1556615110623</updated>
+    </task>
+    <task id="LOCAL-00022" summary="froze dependencies">
+      <created>1556615260675</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1556615260675</updated>
+    </task>
+    <task id="LOCAL-00023" summary="codestyle">
+      <created>1556615707295</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1556615707295</updated>
+    </task>
+    <task id="LOCAL-00024" summary="fix">
+      <created>1556711707781</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1556711707781</updated>
+    </task>
+    <task id="LOCAL-00025" summary="epochs -&gt; steps">
+      <created>1556719611105</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1556719611105</updated>
+    </task>
+    <task id="LOCAL-00026" summary="group timers in tensorboard">
+      <created>1556795019295</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1556795019295</updated>
+    </task>
+    <task id="LOCAL-00027" summary="add fps">
+      <created>1556814843397</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1556814843397</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Merge branch 'master' of github.com:catalyst-team/catalyst into onecycle&#10;&#10;# Conflicts:&#10;#&#9;examples/notebook-example.ipynb">
+      <created>1556832587508</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1556832587508</updated>
+    </task>
+    <task id="LOCAL-00029" summary="onecycle for batches">
+      <created>1556873203706</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1556873203706</updated>
+    </task>
+    <task id="LOCAL-00030" summary="onecycle for batches">
+      <created>1557217414664</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1557217414664</updated>
+    </task>
+    <task id="LOCAL-00031" summary="WIP on correct hadling dor several dataloaders">
+      <created>1557649306650</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1557649306650</updated>
+    </task>
+    <task id="LOCAL-00032" summary="several dataloaders finished">
+      <created>1558026572959</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1558026572959</updated>
+    </task>
+    <task id="LOCAL-00033" summary="epochs -&gt; steps">
+      <created>1558026849826</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1558026849826</updated>
+    </task>
+    <task id="LOCAL-00034" summary="SchedulerCallback with batch for OneCycle">
+      <created>1558034198144</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1558034198144</updated>
+    </task>
+    <task id="LOCAL-00035" summary="BatchScheduler">
+      <created>1558036982983</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1558036982983</updated>
+    </task>
+    <task id="LOCAL-00036" summary="remove residual loaders">
+      <created>1558073994662</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1558073994662</updated>
+    </task>
+    <task id="LOCAL-00037" summary="add `--version`, thanks to @hexfaker">
+      <created>1558106037914</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1558106037914</updated>
+    </task>
+    <task id="LOCAL-00038" summary="codestyle">
+      <created>1558107219465</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1558107219465</updated>
+    </task>
+    <task id="LOCAL-00039" summary="-v">
+      <created>1558109014786</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1558109014786</updated>
+    </task>
+    <task id="LOCAL-00040" summary="update docs for catalyst-data">
+      <created>1558947469948</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1558947469948</updated>
+    </task>
+    <task id="LOCAL-00041" summary="checks for docs &amp;&amp; new docker">
+      <created>1559081902536</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1559081902536</updated>
+    </task>
+    <task id="LOCAL-00042" summary="update contributing.md">
+      <created>1559112242861</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1559112242861</updated>
+    </task>
+    <task id="LOCAL-00043" summary="add TODOs">
+      <created>1559119382960</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1559119382960</updated>
+    </task>
+    <task id="LOCAL-00044" summary="fix imports for DL and contrib">
+      <created>1559252253740</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1559252253740</updated>
+    </task>
+    <task id="LOCAL-00045" summary="add Metric functions">
+      <created>1559292778015</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1559292778015</updated>
+    </task>
+    <task id="LOCAL-00046" summary="fix Registry">
+      <created>1559293378789</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1559293378789</updated>
+    </task>
+    <task id="LOCAL-00047" summary="fix deploy">
+      <created>1559294364782</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1559294364782</updated>
+    </task>
+    <task id="LOCAL-00048" summary="fix deploy">
+      <created>1559294681800</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1559294681800</updated>
+    </task>
+    <task id="LOCAL-00049" summary="fix deploy">
+      <created>1559295254545</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1559295254545</updated>
+    </task>
+    <task id="LOCAL-00050" summary="docs 19.06">
+      <created>1559409995268</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1559409995269</updated>
+    </task>
+    <task id="LOCAL-00051" summary="fix `catalyst-base` docker">
+      <created>1559897291608</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1559897291609</updated>
+    </task>
+    <task id="LOCAL-00052" summary="fix `catalyst-base` docker">
+      <created>1559897358948</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1559897358948</updated>
+    </task>
+    <task id="LOCAL-00053" summary="change deprecated method">
+      <created>1559925897876</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1559925897876</updated>
+    </task>
+    <task id="LOCAL-00054" summary="change deprecated method">
+      <created>1563967379537</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1563967379537</updated>
+    </task>
+    <task id="LOCAL-00055" summary="get values with safitty">
+      <created>1564047942958</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1564047942958</updated>
+    </task>
+    <task id="LOCAL-00056" summary="rearrange imports">
+      <created>1564048430936</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1564048430937</updated>
+    </task>
+    <task id="LOCAL-00057" summary="add _get_list_args to AccuracyCallback and MapKCallback">
+      <created>1564481312173</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1564481312173</updated>
+    </task>
+    <task id="LOCAL-00058" summary="add _metrics with checkpoint logs">
+      <created>1564485854651</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1564485854651</updated>
+    </task>
+    <task id="LOCAL-00059" summary="add `best` metric">
+      <created>1564489932254</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1564489932255</updated>
+    </task>
+    <task id="LOCAL-00060" summary="rename">
+      <created>1564491041808</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1564491041808</updated>
+    </task>
+    <task id="LOCAL-00061" summary="BaseCheckpointCallback">
+      <created>1564520547172</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1564520547173</updated>
+    </task>
+    <task id="LOCAL-00062" summary="some renaming">
+      <created>1564602651000</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1564602651001</updated>
+    </task>
+    <task id="LOCAL-00063" summary="rearrange">
+      <created>1564603743121</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1564603743121</updated>
+    </task>
+    <task id="LOCAL-00064" summary="final renaming and final rearranging">
+      <created>1564650375078</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1564650375078</updated>
+    </task>
+    <task id="LOCAL-00065" summary="flake8">
+      <created>1564653007841</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1564653007841</updated>
+    </task>
+    <task id="LOCAL-00066" summary="docs/19.09">
+      <created>1567448283226</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1567448283226</updated>
+    </task>
+    <task id="LOCAL-00067" summary="Experimental versions">
+      <created>1586798076338</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1586798076339</updated>
+    </task>
+    <task id="LOCAL-00068" summary="Experimental versions">
+      <created>1586799552908</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1586799552908</updated>
+    </task>
+    <task id="LOCAL-00069" summary="Add gitignore">
+      <created>1586799623541</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1586799623541</updated>
+    </task>
+    <option name="localTasksCounter" value="70" />
+    <servers />
+  </component>
+  <component name="TestHistory">
+    <history-entry file="pytest_for_test_data_test_stratified_fold_split - 2019.04.27 at 16h 03m 28s.xml">
+      <configuration name="pytest for test_data.test_stratified_fold_split" configurationId="tests" />
+    </history-entry>
+    <history-entry file="pytest_for_test_data_test_stratified_fold_split - 2019.04.27 at 16h 04m 00s.xml">
+      <configuration name="pytest for test_data.test_stratified_fold_split" configurationId="tests" />
+    </history-entry>
+    <history-entry file="pytest_for_test_data_test_stratified_fold_split_num_folds - 2019.04.27 at 16h 04m 07s.xml">
+      <configuration name="pytest for test_data.test_stratified_fold_split_num_folds" configurationId="tests" />
+    </history-entry>
+    <history-entry file="pytest_for_scripts_tests_djd_test_prepare_df_from_dirs_one - 2019.04.28 at 20h 00m 49s.xml">
+      <configuration name="pytest for scripts.tests.djd.test_prepare_df_from_dirs_one" configurationId="tests" />
+    </history-entry>
+    <history-entry file="pytest_for_scripts_tests_djd_test_prepare_df_from_dirs_multi - 2019.04.28 at 20h 00m 58s.xml">
+      <configuration name="pytest for scripts.tests.djd.test_prepare_df_from_dirs_multi" configurationId="tests" />
+    </history-entry>
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ORDER">
+      <list>
+        <option value="0" />
+        <option value="2" />
+        <option value="3" />
+        <option value="1" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list />
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="update contributing.md" />
+    <MESSAGE value="add TODOs" />
+    <MESSAGE value="fix imports for DL and contrib" />
+    <MESSAGE value="add Metric functions" />
+    <MESSAGE value="fix Registry" />
+    <MESSAGE value="fix deploy" />
+    <MESSAGE value="docs 19.06" />
+    <MESSAGE value="fix `catalyst-base` docker" />
+    <MESSAGE value="change deprecated method" />
+    <MESSAGE value="get values with safitty" />
+    <MESSAGE value="rearrange imports" />
+    <MESSAGE value="add _get_list_args to AccuracyCallback and MapKCallback" />
+    <MESSAGE value="add _metrics with checkpoint logs" />
+    <MESSAGE value="add `best` metric" />
+    <MESSAGE value="rename" />
+    <MESSAGE value="BaseCheckpointCallback" />
+    <MESSAGE value="some renaming" />
+    <MESSAGE value="rearrange" />
+    <MESSAGE value="final renaming and final rearranging" />
+    <MESSAGE value="flake8" />
+    <MESSAGE value="fix licence" />
+    <MESSAGE value="docs/19.09" />
+    <MESSAGE value="Revert &quot;Experimental versions&quot;&#10;&#10;This reverts commit a07e4dbd" />
+    <MESSAGE value="Experimental versions" />
+    <MESSAGE value="Add gitignore" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add gitignore" />
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2724595" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>
