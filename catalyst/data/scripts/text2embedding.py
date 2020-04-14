@@ -29,7 +29,7 @@ def build_args(parser):
         "--in-huggingface",
         type=str,
         required=False,
-        help="model from huggingface hub"
+        help="model from huggingface hub",
     )
     required_path_to_model = True
 
@@ -170,6 +170,7 @@ def main(args, _=None):
                 batch["attention_mask"].unsqueeze(-1)
                 if args.mask_for_max_length
                 else None
+            )
 
             if utils.is_wrapped_with_ddp(model):
                 # using several gpu
