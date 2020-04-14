@@ -1,0 +1,18 @@
+name: codestyle
+on: [push]
+
+jobs:
+   Check-codestyle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+
+      - name: set up Python 3.6
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.6
+
+      - name: check codestyle
+        run: bash teamcity/py_codestyle.sh
