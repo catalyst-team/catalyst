@@ -286,7 +286,7 @@ class State(FrozenClass):
         callbacks: Dict[str, "Callback"] = None,
         logdir: str = None,
         stage: str = STAGE_INFER_PREFIX,
-        num_epochs: int = None,
+        num_epochs: int = 1,
         main_metric: str = STATE_MAIN_METRIC,
         minimize_metric: bool = True,
         valid_loader: str = LOADER_VALID_PREFIX,
@@ -341,7 +341,7 @@ class State(FrozenClass):
 
         self.stage_name: str = stage
         self.epoch: int = 1
-        self.num_epochs: int = num_epochs or np.iinfo(np.int32).max
+        self.num_epochs: int = num_epochs
 
         self.loader_name: str = None
         self.loader_step: int = 0
