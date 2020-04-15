@@ -17,7 +17,7 @@ class TiledInferenceExperiment(ConfigExperiment):
 
     def get_datasets(
         self, stage: str, epoch: int = None, **data_params
-    ) -> OrderedDict[str, Dataset]:
+    ) -> "OrderedDict[str, Dataset]":
         """
         Defines dataset with tiles of huge image.
         """
@@ -30,7 +30,7 @@ class TiledInferenceExperiment(ConfigExperiment):
         image_path = data_params["image_path"]
         tile_size = data_params["tile_size"]
         tile_step = data_params["tile_step"]
-        input_key = data_params["input_key"]
+        input_key = data_params.get("input_key", "features")
 
         dataset = OrderedDict(
             infer=TiledImageDataset(
@@ -40,7 +40,7 @@ class TiledInferenceExperiment(ConfigExperiment):
 
         return dataset
 
-    def get_callbacks(self, stage: str) -> OrderedDict[Callback]:
+    def get_callbacks(self, stage: str) -> "OrderedDict[Callback]":
         """
         Updates callbacks with additional one for tiled inference.
         """
@@ -49,10 +49,10 @@ class TiledInferenceExperiment(ConfigExperiment):
 
         save_path = data_params["save_path"]
         image_path = data_params["image_path"]
-        n_channels = data_params["n_channels"]
+        num_classes = data_params["num_classes"]
         tile_size = data_params["tile_size"]
         tile_step = data_params["tile_step"]
-        output_key = data_params["output_key"]
+        output_key = data_params.get("output_key", "logits")
 
         image = skimage.io.imread(image_path)
         *image_size, _ = image.shape
@@ -60,7 +60,7 @@ class TiledInferenceExperiment(ConfigExperiment):
         tiled_inference_callback = TiledInferenceCallback(
             save_path,
             image_size,
-            n_channels,
+            num_classes,
             tile_size,
             tile_step,
             output_key=output_key,

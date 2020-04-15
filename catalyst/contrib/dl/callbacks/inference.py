@@ -1,5 +1,6 @@
-from typing import Tuple, Union
+from typing import List, Tuple, Union
 import os
+from pathlib import Path
 
 import numpy as np
 
@@ -59,10 +60,10 @@ class TiledInferenceCallback(Callback):
     def __init__(
         self,
         save_path: str,
-        image_size: Union[int, Tuple[int]],
-        n_channels: int,
-        tile_size: Union[int, Tuple[int]],
-        tile_step: Union[int, Tuple[int]],
+        image_size: Union[int, Tuple[int], List[int]],
+        num_classes: int,
+        tile_size: Union[int, Tuple[int], List[int]],
+        tile_step: Union[int, Tuple[int], List[int]],
         output_key: str = "logits",
     ):
         """
@@ -71,26 +72,19 @@ class TiledInferenceCallback(Callback):
                 file extension must be `.npy` for numpy array save
                 or one of `.pt`, `.pth` for torch tensor save.
             image_size: size of large input image
-            n_channels: number of channels in image
+            num_classes: number of channels in output mask
             tile_size: tile size
             tile_step: tile step
             output_key: key in batch output for obtaining neural net prediction
         """
         super().__init__(CallbackOrder.External)
 
-        if save_path.endswith(suffix=(".pt", ".pth")):
-            self.save_mode = "torch"
-        elif save_path.endswith(".npy"):
-            self.save_mode = "numpy"
-        else:
-            _, ext = os.path.splitext(save_path)
-            raise ValueError(
-                f"Unable to infer save mode for a file with extension {ext}"
-            )
+        if not save_path.endswith(".npy"):
+            save_path += ".npy"
 
-        self.save_path = save_path
+        self.save_path = Path(save_path)
 
-        if isinstance(image_size, tuple):
+        if isinstance(image_size, (tuple, list)):
             size_ndim = len(image_size)
             error_msg = (
                 f"Image size must be 2-dimensional, "
@@ -101,7 +95,7 @@ class TiledInferenceCallback(Callback):
         else:
             self.image_h, self.image_w = image_size, image_size
 
-        if isinstance(tile_size, tuple):
+        if isinstance(tile_size, (tuple, list)):
             tile_size_ndim = len(tile_size)
             error_msg = (
                 f"Tile size must be 2-dimensional, "
@@ -112,7 +106,7 @@ class TiledInferenceCallback(Callback):
         else:
             self.tile_size_h, self.tile_size_w = tile_size, tile_size
 
-        if isinstance(tile_step, tuple):
+        if isinstance(tile_step, (tuple, list)):
             tile_step_ndim = len(tile_step)
             error_msg = (
                 f"Tile step must be 2-dimensional, "
@@ -137,13 +131,13 @@ class TiledInferenceCallback(Callback):
         self.margin_left = margins["margin_left"]
         self.margin_right = margins["margin_right"]
 
-        self.n_channels = n_channels
+        self.n_channels = num_classes
         self.output_key = output_key
 
         storage_h = self.image_h + self.margin_top + self.margin_bottom
         storage_w = self.image_w + self.margin_left + self.margin_right
 
-        self.storage = torch.zeros((n_channels, storage_h, storage_w))
+        self.storage = torch.zeros((num_classes, storage_h, storage_w))
         self.norm_mask = torch.zeros((1, storage_h, storage_w))
         self.weights = pyramid_weights(self.tile_size_h, self.tile_size_w)
 
@@ -156,7 +150,7 @@ class TiledInferenceCallback(Callback):
         self.weights = self.weights.to(state.device)
 
         items = zip(
-            state.batch_out[self.output_key],
+            torch.sigmoid(state.batch_out[self.output_key]),
             state.batch_in["x"],
             state.batch_in["y"],
         )
@@ -177,15 +171,15 @@ class TiledInferenceCallback(Callback):
         On epoch end post-processing of resulting tensor, then saving it.
         """
         output = self.storage / self.norm_mask
+        _, h, w = output.shape
         crop_slice = (
             slice(None),
-            slice(self.margin_top, -self.margin_bottom),
-            slice(self.margin_left, -self.margin_right),
+            slice(self.margin_top, h - self.margin_bottom),
+            slice(self.margin_left, w - self.margin_right),
         )
-        output = output[crop_slice].cpu()
-        output = output.permute(1, 2, 0)
+        output = output[crop_slice].cpu().numpy()
 
-        if self.save_mode == "torch":
-            torch.save(output, self.save_path)
-        elif self.save_mode == "numpy":
-            np.save(self.save_path, output.numpy())
+        save_dir, _ = os.path.split(self.save_path)
+        save_dir = Path(save_dir)
+        save_dir.mkdir(parents=True, exist_ok=True)
+        np.save(self.save_path, output)

@@ -67,7 +67,7 @@ class TiledImageDataset(Dataset):
         image_path: Union[str, Path],
         tile_size: Union[int, Tuple[int]],
         tile_step: Union[int, Tuple[int]],
-        input_key: str = "images",
+        input_key: str = "features",
     ):
         """
         Args:
@@ -79,19 +79,6 @@ class TiledImageDataset(Dataset):
         super().__init__()
         image = skimage.io.imread(image_path)
         self.image_h, self.image_w, _ = image.shape
-
-        image = cv2.copyMakeBorder(
-            image,
-            self.margin_top,
-            self.margin_bottom,
-            self.margin_left,
-            self.margin_right,
-            borderType=cv2.BORDER_CONSTANT,
-            value=0,
-        )
-        image = np.moveaxis(image, -1, 0)
-
-        self.image = torch.from_numpy(image).float().contiguous()
         self.input_key = input_key
 
         if isinstance(tile_size, tuple):
@@ -131,7 +118,7 @@ class TiledImageDataset(Dataset):
                 )
             )
 
-        if self.tile_size_w > self.tile_step_w:
+        if self.tile_step_w > self.tile_size_w:
             raise ValueError(
                 error_msg.format(
                     dim="width",
@@ -156,6 +143,18 @@ class TiledImageDataset(Dataset):
         self.margin_top = margins["margin_top"]
         self.margin_left = margins["margin_left"]
         self.margin_right = margins["margin_right"]
+
+        image = cv2.copyMakeBorder(
+            image,
+            self.margin_top,
+            self.margin_bottom,
+            self.margin_left,
+            self.margin_right,
+            borderType=cv2.BORDER_CONSTANT,
+            value=0,
+        )
+        image = np.moveaxis(image, -1, 0)
+        self.image = torch.from_numpy(image).float().contiguous()
 
         x_stop = (
             self.image_w + self.margin_left + self.margin_right - overlap_w

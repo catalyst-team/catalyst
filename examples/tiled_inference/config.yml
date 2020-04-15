@@ -1,0 +1,27 @@
+model_params:
+  model: smp.FPN
+  encoder_name: "resnext50_32x4d"
+  classes: &num_classes 1
+
+args:
+  expdir: "tiled_inference"
+  logdir: "./logs/tiled_inference"
+
+stages:
+  infer:
+    state_params:
+      num_epochs: 1
+
+    data_params:
+      batch_size: 16
+      num_workers: 4
+      image_path: "./tiled_inference/car_8k.jpg"
+      save_path: "./logs/tiled_inference/predictions/mask.npy"
+      num_classes: *num_classes
+      tile_size: 256
+      tile_step: 128
+
+    callback_params:
+      loader:
+        callback: CheckpointCallback
+        resume: "./tiled_inference/checkpoint.pth"
