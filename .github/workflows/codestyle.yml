@@ -2,7 +2,7 @@ name: codestyle
 on: [pull_request]
 
 jobs:
-   Check-codestyle:
+   check-codestyle:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
