@@ -281,23 +281,17 @@
         <span class="n">accumulation_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">grad_clip_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">decouple_weight_decay</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="c1"># @TODO: add model grads support and visualization</span>
-        <span class="c1"># save_model_grads: bool = False,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            grad_clip_params (dict): params for gradient clipping</span>
-<span class="sd">            accumulation_steps (int): number of steps before</span>
-<span class="sd">                ``model.zero_grad()``</span>
+<span class="sd">            loss_key (str): key to get loss from ``state.loss``</span>
 <span class="sd">            optimizer_key (str): A key to take a optimizer in case</span>
 <span class="sd">                there are several of them and they are in a dictionary format.</span>
-<span class="sd">            loss_key (str): key to get loss from ``state.loss``</span>
+<span class="sd">            accumulation_steps (int): number of steps before</span>
+<span class="sd">                ``model.zero_grad()``</span>
+<span class="sd">            grad_clip_params (dict): params for gradient clipping</span>
 <span class="sd">            decouple_weight_decay (bool): If True - decouple weight decay</span>
 <span class="sd">                regularization.</span>
-<span class="sd">            # save_model_grads (bool): If True - State.model_grads will</span>
-<span class="sd">            #     contain gradients calculated</span>
-<span class="sd">            # on backward propagation on current</span>
-<span class="sd">            #     batch</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Optimizer</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">All</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loss_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">loss_key</span>
@@ -313,7 +307,6 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">decouple_weight_decay</span> <span class="o">=</span> <span class="n">decouple_weight_decay</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer_wd</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span></div>
-        <span class="c1"># self.save_model_grads = save_model_grads</span>
 
 <div class="viewcode-block" id="OptimizerCallback.grad_step"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.optimizer.OptimizerCallback.grad_step">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">grad_step</span><span class="p">(</span>
@@ -401,8 +394,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_accumulation_counter</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">need_gradient_step</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_accumulation_counter</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">accumulation_steps</span> <span class="o">==</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_accumulation_counter</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">accumulation_steps</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="p">)</span>
 
         <span class="c1"># This is very hacky check whether we have AMP optimizer and this may</span>
         <span class="c1"># change in future.</span>
@@ -429,13 +422,7 @@
                 <span class="n">grad_clip_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grad_clip_fn</span><span class="p">,</span>
             <span class="p">)</span>
 
-            <span class="c1"># if self.save_model_grads:</span>
-            <span class="c1">#     for tag, value in model.named_parameters():</span>
-            <span class="c1">#         tag = tag.replace(&quot;.&quot;, &quot;/&quot;)</span>
-            <span class="c1">#         state.model_grads[tag] = value.grad.cpu().numpy()</span>
-
             <span class="n">utils</span><span class="o">.</span><span class="n">maybe_recursive_call</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">,</span> <span class="s2">&quot;zero_grad&quot;</span><span class="p">)</span>
-
             <span class="bp">self</span><span class="o">.</span><span class="n">_accumulation_counter</span> <span class="o">=</span> <span class="mi">0</span></div></div>
 
 

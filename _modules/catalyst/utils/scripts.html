@@ -338,7 +338,11 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expdir</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
         <span class="n">expdir</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
     <span class="n">m</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
-    <span class="n">Experiment</span><span class="p">,</span> <span class="n">Runner</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">Experiment</span><span class="p">,</span> <span class="n">m</span><span class="o">.</span><span class="n">Runner</span>
+    <span class="n">Runner</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">Runner</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s2">&quot;Experiment&quot;</span><span class="p">):</span>
+        <span class="n">Experiment</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">Experiment</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">Experiment</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">return</span> <span class="n">Experiment</span><span class="p">,</span> <span class="n">Runner</span></div>
 
 
