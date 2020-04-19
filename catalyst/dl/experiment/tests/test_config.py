@@ -9,7 +9,6 @@ from catalyst.dl import (
     ConsoleLogger,
     ExceptionCallback,
     MetricManagerCallback,
-    PhaseWrapperCallback,
     registry,
     TensorboardLogger,
     ValidationManagerCallback,
@@ -74,7 +73,6 @@ def test_defaults():
     assert exp.logdir == "./logdir"
     assert exp.stages == ["train"]
     assert exp.distributed_params == {}
-    assert exp.monitoring_params == {}
     assert exp.get_state_params("train") == {
         "logdir": "./logdir",
     }
@@ -99,28 +97,6 @@ def test_when_callback_defined():
 
     assert "_criterion" not in exp.get_callbacks("train").keys()
     assert "my_criterion" in exp.get_callbacks("train").keys()
-
-
-def test_when_callback_wrapped():
-    """
-    There should be no default callback of same kind of user defined wrapped
-    callback.
-    """
-    config = DEFAULT_MINIMAL_CONFIG.copy()
-    config["stages"]["callbacks_params"] = {
-        "my_wrapped_criterion": {
-            "_wrapper": {
-                "callback": "PhaseBatchWrapperCallback",
-                "active_phases": [1],
-            },
-            "callback": "CriterionCallback",
-        }
-    }
-    exp = ConfigExperiment(config=config)
-
-    assert "_criterion" not in exp.get_callbacks("train").keys()
-    callback = exp.get_callbacks("train")["my_wrapped_criterion"]
-    assert isinstance(callback, PhaseWrapperCallback)
 
 
 def test_not_implemented_datasets():

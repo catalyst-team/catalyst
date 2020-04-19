@@ -29,7 +29,6 @@ class _Experiment(ABC):
 
         - :py:mod:`catalyst.dl.experiment.base.BaseExperiment`
         - :py:mod:`catalyst.dl.experiment.config.ConfigExperiment`
-        - :py:mod:`catalyst.dl.experiment.gan.GanExperiment`
         - :py:mod:`catalyst.dl.experiment.supervised.SupervisedExperiment`
     """
 
@@ -97,33 +96,6 @@ class _Experiment(ABC):
 
             >>> experiment.distributed_params
             {"opt_level": "O1", "syncbn": True}  # Apex variant
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def monitoring_params(self) -> Dict:
-        """
-        Dictionary with the parameters for monitoring services,
-        like Alchemy_
-
-        .. _Alchemy: https://alchemy.host
-
-        Example::
-
-            >>> experiment.monitoring_params
-            {
-                "token": None, # insert your personal token here
-                "project": "classification_example",
-                "group": "first_trial",
-                "experiment": "first_experiment",
-            }
-
-        .. warning::
-            Deprecated, saved for backward compatibility.
-            Please use
-            :py:mod:`catalyst.contrib.dl.callbacks.alchemy.AlchemyLogger`
-            instead.
         """
         pass
 

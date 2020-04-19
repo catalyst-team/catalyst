@@ -1,11 +1,8 @@
-from typing import List, Optional, Union
 import itertools
-from pathlib import Path
 
 import numpy as np
 
 from .image import tensor_from_rgb_image
-from .plotly import plot_tensorboard_log
 
 
 def plot_confusion_matrix(
@@ -95,33 +92,4 @@ def render_figure_to_tensor(figure):
     return image
 
 
-def plot_metrics(
-    logdir: Union[str, Path],
-    step: Optional[str] = "epoch",
-    metrics: Optional[List[str]] = None,
-    height: Optional[int] = None,
-    width: Optional[int] = None,
-) -> None:
-    """Plots your learning results.
-
-    Args:
-        logdir: the logdir that was specified during training.
-        step: 'batch' or 'epoch' - what logs to show: for batches or
-            for epochs
-        metrics: list of metrics to plot. The loss should be specified as
-            'loss', learning rate = '_base/lr' and other metrics should be
-            specified as names in metrics dict
-            that was specified during training
-        height: the height of the whole resulting plot
-        width: the width of the whole resulting plot
-
-    """
-    assert step in [
-        "batch",
-        "epoch",
-    ], f"Step should be either 'batch' or 'epoch', got '{step}'"
-    metrics = metrics or ["loss"]
-    plot_tensorboard_log(logdir, step, metrics, height, width)
-
-
-__all__ = ["plot_confusion_matrix", "render_figure_to_tensor", "plot_metrics"]
+__all__ = ["plot_confusion_matrix", "render_figure_to_tensor"]

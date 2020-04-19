@@ -4,11 +4,6 @@ from catalyst.core.callback import *
 from catalyst.core.callbacks import *
 
 from .confusion_matrix import ConfusionMatrixCallback
-from .gan import (
-    GradientPenaltyCallback,
-    WassersteinDistanceCallback,
-    WeightClampingOptimizerCallback,
-)
 from .inference import InferCallback, InferMaskCallback
 from .meter import MeterMetricsCallback
 from .metrics import (
@@ -25,8 +20,6 @@ from .metrics import (
     PrecisionRecallF1ScoreCallback,
 )
 from .mixup import MixupCallback
-from .phase import PhaseManagerCallback
 from .scheduler import LRFinder
-from .wrappers import PhaseBatchWrapperCallback, PhaseWrapperCallback
 
 from catalyst.contrib.dl.callbacks import *  # isort:skip

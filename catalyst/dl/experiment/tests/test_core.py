@@ -51,7 +51,6 @@ def test_defaults():
     assert exp.logdir is None
     assert exp.stages == ["train"]
     assert exp.distributed_params == {}
-    assert exp.monitoring_params == {}
     assert exp.get_state_params("") == {
         "logdir": None,
         "num_epochs": 1,
