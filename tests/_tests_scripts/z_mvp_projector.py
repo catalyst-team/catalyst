@@ -30,4 +30,5 @@ runner.train(
     check=True,
 )
 # model inference
-loader_logits = runner.predict_loader(model=model, loader=loader, verbose=True)
+for prediction in runner.predict_loader(model=model, loader=loader):
+    assert prediction["logits"].shape == [32, 1]

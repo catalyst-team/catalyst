@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, Iterator, List, Mapping, Union
+from typing import Any, Callable, Dict, Generator, List, Mapping, Union
 from collections import OrderedDict
 from pathlib import Path
 
@@ -241,9 +241,10 @@ class Runner(StageBasedRunner):
         resume: str = None,
         fp16: Union[Dict, bool] = None,
         initial_seed: int = 42,
-    ) -> Iterator:
+    ) -> Generator:
         """
-        Runs model inference on PyTorch Dataloader.
+        Runs model inference on PyTorch Dataloader and returns
+        python Generator with model predictions from `runner.predict_batch`
 
         Args:
             loader (DataLoader):
@@ -253,7 +254,7 @@ class Runner(StageBasedRunner):
             initial_seed (int):
 
         Returns:
-            (Iterator) model predictions from `runner.predict_batch` method.
+            (Generator) model predictions from `runner.predict_batch` method.
         """
         if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}

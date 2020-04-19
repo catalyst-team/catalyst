@@ -66,7 +66,8 @@ runner.train(
     verbose=True,
 )
 # model inference
-loader_logits = runner.predict_loader(model=model, loader=loader, verbose=True)
+for prediction in runner.predict_loader(model=model, loader=loader):
+    do_something_with_predicitons(prediction)
 ```
 
 ### Minimal Examples
