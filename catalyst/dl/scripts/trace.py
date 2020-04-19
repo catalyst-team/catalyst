@@ -20,7 +20,8 @@ def trace_model_from_checkpoint(
     opt_level: str = None,
     device: Device = "cpu",
 ):
-    """Traces model using created experiment and runner.
+    """
+    Traces model using created experiment and runner.
 
     Args:
         logdir (Union[str, Path]): Path to Catalyst logdir with model

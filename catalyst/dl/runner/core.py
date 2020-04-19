@@ -1,11 +1,20 @@
-from typing import Any, Callable, Dict, List, Union
+from typing import Any, Callable, Dict, Iterator, List, Mapping, Union
 from collections import OrderedDict
+from pathlib import Path
 
+import torch
+from torch.jit import ScriptModule
 from torch.utils.data import DataLoader, Dataset
 
 from catalyst.core import Callback, CheckpointCallback, StageBasedRunner, State
 from catalyst.dl import Experiment, utils
-from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
+from catalyst.utils.tools.typing import (
+    Criterion,
+    Device,
+    Model,
+    Optimizer,
+    Scheduler,
+)
 
 
 class Runner(StageBasedRunner):
@@ -203,6 +212,155 @@ class Runner(StageBasedRunner):
             initial_seed=initial_seed,
         )
         self.run_experiment(experiment)
+
+    @torch.no_grad()
+    def predict_batch(
+        self, batch: Mapping[str, Any], **kwargs
+    ) -> Mapping[str, Any]:
+        """
+        Run model inference on specified data batch.
+
+        Args:
+            batch (Mapping[str, Any]): dictionary with data batches
+                from DataLoader.
+            **kwargs: additional kwargs to pass to the model
+
+        Returns:
+            Mapping[str, Any]: model output dictionary
+        """
+        raise NotImplementedError(
+            "Please implement `runner.predict_batch` method"
+        )
+
+    @torch.no_grad()
+    def predict_loader(
+        self,
+        *,
+        loader: DataLoader,
+        model: Model = None,
+        resume: str = None,
+        fp16: Union[Dict, bool] = None,
+        initial_seed: int = 42,
+    ) -> Iterator:
+        """
+        Runs model inference on PyTorch Dataloader.
+
+        Args:
+            loader (DataLoader):
+            model (Model):
+            resume (str):
+            fp16 (Union[Dict, bool]):
+            initial_seed (int):
+
+        Returns:
+            (Iterator) model predictions from `runner.predict_batch` method.
+        """
+        if isinstance(fp16, bool) and fp16:
+            fp16 = {"opt_level": "O1"}
+
+        if model is not None:
+            self.model = model
+
+        if resume is not None:
+            checkpoint = utils.load_checkpoint(resume)
+            utils.unpack_checkpoint(checkpoint, model=model)
+
+        assert self.model is not None
+
+        self.model, _, _, _, self.device = utils.process_components(
+            model=model, distributed_params=fp16, device=self.device,
+        )
+
+        utils.set_global_seed(initial_seed)
+        for batch in loader:
+            yield self.predict_batch(batch)
+
+    def trace(
+        self,
+        model: Model = None,
+        batch=None,
+        logdir: str = None,
+        loader: DataLoader = None,
+        method_name: str = "forward",
+        mode: str = "eval",
+        requires_grad: bool = False,
+        fp16: Union[Dict, bool] = None,
+        device: Device = "cpu",
+        predict_params: dict = None,
+    ) -> ScriptModule:
+        """
+        Traces model using Torch Jit.
+
+        Args:
+            model (Model): model to trace
+            batch: batch to forward through the model to trace
+            logdir (str, optional): If specified,
+                the result will be written to the directory
+            loader (DataLoader, optional): if batch is not specified, the batch
+                will be ``next(iter(loader))``
+            method_name (str): model's method name that will be traced
+            mode (str): ``train`` or ``eval``
+            requires_grad (bool): flag to trace with gradients
+            fp16 (Union[Dict, bool]): If not None, then sets
+                tracing params to FP16
+            device (Device): Torch deivice or a string
+            predict_params (dict): additional parameters for model forward
+        """
+        if batch is None:
+            if loader is None:
+                raise ValueError(
+                    "If batch is not provided the loader must be specified"
+                )
+            batch = next(iter(loader))
+
+        if model is not None:
+            self.model = model
+
+        if isinstance(fp16, bool) and fp16:
+            opt_level = "O1"
+        elif isinstance(fp16, bool) and not fp16:
+            opt_level = None
+        elif isinstance(fp16, dict):
+            opt_level = fp16["opt_level"]
+        else:
+            opt_level = fp16
+
+        if opt_level is not None:
+            device = "cuda"
+        elif device is None:
+            if self.device is None:
+                self.device = utils.get_device()
+            device = self.device
+
+        result = utils.trace_model(
+            model=self.model,
+            runner=self,
+            batch=batch,
+            method_name=method_name,
+            mode=mode,
+            requires_grad=requires_grad,
+            opt_level=opt_level,
+            device=device,
+            predict_params=predict_params,
+        )
+
+        if logdir is not None:
+            filename = utils.get_trace_name(
+                method_name=method_name,
+                mode=mode,
+                requires_grad=requires_grad,
+                opt_level=opt_level,
+            )
+
+            logdir = Path(logdir)
+            output: Path = logdir / "trace"
+            output.mkdir(exist_ok=True, parents=True)
+
+            out_model = str(output / filename)
+
+            torch.jit.save(result, out_model)
+
+        return result
 
 
 __all__ = ["Runner"]
