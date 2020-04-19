@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.runner.core &mdash; Catalyst 20.04.1 documentation</title>
+  <title>catalyst.dl.runner.core &mdash; Catalyst 20.04.2 documentation</title>
   
 
   
@@ -298,12 +298,12 @@
         <span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fp16</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">distributed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">monitoring_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">timeit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">initial_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Starts the training process of the model.</span>
+<span class="sd">        Starts the train stage of the model.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            model (Model): model to train</span>
@@ -333,7 +333,7 @@
 <span class="sd">                the ``main_metric`` should be minimized.</span>
 <span class="sd">            verbose (bool): if `True`, it displays the status of the training</span>
 <span class="sd">                to the console.</span>
-<span class="sd">            state_kwargs (dict): additional state params to ``State``</span>
+<span class="sd">            state_kwargs (dict): additional state params for ``State``</span>
 <span class="sd">            checkpoint_data (dict): additional data to save in checkpoint,</span>
 <span class="sd">                for example: ``class_names``, ``date_of_training``, etc</span>
 <span class="sd">            fp16 (Union[Dict, bool]): If not None, then sets training to FP16.</span>
@@ -342,14 +342,11 @@
 <span class="sd">            distributed (bool): if `True` will start training</span>
 <span class="sd">                in distributed mode.</span>
 <span class="sd">                Note: Works only with python scripts. No jupyter support.</span>
-<span class="sd">            monitoring_params (dict): If not None, then create monitoring</span>
-<span class="sd">                through Alchemy or other tools.</span>
-<span class="sd">                For example,</span>
-<span class="sd">                ``{&quot;token&quot;: &quot;api_token&quot;, &quot;experiment&quot;: &quot;experiment_name&quot;}``</span>
 <span class="sd">            check (bool): if True, then only checks that pipeline is working</span>
 <span class="sd">                (3 epochs only)</span>
 <span class="sd">            timeit (bool): if True, computes the execution time</span>
 <span class="sd">                of training process and displays it to the console.</span>
+<span class="sd">            initial_seed (int): experiment&#39;s initial seed value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp16</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fp16</span><span class="p">:</span>
             <span class="n">fp16</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;opt_level&quot;</span><span class="p">:</span> <span class="s2">&quot;O1&quot;</span><span class="p">}</span>
@@ -367,8 +364,8 @@
         <span class="n">experiment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_experiment_fn</span><span class="p">(</span>
             <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span>
             <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-            <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
             <span class="n">datasets</span><span class="o">=</span><span class="n">datasets</span><span class="p">,</span>
+            <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
             <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
             <span class="n">logdir</span><span class="o">=</span><span class="n">logdir</span><span class="p">,</span>
             <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
@@ -379,15 +376,90 @@
             <span class="n">main_metric</span><span class="o">=</span><span class="n">main_metric</span><span class="p">,</span>
             <span class="n">minimize_metric</span><span class="o">=</span><span class="n">minimize_metric</span><span class="p">,</span>
             <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
-            <span class="n">check_run</span><span class="o">=</span><span class="n">check</span><span class="p">,</span>
             <span class="n">check_time</span><span class="o">=</span><span class="n">timeit</span><span class="p">,</span>
+            <span class="n">check_run</span><span class="o">=</span><span class="n">check</span><span class="p">,</span>
             <span class="n">state_kwargs</span><span class="o">=</span><span class="n">state_kwargs</span><span class="p">,</span>
             <span class="n">checkpoint_data</span><span class="o">=</span><span class="n">checkpoint_data</span><span class="p">,</span>
             <span class="n">distributed_params</span><span class="o">=</span><span class="n">fp16</span><span class="p">,</span>
-            <span class="n">monitoring_params</span><span class="o">=</span><span class="n">monitoring_params</span><span class="p">,</span>
+            <span class="n">initial_seed</span><span class="o">=</span><span class="n">initial_seed</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span> <span class="o">=</span> <span class="n">experiment</span>
-        <span class="n">utils</span><span class="o">.</span><span class="n">distributed_cmd_run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_experiment</span><span class="p">,</span> <span class="n">distributed</span><span class="p">)</span></div></div>
+        <span class="n">utils</span><span class="o">.</span><span class="n">distributed_cmd_run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_experiment</span><span class="p">,</span> <span class="n">distributed</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Runner.infer"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.core.Runner.infer">[docs]</a>    <span class="k">def</span> <span class="nf">infer</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+        <span class="n">datasets</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, Union[Dataset, Dict, Any]]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">loaders</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">callbacks</span><span class="p">:</span> <span class="s2">&quot;Union[List[Callback], OrderedDict[str, Callback]]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">resume</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fp16</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">timeit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">initial_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Starts the inference stage of the model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model (Model): model for inference</span>
+<span class="sd">            datasets (OrderedDict[str, Union[Dataset, Dict, Any]]): dictionary</span>
+<span class="sd">                with one or several  ``torch.utils.data.Dataset``</span>
+<span class="sd">                for training, validation or inference</span>
+<span class="sd">                used for Loaders automatic creation</span>
+<span class="sd">                preferred way for distributed training setup</span>
+<span class="sd">            loaders (OrderedDict[str, DataLoader]): dictionary</span>
+<span class="sd">                with one or several ``torch.utils.data.DataLoader``</span>
+<span class="sd">                for training, validation or inference</span>
+<span class="sd">            callbacks (Union[List[Callback], OrderedDict[str, Callback]]):</span>
+<span class="sd">                list or dictionary with Catalyst callbacks</span>
+<span class="sd">            logdir (str): path to output directory</span>
+<span class="sd">            verbose (bool): if `True`, it displays the status of the training</span>
+<span class="sd">                to the console.</span>
+<span class="sd">            state_kwargs (dict): additional state params for ``State``</span>
+<span class="sd">            checkpoint_data (dict): additional data to save in checkpoint,</span>
+<span class="sd">                for example: ``class_names``, ``date_of_training``, etc</span>
+<span class="sd">            fp16 (Union[Dict, bool]): If not None, then sets training to FP16.</span>
+<span class="sd">                See https://nvidia.github.io/apex/amp.html#properties</span>
+<span class="sd">                if fp16=True, params by default will be ``{&quot;opt_level&quot;: &quot;O1&quot;}``</span>
+<span class="sd">            check (bool): if True, then only checks that pipeline is working</span>
+<span class="sd">                (3 epochs only)</span>
+<span class="sd">            timeit (bool): if True, computes the execution time</span>
+<span class="sd">                of training process and displays it to the console.</span>
+<span class="sd">            initial_seed (int): experiment&#39;s initial seed value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp16</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fp16</span><span class="p">:</span>
+            <span class="n">fp16</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;opt_level&quot;</span><span class="p">:</span> <span class="s2">&quot;O1&quot;</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">resume</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">callbacks</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">sort_callbacks_by_order</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
+            <span class="n">checkpoint_callback_flag</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">checkpoint_callback_flag</span><span class="p">:</span>
+                <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;loader&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CheckpointCallback</span><span class="p">(</span><span class="n">resume</span><span class="o">=</span><span class="n">resume</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;CheckpointCallback already exist&quot;</span><span class="p">)</span>
+
+        <span class="n">experiment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_experiment_fn</span><span class="p">(</span>
+            <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;infer&quot;</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">datasets</span><span class="o">=</span><span class="n">datasets</span><span class="p">,</span>
+            <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
+            <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
+            <span class="n">logdir</span><span class="o">=</span><span class="n">logdir</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">check_time</span><span class="o">=</span><span class="n">timeit</span><span class="p">,</span>
+            <span class="n">check_run</span><span class="o">=</span><span class="n">check</span><span class="p">,</span>
+            <span class="n">state_kwargs</span><span class="o">=</span><span class="n">state_kwargs</span><span class="p">,</span>
+            <span class="n">distributed_params</span><span class="o">=</span><span class="n">fp16</span><span class="p">,</span>
+            <span class="n">initial_seed</span><span class="o">=</span><span class="n">initial_seed</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_experiment</span><span class="p">(</span><span class="n">experiment</span><span class="p">)</span></div></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Runner&quot;</span><span class="p">]</span>

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.runner.supervised &mdash; Catalyst 20.04.1 documentation</title>
+  <title>catalyst.dl.runner.supervised &mdash; Catalyst 20.04.2 documentation</title>
   
 
   
@@ -265,7 +265,6 @@
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">Callback</span><span class="p">,</span>
     <span class="n">CheckpointCallback</span><span class="p">,</span>
     <span class="n">InferCallback</span><span class="p">,</span>
     <span class="n">State</span><span class="p">,</span>
@@ -413,48 +412,6 @@
         <span class="n">batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch2device</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
         <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">output</span></div>
-
-<div class="viewcode-block" id="SupervisedRunner.infer"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.supervised.SupervisedRunner.infer">[docs]</a>    <span class="k">def</span> <span class="nf">infer</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
-        <span class="n">loaders</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">,</span>
-        <span class="n">callbacks</span><span class="p">:</span> <span class="s2">&quot;Union[List[Callback], OrderedDict[str, Callback]]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">fp16</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Makes the inference on the model.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            model (Model): model to infer</span>
-<span class="sd">            loaders (dict): dictionary containing one or several</span>
-<span class="sd">                ``torch.utils.data.DataLoader`` for inference</span>
-<span class="sd">            callbacks (List[catalyst.dl.Callback]): list of inference callbacks</span>
-<span class="sd">            verbose (bool): ff true, it displays the status of the inference</span>
-<span class="sd">                to the console.</span>
-<span class="sd">            state_kwargs (dict): additional state params to ``State``</span>
-<span class="sd">            fp16 (Union[Dict, bool]): If not None, then sets inference to FP16.</span>
-<span class="sd">                See https://nvidia.github.io/apex/amp.html#properties</span>
-<span class="sd">                if fp16=True, params by default will be ``{&quot;opt_level&quot;: &quot;O1&quot;}``</span>
-<span class="sd">            check (bool): if True, then only checks that pipeline is working</span>
-<span class="sd">                (3 epochs only)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp16</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fp16</span><span class="p">:</span>
-            <span class="n">fp16</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;opt_level&quot;</span><span class="p">:</span> <span class="s2">&quot;O1&quot;</span><span class="p">}</span>
-
-        <span class="n">experiment</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_experiment_fn</span><span class="p">(</span>
-            <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;infer&quot;</span><span class="p">,</span>
-            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-            <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
-            <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
-            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
-            <span class="n">check_run</span><span class="o">=</span><span class="n">check</span><span class="p">,</span>
-            <span class="n">state_kwargs</span><span class="o">=</span><span class="n">state_kwargs</span><span class="p">,</span>
-            <span class="n">distributed_params</span><span class="o">=</span><span class="n">fp16</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">run_experiment</span><span class="p">(</span><span class="n">experiment</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="SupervisedRunner.predict_loader"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.supervised.SupervisedRunner.predict_loader">[docs]</a>    <span class="k">def</span> <span class="nf">predict_loader</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>

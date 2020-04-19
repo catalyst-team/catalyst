@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contrib &mdash; Catalyst 20.04.1 documentation</title>
+  <title>Contrib &mdash; Catalyst 20.04.2 documentation</title>
   
 
   
@@ -2746,6 +2746,27 @@ must be one on [“downsampling”, “upsampling”]</p></li>
 <dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
 </dd></dl>
 
+<dl class="py function">
+<dt id="catalyst.contrib.utils.plotly.plot_metrics">
+<code class="sig-prename descclassname">catalyst.contrib.utils.plotly.</code><code class="sig-name descname">plot_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">step</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'epoch'</span></em>, <em class="sig-param"><span class="n">metrics</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>List<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">height</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">width</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/contrib/utils/plotly.html#plot_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.plotly.plot_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots your learning results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logdir</strong> – the logdir that was specified during training.</p></li>
+<li><p><strong>step</strong> – ‘batch’ or ‘epoch’ - what logs to show: for batches or
+for epochs</p></li>
+<li><p><strong>metrics</strong> – list of metrics to plot. The loss should be specified as
+‘loss’, learning rate = ‘_base/lr’ and other metrics should be
+specified as names in metrics dict
+that was specified during training</p></li>
+<li><p><strong>height</strong> – the height of the whole resulting plot</p></li>
+<li><p><strong>width</strong> – the width of the whole resulting plot</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="module-catalyst.contrib.utils.serialization">
 <span id="serialization"></span><h3><a class="toc-backref" href="#id23">Serialization</a><a class="headerlink" href="#module-catalyst.contrib.utils.serialization" title="Permalink to this headline">¶</a></h3>
@@ -2819,27 +2840,6 @@ Normalization can be applied by setting <cite>normalize=True</cite>.</p>
 <dt id="catalyst.contrib.utils.visualization.render_figure_to_tensor">
 <code class="sig-prename descclassname">catalyst.contrib.utils.visualization.</code><code class="sig-name descname">render_figure_to_tensor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">figure</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/utils/visualization.html#render_figure_to_tensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.visualization.render_figure_to_tensor" title="Permalink to this definition">¶</a></dt>
 <dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="catalyst.contrib.utils.visualization.plot_metrics">
-<code class="sig-prename descclassname">catalyst.contrib.utils.visualization.</code><code class="sig-name descname">plot_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">step</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'epoch'</span></em>, <em class="sig-param"><span class="n">metrics</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>List<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">height</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">width</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/contrib/utils/visualization.html#plot_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.visualization.plot_metrics" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plots your learning results.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>logdir</strong> – the logdir that was specified during training.</p></li>
-<li><p><strong>step</strong> – ‘batch’ or ‘epoch’ - what logs to show: for batches or
-for epochs</p></li>
-<li><p><strong>metrics</strong> – list of metrics to plot. The loss should be specified as
-‘loss’, learning rate = ‘_base/lr’ and other metrics should be
-specified as names in metrics dict
-that was specified during training</p></li>
-<li><p><strong>height</strong> – the height of the whole resulting plot</p></li>
-<li><p><strong>width</strong> – the width of the whole resulting plot</p></li>
-</ul>
-</dd>
-</dl>
 </dd></dl>
 
 </div>

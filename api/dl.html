@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>DL &mdash; Catalyst 20.04.1 documentation</title>
+  <title>DL &mdash; Catalyst 20.04.2 documentation</title>
   
 
   
@@ -273,22 +273,21 @@
 <li><p><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.accuracy" id="id4">Metrics</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#module-catalyst.dl.state.gan" id="id5">State</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.dl.utils.torch" id="id6">Utils</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.dl.registry" id="id7">Registry</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.dl.utils.torch" id="id5">Utils</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.dl.registry" id="id6">Registry</a></p></li>
 </ul>
 </div>
 <div class="section" id="module-catalyst.dl.experiment.core">
 <span id="experiment"></span><h2><a class="toc-backref" href="#id1">Experiment</a><a class="headerlink" href="#module-catalyst.dl.experiment.core" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="catalyst.dl.experiment.core.Experiment">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.experiment.core.</code><code class="sig-name descname">Experiment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">datasets</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>Dataset<span class="p">, </span>Dict<span class="p">, </span>Any<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">loaders</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>DataLoader<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">callbacks</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>OrderedDict<span class="p">[</span>str<span class="p">, </span>Callback<span class="p">]</span><span class="p">, </span>List<span class="p">[</span>Callback<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stage</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'train'</span></em>, <em class="sig-param"><span class="n">criterion</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="p">:</span> <span class="n">torch.optim.optimizer.Optimizer</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">scheduler</span><span class="p">:</span> <span class="n">torch.optim.lr_scheduler._LRScheduler</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_epochs</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">valid_loader</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'valid'</span></em>, <em class="sig-param"><span class="n">main_metric</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'loss'</span></em>, <em class="sig-param"><span class="n">minimize_metric</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">check_time</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">check_run</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">distributed_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">monitoring_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">initial_seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">42</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/core.html#Experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.core.Experiment" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.experiment.core.</code><code class="sig-name descname">Experiment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">datasets</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>Dataset<span class="p">, </span>Dict<span class="p">, </span>Any<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">loaders</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>DataLoader<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">callbacks</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>OrderedDict<span class="p">[</span>str<span class="p">, </span>Callback<span class="p">]</span><span class="p">, </span>List<span class="p">[</span>Callback<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stage</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'train'</span></em>, <em class="sig-param"><span class="n">criterion</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="p">:</span> <span class="n">torch.optim.optimizer.Optimizer</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">scheduler</span><span class="p">:</span> <span class="n">torch.optim.lr_scheduler._LRScheduler</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_epochs</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">valid_loader</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'valid'</span></em>, <em class="sig-param"><span class="n">main_metric</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'loss'</span></em>, <em class="sig-param"><span class="n">minimize_metric</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">check_time</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">check_run</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">distributed_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">initial_seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">42</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/core.html#Experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.core.Experiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.experiment.StageBasedExperiment" title="catalyst.core.experiment.StageBasedExperiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.experiment.StageBasedExperiment</span></code></a></p>
 <p>Super-simple one-staged experiment,
 you can use to declare experiment in code.</p>
 <dl class="py method">
 <dt id="catalyst.dl.experiment.core.Experiment.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">datasets</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>Dataset<span class="p">, </span>Dict<span class="p">, </span>Any<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">loaders</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>DataLoader<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">callbacks</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>OrderedDict<span class="p">[</span>str<span class="p">, </span>Callback<span class="p">]</span><span class="p">, </span>List<span class="p">[</span>Callback<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stage</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'train'</span></em>, <em class="sig-param"><span class="n">criterion</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="p">:</span> <span class="n">torch.optim.optimizer.Optimizer</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">scheduler</span><span class="p">:</span> <span class="n">torch.optim.lr_scheduler._LRScheduler</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_epochs</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">valid_loader</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'valid'</span></em>, <em class="sig-param"><span class="n">main_metric</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'loss'</span></em>, <em class="sig-param"><span class="n">minimize_metric</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">check_time</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">check_run</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">distributed_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">monitoring_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">initial_seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">42</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/core.html#Experiment.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.core.Experiment.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">datasets</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>Dataset<span class="p">, </span>Dict<span class="p">, </span>Any<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">loaders</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>DataLoader<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">callbacks</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>OrderedDict<span class="p">[</span>str<span class="p">, </span>Callback<span class="p">]</span><span class="p">, </span>List<span class="p">[</span>Callback<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stage</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'train'</span></em>, <em class="sig-param"><span class="n">criterion</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="p">:</span> <span class="n">torch.optim.optimizer.Optimizer</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">scheduler</span><span class="p">:</span> <span class="n">torch.optim.lr_scheduler._LRScheduler</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_epochs</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">valid_loader</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'valid'</span></em>, <em class="sig-param"><span class="n">main_metric</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'loss'</span></em>, <em class="sig-param"><span class="n">minimize_metric</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">check_time</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">check_run</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">distributed_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">initial_seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">42</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/core.html#Experiment.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.core.Experiment.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -327,8 +326,6 @@ and 3 epochs per stage to check pipeline correctness</p></li>
 for example: <code class="docutils literal notranslate"><span class="pre">class_names</span></code>, <code class="docutils literal notranslate"><span class="pre">date_of_training</span></code>, etc</p></li>
 <li><p><strong>distributed_params</strong> (<em>dict</em>) – dictionary with the parameters
 for distributed and FP16 method</p></li>
-<li><p><strong>monitoring_params</strong> (<em>dict</em>) – dict with the parameters
-for monitoring services</p></li>
 <li><p><strong>initial_seed</strong> (<em>int</em>) – experiment’s initial seed value</p></li>
 </ul>
 </dd>
@@ -396,9 +393,9 @@ for monitoring services</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.dl.experiment.core.Experiment.monitoring_params">
-<em class="property">property </em><code class="sig-name descname">monitoring_params</code><a class="headerlink" href="#catalyst.dl.experiment.core.Experiment.monitoring_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dict with the parameters for monitoring services.</p>
+<dt id="catalyst.dl.experiment.core.Experiment.process_loaders">
+<em class="property">static </em><code class="sig-name descname">process_loaders</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">loaders</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>DataLoader<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">datasets</span><span class="p">:</span> <span class="n">Dict</span></em>, <em class="sig-param"><span class="n">stage</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">valid_loader</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">initial_seed</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; Tuple<span class="p">[</span>OrderedDict<span class="p">[</span>str<span class="p">, </span>DataLoader<span class="p">]</span><span class="p">, </span>str<span class="p">]</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/core.html#Experiment.process_loaders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.core.Experiment.process_loaders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares loaders for a given stage.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -513,12 +510,6 @@ will be used only if the value of <cite>_key_value`</cite> is <code class="docut
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.dl.experiment.config.ConfigExperiment.monitoring_params">
-<em class="property">property </em><code class="sig-name descname">monitoring_params</code><a class="headerlink" href="#catalyst.dl.experiment.config.ConfigExperiment.monitoring_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dict with the parameters for monitoring services.</p>
-</dd></dl>
-
-<dl class="py method">
 <dt id="catalyst.dl.experiment.config.ConfigExperiment.stages">
 <em class="property">property </em><code class="sig-name descname">stages</code><a class="headerlink" href="#catalyst.dl.experiment.config.ConfigExperiment.stages" title="Permalink to this definition">¶</a></dt>
 <dd><p>Experiment’s stage names.</p>
@@ -528,7 +519,7 @@ will be used only if the value of <cite>_key_value`</cite> is <code class="docut
 
 <span class="target" id="module-catalyst.dl.experiment.supervised"></span><dl class="py class">
 <dt id="catalyst.dl.experiment.supervised.SupervisedExperiment">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.experiment.supervised.</code><code class="sig-name descname">SupervisedExperiment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">datasets</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>Dataset<span class="p">, </span>Dict<span class="p">, </span>Any<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">loaders</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>DataLoader<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">callbacks</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>OrderedDict<span class="p">[</span>str<span class="p">, </span>Callback<span class="p">]</span><span class="p">, </span>List<span class="p">[</span>Callback<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stage</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'train'</span></em>, <em class="sig-param"><span class="n">criterion</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="p">:</span> <span class="n">torch.optim.optimizer.Optimizer</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">scheduler</span><span class="p">:</span> <span class="n">torch.optim.lr_scheduler._LRScheduler</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_epochs</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">valid_loader</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'valid'</span></em>, <em class="sig-param"><span class="n">main_metric</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'loss'</span></em>, <em class="sig-param"><span class="n">minimize_metric</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">check_time</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">check_run</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">distributed_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">monitoring_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">initial_seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">42</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/supervised.html#SupervisedExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.supervised.SupervisedExperiment" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.experiment.supervised.</code><code class="sig-name descname">SupervisedExperiment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">datasets</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>Dataset<span class="p">, </span>Dict<span class="p">, </span>Any<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">loaders</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>DataLoader<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">callbacks</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>OrderedDict<span class="p">[</span>str<span class="p">, </span>Callback<span class="p">]</span><span class="p">, </span>List<span class="p">[</span>Callback<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stage</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'train'</span></em>, <em class="sig-param"><span class="n">criterion</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="p">:</span> <span class="n">torch.optim.optimizer.Optimizer</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">scheduler</span><span class="p">:</span> <span class="n">torch.optim.lr_scheduler._LRScheduler</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_epochs</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">valid_loader</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'valid'</span></em>, <em class="sig-param"><span class="n">main_metric</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'loss'</span></em>, <em class="sig-param"><span class="n">minimize_metric</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">check_time</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">check_run</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">distributed_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">initial_seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">42</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/supervised.html#SupervisedExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.supervised.SupervisedExperiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.dl.experiment.core.Experiment" title="catalyst.dl.experiment.core.Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.experiment.core.Experiment</span></code></a></p>
 <p>Supervised experiment.</p>
 <p>The main difference with Experiment that it will
@@ -581,65 +572,6 @@ training stages.</p>
 
 </dd></dl>
 
-<span class="target" id="module-catalyst.dl.experiment.gan"></span><dl class="py class">
-<dt id="catalyst.dl.experiment.gan.GanExperiment">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.experiment.gan.</code><code class="sig-name descname">GanExperiment</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">phase2callbacks</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>List<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/gan.html#GanExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.gan.GanExperiment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.dl.experiment.core.Experiment" title="catalyst.dl.experiment.core.Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.experiment.core.Experiment</span></code></a></p>
-<p>One-staged GAN experiment.</p>
-<dl class="py method">
-<dt id="catalyst.dl.experiment.gan.GanExperiment.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">phase2callbacks</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>List<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/gan.html#GanExperiment.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.gan.GanExperiment.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>Model</em><em> or </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Model</em><em>]</em>) – models,
-usually generator and discriminator</p></li>
-<li><p><strong>loaders</strong> (<em>dict</em>) – dictionary containing one or several
-<code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code> for training and validation</p></li>
-<li><p><strong>callbacks</strong> (<em>List</em><em>[</em><em>catalyst.dl.Callback</em><em>]</em>) – list of callbacks</p></li>
-<li><p><strong>logdir</strong> (<em>str</em>) – path to output directory</p></li>
-<li><p><strong>stage</strong> (<em>str</em>) – current stage</p></li>
-<li><p><strong>criterion</strong> (<em>Criterion</em>) – criterion function</p></li>
-<li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.utils.tools.typing.Optimizer" title="catalyst.utils.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer</p></li>
-<li><p><strong>scheduler</strong> (<em>Scheduler</em>) – scheduler</p></li>
-<li><p><strong>num_epochs</strong> (<em>int</em>) – number of experiment’s epochs</p></li>
-<li><p><strong>valid_loader</strong> (<em>str</em>) – loader name used to calculate
-the metrics and save the checkpoints. For example,
-you can pass <cite>train</cite> and then
-the metrics will be taken from <cite>train</cite> loader.</p></li>
-<li><p><strong>main_metric</strong> (<em>str</em>) – the key to the name of the metric
-by which the checkpoints will be selected.</p></li>
-<li><p><strong>minimize_metric</strong> (<em>bool</em>) – flag to indicate whether
-the <code class="docutils literal notranslate"><span class="pre">main_metric</span></code> should be minimized.</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – ff true, it displays the status of the training
-to the console.</p></li>
-<li><p><strong>state_kwargs</strong> (<em>dict</em>) – additional state params to <code class="docutils literal notranslate"><span class="pre">RunnerState</span></code></p></li>
-<li><p><strong>checkpoint_data</strong> (<em>dict</em>) – additional data to save in checkpoint,
-for example: <code class="docutils literal notranslate"><span class="pre">class_names</span></code>, <code class="docutils literal notranslate"><span class="pre">date_of_training</span></code>, etc</p></li>
-<li><p><strong>distributed_params</strong> (<em>dict</em>) – dictionary with the parameters
-for distributed and FP16 method</p></li>
-<li><p><strong>monitoring_params</strong> (<em>dict</em>) – dict with the parameters
-for monitoring services</p></li>
-<li><p><strong>initial_seed</strong> (<em>int</em>) – experiment’s initial seed value</p></li>
-<li><p><strong>phase2callbacks</strong> (<em>dict</em>) – dictionary with lists of callback names
-which should be wrapped for appropriate phase
-for example: {“generator_train”: “loss_g”, “optim_g”}
-“loss_g” and “optim_g” callbacks from callbacks dict
-will be wrapped for “generator_train” phase
-in wrap_callbacks method</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.experiment.gan.GanExperiment.wrap_callbacks">
-<code class="sig-name descname">wrap_callbacks</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase2callbacks</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/experiment/gan.html#GanExperiment.wrap_callbacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.gan.GanExperiment.wrap_callbacks" title="Permalink to this definition">¶</a></dt>
-<dd><p>Phase wrapping procedure for callbacks.</p>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 <div class="section" id="module-catalyst.dl.runner.core">
 <span id="runner"></span><h2><a class="toc-backref" href="#id2">Runner</a><a class="headerlink" href="#module-catalyst.dl.runner.core" title="Permalink to this headline">¶</a></h2>
@@ -649,9 +581,45 @@ in wrap_callbacks method</p></li>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.runner.StageBasedRunner" title="catalyst.core.runner.StageBasedRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.runner.StageBasedRunner</span></code></a></p>
 <p>Deep Learning Runner for different supervised, unsupervised, gan, etc runs.</p>
 <dl class="py method">
+<dt id="catalyst.dl.runner.core.Runner.infer">
+<code class="sig-name descname">infer</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">datasets</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>Dataset<span class="p">, </span>Dict<span class="p">, </span>Any<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">loaders</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>DataLoader<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">callbacks</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>List<span class="p">[</span>Callback<span class="p">]</span><span class="p">, </span>OrderedDict<span class="p">[</span>str<span class="p">, </span>Callback<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resume</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fp16</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Dict<span class="p">, </span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">check</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">timeit</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">initial_seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">42</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/runner/core.html#Runner.infer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.core.Runner.infer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts the inference stage of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>Model</em>) – model for inference</p></li>
+<li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="utils.html#catalyst.utils.tools.typing.Dataset" title="catalyst.utils.tools.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
+with one or several  <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code>
+for training, validation or inference
+used for Loaders automatic creation
+preferred way for distributed training setup</p></li>
+<li><p><strong>loaders</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>DataLoader</em><em>]</em>) – dictionary
+with one or several <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code>
+for training, validation or inference</p></li>
+<li><p><strong>callbacks</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>, </em><em>OrderedDict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>]</em>) – list or dictionary with Catalyst callbacks</p></li>
+<li><p><strong>logdir</strong> (<em>str</em>) – path to output directory</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – if <cite>True</cite>, it displays the status of the training
+to the console.</p></li>
+<li><p><strong>state_kwargs</strong> (<em>dict</em>) – additional state params for <code class="docutils literal notranslate"><span class="pre">State</span></code></p></li>
+<li><p><strong>checkpoint_data</strong> (<em>dict</em>) – additional data to save in checkpoint,
+for example: <code class="docutils literal notranslate"><span class="pre">class_names</span></code>, <code class="docutils literal notranslate"><span class="pre">date_of_training</span></code>, etc</p></li>
+<li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets training to FP16.
+See <a class="reference external" href="https://nvidia.github.io/apex/amp.html#properties">https://nvidia.github.io/apex/amp.html#properties</a>
+if fp16=True, params by default will be <code class="docutils literal notranslate"><span class="pre">{&quot;opt_level&quot;:</span> <span class="pre">&quot;O1&quot;}</span></code></p></li>
+<li><p><strong>check</strong> (<em>bool</em>) – if True, then only checks that pipeline is working
+(3 epochs only)</p></li>
+<li><p><strong>timeit</strong> (<em>bool</em>) – if True, computes the execution time
+of training process and displays it to the console.</p></li>
+<li><p><strong>initial_seed</strong> (<em>int</em>) – experiment’s initial seed value</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="catalyst.dl.runner.core.Runner.train">
-<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">criterion</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="p">:</span> <span class="n">torch.optim.optimizer.Optimizer</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">scheduler</span><span class="p">:</span> <span class="n">torch.optim.lr_scheduler._LRScheduler</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">datasets</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>Dataset<span class="p">, </span>Dict<span class="p">, </span>Any<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">loaders</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>DataLoader<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">callbacks</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>List<span class="p">[</span>Callback<span class="p">]</span><span class="p">, </span>OrderedDict<span class="p">[</span>str<span class="p">, </span>Callback<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resume</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_epochs</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">valid_loader</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'valid'</span></em>, <em class="sig-param"><span class="n">main_metric</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'loss'</span></em>, <em class="sig-param"><span class="n">minimize_metric</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fp16</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Dict<span class="p">, </span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">distributed</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">monitoring_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">check</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">timeit</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/runner/core.html#Runner.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.core.Runner.train" title="Permalink to this definition">¶</a></dt>
-<dd><p>Starts the training process of the model.</p>
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">criterion</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="p">:</span> <span class="n">torch.optim.optimizer.Optimizer</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">scheduler</span><span class="p">:</span> <span class="n">torch.optim.lr_scheduler._LRScheduler</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">datasets</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>Dataset<span class="p">, </span>Dict<span class="p">, </span>Any<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">loaders</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>DataLoader<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">callbacks</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>List<span class="p">[</span>Callback<span class="p">]</span><span class="p">, </span>OrderedDict<span class="p">[</span>str<span class="p">, </span>Callback<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resume</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_epochs</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">valid_loader</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'valid'</span></em>, <em class="sig-param"><span class="n">main_metric</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'loss'</span></em>, <em class="sig-param"><span class="n">minimize_metric</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fp16</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Dict<span class="p">, </span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">distributed</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">check</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">timeit</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">initial_seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">42</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/runner/core.html#Runner.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.core.Runner.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts the train stage of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -681,7 +649,7 @@ by which the checkpoints will be selected.</p></li>
 the <code class="docutils literal notranslate"><span class="pre">main_metric</span></code> should be minimized.</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em>) – if <cite>True</cite>, it displays the status of the training
 to the console.</p></li>
-<li><p><strong>state_kwargs</strong> (<em>dict</em>) – additional state params to <code class="docutils literal notranslate"><span class="pre">State</span></code></p></li>
+<li><p><strong>state_kwargs</strong> (<em>dict</em>) – additional state params for <code class="docutils literal notranslate"><span class="pre">State</span></code></p></li>
 <li><p><strong>checkpoint_data</strong> (<em>dict</em>) – additional data to save in checkpoint,
 for example: <code class="docutils literal notranslate"><span class="pre">class_names</span></code>, <code class="docutils literal notranslate"><span class="pre">date_of_training</span></code>, etc</p></li>
 <li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets training to FP16.
@@ -690,14 +658,11 @@ if fp16=True, params by default will be <code class="docutils literal notranslat
 <li><p><strong>distributed</strong> (<em>bool</em>) – if <cite>True</cite> will start training
 in distributed mode.
 Note: Works only with python scripts. No jupyter support.</p></li>
-<li><p><strong>monitoring_params</strong> (<em>dict</em>) – If not None, then create monitoring
-through Alchemy or other tools.
-For example,
-<code class="docutils literal notranslate"><span class="pre">{&quot;token&quot;:</span> <span class="pre">&quot;api_token&quot;,</span> <span class="pre">&quot;experiment&quot;:</span> <span class="pre">&quot;experiment_name&quot;}</span></code></p></li>
 <li><p><strong>check</strong> (<em>bool</em>) – if True, then only checks that pipeline is working
 (3 epochs only)</p></li>
 <li><p><strong>timeit</strong> (<em>bool</em>) – if True, computes the execution time
 of training process and displays it to the console.</p></li>
+<li><p><strong>initial_seed</strong> (<em>int</em>) – experiment’s initial seed value</p></li>
 </ul>
 </dd>
 </dl>
@@ -739,30 +704,6 @@ If your model has specific interface, override this method to use it</p>
 <li><p><strong>batch</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – dictionary with data batches
 from DataLoaders.</p></li>
 <li><p><strong>**kwargs</strong> – additional parameters to pass to the model</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.runner.supervised.SupervisedRunner.infer">
-<code class="sig-name descname">infer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">loaders</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>DataLoader<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">callbacks</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>List<span class="p">[</span>Callback<span class="p">]</span><span class="p">, </span>OrderedDict<span class="p">[</span>str<span class="p">, </span>Callback<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fp16</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Dict<span class="p">, </span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">check</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/runner/supervised.html#SupervisedRunner.infer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.supervised.SupervisedRunner.infer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Makes the inference on the model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>Model</em>) – model to infer</p></li>
-<li><p><strong>loaders</strong> (<em>dict</em>) – dictionary containing one or several
-<code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code> for inference</p></li>
-<li><p><strong>callbacks</strong> (<em>List</em><em>[</em><em>catalyst.dl.Callback</em><em>]</em>) – list of inference callbacks</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – ff true, it displays the status of the inference
-to the console.</p></li>
-<li><p><strong>state_kwargs</strong> (<em>dict</em>) – additional state params to <code class="docutils literal notranslate"><span class="pre">State</span></code></p></li>
-<li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets inference to FP16.
-See <a class="reference external" href="https://nvidia.github.io/apex/amp.html#properties">https://nvidia.github.io/apex/amp.html#properties</a>
-if fp16=True, params by default will be <code class="docutils literal notranslate"><span class="pre">{&quot;opt_level&quot;:</span> <span class="pre">&quot;O1&quot;}</span></code></p></li>
-<li><p><strong>check</strong> (<em>bool</em>) – if True, then only checks that pipeline is working
-(3 epochs only)</p></li>
 </ul>
 </dd>
 </dl>
@@ -845,148 +786,6 @@ tracing params to FP16</p></li>
 
 </dd></dl>
 
-<span class="target" id="module-catalyst.dl.runner.gan"></span><dl class="py class">
-<dt id="catalyst.dl.runner.gan.MultiPhaseRunner">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.runner.gan.</code><code class="sig-name descname">MultiPhaseRunner</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>torch.nn.modules.module.Module<span class="p">, </span>Dict<span class="p">[</span>str<span class="p">, </span>torch.nn.modules.module.Module<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">device</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>torch.device<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">input_batch_keys</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">registered_phases</span><span class="p">:</span> <span class="n">Tuple[Tuple[str, Union[str, Callable]], …]</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/runner/gan.html#MultiPhaseRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.gan.MultiPhaseRunner" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.dl.runner.core.Runner" title="catalyst.dl.runner.core.Runner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.runner.core.Runner</span></code></a></p>
-<p>Base Runner with multiple phases.</p>
-<dl class="py method">
-<dt id="catalyst.dl.runner.gan.MultiPhaseRunner.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>torch.nn.modules.module.Module<span class="p">, </span>Dict<span class="p">[</span>str<span class="p">, </span>torch.nn.modules.module.Module<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">device</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>torch.device<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">input_batch_keys</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">registered_phases</span><span class="p">:</span> <span class="n">Tuple[Tuple[str, Union[str, Callable]], …]</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/runner/gan.html#MultiPhaseRunner.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.gan.MultiPhaseRunner.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> – gan models</p></li>
-<li><p><strong>device</strong> – runner’s device</p></li>
-<li><p><strong>input_batch_keys</strong> – list of strings of keys for batch elements,
-e.g. <code class="docutils literal notranslate"><span class="pre">input_batch_keys</span> <span class="pre">=</span> <span class="pre">[&quot;features&quot;,</span> <span class="pre">&quot;targets&quot;]</span></code> and your
-DataLoader returns 2 tensors (images and targets)
-when state.input will be
-<code class="docutils literal notranslate"><span class="pre">{&quot;features&quot;:</span> <span class="pre">batch[0],</span> <span class="pre">&quot;targets&quot;:</span> <span class="pre">batch[1]}</span></code></p></li>
-<li><p><strong>registered_phases</strong> – Tuple of pairs
-(phase_name, phase_forward_function)
-phase_forward_function’s may be also str, in that case Runner
-should have method with same name, which will be called</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.runner.gan.MultiPhaseRunner.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/runner/gan.html#MultiPhaseRunner.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.gan.MultiPhaseRunner.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Forward call.</p>
-<p>&#64;TODO: Docs (add <cite>batch</cite> shapes). Contribution is welcome.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="catalyst.dl.runner.gan.GanRunner">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.runner.gan.</code><code class="sig-name descname">GanRunner</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>torch.nn.modules.module.Module<span class="p">, </span>Dict<span class="p">[</span>str<span class="p">, </span>torch.nn.modules.module.Module<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">device</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>torch.device<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">input_batch_keys</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>List<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">data_input_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'data'</span></em>, <em class="sig-param"><span class="n">class_input_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'class_targets'</span></em>, <em class="sig-param"><span class="n">noise_input_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'noise'</span></em>, <em class="sig-param"><span class="n">fake_logits_output_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'fake_logits'</span></em>, <em class="sig-param"><span class="n">real_logits_output_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'real_logits'</span></em>, <em class="sig-param"><span class="n">fake_data_output_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'fake_data'</span></em>, <em class="sig-param"><span class="n">fake_condition_keys</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">real_condition_keys</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">generator_train_phase</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'generator_train'</span></em>, <em class="sig-param"><span class="n">discriminator_train_phase</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'discriminator_train'</span></em>, <em class="sig-param"><span class="n">generator_model_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'generator'</span></em>, <em class="sig-param"><span class="n">discriminator_model_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'discriminator'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/runner/gan.html#GanRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.gan.GanRunner" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.dl.runner.gan.MultiPhaseRunner" title="catalyst.dl.runner.gan.MultiPhaseRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.runner.gan.MultiPhaseRunner</span></code></a></p>
-<p>Runner with logic for single-generator single-discriminator GAN training.</p>
-<p>Various conditioning types, penalties and regularization (such as WGAN-GP)
-can be easily derived from this class</p>
-<dl class="py method">
-<dt id="catalyst.dl.runner.gan.GanRunner.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>torch.nn.modules.module.Module<span class="p">, </span>Dict<span class="p">[</span>str<span class="p">, </span>torch.nn.modules.module.Module<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">device</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>torch.device<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">input_batch_keys</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>List<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">data_input_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'data'</span></em>, <em class="sig-param"><span class="n">class_input_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'class_targets'</span></em>, <em class="sig-param"><span class="n">noise_input_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'noise'</span></em>, <em class="sig-param"><span class="n">fake_logits_output_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'fake_logits'</span></em>, <em class="sig-param"><span class="n">real_logits_output_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'real_logits'</span></em>, <em class="sig-param"><span class="n">fake_data_output_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'fake_data'</span></em>, <em class="sig-param"><span class="n">fake_condition_keys</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">real_condition_keys</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">generator_train_phase</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'generator_train'</span></em>, <em class="sig-param"><span class="n">discriminator_train_phase</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'discriminator_train'</span></em>, <em class="sig-param"><span class="n">generator_model_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'generator'</span></em>, <em class="sig-param"><span class="n">discriminator_model_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'discriminator'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/runner/gan.html#GanRunner.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.gan.GanRunner.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> – Model</p></li>
-<li><p><strong>device</strong> – Device</p></li>
-<li><p><strong>input_batch_keys</strong> – list of strings of keys for batch elements,
-e.g. <code class="docutils literal notranslate"><span class="pre">input_batch_keys</span> <span class="pre">=</span> <span class="pre">[&quot;features&quot;,</span> <span class="pre">&quot;targets&quot;]</span></code> and
-your DataLoader returns 2 tensors (images and targets)
-when state.input will be
-<code class="docutils literal notranslate"><span class="pre">{&quot;features&quot;:</span> <span class="pre">batch[0],</span> <span class="pre">&quot;targets&quot;:</span> <span class="pre">batch[1]}</span></code></p></li>
-<li><p><strong>data_input_key</strong> – real distribution to fit</p></li>
-<li><p><strong>class_input_key</strong> – labels for real distribution</p></li>
-<li><p><strong>noise_input_key</strong> – noise</p></li>
-<li><p><strong>fake_logits_output_key</strong> – prediction scores of discriminator for
-fake data</p></li>
-<li><p><strong>real_logits_output_key</strong> – prediction scores of discriminator for
-real data</p></li>
-<li><p><strong>fake_data_output_key</strong> – generated data</p></li>
-<li><p><strong>fake_condition_keys</strong> – list of all conditional inputs of
-discriminator (fake data conditions)
-(appear in same order as in generator model forward() call)</p></li>
-<li><p><strong>real_condition_keys</strong> – list of all conditional inputs of
-discriminator (real data conditions)
-(appear in same order as in generator model forward() call)</p></li>
-<li><p><strong>generator_train_phase</strong> (<em>str</em>) – name for generator training phase</p></li>
-<li><p><strong>discriminator_train_phase</strong> (<em>str</em>) – name for discriminator
-training phase</p></li>
-<li><p><strong>generator_model_key</strong> – name for generator model, e.g. “generator”</p></li>
-<li><p><strong>discriminator_model_key</strong> – name for discriminator model,
-e.g. “discriminator”</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>THIS RUNNER SUPPORTS ONLY EQUALLY CONDITIONED generator and
-discriminator (i.e. if generator is conditioned on 3 variables,
-discriminator must be conditioned on same 3 variables)</p>
-</div>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="catalyst.dl.runner.gan.GanRunner.experiment">
-<code class="sig-name descname">experiment</code><em class="property">: GanExperiment</em><em class="property"> = None</em><a class="headerlink" href="#catalyst.dl.runner.gan.GanRunner.experiment" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="catalyst.dl.runner.gan.GanRunner.state">
-<code class="sig-name descname">state</code><em class="property">: GanState</em><em class="property"> = None</em><a class="headerlink" href="#catalyst.dl.runner.gan.GanRunner.state" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.runner.gan.GanRunner.train">
-<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">loaders</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>DataLoader<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">callbacks</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>Callback<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">phase2callbacks</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>List<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">criterion</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="p">:</span> <span class="n">torch.optim.optimizer.Optimizer</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_epochs</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">main_metric</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'loss'</span></em>, <em class="sig-param"><span class="n">minimize_metric</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">distributed_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">monitoring_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">initial_seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">42</span></em>, <em class="sig-param"><span class="n">check</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/runner/gan.html#GanRunner.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.gan.GanRunner.train" title="Permalink to this definition">¶</a></dt>
-<dd><p>Starts the training process of the model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> – models, usually generator and discriminator</p></li>
-<li><p><strong>loaders</strong> – dictionary containing one or several
-<code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code> for training and validation</p></li>
-<li><p><strong>callbacks</strong> – list of callbacks</p></li>
-<li><p><strong>phase2callbacks</strong> – dictionary with lists of callback names
-which should be wrapped for appropriate phase
-for example: {“generator_train”: “loss_g”, “optim_g”}
-“loss_g” and “optim_g” callbacks from callbacks dict
-will be wrapped for “generator_train” phase
-in wrap_callbacks method</p></li>
-<li><p><strong>criterion</strong> – criterion function</p></li>
-<li><p><strong>optimizer</strong> – optimize</p></li>
-<li><p><strong>num_epochs</strong> – number of experiment’s epochs
-the metrics and save the checkpoints.</p></li>
-<li><p><strong>main_metric</strong> – the key to the name of the metric
-by which the checkpoints will be selected.</p></li>
-<li><p><strong>minimize_metric</strong> – flag to indicate whether
-the <code class="docutils literal notranslate"><span class="pre">main_metric</span></code> should be minimized.</p></li>
-<li><p><strong>state_kwargs</strong> – additional state params to <code class="docutils literal notranslate"><span class="pre">RunnerState</span></code></p></li>
-<li><p><strong>checkpoint_data</strong> – additional data to save in checkpoint,
-for example: <code class="docutils literal notranslate"><span class="pre">class_names</span></code>, <code class="docutils literal notranslate"><span class="pre">date_of_training</span></code>, etc</p></li>
-<li><p><strong>distributed_params</strong> – dictionary with the parameters
-for distributed and FP16 method</p></li>
-<li><p><strong>monitoring_params</strong> – dict with the parameters
-for monitoring services</p></li>
-<li><p><strong>logdir</strong> – path to output directory</p></li>
-<li><p><strong>verbose</strong> – if true, it displays the status of the training
-to the console.</p></li>
-<li><p><strong>initial_seed</strong> – experiment’s initial seed value</p></li>
-<li><p><strong>check</strong> – if True, then only checks that pipeline is working</p></li>
-<li><p><strong>epochs only</strong><strong>)</strong> (<em>(</em><em>3</em>) – </p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 <div class="section" id="module-catalyst.dl.callbacks.confusion_matrix">
 <span id="callbacks"></span><h2><a class="toc-backref" href="#id3">Callbacks</a><a class="headerlink" href="#module-catalyst.dl.callbacks.confusion_matrix" title="Permalink to this headline">¶</a></h2>
@@ -1031,104 +830,6 @@ to the console.</p></li>
 <dt id="catalyst.dl.callbacks.confusion_matrix.ConfusionMatrixCallback.on_loader_start">
 <code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/confusion_matrix.html#ConfusionMatrixCallback.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.confusion_matrix.ConfusionMatrixCallback.on_loader_start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loader start hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – current state</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<span class="target" id="module-catalyst.dl.callbacks.gan"></span><dl class="py class">
-<dt id="catalyst.dl.callbacks.gan.WassersteinDistanceCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.gan.</code><code class="sig-name descname">WassersteinDistanceCallback</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prefix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'wasserstein_distance'</span></em>, <em class="sig-param"><span class="n">real_validity_output_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'real_validity'</span></em>, <em class="sig-param"><span class="n">fake_validity_output_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'fake_validity'</span></em>, <em class="sig-param"><span class="n">multiplier</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/gan.html#WassersteinDistanceCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.gan.WassersteinDistanceCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.MetricCallback" title="catalyst.core.callbacks.metrics.MetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.MetricCallback</span></code></a></p>
-<p>Callback to compute Wasserstein distance metric.</p>
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.gan.WassersteinDistanceCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">prefix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'wasserstein_distance'</span></em>, <em class="sig-param"><span class="n">real_validity_output_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'real_validity'</span></em>, <em class="sig-param"><span class="n">fake_validity_output_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'fake_validity'</span></em>, <em class="sig-param"><span class="n">multiplier</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/gan.html#WassersteinDistanceCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.gan.WassersteinDistanceCallback.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>prefix</strong> (<em>str</em>) – </p></li>
-<li><p><strong>real_validity_output_key</strong> (<em>str</em>) – </p></li>
-<li><p><strong>fake_validity_output_key</strong> (<em>str</em>) – </p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.gan.WassersteinDistanceCallback.get_wasserstein_distance">
-<code class="sig-name descname">get_wasserstein_distance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">real_validity</span></em>, <em class="sig-param"><span class="n">fake_validity</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/gan.html#WassersteinDistanceCallback.get_wasserstein_distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.gan.WassersteinDistanceCallback.get_wasserstein_distance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes Wasserstein distance.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="catalyst.dl.callbacks.gan.GradientPenaltyCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.gan.</code><code class="sig-name descname">GradientPenaltyCallback</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">real_input_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'data'</span></em>, <em class="sig-param"><span class="n">fake_output_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'fake_data'</span></em>, <em class="sig-param"><span class="n">condition_keys</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>List<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">critic_model_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'critic'</span></em>, <em class="sig-param"><span class="n">critic_criterion_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'critic'</span></em>, <em class="sig-param"><span class="n">real_data_criterion_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'real_data'</span></em>, <em class="sig-param"><span class="n">fake_data_criterion_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'fake_data'</span></em>, <em class="sig-param"><span class="n">condition_args_criterion_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'critic_condition_args'</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'loss'</span></em>, <em class="sig-param"><span class="n">criterion_key</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">multiplier</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/gan.html#GradientPenaltyCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.gan.GradientPenaltyCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.criterion.CriterionCallback" title="catalyst.core.callbacks.criterion.CriterionCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.criterion.CriterionCallback</span></code></a></p>
-<p>Criterion Callback to compute Gradient Penalty.</p>
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.gan.GradientPenaltyCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">real_input_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'data'</span></em>, <em class="sig-param"><span class="n">fake_output_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'fake_data'</span></em>, <em class="sig-param"><span class="n">condition_keys</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>List<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">critic_model_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'critic'</span></em>, <em class="sig-param"><span class="n">critic_criterion_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'critic'</span></em>, <em class="sig-param"><span class="n">real_data_criterion_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'real_data'</span></em>, <em class="sig-param"><span class="n">fake_data_criterion_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'fake_data'</span></em>, <em class="sig-param"><span class="n">condition_args_criterion_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'critic_condition_args'</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'loss'</span></em>, <em class="sig-param"><span class="n">criterion_key</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">multiplier</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/gan.html#GradientPenaltyCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.gan.GradientPenaltyCallback.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>real_input_key</strong> (<em>str</em>) – real data key in <code class="docutils literal notranslate"><span class="pre">state.input</span></code></p></li>
-<li><p><strong>fake_output_key</strong> (<em>str</em>) – fake data key in <code class="docutils literal notranslate"><span class="pre">state.output</span></code></p></li>
-<li><p><strong>condition_keys</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – all condition keys
-in <code class="docutils literal notranslate"><span class="pre">state.input</span></code> for critic</p></li>
-<li><p><strong>critic_model_key</strong> (<em>str</em>) – key for critic model in <code class="docutils literal notranslate"><span class="pre">state.model</span></code></p></li>
-<li><p><strong>critic_criterion_key</strong> (<em>str</em>) – key for critic model in criterion</p></li>
-<li><p><strong>real_data_criterion_key</strong> (<em>str</em>) – key for real data in criterion</p></li>
-<li><p><strong>fake_data_criterion_key</strong> (<em>str</em>) – key for fake data in criterion</p></li>
-<li><p><strong>condition_args_criterion_key</strong> (<em>str</em>) – key for all condition args
-in criterion</p></li>
-<li><p><strong>prefix</strong> (<em>str</em>) – </p></li>
-<li><p><strong>criterion_key</strong> (<em>str</em>) – </p></li>
-<li><p><strong>multiplier</strong> (<em>float</em>) – </p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="catalyst.dl.callbacks.gan.WeightClampingOptimizerCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.gan.</code><code class="sig-name descname">WeightClampingOptimizerCallback</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">grad_clip_params</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">accumulation_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">optimizer_key</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">loss_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'loss'</span></em>, <em class="sig-param"><span class="n">decouple_weight_decay</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">weight_clamp_value</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/gan.html#WeightClampingOptimizerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.gan.WeightClampingOptimizerCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.optimizer.OptimizerCallback" title="catalyst.core.callbacks.optimizer.OptimizerCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.optimizer.OptimizerCallback</span></code></a></p>
-<p>Optimizer callback + weights clipping after step is finished.</p>
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.gan.WeightClampingOptimizerCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">grad_clip_params</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Dict<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">accumulation_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">optimizer_key</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">loss_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'loss'</span></em>, <em class="sig-param"><span class="n">decouple_weight_decay</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">weight_clamp_value</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.01</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/gan.html#WeightClampingOptimizerCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.gan.WeightClampingOptimizerCallback.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>grad_clip_params</strong> (<em>dict</em><em>, </em><em>optional</em>) – </p></li>
-<li><p><strong>accumulation_steps</strong> (<em>int</em>) – </p></li>
-<li><p><strong>optimizer_key</strong> (<em>str</em><em>, </em><em>optional</em>) – </p></li>
-<li><p><strong>loss_key</strong> (<em>str</em>) – </p></li>
-<li><p><strong>decouple_weight_decay</strong> (<em>bool</em>) – </p></li>
-<li><p><strong>weight_clamp_value</strong> (<em>float</em>) – value to clamp weights after each
-optimization iteration</p></li>
-</ul>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p><code class="docutils literal notranslate"><span class="pre">weight_clamp_value</span></code> will clamp WEIGHTS, not GRADIENTS</p>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.gan.WeightClampingOptimizerCallback.on_batch_end">
-<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/callbacks/gan.html#WeightClampingOptimizerCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.gan.WeightClampingOptimizerCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>On batch end event.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – current state</p>
@@ -1306,60 +1007,6 @@ for validation.</p></li>
 
 </dd></dl>
 
-<span class="target" id="module-catalyst.dl.callbacks.phase"></span><dl class="py class">
-<dt id="catalyst.dl.callbacks.phase.PhaseManagerCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.phase.</code><code class="sig-name descname">PhaseManagerCallback</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">train_phases</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">valid_phases</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">valid_mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/phase.html#PhaseManagerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.phase.PhaseManagerCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
-<p>Callback to update <code class="docutils literal notranslate"><span class="pre">state.phase</span></code>.</p>
-<dl class="py attribute">
-<dt id="catalyst.dl.callbacks.phase.PhaseManagerCallback.VALIDATION_MODE_ALL">
-<code class="sig-name descname">VALIDATION_MODE_ALL</code><em class="property"> = 'all'</em><a class="headerlink" href="#catalyst.dl.callbacks.phase.PhaseManagerCallback.VALIDATION_MODE_ALL" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="catalyst.dl.callbacks.phase.PhaseManagerCallback.VALIDATION_MODE_SAME">
-<code class="sig-name descname">VALIDATION_MODE_SAME</code><em class="property"> = 'same'</em><a class="headerlink" href="#catalyst.dl.callbacks.phase.PhaseManagerCallback.VALIDATION_MODE_SAME" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.phase.PhaseManagerCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">train_phases</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">valid_phases</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">valid_mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/phase.html#PhaseManagerCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.phase.PhaseManagerCallback.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&#64;TODO</strong> – Docs. Contribution is welcome</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt id="catalyst.dl.callbacks.phase.PhaseManagerCallback.allowed_valid_modes">
-<code class="sig-name descname">allowed_valid_modes</code><em class="property"> = ['same', 'all']</em><a class="headerlink" href="#catalyst.dl.callbacks.phase.PhaseManagerCallback.allowed_valid_modes" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.phase.PhaseManagerCallback.on_batch_end">
-<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/phase.html#PhaseManagerCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.phase.PhaseManagerCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Batch end hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – current state</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.phase.PhaseManagerCallback.on_batch_start">
-<code class="sig-name descname">on_batch_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/phase.html#PhaseManagerCallback.on_batch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.phase.PhaseManagerCallback.on_batch_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Batch start hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – current state</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 <span class="target" id="module-catalyst.dl.callbacks.scheduler"></span><dl class="py class">
 <dt id="catalyst.dl.callbacks.scheduler.LRFinder">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.scheduler.</code><code class="sig-name descname">LRFinder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">final_lr</span></em>, <em class="sig-param"><span class="n">scale</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'log'</span></em>, <em class="sig-param"><span class="n">num_steps</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">optimizer_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/scheduler.html#LRFinder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.scheduler.LRFinder" title="Permalink to this definition">¶</a></dt>
@@ -1411,173 +1058,6 @@ for learning rate scheduling</p></li>
 <dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – current state</p>
 </dd>
 </dl>
-</dd></dl>
-
-</dd></dl>
-
-<span class="target" id="module-catalyst.dl.callbacks.wrappers"></span><dl class="py class">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseWrapperCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.wrappers.</code><code class="sig-name descname">PhaseWrapperCallback</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_callback</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback">catalyst.core.callback.Callback</a></span></em>, <em class="sig-param"><span class="n">active_phases</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">inactive_phases</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/wrappers.html#PhaseWrapperCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseWrapperCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
-<p>CallbackWrapper which disables/enables handlers
-dependant on current phase and event type</p>
-<p>May be useful i.e. to disable/enable optimizers &amp; losses</p>
-<dl class="py attribute">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.LEVEL_BATCH">
-<code class="sig-name descname">LEVEL_BATCH</code><em class="property"> = 'batch'</em><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.LEVEL_BATCH" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.LEVEL_EPOCH">
-<code class="sig-name descname">LEVEL_EPOCH</code><em class="property"> = 'epoch'</em><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.LEVEL_EPOCH" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.LEVEL_LOADER">
-<code class="sig-name descname">LEVEL_LOADER</code><em class="property"> = 'loader'</em><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.LEVEL_LOADER" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.LEVEL_STAGE">
-<code class="sig-name descname">LEVEL_STAGE</code><em class="property"> = 'stage'</em><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.LEVEL_STAGE" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.TIME_END">
-<code class="sig-name descname">TIME_END</code><em class="property"> = 'end'</em><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.TIME_END" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.TIME_START">
-<code class="sig-name descname">TIME_START</code><em class="property"> = 'start'</em><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.TIME_START" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_callback</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback">catalyst.core.callback.Callback</a></span></em>, <em class="sig-param"><span class="n">active_phases</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">inactive_phases</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/wrappers.html#PhaseWrapperCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&#64;TODO</strong> – Docs. Contribution is welcome</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.is_active_on_phase">
-<code class="sig-name descname">is_active_on_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase</span></em>, <em class="sig-param"><span class="n">level</span></em>, <em class="sig-param"><span class="n">time</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/wrappers.html#PhaseWrapperCallback.is_active_on_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.is_active_on_phase" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.on_batch_end">
-<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/wrappers.html#PhaseWrapperCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Batch end hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – current state</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.on_batch_start">
-<code class="sig-name descname">on_batch_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/wrappers.html#PhaseWrapperCallback.on_batch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.on_batch_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Batch start hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – current state</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.on_epoch_end">
-<code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/wrappers.html#PhaseWrapperCallback.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.on_epoch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Epoch end hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – current state</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.on_epoch_start">
-<code class="sig-name descname">on_epoch_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/wrappers.html#PhaseWrapperCallback.on_epoch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.on_epoch_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Epoch start hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – current state</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.on_exception">
-<code class="sig-name descname">on_exception</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/wrappers.html#PhaseWrapperCallback.on_exception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.on_exception" title="Permalink to this definition">¶</a></dt>
-<dd><p>On exception event.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – current state</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.on_loader_end">
-<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/wrappers.html#PhaseWrapperCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loader end hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – current state</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.on_loader_start">
-<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/wrappers.html#PhaseWrapperCallback.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.on_loader_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loader start hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – current state</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.on_stage_end">
-<code class="sig-name descname">on_stage_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/wrappers.html#PhaseWrapperCallback.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.on_stage_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stage end hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – current state</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.on_stage_start">
-<code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/wrappers.html#PhaseWrapperCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseWrapperCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stage start hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – current state</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseBatchWrapperCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.wrappers.</code><code class="sig-name descname">PhaseBatchWrapperCallback</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_callback</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback">catalyst.core.callback.Callback</a></span></em>, <em class="sig-param"><span class="n">active_phases</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">inactive_phases</span><span class="p">:</span> <span class="n">List<span class="p">[</span>str<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/wrappers.html#PhaseBatchWrapperCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseBatchWrapperCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.dl.callbacks.wrappers.PhaseWrapperCallback" title="catalyst.dl.callbacks.wrappers.PhaseWrapperCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.callbacks.wrappers.PhaseWrapperCallback</span></code></a></p>
-<p>&#64;TODO: Docs. Contribution is welcome.</p>
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.wrappers.PhaseBatchWrapperCallback.is_active_on_phase">
-<code class="sig-name descname">is_active_on_phase</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phase</span></em>, <em class="sig-param"><span class="n">level</span></em>, <em class="sig-param"><span class="n">time</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/wrappers.html#PhaseBatchWrapperCallback.is_active_on_phase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.wrappers.PhaseBatchWrapperCallback.is_active_on_phase" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1913,29 +1393,8 @@ Must be one of <code class="docutils literal notranslate"><span class="pre">'non
 
 </div>
 </div>
-<div class="section" id="module-catalyst.dl.state.gan">
-<span id="state"></span><h2><a class="toc-backref" href="#id5">State</a><a class="headerlink" href="#module-catalyst.dl.state.gan" title="Permalink to this headline">¶</a></h2>
-<dl class="py class">
-<dt id="catalyst.dl.state.gan.GanState">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.state.gan.</code><code class="sig-name descname">GanState</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/state/gan.html#GanState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.state.gan.GanState" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.state.State</span></code></a></p>
-<p>An object that is used to pass internal state during
-train/valid/infer in GAN Runners.</p>
-<dl class="py method">
-<dt id="catalyst.dl.state.gan.GanState.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/state/gan.html#GanState.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.state.gan.GanState.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&#64;TODO</strong> – Docs. Contribution is welcome</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
 <div class="section" id="module-catalyst.dl.utils.torch">
-<span id="utils"></span><h2><a class="toc-backref" href="#id6">Utils</a><a class="headerlink" href="#module-catalyst.dl.utils.torch" title="Permalink to this headline">¶</a></h2>
+<span id="utils"></span><h2><a class="toc-backref" href="#id5">Utils</a><a class="headerlink" href="#module-catalyst.dl.utils.torch" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="catalyst.dl.utils.torch.get_loader">
 <code class="sig-prename descclassname">catalyst.dl.utils.torch.</code><code class="sig-name descname">get_loader</code><span class="sig-paren">(</span><em class="sig-param">data_source: Iterable[dict], open_fn: Callable, dict_transform: Callable = None, sampler=None, collate_fn: Callable = &lt;function default_collate&gt;, batch_size: int = 32, num_workers: int = 4, shuffle: bool = False, drop_last: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils/torch.html#get_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.torch.get_loader" title="Permalink to this definition">¶</a></dt>
@@ -2077,7 +1536,7 @@ lists to ease the choice.</p>
 
 </div>
 <div class="section" id="module-catalyst.dl.registry">
-<span id="registry"></span><h2><a class="toc-backref" href="#id7">Registry</a><a class="headerlink" href="#module-catalyst.dl.registry" title="Permalink to this headline">¶</a></h2>
+<span id="registry"></span><h2><a class="toc-backref" href="#id6">Registry</a><a class="headerlink" href="#module-catalyst.dl.registry" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="catalyst.dl.registry.Callback">
 <code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Callback</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factory</span><span class="p">:</span> <span class="n">Union[Type, Callable[…, Any]]</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">factories</span><span class="p">:</span> <span class="n">Union[Type, Callable[…, Any]]</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">named_factories</span><span class="p">:</span> <span class="n">Union[Type, Callable[…, Any]]</span></em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[…, Any]]<a class="headerlink" href="#catalyst.dl.registry.Callback" title="Permalink to this definition">¶</a></dt>
@@ -2343,7 +1802,6 @@ single instance.</p></li>
 <li><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.accuracy">Metrics</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#module-catalyst.dl.state.gan">State</a></li>
 <li><a class="reference internal" href="#module-catalyst.dl.utils.torch">Utils</a></li>
 <li><a class="reference internal" href="#module-catalyst.dl.registry">Registry</a></li>
 </ul>

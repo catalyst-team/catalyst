@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.core.callbacks.logging &mdash; Catalyst 20.04.1 documentation</title>
+  <title>catalyst.core.callbacks.logging &mdash; Catalyst 20.04.2 documentation</title>
   
 
   
@@ -321,6 +321,10 @@
 
 <div class="viewcode-block" id="VerboseLogger.on_loader_end"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.logging.VerboseLogger.on_loader_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Cleanup and close tqdm progress bar.&quot;&quot;&quot;</span>
+        <span class="c1"># self.tqdm.visible = False</span>
+        <span class="c1"># self.tqdm.leave = True</span>
+        <span class="c1"># self.tqdm.disable = True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">step</span> <span class="o">=</span> <span class="mi">0</span></div>

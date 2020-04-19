@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.utils.plotly &mdash; Catalyst 20.04.1 documentation</title>
+  <title>catalyst.contrib.utils.plotly &mdash; Catalyst 20.04.2 documentation</title>
   
 
   
@@ -330,7 +330,37 @@
         <span class="n">iplot</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">Figure</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">metric_data</span><span class="p">,</span> <span class="n">layout</span><span class="o">=</span><span class="n">layout</span><span class="p">))</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;plot_tensorboard_log&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="plot_metrics"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.utils.plotly.plot_metrics">[docs]</a><span class="k">def</span> <span class="nf">plot_metrics</span><span class="p">(</span>
+    <span class="n">logdir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+    <span class="n">step</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;epoch&quot;</span><span class="p">,</span>
+    <span class="n">metrics</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">height</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">width</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plots your learning results.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        logdir: the logdir that was specified during training.</span>
+<span class="sd">        step: &#39;batch&#39; or &#39;epoch&#39; - what logs to show: for batches or</span>
+<span class="sd">            for epochs</span>
+<span class="sd">        metrics: list of metrics to plot. The loss should be specified as</span>
+<span class="sd">            &#39;loss&#39;, learning rate = &#39;_base/lr&#39; and other metrics should be</span>
+<span class="sd">            specified as names in metrics dict</span>
+<span class="sd">            that was specified during training</span>
+<span class="sd">        height: the height of the whole resulting plot</span>
+<span class="sd">        width: the width of the whole resulting plot</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="n">step</span> <span class="ow">in</span> <span class="p">[</span>
+        <span class="s2">&quot;batch&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;epoch&quot;</span><span class="p">,</span>
+    <span class="p">],</span> <span class="sa">f</span><span class="s2">&quot;Step should be either &#39;batch&#39; or &#39;epoch&#39;, got &#39;</span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+    <span class="n">metrics</span> <span class="o">=</span> <span class="n">metrics</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">]</span>
+    <span class="n">plot_tensorboard_log</span><span class="p">(</span><span class="n">logdir</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">)</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;plot_tensorboard_log&quot;</span><span class="p">,</span> <span class="s2">&quot;plot_metrics&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

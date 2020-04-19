@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.core.callbacks.optimizer &mdash; Catalyst 20.04.1 documentation</title>
+  <title>catalyst.core.callbacks.optimizer &mdash; Catalyst 20.04.2 documentation</title>
   
 
   
@@ -257,6 +257,7 @@
   <h1>Source code for catalyst.core.callbacks.optimizer</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Callback</span><span class="p">,</span>
@@ -276,15 +277,16 @@
 
 <div class="viewcode-block" id="OptimizerCallback.__init__"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.optimizer.OptimizerCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">loss_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+        <span class="n">metric_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">optimizer_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">accumulation_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">grad_clip_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">decouple_weight_decay</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">loss_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            loss_key (str): key to get loss from ``state.loss``</span>
+<span class="sd">            loss_key (str): key to get loss from ``state.batch_metrics``</span>
 <span class="sd">            optimizer_key (str): A key to take a optimizer in case</span>
 <span class="sd">                there are several of them and they are in a dictionary format.</span>
 <span class="sd">            accumulation_steps (int): number of steps before</span>
@@ -294,7 +296,14 @@
 <span class="sd">                regularization.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Optimizer</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">All</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loss_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">loss_key</span>
+        <span class="k">assert</span> <span class="n">metric_key</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">loss_key</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">loss_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;OptimizerCallback: &quot;</span>
+                <span class="s2">&quot;`loss_key` is now deprecated in favor `metric_key`&quot;</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">metric_key</span> <span class="ow">or</span> <span class="n">loss_key</span> <span class="ow">or</span> <span class="s2">&quot;loss&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">optimizer_key</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">accumulation_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">accumulation_steps</span>

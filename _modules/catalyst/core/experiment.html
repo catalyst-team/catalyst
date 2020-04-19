@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.core.experiment &mdash; Catalyst 20.04.1 documentation</title>
+  <title>catalyst.core.experiment &mdash; Catalyst 20.04.2 documentation</title>
   
 
   
@@ -286,7 +286,6 @@
 
 <span class="sd">        - :py:mod:`catalyst.dl.experiment.base.BaseExperiment`</span>
 <span class="sd">        - :py:mod:`catalyst.dl.experiment.config.ConfigExperiment`</span>
-<span class="sd">        - :py:mod:`catalyst.dl.experiment.gan.GanExperiment`</span>
 <span class="sd">        - :py:mod:`catalyst.dl.experiment.supervised.SupervisedExperiment`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -354,33 +353,6 @@
 
 <span class="sd">            &gt;&gt;&gt; experiment.distributed_params</span>
 <span class="sd">            {&quot;opt_level&quot;: &quot;O1&quot;, &quot;syncbn&quot;: True}  # Apex variant</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span>
-
-    <span class="nd">@property</span>
-    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">monitoring_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Dictionary with the parameters for monitoring services,</span>
-<span class="sd">        like Alchemy_</span>
-
-<span class="sd">        .. _Alchemy: https://alchemy.host</span>
-
-<span class="sd">        Example::</span>
-
-<span class="sd">            &gt;&gt;&gt; experiment.monitoring_params</span>
-<span class="sd">            {</span>
-<span class="sd">                &quot;token&quot;: None, # insert your personal token here</span>
-<span class="sd">                &quot;project&quot;: &quot;classification_example&quot;,</span>
-<span class="sd">                &quot;group&quot;: &quot;first_trial&quot;,</span>
-<span class="sd">                &quot;experiment&quot;: &quot;first_experiment&quot;,</span>
-<span class="sd">            }</span>
-
-<span class="sd">        .. warning::</span>
-<span class="sd">            Deprecated, saved for backward compatibility.</span>
-<span class="sd">            Please use</span>
-<span class="sd">            :py:mod:`catalyst.contrib.dl.callbacks.alchemy.AlchemyLogger`</span>
-<span class="sd">            instead.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
