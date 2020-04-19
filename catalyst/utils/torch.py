@@ -240,7 +240,7 @@ def set_requires_grad(model: Model, requires_grad: bool):
 
 
 def get_network_output(net: Model, *input_shapes_args, **input_shapes_kwargs):
-    """
+    """# noqa: D202
     For each input shape returns an output tensor
 
     Args:

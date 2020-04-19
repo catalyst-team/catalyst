@@ -47,8 +47,18 @@ from .pandas import (
     balance_classes,
 )
 from .parallel import parallel_imap, tqdm_parallel_imap, get_pool
-from .plotly import plot_tensorboard_log
 from .serialization import deserialize, serialize
+
+try:
+    import plotly  # noqa: F401
+    from .plotly import plot_tensorboard_log, plot_metrics
+except ImportError as ex:
+    if os.environ.get("USE_PLOTLY", "0") == "1":
+        logger.warning(
+            "plotly not available, to install plotly,"
+            " run `pip install plotly`."
+        )
+        raise ex
 
 try:
     import transformers  # noqa: F401
@@ -64,5 +74,4 @@ except ImportError as ex:
 from .visualization import (
     plot_confusion_matrix,
     render_figure_to_tensor,
-    plot_metrics,
 )

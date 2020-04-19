@@ -101,7 +101,7 @@ def py3round(number):
 
 
 def preserve_channel_dim(func):
-    """Preserve dummy channel dim."""
+    """Preserve dummy channel dim."""  # noqa: D202
 
     @wraps(func)
     def wrapped_function(img, *args, **kwargs):

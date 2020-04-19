@@ -22,15 +22,6 @@ loaders = {
         ),
         batch_size=32,
     ),
-    "valid": DataLoader(
-        MNIST(
-            os.getcwd(),
-            train=False,
-            download=True,
-            transform=transforms.ToTensor(),
-        ),
-        batch_size=32,
-    ),
 }
 
 

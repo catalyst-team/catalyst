@@ -8,7 +8,6 @@ from torch.jit import ScriptModule
 from torch.utils.data import DataLoader
 
 from catalyst.dl import (
-    Callback,
     CheckpointCallback,
     InferCallback,
     State,
@@ -156,48 +155,6 @@ class SupervisedRunner(Runner):
         batch = self._batch2device(batch, self.device)
         output = self.forward(batch, **kwargs)
         return output
-
-    def infer(
-        self,
-        model: Model,
-        loaders: "OrderedDict[str, DataLoader]",
-        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
-        verbose: bool = False,
-        state_kwargs: Dict = None,
-        fp16: Union[Dict, bool] = None,
-        check: bool = False,
-    ) -> None:
-        """
-        Makes the inference on the model.
-
-        Args:
-            model (Model): model to infer
-            loaders (dict): dictionary containing one or several
-                ``torch.utils.data.DataLoader`` for inference
-            callbacks (List[catalyst.dl.Callback]): list of inference callbacks
-            verbose (bool): ff true, it displays the status of the inference
-                to the console.
-            state_kwargs (dict): additional state params to ``State``
-            fp16 (Union[Dict, bool]): If not None, then sets inference to FP16.
-                See https://nvidia.github.io/apex/amp.html#properties
-                if fp16=True, params by default will be ``{"opt_level": "O1"}``
-            check (bool): if True, then only checks that pipeline is working
-                (3 epochs only)
-        """
-        if isinstance(fp16, bool) and fp16:
-            fp16 = {"opt_level": "O1"}
-
-        experiment = self._experiment_fn(
-            stage="infer",
-            model=model,
-            loaders=loaders,
-            callbacks=callbacks,
-            verbose=verbose,
-            check_run=check,
-            state_kwargs=state_kwargs,
-            distributed_params=fp16,
-        )
-        self.run_experiment(experiment)
 
     def predict_loader(
         self,

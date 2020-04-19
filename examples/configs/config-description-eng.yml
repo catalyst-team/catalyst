@@ -36,12 +36,6 @@ distributed_params:  # OPTIONAL KEYWORD, params for distributed training and NVI
   # This level may contain other parameters for the initialization of NVIDIA Apex
 
 
-monitoring_params: # OPTIONAL KEYWORD, parameters for monitoring. Only Weights & Biases is available now
-  project: "my-research-project"  # Example
-  group: "finetuning"  # Example
-  # This level may contain other parameters for the initialization of Weights & Biases
-
-
 stages:  # REQUIRED KEYWORD, dictionary of all stages of Catalyst, for training and/or infer. Contain keywords with parameters that apply to all the stages, as well as the names of the stages
   data_params:  # KEYWORD, parameters passed to `ConfigExperiment.get_datasets(...)` (for all the stages)
     batch_size: 1  # KEYWORD, batch size for all the stages
@@ -69,8 +63,8 @@ stages:  # REQUIRED KEYWORD, dictionary of all stages of Catalyst, for training 
 
 
   transform_params:
-
     _key_value: True  # KEYWORD, if True, for each dataset (e.g. train/valid/infer) its own transforms can be defined and then they should be wrapped in key-value
+
     train:  # only for train dataset
       _key_value: False  # KEYWORD, if False, transform will be applied to the dataset sample
 
@@ -151,7 +145,6 @@ stages:  # REQUIRED KEYWORD, dictionary of all stages of Catalyst, for training 
         reduced_metric: *main_metric
       saver:
         callback: CheckpointCallback
-        # At this level, the parameters for any callback can be found, for example
         save_n_best: 3
 
   finetune:  # Example of a second training stage, here we can change our parameters

@@ -64,6 +64,10 @@ class VerboseLogger(Callback):
 
     def on_loader_end(self, state: State):
         """Cleanup and close tqdm progress bar."""
+        # self.tqdm.visible = False
+        # self.tqdm.leave = True
+        # self.tqdm.disable = True
+        self.tqdm.clear()
         self.tqdm.close()
         self.tqdm = None
         self.step = 0
