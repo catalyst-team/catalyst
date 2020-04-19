@@ -1,5 +1,6 @@
 from typing import Callable, Dict, List
 import logging
+import warnings
 
 from catalyst.core import (
     Callback,
@@ -19,15 +20,16 @@ class OptimizerCallback(Callback):
 
     def __init__(
         self,
-        loss_key: str = "loss",
+        metric_key: str = None,
         optimizer_key: str = None,
         accumulation_steps: int = 1,
         grad_clip_params: Dict = None,
         decouple_weight_decay: bool = True,
+        loss_key: str = None,
     ):
         """
         Args:
-            loss_key (str): key to get loss from ``state.loss``
+            loss_key (str): key to get loss from ``state.batch_metrics``
             optimizer_key (str): A key to take a optimizer in case
                 there are several of them and they are in a dictionary format.
             accumulation_steps (int): number of steps before
@@ -37,7 +39,14 @@ class OptimizerCallback(Callback):
                 regularization.
         """
         super().__init__(order=CallbackOrder.Optimizer, node=CallbackNode.All)
-        self.loss_key: str = loss_key
+        assert metric_key is None or loss_key is None
+        if loss_key is not None:
+            warnings.warn(
+                "OptimizerCallback: "
+                "`loss_key` is now deprecated in favor `metric_key`",
+                stacklevel=2,
+            )
+        self.loss_key: str = metric_key or loss_key or "loss"
         self.optimizer_key: str = optimizer_key
 
         self.accumulation_steps: int = accumulation_steps

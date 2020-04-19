@@ -25,11 +25,6 @@ Experiment
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.dl.experiment.gan
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Runner
 --------------------
@@ -45,21 +40,11 @@ Runner
     :show-inheritance:
 
 
-.. automodule:: catalyst.dl.runner.gan
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Callbacks
 --------------------
 
 
 .. automodule:: catalyst.dl.callbacks.confusion_matrix
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.dl.callbacks.gan
     :members:
     :undoc-members:
     :show-inheritance:
@@ -74,20 +59,11 @@ Callbacks
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.dl.callbacks.phase
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 .. automodule:: catalyst.dl.callbacks.scheduler
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.dl.callbacks.wrappers
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 Metrics
 ~~~~~~~~~~~~~~~~
@@ -118,15 +94,6 @@ Metrics
     :show-inheritance:
 
 .. automodule:: catalyst.dl.callbacks.metrics.ppv_tpr_f1
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-State
---------------------
-
-.. automodule:: catalyst.dl.state.gan
     :members:
     :undoc-members:
     :show-inheritance:

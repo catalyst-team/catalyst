@@ -1,4 +1,4 @@
-from typing import Any, Dict, Iterable, List, Mapping, Union
+from typing import Any, Dict, Iterable, List, Mapping, Tuple, Union
 from collections import OrderedDict
 import warnings
 
@@ -19,7 +19,7 @@ from catalyst.dl import (
     ValidationManagerCallback,
     VerboseLogger,
 )
-from catalyst.utils.tools.settings import STAGE_TRAIN_PREFIX
+from catalyst.utils.tools.settings import STAGE_INFER_PREFIX
 from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
@@ -50,7 +50,6 @@ class Experiment(StageBasedExperiment):
         state_kwargs: Dict = None,
         checkpoint_data: Dict = None,
         distributed_params: Dict = None,
-        monitoring_params: Dict = None,
         initial_seed: int = 42,
     ):
         """
@@ -91,8 +90,6 @@ class Experiment(StageBasedExperiment):
                 for example: ``class_names``, ``date_of_training``, etc
             distributed_params (dict): dictionary with the parameters
                 for distributed and FP16 method
-            monitoring_params (dict): dict with the parameters
-                for monitoring services
             initial_seed (int): experiment's initial seed value
         """
         assert (
@@ -100,8 +97,13 @@ class Experiment(StageBasedExperiment):
         ), "Please specify the data sources"
 
         self._model = model
-        self._datasets = datasets
-        self._loaders = loaders
+        self._loaders, self._valid_loader = self.process_loaders(
+            loaders=loaders,
+            datasets=datasets,
+            stage=stage,
+            valid_loader=valid_loader,
+            initial_seed=initial_seed,
+        )
         self._callbacks = utils.sort_callbacks_by_order(callbacks)
 
         self._criterion = criterion
@@ -112,7 +114,6 @@ class Experiment(StageBasedExperiment):
         self._logdir = logdir
         self._stage = stage
         self._num_epochs = num_epochs
-        self._valid_loader = valid_loader
         self._main_metric = main_metric
         self._minimize_metric = minimize_metric
         self._verbose = verbose
@@ -121,7 +122,6 @@ class Experiment(StageBasedExperiment):
         self._state_kwargs = state_kwargs or {}
         self._checkpoint_data = checkpoint_data or {}
         self._distributed_params = distributed_params or {}
-        self._monitoring_params = monitoring_params or {}
 
     @property
     def initial_seed(self) -> int:
@@ -143,10 +143,31 @@ class Experiment(StageBasedExperiment):
         """Dict with the parameters for distributed and FP16 method."""
         return self._distributed_params
 
-    @property
-    def monitoring_params(self) -> Dict:
-        """Dict with the parameters for monitoring services."""
-        return self._monitoring_params
+    @staticmethod
+    def process_loaders(
+        loaders: "OrderedDict[str, DataLoader]",
+        datasets: Dict,
+        stage: str,
+        valid_loader: str,
+        initial_seed: int,
+    ) -> "Tuple[OrderedDict[str, DataLoader], str]":
+        """Prepares loaders for a given stage."""
+        if datasets is not None:
+            loaders = utils.get_loaders_from_params(
+                initial_seed=initial_seed, **datasets,
+            )
+        if not stage.startswith(STAGE_INFER_PREFIX):  # train stage
+            if len(loaders) == 1:
+                valid_loader = list(loaders.keys())[0]
+                warnings.warn(
+                    "Attention, there is only one dataloader - "
+                    + str(valid_loader)
+                )
+            assert valid_loader in loaders, (
+                "The validation loader must be present "
+                "in the loaders used during experiment."
+            )
+        return loaders, valid_loader
 
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
         """Returns the state parameters for a given stage."""
@@ -182,21 +203,6 @@ class Experiment(StageBasedExperiment):
         self, stage: str, epoch: int = None,
     ) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage."""
-        if self._datasets is not None:
-            self._loaders = utils.get_loaders_from_params(
-                initial_seed=self.initial_seed, **self._datasets,
-            )
-        if self._stage.startswith(STAGE_TRAIN_PREFIX):
-            if len(self._loaders) == 1:
-                self._valid_loader = list(self._loaders.keys())[0]
-                warnings.warn(
-                    "Attention, there is only one dataloader - "
-                    + str(self._valid_loader)
-                )
-            assert self._valid_loader in self._loaders, (
-                "The validation loader must be present "
-                "in the loaders used during experiment."
-            )
         return self._loaders
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":

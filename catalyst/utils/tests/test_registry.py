@@ -102,7 +102,7 @@ def test_from_config():
 
 
 def test_meta_factory():
-    """@TODO: Docs. Contribution is welcome."""
+    """@TODO: Docs. Contribution is welcome."""  # noqa: D202
 
     def meta_1(fn, args, kwargs):
         return fn

@@ -41,12 +41,12 @@ class Runner(StageBasedRunner):
         checkpoint_data: Dict = None,
         fp16: Union[Dict, bool] = None,
         distributed: bool = False,
-        monitoring_params: Dict = None,
         check: bool = False,
         timeit: bool = False,
+        initial_seed: int = 42,
     ) -> None:
         """
-        Starts the training process of the model.
+        Starts the train stage of the model.
 
         Args:
             model (Model): model to train
@@ -76,7 +76,7 @@ class Runner(StageBasedRunner):
                 the ``main_metric`` should be minimized.
             verbose (bool): if `True`, it displays the status of the training
                 to the console.
-            state_kwargs (dict): additional state params to ``State``
+            state_kwargs (dict): additional state params for ``State``
             checkpoint_data (dict): additional data to save in checkpoint,
                 for example: ``class_names``, ``date_of_training``, etc
             fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
@@ -85,14 +85,11 @@ class Runner(StageBasedRunner):
             distributed (bool): if `True` will start training
                 in distributed mode.
                 Note: Works only with python scripts. No jupyter support.
-            monitoring_params (dict): If not None, then create monitoring
-                through Alchemy or other tools.
-                For example,
-                ``{"token": "api_token", "experiment": "experiment_name"}``
             check (bool): if True, then only checks that pipeline is working
                 (3 epochs only)
             timeit (bool): if True, computes the execution time
                 of training process and displays it to the console.
+            initial_seed (int): experiment's initial seed value
         """
         if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
@@ -110,8 +107,8 @@ class Runner(StageBasedRunner):
         experiment = self._experiment_fn(
             stage="train",
             model=model,
-            loaders=loaders,
             datasets=datasets,
+            loaders=loaders,
             callbacks=callbacks,
             logdir=logdir,
             criterion=criterion,
@@ -122,15 +119,90 @@ class Runner(StageBasedRunner):
             main_metric=main_metric,
             minimize_metric=minimize_metric,
             verbose=verbose,
-            check_run=check,
             check_time=timeit,
+            check_run=check,
             state_kwargs=state_kwargs,
             checkpoint_data=checkpoint_data,
             distributed_params=fp16,
-            monitoring_params=monitoring_params,
+            initial_seed=initial_seed,
         )
         self.experiment = experiment
         utils.distributed_cmd_run(self.run_experiment, distributed)
+
+    def infer(
+        self,
+        *,
+        model: Model,
+        datasets: "OrderedDict[str, Union[Dataset, Dict, Any]]" = None,
+        loaders: "OrderedDict[str, DataLoader]" = None,
+        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
+        logdir: str = None,
+        resume: str = None,
+        verbose: bool = False,
+        state_kwargs: Dict = None,
+        fp16: Union[Dict, bool] = None,
+        check: bool = False,
+        timeit: bool = False,
+        initial_seed: int = 42,
+    ) -> None:
+        """
+        Starts the inference stage of the model.
+
+        Args:
+            model (Model): model for inference
+            datasets (OrderedDict[str, Union[Dataset, Dict, Any]]): dictionary
+                with one or several  ``torch.utils.data.Dataset``
+                for training, validation or inference
+                used for Loaders automatic creation
+                preferred way for distributed training setup
+            loaders (OrderedDict[str, DataLoader]): dictionary
+                with one or several ``torch.utils.data.DataLoader``
+                for training, validation or inference
+            callbacks (Union[List[Callback], OrderedDict[str, Callback]]):
+                list or dictionary with Catalyst callbacks
+            logdir (str): path to output directory
+            verbose (bool): if `True`, it displays the status of the training
+                to the console.
+            state_kwargs (dict): additional state params for ``State``
+            checkpoint_data (dict): additional data to save in checkpoint,
+                for example: ``class_names``, ``date_of_training``, etc
+            fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
+                See https://nvidia.github.io/apex/amp.html#properties
+                if fp16=True, params by default will be ``{"opt_level": "O1"}``
+            check (bool): if True, then only checks that pipeline is working
+                (3 epochs only)
+            timeit (bool): if True, computes the execution time
+                of training process and displays it to the console.
+            initial_seed (int): experiment's initial seed value
+        """
+        if isinstance(fp16, bool) and fp16:
+            fp16 = {"opt_level": "O1"}
+
+        if resume is not None:
+            callbacks = utils.sort_callbacks_by_order(callbacks)
+            checkpoint_callback_flag = any(
+                isinstance(x, CheckpointCallback) for x in callbacks.values()
+            )
+            if not checkpoint_callback_flag:
+                callbacks["loader"] = CheckpointCallback(resume=resume)
+            else:
+                raise NotImplementedError("CheckpointCallback already exist")
+
+        experiment = self._experiment_fn(
+            stage="infer",
+            model=model,
+            datasets=datasets,
+            loaders=loaders,
+            callbacks=callbacks,
+            logdir=logdir,
+            verbose=verbose,
+            check_time=timeit,
+            check_run=check,
+            state_kwargs=state_kwargs,
+            distributed_params=fp16,
+            initial_seed=initial_seed,
+        )
+        self.run_experiment(experiment)
 
 
 __all__ = ["Runner"]

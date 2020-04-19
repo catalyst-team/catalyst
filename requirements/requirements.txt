@@ -15,20 +15,17 @@ ipython
 tensorboard>=1.14.0
 tensorboardX
 crc32c>=1.7
+plotly>=4.1.0
 
-# cv -> cv
+# cv -> catalyst[cv]
 torchvision>=0.2.1
-Pillow<7
+Pillow
 imageio
 opencv-python
 scikit-image>=0.14.2
 
-# logs -> contrib
-plotly>=4.1.0
-
-# Used in scripts  -> contrib
+# Used in scripts  -> contrib (?)
 matplotlib
-seaborn
 pandas>=0.22
 scikit-learn>=0.20
 GitPython>=2.1.11

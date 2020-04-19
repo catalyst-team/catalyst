@@ -17,7 +17,6 @@ from catalyst.dl import (
     ExceptionCallback,
     MetricManagerCallback,
     OptimizerCallback,
-    PhaseWrapperCallback,
     SchedulerCallback,
     TensorboardLogger,
     TimerCallback,
@@ -155,11 +154,6 @@ class ConfigExperiment(StageBasedExperiment):
     def distributed_params(self) -> Dict:
         """Dict with the parameters for distributed and FP16 methond."""
         return self._config.get("distributed_params", {})
-
-    @property
-    def monitoring_params(self) -> Dict:
-        """Dict with the parameters for monitoring services."""
-        return self._config.get("monitoring_params", {})
 
     def get_state_params(self, stage: str) -> Mapping[str, Any]:
         """Returns the state parameters for a given stage."""
@@ -489,8 +483,6 @@ class ConfigExperiment(StageBasedExperiment):
         for callback_name, callback_fn in default_callbacks:
             is_already_present = False
             for x in callbacks.values():
-                if isinstance(x, PhaseWrapperCallback):
-                    x = x.callback
                 if isinstance(x, callback_fn):
                     is_already_present = True
                     break

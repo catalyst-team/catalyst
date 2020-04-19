@@ -42,8 +42,6 @@ class _Runner(ABC):
 
     Abstraction, please check out the implementations:
 
-        - :py:mod:`catalyst.dl.runner.gan.MultiPhaseRunner`
-        - :py:mod:`catalyst.dl.runner.gan.GanRunner`
         - :py:mod:`catalyst.dl.runner.supervised.SupervisedRunner`
 
     """

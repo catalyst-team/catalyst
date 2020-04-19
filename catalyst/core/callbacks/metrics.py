@@ -25,7 +25,7 @@ class _MetricCallback(ABC, Callback):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__(order=CallbackOrder.Metric, node=CallbackNode.All)
         self.prefix = prefix
-        # self.metric_fn = partial(metric_fn, **metric_params)
+        # self.metric_fn = partial(metric_fn, **metrics_kwargs)
         self.input_key = input_key
         self.output_key = output_key
         self.multiplier = multiplier

@@ -1,8 +1,6 @@
 STATE_MAIN_METRIC = "loss"
 
 # stages
-STAGE_TRAIN_PREFIX = "train"
-STAGE_VALID_PREFIX = "valid"
 STAGE_INFER_PREFIX = "infer"
 
 # loader

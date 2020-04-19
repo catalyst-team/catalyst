@@ -36,12 +36,6 @@ distributed_params:  # OPTIONAL KEYWORD, параметры для distributed t
   # на этом уровне могут лежать другие параметры для инициализации NVIDIA Apex
 
 
-monitoring_params: # OPTIONAL KEYWORD, параметры для мониторинга. Сейчас доступен только Weights & Biases
-  project: "my-research-project"  # Пример
-  group: "finetuning"  # Пример
-  # на этом уровне могут лежать другие параметры для инициализации Weights & Biases
-
-
 stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, для обучения и/или инфера. Содержат ключевые слова с параметрами, которые применятся ко всем стейджам, так и сами имена стейджей
   data_params:  # KEYWORD, параметры передаваемые в `ConfigExperiment.get_datasets(...)` (для всех стейджей)
     batch_size: 1  # KEYWORD, размер батча для всех стейджей
