@@ -426,15 +426,10 @@
 
 <span class="sd">    **state.distributed_rank** - distributed rank of current worker</span>
 
-<span class="sd">    **state.is_distributed_master** - bool, indicator flag</span>
-
-<span class="sd">        - ``True`` if is master node (state.distributed_rank == 0)</span>
-<span class="sd">        - ``False`` if is worker node (state.distributed_rank != 0)</span>
-
 <span class="sd">    **state.is_distributed_worker** - bool, indicator flag</span>
 
 <span class="sd">        - ``True`` if is worker node (state.distributed_rank &gt; 0)</span>
-<span class="sd">        - ``False`` if is master node (state.distributed_rank &lt;= 0)</span>
+<span class="sd">        - ``False`` if is master node (state.distributed_rank == 0)</span>
 
 
 <span class="sd">    **state.stage_name** - string, current stage name,\</span>
@@ -597,7 +592,6 @@
 
         <span class="c1"># pipeline info</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">distributed_rank</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">is_distributed_master</span> <span class="o">=</span> <span class="o">~</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distributed_rank</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_distributed_worker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributed_rank</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">stage_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">stage</span>
