@@ -64,10 +64,13 @@ runner.train(
     logdir="./logdir",
     num_epochs=8,
     verbose=True,
+    load_best_on_end=True,
 )
 # model inference
-for prediction in runner.predict_loader(model=model, loader=loader):
-    do_something_with_predicitons(prediction)
+for prediction in runner.predict_loader(loader=loader):
+    do_something()
+# model tracing
+traced_model = runner.trace(loader=loader)
 ```
 
 ### Minimal Examples

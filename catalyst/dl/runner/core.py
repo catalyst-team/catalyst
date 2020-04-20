@@ -52,6 +52,7 @@ class Runner(StageBasedRunner):
         distributed: bool = False,
         check: bool = False,
         timeit: bool = False,
+        load_best_on_end: bool = False,
         initial_seed: int = 42,
     ) -> None:
         """
@@ -98,18 +99,30 @@ class Runner(StageBasedRunner):
                 (3 epochs only)
             timeit (bool): if True, computes the execution time
                 of training process and displays it to the console.
+            load_best_on_end (bool): if True, Runner will load
+                best checkpoint state (model, optimizer, etc)
+                according to validation metrics. Requires specified ``logdir``.
             initial_seed (int): experiment's initial seed value
         """
         if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
 
-        if resume is not None:
+        if resume is not None or load_best_on_end:
+            load_on_end = None
+            if load_best_on_end:
+                load_on_end = "best_full"
+                assert logdir is not None, (
+                    "For ``load_best_on_end`` feature "
+                    "you need to specify ``logdir``"
+                )
             callbacks = utils.sort_callbacks_by_order(callbacks)
             checkpoint_callback_flag = any(
                 isinstance(x, CheckpointCallback) for x in callbacks.values()
             )
             if not checkpoint_callback_flag:
-                callbacks["loader"] = CheckpointCallback(resume=resume)
+                callbacks["loader"] = CheckpointCallback(
+                    resume=resume, load_on_stage_end=load_on_end,
+                )
             else:
                 raise NotImplementedError("CheckpointCallback already exist")
 
@@ -261,15 +274,14 @@ class Runner(StageBasedRunner):
 
         if model is not None:
             self.model = model
+        assert self.model is not None
 
         if resume is not None:
             checkpoint = utils.load_checkpoint(resume)
-            utils.unpack_checkpoint(checkpoint, model=model)
-
-        assert self.model is not None
+            utils.unpack_checkpoint(checkpoint, model=self.model)
 
         self.model, _, _, _, self.device = utils.process_components(
-            model=model, distributed_params=fp16, device=self.device,
+            model=self.model, distributed_params=fp16, device=self.device,
         )
 
         utils.set_global_seed(initial_seed)
@@ -278,8 +290,9 @@ class Runner(StageBasedRunner):
 
     def trace(
         self,
+        *,
         model: Model = None,
-        batch=None,
+        batch: Any = None,
         logdir: str = None,
         loader: DataLoader = None,
         method_name: str = "forward",
@@ -316,6 +329,7 @@ class Runner(StageBasedRunner):
 
         if model is not None:
             self.model = model
+        assert self.model is not None
 
         if isinstance(fp16, bool) and fp16:
             opt_level = "O1"

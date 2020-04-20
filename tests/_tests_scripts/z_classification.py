@@ -408,17 +408,14 @@ runner.train(
     loaders=loaders,
     logdir=logdir,
     num_epochs=num_epochs,
+    load_best_on_end=True,
 )
 
 # # Setup 9 - predict_loader
 
 # In[ ]:
 
-runner_out = runner.predict_loader(
-    model=model,
-    loader=loaders["valid"],
-    resume=f"{logdir}/checkpoints/best.pth",
-)
+runner_out = runner.predict_loader(model=model, loader=loaders["valid"],)
 
 # In[ ]:
 
