@@ -35,43 +35,129 @@ Project [manifest](https://github.com/catalyst-team/catalyst/blob/master/MANIFES
 
 ## Getting started
 
+```bash
+pip install -U catalyst
+```
+
 ```python
+import os
 import torch
-from torch.utils.data import DataLoader, TensorDataset
-from catalyst.dl import SupervisedRunner
+from torch.nn import functional as F
+from torch.utils.data import DataLoader
+from torchvision.datasets import MNIST
+from torchvision.transforms import ToTensor
+from catalyst import dl
+from catalyst.utils import metrics
 
-# data
-num_samples, num_features = int(1e4), int(1e1)
-X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
-dataset = TensorDataset(X, y)
-loader = DataLoader(dataset, batch_size=32, num_workers=1)
-loaders = {"train": loader, "valid": loader}
+model = torch.nn.Linear(28 * 28, 10)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
-# model, criterion, optimizer, scheduler
-model = torch.nn.Linear(num_features, 1)
-criterion = torch.nn.MSELoss()
-optimizer = torch.optim.Adam(model.parameters())
-scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+loaders = {
+    "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
+    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+}
 
-runner = SupervisedRunner()
+class CustomRunner(dl.Runner):
+
+    def predict_batch(self, batch):
+        # model inference step
+        return self.model(batch[0].view(batch[0].size(0), -1))
+
+    def _handle_batch(self, batch):
+        # model train/valid step
+        x, y = batch
+        y_hat = self.model(x.view(x.size(0), -1))
+        loss = F.cross_entropy(y_hat, y)
+        accuracy01, accuracy03 = metrics.accuracy(y_hat, y, topk=(1, 3))
+
+        self.state.batch_metrics.update({
+            "loss": loss,
+            "accuracy01": accuracy01,
+            "accuracy03": accuracy03,
+        })
+
+        if self.state.is_train_loader:
+            loss.backward()
+            self.state.optimizer.step()
+            self.state.optimizer.zero_grad()
+
+runner = CustomRunner()
 # model training
 runner.train(
     model=model,
-    criterion=criterion,
     optimizer=optimizer,
-    scheduler=scheduler,
     loaders=loaders,
-    logdir="./logdir",
-    num_epochs=8,
+    logdir="./logs",
+    num_epochs=5,
     verbose=True,
     load_best_on_end=True,
 )
 # model inference
-for prediction in runner.predict_loader(loader=loader):
-    do_something()
+for prediction in runner.predict_loader(loader=loaders["valid"]):
+    assert prediction.detach().cpu().numpy().shape[-1] == 10
 # model tracing
-traced_model = runner.trace(loader=loader)
+traced_model = runner.trace(loader=loaders["valid"])
 ```
+
+[Demo with minimal examples for ML, CV, NLP, GANs and RecSys](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
+
+For Catalyst.RL introduction, please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
+
+
+## Table of Contents
+- [Overview](#overview)
+  * [Installation](#installation)
+  * [Minimal examples](#minimal-examples)
+  * [Features](#features)
+  * [Structure](#structure)
+  * [Tests](#tests)
+- [Catalyst](#catalyst)
+  * [Tutorials](#tutorials)
+  * [Guides](#guides)
+  * [Projects](#projects)
+  * [Tools and pipelines](#tools-and-pipelines)
+  * [Talks and videos](#talks-and-videos)
+- [Community](#community)
+  * [Contribution guide](#contribution-guide)
+  * [User feedback](#user-feedback)
+  * [Trusted by](#trusted-by)
+  * [Supported by](#supported-by)
+  * [Citation](#citation)
+
+
+## Overview
+Catalyst helps you write compact
+but full-featured Deep Learning pipelines in a few lines of code.
+You get a training loop with metrics, early-stopping, model checkpointing
+and other features without the boilerplate.
+
+
+### Installation
+
+Common installation:
+```bash
+pip install -U catalyst
+```
+
+<details>
+<summary>Specific versions with additional requirements</summary>
+<p>
+
+```bash
+pip install catalyst[ml]         # installs DL+ML based catalyst
+pip install catalyst[cv]         # installs DL+CV based catalyst
+pip install catalyst[nlp]        # installs DL+NLP based catalyst
+pip install catalyst[ecosystem]  # installs Catalyst.Ecosystem
+pip install catalyst[contrib]    # installs DL+contrib based catalyst
+pip install catalyst[all]        # installs everything
+# and master version installation
+pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
+```
+</p>
+</details>
+
+Catalyst is compatible with: Python 3.6+. PyTorch 1.0.0+.
+
 
 ### Minimal Examples
 
@@ -136,6 +222,7 @@ loaders = {
 }
 
 class CustomRunner(dl.Runner):
+
     def _handle_batch(self, batch):
         x, y = batch
         y_hat = self.model(x.view(x.size(0), -1))
@@ -181,6 +268,7 @@ from catalyst import dl
 from catalyst.utils import metrics
 
 class ClassifyAE(nn.Module):
+
     def __init__(self, in_features, hid_features, out_features):
         super().__init__()
         self.encoder = nn.Sequential(nn.Linear(in_features, hid_features), nn.Tanh())
@@ -202,6 +290,7 @@ loaders = {
 }
 
 class CustomRunner(dl.Runner):
+
     def _handle_batch(self, batch):
         x, y = batch
         x = x.view(x.size(0), -1)
@@ -266,6 +355,7 @@ def normal_logprob(mu, sigma, z):
     return logprob
 
 class ClassifyVAE(torch.nn.Module):
+
     def __init__(self, in_features, hid_features, out_features):
         super().__init__()
         self.encoder = torch.nn.Linear(in_features, hid_features * 2)
@@ -296,6 +386,7 @@ loaders = {
 }
 
 class CustomRunner(dl.Runner):
+
     def _handle_batch(self, batch):
         x, y = batch
         x = x.view(x.size(0), -1)
@@ -351,6 +442,7 @@ from catalyst import dl
 from catalyst.utils import metrics
 
 class ClassifyUnet(nn.Module):
+
     def __init__(self, in_channels, in_hw, out_features):
         super().__init__()
         self.encoder = nn.Sequential(nn.Conv2d(in_channels, in_channels, 3, 1, 1), nn.Tanh())
@@ -373,6 +465,7 @@ loaders = {
 }
 
 class CustomRunner(dl.Runner):
+
     def _handle_batch(self, batch):
         x, y = batch
         x_noise = (x + torch.rand_like(x)).clamp_(0, 1)
@@ -443,6 +536,7 @@ loaders = {
 }
 
 class CustomRunner(dl.Runner):
+
     def _handle_batch(self, batch):
         images, _ = batch
         images = images.view(images.size(0), -1)
@@ -561,6 +655,7 @@ from catalyst import dl, utils
 from catalyst.utils import metrics
 
 class ClassifyAE(nn.Module):
+
     def __init__(self, in_features, hid_features, out_features):
         super().__init__()
         self.encoder = nn.Sequential(nn.Linear(in_features, hid_features), nn.Tanh())
@@ -574,6 +669,7 @@ class ClassifyAE(nn.Module):
         return y_hat, x_
 
 class CustomRunner(dl.Runner):
+
     def _handle_batch(self, batch):
         x, y = batch
         x = x.view(x.size(0), -1)
@@ -624,63 +720,6 @@ utils.distributed_cmd_run(train)
 </p>
 </details>
 
-[Demo with minimal examples for ML, CV, NLP, GANs and RecSys](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
-
-[Distributed training best practices](https://catalyst-team.github.io/catalyst/info/distributed.html)
-
-For Catalyst.RL introduction, please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
-
-
-## Table of Contents
-- [Overview](#overview)
-  * [Installation](#installation)
-  * [Features](#features)
-  * [Structure](#structure)
-  * [Tests](#tests)
-- [Catalyst](#catalyst)
-  * [Tutorials](#tutorials)
-  * [Projects](#projects)
-  * [Tools and pipelines](#tools-and-pipelines)
-  * [Talks and videos](#talks-and-videos)
-- [Community](#community)
-  * [Contribution guide](#contribution-guide)
-  * [User feedback](#user-feedback)
-  * [Trusted by](#trusted-by)
-  * [Supported by](#supported-by)
-  * [Citation](#citation)
-
-
-## Overview
-Catalyst helps you write compact
-but full-featured Deep Learning pipelines in a few lines of code.
-You get a training loop with metrics, early-stopping, model checkpointing
-and other features without the boilerplate.
-
-### Installation
-
-Common installation:
-```bash
-pip install -U catalyst
-```
-
-<details>
-<summary>Specific versions with additional requirements</summary>
-<p>
-
-```bash
-pip install catalyst[ml]         # installs DL+ML based catalyst
-pip install catalyst[cv]         # installs DL+CV based catalyst
-pip install catalyst[nlp]        # installs DL+NLP based catalyst
-pip install catalyst[ecosystem]  # installs Catalyst.Ecosystem
-pip install catalyst[contrib]    # installs DL+contrib based catalyst
-pip install catalyst[all]        # installs everything
-# and master version installation
-pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
-```
-</p>
-</details>
-
-Catalyst is compatible with: Python 3.6+. PyTorch 1.0.0+.
 
 ### Features
 - Universal train/inference loop.
@@ -697,7 +736,7 @@ Catalyst is compatible with: Python 3.6+. PyTorch 1.0.0+.
 - **core** - framework core with main abstractions - 
     Experiment, Runner, Callback and State.
 - **data** - useful tools and scripts for data processing.
-- **DL** – runner for training and inference,
+- **dl** – runner for training and inference,
    all of the classic ML and CV/NLP/RecSys metrics
    and a variety of callbacks for training, validation
    and inference of neural networks.
@@ -715,6 +754,8 @@ the correctness of the training procedure and its reproducibility.
 Overall, Catalyst guarantees fully tested, correct and reproducible 
 best practices for the automated parts.
 
+
+
 ## Catalyst
 
 ### Tutorials
@@ -730,6 +771,11 @@ API documentation and an overview of the library can be found here
 [![Docs](https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v)](https://catalyst-team.github.io/catalyst/index.html). <br/>
 In the **[examples folder](examples)**
 of the repository, you can find advanced tutorials and Catalyst best practices.
+
+
+### Guides
+
+- [Distributed training best practices](https://catalyst-team.github.io/catalyst/info/distributed.html)
 
 
 ### Projects
@@ -782,6 +828,7 @@ of the repository, you can find advanced tutorials and Catalyst best practices.
 - [Catalyst – accelerated DL & RL (rus)](https://youtu.be/Rmo2rx5V3v8?t=77) and [slides (eng)](https://docs.google.com/presentation/d/1xMZMjSwJfM5mZMK7pHp6hVI0FxPyZOpRtBZ0J2l1AaY/edit?fbclid=IwAR1q4XJVqYdD-a5oO2n68Y4xHvChIeOSjCSmlUYqrjIzneYpehzF8PiNdMc#slide=id.g75815b5293_0_202) at [Facebook Developer Circle: Moscow | ML & AI Meetup](https://www.facebook.com/groups/475428499888062/)
 - [Catalyst.RL - Learn to Move - Walk Around 2nd place solution](https://docs.google.com/presentation/d/14UzYAURBulLjuCbQRnNeROhZ74h51-o460DPTkKMrwo/edit?usp=sharing) at NeurIPS competition track
 - [Open Source ML 2019 edition](https://docs.google.com/presentation/d/1A-kwek7USA-j2Nn4n8PmLUQ1PdeUzkkViwXST7RyL-w/edit?usp=sharing) at [Datafest.elka](https://datafest.ru/elka/)
+
 
 
 ## Community
