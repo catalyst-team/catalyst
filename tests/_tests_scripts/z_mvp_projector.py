@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import SupervisedRunner
 
 # data
-num_samples, num_features = int(1e4), int(1e1)
+num_samples, num_features = int(32e3), int(1e1)
 X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
 dataset = TensorDataset(X, y)
 loader = DataLoader(dataset, batch_size=32, num_workers=1)
@@ -28,6 +28,10 @@ runner.train(
     num_epochs=8,
     verbose=True,
     check=True,
+    load_best_on_end=True,
 )
 # model inference
-loader_logits = runner.predict_loader(model=model, loader=loader, verbose=True)
+for prediction in runner.predict_loader(loader=loader):
+    assert prediction["logits"].cpu().detach().numpy().shape == (32, 1)
+# model tracing
+traced_model = runner.trace(loader=loader)

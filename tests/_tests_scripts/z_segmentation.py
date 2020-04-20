@@ -137,15 +137,14 @@ runner.train(
     logdir=logdir,
     num_epochs=num_epochs,
     check=True,
+    load_best_on_end=True,
 )
 
 # # Inference
 
 # In[ ]:
 
-runner_out = runner.predict_loader(
-    model, loaders["valid"], resume=f"{logdir}/checkpoints/best.pth"
-)
+runner_out = runner.predict_loader(loader=loaders["valid"])
 
 # # Predictions visualization
 
@@ -170,7 +169,8 @@ for i, (input, output) in enumerate(zip(valid_data, runner_out)):
     plt.imshow(image, "gray")
 
     plt.subplot(1, 3, 2)
-    output = sigmoid(output[0].copy())
+    output = output["logits"].cpu().numpy()
+    output = sigmoid(output[0, 0].copy())  # [bs; ch; h; w] -> [h; w]
     output = (output > threshold).astype(np.uint8)
     plt.imshow(output, "gray")
 
