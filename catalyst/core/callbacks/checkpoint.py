@@ -74,9 +74,7 @@ class BaseCheckpointCallback(Callback):
             metrics_filename (str): filename to save metrics
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
         """
-        super().__init__(
-            order=CallbackOrder.External, node=CallbackNode.Master
-        )
+        super().__init__(order=CallbackOrder.External, node=CallbackNode.All)
         self.metrics_filename = metrics_filename
         self.metrics: dict = {}
 
@@ -255,7 +253,7 @@ class CheckpointCallback(BaseCheckpointCallback):
 
     def on_epoch_end(self, state: State):
         """@TODO: Docs. Contribution is welcome."""
-        if state.stage_name.startswith("infer"):
+        if state.stage_name.startswith("infer") or state.is_distributed_worker:
             return
 
         checkpoint = _pack_state(state)
@@ -269,7 +267,7 @@ class CheckpointCallback(BaseCheckpointCallback):
 
     def on_stage_end(self, state: State):
         """@TODO: Docs. Contribution is welcome."""
-        if state.stage_name.startswith("infer"):
+        if state.stage_name.startswith("infer") or state.is_distributed_worker:
             return
 
         print("Top best models:")

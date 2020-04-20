@@ -419,7 +419,7 @@ runner_out = runner.predict_loader(model=model, loader=loaders["valid"],)
 
 # In[ ]:
 
-next(runner_out)["logits"].shape
+next(runner_out)[runner.output_key].shape
 
 # # Setup 10 - predict batch
 

@@ -169,10 +169,15 @@ class State(FrozenClass):
 
     **state.distributed_rank** - distributed rank of current worker
 
+    **state.is_distributed_master** - bool, indicator flag
+
+        - ``True`` if is master node (state.distributed_rank == 0)
+        - ``False`` if is worker node (state.distributed_rank != 0)
+
     **state.is_distributed_worker** - bool, indicator flag
 
         - ``True`` if is worker node (state.distributed_rank > 0)
-        - ``False`` if is master node (state.distributed_rank == 0)
+        - ``False`` if is master node (state.distributed_rank <= 0)
 
 
     **state.stage_name** - string, current stage name,\
@@ -335,6 +340,7 @@ class State(FrozenClass):
 
         # pipeline info
         self.distributed_rank = utils.get_rank()
+        self.is_distributed_master = ~(self.distributed_rank > 0)
         self.is_distributed_worker = self.distributed_rank > 0
 
         self.stage_name: str = stage

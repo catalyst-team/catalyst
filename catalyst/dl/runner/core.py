@@ -108,9 +108,9 @@ class Runner(StageBasedRunner):
             fp16 = {"opt_level": "O1"}
 
         if resume is not None or load_best_on_end:
-            load_on_end = None
+            load_on_stage_end = None
             if load_best_on_end:
-                load_on_end = "best_full"
+                load_on_stage_end = "best_full"
                 assert logdir is not None, (
                     "For ``load_best_on_end`` feature "
                     "you need to specify ``logdir``"
@@ -121,7 +121,7 @@ class Runner(StageBasedRunner):
             )
             if not checkpoint_callback_flag:
                 callbacks["loader"] = CheckpointCallback(
-                    resume=resume, load_on_stage_end=load_on_end,
+                    resume=resume, load_on_stage_end=load_on_stage_end,
                 )
             else:
                 raise NotImplementedError("CheckpointCallback already exist")
