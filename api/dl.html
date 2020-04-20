@@ -617,8 +617,75 @@ of training process and displays it to the console.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="catalyst.dl.runner.core.Runner.predict_batch">
+<code class="sig-name descname">predict_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">batch</span><span class="p">:</span> <span class="n">Mapping<span class="p">[</span>str<span class="p">, </span>Any<span class="p">]</span></span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; Mapping<span class="p">[</span>str<span class="p">, </span>Any<span class="p">]</span><a class="reference internal" href="../_modules/catalyst/dl/runner/core.html#Runner.predict_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.core.Runner.predict_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run model inference on specified data batch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – dictionary with data batches
+from DataLoader.</p></li>
+<li><p><strong>**kwargs</strong> – additional kwargs to pass to the model</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>model output dictionary</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Mapping[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.dl.runner.core.Runner.predict_loader">
+<code class="sig-name descname">predict_loader</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">loader</span><span class="p">:</span> <span class="n">torch.utils.data.dataloader.DataLoader</span></em>, <em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resume</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fp16</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Dict<span class="p">, </span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">initial_seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">42</span></em><span class="sig-paren">)</span> &#x2192; Generator<a class="reference internal" href="../_modules/catalyst/dl/runner/core.html#Runner.predict_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.core.Runner.predict_loader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs model inference on PyTorch Dataloader and returns
+python Generator with model predictions from <cite>runner.predict_batch</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loader</strong> (<em>DataLoader</em>) – </p></li>
+<li><p><strong>model</strong> (<em>Model</em>) – </p></li>
+<li><p><strong>resume</strong> (<em>str</em>) – </p></li>
+<li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – </p></li>
+<li><p><strong>initial_seed</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(Generator) model predictions from <cite>runner.predict_batch</cite> method.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.dl.runner.core.Runner.trace">
+<code class="sig-name descname">trace</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">batch</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">loader</span><span class="p">:</span> <span class="n">torch.utils.data.dataloader.DataLoader</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">method_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'forward'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'eval'</span></em>, <em class="sig-param"><span class="n">requires_grad</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">fp16</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Dict<span class="p">, </span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">device</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>torch.device<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'cpu'</span></em>, <em class="sig-param"><span class="n">predict_params</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; torch.jit.ScriptModule<a class="reference internal" href="../_modules/catalyst/dl/runner/core.html#Runner.trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.core.Runner.trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Traces model using Torch Jit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>Model</em>) – model to trace</p></li>
+<li><p><strong>batch</strong> – batch to forward through the model to trace</p></li>
+<li><p><strong>logdir</strong> (<em>str</em><em>, </em><em>optional</em>) – If specified,
+the result will be written to the directory</p></li>
+<li><p><strong>loader</strong> (<em>DataLoader</em><em>, </em><em>optional</em>) – if batch is not specified, the batch
+will be <code class="docutils literal notranslate"><span class="pre">next(iter(loader))</span></code></p></li>
+<li><p><strong>method_name</strong> (<em>str</em>) – model’s method name that will be traced</p></li>
+<li><p><strong>mode</strong> (<em>str</em>) – <code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code></p></li>
+<li><p><strong>requires_grad</strong> (<em>bool</em>) – flag to trace with gradients</p></li>
+<li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets
+tracing params to FP16</p></li>
+<li><p><strong>device</strong> (<em>Device</em>) – Torch deivice or a string</p></li>
+<li><p><strong>predict_params</strong> (<em>dict</em>) – additional parameters for model forward</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="catalyst.dl.runner.core.Runner.train">
-<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">criterion</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="p">:</span> <span class="n">torch.optim.optimizer.Optimizer</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">scheduler</span><span class="p">:</span> <span class="n">torch.optim.lr_scheduler._LRScheduler</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">datasets</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>Dataset<span class="p">, </span>Dict<span class="p">, </span>Any<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">loaders</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>DataLoader<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">callbacks</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>List<span class="p">[</span>Callback<span class="p">]</span><span class="p">, </span>OrderedDict<span class="p">[</span>str<span class="p">, </span>Callback<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resume</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_epochs</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">valid_loader</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'valid'</span></em>, <em class="sig-param"><span class="n">main_metric</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'loss'</span></em>, <em class="sig-param"><span class="n">minimize_metric</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fp16</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Dict<span class="p">, </span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">distributed</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">check</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">timeit</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">initial_seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">42</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/runner/core.html#Runner.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.core.Runner.train" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">criterion</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="p">:</span> <span class="n">torch.optim.optimizer.Optimizer</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">scheduler</span><span class="p">:</span> <span class="n">torch.optim.lr_scheduler._LRScheduler</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">datasets</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>Dataset<span class="p">, </span>Dict<span class="p">, </span>Any<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">loaders</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>DataLoader<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">callbacks</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>List<span class="p">[</span>Callback<span class="p">]</span><span class="p">, </span>OrderedDict<span class="p">[</span>str<span class="p">, </span>Callback<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resume</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_epochs</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">valid_loader</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'valid'</span></em>, <em class="sig-param"><span class="n">main_metric</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'loss'</span></em>, <em class="sig-param"><span class="n">minimize_metric</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fp16</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Dict<span class="p">, </span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">distributed</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">check</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">timeit</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">load_best_on_end</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">initial_seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">42</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/runner/core.html#Runner.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.core.Runner.train" title="Permalink to this definition">¶</a></dt>
 <dd><p>Starts the train stage of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -662,6 +729,9 @@ Note: Works only with python scripts. No jupyter support.</p></li>
 (3 epochs only)</p></li>
 <li><p><strong>timeit</strong> (<em>bool</em>) – if True, computes the execution time
 of training process and displays it to the console.</p></li>
+<li><p><strong>load_best_on_end</strong> (<em>bool</em>) – if True, Runner will load
+best checkpoint state (model, optimizer, etc)
+according to validation metrics. Requires specified <code class="docutils literal notranslate"><span class="pre">logdir</span></code>.</p></li>
 <li><p><strong>initial_seed</strong> (<em>int</em>) – experiment’s initial seed value</p></li>
 </ul>
 </dd>
@@ -731,55 +801,6 @@ from DataLoader.</p></li>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Mapping[str, Any]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.runner.supervised.SupervisedRunner.predict_loader">
-<code class="sig-name descname">predict_loader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">loader</span><span class="p">:</span> <span class="n">torch.utils.data.dataloader.DataLoader</span></em>, <em class="sig-param"><span class="n">resume</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fp16</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Dict<span class="p">, </span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">check</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="../_modules/catalyst/dl/runner/supervised.html#SupervisedRunner.predict_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.supervised.SupervisedRunner.predict_loader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Makes a prediction on the whole loader with the specified model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>Model</em>) – model to infer</p></li>
-<li><p><strong>loader</strong> (<em>DataLoader</em>) – dictionary containing only one
-<code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code> for inference</p></li>
-<li><p><strong>resume</strong> (<em>str</em>) – path to checkpoint for model</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – ff true, it displays the status of the inference
-to the console.</p></li>
-<li><p><strong>state_kwargs</strong> (<em>dict</em>) – additional state params to <code class="docutils literal notranslate"><span class="pre">State</span></code></p></li>
-<li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets inference to FP16.
-See <a class="reference external" href="https://nvidia.github.io/apex/amp.html#properties">https://nvidia.github.io/apex/amp.html#properties</a>
-if fp16=True, params by default will be <code class="docutils literal notranslate"><span class="pre">{&quot;opt_level&quot;:</span> <span class="pre">&quot;O1&quot;}</span></code></p></li>
-<li><p><strong>check</strong> (<em>bool</em>) – if True, then only checks that pipeline is working
-(3 epochs only)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.runner.supervised.SupervisedRunner.trace">
-<code class="sig-name descname">trace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">batch</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">loader</span><span class="p">:</span> <span class="n">torch.utils.data.dataloader.DataLoader</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">method_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'forward'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'eval'</span></em>, <em class="sig-param"><span class="n">requires_grad</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">fp16</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>Dict<span class="p">, </span>bool<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">device</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>torch.device<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'cpu'</span></em>, <em class="sig-param"><span class="n">predict_params</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; torch.jit.ScriptModule<a class="reference internal" href="../_modules/catalyst/dl/runner/supervised.html#SupervisedRunner.trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.supervised.SupervisedRunner.trace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Traces model using Torch Jit.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>Model</em>) – model to trace</p></li>
-<li><p><strong>batch</strong> – batch to forward through the model to trace</p></li>
-<li><p><strong>logdir</strong> (<em>str</em><em>, </em><em>optional</em>) – If specified,
-the result will be written to the directory</p></li>
-<li><p><strong>loader</strong> (<em>DataLoader</em><em>, </em><em>optional</em>) – if batch is not specified, the batch
-will be <code class="docutils literal notranslate"><span class="pre">next(iter(loader))</span></code></p></li>
-<li><p><strong>method_name</strong> (<em>str</em>) – model’s method name that will be traced</p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – <code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code></p></li>
-<li><p><strong>requires_grad</strong> (<em>bool</em>) – flag to trace with gradients</p></li>
-<li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets
-tracing params to FP16</p></li>
-<li><p><strong>device</strong> (<em>Device</em>) – Torch deivice or a string</p></li>
-<li><p><strong>predict_params</strong> (<em>dict</em>) – additional parameters for model forward</p></li>
-</ul>
 </dd>
 </dl>
 </dd></dl>

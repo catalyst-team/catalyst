@@ -1208,11 +1208,18 @@ model, criterion, optimizer, schedulers, metrics, loggers, loaders, etc</p>
 </div>
 <p><strong>state.best_valid_metrics</strong> - dictionary with best validation metrics     during whole training process</p>
 <p><strong>state.distributed_rank</strong> - distributed rank of current worker</p>
+<p><strong>state.is_distributed_master</strong> - bool, indicator flag</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if is master node (state.distributed_rank == 0)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> if is worker node (state.distributed_rank != 0)</p></li>
+</ul>
+</div></blockquote>
 <p><strong>state.is_distributed_worker</strong> - bool, indicator flag</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if is worker node (state.distributed_rank &gt; 0)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> if is master node (state.distributed_rank == 0)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> if is master node (state.distributed_rank &lt;= 0)</p></li>
 </ul>
 </div></blockquote>
 <p><strong>state.stage_name</strong> - string, current stage name,    for example,</p>
@@ -1396,12 +1403,12 @@ Please use <cite>state.batch_out</cite> instead.</p>
 <span id="checkpoint"></span><h3><a class="toc-backref" href="#id8">Checkpoint</a><a class="headerlink" href="#module-catalyst.core.callbacks.checkpoint" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt id="catalyst.core.callbacks.checkpoint.CheckpointCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.checkpoint.</code><code class="sig-name descname">CheckpointCallback</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_n_best</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">resume</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resume_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">metrics_filename</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'_metrics.json'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.checkpoint.</code><code class="sig-name descname">CheckpointCallback</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_n_best</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">resume</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resume_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">metrics_filename</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'_metrics.json'</span></em>, <em class="sig-param"><span class="n">load_on_stage_end</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.checkpoint.BaseCheckpointCallback</span></code></p>
 <p>Checkpoint callback to save/restore your model/criterion/optimizer/metrics.</p>
 <dl class="py method">
 <dt id="catalyst.core.callbacks.checkpoint.CheckpointCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_n_best</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">resume</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resume_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">metrics_filename</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'_metrics.json'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_n_best</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">resume</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resume_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">metrics_filename</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'_metrics.json'</span></em>, <em class="sig-param"><span class="n">load_on_stage_end</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1410,6 +1417,11 @@ Please use <cite>state.batch_out</cite> instead.</p>
 and initialize runner state</p></li>
 <li><p><strong>metrics_filename</strong> (<em>str</em>) – filename to save metrics
 in checkpoint folder. Must ends on <code class="docutils literal notranslate"><span class="pre">.json</span></code> or <code class="docutils literal notranslate"><span class="pre">.yml</span></code></p></li>
+<li><p><strong>load_on_stage_end</strong> (<em>str</em>) – name of the model to load
+at the end of the stage.
+You can use <code class="docutils literal notranslate"><span class="pre">best</span></code> to load the best model according
+to validation metrics, or <code class="docutils literal notranslate"><span class="pre">last</span></code> to use just the last one
+(default behaviour).</p></li>
 </ul>
 </dd>
 </dl>
