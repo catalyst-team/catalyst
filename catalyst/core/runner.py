@@ -348,7 +348,7 @@ class _Runner(ABC):
     def _handle_batch(self, batch: Mapping[str, Any]) -> None:
         """
         Inner method to handle specified data batch.
-        Used to make a train/valid/infer step during Experiment run.
+        Used to make a train/valid/infer stage during Experiment run.
 
         Args:
             batch (Mapping[str, Any]): dictionary with data batches

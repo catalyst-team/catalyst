@@ -161,6 +161,7 @@ class ConfigExperiment(StageBasedExperiment):
 
     def _preprocess_model_for_stage(self, stage: str, model: Model):
         stage_index = self.stages.index(stage)
+        # @TODO: remove to callbacks
         if stage_index > 0:
             checkpoint_path = f"{self.logdir}/checkpoints/best.pth"
             checkpoint = utils.load_checkpoint(checkpoint_path)

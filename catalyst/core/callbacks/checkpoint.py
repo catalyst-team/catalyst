@@ -27,14 +27,14 @@ def _pack_state(state: State):
     return checkpoint
 
 
-def _load_checkpoint(*, filename, state: State):
+def _load_checkpoint(*, filename, state: State, load_full: bool = True):
     if not os.path.isfile(filename):
         raise Exception(f"No checkpoint found at {filename}")
 
     print(f"=> loading checkpoint {filename}")
     checkpoint = utils.load_checkpoint(filename)
 
-    if not state.stage_name.startswith("infer"):
+    if not state.stage_name.startswith("infer") and load_full:
         state.stage_name = checkpoint["stage_name"]
         state.epoch = checkpoint["epoch"]
         state.global_epoch = checkpoint["global_epoch"]
@@ -42,20 +42,27 @@ def _load_checkpoint(*, filename, state: State):
         # checkpoint_data, main_metric, minimize_metric, valid_loader ?
         # epoch_metrics, valid_metrics ?
 
-    utils.unpack_checkpoint(
-        checkpoint,
-        model=state.model,
-        criterion=state.criterion,
-        optimizer=state.optimizer,
-        scheduler=state.scheduler,
-    )
+    if load_full:
+        utils.unpack_checkpoint(
+            checkpoint,
+            model=state.model,
+            criterion=state.criterion,
+            optimizer=state.optimizer,
+            scheduler=state.scheduler,
+        )
 
-    print(
-        f"loaded checkpoint {filename} "
-        f"(global epoch {checkpoint['global_epoch']}, "
-        f"epoch {checkpoint['epoch']}, "
-        f"stage {checkpoint['stage_name']})"
-    )
+        print(
+            f"loaded state checkpoint {filename} "
+            f"(global epoch {checkpoint['global_epoch']}, "
+            f"epoch {checkpoint['epoch']}, "
+            f"stage {checkpoint['stage_name']})"
+        )
+    else:
+        utils.unpack_checkpoint(
+            checkpoint, model=state.model,
+        )
+
+        print(f"loaded model checkpoint {filename}")
 
 
 class BaseCheckpointCallback(Callback):
@@ -67,9 +74,7 @@ class BaseCheckpointCallback(Callback):
             metrics_filename (str): filename to save metrics
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
         """
-        super().__init__(
-            order=CallbackOrder.External, node=CallbackNode.Master
-        )
+        super().__init__(order=CallbackOrder.External, node=CallbackNode.All)
         self.metrics_filename = metrics_filename
         self.metrics: dict = {}
 
@@ -115,6 +120,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         resume: str = None,
         resume_dir: str = None,
         metrics_filename: str = "_metrics.json",
+        load_on_stage_end: str = None,
     ):
         """
         Args:
@@ -123,11 +129,24 @@ class CheckpointCallback(BaseCheckpointCallback):
                 and initialize runner state
             metrics_filename (str): filename to save metrics
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
+            load_on_stage_end (str): name of the model to load
+                at the end of the stage.
+                You can use ``best`` to load the best model according
+                to validation metrics, or ``last`` to use just the last one
+                (default behaviour).
         """
         super().__init__(metrics_filename)
+        assert load_on_stage_end in [
+            None,
+            "best",
+            "last",
+            "best_full",
+            "last_full",
+        ]
         self.save_n_best = save_n_best
         self.resume = resume
         self.resume_dir = resume_dir
+        self.load_on_stage_end = load_on_stage_end
 
         self.top_best_metrics = []
         self.metrics_history = []
@@ -234,7 +253,7 @@ class CheckpointCallback(BaseCheckpointCallback):
 
     def on_epoch_end(self, state: State):
         """@TODO: Docs. Contribution is welcome."""
-        if state.stage_name.startswith("infer"):
+        if state.stage_name.startswith("infer") or state.is_distributed_worker:
             return
 
         checkpoint = _pack_state(state)
@@ -248,7 +267,7 @@ class CheckpointCallback(BaseCheckpointCallback):
 
     def on_stage_end(self, state: State):
         """@TODO: Docs. Contribution is welcome."""
-        if state.stage_name.startswith("infer"):
+        if state.stage_name.startswith("infer") or state.is_distributed_worker:
             return
 
         print("Top best models:")
@@ -261,6 +280,15 @@ class CheckpointCallback(BaseCheckpointCallback):
             ]
         )
         print(top_best_metrics_str)
+
+        if self.load_on_stage_end in ["best", "best_full"]:
+            resume = f"{state.logdir}/checkpoints/{self.load_on_stage_end}.pth"
+            print(f"Loading {self.load_on_stage_end} model from {resume}")
+            _load_checkpoint(
+                filename=resume,
+                state=state,
+                load_full=self.load_on_stage_end.endswith("full"),
+            )
 
 
 class IterationCheckpointCallback(BaseCheckpointCallback):
