@@ -15,11 +15,11 @@ stages:
     data_params:
       batch_size: 16
       num_workers: 4
-      image_path: "./tiled_inference/car_8k.jpg"
-      save_path: "./logs/tiled_inference/predictions/mask.npy"
+      image_path: "./tiled_inference/car_common.jpg"
+      save_dir: "./logs/tiled_inference/predictions/"
       num_classes: *num_classes
-      tile_size: 256
-      tile_step: 128
+      tile_size: [1280, 1920]
+      tile_step: 1
 
     callback_params:
       loader:
