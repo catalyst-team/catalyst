@@ -47,23 +47,25 @@ class TiledInferenceExperiment(ConfigExperiment):
         callbacks = super().get_callbacks(stage)
         data_params = dict(self.stages_config[stage]["data_params"])
 
-        save_path = data_params["save_path"]
+        save_dir = data_params["save_dir"]
         image_path = data_params["image_path"]
         num_classes = data_params["num_classes"]
         tile_size = data_params["tile_size"]
         tile_step = data_params["tile_step"]
         output_key = data_params.get("output_key", "logits")
+        mask_key = data_params.get("mask_key", "mask")
 
         image = skimage.io.imread(image_path)
         *image_size, _ = image.shape
 
         tiled_inference_callback = TiledInferenceCallback(
-            save_path,
+            save_dir,
             image_size,
             num_classes,
             tile_size,
             tile_step,
             output_key=output_key,
+            mask_key=mask_key,
         )
         callbacks.update(tiled_inference=tiled_inference_callback)
 

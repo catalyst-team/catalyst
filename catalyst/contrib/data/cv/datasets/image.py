@@ -81,7 +81,7 @@ class TiledImageDataset(Dataset):
         self.image_h, self.image_w, _ = image.shape
         self.input_key = input_key
 
-        if isinstance(tile_size, tuple):
+        if isinstance(tile_size, (tuple, list)):
             tile_size_ndim = len(tile_size)
             error_msg = (
                 f"Tile size must be 2-dimensional, "
@@ -92,7 +92,7 @@ class TiledImageDataset(Dataset):
         else:
             self.tile_size_h, self.tile_size_w = tile_size, tile_size
 
-        if isinstance(tile_step, tuple):
+        if isinstance(tile_step, (tuple, list)):
             tile_step_ndim = len(tile_step)
             error_msg = (
                 f"Tile step must be 2-dimensional, "
@@ -182,7 +182,7 @@ class TiledImageDataset(Dataset):
         Returns:
             OrderedDict with tile and starting x, y coordinates.
         """
-        x, y = self.crops[idx]
+        x, y = map(lambda coord: coord.item(), self.crops[idx])
 
         tile = self.image[
             :, y : y + self.tile_size_h, x : x + self.tile_size_w

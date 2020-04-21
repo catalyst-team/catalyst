@@ -1,10 +1,10 @@
 from typing import List, Tuple, Union
-import os
 from pathlib import Path
 
 import numpy as np
 
 import torch
+import torch.nn.functional as F
 
 from catalyst.contrib.data.cv.datasets import get_image_margins
 from catalyst.core import Callback, CallbackOrder, State
@@ -59,30 +59,37 @@ class TiledInferenceCallback(Callback):
 
     def __init__(
         self,
-        save_path: str,
+        save_dir: str,
         image_size: Union[int, Tuple[int], List[int]],
         num_classes: int,
         tile_size: Union[int, Tuple[int], List[int]],
         tile_step: Union[int, Tuple[int], List[int]],
         output_key: str = "logits",
+        mask_key: str = "mask",
+        class_first: bool = True,
     ):
         """
         Args:
-            save_path: file path where to save resulting array / tensor:
-                file extension must be `.npy` for numpy array save
-                or one of `.pt`, `.pth` for torch tensor save.
-            image_size: size of large input image
-            num_classes: number of channels in output mask
-            tile_size: tile size
-            tile_step: tile step
-            output_key: key in batch output for obtaining neural net prediction
+            save_dir: directory where resulting objects are stored.
+            image_size: size of large input image.
+            num_classes: number of channels in output mask.
+            tile_size: tile size.
+            tile_step: tile step.
+            output_key: key in batch output for obtaining neural net
+                prediction.
+            mask_key: key for naming a file with output mask.
+            class_first: if True, then saved array will have
+                dimensions order (num_classes, height, width),
+                if False, then (height, width, num_classes).
         """
         super().__init__(CallbackOrder.External)
 
-        if not save_path.endswith(".npy"):
-            save_path += ".npy"
+        assert num_classes >= 1, (
+            f"Number of classes must be greater or equal to 1, "
+            f"got {num_classes}."
+        )
 
-        self.save_path = Path(save_path)
+        self.save_dir = Path(save_dir)
 
         if isinstance(image_size, (tuple, list)):
             size_ndim = len(image_size)
@@ -131,8 +138,10 @@ class TiledInferenceCallback(Callback):
         self.margin_left = margins["margin_left"]
         self.margin_right = margins["margin_right"]
 
-        self.n_channels = num_classes
+        self.num_classes = num_classes
         self.output_key = output_key
+        self.mask_key = mask_key
+        self.class_first = class_first
 
         storage_h = self.image_h + self.margin_top + self.margin_bottom
         storage_w = self.image_w + self.margin_left + self.margin_right
@@ -149,8 +158,15 @@ class TiledInferenceCallback(Callback):
         self.norm_mask = self.norm_mask.to(state.device)
         self.weights = self.weights.to(state.device)
 
+        output = state.batch_out[self.output_key]
+
+        if self.num_classes == 1:
+            output = torch.sigmoid(output)
+        else:
+            output = F.softmax(output, dim=1)
+
         items = zip(
-            torch.sigmoid(state.batch_out[self.output_key]),
+            output,
             state.batch_in["x"],
             state.batch_in["y"],
         )
@@ -177,9 +193,16 @@ class TiledInferenceCallback(Callback):
             slice(self.margin_top, h - self.margin_bottom),
             slice(self.margin_left, w - self.margin_right),
         )
-        output = output[crop_slice].cpu().numpy()
+        output = output[crop_slice]
+        mask = torch.argmax(output, dim=0)
 
-        save_dir, _ = os.path.split(self.save_path)
-        save_dir = Path(save_dir)
-        save_dir.mkdir(parents=True, exist_ok=True)
-        np.save(self.save_path, output)
+        if not self.class_first:
+            output = output.permute(1, 2, 0)
+            mask = mask.permute(1, 2, 0)
+
+        output = output.cpu().numpy()
+        mask = mask.cpu().numpy()
+
+        self.save_dir.mkdir(parents=True, exist_ok=True)
+        np.save(self.save_dir/f"{self.output_key}.npy", output)
+        np.save(self.save_dir/f"{self.mask_key}.npy", mask)
