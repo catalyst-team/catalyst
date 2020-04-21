@@ -9,12 +9,32 @@ from torchvision import transforms
 from torchvision.datasets import MNIST
 
 from catalyst import dl
+from catalyst.contrib.nn.modules import Flatten, GlobalMaxPool2d, Lambda
 
 latent_dim = 128
-generator = nn.Sequential(nn.Linear(latent_dim, 28 * 28), nn.Sigmoid())
-discriminator = nn.Linear(28 * 28, 1)
-model = {"generator": generator, "discriminator": discriminator}
+generator = nn.Sequential(
+    # We want to generate 128 coefficients to reshape into a 7x7x128 map
+    nn.Linear(128, 128 * 7 * 7),
+    nn.LeakyReLU(0.2, inplace=True),
+    Lambda(lambda x: x.view(x.size(0), 128, 7, 7)),
+    nn.ConvTranspose2d(128, 128, (4, 4), stride=(2, 2), padding=1),
+    nn.LeakyReLU(0.2, inplace=True),
+    nn.ConvTranspose2d(128, 128, (4, 4), stride=(2, 2), padding=1),
+    nn.LeakyReLU(0.2, inplace=True),
+    nn.Conv2d(128, 1, (7, 7), padding=3),
+    nn.Sigmoid(),
+)
+discriminator = nn.Sequential(
+    nn.Conv2d(1, 64, (3, 3), stride=(2, 2), padding=1),
+    nn.LeakyReLU(0.2, inplace=True),
+    nn.Conv2d(64, 128, (3, 3), stride=(2, 2), padding=1),
+    nn.LeakyReLU(0.2, inplace=True),
+    GlobalMaxPool2d(),
+    Flatten(),
+    nn.Linear(128, 1),
+)
 
+model = {"generator": generator, "discriminator": discriminator}
 optimizer = {
     "generator": torch.optim.Adam(
         generator.parameters(), lr=0.0003, betas=(0.5, 0.999)
@@ -23,7 +43,6 @@ optimizer = {
         discriminator.parameters(), lr=0.0003, betas=(0.5, 0.999)
     ),
 }
-
 loaders = {
     "train": DataLoader(
         MNIST(

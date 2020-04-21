@@ -512,17 +512,36 @@ from torch.utils.data import DataLoader
 from torchvision.datasets import MNIST
 from torchvision import transforms
 from catalyst import dl
+from catalyst.contrib.nn.modules import GlobalMaxPool2d, Flatten, Lambda
 
 latent_dim = 128
-generator = nn.Sequential(nn.Linear(latent_dim, 28 * 28), nn.Sigmoid())
-discriminator = nn.Linear(28 * 28, 1)
-model = {"generator": generator, "discriminator": discriminator}
+generator = nn.Sequential(
+    # We want to generate 128 coefficients to reshape into a 7x7x128 map
+    nn.Linear(128, 128 * 7 * 7),
+    nn.LeakyReLU(0.2, inplace=True),
+    Lambda(lambda x: x.view(x.size(0), 128, 7, 7)),
+    nn.ConvTranspose2d(128, 128, (4, 4), stride=(2, 2), padding=1),
+    nn.LeakyReLU(0.2, inplace=True),
+    nn.ConvTranspose2d(128, 128, (4, 4), stride=(2, 2), padding=1),
+    nn.LeakyReLU(0.2, inplace=True),
+    nn.Conv2d(128, 1, (7, 7), padding=3),
+    nn.Sigmoid(),
+)
+discriminator = nn.Sequential(
+    nn.Conv2d(1, 64, (3, 3), stride=(2, 2), padding=1),
+    nn.LeakyReLU(0.2, inplace=True),
+    nn.Conv2d(64, 128, (3, 3), stride=(2, 2), padding=1),
+    nn.LeakyReLU(0.2, inplace=True),
+    GlobalMaxPool2d(),
+    Flatten(),
+    nn.Linear(128, 1)
+)
 
+model = {"generator": generator, "discriminator": discriminator}
 optimizer = {
     "generator": torch.optim.Adam(generator.parameters(), lr=0.0003, betas=(0.5, 0.999)),
     "discriminator": torch.optim.Adam(discriminator.parameters(), lr=0.0003, betas=(0.5, 0.999)),
 }
-
 loaders = {
     "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=transforms.ToTensor()), batch_size=32),
 }
@@ -758,7 +777,7 @@ best practices for the automated parts.
 ## Catalyst
 
 ### Tutorials
-- [Customizing what happens in `train`](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb)
+- [Customizing what happens in `train`](./examples/notebooks/customizing_what_happens_in_train.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb)
 - [Demo with minimal examples](./examples/notebooks/demo.ipynb) for ML, CV, NLP, GANs and RecSys [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
 - Detailed [classification tutorial](./examples/notebooks/classification-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb)
 - Advanced [segmentation tutorial](./examples/notebooks/segmentation-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb)
