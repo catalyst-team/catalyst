@@ -85,6 +85,7 @@ def get_environment_vars() -> Dict[str, Any]:
 def list_pip_packages() -> str:
     """
     @TODO: Docs. Contribution is welcome
+    @TODO: When catching exception, e has no attribute 'output'
     """
     result = ""
     with open(os.devnull, "w") as devnull:
@@ -94,10 +95,10 @@ def list_pip_packages() -> str:
                 .strip()
                 .decode("UTF-8")
             )
-        except Exception as e:
+        except Exception:
             warnings.warn(
                 f"Failed to freeze pip packages. "
-                f"Pip Output: ```{e.output}```."
+                # f"Pip Output: ```{e.output}```."
                 f"Continue experiment without pip packages dumping."
             )
             pass
@@ -112,6 +113,7 @@ def list_pip_packages() -> str:
 def list_conda_packages() -> str:
     """
     @TODO: Docs. Contribution is welcome
+    @TODO: When catching exception, e has no attribute 'output'
     """
     result = ""
     conda_meta_path = Path(sys.prefix) / "conda-meta"
@@ -126,11 +128,11 @@ def list_conda_packages() -> str:
                     .strip()
                     .decode("UTF-8")
                 )
-            except Exception as e:
+            except Exception:
                 warnings.warn(
                     f"Running from conda env, "
                     f"but failed to list conda packages. "
-                    f"Conda Output: ```{e.output}```."
+                    # f"Conda Output: ```{e.output}```."
                     f"Continue experiment without conda packages dumping."
                 )
                 pass
