@@ -132,7 +132,7 @@ class CutmixCallback(CriterionCallback):
         for f in self.fields:
             state.input[f][:, :, bbx1:bbx2, bby1:bby2] = state.input[f][
                 self.index, :, bbx1:bbx2, bby1:bby2
-                                                         ]
+            ]
 
         self.lam = 1 - (
             (bbx2 - bbx1)

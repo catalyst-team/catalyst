@@ -439,7 +439,9 @@ class _Runner(ABC):
             state.is_train_loader = loader_name.startswith(LOADER_TRAIN_PREFIX)
             state.is_valid_loader = loader_name.startswith(LOADER_VALID_PREFIX)
             state.is_infer_loader = loader_name.startswith(LOADER_INFER_PREFIX)
-            self.model.train(state.is_train_loader)
+            utils.maybe_recursive_call(
+                self.model, "train", mode=state.is_train_loader,
+            )
 
             if (
                 isinstance(loader.sampler, DistributedSampler)

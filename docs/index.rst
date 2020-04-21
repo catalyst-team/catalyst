@@ -96,7 +96,7 @@ Getting started
 - `Demo with minimal examples for ML, CV, NLP, GANs and RecSys`_
 - For Catalyst.RL introduction, please follow `Catalyst.RL repo`_.
 
-.. _`Customizing what happens in train` : https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb
+.. _`Customizing what happens in train`: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb
 .. _Demo with minimal examples for ML, CV, NLP, GANs and RecSys: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb
 .. _Catalyst.RL repo: https://github.com/catalyst-team/catalyst-rl
 
