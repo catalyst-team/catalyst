@@ -6,7 +6,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader  # noqa F401
 
-from catalyst.core import StageBasedExperiment
+from catalyst.core import _StageBasedExperiment
 from catalyst.data import Augmentor, AugmentorCompose
 from catalyst.dl import (
     Callback,
@@ -35,7 +35,7 @@ from catalyst.dl.registry import (
 from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
-class ConfigExperiment(StageBasedExperiment):
+class ConfigExperiment(_StageBasedExperiment):
     """
     Experiment created from a configuration file.
     """

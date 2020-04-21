@@ -61,7 +61,7 @@ class CustomRunner(dl.Runner):
 
     def predict_batch(self, batch):
         # model inference step
-        return self.model(batch[0].view(batch[0].size(0), -1))
+        return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
 
     def _handle_batch(self, batch):
         # model train/valid step
@@ -99,9 +99,9 @@ for prediction in runner.predict_loader(loader=loaders["valid"]):
 traced_model = runner.trace(loader=loaders["valid"])
 ```
 
-[Demo with minimal examples for ML, CV, NLP, GANs and RecSys](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
-
-For Catalyst.RL introduction, please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
+- [Customizing what happens in `train`](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb)
+- [Demo with minimal examples for ML, CV, NLP, GANs and RecSys](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
+- For Catalyst.RL introduction, please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
 
 
 ## Table of Contents
@@ -759,6 +759,7 @@ best practices for the automated parts.
 ## Catalyst
 
 ### Tutorials
+- [Customizing what happens in `train`](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb)
 - [Demo with minimal examples](./examples/notebooks/demo.ipynb) for ML, CV, NLP, GANs and RecSys [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
 - Detailed [classification tutorial](./examples/notebooks/classification-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb)
 - Advanced [segmentation tutorial](./examples/notebooks/segmentation-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb)

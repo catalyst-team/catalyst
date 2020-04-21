@@ -107,22 +107,22 @@ class State(FrozenClass):
         }
 
 
-    **state.batch_in** - dictionary, \
+    **state.input** - dictionary, \
     containing batch of data from currents DataLoader; \
     for example,
     ::
 
-        state.batch_in = {
+        state.input = {
             "images": np.ndarray(batch_size, c, h, w),
             "targets": np.ndarray(batch_size, 1),
         }
 
-    **state.batch_out** - dictionary, \
+    **state.output** - dictionary, \
     containing model output for current batch; \
     for example,
     ::
 
-        state.batch_out = {"logits": torch.Tensor(batch_size, num_classes)}
+        state.output = {"logits": torch.Tensor(batch_size, num_classes)}
 
     **state.batch_metrics** - dictionary, flatten storage for batch metrics; \
     for example,
@@ -314,9 +314,11 @@ class State(FrozenClass):
         # extra components - Catalyst callbacks
         self.callbacks: Dict[str, "Callback"] = callbacks
 
-        # dataflow - model input, model output, metrics
-        self.batch_in = None
-        self.batch_out = None
+        # dataflow - model input, model output
+        self.input = None
+        self.output = None
+
+        # metrics flow - batch, loader, epoch metrics
         # let's use flatten storage for batch metrics
         # batch_metrics = {'loss': ..., 'accuracy': ..., 'iou': ...}
         self.batch_metrics = defaultdict(None)
@@ -385,32 +387,34 @@ class State(FrozenClass):
         self._freeze()
 
     @property
-    def input(self):
-        """Alias for `state.batch_in`.
+    def batch_in(self):
+        """Alias for `state.input`.
 
         .. warning::
             Deprecated, saved for backward compatibility.
             Please use `state.batch_in` instead.
         """
         warnings.warn(
-            "`input` was deprecated, " "please use `batch_in` instead",
+            "`state.batch_in` was deprecated, "
+            "please use `state.input` instead",
             DeprecationWarning,
         )
-        return self.batch_in
+        return self.input
 
     @property
-    def output(self):
-        """Alias for `state.batch_out`.
+    def batch_out(self):
+        """Alias for `state.output`.
 
         .. warning::
             Deprecated, saved for backward compatibility.
             Please use `state.batch_out` instead.
         """
         warnings.warn(
-            "`output` was deprecated, " "please use `batch_out` instead",
+            "`state.batch_out` was deprecated, "
+            "please use `state.output` instead",
             DeprecationWarning,
         )
-        return self.batch_out
+        return self.output
 
     @property
     def need_backward_pass(self):

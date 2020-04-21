@@ -66,15 +66,15 @@ class _MetricCallback(ABC, Callback):
         pass
 
     def _compute_metric_value(self, state: State):
-        output = self._get_output(state.batch_out, self.output_key)
-        input = self._get_input(state.batch_in, self.input_key)
+        output = self._get_output(state.output, self.output_key)
+        input = self._get_input(state.input, self.input_key)
 
         metric = self.metric_fn(output, input, **self.metrics_kwargs)
         return metric
 
     def _compute_metric_key_value(self, state: State):
-        output = self._get_output(state.batch_out, self.output_key)
-        input = self._get_input(state.batch_in, self.input_key)
+        output = self._get_output(state.output, self.output_key)
+        input = self._get_input(state.input, self.input_key)
 
         metric = self.metric_fn(**output, **input, **self.metrics_kwargs)
         return metric

@@ -121,7 +121,7 @@ class SupervisedRunner(Runner):
             batch (Mapping[str, Any]): dictionary with data batches
                 from DataLoader.
         """
-        self.state.batch_out = self.forward(batch)
+        self.state.output = self.forward(batch)
 
     @torch.no_grad()
     def predict_batch(
