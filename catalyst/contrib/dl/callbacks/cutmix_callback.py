@@ -64,9 +64,9 @@ class CutmixCallback(CriterionCallback):
         if not self.is_needed:
             return super()._compute_loss_value(state, criterion)
 
-        pred = state.batch_out[self.output_key]
-        y_a = state.batch_in[self.input_key]
-        y_b = state.batch_in[self.input_key][self.index]
+        pred = state.output[self.output_key]
+        y_a = state.input[self.input_key]
+        y_b = state.input[self.input_key][self.index]
         loss = self.lam * criterion(pred, y_a) + (1 - self.lam) * criterion(
             pred, y_b
         )
@@ -122,15 +122,15 @@ class CutmixCallback(CriterionCallback):
         else:
             self.lam = 1
 
-        self.index = torch.randperm(state.batch_in[self.fields[0]].shape[0])
+        self.index = torch.randperm(state.input[self.fields[0]].shape[0])
         self.index.to(state.device)
 
         bbx1, bby1, bbx2, bby2 = self._rand_bbox(
-            state.batch_in[self.fields[0]].shape, self.lam
+            state.input[self.fields[0]].shape, self.lam
         )
 
         for f in self.fields:
-            state.batch_in[f][:, :, bbx1:bbx2, bby1:bby2] = state.batch_in[f][
+            state.input[f][:, :, bbx1:bbx2, bby1:bby2] = state.input[f][
                 self.index, :, bbx1:bbx2, bby1:bby2
             ]
 
@@ -138,7 +138,7 @@ class CutmixCallback(CriterionCallback):
             (bbx2 - bbx1)
             * (bby2 - bby1)
             / (
-                state.batch_in[self.fields[0]].shape[-1]
-                * state.batch_in[self.fields[0]].shape[-2]
+                state.input[self.fields[0]].shape[-1]
+                * state.input[self.fields[0]].shape[-2]
             )
         )

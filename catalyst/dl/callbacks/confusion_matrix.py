@@ -104,8 +104,8 @@ class ConfusionMatrixCallback(Callback):
             state (State): current state
         """
         self._add_to_stats(
-            state.batch_out[self.output_key].detach(),
-            state.batch_in[self.input_key].detach(),
+            state.output[self.output_key].detach(),
+            state.input[self.input_key].detach(),
         )
 
     def on_loader_end(self, state: State):

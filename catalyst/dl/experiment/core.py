@@ -5,7 +5,7 @@ import warnings
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from catalyst.core import StageBasedExperiment
+from catalyst.core import _StageBasedExperiment
 from catalyst.dl import (
     Callback,
     CheckpointCallback,
@@ -23,7 +23,7 @@ from catalyst.utils.tools.settings import STAGE_INFER_PREFIX
 from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
-class Experiment(StageBasedExperiment):
+class Experiment(_StageBasedExperiment):
     """
     Super-simple one-staged experiment,
     you can use to declare experiment in code.

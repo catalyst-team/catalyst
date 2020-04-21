@@ -22,7 +22,7 @@ from catalyst.utils.tools.typing import (
 
 from .callback import Callback, CallbackScope
 from .callbacks import ExceptionCallback
-from .experiment import _Experiment, StageBasedExperiment
+from .experiment import _Experiment, _StageBasedExperiment
 from .state import State
 
 
@@ -68,7 +68,8 @@ class _Runner(ABC):
 
     @model.setter
     def model(self, value: Union[Model, Dict[str, Model]]):
-        """Setter for the runner's model, useful for experiment tracing.
+        """
+        Setter for the runner's model, useful for experiment tracing.
 
         Args:
             value (Union[Model, Dict[str, Model]]): new model.
@@ -107,7 +108,8 @@ class _Runner(ABC):
 
     @device.setter
     def device(self, value: Device):
-        """Setter for the runner's device.
+        """
+        Setter for the runner's device.
 
         Args:
             value (Device): new torch device.
@@ -137,14 +139,15 @@ class _Runner(ABC):
     def _get_experiment_components(
         self, stage: str = None
     ) -> Tuple[Model, Criterion, Optimizer, Scheduler, Device]:
-        """Inner method for `Experiment` components preparation.
+        """
+        Inner method for `Experiment` components preparation.
 
         Check available torch device, takes model from the experiment
         and creates stage-specified criterion, optimizer, scheduler for it.
 
         Args:
             stage (str): experiment stage name of interest
-                like "pretraining" / "training" / "finetuning" / etc
+                like "pretrain" / "train" / "finetune" / etc
 
         Returns:
             tuple: model, criterion, optimizer,
@@ -185,14 +188,15 @@ class _Runner(ABC):
         device: Device,
         callbacks: Dict[str, Callback],
     ) -> State:
-        """Inner method for `State` preparation.
+        """
+        Inner method for `State` preparation.
 
         Migrates State parameters from previous stage if possible,
         create new State for current stage.
 
         Args:
             stage (str): stage name of interest,
-                like "pretraining" / "training" / "finetuning" / etc
+                like "pretrain" / "train" / "finetune" / etc
             model (Model): stage model
             criterion (Criterion): stage criterion
             optimizer (Optimizer): stage optimizer
@@ -256,7 +260,7 @@ class _Runner(ABC):
 
         Args:
             stage (str): stage name of interest,
-                like "pretraining" / "training" / "finetuning" / etc
+                like "pretrain" / "train" / "finetune" / etc
 
         Returns:
             OrderedDict[str, Callback]: Ordered dictionary
@@ -268,7 +272,8 @@ class _Runner(ABC):
         return callbacks
 
     def _prepare_for_stage(self, stage: str) -> None:
-        """Inner method to prepare `Runner` for the specified stage.
+        """
+        Inner method to prepare `Runner` for the specified stage.
 
         Sets `Experiment` initial seed.
         Prepares experiment components with `self._get_experiment_components`.
@@ -277,7 +282,7 @@ class _Runner(ABC):
 
         Args:
             stage (str): stage name of interest,
-                like "pretraining" / "training" / "finetuning" / etc
+                like "pretrain" / "train" / "finetune" / etc
         """
         utils.set_global_seed(self.experiment.initial_seed)
         (
@@ -303,11 +308,12 @@ class _Runner(ABC):
         )
 
     def _prepare_for_epoch(self, stage: str, epoch: int) -> None:
-        """Inner method to prepare `Runner` for the specified stage and epoch.
+        """
+        Inner method to prepare `Runner` for the specified stage and epoch.
 
         Args:
             stage (str): stage name of interest,
-                like "pretraining" / "training" / "finetuning" / etc
+                like "pretrain" / "train" / "finetune" / etc
             epoch (int): epoch index
         """
         pass
@@ -367,7 +373,7 @@ class _Runner(ABC):
         """
         self.state.global_step += self.state.batch_size
         batch = self._batch2device(batch, self.device)
-        self.state.batch_in = batch
+        self.state.input = batch
 
         self._run_event("on_batch_start")
         self._handle_batch(batch=batch)
@@ -405,7 +411,7 @@ class _Runner(ABC):
 
         Args:
             stage (str): stage name of interest,
-                like "pretraining" / "training" / "finetuning" / etc
+                like "pretrain" / "train" / "finetune" / etc
             epoch (int): epoch index
         """
         self._prepare_for_epoch(stage=stage, epoch=epoch)
@@ -433,7 +439,9 @@ class _Runner(ABC):
             state.is_train_loader = loader_name.startswith(LOADER_TRAIN_PREFIX)
             state.is_valid_loader = loader_name.startswith(LOADER_VALID_PREFIX)
             state.is_infer_loader = loader_name.startswith(LOADER_INFER_PREFIX)
-            self.model.train(state.is_train_loader)
+            utils.maybe_recursive_call(
+                self.model, "train", mode=state.is_train_loader,
+            )
 
             if (
                 isinstance(loader.sampler, DistributedSampler)
@@ -456,7 +464,7 @@ class _Runner(ABC):
 
         Args:
             stage (str): stage name of interest,
-                like "pretraining" / "training" / "finetuning" / etc
+                like "pretrain" / "train" / "finetune" / etc
 
         """
         self._prepare_for_stage(stage)
@@ -481,7 +489,8 @@ class _Runner(ABC):
         self._run_event("on_stage_end")
 
     def run_experiment(self, experiment: _Experiment = None) -> "_Runner":
-        """Starts the experiment.
+        """
+        Starts the experiment.
 
         Args:
             experiment (_Experiment): Experiment instance to use for Runner.
@@ -512,20 +521,36 @@ class _Runner(ABC):
         return self
 
 
-class StageBasedRunner(_Runner):
+class _StageBasedRunner(_Runner):
     """
-    Runner that suppose to have constant
-    datasources during training/inference stage.
+    Runner abstraction that suppose to have constant
+    datasources per stage.
     """
 
-    _experiment_fn: Callable = StageBasedExperiment
+    _experiment_fn: Callable = _StageBasedExperiment
     _state_fn: Callable = State
 
     def _init(self):
-        self.experiment: StageBasedExperiment = None
+        """
+        Inner method for `experiment` and `state` linting.
+        """
+        self.experiment: _StageBasedExperiment = None
         self.state: State = None
 
     def _prepare_for_stage(self, stage: str):
+        """
+        Inner method to prepare `Runner` for the specified stage.
+
+        Sets `Experiment` initial seed.
+        Prepares experiment components with `self._get_experiment_components`.
+        Prepares callbacks with `self._get_callbacks`.
+        Prepares `State` with `self._get_state`.
+        Additionally sets `Experiment` datasources for specified stage.
+
+        Args:
+            stage (str): stage name of interest,
+                like "pretrain" / "train" / "finetune" / etc
+        """
         super()._prepare_for_stage(stage=stage)
 
         utils.set_global_seed(self.experiment.initial_seed)
@@ -534,4 +559,4 @@ class StageBasedRunner(_Runner):
         self.state.loaders = loaders
 
 
-__all__ = ["_Runner", "StageBasedRunner"]
+__all__ = ["_Runner", "_StageBasedRunner"]

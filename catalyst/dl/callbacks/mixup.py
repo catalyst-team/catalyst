@@ -62,9 +62,9 @@ class MixupCallback(CriterionCallback):
         if not self.is_needed:
             return super()._compute_loss_value(state, criterion)
 
-        pred = state.batch_out[self.output_key]
-        y_a = state.batch_in[self.input_key]
-        y_b = state.batch_in[self.input_key][self.index]
+        pred = state.output[self.output_key]
+        y_a = state.input[self.input_key]
+        y_b = state.input[self.input_key][self.index]
 
         loss = self.lam * criterion(pred, y_a) + (1 - self.lam) * criterion(
             pred, y_b
@@ -93,13 +93,13 @@ class MixupCallback(CriterionCallback):
         else:
             self.lam = 1
 
-        self.index = torch.randperm(state.batch_in[self.fields[0]].shape[0])
+        self.index = torch.randperm(state.input[self.fields[0]].shape[0])
         self.index.to(state.device)
 
         for f in self.fields:
-            state.batch_in[f] = (
-                self.lam * state.batch_in[f]
-                + (1 - self.lam) * state.batch_in[f][self.index]
+            state.input[f] = (
+                self.lam * state.input[f]
+                + (1 - self.lam) * state.input[f][self.index]
             )
 
 

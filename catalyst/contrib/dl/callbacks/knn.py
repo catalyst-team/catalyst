@@ -170,10 +170,10 @@ class KNNMetricCallback(Callback):
         Args:
             state (State): current state
         """
-        features: torch.Tensor = state.batch_out[
+        features: torch.Tensor = state.output[
             self.features_key
         ].cpu().detach().numpy()
-        targets: torch.Tensor = state.batch_in[
+        targets: torch.Tensor = state.input[
             self.targets_key
         ].cpu().detach().numpy()
 

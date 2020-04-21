@@ -80,8 +80,8 @@ class MulticlassDiceMetricCallback(Callback):
         Args:
             state (State): current state
         """
-        outputs = state.batch_out[self.output_key]
-        targets = state.batch_in[self.input_key]
+        outputs = state.output[self.output_key]
+        targets = state.input[self.input_key]
 
         confusion_matrix = utils.calculate_confusion_matrix_from_tensors(
             outputs, targets

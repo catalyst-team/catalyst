@@ -46,7 +46,7 @@ class OptimizerCallback(Callback):
                 "`loss_key` is now deprecated in favor `metric_key`",
                 stacklevel=2,
             )
-        self.loss_key: str = metric_key or loss_key or "loss"
+        self.metric_key: str = metric_key or loss_key or "loss"
         self.optimizer_key: str = optimizer_key
 
         self.accumulation_steps: int = accumulation_steps
@@ -142,7 +142,7 @@ class OptimizerCallback(Callback):
         if not state.is_train_loader:
             return
 
-        loss = state.batch_metrics[self.loss_key]
+        loss = state.batch_metrics[self.metric_key]
 
         self._accumulation_counter += 1
         need_gradient_step = (

@@ -34,46 +34,68 @@ Getting started
 
 .. code-block:: python
 
+    import os
     import torch
-    from torch.utils.data import DataLoader, TensorDataset
-    from catalyst.dl import SupervisedRunner
+    from torch.nn import functional as F
+    from torch.utils.data import DataLoader
+    from torchvision.datasets import MNIST
+    from torchvision.transforms import ToTensor
+    from catalyst import dl
+    from catalyst.utils import metrics
 
-    # experiment setup
-    logdir = "./logdir"
-    num_epochs = 8
+    model = torch.nn.Linear(28 * 28, 10)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
-    # data
-    num_samples, num_features = int(1e4), int(1e1)
-    X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
-    dataset = TensorDataset(X, y)
-    loader = DataLoader(dataset, batch_size=32, num_workers=1)
-    loaders = {"train": loader, "valid": loader}
+    loaders = {
+        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
+        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+    }
 
-    # model, criterion, optimizer, scheduler
-    model = torch.nn.Linear(num_features, 1)
-    criterion = torch.nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters())
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+    class CustomRunner(dl.Runner):
 
+        def predict_batch(self, batch):
+            # model inference step
+            return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
+
+        def _handle_batch(self, batch):
+            # model train/valid step
+            x, y = batch
+            y_hat = self.model(x.view(x.size(0), -1))
+
+            loss = F.cross_entropy(y_hat, y)
+            accuracy01, accuracy03 = metrics.accuracy(y_hat, y, topk=(1, 3))
+            self.state.batch_metrics.update(
+                {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
+            )
+
+            if self.state.is_train_loader:
+                loss.backward()
+                self.state.optimizer.step()
+                self.state.optimizer.zero_grad()
+
+    runner = CustomRunner()
     # model training
-    runner = SupervisedRunner()
     runner.train(
         model=model,
-        criterion=criterion,
         optimizer=optimizer,
-        scheduler=scheduler,
         loaders=loaders,
-        logdir=logdir,
-        num_epochs=num_epochs,
+        logdir="./logs",
+        num_epochs=5,
         verbose=True,
+        load_best_on_end=True,
     )
+    # model inference
+    for prediction in runner.predict_loader(loader=loaders["valid"]):
+        assert prediction.detach().cpu().numpy().shape[-1] == 10
+    # model tracing
+    traced_model = runner.trace(loader=loaders["valid"])
 
-`Demo with minimal examples for ML, CV, NLP, GANs and RecSys`_
+- `Customizing what happens in train`_
+- `Demo with minimal examples for ML, CV, NLP, GANs and RecSys`_
+- For Catalyst.RL introduction, please follow `Catalyst.RL repo`_.
 
+.. _`Customizing what happens in train`: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb
 .. _Demo with minimal examples for ML, CV, NLP, GANs and RecSys: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb
-
-For Catalyst.RL introduction, please follow `Catalyst.RL repo`_.
-
 .. _Catalyst.RL repo: https://github.com/catalyst-team/catalyst-rl
 
 Overview
@@ -124,7 +146,7 @@ Structure
 - **contrib** - additional modules contributed by Catalyst users.
 - **core** - framework core with main abstractions - Experiment, Runner, Callback and State.
 - **data** - useful tools and scripts for data processing.
-- **DL** – runner for training and inference, all of the classic ML and CV/NLP/RecSys metrics and a variety of callbacks for training, validation and inference of neural networks.
+- **dl** – runner for training and inference, all of the classic ML and CV/NLP/RecSys metrics and a variety of callbacks for training, validation and inference of neural networks.
 - **utils** - typical utils for Deep Learning research.
 
 Tests
