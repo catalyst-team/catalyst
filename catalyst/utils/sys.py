@@ -94,10 +94,10 @@ def list_pip_packages() -> str:
                 .strip()
                 .decode("UTF-8")
             )
-        except Exception as e:
+        except Exception:
             warnings.warn(
                 f"Failed to freeze pip packages. "
-                f"Pip Output: ```{e.output}```."
+                # f"Pip Output: ```{e.output}```."
                 f"Continue experiment without pip packages dumping."
             )
             pass
@@ -126,11 +126,11 @@ def list_conda_packages() -> str:
                     .strip()
                     .decode("UTF-8")
                 )
-            except Exception as e:
+            except Exception:
                 warnings.warn(
                     f"Running from conda env, "
                     f"but failed to list conda packages. "
-                    f"Conda Output: ```{e.output}```."
+                    # f"Conda Output: ```{e.output}```."
                     f"Continue experiment without conda packages dumping."
                 )
                 pass
