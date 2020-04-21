@@ -61,14 +61,12 @@ Getting started
             # model train/valid step
             x, y = batch
             y_hat = self.model(x.view(x.size(0), -1))
+
             loss = F.cross_entropy(y_hat, y)
             accuracy01, accuracy03 = metrics.accuracy(y_hat, y, topk=(1, 3))
-
-            self.state.batch_metrics.update({
-                "loss": loss,
-                "accuracy01": accuracy01,
-                "accuracy03": accuracy03,
-            })
+            self.state.batch_metrics.update(
+                {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
+            )
 
             if self.state.is_train_loader:
                 loss.backward()

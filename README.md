@@ -67,14 +67,12 @@ class CustomRunner(dl.Runner):
         # model train/valid step
         x, y = batch
         y_hat = self.model(x.view(x.size(0), -1))
+
         loss = F.cross_entropy(y_hat, y)
         accuracy01, accuracy03 = metrics.accuracy(y_hat, y, topk=(1, 3))
-
-        self.state.batch_metrics.update({
-            "loss": loss,
-            "accuracy01": accuracy01,
-            "accuracy03": accuracy03,
-        })
+        self.state.batch_metrics.update(
+            {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
+        )
 
         if self.state.is_train_loader:
             loss.backward()
@@ -226,9 +224,9 @@ class CustomRunner(dl.Runner):
     def _handle_batch(self, batch):
         x, y = batch
         y_hat = self.model(x.view(x.size(0), -1))
+
         loss = F.cross_entropy(y_hat, y)
         accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
-
         self.state.batch_metrics = {
             "loss": loss,
             "accuracy01": accuracy01,
@@ -295,11 +293,11 @@ class CustomRunner(dl.Runner):
         x, y = batch
         x = x.view(x.size(0), -1)
         y_hat, x_ = self.model(x)
+
         loss_clf = F.cross_entropy(y_hat, y)
         loss_ae = F.mse_loss(x_, x)
         loss = loss_clf + loss_ae
         accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
-
         self.state.batch_metrics = {
             "loss_clf": loss_clf,
             "loss_ae": loss_ae,
@@ -398,7 +396,6 @@ class CustomRunner(dl.Runner):
         loss_logprob = torch.mean(z_logprob) * 0.01
         loss = loss_clf + loss_ae + loss_kld + loss_logprob
         accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
-
         self.state.batch_metrics = {
             "loss_clf": loss_clf,
             "loss_ae": loss_ae,
@@ -476,7 +473,6 @@ class CustomRunner(dl.Runner):
         loss_iou = 1 - iou
         loss = loss_clf + loss_iou
         accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
-
         self.state.batch_metrics = {
             "loss_clf": loss_clf,
             "loss_iou": loss_iou,
@@ -517,56 +513,59 @@ from torchvision.datasets import MNIST
 from torchvision import transforms
 from catalyst import dl
 
-generator = nn.Sequential(nn.Linear(128, 28 * 28), nn.Tanh())
-discriminator = nn.Sequential(nn.Linear(28 * 28, 1), nn.Sigmoid())
-model = nn.ModuleDict({"generator": generator, "discriminator": discriminator})
+latent_dim = 128
+generator = nn.Sequential(nn.Linear(latent_dim, 28 * 28), nn.Sigmoid())
+discriminator = nn.Linear(28 * 28, 1)
+model = {"generator": generator, "discriminator": discriminator}
 
-generator_optimizer = torch.optim.Adam(
-    generator.parameters(), lr=0.0001, betas=(0.5, 0.999))
-discriminator_optimizer = torch.optim.Adam(
-    discriminator.parameters(), lr=0.0001, betas=(0.5, 0.999))
 optimizer = {
-    "generator": generator_optimizer,
-    "discriminator": discriminator_optimizer,
+    "generator": torch.optim.Adam(generator.parameters(), lr=0.0003, betas=(0.5, 0.999)),
+    "discriminator": torch.optim.Adam(discriminator.parameters(), lr=0.0003, betas=(0.5, 0.999)),
 }
 
 loaders = {
-    "train": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=transforms.ToTensor()), batch_size=32),
-    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=transforms.ToTensor()), batch_size=32),
+    "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=transforms.ToTensor()), batch_size=32),
 }
 
 class CustomRunner(dl.Runner):
 
     def _handle_batch(self, batch):
-        images, _ = batch
-        images = images.view(images.size(0), -1)
-        bs = images.shape[0]
-        z = torch.randn(bs, 128).to(self.device)
-        generated_images = self.model["generator"](z)
+        real_images, _ = batch
+        batch_metrics = {}
         
-        # generator step
-        ## predictions & labels
-        generated_labels = torch.ones(bs, 1).to(self.device)
-        generated_pred = self.model["discriminator"](generated_images)
-
-        ## loss
-        loss_generator = F.binary_cross_entropy(generated_pred, generated_labels)
-        self.state.batch_metrics["loss_generator"] = loss_generator
-
-        # discriminator step
-        ## real
-        images_labels = torch.ones(bs, 1).to(self.device)
-        images_pred = self.model["discriminator"](images)
-        real_loss = F.binary_cross_entropy(images_pred, images_labels)
-
-        ## fake
-        generated_labels_ = torch.zeros(bs, 1).to(self.device)
-        generated_pred_ = self.model["discriminator"](generated_images.detach())
-        fake_loss = F.binary_cross_entropy(generated_pred_, generated_labels_)
-
-        ## loss
-        loss_discriminator = (real_loss + fake_loss) / 2.0
-        self.state.batch_metrics["loss_discriminator"] = loss_discriminator
+        # Sample random points in the latent space
+        batch_size = real_images.shape[0]
+        random_latent_vectors = torch.randn(batch_size, latent_dim).to(self.device)
+        
+        # Decode them to fake images
+        generated_images = self.model["generator"](random_latent_vectors).detach()
+        # Combine them with real images
+        combined_images = torch.cat([generated_images, real_images])
+        
+        # Assemble labels discriminating real from fake images
+        labels = torch.cat([
+            torch.ones((batch_size, 1)), torch.zeros((batch_size, 1))
+        ]).to(self.device)
+        # Add random noise to the labels - important trick!
+        labels += 0.05 * torch.rand(labels.shape).to(self.device)
+        
+        # Train the discriminator
+        predictions = self.model["discriminator"](combined_images)
+        batch_metrics["loss_discriminator"] = \
+          F.binary_cross_entropy_with_logits(predictions, labels)
+        
+        # Sample random points in the latent space
+        random_latent_vectors = torch.randn(batch_size, latent_dim).to(self.device)
+        # Assemble labels that say "all real images"
+        misleading_labels = torch.zeros((batch_size, 1)).to(self.device)
+        
+        # Train the generator
+        generated_images = self.model["generator"](random_latent_vectors)
+        predictions = self.model["discriminator"](generated_images)
+        batch_metrics["loss_generator"] = \
+          F.binary_cross_entropy_with_logits(predictions, misleading_labels)
+        
+        self.state.batch_metrics.update(**batch_metrics)
 
 runner = CustomRunner()
 runner.train(
@@ -576,17 +575,17 @@ runner.train(
     callbacks=[
         dl.OptimizerCallback(
             optimizer_key="generator", 
-            loss_key="loss_generator"
+            metric_key="loss_generator"
         ),
         dl.OptimizerCallback(
             optimizer_key="discriminator", 
-            loss_key="loss_discriminator"
+            metric_key="loss_discriminator"
         ),
     ],
     main_metric="loss_generator",
-    num_epochs=5,
-    logdir="./logs/gan",
+    num_epochs=20,
     verbose=True,
+    logdir="./logs_gan",
 )
 ```
 </p>
@@ -674,11 +673,11 @@ class CustomRunner(dl.Runner):
         x, y = batch
         x = x.view(x.size(0), -1)
         y_hat, x_ = self.model(x)
+
         loss_clf = F.cross_entropy(y_hat, y)
         loss_ae = F.mse_loss(x_, x)
         loss = loss_clf + loss_ae
         accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
-
         self.state.batch_metrics = {
             "loss_clf": loss_clf,
             "loss_ae": loss_ae,

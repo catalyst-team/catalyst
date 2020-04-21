@@ -183,14 +183,14 @@ class MetricAggregationCallback(Callback):
         if mode in ("sum", "mean"):
             if metrics is not None and not isinstance(metrics, list):
                 raise ValueError(
-                    "For `sum` or `mean` mode the loss_keys must be "
+                    "For `sum` or `mean` mode the metrics must be "
                     "None or list or str (not dict)"
                 )
         elif mode in ("weighted_sum", "weighted_mean"):
             if metrics is None or not isinstance(metrics, dict):
                 raise ValueError(
                     "For `weighted_sum` or `weighted_mean` mode "
-                    "the loss_keys must be specified "
+                    "the metrics must be specified "
                     "and must be a dict"
                 )
         else:
