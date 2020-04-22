@@ -278,6 +278,10 @@ def get_network_output(net: Model, *input_shapes_args, **input_shapes_kwargs):
     return output_t
 
 
+def detach(tensor):
+    return tensor.cpu().detach().numpy()
+
+
 __all__ = [
     "get_optimizable_params",
     "get_optimizer_momentum",
@@ -290,4 +294,5 @@ __all__ = [
     "process_model_params",
     "set_requires_grad",
     "get_network_output",
+    "detach",
 ]
