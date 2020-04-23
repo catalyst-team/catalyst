@@ -1,10 +1,9 @@
-from typing import Tuple, Union
+from typing import Callable, Optional, Tuple, Union
 from collections import OrderedDict
 import math
 from pathlib import Path
 
 import cv2
-import numpy as np
 import skimage.io
 
 import torch
@@ -68,6 +67,7 @@ class TiledImageDataset(Dataset):
         tile_size: Union[int, Tuple[int]],
         tile_step: Union[int, Tuple[int]],
         input_key: str = "features",
+        transform: Optional[Callable] = None,
     ):
         """
         Args:
@@ -75,11 +75,13 @@ class TiledImageDataset(Dataset):
             tile_size: tile size
             tile_step: tile step
             input_key: input key in State for obtaining image tiles
+            transform: optional callable of transforms
         """
         super().__init__()
         image = skimage.io.imread(image_path)
         self.image_h, self.image_w, _ = image.shape
         self.input_key = input_key
+        self.transform = transform
 
         if isinstance(tile_size, (tuple, list)):
             tile_size_ndim = len(tile_size)
@@ -153,8 +155,7 @@ class TiledImageDataset(Dataset):
             borderType=cv2.BORDER_CONSTANT,
             value=0,
         )
-        image = np.moveaxis(image, -1, 0)
-        self.image = torch.from_numpy(image).float().contiguous()
+        self.image = image
 
         x_stop = (
             self.image_w + self.margin_left + self.margin_right - overlap_w
@@ -184,10 +185,10 @@ class TiledImageDataset(Dataset):
         """
         x, y = map(lambda coord: coord.item(), self.crops[idx])
 
-        tile = self.image[
-            :, y : y + self.tile_size_h, x : x + self.tile_size_w
-        ]
-        tile = tile.clone()
+        tile = self.image[y : y + self.tile_size_h, x : x + self.tile_size_w]
+
+        if self.transform is not None:
+            tile = self.transform({"image": tile})["image"]
 
         item = OrderedDict(**{self.input_key: tile}, x=x, y=y)
 

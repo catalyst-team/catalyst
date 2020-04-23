@@ -34,7 +34,11 @@ class TiledInferenceExperiment(ConfigExperiment):
 
         dataset = OrderedDict(
             infer=TiledImageDataset(
-                image_path, tile_size, tile_step, input_key=input_key
+                image_path,
+                tile_size,
+                tile_step,
+                input_key=input_key,
+                transform=self.get_transforms(stage=stage, dataset="infer"),
             )
         )
 

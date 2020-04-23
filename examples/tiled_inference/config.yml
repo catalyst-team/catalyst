@@ -25,3 +25,10 @@ stages:
       loader:
         callback: CheckpointCallback
         resume: "./tiled_inference/checkpoint.pth"
+
+    transform_params:
+
+      transform: A.Compose
+      transforms:
+        - transform: A.Normalize
+        - transform: catalyst.ToTensor
