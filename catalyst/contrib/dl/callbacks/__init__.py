@@ -22,6 +22,17 @@ except ImportError as ex:
         raise ex
 
 try:
+    import visdom
+    from .visdom_logger import VisdomLogger
+except ImportError as ex:
+    if os.environ.get("USE_VISDOM", "0") == "1":
+        logger.warning(
+            "visdom not available, to install visdom, "
+            "run `pip install visdom`."
+        )
+        raise ex
+
+try:
     import neptune
     from .neptune import NeptuneLogger
 except ImportError as ex:
