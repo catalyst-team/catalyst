@@ -167,13 +167,16 @@ class TiledImageDataset(Dataset):
         x = torch.arange(0, x_stop, self.tile_step_w)
         y = torch.arange(0, y_stop, self.tile_step_h)
 
-        self.crops = torch.cartesian_prod(x, y)
+        self.crops = [
+            tuple(map(lambda x_: x_.item(), pair))
+            for pair in torch.cartesian_prod(x, y)
+        ]
 
     def __len__(self):
         """
         Returns length of dataset, i.e. number of tiles.
         """
-        return self.crops.size(0)
+        return len(self.crops)
 
     def __getitem__(self, idx: int):
         """
@@ -183,8 +186,7 @@ class TiledImageDataset(Dataset):
         Returns:
             OrderedDict with tile and starting x, y coordinates.
         """
-        x, y = map(lambda coord: coord.item(), self.crops[idx])
-
+        x, y = self.crops[idx]
         tile = self.image[y : y + self.tile_size_h, x : x + self.tile_size_w]
 
         if self.transform is not None:

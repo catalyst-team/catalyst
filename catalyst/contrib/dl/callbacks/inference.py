@@ -169,9 +169,9 @@ class TiledInferenceCallback(Callback):
         else:
             output = F.softmax(output, dim=1)
 
-        items = zip(output, state.batch_in["x"], state.batch_in["y"],)
-
-        for predictions, x_min, y_min in items:
+        for predictions, x_min, y_min in zip(
+            output, state.batch_in["x"], state.batch_in["y"],
+        ):
             x_max = x_min + self.tile_size_w
             y_max = y_min + self.tile_size_h
             crop_slice = (
