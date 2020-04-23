@@ -18,8 +18,8 @@ stages:
       image_path: "./tiled_inference/car_common.jpg"
       save_dir: "./logs/tiled_inference/predictions/"
       num_classes: *num_classes
-      tile_size: [1280, 1920]
-      tile_step: 1
+      tile_size: 512
+      tile_step: 256
 
     callbacks_params:
       loader:
