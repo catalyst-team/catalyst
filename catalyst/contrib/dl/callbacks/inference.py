@@ -64,6 +64,7 @@ class TiledInferenceCallback(Callback):
         num_classes: int,
         tile_size: Union[int, Tuple[int], List[int]],
         tile_step: Union[int, Tuple[int], List[int]],
+        threshold: float = 0.5,
         output_key: str = "logits",
         mask_key: str = "mask",
         class_first: bool = True,
@@ -75,6 +76,7 @@ class TiledInferenceCallback(Callback):
             num_classes: number of channels in output mask.
             tile_size: tile size.
             tile_step: tile step.
+            threshold: threshold for masking
             output_key: key in batch output for obtaining neural net
                 prediction.
             mask_key: key for naming a file with output mask.
@@ -150,6 +152,8 @@ class TiledInferenceCallback(Callback):
         self.norm_mask = torch.zeros((1, storage_h, storage_w))
         self.weights = pyramid_weights(self.tile_size_h, self.tile_size_w)
 
+        self.threshold = threshold
+
     def on_batch_end(self, state: State):
         """
         On batch end update of resulting tensor.
@@ -165,11 +169,7 @@ class TiledInferenceCallback(Callback):
         else:
             output = F.softmax(output, dim=1)
 
-        items = zip(
-            output,
-            state.batch_in["x"],
-            state.batch_in["y"],
-        )
+        items = zip(output, state.batch_in["x"], state.batch_in["y"],)
 
         for predictions, x_min, y_min in items:
             x_max = x_min + self.tile_size_w
@@ -186,23 +186,28 @@ class TiledInferenceCallback(Callback):
         """
         On epoch end post-processing of resulting tensor, then saving it.
         """
-        output = self.storage / self.norm_mask
-        _, h, w = output.shape
+        eps = torch.finfo(self.norm_mask.dtype).eps
+        self.norm_mask = torch.clamp_min(self.norm_mask, eps)
+        probs = self.storage / self.norm_mask
+        _, h, w = probs.shape
         crop_slice = (
             slice(None),
             slice(self.margin_top, h - self.margin_bottom),
             slice(self.margin_left, w - self.margin_right),
         )
-        output = output[crop_slice]
-        mask = torch.argmax(output, dim=0)
+        probs = probs[crop_slice]
+        mask = torch.zeros_like(probs[0], dtype=torch.int32)
+
+        for i, channel in enumerate(probs):
+            mask[channel >= self.threshold] = i + 1
 
         if not self.class_first:
-            output = output.permute(1, 2, 0)
+            probs = probs.permute(1, 2, 0)
             mask = mask.permute(1, 2, 0)
 
-        output = output.cpu().numpy()
+        probs = probs.cpu().numpy()
         mask = mask.cpu().numpy()
 
         self.save_dir.mkdir(parents=True, exist_ok=True)
-        np.save(self.save_dir/f"{self.output_key}.npy", output)
-        np.save(self.save_dir/f"{self.mask_key}.npy", mask)
+        np.save(self.save_dir / f"probs.npy", probs)
+        np.save(self.save_dir / f"mask.npy", mask)

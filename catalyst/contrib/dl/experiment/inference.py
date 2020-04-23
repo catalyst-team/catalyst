@@ -56,6 +56,7 @@ class TiledInferenceExperiment(ConfigExperiment):
         num_classes = data_params["num_classes"]
         tile_size = data_params["tile_size"]
         tile_step = data_params["tile_step"]
+        threshold = data_params.get("threshold", 0.5)
         output_key = data_params.get("output_key", "logits")
         mask_key = data_params.get("mask_key", "mask")
 
@@ -68,6 +69,7 @@ class TiledInferenceExperiment(ConfigExperiment):
             num_classes,
             tile_size,
             tile_step,
+            threshold=threshold,
             output_key=output_key,
             mask_key=mask_key,
         )
