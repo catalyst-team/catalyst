@@ -21,7 +21,7 @@ stages:
       tile_size: [1280, 1920]
       tile_step: 1
 
-    callback_params:
+    callbacks_params:
       loader:
         callback: CheckpointCallback
         resume: "./tiled_inference/checkpoint.pth"
