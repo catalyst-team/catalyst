@@ -1,9 +1,13 @@
-from typing import Dict, List
+from typing import Dict, List, Union
+from collections import Counter
+import logging
+import queue
+import threading
+import time
 
-from .alchemy import AlchemyLogger
 from alchemy.logger import Logger
+import visdom
 
-from catalyst import utils
 from catalyst.core import (
     Callback,
     CallbackNode,
@@ -12,19 +16,145 @@ from catalyst.core import (
     State,
 )
 
-from collections import Counter
-import logging
-import numpy as np
-import time
-import threading
-from typing import Union
-import visdom
-import queue
-
 
 class Visdom(Logger):
+    """Logger, translates ``state.*_metrics`` to Visdom.
+    Read about Visdom here https://github.com/facebookresearch/visdom
+
+    Example:
+        .. code-block:: python
+
+            VisdomLogger(
+                env_name="...", # enviroment name
+                server="localhost", # visdom server name
+                port=8097, # visdom server port
+            )
+    """
+
+    def __init__(
+        self,
+        env_name: str,
+        batch_size: int = None,
+        server: str = "localhost",
+        port: int = 8097,
+        log_to_filename: str = None,
+        username: str = None,
+        password: str = None,
+    ):
+        """
+        Args:
+            env_name (str): Environment name to plot to when
+                no env is provided (default: main)
+            batch_size (int): batch_size for log_on_batch_end
+            server (str): the hostname of your
+                visdom server (default: 'http://localhost')
+            port (str): the port for your visdom server (default: 8097)
+            log_to_filename (str): logs per-epoch metrics if set True
+            username (str): username to use for authentication,
+                if server started with -enable_login (default: None)
+            password (str): password to use for authentication,
+                if server started with -enable_login (default: None)
+        """
+        self._batch_size = max(int(batch_size or int(1e3)), 1)
+        self._counters = Counter()
+        self._queue = queue.Queue()
+        self._thread = threading.Thread(target=self._run_worker)
+        self._thread.start()
+        try:
+            self.viz = visdom.Visdom(
+                server=server,
+                port=port,
+                env=env_name,
+                log_to_filename=log_to_filename,
+                username=username,
+                password=password,
+            )
+            startup_sec = 1
+            while not self.viz.check_connection() and startup_sec > 0:
+                time.sleep(0.1)
+                startup_sec -= 0.1
+            assert (
+                self.viz.check_connection()
+            ), "No connection could be formed quickly"
+        except BaseException as e:
+            logging.error(
+                "The visdom experienced an exception while"
+                + "running: {}".format(repr(e))
+            )
+
+    def _run_worker(self):
+        """Runs worker to gather batch statistics."""
+        running = True
+        while running:
+            batch = []
+            try:
+                while len(batch) < self._batch_size:
+                    if batch:
+                        msg = self._queue.get_nowait()
+                    else:
+                        msg = self._queue.get()
+                    if msg is None:
+                        running = False
+                        break
+                    batch.append(msg)
+            except queue.Empty:
+                pass
+            if batch:
+                self.plot_lines(batch)
+
+    def plot_lines(self, batch: List[Dict]):
+        """Plots vales from batch statistics.
+
+        Args:
+            batch (List[Dict]): List with dictionaries from log_scalar
+        """
+        for msg in batch:
+            opts = {
+                "xlabel": "epochs",
+                "legend": ["train", "valid"],
+                "ylabel": msg["name"],
+                "title": msg["name"],
+            }
+            self.viz.line(
+                X=[self._counters[msg["full_name"]]],
+                Y=[msg["value"]],
+                win=msg["name"],
+                name=msg["mode"],
+                update="append",
+                opts=opts,
+            )
+
+    def log_scalar(
+        self, name: str, mode: str, full_name: str, value: Union[int, float],
+    ):
+        """Logs scalar.
+
+        Args:
+            name (str): Environment name to plot to when
+                no env is provided (default: main)
+            mode (str): Metric's mode (example: train)
+            full_name (str): Full metric name
+            value (Union[int, float]): Metric's value
+        """
+        self._queue.put(
+            {
+                "name": name,
+                "full_name": full_name,
+                "mode": mode,
+                "value": value,
+                "step": self._counters[full_name],
+            }
+        )
+        self._counters[full_name] += 1
+
+    def close(self):
+        """Overwrite the Alchemy's logger close."""
+        return
+
+
+class VisdomLogger(Callback):
     """Logger callback, translates ``state.*_metrics`` to Visdom.
-    Read about Vinsdom here https://github.com/facebookresearch/visdom
+    Read about Visdom here https://github.com/facebookresearch/visdom
 
     Example:
         .. code-block:: python
@@ -49,102 +179,10 @@ class Visdom(Logger):
                     )
                 }
             )
-
-    Powered by Catalyst.Ecosystem.
     """
 
     def __init__(
         self,
-        env_name: str,
-        batch_size: int = None,
-        server: str = "localhost",
-        port: int = 8097,
-        log_to_filename: str = None,
-        username: str = None,
-        password: str = None
-    ):
-        self._batch_size = max(int(batch_size or int(1e3)), 1)
-        self._counters = Counter()
-        self._queue = queue.Queue()
-        self._thread = threading.Thread(target=self._run_worker)
-        self._thread.start()
-        try:
-            self.viz = visdom.Visdom(
-                server=server,
-                port=port,
-                env=env_name,
-                log_to_filename=log_to_filename,
-                username=username,
-                password=password
-            )
-            startup_sec = 1
-            while not self.viz.check_connection() and startup_sec > 0:
-                time.sleep(0.1)
-                startup_sec -= 0.1
-            assert self.viz.check_connection(), "No connection could be formed quickly"
-        except BaseException as e:
-            logging.error(
-                "The visdom experienced an exception while"
-                + "running: {}".format(repr(e))
-            )
-
-    def _run_worker(self):
-        running = True
-        while running:
-            batch = []
-            try:
-                while len(batch) < self._batch_size:
-                    if batch:
-                        msg = self._queue.get_nowait()
-                    else:
-                        msg = self._queue.get()
-                    if msg is None:
-                        running = False
-                        break
-                    batch.append(msg)
-            except queue.Empty:
-                pass
-            if batch:
-                self.plot_lines(batch)
-
-    def plot_lines(self, batch):
-        for msg in batch:
-            opts = dict(
-                xlabel="epochs",
-                legend=['train', 'valid'],
-                ylabel=msg['name'],
-                title=msg['name'])
-            self.viz.line(
-                X=[self._counters[msg['full_name']]],
-                Y=[msg['value']],
-                win=msg['name'],
-                name=msg['mode'],
-                update='append', opts=opts)
-
-    def log_scalar(
-        self,
-        name: str,
-        mode: str,
-        full_name: str,
-        value: Union[int, float],
-    ):
-        self._queue.put(
-            dict(
-                name=name,
-                full_name=full_name,
-                mode=mode,
-                value=value,
-                step=self._counters[full_name],
-            )
-        )
-        self._counters[full_name] += 1
-
-    def close(self):
-        return
-
-
-class VisdomLogger(Callback):
-    def __init__(self,
         metric_names: List[str] = None,
         log_on_batch_end: bool = False,
         log_on_epoch_end: bool = True,
@@ -182,6 +220,14 @@ class VisdomLogger(Callback):
     def _log_metrics(
         self, metrics: Dict[str, float], step: int, mode: str, suffix=""
     ):
+        """Translate batch metrics to Visdom logger.
+
+        Args:
+            metrics (Dict[str, float]): Metrics from Catalyst
+            step (int): Iteration step from Catalyst
+            mode (str): Metric's mode (example: train)
+            suffix (str): Additional suffix
+        """
         if self.metrics_to_log is None:
             metrics_to_log = sorted(metrics.keys())
         else:
@@ -190,8 +236,8 @@ class VisdomLogger(Callback):
         for name in metrics_to_log:
             if name in metrics:
                 # Renaming catalyst metric names to visdom formatting
-                real_mode = name.split('_')[0]
-                splitted_name = name.split(real_mode + '_')[-1]
+                real_mode = name.split("_")[0]
+                splitted_name = name.split(real_mode + "_")[-1]
                 metric_name = f"{splitted_name}{suffix}"
                 full_metric_name = f"{real_mode}/{metric_name}"
                 metric_value = metrics[name]
