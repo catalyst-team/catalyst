@@ -279,7 +279,7 @@ def get_network_output(net: Model, *input_shapes_args, **input_shapes_kwargs):
 
 
 def detach(tensor: torch.Tensor) -> np.ndarray:
-    """Detach a pytorch tensor from graph and 
+    """Detach a pytorch tensor from graph and
     convert it to numpy array
 
     Args:
