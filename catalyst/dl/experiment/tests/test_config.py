@@ -46,16 +46,16 @@ class SomeOptimizer(torch.nn.Module):
     """Dummy test torch optimizer."""
 
     def __init__(self, **kwargs):
+        """Dummy optimizer"""
         super().__init__()
-        pass
 
 
 class SomeScheduler(torch.nn.Module):
     """Dummy test torch scheduler."""
 
     def __init__(self, **kwargs):
+        """Dummy scheduler"""
         super().__init__()
-        pass
 
 
 registry.MODELS.add(SomeModel)
