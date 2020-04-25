@@ -15,11 +15,11 @@ stages:
     data_params:
       batch_size: 16
       num_workers: 4
-      image_path: "./tiled_inference/car_common.jpg"
+      image_path: "./tiled_inference/car_8k.jpg"
       save_dir: "./logs/tiled_inference/predictions/"
       num_classes: *num_classes
-      tile_size: 512
-      tile_step: 256
+      tile_size: 448
+      tile_step: 224
 
     callbacks_params:
       loader:
