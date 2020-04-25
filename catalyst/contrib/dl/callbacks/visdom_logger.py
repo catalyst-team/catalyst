@@ -147,10 +147,6 @@ class Visdom(Logger):
         )
         self._counters[full_name] += 1
 
-    def close(self):
-        """Overwrite the Alchemy's logger close."""
-        return
-
 
 class VisdomLogger(Callback):
     """Logger callback, translates ``state.*_metrics`` to Visdom.
