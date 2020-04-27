@@ -5,7 +5,7 @@ set -eo pipefail -v
 
 
 bash ./teamcity/dl_.sh
-pip install torch==1.0.0 torchvision==0.2.2
+pip install torch==1.0.0 torchvision==0.2.2 tqdm>=4.33.0
 # bash ./teamcity/dl_apex.sh
 
 ###################################  CPU ######################################
