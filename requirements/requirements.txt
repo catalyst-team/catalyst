@@ -1,6 +1,6 @@
 # Framework must-haves
 numpy>=1.16.4
-torch>=1.0.0
+torch>=1.1.0
 tqdm>=4.33.0
 PyYAML
 
@@ -18,7 +18,7 @@ crc32c>=1.7
 plotly>=4.1.0
 
 # cv -> catalyst[cv]
-torchvision>=0.2.1
+torchvision>=0.3.0
 Pillow
 imageio
 opencv-python
