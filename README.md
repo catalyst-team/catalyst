@@ -4,12 +4,6 @@
 
 **Accelerated DL R&D**
 
-![torch 1.1](https://github.com/catalyst-team/catalyst/workflows/torch%201.1/badge.svg)
-![torch 1.2](https://github.com/catalyst-team/catalyst/workflows/torch%201.2/badge.svg)
-![torch 1.3](https://github.com/catalyst-team/catalyst/workflows/torch%201.3/badge.svg)
-![torch 1.4](https://github.com/catalyst-team/catalyst/workflows/torch%201.4/badge.svg)
-![torch 1.5](https://github.com/catalyst-team/catalyst/workflows/torch%201.5/badge.svg)
-
 ![CI_status_torch10](https://github.com/catalyst-team/catalyst/workflows/codestyle/badge.svg)
 [![Build Status](http://66.248.205.49:8111/app/rest/builds/buildType:id:Catalyst_Deploy/statusIcon.svg)](http://66.248.205.49:8111/project.html?projectId=Catalyst&tab=projectOverview&guest=1)
 [![CodeFactor](https://www.codefactor.io/repository/github/catalyst-team/catalyst/badge)](https://www.codefactor.io/repository/github/catalyst-team/catalyst)
@@ -21,6 +15,13 @@
 [![Slack](https://img.shields.io/badge/Catalyst-slack-success)](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw)
 [![Github contributors](https://img.shields.io/github/contributors/catalyst-team/catalyst.svg?logo=github&logoColor=white)](https://github.com/catalyst-team/catalyst/graphs/contributors)
 [![PyPI Status](https://pepy.tech/badge/catalyst)](https://pepy.tech/project/catalyst)
+
+![torch 1.1](https://github.com/catalyst-team/catalyst/workflows/torch%201.1/badge.svg)
+![torch 1.2](https://github.com/catalyst-team/catalyst/workflows/torch%201.2/badge.svg)
+![torch 1.3](https://github.com/catalyst-team/catalyst/workflows/torch%201.3/badge.svg)
+![torch 1.4](https://github.com/catalyst-team/catalyst/workflows/torch%201.4/badge.svg)
+![torch 1.5](https://github.com/catalyst-team/catalyst/workflows/torch%201.5/badge.svg)
+
 
 </div>
 
