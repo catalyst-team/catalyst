@@ -4,16 +4,23 @@
 
 **Accelerated DL R&D**
 
+![torch 1.1](https://github.com/catalyst-team/catalyst/workflows/torch%201.1/badge.svg)
+![torch 1.2](https://github.com/catalyst-team/catalyst/workflows/torch%201.2/badge.svg)
+![torch 1.3](https://github.com/catalyst-team/catalyst/workflows/torch%201.3/badge.svg)
+![torch 1.4](https://github.com/catalyst-team/catalyst/workflows/torch%201.4/badge.svg)
+![torch 1.5](https://github.com/catalyst-team/catalyst/workflows/torch%201.5/badge.svg)
+
+![CI_status_torch10](https://github.com/catalyst-team/catalyst/workflows/codestyle/badge.svg)
 [![Build Status](http://66.248.205.49:8111/app/rest/builds/buildType:id:Catalyst_Deploy/statusIcon.svg)](http://66.248.205.49:8111/project.html?projectId=Catalyst&tab=projectOverview&guest=1)
 [![CodeFactor](https://www.codefactor.io/repository/github/catalyst-team/catalyst/badge)](https://www.codefactor.io/repository/github/catalyst-team/catalyst)
 [![Pipi version](https://img.shields.io/pypi/v/catalyst.svg)](https://pypi.org/project/catalyst/)
 [![Docs](https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v)](https://catalyst-team.github.io/catalyst/index.html)
-[![PyPI Status](https://pepy.tech/badge/catalyst)](https://pepy.tech/project/catalyst)
 
 [![Twitter](https://img.shields.io/badge/news-on%20twitter-499feb)](https://twitter.com/catalyst_core)
 [![Telegram](https://img.shields.io/badge/channel-on%20telegram-blue)](https://t.me/catalyst_team)
 [![Slack](https://img.shields.io/badge/Catalyst-slack-success)](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw)
 [![Github contributors](https://img.shields.io/github/contributors/catalyst-team/catalyst.svg?logo=github&logoColor=white)](https://github.com/catalyst-team/catalyst/graphs/contributors)
+[![PyPI Status](https://pepy.tech/badge/catalyst)](https://pepy.tech/project/catalyst)
 
 </div>
 
