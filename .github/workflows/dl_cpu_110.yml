@@ -1,8 +1,8 @@
-name: dl_cpu_torch_110
+name: torch 1.1
 on: [pull_request]
 
 jobs:
-   check-examples-with-pytorch-1-1:
+   check-examples:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
