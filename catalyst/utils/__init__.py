@@ -84,4 +84,5 @@ from .torch import (
     set_optimizer_momentum,
     set_requires_grad,
     get_network_output,
+    detach,
 )
