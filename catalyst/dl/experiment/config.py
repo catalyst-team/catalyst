@@ -474,7 +474,7 @@ class ConfigExperiment(_StageBasedExperiment):
 
             if self.stages_config[stage].get("criterion_params", {}):
                 default_callbacks.append(("_criterion", CriterionCallback))
-            if self.stages_config[stage].get("optimier_params", {}):
+            if self.stages_config[stage].get("optimizer_params", {}):
                 default_callbacks.append(("_optimizer", OptimizerCallback))
             if self.stages_config[stage].get("scheduler_params", {}):
                 default_callbacks.append(("_scheduler", SchedulerCallback))
