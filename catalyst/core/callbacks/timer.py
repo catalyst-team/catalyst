@@ -2,6 +2,9 @@ from catalyst.core import Callback, CallbackNode, CallbackOrder, State
 from catalyst.utils.tools.time_manager import TimeManager
 
 
+EPS = 1e-8
+
+
 class TimerCallback(Callback):
     """Logs pipeline execution time."""
 
@@ -48,7 +51,7 @@ class TimerCallback(Callback):
 
         # @TODO: just a trick
         self.timer.elapsed["_timer/_fps"] = (
-            state.batch_size / (self.timer.elapsed["_timer/batch_time"] + 1e-8)
+            state.batch_size / (self.timer.elapsed["_timer/batch_time"] + EPS)
         )
         for key, value in self.timer.elapsed.items():
             state.batch_metrics[key] = value
