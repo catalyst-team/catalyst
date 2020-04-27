@@ -1,7 +1,6 @@
 from catalyst.core import Callback, CallbackNode, CallbackOrder, State
 from catalyst.utils.tools.time_manager import TimeManager
 
-
 EPS = 1e-8
 
 
