@@ -16,12 +16,11 @@
 [![Github contributors](https://img.shields.io/github/contributors/catalyst-team/catalyst.svg?logo=github&logoColor=white)](https://github.com/catalyst-team/catalyst/graphs/contributors)
 [![PyPI Status](https://pepy.tech/badge/catalyst)](https://pepy.tech/project/catalyst)
 
-
-![torch 1.1](https://github.com/catalyst-team/catalyst/workflows/torch%201.1/badge.svg?branch=master)
-![torch 1.2](https://github.com/catalyst-team/catalyst/workflows/torch%201.2/badge.svg?branch=master)
-![torch 1.3](https://github.com/catalyst-team/catalyst/workflows/torch%201.3/badge.svg?branch=master)
-![torch 1.4](https://github.com/catalyst-team/catalyst/workflows/torch%201.4/badge.svg?branch=master)
-![torch 1.5](https://github.com/catalyst-team/catalyst/workflows/torch%201.5/badge.svg?branch=master)
+![torch 1.1](https://github.com/catalyst-team/catalyst/workflows/torch%201.1/badge.svg?branch=master&event=push)
+![torch 1.2](https://github.com/catalyst-team/catalyst/workflows/torch%201.2/badge.svg?branch=master&event=push)
+![torch 1.3](https://github.com/catalyst-team/catalyst/workflows/torch%201.3/badge.svg?branch=master&event=push)
+![torch 1.4](https://github.com/catalyst-team/catalyst/workflows/torch%201.4/badge.svg?branch=master&event=push)
+![torch 1.5](https://github.com/catalyst-team/catalyst/workflows/torch%201.5/badge.svg?branch=master&event=push)
 
 </div>
 
