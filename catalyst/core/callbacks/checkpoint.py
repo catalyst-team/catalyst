@@ -2,9 +2,10 @@ from typing import Dict, Union
 from collections import OrderedDict
 import os
 from pathlib import Path
-
 import shutil
+
 import torch
+
 from catalyst.core import Callback, CallbackNode, CallbackOrder, State, utils
 
 
@@ -127,7 +128,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         """
         Args:
             save_n_best (int): number of best checkpoint to keep,
-                if ``0`` then  store only last state of model and 
+                if ``0`` then  store only last state of model and
                 ``load_on_stage_end`` should be one of
                 ``last`` or ``last_full``.
             resume (str): path to checkpoint to load
@@ -139,9 +140,9 @@ class CheckpointCallback(BaseCheckpointCallback):
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
             load_on_stage_end (str): name of the model to load
                 at the end of the stage.
-                You can use ``best``, ``best_full`` to load the best model according
-                to validation metrics, or ``last`` ``last_full`` to use just the last one
-                (default behaviour).
+                You can use ``best``, ``best_full`` (default)
+                to load the best model according to validation metrics,
+                or ``last`` ``last_full`` to use just the last one.
         """
         super().__init__(metrics_filename)
         assert load_on_stage_end in [
@@ -172,8 +173,8 @@ class CheckpointCallback(BaseCheckpointCallback):
         Create suffix for checkpoint file name.
 
         Args:
-            checkpoint (dict): checkpoint dict, 
-                should contain 'stage_name' and 'epoch'.
+            checkpoint (dict): checkpoint dict,
+                should contain ``stage_name`` and ``epoch``.
         """
         result = f"{checkpoint['stage_name']}.{checkpoint['epoch']}"
         return result
@@ -190,10 +191,17 @@ class CheckpointCallback(BaseCheckpointCallback):
         ]
         metrics = []
         if self.save_n_best > 0:
-            metrics = [
-                ("best", top_best_checkpoints[0][1]),  # best validation metric
-                ("last", last_valid_metrics),
-            ] + top_best_checkpoints + all_epochs_metrics
+            metrics = (
+                [
+                    (
+                        "best",
+                        top_best_checkpoints[0][1],
+                    ),  # best validation metric
+                    ("last", last_valid_metrics),
+                ]
+                + top_best_checkpoints
+                + all_epochs_metrics
+            )
         else:
             metrics = [("last", last_valid_metrics)]
         self.metrics = OrderedDict(metrics)
@@ -260,7 +268,8 @@ class CheckpointCallback(BaseCheckpointCallback):
     def on_stage_start(self, state: State) -> None:
         """
         Setup model for stage.
-        If specified ``resume`` or ``resume`` and ``resume_dir`` - load checkpoint.
+        If specified ``resume`` or
+        ``resume`` and ``resume_dir`` - load checkpoint.
 
         Args:
             state (State): training state
@@ -315,7 +324,10 @@ class CheckpointCallback(BaseCheckpointCallback):
             last_state_filename = f"{state.logdir}/checkpoints/last_full.pth"
             torch.save(checkpoint, last_state_filename)
             # make duplicate for the next state
-            shutil.copyfile(last_state_filename, f"{state.logdir}/checkpoints/best_full.pth")
+            shutil.copyfile(
+                last_state_filename,
+                f"{state.logdir}/checkpoints/best_full.pth",
+            )
             # simple checkpoint
             exclude = ["criterion", "optimizer", "scheduler"]
             checkpoint = {
@@ -326,7 +338,9 @@ class CheckpointCallback(BaseCheckpointCallback):
             last_state_filename = f"{state.logdir}/checkpoints/last.pth"
             torch.save(checkpoint, last_state_filename)
             # duplicate for the next state
-            shutil.copyfile(last_state_filename, f"{state.logdir}/checkpoints/best.pth")
+            shutil.copyfile(
+                last_state_filename, f"{state.logdir}/checkpoints/best.pth"
+            )
             # save metrics
             metrics = self.process_metrics(checkpoint["valid_metrics"])
             self.save_metric(state.logdir, metrics)
@@ -342,7 +356,10 @@ class CheckpointCallback(BaseCheckpointCallback):
             )
             print(top_best_metrics_str)
 
-        if self.load_on_stage_end in ["best", "best_full"] and self.save_n_best > 0:
+        if (
+            self.load_on_stage_end in ["best", "best_full"]
+            and self.save_n_best > 0
+        ):
             resume = f"{state.logdir}/checkpoints/{self.load_on_stage_end}.pth"
             print(f"Loading {self.load_on_stage_end} model from {resume}")
             _load_checkpoint(
@@ -372,9 +389,9 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
             load_on_stage_end (str): name of the model to load
                 at the end of the stage.
-                You can use ``best``, ``best_full`` to load the best model according
-                to validation metrics, or ``last`` ``last_full`` to use just the last one
-                (default behaviour).
+                You can use ``best``, ``best_full`` (default)
+                to load the best model according to validation metrics,
+                or ``last`` ``last_full`` to use just the last one.
         """
         super().__init__(metrics_filename)
         self.save_n_last = save_n_last
@@ -460,6 +477,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
             )
 
     def on_stage_end(self, state: State):
+        """@TODO: Docs. Contribution is welcome."""
         if self.load_on_stage_end in ["best", "best_full"]:
             resume = f"{state.logdir}/checkpoints/{self.load_on_stage_end}.pth"
             print(f"Loading {self.load_on_stage_end} model from {resume}")
