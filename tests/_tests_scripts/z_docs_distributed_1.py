@@ -1,13 +1,18 @@
 # alias for https://catalyst-team.github.io/catalyst/info/distributed.html#stage-1-i-just-want-distributed # noqa: E501 W505
+# flake8: noqa
+# isort:skip_file
+import os
+import sys
+
+
+if os.getenv("USE_APEX", "0") != "0" or os.getenv("USE_DDP", "0") != "1":
+    sys.exit()
+
 
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
 from catalyst.dl import SupervisedRunner
-
-# experiment setup
-logdir = "./logdir"
-num_epochs = 8
 
 # data
 num_samples, num_features = int(1e4), int(1e1)
@@ -30,8 +35,8 @@ runner.train(
     optimizer=optimizer,
     scheduler=scheduler,
     loaders=loaders,
-    logdir=logdir,
-    num_epochs=num_epochs,
+    logdir="./logs/example_1",
+    num_epochs=8,
     verbose=True,
-    check=True,
+    distributed=True,
 )

@@ -43,20 +43,26 @@ class CustomRunner(dl.Runner):
             self.state.optimizer.zero_grad()
 
 
-runner = CustomRunner()
-# model training
-runner.train(
-    model=model,
-    optimizer=optimizer,
-    loaders=loaders,
-    logdir="./logs",
-    num_epochs=5,
-    verbose=True,
-    load_best_on_end=True,
-    check=True,
-)
-# model inference
-for prediction in runner.predict_loader(loader=loaders["train"]):
-    assert prediction.detach().cpu().numpy().shape[-1] == 10
-# model tracing
-traced_model = runner.trace(loader=loaders["train"])
+def main():
+    runner = CustomRunner()
+    # model training
+    runner.train(
+        model=model,
+        optimizer=optimizer,
+        loaders=loaders,
+        logdir="./logs",
+        num_epochs=5,
+        verbose=True,
+        load_best_on_end=True,
+        check=True,
+    )
+    # model inference
+    for prediction in runner.predict_loader(loader=loaders["train"]):
+        assert prediction.detach().cpu().numpy().shape[-1] == 10
+    # model tracing
+    traced_model = runner.trace(loader=loaders["train"])
+
+
+if __name__ == "__main__":
+    if os.getenv("USE_APEX", "0") == "0" and os.getenv("USE_DDP", "0") == "0":
+        main()
