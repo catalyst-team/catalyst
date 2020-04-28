@@ -361,8 +361,8 @@
 <span class="sd">            state (State): current state</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_to_stats</span><span class="p">(</span>
-            <span class="n">state</span><span class="o">.</span><span class="n">batch_out</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
-            <span class="n">state</span><span class="o">.</span><span class="n">batch_in</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="ConfusionMatrixCallback.on_loader_end"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.confusion_matrix.ConfusionMatrixCallback.on_loader_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>

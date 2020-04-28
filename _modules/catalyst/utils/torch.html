@@ -535,6 +535,19 @@
     <span class="k">return</span> <span class="n">output_t</span></div>
 
 
+<div class="viewcode-block" id="detach"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.detach">[docs]</a><span class="k">def</span> <span class="nf">detach</span><span class="p">(</span><span class="n">tensor</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Detach a pytorch tensor from graph and</span>
+<span class="sd">    convert it to numpy array</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tensor: PyTorch tensor</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy ndarray</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">tensor</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span></div>
+
+
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;get_optimizable_params&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_optimizer_momentum&quot;</span><span class="p">,</span>
@@ -547,6 +560,7 @@
     <span class="s2">&quot;process_model_params&quot;</span><span class="p">,</span>
     <span class="s2">&quot;set_requires_grad&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_network_output&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;detach&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

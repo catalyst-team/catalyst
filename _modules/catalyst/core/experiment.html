@@ -378,7 +378,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): stage name of interest</span>
-<span class="sd">                like &quot;pretraining&quot; / &quot;training&quot; / &quot;finetuning&quot; / etc</span>
+<span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dict: State parameters for a given stage.</span>
@@ -401,7 +401,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): stage name of interest</span>
-<span class="sd">                like &quot;pretraining&quot; / &quot;training&quot; / &quot;finetuning&quot; / etc</span>
+<span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Model: model for a given stage.</span>
@@ -420,7 +420,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): stage name of interest</span>
-<span class="sd">                like &quot;pretraining&quot; / &quot;training&quot; / &quot;finetuning&quot; / etc</span>
+<span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Criterion: criterion for a given stage.</span>
@@ -438,7 +438,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): stage name of interest</span>
-<span class="sd">                like &quot;pretraining&quot; / &quot;training&quot; / &quot;finetuning&quot; / etc</span>
+<span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 <span class="sd">            model (Model): model to optimize with stage optimizer</span>
 
 <span class="sd">        Returns:</span>
@@ -456,7 +456,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): stage name of interest</span>
-<span class="sd">                like &quot;pretraining&quot; / &quot;training&quot; / &quot;finetuning&quot; / etc</span>
+<span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 <span class="sd">            optimizer (Optimizer): optimizer to schedule with stage scheduler</span>
 
 <span class="sd">        Returns:</span>
@@ -480,7 +480,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            model (Model): model to optimize with stage optimizer</span>
 <span class="sd">            stage (str): stage name of interest,</span>
-<span class="sd">                like &quot;pretraining&quot; / &quot;training&quot; / &quot;finetuning&quot; / etc</span>
+<span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            tuple: criterion, optimizer, scheduler for a given stage and model</span>
@@ -495,7 +495,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): stage name of interest,</span>
-<span class="sd">                like &quot;pretraining&quot; / &quot;training&quot; / &quot;finetuning&quot; / etc</span>
+<span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 <span class="sd">            dataset (str): dataset name of interest,</span>
 <span class="sd">                like &quot;train&quot; / &quot;valid&quot; / &quot;infer&quot;</span>
 
@@ -523,7 +523,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): stage name of interest,</span>
-<span class="sd">                like &quot;pretraining&quot; / &quot;training&quot; / &quot;finetuning&quot; / etc</span>
+<span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 <span class="sd">            epoch (int): epoch index</span>
 <span class="sd">            **kwargs (dict): additional parameters to use during</span>
 <span class="sd">                dataset creation</span>
@@ -567,7 +567,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): stage name of interest,</span>
-<span class="sd">                like &quot;pretraining&quot; / &quot;training&quot; / &quot;finetuning&quot; / etc</span>
+<span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 <span class="sd">            epoch (int): epoch index</span>
 <span class="sd">            **kwargs (dict): additional parameters to use during</span>
 <span class="sd">                dataset creation</span>
@@ -595,7 +595,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): stage name of interest</span>
-<span class="sd">                like &quot;pretraining&quot; / &quot;training&quot; / &quot;finetuning&quot; / etc</span>
+<span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            OrderedDict[str, Callback]: Ordered dictionary</span>
@@ -612,13 +612,13 @@
         <span class="k">pass</span></div></div>
 
 
-<div class="viewcode-block" id="StageBasedExperiment"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment.StageBasedExperiment">[docs]</a><span class="k">class</span> <span class="nc">StageBasedExperiment</span><span class="p">(</span><span class="n">_Experiment</span><span class="p">):</span>
+<div class="viewcode-block" id="_StageBasedExperiment"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment._StageBasedExperiment">[docs]</a><span class="k">class</span> <span class="nc">_StageBasedExperiment</span><span class="p">(</span><span class="n">_Experiment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Experiment that provides constant</span>
 <span class="sd">    datasources during training/inference stage.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="StageBasedExperiment.get_native_batch"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment.StageBasedExperiment.get_native_batch">[docs]</a>    <span class="k">def</span> <span class="nf">get_native_batch</span><span class="p">(</span>
+<div class="viewcode-block" id="_StageBasedExperiment.get_native_batch"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment._StageBasedExperiment.get_native_batch">[docs]</a>    <span class="k">def</span> <span class="nf">get_native_batch</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">loader</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">data_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -646,7 +646,7 @@
         <span class="k">return</span> <span class="n">sample</span></div></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_Experiment&quot;</span><span class="p">,</span> <span class="s2">&quot;StageBasedExperiment&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_Experiment&quot;</span><span class="p">,</span> <span class="s2">&quot;_StageBasedExperiment&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

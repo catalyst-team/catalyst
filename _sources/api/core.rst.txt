@@ -22,6 +22,11 @@ Experiment
     :undoc-members:
     :show-inheritance:
 
+.. autoclass:: catalyst.core.experiment._StageBasedExperiment
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 .. automodule:: catalyst.core.experiment
     :members:
     :undoc-members:
@@ -30,6 +35,11 @@ Experiment
 Runner
 ~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.core.runner._Runner
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. autoclass:: catalyst.core.runner._StageBasedRunner
     :members:
     :undoc-members:
     :show-inheritance:

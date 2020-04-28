@@ -568,6 +568,10 @@
 </li>
       <li><a href="api/core.html#catalyst.core.runner._Runner">_Runner (class in catalyst.core.runner)</a>
 </li>
+      <li><a href="api/core.html#catalyst.core.experiment._StageBasedExperiment">_StageBasedExperiment (class in catalyst.core.experiment)</a>
+</li>
+      <li><a href="api/core.html#catalyst.core.runner._StageBasedRunner">_StageBasedRunner (class in catalyst.core.runner)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -652,10 +656,14 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.schedulers.base.BaseScheduler">BaseScheduler (class in catalyst.contrib.nn.schedulers.base)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.nn.schedulers.base.BatchScheduler">BatchScheduler (class in catalyst.contrib.nn.schedulers.base)</a>
+      <li><a href="api/core.html#catalyst.core.state.State.batch_in">batch_in() (catalyst.core.state.State property)</a>
+</li>
+      <li><a href="api/core.html#catalyst.core.state.State.batch_out">batch_out() (catalyst.core.state.State property)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.schedulers.base.BatchScheduler">BatchScheduler (class in catalyst.contrib.nn.schedulers.base)</a>
+</li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.dice.BCEDiceLoss">BCEDiceLoss (class in catalyst.contrib.nn.criterion.dice)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.iou.BCEIoULoss">BCEIoULoss (class in catalyst.contrib.nn.criterion.iou)</a>
@@ -1561,6 +1569,8 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.utils.serialization.deserialize">deserialize() (in module catalyst.contrib.utils.serialization)</a>
 </li>
+      <li><a href="api/utils.html#catalyst.utils.torch.detach">detach() (in module catalyst.utils.torch)</a>
+</li>
       <li><a href="api/core.html#catalyst.core.runner._Runner.device">device() (catalyst.core.runner._Runner property)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.metrics.dice.dice">dice() (in module catalyst.utils.metrics.dice)</a>
@@ -1835,7 +1845,7 @@
         <li><a href="api/contrib.html#catalyst.contrib.nn.schedulers.onecycle.OneCycleLRWithWarmup.get_momentum">(catalyst.contrib.nn.schedulers.onecycle.OneCycleLRWithWarmup method)</a>
 </li>
       </ul></li>
-      <li><a href="api/core.html#catalyst.core.experiment.StageBasedExperiment.get_native_batch">get_native_batch() (catalyst.core.experiment.StageBasedExperiment method)</a>
+      <li><a href="api/core.html#catalyst.core.experiment._StageBasedExperiment.get_native_batch">get_native_batch() (catalyst.core.experiment._StageBasedExperiment method)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.torch.get_network_output">get_network_output() (in module catalyst.utils.torch)</a>
 </li>
@@ -1947,8 +1957,6 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/core.html#catalyst.core.state.State.input">input() (catalyst.core.state.State property)</a>
-</li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackOrder.Internal">Internal (catalyst.core.callback.CallbackOrder attribute)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.metrics.iou.iou">iou() (in module catalyst.utils.metrics.iou)</a>
@@ -2590,8 +2598,6 @@
       </ul></li>
       <li><a href="api/utils.html#catalyst.utils.initialization.outer_init">outer_init() (in module catalyst.utils.initialization)</a>
 </li>
-      <li><a href="api/core.html#catalyst.core.state.State.output">output() (catalyst.core.state.State property)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -2628,9 +2634,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/utils.html#catalyst.utils.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter">PrecisionRecallF1ScoreMeter (class in catalyst.utils.meters.ppv_tpr_f1_meter)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.runner.supervised.SupervisedRunner.predict_batch">predict_batch() (catalyst.dl.runner.supervised.SupervisedRunner method)</a>
+      <li><a href="api/dl.html#catalyst.dl.runner.core.Runner.predict_batch">predict_batch() (catalyst.dl.runner.core.Runner method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.runner.supervised.SupervisedRunner.predict_batch">(catalyst.dl.runner.supervised.SupervisedRunner method)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.runner.supervised.SupervisedRunner.predict_loader">predict_loader() (catalyst.dl.runner.supervised.SupervisedRunner method)</a>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.runner.core.Runner.predict_loader">predict_loader() (catalyst.dl.runner.core.Runner method)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.torch.prepare_cudnn">prepare_cudnn() (in module catalyst.utils.torch)</a>
 </li>
@@ -2800,17 +2810,13 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.utils.pandas.split_dataframe_train_test">split_dataframe_train_test() (in module catalyst.contrib.utils.pandas)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.utils.dataset.split_dataset_train_test">split_dataset_train_test() (in module catalyst.contrib.utils.dataset)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/contrib.html#catalyst.contrib.utils.dataset.split_dataset_train_test">split_dataset_train_test() (in module catalyst.contrib.utils.dataset)</a>
+</li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackScope.Stage">Stage (catalyst.core.callback.CallbackScope attribute)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.STAGE_KEYWORDS">STAGE_KEYWORDS (catalyst.dl.experiment.config.ConfigExperiment attribute)</a>
-</li>
-      <li><a href="api/core.html#catalyst.core.experiment.StageBasedExperiment">StageBasedExperiment (class in catalyst.core.experiment)</a>
-</li>
-      <li><a href="api/core.html#catalyst.core.runner.StageBasedRunner">StageBasedRunner (class in catalyst.core.runner)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.experiment._Experiment.stages">stages() (catalyst.core.experiment._Experiment property)</a>
 
@@ -2896,7 +2902,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/contrib.html#catalyst.contrib.utils.parallel.tqdm_parallel_imap">tqdm_parallel_imap() (in module catalyst.contrib.utils.parallel)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.runner.supervised.SupervisedRunner.trace">trace() (catalyst.dl.runner.supervised.SupervisedRunner method)</a>
+      <li><a href="api/dl.html#catalyst.dl.runner.core.Runner.trace">trace() (catalyst.dl.runner.core.Runner method)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.utils.trace.trace_model">trace_model() (in module catalyst.dl.utils.trace)</a>
 </li>

@@ -342,6 +342,7 @@
 <div class="viewcode-block" id="list_pip_packages"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.sys.list_pip_packages">[docs]</a><span class="k">def</span> <span class="nf">list_pip_packages</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    @TODO: Docs. Contribution is welcome</span>
+<span class="sd">    @TODO: When catching exception, e has no attribute &#39;output&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">devnull</span><span class="p">:</span>
@@ -351,10 +352,10 @@
                 <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                 <span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
             <span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Failed to freeze pip packages. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Pip Output: ```</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">output</span><span class="si">}</span><span class="s2">```.&quot;</span>
+                <span class="c1"># f&quot;Pip Output: ```{e.output}```.&quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;Continue experiment without pip packages dumping.&quot;</span>
             <span class="p">)</span>
             <span class="k">pass</span>
@@ -369,6 +370,7 @@
 <div class="viewcode-block" id="list_conda_packages"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.sys.list_conda_packages">[docs]</a><span class="k">def</span> <span class="nf">list_conda_packages</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    @TODO: Docs. Contribution is welcome</span>
+<span class="sd">    @TODO: When catching exception, e has no attribute &#39;output&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="n">conda_meta_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;conda-meta&quot;</span>
@@ -383,11 +385,11 @@
                     <span class="o">.</span><span class="n">strip</span><span class="p">()</span>
                     <span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
                 <span class="p">)</span>
-            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Running from conda env, &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;but failed to list conda packages. &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;Conda Output: ```</span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">output</span><span class="si">}</span><span class="s2">```.&quot;</span>
+                    <span class="c1"># f&quot;Conda Output: ```{e.output}```.&quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;Continue experiment without conda packages dumping.&quot;</span>
                 <span class="p">)</span>
                 <span class="k">pass</span>

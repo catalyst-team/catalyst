@@ -364,22 +364,22 @@
 <span class="sd">        }</span>
 
 
-<span class="sd">    **state.batch_in** - dictionary, \</span>
+<span class="sd">    **state.input** - dictionary, \</span>
 <span class="sd">    containing batch of data from currents DataLoader; \</span>
 <span class="sd">    for example,</span>
 <span class="sd">    ::</span>
 
-<span class="sd">        state.batch_in = {</span>
+<span class="sd">        state.input = {</span>
 <span class="sd">            &quot;images&quot;: np.ndarray(batch_size, c, h, w),</span>
 <span class="sd">            &quot;targets&quot;: np.ndarray(batch_size, 1),</span>
 <span class="sd">        }</span>
 
-<span class="sd">    **state.batch_out** - dictionary, \</span>
+<span class="sd">    **state.output** - dictionary, \</span>
 <span class="sd">    containing model output for current batch; \</span>
 <span class="sd">    for example,</span>
 <span class="sd">    ::</span>
 
-<span class="sd">        state.batch_out = {&quot;logits&quot;: torch.Tensor(batch_size, num_classes)}</span>
+<span class="sd">        state.output = {&quot;logits&quot;: torch.Tensor(batch_size, num_classes)}</span>
 
 <span class="sd">    **state.batch_metrics** - dictionary, flatten storage for batch metrics; \</span>
 <span class="sd">    for example,</span>
@@ -426,10 +426,15 @@
 
 <span class="sd">    **state.distributed_rank** - distributed rank of current worker</span>
 
+<span class="sd">    **state.is_distributed_master** - bool, indicator flag</span>
+
+<span class="sd">        - ``True`` if is master node (state.distributed_rank == 0)</span>
+<span class="sd">        - ``False`` if is worker node (state.distributed_rank != 0)</span>
+
 <span class="sd">    **state.is_distributed_worker** - bool, indicator flag</span>
 
 <span class="sd">        - ``True`` if is worker node (state.distributed_rank &gt; 0)</span>
-<span class="sd">        - ``False`` if is master node (state.distributed_rank == 0)</span>
+<span class="sd">        - ``False`` if is master node (state.distributed_rank &lt;= 0)</span>
 
 
 <span class="sd">    **state.stage_name** - string, current stage name,\</span>
@@ -566,9 +571,11 @@
         <span class="c1"># extra components - Catalyst callbacks</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Callback&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">callbacks</span>
 
-        <span class="c1"># dataflow - model input, model output, metrics</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">batch_in</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">batch_out</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># dataflow - model input, model output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># metrics flow - batch, loader, epoch metrics</span>
         <span class="c1"># let&#39;s use flatten storage for batch metrics</span>
         <span class="c1"># batch_metrics = {&#39;loss&#39;: ..., &#39;accuracy&#39;: ..., &#39;iou&#39;: ...}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_metrics</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
@@ -592,6 +599,7 @@
 
         <span class="c1"># pipeline info</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">distributed_rank</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_distributed_master</span> <span class="o">=</span> <span class="o">~</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distributed_rank</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_distributed_worker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributed_rank</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">stage_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">stage</span>
@@ -636,32 +644,34 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_freeze</span><span class="p">()</span></div>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Alias for `state.batch_in`.</span>
+    <span class="k">def</span> <span class="nf">batch_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Alias for `state.input`.</span>
 
 <span class="sd">        .. warning::</span>
 <span class="sd">            Deprecated, saved for backward compatibility.</span>
 <span class="sd">            Please use `state.batch_in` instead.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;`input` was deprecated, &quot;</span> <span class="s2">&quot;please use `batch_in` instead&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;`state.batch_in` was deprecated, &quot;</span>
+            <span class="s2">&quot;please use `state.input` instead&quot;</span><span class="p">,</span>
             <span class="ne">DeprecationWarning</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_in</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Alias for `state.batch_out`.</span>
+    <span class="k">def</span> <span class="nf">batch_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Alias for `state.output`.</span>
 
 <span class="sd">        .. warning::</span>
 <span class="sd">            Deprecated, saved for backward compatibility.</span>
 <span class="sd">            Please use `state.batch_out` instead.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;`output` was deprecated, &quot;</span> <span class="s2">&quot;please use `batch_out` instead&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;`state.batch_out` was deprecated, &quot;</span>
+            <span class="s2">&quot;please use `state.output` instead&quot;</span><span class="p">,</span>
             <span class="ne">DeprecationWarning</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_out</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">need_backward_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

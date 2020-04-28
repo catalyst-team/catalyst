@@ -357,7 +357,7 @@ or to compute all the metrics before logging :)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
-like “pretraining” / “training” / “finetuning” / etc</p>
+like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Ordered dictionary
@@ -394,7 +394,7 @@ with callbacks for current stage.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
-like “pretraining” / “training” / “finetuning” / etc</p>
+like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>criterion for a given stage.</p>
@@ -420,7 +420,7 @@ during whole stage.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>stage</strong> (<em>str</em>) – stage name of interest,
-like “pretraining” / “training” / “finetuning” / etc</p></li>
+like “pretrain” / “train” / “finetune” / etc</p></li>
 <li><p><strong>epoch</strong> (<em>int</em>) – epoch index</p></li>
 <li><p><strong>**kwargs</strong> (<em>dict</em>) – additional parameters to use during
 dataset creation</p></li>
@@ -473,7 +473,7 @@ giving model and stage.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<em>Model</em>) – model to optimize with stage optimizer</p></li>
 <li><p><strong>stage</strong> (<em>str</em>) – stage name of interest,
-like “pretraining” / “training” / “finetuning” / etc</p></li>
+like “pretrain” / “train” / “finetune” / etc</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -500,7 +500,7 @@ method only.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>stage</strong> (<em>str</em>) – stage name of interest,
-like “pretraining” / “training” / “finetuning” / etc</p></li>
+like “pretrain” / “train” / “finetune” / etc</p></li>
 <li><p><strong>epoch</strong> (<em>int</em>) – epoch index</p></li>
 <li><p><strong>**kwargs</strong> (<em>dict</em>) – additional parameters to use during
 dataset creation</p></li>
@@ -536,7 +536,7 @@ dataset creation</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
-like “pretraining” / “training” / “finetuning” / etc</p>
+like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>model for a given stage.</p>
@@ -560,7 +560,7 @@ like “pretraining” / “training” / “finetuning” / etc</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>stage</strong> (<em>str</em>) – stage name of interest
-like “pretraining” / “training” / “finetuning” / etc</p></li>
+like “pretrain” / “train” / “finetune” / etc</p></li>
 <li><p><strong>model</strong> (<em>Model</em>) – model to optimize with stage optimizer</p></li>
 </ul>
 </dd>
@@ -588,7 +588,7 @@ like “pretraining” / “training” / “finetuning” / etc</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>stage</strong> (<em>str</em>) – stage name of interest
-like “pretraining” / “training” / “finetuning” / etc</p></li>
+like “pretrain” / “train” / “finetune” / etc</p></li>
 <li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.utils.tools.typing.Optimizer" title="catalyst.utils.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer to schedule with stage scheduler</p></li>
 </ul>
 </dd>
@@ -623,7 +623,7 @@ documentation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
-like “pretraining” / “training” / “finetuning” / etc</p>
+like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>State parameters for a given stage.</p>
@@ -642,7 +642,7 @@ like “pretraining” / “training” / “finetuning” / etc</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>stage</strong> (<em>str</em>) – stage name of interest,
-like “pretraining” / “training” / “finetuning” / etc</p></li>
+like “pretrain” / “train” / “finetune” / etc</p></li>
 <li><p><strong>dataset</strong> (<em>str</em>) – dataset name of interest,
 like “train” / “valid” / “infer”</p></li>
 </ul>
@@ -705,15 +705,15 @@ for example, <a class="reference internal" href="#catalyst.core.callback.Callbac
 
 </dd></dl>
 
-<span class="target" id="module-catalyst.core.experiment"></span><dl class="py class">
-<dt id="catalyst.core.experiment.StageBasedExperiment">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.experiment.</code><code class="sig-name descname">StageBasedExperiment</code><a class="reference internal" href="../_modules/catalyst/core/experiment.html#StageBasedExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.experiment.StageBasedExperiment" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="catalyst.core.experiment._StageBasedExperiment">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.experiment.</code><code class="sig-name descname">_StageBasedExperiment</code><a class="reference internal" href="../_modules/catalyst/core/experiment.html#_StageBasedExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.experiment._StageBasedExperiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.experiment._Experiment" title="catalyst.core.experiment._Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.experiment._Experiment</span></code></a></p>
 <p>Experiment that provides constant
 datasources during training/inference stage.</p>
 <dl class="py method">
-<dt id="catalyst.core.experiment.StageBasedExperiment.get_native_batch">
-<code class="sig-name descname">get_native_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stage</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">loader</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">0</span></em>, <em class="sig-param"><span class="n">data_index</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/experiment.html#StageBasedExperiment.get_native_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.experiment.StageBasedExperiment.get_native_batch" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.core.experiment._StageBasedExperiment.get_native_batch">
+<code class="sig-name descname">get_native_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stage</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">loader</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">0</span></em>, <em class="sig-param"><span class="n">data_index</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/experiment.html#_StageBasedExperiment.get_native_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.experiment._StageBasedExperiment.get_native_batch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a batch from experiment loader.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -729,7 +729,7 @@ default is the first loader</p></li>
 
 </dd></dl>
 
-</div>
+<span class="target" id="module-catalyst.core.experiment"></span></div>
 <div class="section" id="runner">
 <h3><a class="toc-backref" href="#id4">Runner</a><a class="headerlink" href="#runner" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
@@ -795,15 +795,15 @@ stages, epoch and batches.</p>
 
 </dd></dl>
 
-<span class="target" id="module-catalyst.core.runner"></span><dl class="py class">
-<dt id="catalyst.core.runner.StageBasedRunner">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.runner.</code><code class="sig-name descname">StageBasedRunner</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">device</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>torch.device<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#StageBasedRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.StageBasedRunner" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="catalyst.core.runner._StageBasedRunner">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.runner.</code><code class="sig-name descname">_StageBasedRunner</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">device</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>torch.device<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#_StageBasedRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner._StageBasedRunner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.runner._Runner" title="catalyst.core.runner._Runner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.runner._Runner</span></code></a></p>
-<p>Runner that suppose to have constant
-datasources during training/inference stage.</p>
+<p>Runner abstraction that suppose to have constant
+datasources per stage.</p>
 </dd></dl>
 
-</div>
+<span class="target" id="module-catalyst.core.runner"></span></div>
 <div class="section" id="module-catalyst.core.callback">
 <span id="callback"></span><h3><a class="toc-backref" href="#id5">Callback</a><a class="headerlink" href="#module-catalyst.core.callback" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
@@ -1165,15 +1165,15 @@ model, criterion, optimizer, schedulers, metrics, loggers, loaders, etc</p>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p><strong>state.batch_in</strong> - dictionary,     containing batch of data from currents DataLoader;     for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">batch_in</span> <span class="o">=</span> <span class="p">{</span>
+<p><strong>state.input</strong> - dictionary,     containing batch of data from currents DataLoader;     for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;images&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">w</span><span class="p">),</span>
     <span class="s2">&quot;targets&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
 <span class="p">}</span>
 </pre></div>
 </div>
-<p><strong>state.batch_out</strong> - dictionary,     containing model output for current batch;     for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">batch_out</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)}</span>
+<p><strong>state.output</strong> - dictionary,     containing model output for current batch;     for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)}</span>
 </pre></div>
 </div>
 <p><strong>state.batch_metrics</strong> - dictionary, flatten storage for batch metrics;     for example,</p>
@@ -1208,11 +1208,18 @@ model, criterion, optimizer, schedulers, metrics, loggers, loaders, etc</p>
 </div>
 <p><strong>state.best_valid_metrics</strong> - dictionary with best validation metrics     during whole training process</p>
 <p><strong>state.distributed_rank</strong> - distributed rank of current worker</p>
+<p><strong>state.is_distributed_master</strong> - bool, indicator flag</p>
+<blockquote>
+<div><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if is master node (state.distributed_rank == 0)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> if is worker node (state.distributed_rank != 0)</p></li>
+</ul>
+</div></blockquote>
 <p><strong>state.is_distributed_worker</strong> - bool, indicator flag</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if is worker node (state.distributed_rank &gt; 0)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> if is master node (state.distributed_rank == 0)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> if is master node (state.distributed_rank &lt;= 0)</p></li>
 </ul>
 </div></blockquote>
 <p><strong>state.stage_name</strong> - string, current stage name,    for example,</p>
@@ -1302,6 +1309,28 @@ model, criterion, optimizer, schedulers, metrics, loggers, loaders, etc</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="catalyst.core.state.State.batch_in">
+<em class="property">property </em><code class="sig-name descname">batch_in</code><a class="headerlink" href="#catalyst.core.state.State.batch_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for <cite>state.input</cite>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Deprecated, saved for backward compatibility.
+Please use <cite>state.batch_in</cite> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.core.state.State.batch_out">
+<em class="property">property </em><code class="sig-name descname">batch_out</code><a class="headerlink" href="#catalyst.core.state.State.batch_out" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for <cite>state.output</cite>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Deprecated, saved for backward compatibility.
+Please use <cite>state.batch_out</cite> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
 <dt id="catalyst.core.state.State.get_attr">
 <code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">inner_key</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="../_modules/catalyst/core/state.html#State.get_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.state.State.get_attr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for python <cite>getattr</cite> method. Useful for Callbacks preparation
@@ -1354,17 +1383,6 @@ like <cite>criterion</cite>, <cite>optimizer</cite>, <cite>scheduler</cite></p><
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.core.state.State.input">
-<em class="property">property </em><code class="sig-name descname">input</code><a class="headerlink" href="#catalyst.core.state.State.input" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for <cite>state.batch_in</cite>.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Deprecated, saved for backward compatibility.
-Please use <cite>state.batch_in</cite> instead.</p>
-</div>
-</dd></dl>
-
-<dl class="py method">
 <dt id="catalyst.core.state.State.need_backward_pass">
 <em class="property">property </em><code class="sig-name descname">need_backward_pass</code><a class="headerlink" href="#catalyst.core.state.State.need_backward_pass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for <cite>state.is_train_loader</cite>.</p>
@@ -1372,17 +1390,6 @@ Please use <cite>state.batch_in</cite> instead.</p>
 <p class="admonition-title">Warning</p>
 <p>Deprecated, saved for backward compatibility.
 Please use <cite>state.is_train_loader</cite> instead.</p>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.core.state.State.output">
-<em class="property">property </em><code class="sig-name descname">output</code><a class="headerlink" href="#catalyst.core.state.State.output" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for <cite>state.batch_out</cite>.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Deprecated, saved for backward compatibility.
-Please use <cite>state.batch_out</cite> instead.</p>
 </div>
 </dd></dl>
 
@@ -1396,12 +1403,12 @@ Please use <cite>state.batch_out</cite> instead.</p>
 <span id="checkpoint"></span><h3><a class="toc-backref" href="#id8">Checkpoint</a><a class="headerlink" href="#module-catalyst.core.callbacks.checkpoint" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt id="catalyst.core.callbacks.checkpoint.CheckpointCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.checkpoint.</code><code class="sig-name descname">CheckpointCallback</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_n_best</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">resume</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resume_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">metrics_filename</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'_metrics.json'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.checkpoint.</code><code class="sig-name descname">CheckpointCallback</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_n_best</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">resume</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resume_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">metrics_filename</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'_metrics.json'</span></em>, <em class="sig-param"><span class="n">load_on_stage_end</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.checkpoint.BaseCheckpointCallback</span></code></p>
 <p>Checkpoint callback to save/restore your model/criterion/optimizer/metrics.</p>
 <dl class="py method">
 <dt id="catalyst.core.callbacks.checkpoint.CheckpointCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_n_best</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">resume</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resume_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">metrics_filename</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'_metrics.json'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_n_best</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">resume</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resume_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">metrics_filename</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'_metrics.json'</span></em>, <em class="sig-param"><span class="n">load_on_stage_end</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1410,6 +1417,11 @@ Please use <cite>state.batch_out</cite> instead.</p>
 and initialize runner state</p></li>
 <li><p><strong>metrics_filename</strong> (<em>str</em>) – filename to save metrics
 in checkpoint folder. Must ends on <code class="docutils literal notranslate"><span class="pre">.json</span></code> or <code class="docutils literal notranslate"><span class="pre">.yml</span></code></p></li>
+<li><p><strong>load_on_stage_end</strong> (<em>str</em>) – name of the model to load
+at the end of the stage.
+You can use <code class="docutils literal notranslate"><span class="pre">best</span></code> to load the best model according
+to validation metrics, or <code class="docutils literal notranslate"><span class="pre">last</span></code> to use just the last one
+(default behaviour).</p></li>
 </ul>
 </dd>
 </dl>

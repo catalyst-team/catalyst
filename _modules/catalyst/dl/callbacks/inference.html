@@ -313,7 +313,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            state (State): current state</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">dct</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">batch_out</span>
+        <span class="n">dct</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">output</span>
         <span class="n">dct</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dct</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dct</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">predictions</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div>
@@ -404,12 +404,12 @@
 <span class="sd">            state (State): current state</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lm</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">loader_name</span>
-        <span class="n">names</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">batch_in</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name_key</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name_key</span><span class="p">,</span> <span class="p">[])</span>
 
-        <span class="n">features</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">batch_in</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
         <span class="n">images</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">tensor_to_ndimage</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
 
-        <span class="n">logits</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">batch_out</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">]</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">]</span>
         <span class="n">logits</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">torch</span><span class="o">.</span><span class="n">unsqueeze_</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">logits</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span>

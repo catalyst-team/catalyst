@@ -303,7 +303,7 @@
                 <span class="s2">&quot;`loss_key` is now deprecated in favor `metric_key`&quot;</span><span class="p">,</span>
                 <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loss_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">metric_key</span> <span class="ow">or</span> <span class="n">loss_key</span> <span class="ow">or</span> <span class="s2">&quot;loss&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metric_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">metric_key</span> <span class="ow">or</span> <span class="n">loss_key</span> <span class="ow">or</span> <span class="s2">&quot;loss&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">optimizer_key</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">accumulation_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">accumulation_steps</span>
@@ -399,7 +399,7 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">state</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="n">loss</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">batch_metrics</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_key</span><span class="p">]</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">batch_metrics</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_key</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_accumulation_counter</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">need_gradient_step</span> <span class="o">=</span> <span class="p">(</span>

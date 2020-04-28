@@ -279,7 +279,7 @@
 
 <span class="kn">from</span> <span class="nn">.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackScope</span>
 <span class="kn">from</span> <span class="nn">.callbacks</span> <span class="kn">import</span> <span class="n">ExceptionCallback</span>
-<span class="kn">from</span> <span class="nn">.experiment</span> <span class="kn">import</span> <span class="n">_Experiment</span><span class="p">,</span> <span class="n">StageBasedExperiment</span>
+<span class="kn">from</span> <span class="nn">.experiment</span> <span class="kn">import</span> <span class="n">_Experiment</span><span class="p">,</span> <span class="n">_StageBasedExperiment</span>
 <span class="kn">from</span> <span class="nn">.state</span> <span class="kn">import</span> <span class="n">State</span>
 
 
@@ -325,7 +325,8 @@
 
     <span class="nd">@model</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Model</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Model</span><span class="p">]]):</span>
-        <span class="sd">&quot;&quot;&quot;Setter for the runner&#39;s model, useful for experiment tracing.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter for the runner&#39;s model, useful for experiment tracing.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            value (Union[Model, Dict[str, Model]]): new model.</span>
@@ -364,7 +365,8 @@
 
     <span class="nd">@device</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Device</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Setter for the runner&#39;s device.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Setter for the runner&#39;s device.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            value (Device): new torch device.</span>
@@ -394,14 +396,15 @@
     <span class="k">def</span> <span class="nf">_get_experiment_components</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Model</span><span class="p">,</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span><span class="p">,</span> <span class="n">Device</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Inner method for `Experiment` components preparation.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Inner method for `Experiment` components preparation.</span>
 
 <span class="sd">        Check available torch device, takes model from the experiment</span>
 <span class="sd">        and creates stage-specified criterion, optimizer, scheduler for it.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): experiment stage name of interest</span>
-<span class="sd">                like &quot;pretraining&quot; / &quot;training&quot; / &quot;finetuning&quot; / etc</span>
+<span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            tuple: model, criterion, optimizer,</span>
@@ -442,14 +445,15 @@
         <span class="n">device</span><span class="p">:</span> <span class="n">Device</span><span class="p">,</span>
         <span class="n">callbacks</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callback</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">State</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Inner method for `State` preparation.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Inner method for `State` preparation.</span>
 
 <span class="sd">        Migrates State parameters from previous stage if possible,</span>
 <span class="sd">        create new State for current stage.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): stage name of interest,</span>
-<span class="sd">                like &quot;pretraining&quot; / &quot;training&quot; / &quot;finetuning&quot; / etc</span>
+<span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 <span class="sd">            model (Model): stage model</span>
 <span class="sd">            criterion (Criterion): stage criterion</span>
 <span class="sd">            optimizer (Optimizer): stage optimizer</span>
@@ -513,7 +517,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): stage name of interest,</span>
-<span class="sd">                like &quot;pretraining&quot; / &quot;training&quot; / &quot;finetuning&quot; / etc</span>
+<span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            OrderedDict[str, Callback]: Ordered dictionary</span>
@@ -525,7 +529,8 @@
         <span class="k">return</span> <span class="n">callbacks</span>
 
     <span class="k">def</span> <span class="nf">_prepare_for_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Inner method to prepare `Runner` for the specified stage.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Inner method to prepare `Runner` for the specified stage.</span>
 
 <span class="sd">        Sets `Experiment` initial seed.</span>
 <span class="sd">        Prepares experiment components with `self._get_experiment_components`.</span>
@@ -534,7 +539,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): stage name of interest,</span>
-<span class="sd">                like &quot;pretraining&quot; / &quot;training&quot; / &quot;finetuning&quot; / etc</span>
+<span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">utils</span><span class="o">.</span><span class="n">set_global_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">initial_seed</span><span class="p">)</span>
         <span class="p">(</span>
@@ -560,11 +565,12 @@
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_prepare_for_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Inner method to prepare `Runner` for the specified stage and epoch.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Inner method to prepare `Runner` for the specified stage and epoch.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): stage name of interest,</span>
-<span class="sd">                like &quot;pretraining&quot; / &quot;training&quot; / &quot;finetuning&quot; / etc</span>
+<span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 <span class="sd">            epoch (int): epoch index</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
@@ -605,7 +611,7 @@
     <span class="k">def</span> <span class="nf">_handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inner method to handle specified data batch.</span>
-<span class="sd">        Used to make a train/valid/infer step during Experiment run.</span>
+<span class="sd">        Used to make a train/valid/infer stage during Experiment run.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            batch (Mapping[str, Any]): dictionary with data batches</span>
@@ -624,7 +630,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">global_step</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">batch_size</span>
         <span class="n">batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch2device</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">batch_in</span> <span class="o">=</span> <span class="n">batch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="n">batch</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;on_batch_start&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_handle_batch</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
@@ -662,7 +668,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): stage name of interest,</span>
-<span class="sd">                like &quot;pretraining&quot; / &quot;training&quot; / &quot;finetuning&quot; / etc</span>
+<span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 <span class="sd">            epoch (int): epoch index</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_for_epoch</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">)</span>
@@ -690,7 +696,9 @@
             <span class="n">state</span><span class="o">.</span><span class="n">is_train_loader</span> <span class="o">=</span> <span class="n">loader_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">LOADER_TRAIN_PREFIX</span><span class="p">)</span>
             <span class="n">state</span><span class="o">.</span><span class="n">is_valid_loader</span> <span class="o">=</span> <span class="n">loader_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">LOADER_VALID_PREFIX</span><span class="p">)</span>
             <span class="n">state</span><span class="o">.</span><span class="n">is_infer_loader</span> <span class="o">=</span> <span class="n">loader_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">LOADER_INFER_PREFIX</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">)</span>
+            <span class="n">utils</span><span class="o">.</span><span class="n">maybe_recursive_call</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">,</span>
+            <span class="p">)</span>
 
             <span class="k">if</span> <span class="p">(</span>
                 <span class="nb">isinstance</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">sampler</span><span class="p">,</span> <span class="n">DistributedSampler</span><span class="p">)</span>
@@ -713,7 +721,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): stage name of interest,</span>
-<span class="sd">                like &quot;pretraining&quot; / &quot;training&quot; / &quot;finetuning&quot; / etc</span>
+<span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_for_stage</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
@@ -738,7 +746,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;on_stage_end&quot;</span><span class="p">)</span>
 
 <div class="viewcode-block" id="_Runner.run_experiment"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.runner._Runner.run_experiment">[docs]</a>    <span class="k">def</span> <span class="nf">run_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment</span><span class="p">:</span> <span class="n">_Experiment</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_Runner&quot;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Starts the experiment.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Starts the experiment.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            experiment (_Experiment): Experiment instance to use for Runner.</span>
@@ -769,20 +778,36 @@
         <span class="k">return</span> <span class="bp">self</span></div></div>
 
 
-<div class="viewcode-block" id="StageBasedRunner"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.runner.StageBasedRunner">[docs]</a><span class="k">class</span> <span class="nc">StageBasedRunner</span><span class="p">(</span><span class="n">_Runner</span><span class="p">):</span>
+<div class="viewcode-block" id="_StageBasedRunner"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.runner._StageBasedRunner">[docs]</a><span class="k">class</span> <span class="nc">_StageBasedRunner</span><span class="p">(</span><span class="n">_Runner</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Runner that suppose to have constant</span>
-<span class="sd">    datasources during training/inference stage.</span>
+<span class="sd">    Runner abstraction that suppose to have constant</span>
+<span class="sd">    datasources per stage.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">_experiment_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">StageBasedExperiment</span>
+    <span class="n">_experiment_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">_StageBasedExperiment</span>
     <span class="n">_state_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">State</span>
 
     <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">:</span> <span class="n">StageBasedExperiment</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Inner method for `experiment` and `state` linting.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">:</span> <span class="n">_StageBasedExperiment</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">:</span> <span class="n">State</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_prepare_for_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Inner method to prepare `Runner` for the specified stage.</span>
+
+<span class="sd">        Sets `Experiment` initial seed.</span>
+<span class="sd">        Prepares experiment components with `self._get_experiment_components`.</span>
+<span class="sd">        Prepares callbacks with `self._get_callbacks`.</span>
+<span class="sd">        Prepares `State` with `self._get_state`.</span>
+<span class="sd">        Additionally sets `Experiment` datasources for specified stage.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            stage (str): stage name of interest,</span>
+<span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_prepare_for_stage</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">)</span>
 
         <span class="n">utils</span><span class="o">.</span><span class="n">set_global_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">initial_seed</span><span class="p">)</span>
@@ -791,7 +816,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">loaders</span> <span class="o">=</span> <span class="n">loaders</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_Runner&quot;</span><span class="p">,</span> <span class="s2">&quot;StageBasedRunner&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_Runner&quot;</span><span class="p">,</span> <span class="s2">&quot;_StageBasedRunner&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

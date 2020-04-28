@@ -337,8 +337,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            state (State): current state</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">outputs</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">batch_out</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">]</span>
-        <span class="n">targets</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">batch_in</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">]</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">]</span>
+        <span class="n">targets</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">]</span>
 
         <span class="n">confusion_matrix</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">calculate_confusion_matrix_from_tensors</span><span class="p">(</span>
             <span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span>
