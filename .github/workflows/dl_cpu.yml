@@ -1,5 +1,11 @@
 name: dl_cpu
-on: [pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
    check-examples:

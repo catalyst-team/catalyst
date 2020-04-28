@@ -22,7 +22,6 @@
 ![torch 1.4](https://github.com/catalyst-team/catalyst/workflows/torch%201.4/badge.svg)
 ![torch 1.5](https://github.com/catalyst-team/catalyst/workflows/torch%201.5/badge.svg)
 
-
 </div>
 
 PyTorch framework for Deep Learning research and development.
