@@ -160,12 +160,6 @@ class ConfigExperiment(_StageBasedExperiment):
         return self.stages_config[stage].get("state_params", {})
 
     def _preprocess_model_for_stage(self, stage: str, model: Model):
-        # stage_index = self.stages.index(stage)
-        # @TODO: remove to callbacks
-        # if stage_index > 0:
-        #     checkpoint_path = f"{self.logdir}/checkpoints/best.pth"
-        #     checkpoint = utils.load_checkpoint(checkpoint_path)
-        #     utils.unpack_checkpoint(checkpoint, model=model)
         return model
 
     def _postprocess_model_for_stage(self, stage: str, model: Model):
@@ -271,34 +265,7 @@ class ConfigExperiment(_StageBasedExperiment):
         else:
             raise ValueError("unknown type of model_params")
 
-        load_from_previous_stage = params.pop(
-            "load_from_previous_stage", False
-        )
-        optimizer_key = params.pop("optimizer_key", None)
         optimizer = OPTIMIZERS.get_from_params(**params, params=model_params)
-        # TODO: comment this logic
-        # if load_from_previous_stage and self.stages.index(stage) != 0:
-        #     checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
-        #     checkpoint = utils.load_checkpoint(checkpoint_path)
-
-        #     dict2load = optimizer
-        #     if optimizer_key is not None:
-        #         dict2load = {optimizer_key: optimizer}
-        #     utils.unpack_checkpoint(checkpoint, optimizer=dict2load)
-
-        #     # move optimizer to device
-        #     device = utils.get_device()
-        #     for param in model_params:
-        #         param = param["params"][0]
-        #         state = optimizer.state[param]
-        #         for key, value in state.items():
-        #             state[key] = utils.any2device(value, device)
-
-        #     # update optimizer params
-        #     for key, value in params.items():
-        #         for pg in optimizer.param_groups:
-        #             pg[key] = value
-
         return optimizer
 
     def get_optimizer(
