@@ -1,5 +1,11 @@
 name: torch 1.4
-on: [pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
    check-examples:
