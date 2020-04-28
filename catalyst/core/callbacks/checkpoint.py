@@ -3,6 +3,8 @@ from collections import OrderedDict
 import os
 from pathlib import Path
 
+import shutil
+import torch
 from catalyst.core import Callback, CallbackNode, CallbackOrder, State, utils
 
 
@@ -120,19 +122,25 @@ class CheckpointCallback(BaseCheckpointCallback):
         resume: str = None,
         resume_dir: str = None,
         metrics_filename: str = "_metrics.json",
-        load_on_stage_end: str = None,
+        load_on_stage_end: str = "best_full",
     ):
         """
         Args:
-            save_n_best (int): number of best checkpoint to keep
+            save_n_best (int): number of best checkpoint to keep,
+                if ``0`` then  store only last state of model and 
+                ``load_on_stage_end`` should be one of
+                ``last`` or ``last_full``.
             resume (str): path to checkpoint to load
                 and initialize runner state
+            resume_dir (str): directory with checkpoints,
+                if specified in combination with ``resume``
+                than resume checkpoint will be loaded from ``resume_dir``
             metrics_filename (str): filename to save metrics
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
             load_on_stage_end (str): name of the model to load
                 at the end of the stage.
-                You can use ``best`` to load the best model according
-                to validation metrics, or ``last`` to use just the last one
+                You can use ``best``, ``best_full`` to load the best model according
+                to validation metrics, or ``last`` ``last_full`` to use just the last one
                 (default behaviour).
         """
         super().__init__(metrics_filename)
@@ -143,6 +151,12 @@ class CheckpointCallback(BaseCheckpointCallback):
             "best_full",
             "last_full",
         ]
+        assert save_n_best >= 0
+        if save_n_best == 0:
+            assert load_on_stage_end in (None, "last", "last_full")
+        if resume_dir is not None:
+            assert resume is not None
+
         self.save_n_best = save_n_best
         self.resume = resume
         self.resume_dir = resume_dir
@@ -154,7 +168,13 @@ class CheckpointCallback(BaseCheckpointCallback):
         self._keys_from_state = ["resume", "resume_dir"]
 
     def get_checkpoint_suffix(self, checkpoint: dict) -> str:
-        """@TODO: Docs. Contribution is welcome."""
+        """
+        Create suffix for checkpoint file name.
+
+        Args:
+            checkpoint (dict): checkpoint dict, 
+                should contain 'stage_name' and 'epoch'.
+        """
         result = f"{checkpoint['stage_name']}.{checkpoint['epoch']}"
         return result
 
@@ -168,15 +188,15 @@ class CheckpointCallback(BaseCheckpointCallback):
             (f"epoch_{order_index}", valid_metric)
             for (order_index, valid_metric) in enumerate(self.metrics_history)
         ]
-        best_valid_metrics = top_best_checkpoints[0][1]
-        metrics = OrderedDict(
-            [("best", best_valid_metrics)]
-            + [("last", last_valid_metrics)]
-            + top_best_checkpoints
-            + all_epochs_metrics
-        )
-
-        self.metrics = metrics
+        metrics = []
+        if self.save_n_best > 0:
+            metrics = [
+                ("best", top_best_checkpoints[0][1]),  # best validation metric
+                ("last", last_valid_metrics),
+            ] + top_best_checkpoints + all_epochs_metrics
+        else:
+            metrics = [("last", last_valid_metrics)]
+        self.metrics = OrderedDict(metrics)
         return self.metrics
 
     def truncate_checkpoints(self, minimize_metric: bool) -> None:
@@ -202,7 +222,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         is_best: bool,
         main_metric: str = "loss",
         minimize_metric: bool = True,
-    ):
+    ) -> None:
         """@TODO: Docs. Contribution is welcome."""
         suffix = self.get_checkpoint_suffix(checkpoint)
         utils.save_checkpoint(
@@ -237,8 +257,14 @@ class CheckpointCallback(BaseCheckpointCallback):
         metrics = self.process_metrics(valid_metrics)
         self.save_metric(logdir, metrics)
 
-    def on_stage_start(self, state: State):
-        """@TODO: Docs. Contribution is welcome."""
+    def on_stage_start(self, state: State) -> None:
+        """
+        Setup model for stage.
+        If specified ``resume`` or ``resume`` and ``resume_dir`` - load checkpoint.
+
+        Args:
+            state (State): training state
+        """
         for key in self._keys_from_state:
             value = getattr(state, key, None)
             if value is not None:
@@ -251,37 +277,72 @@ class CheckpointCallback(BaseCheckpointCallback):
             _load_checkpoint(filename=self.resume, state=state)
             self.resume = None
 
-    def on_epoch_end(self, state: State):
-        """@TODO: Docs. Contribution is welcome."""
+    def on_epoch_end(self, state: State) -> None:
+        """
+        Collect and save checkpoint after epoch.
+
+        Args:
+            state (State): training state
+        """
         if state.stage_name.startswith("infer") or state.is_distributed_worker:
             return
 
-        checkpoint = _pack_state(state)
-        self.process_checkpoint(
-            logdir=state.logdir,
-            checkpoint=checkpoint,
-            is_best=state.is_best_valid,
-            main_metric=state.main_metric,
-            minimize_metric=state.minimize_metric,
-        )
+        if self.save_n_best > 0:
+            checkpoint = _pack_state(state)
+            self.process_checkpoint(
+                logdir=state.logdir,
+                checkpoint=checkpoint,
+                is_best=state.is_best_valid,
+                main_metric=state.main_metric,
+                minimize_metric=state.minimize_metric,
+            )
 
-    def on_stage_end(self, state: State):
-        """@TODO: Docs. Contribution is welcome."""
+    def on_stage_end(self, state: State) -> None:
+        """
+        Show information about best checkpoints during the stage.
+        Load model specified in ``load_on_stage_end``.
+
+        Args:
+            state (State): training state
+        """
         if state.stage_name.startswith("infer") or state.is_distributed_worker:
             return
+        # store latest state
+        if self.save_n_best == 0:
+            # full checkpoint
+            checkpoint = _pack_state(state)
+            os.makedirs(Path(f"{state.logdir}/checkpoints/"), exist_ok=True)
+            last_state_filename = f"{state.logdir}/checkpoints/last_full.pth"
+            torch.save(checkpoint, last_state_filename)
+            # make duplicate for the next state
+            shutil.copyfile(last_state_filename, f"{state.logdir}/checkpoints/best_full.pth")
+            # simple checkpoint
+            exclude = ["criterion", "optimizer", "scheduler"]
+            checkpoint = {
+                key: value
+                for key, value in checkpoint.items()
+                if all(z not in key for z in exclude)
+            }
+            last_state_filename = f"{state.logdir}/checkpoints/last.pth"
+            torch.save(checkpoint, last_state_filename)
+            # duplicate for the next state
+            shutil.copyfile(last_state_filename, f"{state.logdir}/checkpoints/best.pth")
+            # save metrics
+            metrics = self.process_metrics(checkpoint["valid_metrics"])
+            self.save_metric(state.logdir, metrics)
+        else:
+            print("Top best models:")
+            top_best_metrics_str = "\n".join(
+                [
+                    "{filepath}\t{metric:3.4f}".format(
+                        filepath=filepath, metric=checkpoint_metric
+                    )
+                    for filepath, checkpoint_metric, _ in self.top_best_metrics
+                ]
+            )
+            print(top_best_metrics_str)
 
-        print("Top best models:")
-        top_best_metrics_str = "\n".join(
-            [
-                "{filepath}\t{metric:3.4f}".format(
-                    filepath=filepath, metric=checkpoint_metric
-                )
-                for filepath, checkpoint_metric, _ in self.top_best_metrics
-            ]
-        )
-        print(top_best_metrics_str)
-
-        if self.load_on_stage_end in ["best", "best_full"]:
+        if self.load_on_stage_end in ["best", "best_full"] and self.save_n_best > 0:
             resume = f"{state.logdir}/checkpoints/{self.load_on_stage_end}.pth"
             print(f"Loading {self.load_on_stage_end} model from {resume}")
             _load_checkpoint(
@@ -300,6 +361,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         period: int = 100,
         stage_restart: bool = True,
         metrics_filename: str = "_metrics_iter.json",
+        load_on_stage_end: str = "best_full",
     ):
         """
         Args:
@@ -308,6 +370,11 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
             stage_restart (bool): restart counter every stage or not
             metrics_filename (str): filename to save metrics
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
+            load_on_stage_end (str): name of the model to load
+                at the end of the stage.
+                You can use ``best``, ``best_full`` to load the best model according
+                to validation metrics, or ``last`` ``last_full`` to use just the last one
+                (default behaviour).
         """
         super().__init__(metrics_filename)
         self.save_n_last = save_n_last
@@ -316,6 +383,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         self._iteration_counter = 0
         self.last_checkpoints = []
         self.metrics_history = []
+        self.load_on_stage_end = load_on_stage_end
 
     def get_checkpoint_suffix(self, checkpoint: dict) -> str:
         """@TODO: Docs. Contribution is welcome."""
@@ -389,6 +457,16 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
                 logdir=state.logdir,
                 checkpoint=checkpoint,
                 batch_metrics=state.batch_metrics,
+            )
+
+    def on_stage_end(self, state: State):
+        if self.load_on_stage_end in ["best", "best_full"]:
+            resume = f"{state.logdir}/checkpoints/{self.load_on_stage_end}.pth"
+            print(f"Loading {self.load_on_stage_end} model from {resume}")
+            _load_checkpoint(
+                filename=resume,
+                state=state,
+                load_full=self.load_on_stage_end.endswith("full"),
             )
 
 
