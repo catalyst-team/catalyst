@@ -1,8 +1,8 @@
 from collections import OrderedDict
 
+from torch.utils.data import Subset
 import torchvision
 from torchvision import transforms
-from torch.utils.data import Subset
 
 from catalyst.dl import ConfigExperiment
 
@@ -21,7 +21,7 @@ class Experiment(ConfigExperiment):
             [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
         )
 
-    def get_datasets(self, stage: str, **kwargs):
+    def get_datasets(self, stage: str, n_samples: int = 320, **kwargs):
         """
         @TODO: Docs. Contribution is welcome
         """
@@ -40,9 +40,11 @@ class Experiment(ConfigExperiment):
                 download=True,
                 transform=Experiment.get_transforms(stage=stage, mode="valid"),
             )
-
-            datasets["train"] = Subset(trainset, list(range(320)))
-            datasets["valid"] = Subset(testset, list(range(320)))
+            if n_samples > 0:
+                trainset = Subset(trainset, list(range(n_samples)))
+                testset = Subset(testset, list(range(n_samples)))
+            datasets["train"] = trainset
+            datasets["valid"] = testset
         else:
             testset = torchvision.datasets.MNIST(
                 "./data",
@@ -50,6 +52,8 @@ class Experiment(ConfigExperiment):
                 download=True,
                 transform=Experiment.get_transforms(stage=stage, mode="valid"),
             )
-            datasets["infer"] = Subset(testset, list(range(320)))
+            if n_samples > 0:
+                testset = Subset(testset, list(range(n_samples)))
+            datasets["infer"] = testset
 
         return datasets
