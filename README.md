@@ -4,7 +4,7 @@
 
 **Accelerated DL R&D**
 
-![CI_status_torch10](https://github.com/catalyst-team/catalyst/workflows/codestyle/badge.svg?branch=master)
+![CI_status_torch10](https://github.com/catalyst-team/catalyst/workflows/codestyle/badge.svg?branch=master&event=push)
 [![Build Status](http://66.248.205.49:8111/app/rest/builds/buildType:id:Catalyst_Deploy/statusIcon.svg)](http://66.248.205.49:8111/project.html?projectId=Catalyst&tab=projectOverview&guest=1)
 [![CodeFactor](https://www.codefactor.io/repository/github/catalyst-team/catalyst/badge)](https://www.codefactor.io/repository/github/catalyst-team/catalyst)
 [![Pipi version](https://img.shields.io/pypi/v/catalyst.svg)](https://pypi.org/project/catalyst/)
