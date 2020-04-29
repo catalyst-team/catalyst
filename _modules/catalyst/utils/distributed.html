@@ -264,10 +264,13 @@
 <span class="kn">import</span> <span class="nn">subprocess</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
+<span class="kn">import</span> <span class="nn">deprecation</span>
+
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 <span class="kn">import</span> <span class="nn">torch.distributed</span>
 
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">__version__</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.tools.typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Criterion</span><span class="p">,</span>
     <span class="n">Device</span><span class="p">,</span>
@@ -283,7 +286,7 @@
 <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;once&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="is_wrapped_with_ddp"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.is_wrapped_with_ddp">[docs]</a><span class="k">def</span> <span class="nf">is_wrapped_with_ddp</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="check_ddp_wrapped"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.check_ddp_wrapped">[docs]</a><span class="k">def</span> <span class="nf">check_ddp_wrapped</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Checks whether model is wrapped with DataParallel/DistributedDataParallel.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -301,6 +304,62 @@
     <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">parallel_wrappers</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="check_apex_available"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.check_apex_available">[docs]</a><span class="k">def</span> <span class="nf">check_apex_available</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Checks if apex is available.&quot;&quot;&quot;</span>
+    <span class="n">env_apex</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;USE_APEX&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">apex</span>  <span class="c1"># noqa: F401</span>
+        <span class="kn">from</span> <span class="nn">apex</span> <span class="kn">import</span> <span class="n">amp</span>  <span class="c1"># noqa: F401</span>
+
+        <span class="k">return</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">env_apex</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">env_apex</span></div>
+
+
+<div class="viewcode-block" id="check_torch_distributed_initialized"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.check_torch_distributed_initialized">[docs]</a><span class="k">def</span> <span class="nf">check_torch_distributed_initialized</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Checks if torch.distributed is available and initialized.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">()</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="check_slurm_available"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.check_slurm_available">[docs]</a><span class="k">def</span> <span class="nf">check_slurm_available</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;Checks if slurm is available.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;SLURM_JOB_NUM_NODES&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span> <span class="ow">and</span> <span class="s2">&quot;SLURM_NODEID&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span></div>
+
+
+<div class="viewcode-block" id="assert_fp16_available"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.assert_fp16_available">[docs]</a><span class="k">def</span> <span class="nf">assert_fp16_available</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Asserts for installed and available Apex FP16.&quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">enabled</span>
+    <span class="p">),</span> <span class="s2">&quot;fp16 mode requires cudnn backend to be enabled.&quot;</span>
+
+    <span class="k">assert</span> <span class="n">check_apex_available</span><span class="p">(),</span> <span class="p">(</span>
+        <span class="s2">&quot;NVidia Apex package must be installed. &quot;</span>
+        <span class="s2">&quot;See https://github.com/NVIDIA/apex.&quot;</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="initialize_apex"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.initialize_apex">[docs]</a><span class="k">def</span> <span class="nf">initialize_apex</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">distributed_params</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+    <span class="kn">import</span> <span class="nn">apex</span>
+
+    <span class="n">amp_params</span> <span class="o">=</span> <span class="n">get_fn_default_params</span><span class="p">(</span>
+        <span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">initialize</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;models&quot;</span><span class="p">,</span> <span class="s2">&quot;optimizers&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">amp_params</span><span class="p">[</span><span class="s2">&quot;opt_level&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;O0&quot;</span>
+    <span class="k">for</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">distributed_params</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">amp_params</span><span class="p">:</span>
+            <span class="n">amp_params</span><span class="p">[</span><span class="n">dp</span><span class="p">]</span> <span class="o">=</span> <span class="n">distributed_params</span><span class="p">[</span><span class="n">dp</span><span class="p">]</span>
+
+    <span class="n">amp_result</span> <span class="o">=</span> <span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">amp_params</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">optimizer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">amp_result</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">amp_result</span>
+    <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span></div>
+
+
 <div class="viewcode-block" id="get_nn_from_ddp_module"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.get_nn_from_ddp_module">[docs]</a><span class="k">def</span> <span class="nf">get_nn_from_ddp_module</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return a real model from a torch.nn.DataParallel,</span>
@@ -313,40 +372,9 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        A model</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">is_wrapped_with_ddp</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">check_ddp_wrapped</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">module</span>
     <span class="k">return</span> <span class="n">model</span></div>
-
-
-<div class="viewcode-block" id="is_torch_distributed_initialized"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.is_torch_distributed_initialized">[docs]</a><span class="k">def</span> <span class="nf">is_torch_distributed_initialized</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Checks if torch.distributed is available and initialized.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">(</span>
-        <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">is_initialized</span><span class="p">()</span>
-    <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="is_apex_available"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.is_apex_available">[docs]</a><span class="k">def</span> <span class="nf">is_apex_available</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Checks if apex is available.&quot;&quot;&quot;</span>
-    <span class="n">env_apex</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;USE_APEX&quot;</span><span class="p">,</span> <span class="s2">&quot;1&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="kn">import</span> <span class="nn">apex</span>  <span class="c1"># noqa: F401</span>
-        <span class="kn">from</span> <span class="nn">apex</span> <span class="kn">import</span> <span class="n">amp</span>  <span class="c1"># noqa: F401</span>
-
-        <span class="k">return</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">env_apex</span>
-    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">env_apex</span></div>
-
-
-<div class="viewcode-block" id="assert_fp16_available"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.assert_fp16_available">[docs]</a><span class="k">def</span> <span class="nf">assert_fp16_available</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Asserts for installed and available Apex FP16.&quot;&quot;&quot;</span>
-    <span class="k">assert</span> <span class="p">(</span>
-        <span class="n">torch</span><span class="o">.</span><span class="n">backends</span><span class="o">.</span><span class="n">cudnn</span><span class="o">.</span><span class="n">enabled</span>
-    <span class="p">),</span> <span class="s2">&quot;fp16 mode requires cudnn backend to be enabled.&quot;</span>
-
-    <span class="k">assert</span> <span class="n">is_apex_available</span><span class="p">(),</span> <span class="p">(</span>
-        <span class="s2">&quot;NVidia Apex package must be installed. &quot;</span>
-        <span class="s2">&quot;See https://github.com/NVIDIA/apex.&quot;</span>
-    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="get_rank"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.get_rank">[docs]</a><span class="k">def</span> <span class="nf">get_rank</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -357,7 +385,7 @@
 <span class="sd">        (int): ``rank`` if torch.distributed is initialized,</span>
 <span class="sd">        otherwise ``-1``</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">is_torch_distributed_initialized</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">check_torch_distributed_initialized</span><span class="p">():</span>
         <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
@@ -365,7 +393,7 @@
 
 <div class="viewcode-block" id="get_distributed_mean"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.get_distributed_mean">[docs]</a><span class="k">def</span> <span class="nf">get_distributed_mean</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;Computes distributed mean among all nodes.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">is_torch_distributed_initialized</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">check_torch_distributed_initialized</span><span class="p">():</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
             <span class="n">value</span><span class="p">,</span>
             <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">,</span>
@@ -375,11 +403,6 @@
         <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">all_reduce</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">distributed</span><span class="o">.</span><span class="n">get_world_size</span><span class="p">())</span>
     <span class="k">return</span> <span class="n">value</span></div>
-
-
-<div class="viewcode-block" id="is_slurm_available"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.is_slurm_available">[docs]</a><span class="k">def</span> <span class="nf">is_slurm_available</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Checks if slurm is available.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="s2">&quot;SLURM_JOB_NUM_NODES&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span> <span class="ow">and</span> <span class="s2">&quot;SLURM_NODEID&quot;</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span></div>
 
 
 <div class="viewcode-block" id="get_slurm_params"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.get_slurm_params">[docs]</a><span class="k">def</span> <span class="nf">get_slurm_params</span><span class="p">():</span>
@@ -400,7 +423,7 @@
     <span class="n">master_port</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">5</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">4</span><span class="p">))</span>
     <span class="n">master_addr</span> <span class="o">=</span> <span class="s2">&quot;127.0.0.1&quot;</span>
     <span class="n">cur_node</span><span class="p">,</span> <span class="n">num_nodes</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
-    <span class="k">if</span> <span class="n">is_slurm_available</span><span class="p">():</span>
+    <span class="k">if</span> <span class="n">check_slurm_available</span><span class="p">():</span>
         <span class="n">cur_node</span><span class="p">,</span> <span class="n">num_nodes</span><span class="p">,</span> <span class="n">master_addr</span><span class="p">,</span> <span class="n">master_port</span> <span class="o">=</span> <span class="n">get_slurm_params</span><span class="p">()</span>
 
     <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MASTER_ADDR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;MASTER_ADDR&quot;</span><span class="p">,</span> <span class="n">master_addr</span><span class="p">)</span>
@@ -442,26 +465,6 @@
     <span class="k">return</span> <span class="n">env</span></div>
 
 
-<div class="viewcode-block" id="initialize_apex"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.initialize_apex">[docs]</a><span class="k">def</span> <span class="nf">initialize_apex</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">distributed_params</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
-    <span class="kn">import</span> <span class="nn">apex</span>
-
-    <span class="n">amp_params</span> <span class="o">=</span> <span class="n">get_fn_default_params</span><span class="p">(</span>
-        <span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">initialize</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;models&quot;</span><span class="p">,</span> <span class="s2">&quot;optimizers&quot;</span><span class="p">]</span>
-    <span class="p">)</span>
-    <span class="n">amp_params</span><span class="p">[</span><span class="s2">&quot;opt_level&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;O0&quot;</span>
-    <span class="k">for</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">distributed_params</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">amp_params</span><span class="p">:</span>
-            <span class="n">amp_params</span><span class="p">[</span><span class="n">dp</span><span class="p">]</span> <span class="o">=</span> <span class="n">distributed_params</span><span class="p">[</span><span class="n">dp</span><span class="p">]</span>
-
-    <span class="n">amp_result</span> <span class="o">=</span> <span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">amp_params</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">optimizer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">amp_result</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">amp_result</span>
-    <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span></div>
-
-
 <div class="viewcode-block" id="process_components"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.process_components">[docs]</a><span class="k">def</span> <span class="nf">process_components</span><span class="p">(</span>
     <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
     <span class="n">criterion</span><span class="p">:</span> <span class="n">Criterion</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -488,11 +491,13 @@
     <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">device</span> <span class="o">=</span> <span class="n">get_device</span><span class="p">()</span>
 
-    <span class="n">use_apex</span> <span class="o">=</span> <span class="n">distributed_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;apex&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_apex_available</span><span class="p">()</span>
+    <span class="n">is_apex_available</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">distributed_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;apex&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check_apex_available</span><span class="p">()</span>
+    <span class="p">)</span>
 
     <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">maybe_recursive_call</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">is_wrapped_with_ddp</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">check_ddp_wrapped</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
         <span class="k">pass</span>
     <span class="c1"># distributed data parallel run (ddp) (with apex support)</span>
     <span class="k">elif</span> <span class="n">get_rank</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
@@ -506,7 +511,7 @@
 
         <span class="n">syncbn</span> <span class="o">=</span> <span class="n">distributed_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;syncbn&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">use_apex</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">is_apex_available</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">apex</span>
 
             <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">initialize_apex</span><span class="p">(</span>
@@ -523,13 +528,13 @@
     <span class="c1"># data parallel run (dp) (with apex support)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># apex issue https://github.com/deepset-ai/FARM/issues/210</span>
-        <span class="n">can_use_apex</span> <span class="o">=</span> <span class="p">(</span><span class="n">use_apex</span> <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
-            <span class="n">use_apex</span>
+        <span class="n">use_apex</span> <span class="o">=</span> <span class="p">(</span><span class="n">is_apex_available</span> <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="n">is_apex_available</span>
             <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span>
             <span class="ow">and</span> <span class="n">distributed_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;opt_level&quot;</span><span class="p">,</span> <span class="s2">&quot;O0&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;O1&quot;</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">can_use_apex</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">use_apex</span><span class="p">:</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
                 <span class="n">model</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span>
             <span class="p">),</span> <span class="s2">&quot;Apex training is not available for KV model&quot;</span>
@@ -551,20 +556,70 @@
     <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span><span class="p">,</span> <span class="n">device</span></div>
 
 
+<div class="viewcode-block" id="is_wrapped_with_ddp"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.is_wrapped_with_ddp">[docs]</a><span class="nd">@deprecation</span><span class="o">.</span><span class="n">deprecated</span><span class="p">(</span>
+    <span class="n">deprecated_in</span><span class="o">=</span><span class="s2">&quot;20.05&quot;</span><span class="p">,</span>
+    <span class="n">removed_in</span><span class="o">=</span><span class="s2">&quot;20.06&quot;</span><span class="p">,</span>
+    <span class="n">current_version</span><span class="o">=</span><span class="n">__version__</span><span class="p">,</span>
+    <span class="n">details</span><span class="o">=</span><span class="s2">&quot;Use check_ddp_wrapped instead.&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">is_wrapped_with_ddp</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks whether model is wrapped with DataParallel/DistributedDataParallel.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">check_ddp_wrapped</span><span class="p">(</span><span class="n">model</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_torch_distributed_initialized"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.is_torch_distributed_initialized">[docs]</a><span class="nd">@deprecation</span><span class="o">.</span><span class="n">deprecated</span><span class="p">(</span>
+    <span class="n">deprecated_in</span><span class="o">=</span><span class="s2">&quot;20.05&quot;</span><span class="p">,</span>
+    <span class="n">removed_in</span><span class="o">=</span><span class="s2">&quot;20.06&quot;</span><span class="p">,</span>
+    <span class="n">current_version</span><span class="o">=</span><span class="n">__version__</span><span class="p">,</span>
+    <span class="n">details</span><span class="o">=</span><span class="s2">&quot;Use check_torch_distributed_initialized instead.&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">is_torch_distributed_initialized</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Checks if torch.distributed is available and initialized.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">check_torch_distributed_initialized</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="is_slurm_available"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.is_slurm_available">[docs]</a><span class="nd">@deprecation</span><span class="o">.</span><span class="n">deprecated</span><span class="p">(</span>
+    <span class="n">deprecated_in</span><span class="o">=</span><span class="s2">&quot;20.05&quot;</span><span class="p">,</span>
+    <span class="n">removed_in</span><span class="o">=</span><span class="s2">&quot;20.06&quot;</span><span class="p">,</span>
+    <span class="n">current_version</span><span class="o">=</span><span class="n">__version__</span><span class="p">,</span>
+    <span class="n">details</span><span class="o">=</span><span class="s2">&quot;Use check_slurm_available instead.&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">is_slurm_available</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Checks if slurm is available.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">check_slurm_available</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="is_apex_available"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.is_apex_available">[docs]</a><span class="nd">@deprecation</span><span class="o">.</span><span class="n">deprecated</span><span class="p">(</span>
+    <span class="n">deprecated_in</span><span class="o">=</span><span class="s2">&quot;20.05&quot;</span><span class="p">,</span>
+    <span class="n">removed_in</span><span class="o">=</span><span class="s2">&quot;20.06&quot;</span><span class="p">,</span>
+    <span class="n">current_version</span><span class="o">=</span><span class="n">__version__</span><span class="p">,</span>
+    <span class="n">details</span><span class="o">=</span><span class="s2">&quot;Use check_apex_available instead.&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="k">def</span> <span class="nf">is_apex_available</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Checks if apex is available.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">check_apex_available</span><span class="p">()</span></div>
+
+
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;check_ddp_wrapped&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;check_apex_available&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;check_torch_distributed_initialized&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;check_slurm_available&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;assert_fp16_available&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;initialize_apex&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_nn_from_ddp_module&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_rank&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_distributed_mean&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;is_apex_available&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;assert_fp16_available&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;is_slurm_available&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;is_torch_distributed_initialized&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;initialize_apex&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;is_wrapped_with_ddp&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_distributed_env&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_distributed_params&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;get_nn_from_ddp_module&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_slurm_params&quot;</span><span class="p">,</span>
     <span class="s2">&quot;process_components&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;is_wrapped_with_ddp&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;is_torch_distributed_initialized&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;is_slurm_available&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;is_apex_available&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

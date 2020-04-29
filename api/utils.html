@@ -404,6 +404,58 @@
 <div class="section" id="module-catalyst.utils.distributed">
 <span id="distributed"></span><h3><a class="toc-backref" href="#id4">Distributed</a><a class="headerlink" href="#module-catalyst.utils.distributed" title="Permalink to this headline">¶</a></h3>
 <dl class="py function">
+<dt id="catalyst.utils.distributed.check_ddp_wrapped">
+<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">check_ddp_wrapped</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#check_ddp_wrapped"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.check_ddp_wrapped" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether model is wrapped with DataParallel/DistributedDataParallel.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="catalyst.utils.distributed.check_apex_available">
+<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">check_apex_available</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#check_apex_available"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.check_apex_available" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if apex is available.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="catalyst.utils.distributed.check_torch_distributed_initialized">
+<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">check_torch_distributed_initialized</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#check_torch_distributed_initialized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.check_torch_distributed_initialized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if torch.distributed is available and initialized.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="catalyst.utils.distributed.check_slurm_available">
+<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">check_slurm_available</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/distributed.html#check_slurm_available"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.check_slurm_available" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if slurm is available.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="catalyst.utils.distributed.assert_fp16_available">
+<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">assert_fp16_available</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#assert_fp16_available"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.assert_fp16_available" title="Permalink to this definition">¶</a></dt>
+<dd><p>Asserts for installed and available Apex FP16.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="catalyst.utils.distributed.initialize_apex">
+<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">initialize_apex</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">distributed_params</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/distributed.html#initialize_apex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.initialize_apex" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="catalyst.utils.distributed.get_nn_from_ddp_module">
+<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">get_nn_from_ddp_module</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em><span class="sig-paren">)</span> &#x2192; torch.nn.modules.module.Module<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#get_nn_from_ddp_module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.get_nn_from_ddp_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a real model from a torch.nn.DataParallel,
+torch.nn.parallel.DistributedDataParallel, or
+apex.parallel.DistributedDataParallel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>model</strong> – A model, or DataParallel wrapper.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A model</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="catalyst.utils.distributed.get_rank">
 <code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">get_rank</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#get_rank"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.get_rank" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the rank of the current worker.</p>
@@ -425,42 +477,6 @@ otherwise <code class="docutils literal notranslate"><span class="pre">-1</span>
 </dd></dl>
 
 <dl class="py function">
-<dt id="catalyst.utils.distributed.is_apex_available">
-<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">is_apex_available</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#is_apex_available"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.is_apex_available" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks if apex is available.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="catalyst.utils.distributed.assert_fp16_available">
-<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">assert_fp16_available</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#assert_fp16_available"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.assert_fp16_available" title="Permalink to this definition">¶</a></dt>
-<dd><p>Asserts for installed and available Apex FP16.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="catalyst.utils.distributed.is_slurm_available">
-<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">is_slurm_available</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/distributed.html#is_slurm_available"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.is_slurm_available" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks if slurm is available.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="catalyst.utils.distributed.is_torch_distributed_initialized">
-<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">is_torch_distributed_initialized</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#is_torch_distributed_initialized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.is_torch_distributed_initialized" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks if torch.distributed is available and initialized.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="catalyst.utils.distributed.initialize_apex">
-<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">initialize_apex</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">distributed_params</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/distributed.html#initialize_apex"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.initialize_apex" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="catalyst.utils.distributed.is_wrapped_with_ddp">
-<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">is_wrapped_with_ddp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#is_wrapped_with_ddp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.is_wrapped_with_ddp" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks whether model is wrapped with DataParallel/DistributedDataParallel.</p>
-</dd></dl>
-
-<dl class="py function">
 <dt id="catalyst.utils.distributed.get_distributed_env">
 <code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">get_distributed_env</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">local_rank</span></em>, <em class="sig-param"><span class="n">rank</span></em>, <em class="sig-param"><span class="n">world_size</span></em>, <em class="sig-param"><span class="n">use_cuda_visible_devices</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/distributed.html#get_distributed_env"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.get_distributed_env" title="Permalink to this definition">¶</a></dt>
 <dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
@@ -470,22 +486,6 @@ otherwise <code class="docutils literal notranslate"><span class="pre">-1</span>
 <dt id="catalyst.utils.distributed.get_distributed_params">
 <code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">get_distributed_params</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/distributed.html#get_distributed_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.get_distributed_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="catalyst.utils.distributed.get_nn_from_ddp_module">
-<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">get_nn_from_ddp_module</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em><span class="sig-paren">)</span> &#x2192; torch.nn.modules.module.Module<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#get_nn_from_ddp_module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.get_nn_from_ddp_module" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a real model from a torch.nn.DataParallel,
-torch.nn.parallel.DistributedDataParallel, or
-apex.parallel.DistributedDataParallel.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>model</strong> – A model, or DataParallel wrapper.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A model</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -511,6 +511,30 @@ for distributed and FP16 method</p></li>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="catalyst.utils.distributed.is_wrapped_with_ddp">
+<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">is_wrapped_with_ddp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#is_wrapped_with_ddp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.is_wrapped_with_ddp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks whether model is wrapped with DataParallel/DistributedDataParallel.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="catalyst.utils.distributed.is_torch_distributed_initialized">
+<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">is_torch_distributed_initialized</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#is_torch_distributed_initialized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.is_torch_distributed_initialized" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if torch.distributed is available and initialized.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="catalyst.utils.distributed.is_slurm_available">
+<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">is_slurm_available</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#is_slurm_available"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.is_slurm_available" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if slurm is available.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="catalyst.utils.distributed.is_apex_available">
+<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">is_apex_available</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#is_apex_available"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.is_apex_available" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if apex is available.</p>
 </dd></dl>
 
 </div>
