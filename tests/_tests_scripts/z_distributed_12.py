@@ -1,3 +1,6 @@
+# flake8: noqa
+import os
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -7,30 +10,11 @@ from catalyst import dl
 
 
 class Projector(nn.Module):
-    """
-    Simpler neural network example - Projector.
-    """
-
     def __init__(self, input_size: int):
-        """
-        Init method.
-
-        Args:
-            input_size(int): number of features in projected space.
-        """
         super().__init__()
         self.linear = nn.Linear(input_size, 1)
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
-        """
-        Forward method.
-
-        Args:
-            X(torch.Tensor): input tensor.
-
-        Returns:
-            (torch.Tensor): output projection.
-        """
         return self.linear(X).squeeze(-1)
 
 
@@ -47,26 +31,32 @@ def datasets_fn(num_features: int):
     return {"train": dataset, "valid": dataset}
 
 
-num_features = 10
-model = Projector(num_features)
+def main():
+    num_features = 10
+    model = Projector(num_features)
 
-# example  12 - distibuted training with datasets closure
-runner = dl.SupervisedRunner()
-runner.train(
-    model=model,
-    # loaders={"train": loader, "valid": loader},
-    datasets={
-        "batch_size": 32,
-        "num_workers": 1,
-        "get_datasets_fn": datasets_fn,
-        "num_features": num_features,
-    },
-    criterion=nn.MSELoss(),
-    optimizer=optim.Adam(model.parameters()),
-    logdir="logs/log_example_12",
-    num_epochs=10,
-    verbose=True,
-    check=True,
-    fp16=False,
-    distributed=True,
-)
+    # example  12 - distibuted training with datasets closure
+    runner = dl.SupervisedRunner()
+    runner.train(
+        model=model,
+        # loaders={"train": loader, "valid": loader},
+        datasets={
+            "batch_size": 32,
+            "num_workers": 1,
+            "get_datasets_fn": datasets_fn,
+            "num_features": num_features,
+        },
+        criterion=nn.MSELoss(),
+        optimizer=optim.Adam(model.parameters()),
+        logdir="logs/log_example_12",
+        num_epochs=10,
+        verbose=True,
+        check=True,
+        fp16=False,
+        distributed=True,
+    )
+
+
+if __name__ == "__main__":
+    if os.getenv("USE_APEX", "0") == "0" and os.getenv("USE_DDP", "0") == "1":
+        main()

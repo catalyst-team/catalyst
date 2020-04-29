@@ -172,7 +172,7 @@ def main(args, _=None):
                 else None
             )
 
-            if utils.is_wrapped_with_ddp(model):
+            if utils.check_ddp_wrapped(model):
                 # using several gpu
                 hidden_size = model.module.config.hidden_size
                 hidden_states = model.module.config.output_hidden_states

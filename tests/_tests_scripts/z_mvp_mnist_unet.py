@@ -1,3 +1,4 @@
+# flake8: noqa
 import os
 
 import torch
@@ -12,14 +13,7 @@ from catalyst.utils import metrics
 
 
 class ClassifyUnet(nn.Module):
-    """
-    Docs.
-    """
-
     def __init__(self, in_channels, in_hw, out_features):
-        """
-        Docs.
-        """
         super().__init__()
         self.encoder = nn.Sequential(
             nn.Conv2d(in_channels, in_channels, 3, 1, 1), nn.Tanh()
@@ -28,9 +22,6 @@ class ClassifyUnet(nn.Module):
         self.clf = nn.Linear(in_channels * in_hw * in_hw, out_features)
 
     def forward(self, x):
-        """
-        Docs.
-        """
         z = self.encoder(x)
         z_ = z.view(z.size(0), -1)
         y_hat = self.clf(z_)
@@ -38,40 +29,8 @@ class ClassifyUnet(nn.Module):
         return y_hat, x_
 
 
-model = ClassifyUnet(1, 28, 10)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
-
-loaders = {
-    "train": DataLoader(
-        MNIST(
-            os.getcwd(),
-            train=False,
-            download=True,
-            transform=transforms.ToTensor(),
-        ),
-        batch_size=32,
-    ),
-    "valid": DataLoader(
-        MNIST(
-            os.getcwd(),
-            train=False,
-            download=True,
-            transform=transforms.ToTensor(),
-        ),
-        batch_size=32,
-    ),
-}
-
-
 class CustomRunner(dl.Runner):
-    """
-    Docs.
-    """
-
     def _handle_batch(self, batch):
-        """
-        Docs.
-        """
         x, y = batch
         x_noise = (x + torch.rand_like(x)).clamp_(0, 1)
         y_hat, x_ = self.model(x_noise)
@@ -100,11 +59,41 @@ class CustomRunner(dl.Runner):
             self.state.optimizer.zero_grad()
 
 
-runner = CustomRunner()
-runner.train(
-    model=model,
-    optimizer=optimizer,
-    loaders=loaders,
-    verbose=True,
-    check=True,
-)
+def main():
+    model = ClassifyUnet(1, 28, 10)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
+
+    loaders = {
+        "train": DataLoader(
+            MNIST(
+                os.getcwd(),
+                train=False,
+                download=True,
+                transform=transforms.ToTensor(),
+            ),
+            batch_size=32,
+        ),
+        "valid": DataLoader(
+            MNIST(
+                os.getcwd(),
+                train=False,
+                download=True,
+                transform=transforms.ToTensor(),
+            ),
+            batch_size=32,
+        ),
+    }
+
+    runner = CustomRunner()
+    runner.train(
+        model=model,
+        optimizer=optimizer,
+        loaders=loaders,
+        verbose=True,
+        check=True,
+    )
+
+
+if __name__ == "__main__":
+    if os.getenv("USE_APEX", "0") == "0" and os.getenv("USE_DDP", "0") == "0":
+        main()

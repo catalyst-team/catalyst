@@ -4,7 +4,6 @@ import os
 
 from catalyst.tools import settings
 
-from .criterion import CriterionAggregatorCallback
 from .cutmix_callback import CutmixCallback
 from .knn import KNNMetricCallback
 from .optimizer import SaveModelGradsCallback

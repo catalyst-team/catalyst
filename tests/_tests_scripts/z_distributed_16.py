@@ -1,3 +1,6 @@
+# flake8: noqa
+import os
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -7,30 +10,11 @@ from catalyst import dl, utils
 
 
 class Projector(nn.Module):
-    """
-    Simpler neural network example - Projector.
-    """
-
     def __init__(self, input_size: int):
-        """
-        Init method.
-
-        Args:
-            input_size(int): number of features in projected space.
-        """
         super().__init__()
         self.linear = nn.Linear(input_size, 1)
 
     def forward(self, X: torch.Tensor) -> torch.Tensor:
-        """
-        Forward method.
-
-        Args:
-            X(torch.Tensor): input tensor.
-
-        Returns:
-            (torch.Tensor): output projection.
-        """
         return self.linear(X).squeeze(-1)
 
 
@@ -50,9 +34,6 @@ def datasets_fn(num_features: int):
 # example 14 - distibuted training with datasets closure
 # and utils.distributed_cmd_run
 def train():
-    """
-    Training loop function.
-    """
     num_features = 10
     model = Projector(num_features)
 
@@ -77,4 +58,10 @@ def train():
     )
 
 
-utils.distributed_cmd_run(train)
+def main():
+    utils.distributed_cmd_run(train)
+
+
+if __name__ == "__main__":
+    if os.getenv("USE_APEX", "0") == "0" and os.getenv("USE_DDP", "0") == "1":
+        main()

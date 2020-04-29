@@ -2,12 +2,14 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
 import logging
 
-from catalyst.contrib.scripts import find_thresholds
+from catalyst.contrib.scripts import collect_env, find_thresholds
 from catalyst.tools import settings
 
 logger = logging.getLogger(__name__)
 
-COMMANDS = OrderedDict([("find-thresholds", find_thresholds)])
+COMMANDS = OrderedDict(
+    [("collect-env", collect_env), ("find-thresholds", find_thresholds)]
+)
 
 try:
     import nmslib  # noqa: F401
