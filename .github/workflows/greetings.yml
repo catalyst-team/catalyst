@@ -1,0 +1,13 @@
+# https://github.com/marketplace/actions/first-interaction
+name: Greetings
+on: [issues]  # pull_request
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: 'Hi! Thank you for your contribution! Great first issue!'
+        pr-message: 'Hey thanks for the pull request! Please give us a bit of time to review it!'
