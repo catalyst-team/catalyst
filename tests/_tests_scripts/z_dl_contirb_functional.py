@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 # flake8: noqa
+import os
+import sys
 
 from catalyst.contrib.models import get_convolution_net, get_linear_net
+
+if os.getenv("USE_APEX", "0") != "0" or os.getenv("USE_DDP", "0") != "0":
+    sys.exit()
+
 
 net = get_linear_net(
     in_features=32,

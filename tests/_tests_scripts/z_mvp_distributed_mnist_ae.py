@@ -1,3 +1,4 @@
+# flake8: noqa
 import os
 
 import torch
@@ -109,4 +110,10 @@ def train():
     )
 
 
-utils.distributed_cmd_run(train)
+def main():
+    utils.distributed_cmd_run(train)
+
+
+if __name__ == "__main__":
+    if os.getenv("USE_APEX", "0") == "0" and os.getenv("USE_DDP", "0") == "1":
+        main()

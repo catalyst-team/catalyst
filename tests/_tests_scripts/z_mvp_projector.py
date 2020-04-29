@@ -1,7 +1,15 @@
+# flake8: noqa
+import os
+import sys
+
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
 from catalyst.dl import SupervisedRunner
+
+if os.getenv("USE_APEX", "0") != "0" or os.getenv("USE_DDP", "0") != "0":
+    sys.exit()
+
 
 # data
 num_samples, num_features = int(32e3), int(1e1)

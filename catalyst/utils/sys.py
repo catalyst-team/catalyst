@@ -15,7 +15,8 @@ from .misc import get_utcnow_time
 
 
 def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:
-    """Decode bytes values in the dictionary to UTF-8.
+    """
+    Decode bytes values in the dictionary to UTF-8.
 
     Args:
         dictionary: a dict
@@ -31,7 +32,8 @@ def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:
 
 
 def get_environment_vars() -> Dict[str, Any]:
-    """Creates a dictionary with environment variables.
+    """
+    Creates a dictionary with environment variables.
 
     Returns:
         dict: environment variables

@@ -1,4 +1,13 @@
 # alias for https://catalyst-team.github.io/catalyst/info/distributed.html#case-3-best-practices-for-distributed-training # noqa: E501 W505
+# flake8: noqa
+# isort:skip_file
+import os
+import sys
+
+
+if os.getenv("USE_APEX", "0") != "0" or os.getenv("USE_DDP", "0") != "1":
+    sys.exit()
+
 
 import torch
 from torch.utils.data import TensorDataset
