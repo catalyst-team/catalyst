@@ -4,7 +4,7 @@ import logging
 import numpy as np
 from six import string_types
 
-from catalyst.utils.tools import settings
+from catalyst.tools import settings
 
 from .serialization import deserialize, serialize
 

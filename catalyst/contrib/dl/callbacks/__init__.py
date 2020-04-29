@@ -2,7 +2,7 @@
 import logging
 import os
 
-from catalyst.utils.tools import settings
+from catalyst.tools import settings
 
 from .criterion import CriterionAggregatorCallback
 from .cutmix_callback import CutmixCallback

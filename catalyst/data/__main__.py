@@ -82,7 +82,7 @@ from catalyst.data.scripts import (
     split_dataframe,
     tag2label,
 )
-from catalyst.utils.tools import settings
+from catalyst.tools import settings
 
 logger = logging.getLogger(__name__)
 

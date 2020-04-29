@@ -5,7 +5,7 @@ from urllib.request import Request, urlopen
 
 from catalyst import utils
 from catalyst.core import Callback, CallbackNode, CallbackOrder, State
-from catalyst.utils.tools import settings
+from catalyst.tools import settings
 
 
 class TelegramLogger(Callback):

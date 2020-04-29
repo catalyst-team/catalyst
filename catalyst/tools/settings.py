@@ -3,7 +3,7 @@ import configparser
 import logging
 import os
 
-from catalyst.utils.tools.frozen_class import FrozenClass
+from catalyst.tools.frozen_class import FrozenClass
 
 logger = logging.getLogger(__name__)
 

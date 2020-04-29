@@ -3,8 +3,8 @@ catalyst subpackage registries
 """
 import logging
 
-from catalyst.utils.tools import settings
-from catalyst.utils.tools.registry import Registry
+from catalyst.tools import settings
+from catalyst.tools.registry import Registry
 
 logger = logging.getLogger(__name__)
 

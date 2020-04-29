@@ -19,8 +19,8 @@ from catalyst.dl import (
     ValidationManagerCallback,
     VerboseLogger,
 )
-from catalyst.utils.tools import settings
-from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
+from catalyst.tools import settings
+from catalyst.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
 class Experiment(_StageBasedExperiment):

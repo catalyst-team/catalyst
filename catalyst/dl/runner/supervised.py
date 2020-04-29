@@ -4,7 +4,7 @@ import logging
 import torch
 
 from catalyst.dl import State, SupervisedExperiment
-from catalyst.utils.tools.typing import Device, Model
+from catalyst.tools.typing import Device, Model
 
 from .core import Runner
 

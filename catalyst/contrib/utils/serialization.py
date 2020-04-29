@@ -1,7 +1,7 @@
 import logging
 import pickle
 
-from catalyst.utils.tools import settings
+from catalyst.tools import settings
 
 logger = logging.getLogger(__name__)
 

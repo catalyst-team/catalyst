@@ -48,7 +48,7 @@ from .pandas import (
 )
 from .parallel import parallel_imap, tqdm_parallel_imap, get_pool
 from .serialization import deserialize, serialize
-from catalyst.utils.tools import settings
+from catalyst.tools import settings
 
 try:
     import plotly  # noqa: F401

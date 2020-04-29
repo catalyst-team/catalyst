@@ -3,7 +3,7 @@ from collections import OrderedDict
 import logging
 
 from catalyst.contrib.scripts import find_thresholds
-from catalyst.utils.tools import settings
+from catalyst.tools import settings
 
 logger = logging.getLogger(__name__)
 

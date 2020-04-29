@@ -10,7 +10,7 @@ from skimage.color import label2rgb, rgb2gray
 
 import torch
 
-from catalyst.utils.tools import settings
+from catalyst.tools import settings
 
 _IMAGENET_STD = (0.229, 0.224, 0.225)
 _IMAGENET_MEAN = (0.485, 0.456, 0.406)

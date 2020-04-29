@@ -4,7 +4,7 @@ from torch.nn import DataParallel
 from torch.nn.parallel import DistributedDataParallel
 
 from catalyst.core import Callback, CallbackNode, CallbackOrder, State
-from catalyst.utils.tools.typing import Model
+from catalyst.tools.typing import Model
 
 
 class SaveModelGradsCallback(Callback):
