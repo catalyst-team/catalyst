@@ -7,11 +7,7 @@ from torch.utils.data import DataLoader
 
 from catalyst.core import utils
 from catalyst.utils.tools.frozen_class import FrozenClass
-from catalyst.utils.tools.settings import (
-    LOADER_VALID_PREFIX,
-    STAGE_INFER_PREFIX,
-    STATE_MAIN_METRIC,
-)
+from catalyst.utils.tools import settings
 from catalyst.utils.tools.typing import (
     Criterion,
     Device,
@@ -288,11 +284,11 @@ class State(FrozenClass):
         scheduler: StateScheduler = None,
         callbacks: Dict[str, "Callback"] = None,
         logdir: str = None,
-        stage: str = STAGE_INFER_PREFIX,
+        stage: str = settings.stage_infer_prefix,  # @TODO: wtf?
         num_epochs: int = 1,
-        main_metric: str = STATE_MAIN_METRIC,
+        main_metric: str = "loss",
         minimize_metric: bool = True,
-        valid_loader: str = LOADER_VALID_PREFIX,
+        valid_loader: str = settings.loader_valid_prefix,
         checkpoint_data: Dict = None,
         is_check_run: bool = False,
         **kwargs,
@@ -374,7 +370,7 @@ class State(FrozenClass):
         self.is_valid_loader: bool = False
         self.is_infer_loader: bool = False
         self.is_infer_stage: bool = self.stage_name.startswith(
-            STAGE_INFER_PREFIX
+            settings.stage_infer_prefix
         )
         self.need_early_stop: bool = False
         self.need_exception_reraise: bool = True
