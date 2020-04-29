@@ -13,7 +13,7 @@ function check_file_existence {
 }
 
 
-################################  preparing  ################################
+################################  global variables  ################################
 rm -rf ./tests/logs
 
 EXPDIR=./tests/_tests_dl_callbacks
@@ -343,6 +343,37 @@ echo ${LOG_MSG};
 check_file_existence "${LOGDIR}/checkpoints/_metrics.json"
 
 for FPREFIX in 'best' 'last' 'stage1.3' 'stage1.4' 'stage1.5' 'stage2.3' 'stage2.4' 'stage2.5'
+do
+    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
+    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
+done
+
+rm -rf ${LOGDIR}
+
+
+################################  pipeline 11  ################################
+# checking with three stages and default not specified callback
+# (CheckpointCallback is one of default callbacks)
+LOG_MSG='pipeline 11'
+echo ${LOG_MSG}
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config11.yml \
+  --logdir=${LOGDIR}
+
+if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
+    echo "File $LOGFILE does not exist"
+    exit 1
+fi
+
+cat $LOGFILE;
+echo ${LOG_MSG};
+
+check_file_existence "${LOGDIR}/checkpoints/_metrics.json"
+
+for FPREFIX in 'best' 'last' 'stage1.5' 'stage2.4'
 do
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"

@@ -1,10 +1,7 @@
-from typing import Dict, Union
+from typing import Dict, Tuple, Union
 from collections import OrderedDict
 import os
 from pathlib import Path
-import shutil
-
-import torch
 
 from catalyst.core import Callback, CallbackNode, CallbackOrder, State, utils
 
@@ -223,6 +220,50 @@ class CheckpointCallback(BaseCheckpointCallback):
             for filepath in last_filepaths:
                 os.remove(filepath)
 
+    def _save_checkpoint(
+        self,
+        logdir: Union[str, Path],
+        suffix: str,
+        checkpoint: Dict,
+        is_best: bool,
+        is_last: bool,
+    ) -> Tuple[str, str]:
+        """
+        Save checkpoint (simple and full).
+
+        Args:
+            logdir (str or Path object): directory for storing checkpoints
+            suffix (str): checkpoint suffix
+            checkpoint (dict): dict with checkpoint data
+            is_best (bool): indicator to save best checkpoint,
+                if true then will be saved two additional checkpoints -
+                ``best`` and ``best_full``.
+            is_last (bool): indicator to save last checkpoint,
+                if true then will be saved two additional checkpoints -
+                ``last`` and ``last_full``.
+        """
+        full_checkpoint_path = utils.save_checkpoint(
+            logdir=Path(f"{logdir}/checkpoints/"),
+            checkpoint=checkpoint,
+            suffix=f"{suffix}_full",
+            is_best=is_best,
+            is_last=is_last,
+            special_suffix="_full",
+        )
+        exclude = ["criterion", "optimizer", "scheduler"]
+        checkpoint_path = utils.save_checkpoint(
+            checkpoint={
+                key: value
+                for key, value in checkpoint.items()
+                if all(z not in key for z in exclude)
+            },
+            logdir=Path(f"{logdir}/checkpoints/"),
+            suffix=suffix,
+            is_best=is_best,
+            is_last=is_last,
+        )
+        return (full_checkpoint_path, checkpoint_path)
+
     def process_checkpoint(
         self,
         logdir: Union[str, Path],
@@ -231,31 +272,28 @@ class CheckpointCallback(BaseCheckpointCallback):
         main_metric: str = "loss",
         minimize_metric: bool = True,
     ) -> None:
-        """@TODO: Docs. Contribution is welcome."""
-        suffix = self.get_checkpoint_suffix(checkpoint)
-        utils.save_checkpoint(
-            logdir=Path(f"{logdir}/checkpoints/"),
-            checkpoint=checkpoint,
-            suffix=f"{suffix}_full",
-            is_best=is_best,
-            is_last=True,
-            special_suffix="_full",
-        )
+        """
+        Save checkpoint and metrics.
 
-        exclude = ["criterion", "optimizer", "scheduler"]
-        checkpoint = {
-            key: value
-            for key, value in checkpoint.items()
-            if all(z not in key for z in exclude)
-        }
-        filepath = utils.save_checkpoint(
+        Args:
+            logdir (str or Path object): directory for storing checkpoints
+            checkpoint (dict): dict with checkpoint data
+            is_best (bool): indicator to save best checkpoint,
+                if true then will be saved two additional checkpoints -
+                ``best`` and ``best_full``.
+            main_metric (str): metric to use for selecting best model and save
+            minimize_metric (bool): indicator for selecting best metric,
+                if true then best metric will be the metric with lowest value,
+                othervise with greatest value.
+
+        """
+        _, filepath = self._save_checkpoint(
+            logdir=logdir,
             checkpoint=checkpoint,
-            logdir=Path(f"{logdir}/checkpoints/"),
-            suffix=suffix,
+            suffix=self.get_checkpoint_suffix(checkpoint),
             is_best=is_best,
             is_last=True,
         )
-
         valid_metrics = checkpoint["valid_metrics"]
         checkpoint_metric = valid_metrics[main_metric]
         metrics_record = (filepath, checkpoint_metric, valid_metrics)
@@ -268,8 +306,11 @@ class CheckpointCallback(BaseCheckpointCallback):
     def on_stage_start(self, state: State) -> None:
         """
         Setup model for stage.
-        If specified ``resume`` or
-        ``resume`` and ``resume_dir`` - load checkpoint.
+
+        NOTE: If CheckpointCallback initialized with ``resume``
+        (as path to checkpoint file) or ``resume`` (as filename)
+        and ``resume_dir`` (as directory with file)
+        then will be performed loading checkpoint.
 
         Args:
             state (State): training state
@@ -320,28 +361,13 @@ class CheckpointCallback(BaseCheckpointCallback):
         if self.save_n_best == 0:
             # full checkpoint
             checkpoint = _pack_state(state)
-            os.makedirs(Path(f"{state.logdir}/checkpoints/"), exist_ok=True)
-            last_state_filename = f"{state.logdir}/checkpoints/last_full.pth"
-            torch.save(checkpoint, last_state_filename)
-            # make duplicate for the next state
-            shutil.copyfile(
-                last_state_filename,
-                f"{state.logdir}/checkpoints/best_full.pth",
+            self._save_checkpoint(
+                logdir=state.logdir,
+                checkpoint=checkpoint,
+                suffix="last",
+                is_best=True,  # will duplicate current (last) as best
+                is_last=False,  # current state is last state
             )
-            # simple checkpoint
-            exclude = ["criterion", "optimizer", "scheduler"]
-            checkpoint = {
-                key: value
-                for key, value in checkpoint.items()
-                if all(z not in key for z in exclude)
-            }
-            last_state_filename = f"{state.logdir}/checkpoints/last.pth"
-            torch.save(checkpoint, last_state_filename)
-            # duplicate for the next state
-            shutil.copyfile(
-                last_state_filename, f"{state.logdir}/checkpoints/best.pth"
-            )
-            # save metrics
             metrics = self.process_metrics(checkpoint["valid_metrics"])
             self.save_metric(state.logdir, metrics)
         else:
