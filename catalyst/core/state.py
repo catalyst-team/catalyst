@@ -6,8 +6,8 @@ import warnings
 from torch.utils.data import DataLoader
 
 from catalyst.core import utils
-from catalyst.utils.tools.frozen_class import FrozenClass
 from catalyst.utils.tools import settings
+from catalyst.utils.tools.frozen_class import FrozenClass
 from catalyst.utils.tools.typing import (
     Criterion,
     Device,

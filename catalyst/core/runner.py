@@ -426,15 +426,22 @@ class _Runner(ABC):
         else:
             # @TODO: add check for non distributed run for inference
             assert not any(
-                x.startswith(settings.loader_train_prefix) for x in loaders.keys()
+                x.startswith(settings.loader_train_prefix)
+                for x in loaders.keys()
             ), "for inference no train loader should be passed"
 
         for loader_name, loader in loaders.items():
             state.loader_name = loader_name
             state.loader_len = len(loader)
-            state.is_train_loader = loader_name.startswith(settings.loader_train_prefix)
-            state.is_valid_loader = loader_name.startswith(settings.loader_valid_prefix)
-            state.is_infer_loader = loader_name.startswith(settings.loader_infer_prefix)
+            state.is_train_loader = loader_name.startswith(
+                settings.loader_train_prefix
+            )
+            state.is_valid_loader = loader_name.startswith(
+                settings.loader_valid_prefix
+            )
+            state.is_infer_loader = loader_name.startswith(
+                settings.loader_infer_prefix
+            )
             utils.maybe_recursive_call(
                 self.model, "train", mode=state.is_train_loader,
             )
