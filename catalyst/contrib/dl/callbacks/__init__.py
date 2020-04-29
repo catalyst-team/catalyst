@@ -12,6 +12,17 @@ from .telegram_logger import TelegramLogger
 logger = logging.getLogger(__name__)
 
 try:
+    import imageio
+    from .inference import InferMaskCallback
+except ImportError as ex:
+    if settings.cv_required:
+        logger.warning(
+            "some of catalyst-cv dependencies not available,"
+            " to install dependencies, run `pip install catalyst[cv]`."
+        )
+        raise ex
+
+try:
     import alchemy
     from .alchemy import AlchemyLogger
 except ImportError as ex:

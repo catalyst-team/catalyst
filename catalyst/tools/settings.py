@@ -19,6 +19,7 @@ class Settings(FrozenClass):
         visdom_logger_required: Optional[bool] = None,
         neptune_logger_required: Optional[bool] = None,
         wandb_logger_required: Optional[bool] = None,
+        plotly_required: Optional[bool] = None,
         telegram_logger_token: str = "",
         telegram_logger_chat_id: str = "",
         use_lz4: bool = False,
@@ -57,6 +58,9 @@ class Settings(FrozenClass):
         )
         self.wandb_logger_required: bool = self._optional_value(
             wandb_logger_required, default=contrib_required
+        )
+        self.plotly_required: bool = self._optional_value(
+            plotly_required, default=contrib_required
         )
         self.telegram_logger_token: str = telegram_logger_token
         self.telegram_logger_chat_id: str = telegram_logger_chat_id
