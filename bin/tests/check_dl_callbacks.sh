@@ -7,7 +7,16 @@ set -eo pipefail -v
 function check_file_existence {
     if [[ ! -f $1 ]]
     then
-        echo "There is no '$1'!";
+        echo "There is no '$1'!"
+        exit 1
+    fi
+}
+
+function check_number_of_files {
+    NFILES=$( ls $1 | wc -l )
+    if [[ $NFILES -ne $2 ]]
+    then
+        echo "Different number of files in '$1' directory - expected $2 but actual number is $NFILES!"
         exit 1
     fi
 }
@@ -48,6 +57,8 @@ do
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
 done
 
+check_number_of_files "${LOGDIR}/checkpoints" 7
+
 rm -rf ${LOGDIR}
 
 
@@ -78,6 +89,8 @@ do
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
 done
 
+check_number_of_files "${LOGDIR}/checkpoints" 7
+
 rm -rf ${LOGDIR}
 
 
@@ -100,11 +113,15 @@ fi
 cat $LOGFILE;
 echo ${LOG_MSG};
 
+check_file_existence "${LOGDIR}/checkpoints/_metrics.json"
+
 for FPREFIX in 'best' 'last' 'stage1.5' 'stage2.4' 'stage3.5'
 do
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
 done
+
+check_number_of_files "${LOGDIR}/checkpoints" 11
 
 rm -rf ${LOGDIR}
 
@@ -136,6 +153,8 @@ do
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
 done
 
+check_number_of_files "${LOGDIR}/checkpoints" 11
+
 rm -rf ${LOGDIR}
 
 
@@ -165,6 +184,8 @@ do
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
 done
+
+check_number_of_files "${LOGDIR}/checkpoints" 23
 
 rm -rf ${LOGDIR}
 
@@ -196,6 +217,8 @@ do
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
 done
 
+check_number_of_files "${LOGDIR}/checkpoints" 5
+
 rm -rf ${LOGDIR}
 
 
@@ -225,6 +248,8 @@ do
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
 done
+
+check_number_of_files "${LOGDIR}/checkpoints" 5
 
 rm -rf ${LOGDIR}
 
@@ -256,6 +281,8 @@ do
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
 done
 
+check_number_of_files "${LOGDIR}/checkpoints" 7
+
 rm -rf ${LOGDIR}
 
 
@@ -285,6 +312,8 @@ do
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
 done
+
+check_number_of_files "${LOGDIR}/checkpoints" 23
 
 rm -rf ${LOGDIR}
 
@@ -317,6 +346,8 @@ do
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
 done
 
+check_number_of_files "${LOGDIR}/checkpoints" 9
+
 rm -rf ${LOGDIR}
 
 
@@ -348,6 +379,8 @@ do
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
 done
 
+check_number_of_files "${LOGDIR}/checkpoints" 17
+
 rm -rf ${LOGDIR}
 
 
@@ -378,5 +411,7 @@ do
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
 done
+
+check_number_of_files "${LOGDIR}/checkpoints" 9
 
 rm -rf ${LOGDIR}
