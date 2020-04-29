@@ -1,3 +1,4 @@
+# flake8: noqa
 import os
 
 import numpy as np
@@ -17,16 +18,10 @@ LOG_SCALE_MIN = -10
 
 
 def normal_sample(mu, sigma):
-    """
-    Docs.
-    """
     return mu + sigma * torch.randn_like(sigma)
 
 
 def normal_logprob(mu, sigma, z):
-    """
-    Docs.
-    """
     normalization_constant = -sigma.log() - 0.5 * np.log(2 * np.pi)
     square_term = -0.5 * ((z - mu) / sigma) ** 2
     logprob_vec = normalization_constant + square_term
@@ -35,14 +30,7 @@ def normal_logprob(mu, sigma, z):
 
 
 class ClassifyVAE(torch.nn.Module):
-    """
-    Docs.
-    """
-
     def __init__(self, in_features, hid_features, out_features):
-        """
-        Docs.
-        """
         super().__init__()
         self.encoder = torch.nn.Linear(in_features, hid_features * 2)
         self.decoder = nn.Sequential(
@@ -51,9 +39,6 @@ class ClassifyVAE(torch.nn.Module):
         self.clf = torch.nn.Linear(hid_features, out_features)
 
     def forward(self, x, deterministic=False):
-        """
-        Docs.
-        """
         z = self.encoder(x)
         bs, z_dim = z.shape
 
@@ -67,31 +52,6 @@ class ClassifyVAE(torch.nn.Module):
         y_hat = self.clf(z_)
 
         return y_hat, x_, z_logprob, loc, log_scale
-
-
-model = ClassifyVAE(28 * 28, 64, 10)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
-
-loaders = {
-    "train": DataLoader(
-        MNIST(
-            os.getcwd(),
-            train=False,
-            download=True,
-            transform=transforms.ToTensor(),
-        ),
-        batch_size=32,
-    ),
-    "valid": DataLoader(
-        MNIST(
-            os.getcwd(),
-            train=False,
-            download=True,
-            transform=transforms.ToTensor(),
-        ),
-        batch_size=32,
-    ),
-}
 
 
 class CustomRunner(dl.Runner):
@@ -137,11 +97,41 @@ class CustomRunner(dl.Runner):
             self.state.optimizer.zero_grad()
 
 
-runner = CustomRunner()
-runner.train(
-    model=model,
-    optimizer=optimizer,
-    loaders=loaders,
-    verbose=True,
-    check=True,
-)
+def main():
+    model = ClassifyVAE(28 * 28, 64, 10)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
+
+    loaders = {
+        "train": DataLoader(
+            MNIST(
+                os.getcwd(),
+                train=False,
+                download=True,
+                transform=transforms.ToTensor(),
+            ),
+            batch_size=32,
+        ),
+        "valid": DataLoader(
+            MNIST(
+                os.getcwd(),
+                train=False,
+                download=True,
+                transform=transforms.ToTensor(),
+            ),
+            batch_size=32,
+        ),
+    }
+
+    runner = CustomRunner()
+    runner.train(
+        model=model,
+        optimizer=optimizer,
+        loaders=loaders,
+        verbose=True,
+        check=True,
+    )
+
+
+if __name__ == "__main__":
+    if os.getenv("USE_APEX", "0") == "0" and os.getenv("USE_DDP", "0") == "0":
+        main()

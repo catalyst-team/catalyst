@@ -34,13 +34,17 @@ from .distributed import (
     get_distributed_env,
     get_rank,
     get_distributed_mean,
+    check_ddp_wrapped,
+    check_torch_distributed_initialized,
+    check_slurm_available,
+    check_apex_available,
+    initialize_apex,
+    assert_fp16_available,
+    process_components,
     is_wrapped_with_ddp,
     is_torch_distributed_initialized,
     is_slurm_available,
     is_apex_available,
-    initialize_apex,
-    assert_fp16_available,
-    process_components,
 )
 from .hash import get_hash, get_short_hash
 from .initialization import get_optimal_inner_init, outer_init
@@ -84,4 +88,5 @@ from .torch import (
     set_optimizer_momentum,
     set_requires_grad,
     get_network_output,
+    detach,
 )

@@ -1,0 +1,9 @@
+version: 1
+update_configs:
+  - package_manager: "docker"
+    directory: "/docker"
+    update_schedule: "daily"
+    ignored_updates:
+      - match: nvidia/cuda:*  # ignore updates of cuda driver
+    default_labels:
+      - "dependencies"

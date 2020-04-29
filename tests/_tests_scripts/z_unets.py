@@ -2,6 +2,13 @@
 # coding: utf-8
 # flake8: noqa
 # isort:skip_file
+import os
+import sys
+
+
+if os.getenv("USE_DDP", "0") != "0":
+    sys.exit()
+
 
 # # main check
 

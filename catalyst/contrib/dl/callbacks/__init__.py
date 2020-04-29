@@ -2,7 +2,6 @@
 import logging
 import os
 
-from .criterion import CriterionAggregatorCallback
 from .cutmix_callback import CutmixCallback
 from .knn import KNNMetricCallback
 from .optimizer import SaveModelGradsCallback
@@ -18,6 +17,17 @@ except ImportError as ex:
         logger.warning(
             "alchemy not available, to install alchemy, "
             "run `pip install alchemy`."
+        )
+        raise ex
+
+try:
+    import visdom
+    from .visdom_logger import VisdomLogger
+except ImportError as ex:
+    if os.environ.get("USE_VISDOM", "0") == "1":
+        logger.warning(
+            "visdom not available, to install visdom, "
+            "run `pip install visdom`."
         )
         raise ex
 
