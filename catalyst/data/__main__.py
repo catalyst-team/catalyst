@@ -73,7 +73,6 @@ Examples:
 from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
 import logging
-import os
 
 from catalyst.__version__ import __version__
 from catalyst.data.scripts import (
@@ -83,6 +82,7 @@ from catalyst.data.scripts import (
     split_dataframe,
     tag2label,
 )
+from catalyst.utils.tools import settings
 
 logger = logging.getLogger(__name__)
 
@@ -102,7 +102,7 @@ try:
 
     COMMANDS["text2embedding"] = text2embedding
 except ImportError as ex:
-    if os.environ.get("USE_TRANSFORMERS", "0") == "1":
+    if settings.transformers_required:
         logger.warning(
             "transformers not available, to install transformers,"
             " run `pip install transformers`."

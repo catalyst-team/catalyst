@@ -48,6 +48,7 @@ from .pandas import (
 )
 from .parallel import parallel_imap, tqdm_parallel_imap, get_pool
 from .serialization import deserialize, serialize
+from catalyst.utils.tools import settings
 
 try:
     import plotly  # noqa: F401
@@ -64,7 +65,7 @@ try:
     import transformers  # noqa: F401
     from .text import tokenize_text, process_bert_output
 except ImportError as ex:
-    if os.environ.get("USE_TRANSFORMERS", "0") == "1":
+    if settings.transformers_required:
         logger.warning(
             "transformers not available, to install transformers,"
             " run `pip install transformers`."

@@ -2,8 +2,8 @@
 catalyst subpackage registries
 """
 import logging
-import os
 
+from catalyst.utils.tools import settings
 from catalyst.utils.tools.registry import Registry
 
 logger = logging.getLogger(__name__)
@@ -23,7 +23,7 @@ def _transforms_loader(r: Registry):
 
         r.add_from_module(t, prefix=["catalyst.", "C."])
     except ImportError as ex:
-        if os.environ.get("USE_ALBUMENTATIONS", "0") == "1":
+        if settings.albumentations_required:
             logger.warning(
                 "albumentations not available, to install albumentations, "
                 "run `pip install albumentations`."

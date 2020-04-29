@@ -1,19 +1,10 @@
-import os
-
 from catalyst.core import Callback, CallbackNode, CallbackOrder, State
-
-_NUM_BATCH_STEPS = int(os.environ.get("CHECK_BATCH_STEPS", 2))
-_NUM_EPOCH_STEPS = int(os.environ.get("CHECK_EPOCH_STEPS", 2))
 
 
 class CheckRunCallback(Callback):
     """@TODO: Docs. Contribution is welcome."""
 
-    def __init__(
-        self,
-        num_batch_steps: int = _NUM_BATCH_STEPS,
-        num_epoch_steps: int = _NUM_EPOCH_STEPS,
-    ):
+    def __init__(self, num_batch_steps: int = 3, num_epoch_steps: int = 2):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__(order=CallbackOrder.External, node=CallbackNode.All)
         self.num_batch_steps = num_batch_steps
