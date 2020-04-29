@@ -41,6 +41,10 @@ from .distributed import (
     initialize_apex,
     assert_fp16_available,
     process_components,
+    is_wrapped_with_ddp,
+    is_torch_distributed_initialized,
+    is_slurm_available,
+    is_apex_available,
 )
 from .hash import get_hash, get_short_hash
 from .initialization import get_optimal_inner_init, outer_init

@@ -7,10 +7,13 @@ import socket
 import subprocess
 import warnings
 
+import deprecation
+
 import torch
 from torch import nn
 import torch.distributed
 
+from catalyst import __version__
 from catalyst.utils.tools.typing import (
     Criterion,
     Device,
@@ -296,6 +299,52 @@ def process_components(
     return model, criterion, optimizer, scheduler, device
 
 
+@deprecation.deprecated(
+    deprecated_in="20.05",
+    removed_in="20.06",
+    current_version=__version__,
+    details="Use check_ddp_wrapped instead.",
+)
+def is_wrapped_with_ddp(model: nn.Module) -> bool:
+    """
+    Checks whether model is wrapped with DataParallel/DistributedDataParallel.
+    """
+    return check_ddp_wrapped(model)
+
+
+@deprecation.deprecated(
+    deprecated_in="20.05",
+    removed_in="20.06",
+    current_version=__version__,
+    details="Use check_torch_distributed_initialized instead.",
+)
+def is_torch_distributed_initialized() -> bool:
+    """Checks if torch.distributed is available and initialized."""
+    return check_torch_distributed_initialized()
+
+
+@deprecation.deprecated(
+    deprecated_in="20.05",
+    removed_in="20.06",
+    current_version=__version__,
+    details="Use check_slurm_available instead.",
+)
+def is_slurm_available() -> bool:
+    """Checks if slurm is available."""
+    return check_slurm_available()
+
+
+@deprecation.deprecated(
+    deprecated_in="20.05",
+    removed_in="20.06",
+    current_version=__version__,
+    details="Use check_apex_available instead.",
+)
+def is_apex_available() -> bool:
+    """Checks if apex is available."""
+    return check_apex_available()
+
+
 __all__ = [
     "check_ddp_wrapped",
     "check_apex_available",
@@ -310,4 +359,8 @@ __all__ = [
     "get_distributed_params",
     "get_slurm_params",
     "process_components",
+    "is_wrapped_with_ddp",
+    "is_torch_distributed_initialized",
+    "is_slurm_available",
+    "is_apex_available",
 ]

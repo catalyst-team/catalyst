@@ -2,7 +2,6 @@
 import logging
 import os
 
-from .criterion import CriterionAggregatorCallback
 from .cutmix_callback import CutmixCallback
 from .knn import KNNMetricCallback
 from .optimizer import SaveModelGradsCallback
