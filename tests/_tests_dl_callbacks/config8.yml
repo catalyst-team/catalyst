@@ -58,7 +58,7 @@ stages:
 
   stage2:
     state_params:
-      num_epochs: *num_epochs 
+      num_epochs: *num_epochs
 
     scheduler_params:
       scheduler: OneCycleLRWithWarmup
@@ -85,7 +85,7 @@ stages:
 
   stage3:
     state_params:
-      num_epochs: *num_epochs 
+      num_epochs: *num_epochs
 
     scheduler_params:
       scheduler: OneCycleLRWithWarmup
