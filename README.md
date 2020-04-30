@@ -104,7 +104,8 @@ for prediction in runner.predict_loader(loader=loaders["valid"]):
 traced_model = runner.trace(loader=loaders["valid"])
 ```
 
-- [Customizing what happens in `train`](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb)
+- [Customizing what happens in `train`](https://colab.research.google.com/drive/1T5G_OVLYHq483l80ikabXRsx_WB3rwPf?usp=sharing)
+- [Minimal examples](#minimal-examples)
 - [Demo with minimal examples for ML, CV, NLP, GANs and RecSys](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
 - For Catalyst.RL introduction, please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
 
