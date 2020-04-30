@@ -21,6 +21,7 @@ function check_file_existence {
     fi
 }
 
+
 function check_num_files {
     NFILES=$( ls $1 | wc -l )
     if [[ $NFILES -ne $2 ]]
@@ -31,19 +32,9 @@ function check_num_files {
 }
 
 
-function check_num_files_with_sufix {
-    NFILES=$( ls $1 | grep "$2" | wc -l )
-    if [[ $NFILES -ne $3 ]]
-    then
-        echo "Different number of files in '$1' with prefix '$2' - expected $3 but actual number is $NFILES!"
-        exit 1
-    fi
-}
-
-
 function check_checkpoints {
-    check_num_files_with_sufix ${CHECKPOINTS} "^${1}\.pth$" $2
-    check_num_files_with_sufix ${CHECKPOINTS} "^${1}_full\.pth$" $2
+    check_num_files "${CHECKPOINTS}/${1}.pth" $2
+    check_num_files "${CHECKPOINTS}/${1}_full.pth" $2
 }
 
 
