@@ -120,7 +120,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         resume: str = None,
         resume_dir: str = None,
         metrics_filename: str = "_metrics.json",
-        load_on_stage_end: str = "best_full",
+        load_on_stage_end: str = "best",
     ):
         """
         Args:
