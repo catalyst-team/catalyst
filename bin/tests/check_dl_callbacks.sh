@@ -4,6 +4,15 @@
 set -eo pipefail -v
 
 
+################################  global variables  ################################
+rm -rf ./tests/logs
+
+EXPDIR=./tests/_tests_dl_callbacks
+LOGDIR=./tests/logs/_tests_dl_callbacks
+CHECKPOINTS=${LOGDIR}/checkpoints
+LOGFILE=${CHECKPOINTS}/_metrics.json
+
+
 function check_file_existence {
     if [[ ! -f $1 ]]
     then
@@ -12,22 +21,30 @@ function check_file_existence {
     fi
 }
 
-function check_number_of_files {
+function check_num_files {
     NFILES=$( ls $1 | wc -l )
     if [[ $NFILES -ne $2 ]]
     then
-        echo "Different number of files in '$1' directory - expected $2 but actual number is $NFILES!"
+        echo "Different number of files in '$1' - expected $2 but actual number is $NFILES!"
         exit 1
     fi
 }
 
 
-################################  global variables  ################################
-rm -rf ./tests/logs
+function check_num_files_with_sufix {
+    NFILES=$( ls $1 | grep "$2" | wc -l )
+    if [[ $NFILES -ne $3 ]]
+    then
+        echo "Different number of files in '$1' with prefix '$2' - expected $3 but actual number is $NFILES!"
+        exit 1
+    fi
+}
 
-EXPDIR=./tests/_tests_dl_callbacks
-LOGDIR=./tests/logs/_tests_dl_callbacks
-LOGFILE=${LOGDIR}/checkpoints/_metrics.json
+
+function check_checkpoints {
+    check_num_files_with_sufix ${CHECKPOINTS} "^${1}\.pth$" $2
+    check_num_files_with_sufix ${CHECKPOINTS} "^${1}_full\.pth$" $2
+}
 
 
 ################################  pipeline 00  ################################
@@ -46,18 +63,14 @@ if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     exit 1
 fi
 
-cat $LOGFILE;
-echo ${LOG_MSG};
+cat ${LOGFILE}
+echo ${LOG_MSG}
 
-check_file_existence "${LOGDIR}/checkpoints/_metrics.json"
-
-for FPREFIX in 'best' 'last' 'stage1.5'
-do
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
-done
-
-check_number_of_files "${LOGDIR}/checkpoints" 7
+check_file_existence ${LOGFILE}
+check_checkpoints "best" 1
+check_checkpoints "last" 1
+check_checkpoints "stage1\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 7
 
 rm -rf ${LOGDIR}
 
@@ -81,15 +94,11 @@ fi
 cat $LOGFILE;
 echo ${LOG_MSG};
 
-check_file_existence "${LOGDIR}/checkpoints/_metrics.json"
-
-for FPREFIX in 'best' 'last' 'stage1.5'
-do
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
-done
-
-check_number_of_files "${LOGDIR}/checkpoints" 7
+check_file_existence ${LOGFILE}
+check_checkpoints "best" 1
+check_checkpoints "last" 1
+check_checkpoints "stage1\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 7
 
 rm -rf ${LOGDIR}
 
@@ -110,24 +119,22 @@ if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     exit 1
 fi
 
-cat $LOGFILE;
-echo ${LOG_MSG};
+cat ${LOGFILE}
+echo ${LOG_MSG}
 
-check_file_existence "${LOGDIR}/checkpoints/_metrics.json"
-
-for FPREFIX in 'best' 'last' 'stage1.5' 'stage2.4' 'stage3.4'
-do
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
-done
-
-check_number_of_files "${LOGDIR}/checkpoints" 11
+check_file_existence ${LOGFILE}
+check_checkpoints "best" 1
+check_checkpoints "last" 1
+check_checkpoints "stage1\.[[:digit:]]" 1
+check_checkpoints "stage2\.[[:digit:]]" 1
+check_checkpoints "stage3\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 11
 
 rm -rf ${LOGDIR}
 
 
 ################################  pipeline 03  ################################
-# checking with three checkpoint and one stage
+# checking with three checkpoints and one stage
 LOG_MSG='pipeline 03'
 echo ${LOG_MSG}
 
@@ -145,15 +152,11 @@ fi
 cat $LOGFILE;
 echo ${LOG_MSG};
 
-check_file_existence "${LOGDIR}/checkpoints/_metrics.json"
-
-for FPREFIX in 'best' 'last' 'stage1.3' 'stage1.4' 'stage1.5'
-do
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
-done
-
-check_number_of_files "${LOGDIR}/checkpoints" 11
+check_file_existence ${LOGFILE}
+check_checkpoints "best" 1
+check_checkpoints "last" 1
+check_checkpoints "stage1\.[[:digit:]]" 3
+check_num_files ${CHECKPOINTS} 11
 
 rm -rf ${LOGDIR}
 
@@ -174,18 +177,16 @@ if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     exit 1
 fi
 
-cat $LOGFILE;
-echo ${LOG_MSG};
+cat ${LOGFILE}
+echo ${LOG_MSG}
 
-check_file_existence "${LOGDIR}/checkpoints/_metrics.json"
-
-for FPREFIX in 'best' 'last' 'stage1.3' 'stage1.4' 'stage1.5' 'stage2.3' 'stage2.4' 'stage2.5' 'stage3.3' 'stage3.4' 'stage3.5'
-do
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
-done
-
-check_number_of_files "${LOGDIR}/checkpoints" 23
+check_file_existence ${LOGFILE}
+check_checkpoints "best" 1
+check_checkpoints "last" 1
+check_checkpoints "stage1\.[[:digit:]]" 3
+check_checkpoints "stage2\.[[:digit:]]" 3
+check_checkpoints "stage3\.[[:digit:]]" 3
+check_num_files ${CHECKPOINTS} 23
 
 rm -rf ${LOGDIR}
 
@@ -206,18 +207,13 @@ if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     exit 1
 fi
 
-cat $LOGFILE;
-echo ${LOG_MSG};
+cat ${LOGFILE}
+echo ${LOG_MSG}
 
-check_file_existence "${LOGDIR}/checkpoints/_metrics.json"
-
-for FPREFIX in 'best' 'last'
-do
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
-done
-
-check_number_of_files "${LOGDIR}/checkpoints" 5
+check_file_existence ${LOGFILE}
+check_checkpoints "best" 1
+check_checkpoints "last" 1
+check_num_files ${CHECKPOINTS} 5
 
 rm -rf ${LOGDIR}
 
@@ -238,18 +234,13 @@ if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     exit 1
 fi
 
-cat $LOGFILE;
-echo ${LOG_MSG};
+cat ${LOGFILE}
+echo ${LOG_MSG}
 
-check_file_existence "${LOGDIR}/checkpoints/_metrics.json"
-
-for FPREFIX in 'best' 'last'
-do
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
-done
-
-check_number_of_files "${LOGDIR}/checkpoints" 5
+check_file_existence ${LOGFILE}
+check_checkpoints "best" 1
+check_checkpoints "last" 1
+check_num_files ${CHECKPOINTS} 5
 
 rm -rf ${LOGDIR}
 
@@ -270,18 +261,14 @@ if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     exit 1
 fi
 
-cat $LOGFILE;
+cat ${LOGFILE}
 echo ${LOG_MSG}
 
-check_file_existence "${LOGDIR}/checkpoints/_metrics.json"
-
-for FPREFIX in 'best' 'last' 'stage1.5'
-do
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
-done
-
-check_number_of_files "${LOGDIR}/checkpoints" 7
+check_file_existence ${LOGFILE}
+check_checkpoints "best" 1
+check_checkpoints "last" 1
+check_checkpoints "stage1\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 7
 
 rm -rf ${LOGDIR}
 
@@ -302,18 +289,16 @@ if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     exit 1
 fi
 
-cat $LOGFILE;
-echo ${LOG_MSG};
+cat ${LOGFILE}
+echo ${LOG_MSG}
 
-check_file_existence "${LOGDIR}/checkpoints/_metrics.json"
-
-for FPREFIX in 'best' 'last' 'stage1.3' 'stage1.4' 'stage1.5' 'stage2.3' 'stage2.4' 'stage2.5' 'stage3.3' 'stage3.4' 'stage3.5'
-do
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
-done
-
-check_number_of_files "${LOGDIR}/checkpoints" 23
+check_file_existence ${LOGFILE}
+check_checkpoints "best" 1
+check_checkpoints "last" 1
+check_checkpoints "stage1\.[[:digit:]]" 3
+check_checkpoints "stage2\.[[:digit:]]" 3
+check_checkpoints "stage3\.[[:digit:]]" 3
+check_num_files ${CHECKPOINTS} 23
 
 rm -rf ${LOGDIR}
 
@@ -335,18 +320,15 @@ if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     exit 1
 fi
 
-cat $LOGFILE;
-echo ${LOG_MSG};
+cat ${LOGFILE}
+echo ${LOG_MSG}
 
-check_file_existence "${LOGDIR}/checkpoints/_metrics.json"
-
-for FPREFIX in 'best' 'last' 'stage1.5' 'stage2.4'
-do
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
-done
-
-check_number_of_files "${LOGDIR}/checkpoints" 9
+check_file_existence ${LOGFILE}
+check_checkpoints "best" 1
+check_checkpoints "last" 1
+check_checkpoints "stage1\.[[:digit:]]" 1
+check_checkpoints "stage2\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 9
 
 rm -rf ${LOGDIR}
 
@@ -368,18 +350,15 @@ if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     exit 1
 fi
 
-cat $LOGFILE;
-echo ${LOG_MSG};
+cat ${LOGFILE}
+echo ${LOG_MSG}
 
-check_file_existence "${LOGDIR}/checkpoints/_metrics.json"
-
-for FPREFIX in 'best' 'last' 'stage1.3' 'stage1.4' 'stage1.5' 'stage2.3' 'stage2.4' 'stage2.5'
-do
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
-done
-
-check_number_of_files "${LOGDIR}/checkpoints" 17
+check_file_existence ${LOGFILE}
+check_checkpoints "best" 1
+check_checkpoints "last" 1
+check_checkpoints "stage1\.[[:digit:]]" 3
+check_checkpoints "stage2\.[[:digit:]]" 3
+check_num_files ${CHECKPOINTS} 17
 
 rm -rf ${LOGDIR}
 
@@ -401,17 +380,14 @@ if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
     exit 1
 fi
 
-cat $LOGFILE;
-echo ${LOG_MSG};
+cat ${LOGFILE}
+echo ${LOG_MSG}
 
-check_file_existence "${LOGDIR}/checkpoints/_metrics.json"
-
-for FPREFIX in 'best' 'last' 'stage1.5' 'stage2.4'
-do
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
-    check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
-done
-
-check_number_of_files "${LOGDIR}/checkpoints" 9
+check_file_existence ${LOGFILE}
+check_checkpoints "best" 1
+check_checkpoints "last" 1
+check_checkpoints "stage1\.[[:digit:]]" 1
+check_checkpoints "stage2\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 9
 
 rm -rf ${LOGDIR}
