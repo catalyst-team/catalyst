@@ -160,6 +160,12 @@ class ConfigExperiment(_StageBasedExperiment):
         return self.stages_config[stage].get("state_params", {})
 
     def _preprocess_model_for_stage(self, stage: str, model: Model):
+        stage_index = self.stages.index(stage)
+        # @TODO: remove to callbacks
+        if stage_index > 0:
+            checkpoint_path = f"{self.logdir}/checkpoints/best.pth"
+            checkpoint = utils.load_checkpoint(checkpoint_path)
+            utils.unpack_checkpoint(checkpoint, model=model)
         return model
 
     def _postprocess_model_for_stage(self, stage: str, model: Model):

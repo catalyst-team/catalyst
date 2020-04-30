@@ -115,7 +115,7 @@ echo ${LOG_MSG};
 
 check_file_existence "${LOGDIR}/checkpoints/_metrics.json"
 
-for FPREFIX in 'best' 'last' 'stage1.5' 'stage2.4' 'stage3.5'
+for FPREFIX in 'best' 'last' 'stage1.5' 'stage2.4' 'stage3.4'
 do
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
@@ -340,7 +340,7 @@ echo ${LOG_MSG};
 
 check_file_existence "${LOGDIR}/checkpoints/_metrics.json"
 
-for FPREFIX in 'best' 'last' 'stage1.5' 'stage2.5'
+for FPREFIX in 'best' 'last' 'stage1.5' 'stage2.4'
 do
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}.pth"
     check_file_existence "${LOGDIR}/checkpoints/${FPREFIX}_full.pth"
