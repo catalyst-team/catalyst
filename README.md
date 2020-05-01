@@ -4,7 +4,7 @@
 
 **Accelerated DL R&D**
 
-![CI_status_torch10](https://github.com/catalyst-team/catalyst/workflows/codestyle/badge.svg)
+![CI_status_torch10](https://github.com/catalyst-team/catalyst/workflows/codestyle/badge.svg?branch=master&event=push)
 [![Build Status](http://66.248.205.49:8111/app/rest/builds/buildType:id:Catalyst_Deploy/statusIcon.svg)](http://66.248.205.49:8111/project.html?projectId=Catalyst&tab=projectOverview&guest=1)
 [![CodeFactor](https://www.codefactor.io/repository/github/catalyst-team/catalyst/badge)](https://www.codefactor.io/repository/github/catalyst-team/catalyst)
 [![Pipi version](https://img.shields.io/pypi/v/catalyst.svg)](https://pypi.org/project/catalyst/)
@@ -16,11 +16,11 @@
 [![Github contributors](https://img.shields.io/github/contributors/catalyst-team/catalyst.svg?logo=github&logoColor=white)](https://github.com/catalyst-team/catalyst/graphs/contributors)
 [![PyPI Status](https://pepy.tech/badge/catalyst)](https://pepy.tech/project/catalyst)
 
-![torch 1.1](https://github.com/catalyst-team/catalyst/workflows/torch%201.1/badge.svg)
-![torch 1.2](https://github.com/catalyst-team/catalyst/workflows/torch%201.2/badge.svg)
-![torch 1.3](https://github.com/catalyst-team/catalyst/workflows/torch%201.3/badge.svg)
-![torch 1.4](https://github.com/catalyst-team/catalyst/workflows/torch%201.4/badge.svg)
-![torch 1.5](https://github.com/catalyst-team/catalyst/workflows/torch%201.5/badge.svg)
+![torch 1.1](https://github.com/catalyst-team/catalyst/workflows/torch%201.1/badge.svg?branch=master&event=push)
+![torch 1.2](https://github.com/catalyst-team/catalyst/workflows/torch%201.2/badge.svg?branch=master&event=push)
+![torch 1.3](https://github.com/catalyst-team/catalyst/workflows/torch%201.3/badge.svg?branch=master&event=push)
+![torch 1.4](https://github.com/catalyst-team/catalyst/workflows/torch%201.4/badge.svg?branch=master&event=push)
+![torch 1.5](https://github.com/catalyst-team/catalyst/workflows/torch%201.5/badge.svg?branch=master&event=push)
 
 </div>
 
@@ -104,8 +104,9 @@ for prediction in runner.predict_loader(loader=loaders["valid"]):
 traced_model = runner.trace(loader=loaders["valid"])
 ```
 
-- [Customizing what happens in `train`](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb)
-- [Demo with minimal examples for ML, CV, NLP, GANs and RecSys](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
+- [Customizing what happens in `train`](https://colab.research.google.com/drive/1T5G_OVLYHq483l80ikabXRsx_WB3rwPf?usp=sharing)
+- [Colab with ML, CV, NLP, GANs and RecSys demos](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
+- [Minimal examples](#minimal-examples)
 - For Catalyst.RL introduction, please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
 
 
