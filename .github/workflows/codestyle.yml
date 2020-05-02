@@ -24,7 +24,7 @@ jobs:
 #          - python-version: 3.8
 #            requires: 'minimal'
     # Timeout: 4
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v2
 
