@@ -13,10 +13,12 @@ from catalyst.dl.utils import (get_fn_argsnames, any2device,
                                get_trace_name, trace_model)
 
 
+# Adapted Experiment.get_native_batch function
 def _get_native_batch(
         loaders, loader: Union[str, int] = 0, data_index: int = 0
 ):
-    """Returns a batch from experiment loader
+    """
+    Returns a batch from experiment loader
 
     Args:
         loaders (Dict[DataLoader]): loaders
@@ -39,7 +41,7 @@ def _get_native_batch(
     return sample
 
 
-# almost the same as catalyst.scripts.trace.trace_model_from_checkpoint
+# Adapted catalyst.scripts.trace.trace_model_from_checkpoint function
 def trace_model_from_state(
     state: State,
     method_name: str = "forward",
@@ -140,7 +142,6 @@ class TracerCallback(Callback):
             out_model: Union[str, Path] = None,
     ):
         """
-
         Traces model using created experiment and runner.
 
         :param metric_key (str): Metric key we should trace model based on
@@ -153,9 +154,9 @@ class TracerCallback(Callback):
         :param loader (str): Loader name to get the batch from
         :param trace_mode (str): Mode for model to trace (``train`` or ``eval``)
         :param requires_grad (bool): Flag to use grads
-        :param opt_level:
-        :param out_dir:
-        :param out_model:
+        :param opt_level (str): AMP FP16 init level
+        :param out_dir (str): Directory to save model to
+        :param out_model: Path to save model to (override out_dir)
         """
 
         if trace_mode not in ["train", "eval"]:
