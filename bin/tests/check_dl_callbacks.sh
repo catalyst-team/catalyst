@@ -89,7 +89,7 @@ check_file_existence ${LOGFILE}
 check_checkpoints "best" 1
 check_checkpoints "last" 1
 check_checkpoints "stage1\.[[:digit:]]" 1
-check_num_files ${CHECKPOINTS} 7
+check_num_files ${CHECKPOINTS} 7  # 3x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
 
@@ -119,7 +119,7 @@ check_checkpoints "last" 1
 check_checkpoints "stage1\.[[:digit:]]" 1
 check_checkpoints "stage2\.[[:digit:]]" 1
 check_checkpoints "stage3\.[[:digit:]]" 1
-check_num_files ${CHECKPOINTS} 11
+check_num_files ${CHECKPOINTS} 11  # 5x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
 
@@ -147,7 +147,7 @@ check_file_existence ${LOGFILE}
 check_checkpoints "best" 1
 check_checkpoints "last" 1
 check_checkpoints "stage1\.[[:digit:]]" 3
-check_num_files ${CHECKPOINTS} 11
+check_num_files ${CHECKPOINTS} 11  # 5x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
 
@@ -177,7 +177,7 @@ check_checkpoints "last" 1
 check_checkpoints "stage1\.[[:digit:]]" 3
 check_checkpoints "stage2\.[[:digit:]]" 3
 check_checkpoints "stage3\.[[:digit:]]" 3
-check_num_files ${CHECKPOINTS} 23
+check_num_files ${CHECKPOINTS} 23  # 11x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
 
@@ -204,13 +204,13 @@ echo ${LOG_MSG}
 check_file_existence ${LOGFILE}
 check_checkpoints "best" 1
 check_checkpoints "last" 1
-check_num_files ${CHECKPOINTS} 5
+check_num_files ${CHECKPOINTS} 5  # 2x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
 
 
 ################################  pipeline 06  ################################
-# checking with three checkpoint and one stage
+# checking with zepo checkpoints and one stage
 LOG_MSG='pipeline 06'
 echo ${LOG_MSG}
 
@@ -231,7 +231,7 @@ echo ${LOG_MSG}
 check_file_existence ${LOGFILE}
 check_checkpoints "best" 1
 check_checkpoints "last" 1
-check_num_files ${CHECKPOINTS} 5
+check_num_files ${CHECKPOINTS} 5  # 2x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
 
@@ -259,7 +259,7 @@ check_file_existence ${LOGFILE}
 check_checkpoints "best" 1
 check_checkpoints "last" 1
 check_checkpoints "stage1\.[[:digit:]]" 1
-check_num_files ${CHECKPOINTS} 7
+check_num_files ${CHECKPOINTS} 7  # 3x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
 
@@ -289,7 +289,7 @@ check_checkpoints "last" 1
 check_checkpoints "stage1\.[[:digit:]]" 3
 check_checkpoints "stage2\.[[:digit:]]" 3
 check_checkpoints "stage3\.[[:digit:]]" 3
-check_num_files ${CHECKPOINTS} 23
+check_num_files ${CHECKPOINTS} 23  # 11x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
 
@@ -319,7 +319,7 @@ check_checkpoints "best" 1
 check_checkpoints "last" 1
 check_checkpoints "stage1\.[[:digit:]]" 1
 check_checkpoints "stage2\.[[:digit:]]" 1
-check_num_files ${CHECKPOINTS} 9
+check_num_files ${CHECKPOINTS} 9  # 4x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
 
@@ -349,7 +349,7 @@ check_checkpoints "best" 1
 check_checkpoints "last" 1
 check_checkpoints "stage1\.[[:digit:]]" 3
 check_checkpoints "stage2\.[[:digit:]]" 3
-check_num_files ${CHECKPOINTS} 17
+check_num_files ${CHECKPOINTS} 17  # 8x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
 
@@ -379,6 +379,6 @@ check_checkpoints "best" 1
 check_checkpoints "last" 1
 check_checkpoints "stage1\.[[:digit:]]" 1
 check_checkpoints "stage2\.[[:digit:]]" 1
-check_num_files ${CHECKPOINTS} 9
+check_num_files ${CHECKPOINTS} 9  # 4x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
