@@ -61,7 +61,7 @@ check_file_existence ${LOGFILE}
 check_checkpoints "best" 1
 check_checkpoints "last" 1
 check_checkpoints "stage1\.[[:digit:]]" 1
-check_num_files ${CHECKPOINTS} 7
+check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
 
