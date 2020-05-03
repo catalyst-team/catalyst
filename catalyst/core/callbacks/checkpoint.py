@@ -174,7 +174,7 @@ class CheckpointCallback(BaseCheckpointCallback):
 
         Args:
             checkpoint (dict): checkpoint dict,
-                should contain ``stage_name`` and ``epoch``.
+                should contain ``stage_name`` and ``epoch`` keys.
         """
         result = f"{checkpoint['stage_name']}.{checkpoint['epoch']}"
         return result
@@ -215,8 +215,8 @@ class CheckpointCallback(BaseCheckpointCallback):
 
         Args:
             minimize_metric (bool): if ``True`` then keep
-            ``save_n_best`` checkpoints with lowest/highest values
-            of main metric.
+            ``save_n_best`` checkpoints with the lowest/highest values
+            of the main metric.
         """
         self.top_best_metrics = sorted(
             self.top_best_metrics,
@@ -250,7 +250,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             is_best (bool): indicator to save best checkpoint,
                 if true then will be saved two additional checkpoints -
                 ``best`` and ``best_full``.
-            is_last (bool): indicator to save last checkpoint,
+            is_last (bool): indicator to save the last checkpoint,
                 if true then will be saved two additional checkpoints -
                 ``last`` and ``last_full``.
         """
@@ -293,10 +293,10 @@ class CheckpointCallback(BaseCheckpointCallback):
             is_best (bool): indicator to save best checkpoint,
                 if true then will be saved two additional checkpoints -
                 ``best`` and ``best_full``.
-            main_metric (str): metric to use for selecting best model and save
+            main_metric (str): metric to use for selecting the best model
             minimize_metric (bool): indicator for selecting best metric,
-                if true then best metric will be the metric with lowest value,
-                othervise with greatest value.
+                if true then best metric will be the metric with
+                the lowest value, otherwise with the greatest value.
         """
         _, filepath = self._save_checkpoint(
             logdir=logdir,
@@ -360,8 +360,8 @@ class CheckpointCallback(BaseCheckpointCallback):
 
     def on_stage_end(self, state: State) -> None:
         """
-        Show information about best checkpoints during the stage.
-        Load model specified in ``load_on_stage_end``.
+        Show information about best checkpoints during the stage and
+        load model specified in ``load_on_stage_end``.
 
         Args:
             state (State): training state
@@ -448,7 +448,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
 
         Args:
             checkpoint (dict): checkpoint dict,
-                should contain ``stage_name`` and ``epoch``.
+                should contain ``stage_name`` and ``epoch`` keys.
         """
         result = (
             f"{checkpoint['stage_name']}."
