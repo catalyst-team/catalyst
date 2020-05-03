@@ -361,7 +361,11 @@ class Runner(_StageBasedRunner):
 
         # function to run prediction on batch
         def predict_fn(model, inputs, **kwargs):
-            return self.predict_batch(inputs, **kwargs)
+            _model = self.model
+            self.model = model
+            result = self.predict_batch(inputs, **kwargs)
+            self.model = _model
+            return result
 
         model.to(device)
 

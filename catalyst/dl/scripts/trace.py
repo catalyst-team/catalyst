@@ -70,7 +70,11 @@ def trace_model_from_checkpoint(
 
     # function to run prediction on batch
     def predict_fn(model, inputs, **kwargs):
-        return runner.predict_batch(inputs, **kwargs)
+        _model = runner.model
+        runner.model = model
+        result = runner.predict_batch(inputs, **kwargs)
+        runner.model = _model
+        return result
 
     print("Tracing")
     traced = utils.trace_model(
