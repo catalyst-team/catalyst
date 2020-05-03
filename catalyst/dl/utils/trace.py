@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Union, Callable
 import inspect
 from pathlib import Path
 
@@ -72,7 +72,7 @@ class _TracingModelWrapper(nn.Module):
 
 def trace_model(
     model: Model,
-    runner: "Runner",
+    predict_fn: Callable,
     batch=None,
     method_name: str = "forward",
     mode: str = "eval",
@@ -85,7 +85,8 @@ def trace_model(
 
     Args:
         model: Model to trace
-        runner: Model's native runner that was used to train model
+        predict_fn: Function to run prediction with the model provided,
+            takes model, inputs parameters
         batch: Batch to trace the model
         method_name (str): Model's method name that will be
             used as entrypoint during tracing
@@ -98,8 +99,8 @@ def trace_model(
     Returns:
         (ScriptModule): Traced model
     """
-    if batch is None or runner is None:
-        raise ValueError("Both batch and runner must be specified.")
+    if batch is None or predict_fn is None:
+        raise ValueError("Both batch and predict_fn must be specified.")
 
     if mode not in ["train", "eval"]:
         raise ValueError(f"Unknown mode '{mode}'. Must be 'eval' or 'train'")
@@ -125,14 +126,9 @@ def trace_model(
     getattr(model, mode)()
     set_requires_grad(model, requires_grad=requires_grad)
 
-    _runner_model, _runner_device = runner.model, runner.device
+    predict_fn(tracer, batch, **params)
 
-    runner.model, runner.device = tracer, device
-    runner.predict_batch(batch, **params)
-    result: ScriptModule = tracer.tracing_result
-
-    runner.model, runner.device = _runner_model, _runner_device
-    return result
+    return tracer.tracing_result
 
 
 def get_trace_name(

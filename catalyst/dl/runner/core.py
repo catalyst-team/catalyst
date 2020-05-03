@@ -322,7 +322,7 @@ class Runner(_StageBasedRunner):
             requires_grad (bool): flag to trace with gradients
             fp16 (Union[Dict, bool]): If not None, then sets
                 tracing params to FP16
-            device (Device): Torch deivice or a string
+            device (Device): Torch device or a string
             predict_params (dict): additional parameters for model forward
         """
         if batch is None:
@@ -352,9 +352,22 @@ class Runner(_StageBasedRunner):
                 self.device = utils.get_device()
             device = self.device
 
+        # Dumping previous state of the model, do we need it here?
+        _device = self.device
+        _is_training = model.training
+        _requires_grads = {}
+        for name, param in model.named_parameters():
+            _requires_grads[name] = param.requires_grad
+
+        # function to run prediction on batch
+        def predict_fn(model, inputs, **kwargs):
+            return self.predict_batch(inputs, **kwargs)
+
+        model.to(device)
+
         result = utils.trace_model(
             model=self.model,
-            runner=self,
+            predict_fn=predict_fn,
             batch=batch,
             method_name=method_name,
             mode=mode,
@@ -363,6 +376,13 @@ class Runner(_StageBasedRunner):
             device=device,
             predict_params=predict_params,
         )
+
+        # Restore previous state, do we need it here?
+        for name, param in model.named_parameters():
+            param.requires_grad = _requires_grads[name]
+
+        model.to(_device)
+        model.train(mode=_is_training)
 
         if logdir is not None:
             filename = utils.get_trace_name(

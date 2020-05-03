@@ -68,10 +68,14 @@ def trace_model_from_checkpoint(
         loader = 0
     batch = experiment.get_native_batch(stage, loader)
 
+    # function to run prediction on batch
+    def predict_fn(model, inputs, **kwargs):
+        return runner.predict_batch(inputs, **kwargs)
+
     print("Tracing")
     traced = utils.trace_model(
         model=model,
-        runner=runner,
+        predict_fn=predict_fn,
         batch=batch,
         method_name=method_name,
         mode=mode,
