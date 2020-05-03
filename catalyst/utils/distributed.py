@@ -266,7 +266,7 @@ def process_components(
                 model = apex.parallel.convert_syncbn_model(model)
         else:
             model = nn.parallel.DistributedDataParallel(
-                model, device_ids=[local_rank], output_device=local_rank
+                model, device_ids=[local_rank], output_device=local_rank, find_unused_parameters=True
             )
     # data parallel run (dp) (with apex support)
     else:
