@@ -14,3 +14,7 @@ bash ./bin/tests/check_dl_cv.sh
 
 ####################################  NLP  ####################################
 bash ./bin/tests/check_dl_nlp.sh
+
+
+#################################  Callbacks  #################################
+bash ./bin/tests/check_dl_callbacks.sh
