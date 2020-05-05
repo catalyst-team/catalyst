@@ -291,6 +291,26 @@ def detach(tensor: torch.Tensor) -> np.ndarray:
     return tensor.cpu().detach().numpy()
 
 
+def trim_tensors(tensors):
+    """
+    Trim padding off of a batch of tensors to the smallest possible length.
+    Should be used with `catalyst.data.DynamicLenBatchSampler`.
+
+    Adapted from "Dynamic minibatch trimming to improve BERT training speed"
+    https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779
+
+    Args:
+        tensors ([torch.tensor]): list of tensors to trim.
+
+    Returns:
+        ([torch.tensor]): list of trimmed tensors.
+    """
+    max_len = torch.max(torch.sum((tensors[0] != 0), 1))
+    if max_len > 2:
+        tensors = [tsr[:, :max_len] for tsr in tensors]
+    return tensors
+
+
 __all__ = [
     "get_optimizable_params",
     "get_optimizer_momentum",
@@ -304,4 +324,5 @@ __all__ = [
     "set_requires_grad",
     "get_network_output",
     "detach",
+    "trim_tensors",
 ]

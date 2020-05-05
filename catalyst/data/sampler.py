@@ -3,8 +3,9 @@ from operator import itemgetter
 
 import numpy as np
 
+import torch
 from torch.utils.data import DistributedSampler
-from torch.utils.data.sampler import Sampler
+from torch.utils.data.sampler import BatchSampler, Sampler
 
 from catalyst.data import DatasetFromSampler
 
@@ -171,6 +172,83 @@ class MiniEpochSampler(Sampler):
         return self.mini_epoch_len
 
 
+class DynamicLenBatchSampler(BatchSampler):
+    """
+    A dynamic batch length data sampler.
+    Should be used with `catalyst.utils.trim_tensors`.
+
+    Adapted from "Dynamic minibatch trimming to improve BERT training speed"
+    https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779
+
+    Args:
+        sampler (torch.utils.data.Sampler): Base sampler.
+        batch_size (int): Size of minibatch.
+        drop_last (bool): If ``True``, the sampler will drop the last batch
+        if its size would be less than ``batch_size``.
+
+    Usage example:
+
+        >>> from torch.utils import data
+        >>> from catalyst.data import DynamicLenBatchSampler
+        >>> from catalyst import utils
+
+        >>> dataset = data.TensorDataset(
+        >>>     input_ids, input_mask, segment_ids, labels
+        >>> )
+
+        >>> sampler_ = data.RandomSampler(dataset)
+        >>> sampler = DynamicLenBatchSampler(
+        >>>     sampler_, batch_size=16, drop_last=False
+        >>> )
+        >>> loader = data.DataLoader(dataset, batch_sampler=sampler)
+
+        >>> for batch in loader:
+        >>>     tensors = utils.trim_tensors(batch)
+        >>>     b_input_ids, b_input_mask, b_segment_ids, b_labels = \
+        >>>         tuple(t.to(device) for t in tensors)
+    """
+
+    def __iter__(self):
+        """
+        Iteration over BatchSampler.
+        """
+        buckets = [[]] * 100
+        yielded = 0
+
+        for idx in self.sampler:
+            count_zeros = torch.sum(self.sampler.data_source[idx][0] == 0)
+            count_zeros = int(count_zeros / 64)
+            if len(buckets[count_zeros]) == 0:
+                buckets[count_zeros] = []
+
+            buckets[count_zeros].append(idx)
+
+            if len(buckets[count_zeros]) == self.batch_size:
+                batch = list(buckets[count_zeros])
+                yield batch
+                yielded += 1
+                buckets[count_zeros] = []
+
+        batch = []
+        leftover = [idx for bucket in buckets for idx in bucket]
+
+        for idx in leftover:
+            batch.append(idx)
+            if len(batch) == self.batch_size:
+                yielded += 1
+                yield batch
+                batch = []
+
+        if len(batch) > 0 and not self.drop_last:
+            yielded += 1
+            yield batch
+
+        assert len(self) == yielded, (
+            "produced an inccorect number of batches. "
+            "expected %i, but yielded %i" % (len(self), yielded)
+        )
+
+
 class DistributedSamplerWrapper(DistributedSampler):
     """
     Wrapper over `Sampler` for distributed training.
@@ -223,4 +301,5 @@ __all__ = [
     "BalanceClassSampler",
     "MiniEpochSampler",
     "DistributedSamplerWrapper",
+    "DynamicLenBatchSampler",
 ]
