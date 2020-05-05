@@ -3,6 +3,7 @@
 # Cause the script to exit if a single command fails
 set -eo pipefail -v
 
+pip install -r requirements/requirements.txt
 
 ###########################  check [catalyst-core]  ###########################
 cat <<EOT > .catalyst
