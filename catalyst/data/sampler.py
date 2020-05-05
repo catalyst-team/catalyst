@@ -19,7 +19,7 @@ class BalanceClassSampler(Sampler):
         """
         Args:
             labels (List[int]): list of class label
-                for each elem in the datasety
+                for each elem in the dataset
             mode (str): Strategy to balance classes.
                 Must be one of [downsampling, upsampling]
         """
