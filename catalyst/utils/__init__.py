@@ -89,4 +89,5 @@ from .torch import (
     set_requires_grad,
     get_network_output,
     detach,
+    trim_tensors,
 )
