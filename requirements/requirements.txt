@@ -15,7 +15,6 @@ ipython
 tensorboard>=1.14.0
 tensorboardX
 crc32c>=1.7
-opencv-python-headless
 plotly>=4.1.0
 
 # Used in scripts  -> contrib (?)

@@ -15,7 +15,6 @@ if os.environ.get("CRC32C_SW_MODE", None) is None:
     os.environ["CRC32C_SW_MODE"] = "auto"
 from crc32c import crc32 as crc32c  # noqa: E402
 
-import cv2  # noqa: E402
 import numpy as np  # noqa: E402
 
 # Native tensorboard support from 1.2.0 version of PyTorch
@@ -145,33 +144,15 @@ def _get_scalar(value) -> Optional[np.ndarray]:
     return None
 
 
-def _get_image(value) -> Optional[np.ndarray]:
-    """Decode an image event.
-
-    Args:
-        value: A value field of an event
-
-    Returns:
-        Decoded image
-    """
-    if value.HasField("image"):
-        encoded_image = value.image.encoded_image_string
-        buf = np.frombuffer(encoded_image, np.uint8)
-        data = cv2.imdecode(buf, cv2.IMREAD_COLOR)
-        return data
-    return None
-
-
 class SummaryReader(Iterable):
     """Iterates over events in all the files in the current logdir.
 
     .. note::
-        Only scalars and images are supported at the moment.
+        Only scalars are supported at the moment.
     """
 
     _DECODERS = {
         "scalar": _get_scalar,
-        "image": _get_image,
     }
 
     def __init__(
