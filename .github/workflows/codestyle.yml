@@ -3,7 +3,6 @@ name: codestyle
 on:
   push:
     branches:
-      - develop
       - master
   pull_request:
     branches:
@@ -20,13 +19,13 @@ jobs:
       matrix:
         os: [ubuntu-18.04] # , windows-2019, macOS-10.15]
         python-version: [3.6] #, 3.7, 3.8]
-        requires: ['minimal'] # , 'latest']
+#        requires: ['minimal', 'latest']
 #        exclude:
 #          # excludes node 4 on macOS
 #          - python-version: 3.8
 #            requires: 'minimal'
     # Timeout: 4
-    timeout-minutes: 20
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
 
@@ -62,4 +61,7 @@ jobs:
 # <- standard block end ->
 
       - name: check codestyle
-        run: bash teamcity/py_codestyle.sh
+        run: |
+          catalyst-check-codestyle
+          pytest .
+          make check-docs

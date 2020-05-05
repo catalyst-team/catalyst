@@ -28,4 +28,4 @@ scikit-image>=0.14.2
 matplotlib
 pandas>=0.22
 scikit-learn>=0.20
-GitPython>=2.1.11
+GitPython>=3.1.1
