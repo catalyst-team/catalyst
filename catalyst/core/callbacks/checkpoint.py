@@ -337,6 +337,13 @@ class CheckpointCallback(BaseCheckpointCallback):
         if self.resume is not None:
             _load_checkpoint(filename=self.resume, state=state)
             self.resume = None
+        else:
+            # by default load model from best state
+            best_checkpoint = f"{state.logdir}/checkpoints/best.pth"
+            if os.path.exists(best_checkpoint):
+                _load_checkpoint(
+                    filename=best_checkpoint, state=state, load_full=False
+                )
 
     def on_epoch_end(self, state: State) -> None:
         """
