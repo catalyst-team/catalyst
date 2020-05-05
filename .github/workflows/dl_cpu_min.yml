@@ -1,11 +1,13 @@
-name: torch 1.4
+name: torch 1.1
 # <- standard block end ->
 on:
   push:
     branches:
+      - develop
       - master
   pull_request:
     branches:
+      - develop
       - master
 
 
@@ -80,4 +82,4 @@ jobs:
           key: MNIST
 
       - name: check examples
-        run: bash teamcity/dl_cpu_140.sh
+        run: bash teamcity/dl_cpu_110.sh

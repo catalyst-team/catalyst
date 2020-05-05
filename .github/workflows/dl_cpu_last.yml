@@ -1,11 +1,13 @@
-name: dl_cpu
+name: torch 1.5
 # <- standard block end ->
 on:
   push:
     branches:
+      - develop
       - master
   pull_request:
     branches:
+      - develop
       - master
 
 
