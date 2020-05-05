@@ -352,12 +352,11 @@ class Runner(_StageBasedRunner):
                 self.device = utils.get_device()
             device = self.device
 
-        # Dumping previous state of the model, do we need it here?
-        _device = self.device
-        _is_training = model.training
-        _requires_grads = {}
-        for name, param in model.named_parameters():
-            _requires_grads[name] = param.requires_grad
+        # Dumping previous state of the model, we will need it to restore
+        _device, _is_training, _requires_grad = \
+            self.device, model.training, utils.get_requires_grad(model)
+
+        model.to(device)
 
         # function to run prediction on batch
         def predict_fn(model, inputs, **kwargs):
@@ -367,9 +366,7 @@ class Runner(_StageBasedRunner):
             self.model = _model
             return result
 
-        model.to(device)
-
-        result = utils.trace_model(
+        traced_model = utils.trace_model(
             model=self.model,
             predict_fn=predict_fn,
             batch=batch,
@@ -381,30 +378,21 @@ class Runner(_StageBasedRunner):
             predict_params=predict_params,
         )
 
-        # Restore previous state, do we need it here?
-        for name, param in model.named_parameters():
-            param.requires_grad = _requires_grads[name]
-
+        # Restore previous state of the model
+        getattr(model, "train" if _is_training else "eval")()
+        utils.set_requires_grad(model, _requires_grad)
         model.to(_device)
-        model.train(mode=_is_training)
 
-        if logdir is not None:
-            filename = utils.get_trace_name(
-                method_name=method_name,
-                mode=mode,
-                requires_grad=requires_grad,
-                opt_level=opt_level,
-            )
+        utils.save_traced_model(
+            model=traced_model,
+            logdir=logdir,
+            method_name=method_name,
+            mode=mode,
+            requires_grad=requires_grad,
+            opt_level=opt_level
+        )
 
-            logdir = Path(logdir)
-            output: Path = logdir / "trace"
-            output.mkdir(exist_ok=True, parents=True)
-
-            out_model = str(output / filename)
-
-            torch.jit.save(result, out_model)
-
-        return result
+        return traced_model
 
 
 __all__ = ["Runner"]

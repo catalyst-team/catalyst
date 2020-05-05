@@ -44,6 +44,7 @@ from .distributed import (
 )
 from .hash import get_hash, get_short_hash
 from .initialization import get_optimal_inner_init, outer_init
+from .loader import get_native_batch
 from .misc import (
     copy_directory,
     format_metric,
@@ -82,6 +83,7 @@ from .torch import (
     prepare_cudnn,
     process_model_params,
     set_optimizer_momentum,
+    get_requires_grad,
     set_requires_grad,
     get_network_output,
     detach,

@@ -1,20 +1,37 @@
-from typing import TYPE_CHECKING, Union, Callable
+from typing import TYPE_CHECKING, Any, Dict, List, Callable, Union  # isort:skip
 import inspect
 from pathlib import Path
 
-import torch
 from torch import nn
-from torch.jit import ScriptModule
+from torch.jit import ScriptModule, trace, load, save
 
-from catalyst.utils import (
-    assert_fp16_available,
-    get_fn_argsnames,
-    set_requires_grad,
-)
+from catalyst.dl import Experiment, State
 from catalyst.utils.tools.typing import Device, Model
+from catalyst.utils import (
+    import_experiment_and_runner,
+    assert_fp16_available,
+    is_wrapped_with_ddp,
+    set_requires_grad,
+    get_requires_grad,
+    unpack_checkpoint,
+    get_native_batch,
+    get_fn_argsnames,
+    load_checkpoint,
+    load_config,
+    any2device,
+)
 
 if TYPE_CHECKING:
     from catalyst.dl import Runner  # noqa: F401
+
+
+def get_input_argnames(fn: Callable[..., Any], exclude: List[str] = None):
+    argspec = inspect.getfullargspec(fn)
+    assert (
+            argspec.varargs is None and argspec.varkw is None
+    ), "not supported by PyTorch"
+
+    return get_fn_argsnames(fn, exclude=exclude)
 
 
 class _ForwardOverrideModel(nn.Module):
@@ -51,18 +68,13 @@ class _TracingModelWrapper(nn.Module):
             assert len(args) == 0, "only KV support implemented"
 
             fn = getattr(self.model, self.method_name)
-            argspec = inspect.getfullargspec(fn)
-            assert (
-                argspec.varargs is None and argspec.varkw is None
-            ), "not supported by PyTorch tracing"
-
-            method_argnames = get_fn_argsnames(fn, exclude=["self"])
+            method_argnames = get_input_argnames(fn=fn, exclude=["self"])
             method_input = tuple(kwargs[name] for name in method_argnames)
 
-            self.tracing_result = torch.jit.trace(method_model, method_input)
+            self.tracing_result = trace(method_model, method_input)
         except Exception:
             # for backward compatibility
-            self.tracing_result = torch.jit.trace(
+            self.tracing_result = trace(
                 method_model, *args, **kwargs
             )
         output = self.model.forward(*args, **kwargs)
@@ -131,6 +143,158 @@ def trace_model(
     return tracer.tracing_result
 
 
+def trace_model_from_checkpoint(
+    logdir: Path,
+    method_name: str,
+    checkpoint_name: str,
+    stage: str = None,
+    loader: Union[str, int] = None,
+    mode: str = "eval",
+    requires_grad: bool = False,
+    opt_level: str = None,
+    device: Device = "cpu",
+):
+    """
+    Traces model using created experiment and runner.
+
+    Args:
+        logdir (Union[str, Path]): Path to Catalyst logdir with model
+        checkpoint_name (str): Name of model checkpoint to use
+        stage (str): experiment's stage name
+        loader (Union[str, int]): experiment's loader name or its index
+        method_name (str): Model's method name that will be
+            used as entrypoint during tracing
+        mode (str): Mode for model to trace (``train`` or ``eval``)
+        requires_grad (bool): Flag to use grads
+        opt_level (str): AMP FP16 init level
+        device (str): Torch device
+
+    Returns:
+        the traced model
+    """
+    config_path = logdir / "configs" / "_config.json"
+    checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
+    print("Load config")
+    config: Dict[str, dict] = load_config(config_path)
+    runner_params = config.get("runner_params", {}) or {}
+
+    # Get expdir name
+    config_expdir = Path(config["args"]["expdir"])
+    # We will use copy of expdir from logs for reproducibility
+    expdir = Path(logdir) / "code" / config_expdir.name
+
+    print("Import experiment and runner from logdir")
+    ExperimentType, RunnerType = import_experiment_and_runner(expdir)
+    experiment: Experiment = ExperimentType(config)
+
+    print(f"Load model state from checkpoints/{checkpoint_name}.pth")
+    if stage is None:
+        stage = list(experiment.stages)[0]
+
+    model = experiment.get_model(stage)
+    checkpoint = load_checkpoint(checkpoint_path)
+    unpack_checkpoint(checkpoint, model=model)
+
+    runner: RunnerType = RunnerType(**runner_params)
+    runner.model, runner.device = model, device
+
+    if loader is None:
+        loader = 0
+    batch = get_native_batch(experiment.get_loaders(stage), loader)
+
+    # function to run prediction on batch
+    def predict_fn(model, inputs, **kwargs):
+        _model = runner.model
+        runner.model = model
+        result = runner.predict_batch(inputs, **kwargs)
+        runner.model = _model
+        return result
+
+    print("Tracing")
+    traced_model = trace_model(
+        model=model,
+        predict_fn=predict_fn,
+        batch=batch,
+        method_name=method_name,
+        mode=mode,
+        requires_grad=requires_grad,
+        opt_level=opt_level,
+        device=device,
+    )
+
+    print("Done")
+    return traced_model
+
+
+def trace_model_from_state(
+    state: State,
+    method_name: str = "forward",
+    loader: Union[str, int] = None,
+    mode: str = "eval",
+    requires_grad: bool = False,
+    opt_level: str = None,
+    device: Device = "cpu",
+) -> ScriptModule:
+    """
+    Traces model using created experiment and runner.
+
+    Args:
+        state (State): Current runner state.
+        method_name (str): Model's method name that will be
+            used as entrypoint during tracing
+        loader (Union[str, int]): experiment's loader name or its index
+        mode (str): Mode for model to trace (``train`` or ``eval``)
+        requires_grad (bool): Flag to use grads
+        opt_level (str): AMP FP16 init level
+        device (str): Torch device
+
+    Returns:
+        (ScriptModule): Traced model
+    """
+    model = state.model
+    if is_wrapped_with_ddp(model):
+        model = model.module
+
+    # getting input names of args for method since we don't have Runner
+    # and we don't know input_key to preprocess batch for method call
+    fn = getattr(model, method_name)
+    method_argnames = get_input_argnames(fn=fn, exclude=["self"])
+
+    # getting batch from loaders and filter it by method argnames
+    if loader is None:
+        loader = 0
+    batch = get_native_batch(state.loaders, loader)
+    batch = any2device({name: batch[name] for name in method_argnames}, device)
+
+    # Dumping previous state of the model, we will need it to restore
+    _device, _is_training, _requires_grad = \
+        state.device, model.training, get_requires_grad(model)
+
+    model.to(device)
+
+    # Function to run prediction on batch
+    def predict_fn(model: Model, inputs, **kwargs):
+        return model(**inputs, **kwargs)
+
+    traced_model = trace_model(
+        model=model,
+        predict_fn=predict_fn,
+        batch=batch,
+        method_name=method_name,
+        mode=mode,
+        requires_grad=requires_grad,
+        opt_level=opt_level,
+        device=device,
+    )
+
+    # Restore previous state of the model
+    getattr(model, "train" if _is_training else "eval")()
+    set_requires_grad(model, _requires_grad)
+    model.to(_device)
+
+    return traced_model
+
+
 def get_trace_name(
     method_name: str,
     mode: str = "eval",
@@ -166,6 +330,55 @@ def get_trace_name(
     return file_name
 
 
+def save_traced_model(
+    model: ScriptModule,
+    logdir: Union[str, Path] = None,
+    method_name: str = "forward",
+    mode: str = "eval",
+    requires_grad: bool = False,
+    opt_level: str = None,
+    out_dir: Union[str, Path] = None,
+    out_model: Union[str, Path] = None,
+    checkpoint_name: str = None,
+):
+    """Saves traced model.
+
+    Args:
+        model (ScriptModule): Traced model
+        logdir (Union[str, Path]): Path to experiment
+        method_name (str): Name of the method was traced
+        mode (str): Model's mode - `train` or `eval`
+        requires_grad (bool): Whether model was traced with require_grad or not
+        opt_level (str): Apex FP16 init level used during tracing
+        out_dir (Union[str, Path]): Directory to save model to
+            (overrides logdir)
+        out_model (Union[str, Path]): Path to save model to
+            (overrides logdir & out_dir)
+        checkpoint_name (str): Checkpoint name used to restore the model
+    """
+
+    if out_model is None:
+        file_name = get_trace_name(
+            method_name=method_name,
+            mode=mode,
+            requires_grad=requires_grad,
+            opt_level=opt_level,
+            additional_string=checkpoint_name,
+        )
+
+        output: Path = out_dir
+        if output is None:
+            output: Path = Path(logdir) / "trace"
+
+        output.mkdir(exist_ok=True, parents=True)
+
+        out_model = str(output / file_name)
+    else:
+        out_model = str(out_model)
+
+    save(model, out_model)
+
+
 def load_traced_model(
     model_path: Union[str, Path],
     device: Device = "cpu",
@@ -187,7 +400,7 @@ def load_traced_model(
     if opt_level is not None:
         device = "cuda"
 
-    model = torch.jit.load(model_path, map_location=device)
+    model = load(model_path, map_location=device)
 
     if opt_level is not None:
         assert_fp16_available()
@@ -200,6 +413,9 @@ def load_traced_model(
 
 __all__ = [
     "trace_model",
+    "trace_model_from_checkpoint",
+    "trace_model_from_state",
     "get_trace_name",
+    "save_traced_model",
     "load_traced_model",
 ]

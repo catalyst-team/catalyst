@@ -222,21 +222,53 @@ def process_model_params(
     return model_params
 
 
-def set_requires_grad(model: Model, requires_grad: bool):
+def get_requires_grad(model: Model):
+    """Gets the ``requires_grad`` value for all model parameters.
+
+    Example::
+
+        >>> model = SimpleModel()
+        >>> requires_grad = get_requires_grad(model)
+
+    Args:
+        model (torch.nn.Module): model
+
+    Returns:
+        requires_grad (Dict[str, bool]): value
+    """
+    requires_grad = dict()
+    for name, param in model.named_parameters():
+        requires_grad[name] = param.requires_grad
+    return requires_grad
+
+
+def set_requires_grad(
+        model: Model,
+        requires_grad: Union[bool, Dict[str, bool]]
+):
     """Sets the ``requires_grad`` value for all model parameters.
 
     Example::
 
         >>> model = SimpleModel()
         >>> set_requires_grad(model, requires_grad=True)
+        >>> # or
+        >>> model = SimpleModel()
+        >>> set_requires_grad(model, requires_grad={""})
 
     Args:
         model (torch.nn.Module): model
-        requires_grad (bool): value
+        requires_grad (Union[bool, Dict[str, bool]]): value
     """
-    requires_grad = bool(requires_grad)
-    for param in model.parameters():
-        param.requires_grad = requires_grad
+    if isinstance(requires_grad, dict):
+        for name, param in model.named_parameters():
+            assert name in requires_grad, \
+                f"Parameter `{name}` does not exist in requires_grad"
+            param.requires_grad = requires_grad[name]
+    else:
+        requires_grad = bool(requires_grad)
+        for param in model.parameters():
+            param.requires_grad = requires_grad
 
 
 def get_network_output(net: Model, *input_shapes_args, **input_shapes_kwargs):
@@ -301,6 +333,7 @@ __all__ = [
     "any2device",
     "prepare_cudnn",
     "process_model_params",
+    "get_requires_grad",
     "set_requires_grad",
     "get_network_output",
     "detach",

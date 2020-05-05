@@ -1,129 +1,14 @@
-from typing import Any, Dict, List, Optional, Callable, Union  # isort:skip
+from typing import Union  # isort:skip
 from operator import lt, gt
 
-import inspect
-import torch
 
-from torch.jit import ScriptModule
 from pathlib import Path
 
 from catalyst.dl import Callback, CallbackOrder, State
-from catalyst.utils.tools.typing import Device, Model
-from catalyst.dl.utils import (get_fn_argsnames, any2device,
-                               get_trace_name, trace_model)
-
-
-# Adapted Experiment.get_native_batch function
-def _get_native_batch(
-        loaders, loader: Union[str, int] = 0, data_index: int = 0
-):
-    """
-    Returns a batch from experiment loader
-
-    Args:
-        loaders (Dict[DataLoader]): loaders
-        loader (Union[str, int]): loader name or its index,
-            default is the first loader
-        data_index (int): index in dataset from the loader
-    """
-    if isinstance(loader, str):
-        _loader = loaders[loader]
-    elif isinstance(loader, int):
-        _loader = list(loaders.values())[loader]
-    else:
-        raise TypeError("Loader parameter must be a string or an integer")
-
-    dataset = _loader.dataset
-    collate_fn = _loader.collate_fn
-
-    sample = collate_fn([dataset[data_index]])
-
-    return sample
-
-
-# Adapted catalyst.scripts.trace.trace_model_from_checkpoint function
-def trace_model_from_state(
-    state: State,
-    method_name: str = "forward",
-    loader: Union[str, int] = None,
-    mode: str = "eval",
-    requires_grad: bool = False,
-    opt_level: str = None,
-    device: Device = "cpu",
-):
-    """
-    Traces model using created experiment and runner.
-
-    Args:
-        state (State): Current runner state.
-        method_name (str): Model's method name that will be
-            used as entrypoint during tracing
-        loader (Union[str, int]): experiment's loader name or its index
-        mode (str): Mode for model to trace (``train`` or ``eval``)
-        requires_grad (bool): Flag to use grads
-        opt_level (str): AMP FP16 init level
-        device (str): Torch device
-
-    Returns:
-        the traced model
-    """
-
-    if loader is None:
-        loader = 0
-
-    _model = state.model
-    if isinstance(_model, (torch.nn.DataParallel,
-                           torch.nn.parallel.DistributedDataParallel)):
-        _model = _model.module
-
-    batch = _get_native_batch(state.loaders, loader)
-
-    # getting input names of args for method since we don't have Runner
-    # and we don't know input_key to preprocess batch for method call
-    fn = getattr(_model, method_name)
-    argspec = inspect.getfullargspec(fn)
-    assert (
-        argspec.varargs is None and argspec.varkw is None
-    ), "not supported by PyTorch tracing"
-    method_argnames = get_fn_argsnames(fn, exclude=["self"])
-
-    batch = {name: batch[name] for name in method_argnames}
-    batch = any2device(batch, device)
-
-    # Dumping previous state of the model, we will need it to restore
-    _device = state.device
-    _is_training = _model.training
-    _requires_grads = {}
-    for name, param in _model.named_parameters():
-        _requires_grads[name] = param.requires_grad
-
-    # function to run prediction on batch
-    def predict_fn(model: Model, inputs, **kwargs):
-        return model(**inputs, **kwargs)
-
-    _model.to(device)
-
-    print("Tracing")
-    traced = trace_model(
-        model=_model,
-        predict_fn=predict_fn,
-        batch=batch,
-        method_name=method_name,
-        mode=mode,
-        requires_grad=requires_grad,
-        opt_level=opt_level,
-        device=device,
-    )
-
-    # Restore previous state of the model, otherwise training will crush
-    for name, param in _model.named_parameters():
-        param.requires_grad = _requires_grads[name]
-
-    _model.to(_device)
-    _model.train(mode=_is_training)
-
-    print("Done")
-    return traced
+from catalyst.dl.utils import (
+    trace_model_from_state,
+    save_traced_model,
+)
 
 
 class TracerCallback(Callback):
@@ -152,7 +37,8 @@ class TracerCallback(Callback):
         :param stage (str): Stage from experiment from which model and loader
             will be taken
         :param loader (str): Loader name to get the batch from
-        :param trace_mode (str): Mode for model to trace (``train`` or ``eval``)
+        :param trace_mode (str): Mode for model to trace
+            (``train`` or ``eval``)
         :param requires_grad (bool): Flag to use grads
         :param opt_level (str): AMP FP16 init level
         :param out_dir (str): Directory to save model to
@@ -161,7 +47,8 @@ class TracerCallback(Callback):
 
         if trace_mode not in ["train", "eval"]:
             raise ValueError(
-                f"Unknown trace_mode '{trace_mode}'. Must be 'eval' or 'train'")
+                f"Unknown trace_mode '{trace_mode}'. "
+                f"Must be 'eval' or 'train'")
 
         if mode == "max":
             self.compare_fn = gt
@@ -216,7 +103,7 @@ class TracerCallback(Callback):
             else:
                 device = "cpu"
 
-            traced = trace_model_from_state(
+            traced_model = trace_model_from_state(
                 state=state,
                 method_name=self.method_name,
                 loader=self.loader,
@@ -226,22 +113,18 @@ class TracerCallback(Callback):
                 device=device,
             )
 
-            if self.out_model is None:
-                file_name = get_trace_name(
-                    method_name=self.method_name,
-                    mode=self.trace_mode,
-                    requires_grad=self.requires_grad,
-                    opt_level=self.opt_level,
-                    additional_string=None,
-                )
+            save_traced_model(
+                model=traced_model,
+                logdir=state.logdir,
+                method_name=self.method_name,
+                mode=self.trace_mode,
+                requires_grad=self.requires_grad,
+                opt_level=self.opt_level,
+                out_model=self.out_model,
+                out_dir=self.out_dir,
+            )
 
-                output: Path = self.out_dir
-                if output is None:
-                    output: Path = state.logdir / "trace"
-                output.mkdir(exist_ok=True, parents=True)
 
-                out_model = str(output / file_name)
-            else:
-                out_model = str(self.out_model)
-
-            torch.jit.save(traced, out_model)
+__all__ = [
+    "TracerCallback"
+]
