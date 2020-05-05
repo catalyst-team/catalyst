@@ -4,6 +4,9 @@
 set -eo pipefail -v
 
 
+(set -e; for f in tests/_tests_scripts/nlp_*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
+
+
 echo "check distilbert_text_classification"
 LOGFILE=./tests/logs/_tests_nlp_classification/checkpoints/_metrics.json
 

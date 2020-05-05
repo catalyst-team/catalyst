@@ -1,3 +1,4 @@
+import torch
 from torch import nn
 from torch.nn import functional as F
 
@@ -47,3 +48,28 @@ class Normalize(nn.Module):
     def forward(self, x):
         """Forward call."""
         return F.normalize(x, **self.normalize_kwargs)
+
+
+class GaussianNoise(nn.Module):
+    """
+    A gaussian noise module.
+
+    Shape:
+
+    - Input: (batch, \*)
+    - Output: (batch, \*) (same shape as input)
+    """
+
+    def __init__(self, stddev: float = 0.1):
+        """
+        Args:
+            stddev (float): The standard deviation of the normal distribution.
+                Default: 0.1.
+        """
+        super().__init__()
+        self.stddev = stddev
+
+    def forward(self, x: torch.Tensor):
+        """Forward call."""
+        noise = torch.empty_like(x)
+        noise.normal_(0, self.stddev)

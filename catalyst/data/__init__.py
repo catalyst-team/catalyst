@@ -20,5 +20,6 @@ from .reader import (
 from .sampler import (
     BalanceClassSampler,
     DistributedSamplerWrapper,
+    DynamicLenBatchSampler,
     MiniEpochSampler,
 )
