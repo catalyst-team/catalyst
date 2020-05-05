@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contrib &mdash; Catalyst 20.04.2 documentation</title>
+  <title>Contrib &mdash; Catalyst 20.05 documentation</title>
   
 
   
@@ -145,7 +145,7 @@
               
               
                 <div class="version">
-                  20.04
+                  20.05
                 </div>
               
             
@@ -1003,6 +1003,35 @@ with Convolutional Neural Networks</a>.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt id="catalyst.contrib.nn.modules.common.GaussianNoise">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.common.</code><code class="sig-name descname">GaussianNoise</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stddev</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/common.html#GaussianNoise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.common.GaussianNoise" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>A gaussian noise module.</p>
+<p>Shape:</p>
+<ul class="simple">
+<li><p>Input: (batch, *)</p></li>
+<li><p>Output: (batch, *) (same shape as input)</p></li>
+</ul>
+<dl class="py method">
+<dt id="catalyst.contrib.nn.modules.common.GaussianNoise.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stddev</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/common.html#GaussianNoise.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.common.GaussianNoise.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stddev</strong> (<em>float</em>) – The standard deviation of the normal distribution.
+Default: 0.1.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.contrib.nn.modules.common.GaussianNoise.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/common.html#GaussianNoise.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.common.GaussianNoise.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward call.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt id="catalyst.contrib.nn.modules.common.Lambda">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.common.</code><code class="sig-name descname">Lambda</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lambda_fn</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/common.html#Lambda"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.common.Lambda" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
@@ -1398,6 +1427,144 @@ composed of several input planes.</p>
 <dd class="field-odd"><p><strong>in_features</strong> – number of channels in the input sample</p>
 </dd>
 </dl>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-catalyst.contrib.nn.modules.rms_norm"></span><dl class="py class">
+<dt id="catalyst.contrib.nn.modules.rms_norm.RMSNorm">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.rms_norm.</code><code class="sig-name descname">RMSNorm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dimension</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">epsilon</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1e-08</span></em>, <em class="sig-param"><span class="n">is_bias</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/rms_norm.html#RMSNorm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.rms_norm.RMSNorm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>An implementation of RMS Normalization.</p>
+<p>&#64;TODO: Docs (link to paper). Contribution is welcome.</p>
+<dl class="py method">
+<dt id="catalyst.contrib.nn.modules.rms_norm.RMSNorm.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dimension</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">epsilon</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1e-08</span></em>, <em class="sig-param"><span class="n">is_bias</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/rms_norm.html#RMSNorm.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.rms_norm.RMSNorm.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dimension</strong> (<em>int</em>) – the dimension of the layer output to normalize</p></li>
+<li><p><strong>epsilon</strong> (<em>float</em>) – an epsilon to prevent dividing by zero
+in case the layer has zero variance. (default = 1e-8)</p></li>
+<li><p><strong>is_bias</strong> (<em>bool</em>) – a boolean value whether to include bias term
+while normalization</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.contrib.nn.modules.rms_norm.RMSNorm.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/rms_norm.html#RMSNorm.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.rms_norm.RMSNorm.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+</dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-catalyst.contrib.nn.modules.se"></span><dl class="py class">
+<dt id="catalyst.contrib.nn.modules.se.ChannelSqueezeAndSpatialExcitation">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.se.</code><code class="sig-name descname">ChannelSqueezeAndSpatialExcitation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">in_channels</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#ChannelSqueezeAndSpatialExcitation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.ChannelSqueezeAndSpatialExcitation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>The sSE (Channel Squeeze and Spatial Excitation) block from the
+[Concurrent Spatial and Channel ‘Squeeze &amp; Excitation’
+in Fully Convolutional Networks](<a class="reference external" href="https://arxiv.org/abs/1803.02579">https://arxiv.org/abs/1803.02579</a>) paper.</p>
+<p>Adapted from
+<a class="reference external" href="https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/66178">https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/66178</a></p>
+<p>Shape:</p>
+<ul class="simple">
+<li><p>Input: (batch, channels, height, width)</p></li>
+<li><p>Output: (batch, channels, height, width) (same shape as input)</p></li>
+</ul>
+<dl class="py method">
+<dt id="catalyst.contrib.nn.modules.se.ChannelSqueezeAndSpatialExcitation.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">in_channels</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#ChannelSqueezeAndSpatialExcitation.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.ChannelSqueezeAndSpatialExcitation.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>in_channels</strong> (<em>int</em>) – The number of channels
+in the feature map of the input.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.contrib.nn.modules.se.ChannelSqueezeAndSpatialExcitation.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#ChannelSqueezeAndSpatialExcitation.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.ChannelSqueezeAndSpatialExcitation.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward call.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="catalyst.contrib.nn.modules.se.ConcurrentSpatialAndChannelSqueezeAndChannelExcitation">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.se.</code><code class="sig-name descname">ConcurrentSpatialAndChannelSqueezeAndChannelExcitation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">in_channels</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">r</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">16</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#ConcurrentSpatialAndChannelSqueezeAndChannelExcitation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.ConcurrentSpatialAndChannelSqueezeAndChannelExcitation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>The scSE (Concurrent Spatial and Channel Squeeze and Channel Excitation)
+block from the [Concurrent Spatial and Channel ‘Squeeze &amp; Excitation’
+in Fully Convolutional Networks](<a class="reference external" href="https://arxiv.org/abs/1803.02579">https://arxiv.org/abs/1803.02579</a>) paper.</p>
+<p>Adapted from
+<a class="reference external" href="https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/66178">https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/66178</a></p>
+<p>Shape:</p>
+<ul class="simple">
+<li><p>Input: (batch, channels, height, width)</p></li>
+<li><p>Output: (batch, channels, height, width) (same shape as input)</p></li>
+</ul>
+<dl class="py method">
+<dt id="catalyst.contrib.nn.modules.se.ConcurrentSpatialAndChannelSqueezeAndChannelExcitation.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">in_channels</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">r</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">16</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#ConcurrentSpatialAndChannelSqueezeAndChannelExcitation.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.ConcurrentSpatialAndChannelSqueezeAndChannelExcitation.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_channels</strong> (<em>int</em>) – The number of channels
+in the feature map of the input.</p></li>
+<li><p><strong>r</strong> (<em>int</em>) – The reduction ratio of the intermediate channels.
+Default: 16.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.contrib.nn.modules.se.ConcurrentSpatialAndChannelSqueezeAndChannelExcitation.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#ConcurrentSpatialAndChannelSqueezeAndChannelExcitation.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.ConcurrentSpatialAndChannelSqueezeAndChannelExcitation.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward call.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="catalyst.contrib.nn.modules.se.SqueezeAndExcitation">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.se.</code><code class="sig-name descname">SqueezeAndExcitation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">in_channels</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">r</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">16</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#SqueezeAndExcitation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.SqueezeAndExcitation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>The channel-wise SE (Squeeze and Excitation) block from the
+[Squeeze-and-Excitation Networks](<a class="reference external" href="https://arxiv.org/abs/1709.01507">https://arxiv.org/abs/1709.01507</a>) paper.</p>
+<p>Adapted from
+<a class="reference external" href="https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/65939">https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/65939</a>
+and
+<a class="reference external" href="https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/66178">https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/66178</a></p>
+<p>Shape:</p>
+<ul class="simple">
+<li><p>Input: (batch, channels, height, width)</p></li>
+<li><p>Output: (batch, channels, height, width) (same shape as input)</p></li>
+</ul>
+<dl class="py method">
+<dt id="catalyst.contrib.nn.modules.se.SqueezeAndExcitation.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">in_channels</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">r</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">16</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#SqueezeAndExcitation.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.SqueezeAndExcitation.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_channels</strong> (<em>int</em>) – The number of channels
+in the feature map of the input.</p></li>
+<li><p><strong>r</strong> (<em>int</em>) – The reduction ratio of the intermediate channels.
+Default: 16.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.contrib.nn.modules.se.SqueezeAndExcitation.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#SqueezeAndExcitation.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.SqueezeAndExcitation.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward call.</p>
 </dd></dl>
 
 </dd></dl>

@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; Catalyst 20.04.2 documentation</title>
+  <title>Index &mdash; Catalyst 20.05 documentation</title>
   
 
   
@@ -145,7 +145,7 @@
               
               
                 <div class="version">
-                  20.04
+                  20.05
                 </div>
               
             
@@ -357,6 +357,8 @@
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.modules.common.Flatten.__init__">(catalyst.contrib.nn.modules.common.Flatten method)</a>
 </li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.modules.common.GaussianNoise.__init__">(catalyst.contrib.nn.modules.common.GaussianNoise method)</a>
+</li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.modules.common.Lambda.__init__">(catalyst.contrib.nn.modules.common.Lambda method)</a>
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.modules.common.Normalize.__init__">(catalyst.contrib.nn.modules.common.Normalize method)</a>
@@ -382,6 +384,14 @@
         <li><a href="api/contrib.html#catalyst.contrib.nn.modules.pooling.GlobalMaxAttnPool2d.__init__">(catalyst.contrib.nn.modules.pooling.GlobalMaxAttnPool2d method)</a>
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.modules.pooling.GlobalMaxPool2d.__init__">(catalyst.contrib.nn.modules.pooling.GlobalMaxPool2d method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.modules.rms_norm.RMSNorm.__init__">(catalyst.contrib.nn.modules.rms_norm.RMSNorm method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.modules.se.ChannelSqueezeAndSpatialExcitation.__init__">(catalyst.contrib.nn.modules.se.ChannelSqueezeAndSpatialExcitation method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.modules.se.ConcurrentSpatialAndChannelSqueezeAndChannelExcitation.__init__">(catalyst.contrib.nn.modules.se.ConcurrentSpatialAndChannelSqueezeAndChannelExcitation method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.modules.se.SqueezeAndExcitation.__init__">(catalyst.contrib.nn.modules.se.SqueezeAndExcitation method)</a>
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.optimizers.lamb.Lamb.__init__">(catalyst.contrib.nn.optimizers.lamb.Lamb method)</a>
 </li>
@@ -544,6 +554,8 @@
 
       <ul>
         <li><a href="api/data.html#catalyst.data.sampler.DistributedSamplerWrapper.__iter__">(catalyst.data.sampler.DistributedSamplerWrapper method)</a>
+</li>
+        <li><a href="api/data.html#catalyst.data.sampler.DynamicLenBatchSampler.__iter__">(catalyst.data.sampler.DynamicLenBatchSampler method)</a>
 </li>
         <li><a href="api/data.html#catalyst.data.sampler.MiniEpochSampler.__iter__">(catalyst.data.sampler.MiniEpochSampler method)</a>
 </li>
@@ -840,6 +852,20 @@
 </li>
       </ul></li>
       <li>
+    catalyst.contrib.nn.modules.rms_norm
+
+      <ul>
+        <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.rms_norm">module</a>
+</li>
+      </ul></li>
+      <li>
+    catalyst.contrib.nn.modules.se
+
+      <ul>
+        <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.se">module</a>
+</li>
+      </ul></li>
+      <li>
     catalyst.contrib.nn.optimizers.lamb
 
       <ul>
@@ -1126,6 +1152,8 @@
         <li><a href="api/data.html#module-catalyst.data.augmentor">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     catalyst.data.collate_fn
 
@@ -1133,8 +1161,6 @@
         <li><a href="api/data.html#module-catalyst.data.collate_fn">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     catalyst.data.dataset
 
@@ -1513,6 +1539,8 @@
         <li><a href="api/utils.html#module-catalyst.utils.torch">module</a>
 </li>
       </ul></li>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.modules.se.ChannelSqueezeAndSpatialExcitation">ChannelSqueezeAndSpatialExcitation (class in catalyst.contrib.nn.modules.se)</a>
+</li>
       <li><a href="api/utils.html#catalyst.utils.distributed.check_apex_available">check_apex_available() (in module catalyst.utils.distributed)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.distributed.check_ddp_wrapped">check_ddp_wrapped() (in module catalyst.utils.distributed)</a>
@@ -1530,6 +1558,8 @@
       <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.iou.ClasswiseIouCallback">ClasswiseIouCallback (class in catalyst.dl.callbacks.metrics.iou)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.iou.ClasswiseJaccardCallback">ClasswiseJaccardCallback (in module catalyst.dl.callbacks.metrics.iou)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.modules.se.ConcurrentSpatialAndChannelSqueezeAndChannelExcitation">ConcurrentSpatialAndChannelSqueezeAndChannelExcitation (class in catalyst.contrib.nn.modules.se)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment">ConfigExperiment (class in catalyst.dl.experiment.config)</a>
 </li>
@@ -1608,6 +1638,8 @@
       <li><a href="api/utils.html#catalyst.utils.sys.dump_environment">dump_environment() (in module catalyst.utils.sys)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.scripts.dump_python_files">dump_python_files() (in module catalyst.utils.scripts)</a>
+</li>
+      <li><a href="api/data.html#catalyst.data.sampler.DynamicLenBatchSampler">DynamicLenBatchSampler (class in catalyst.data.sampler)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1714,6 +1746,8 @@
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.modules.common.Flatten.forward">(catalyst.contrib.nn.modules.common.Flatten method)</a>
 </li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.modules.common.GaussianNoise.forward">(catalyst.contrib.nn.modules.common.GaussianNoise method)</a>
+</li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.modules.common.Lambda.forward">(catalyst.contrib.nn.modules.common.Lambda method)</a>
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.modules.common.Normalize.forward">(catalyst.contrib.nn.modules.common.Normalize method)</a>
@@ -1746,6 +1780,14 @@
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.modules.pooling.GlobalMaxPool2d.forward">(catalyst.contrib.nn.modules.pooling.GlobalMaxPool2d method)</a>
 </li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.modules.rms_norm.RMSNorm.forward">(catalyst.contrib.nn.modules.rms_norm.RMSNorm method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.modules.se.ChannelSqueezeAndSpatialExcitation.forward">(catalyst.contrib.nn.modules.se.ChannelSqueezeAndSpatialExcitation method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.modules.se.ConcurrentSpatialAndChannelSqueezeAndChannelExcitation.forward">(catalyst.contrib.nn.modules.se.ConcurrentSpatialAndChannelSqueezeAndChannelExcitation method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.modules.se.SqueezeAndExcitation.forward">(catalyst.contrib.nn.modules.se.SqueezeAndExcitation method)</a>
+</li>
         <li><a href="api/dl.html#catalyst.dl.runner.supervised.SupervisedRunner.forward">(catalyst.dl.runner.supervised.SupervisedRunner method)</a>
 </li>
       </ul></li>
@@ -1761,6 +1803,8 @@
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.modules.common.GaussianNoise">GaussianNoise (class in catalyst.contrib.nn.modules.common)</a>
+</li>
       <li><a href="api/utils.html#catalyst.utils.tools.registry.Registry.get">get() (catalyst.utils.tools.registry.Registry method)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.torch.get_activation_fn">get_activation_fn() (in module catalyst.utils.torch)</a>
@@ -2171,6 +2215,10 @@
 </li>
         <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.pooling">catalyst.contrib.nn.modules.pooling</a>
 </li>
+        <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.rms_norm">catalyst.contrib.nn.modules.rms_norm</a>
+</li>
+        <li><a href="api/contrib.html#module-catalyst.contrib.nn.modules.se">catalyst.contrib.nn.modules.se</a>
+</li>
         <li><a href="api/contrib.html#module-catalyst.contrib.nn.optimizers.lamb">catalyst.contrib.nn.optimizers.lamb</a>
 </li>
         <li><a href="api/contrib.html#module-catalyst.contrib.nn.optimizers.lookahead">catalyst.contrib.nn.optimizers.lookahead</a>
@@ -2541,6 +2589,8 @@
       <ul>
         <li><a href="api/core.html#catalyst.core.callbacks.checkpoint.CheckpointCallback.on_stage_end">(catalyst.core.callbacks.checkpoint.CheckpointCallback method)</a>
 </li>
+        <li><a href="api/core.html#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.on_stage_end">(catalyst.core.callbacks.checkpoint.IterationCheckpointCallback method)</a>
+</li>
         <li><a href="api/core.html#catalyst.core.callbacks.logging.ConsoleLogger.on_stage_end">(catalyst.core.callbacks.logging.ConsoleLogger method)</a>
 </li>
         <li><a href="api/core.html#catalyst.core.callbacks.logging.TensorboardLogger.on_stage_end">(catalyst.core.callbacks.logging.TensorboardLogger method)</a>
@@ -2748,6 +2798,8 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.models.cv.segmentation.unet.ResnetUnet">ResnetUnet (class in catalyst.contrib.models.cv.segmentation.unet)</a>
 </li>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.modules.rms_norm.RMSNorm">RMSNorm (class in catalyst.contrib.nn.modules.rms_norm)</a>
+</li>
       <li><a href="api/dl.html#catalyst.dl.utils.wizard.Wizard.run">run() (catalyst.dl.utils.wizard.Wizard method)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.runner._Runner.run_experiment">run_experiment() (catalyst.core.runner._Runner method)</a>
@@ -2818,9 +2870,11 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.utils.pandas.split_dataframe_train_test">split_dataframe_train_test() (in module catalyst.contrib.utils.pandas)</a>
 </li>
+      <li><a href="api/contrib.html#catalyst.contrib.utils.dataset.split_dataset_train_test">split_dataset_train_test() (in module catalyst.contrib.utils.dataset)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/contrib.html#catalyst.contrib.utils.dataset.split_dataset_train_test">split_dataset_train_test() (in module catalyst.contrib.utils.dataset)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.modules.se.SqueezeAndExcitation">SqueezeAndExcitation (class in catalyst.contrib.nn.modules.se)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackScope.Stage">Stage (catalyst.core.callback.CallbackScope attribute)</a>
 </li>
@@ -2906,10 +2960,10 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.utils.text.tokenize_text">tokenize_text() (in module catalyst.contrib.utils.text)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/contrib.html#catalyst.contrib.utils.parallel.tqdm_parallel_imap">tqdm_parallel_imap() (in module catalyst.contrib.utils.parallel)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/dl.html#catalyst.dl.runner.core.Runner.trace">trace() (catalyst.dl.runner.core.Runner method)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.utils.trace.trace_model">trace_model() (in module catalyst.dl.utils.trace)</a>
@@ -2924,6 +2978,8 @@
         <li><a href="api/dl.html#catalyst.dl.registry.Transform">(in module catalyst.dl.registry)</a>
 </li>
       </ul></li>
+      <li><a href="api/utils.html#catalyst.utils.torch.trim_tensors">trim_tensors() (in module catalyst.utils.torch)</a>
+</li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletLoss">TripletLoss (class in catalyst.contrib.nn.criterion.triplet)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletPairwiseEmbeddingLoss">TripletPairwiseEmbeddingLoss (class in catalyst.contrib.nn.criterion.triplet)</a>

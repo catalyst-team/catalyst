@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.data.sampler &mdash; Catalyst 20.04.2 documentation</title>
+  <title>catalyst.data.sampler &mdash; Catalyst 20.05 documentation</title>
   
 
   
@@ -144,7 +144,7 @@
               
               
                 <div class="version">
-                  20.04
+                  20.05
                 </div>
               
             
@@ -260,8 +260,9 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
+<span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DistributedSampler</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data.sampler</span> <span class="kn">import</span> <span class="n">Sampler</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data.sampler</span> <span class="kn">import</span> <span class="n">BatchSampler</span><span class="p">,</span> <span class="n">Sampler</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.data</span> <span class="kn">import</span> <span class="n">DatasetFromSampler</span>
 
@@ -276,7 +277,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            labels (List[int]): list of class label</span>
-<span class="sd">                for each elem in the datasety</span>
+<span class="sd">                for each elem in the dataset</span>
 <span class="sd">            mode (str): Strategy to balance classes.</span>
 <span class="sd">                Must be one of [downsampling, upsampling]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -428,6 +429,83 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mini_epoch_len</span></div></div>
 
 
+<div class="viewcode-block" id="DynamicLenBatchSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.DynamicLenBatchSampler">[docs]</a><span class="k">class</span> <span class="nc">DynamicLenBatchSampler</span><span class="p">(</span><span class="n">BatchSampler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A dynamic batch length data sampler.</span>
+<span class="sd">    Should be used with `catalyst.utils.trim_tensors`.</span>
+
+<span class="sd">    Adapted from &quot;Dynamic minibatch trimming to improve BERT training speed&quot;</span>
+<span class="sd">    https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sampler (torch.utils.data.Sampler): Base sampler.</span>
+<span class="sd">        batch_size (int): Size of minibatch.</span>
+<span class="sd">        drop_last (bool): If ``True``, the sampler will drop the last batch</span>
+<span class="sd">        if its size would be less than ``batch_size``.</span>
+
+<span class="sd">    Usage example:</span>
+
+<span class="sd">        &gt;&gt;&gt; from torch.utils import data</span>
+<span class="sd">        &gt;&gt;&gt; from catalyst.data import DynamicLenBatchSampler</span>
+<span class="sd">        &gt;&gt;&gt; from catalyst import utils</span>
+
+<span class="sd">        &gt;&gt;&gt; dataset = data.TensorDataset(</span>
+<span class="sd">        &gt;&gt;&gt;     input_ids, input_mask, segment_ids, labels</span>
+<span class="sd">        &gt;&gt;&gt; )</span>
+
+<span class="sd">        &gt;&gt;&gt; sampler_ = data.RandomSampler(dataset)</span>
+<span class="sd">        &gt;&gt;&gt; sampler = DynamicLenBatchSampler(</span>
+<span class="sd">        &gt;&gt;&gt;     sampler_, batch_size=16, drop_last=False</span>
+<span class="sd">        &gt;&gt;&gt; )</span>
+<span class="sd">        &gt;&gt;&gt; loader = data.DataLoader(dataset, batch_sampler=sampler)</span>
+
+<span class="sd">        &gt;&gt;&gt; for batch in loader:</span>
+<span class="sd">        &gt;&gt;&gt;     tensors = utils.trim_tensors(batch)</span>
+<span class="sd">        &gt;&gt;&gt;     b_input_ids, b_input_mask, b_segment_ids, b_labels = \</span>
+<span class="sd">        &gt;&gt;&gt;         tuple(t.to(device) for t in tensors)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DynamicLenBatchSampler.__iter__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.DynamicLenBatchSampler.__iter__">[docs]</a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Iteration over BatchSampler.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">buckets</span> <span class="o">=</span> <span class="p">[[]]</span> <span class="o">*</span> <span class="mi">100</span>
+        <span class="n">yielded</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="p">:</span>
+            <span class="n">count_zeros</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">data_source</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">count_zeros</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">count_zeros</span> <span class="o">/</span> <span class="mi">64</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">buckets</span><span class="p">[</span><span class="n">count_zeros</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">buckets</span><span class="p">[</span><span class="n">count_zeros</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">buckets</span><span class="p">[</span><span class="n">count_zeros</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">buckets</span><span class="p">[</span><span class="n">count_zeros</span><span class="p">])</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">:</span>
+                <span class="n">batch</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">buckets</span><span class="p">[</span><span class="n">count_zeros</span><span class="p">])</span>
+                <span class="k">yield</span> <span class="n">batch</span>
+                <span class="n">yielded</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">buckets</span><span class="p">[</span><span class="n">count_zeros</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">leftover</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">bucket</span> <span class="ow">in</span> <span class="n">buckets</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">bucket</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">leftover</span><span class="p">:</span>
+            <span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">:</span>
+                <span class="n">yielded</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">yield</span> <span class="n">batch</span>
+                <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">drop_last</span><span class="p">:</span>
+            <span class="n">yielded</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">yield</span> <span class="n">batch</span>
+
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="n">yielded</span><span class="p">,</span> <span class="p">(</span>
+            <span class="s2">&quot;produced an inccorect number of batches. &quot;</span>
+            <span class="s2">&quot;expected </span><span class="si">%i</span><span class="s2">, but yielded </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">yielded</span><span class="p">)</span>
+        <span class="p">)</span></div></div>
+
+
 <div class="viewcode-block" id="DistributedSamplerWrapper"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.DistributedSamplerWrapper">[docs]</a><span class="k">class</span> <span class="nc">DistributedSamplerWrapper</span><span class="p">(</span><span class="n">DistributedSampler</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Wrapper over `Sampler` for distributed training.</span>
@@ -480,6 +558,7 @@
     <span class="s2">&quot;BalanceClassSampler&quot;</span><span class="p">,</span>
     <span class="s2">&quot;MiniEpochSampler&quot;</span><span class="p">,</span>
     <span class="s2">&quot;DistributedSamplerWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DynamicLenBatchSampler&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

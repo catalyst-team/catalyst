@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Data &mdash; Catalyst 20.04.2 documentation</title>
+  <title>Data &mdash; Catalyst 20.05 documentation</title>
   
 
   
@@ -146,7 +146,7 @@
               
               
                 <div class="version">
-                  20.04
+                  20.05
                 </div>
               
             
@@ -899,7 +899,7 @@ and applies all readers and mixins</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>labels</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – list of class label
-for each elem in the datasety</p></li>
+for each elem in the dataset</p></li>
 <li><p><strong>mode</strong> (<em>str</em>) – Strategy to balance classes.
 Must be one of [downsampling, upsampling]</p></li>
 </ul>
@@ -1025,6 +1025,54 @@ sampler will shuffle the indices</p></li>
 <dt id="catalyst.data.sampler.DistributedSamplerWrapper.__iter__">
 <code class="sig-name descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#DistributedSamplerWrapper.__iter__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.DistributedSamplerWrapper.__iter__" title="Permalink to this definition">¶</a></dt>
 <dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="catalyst.data.sampler.DynamicLenBatchSampler">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler.</code><code class="sig-name descname">DynamicLenBatchSampler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sampler</span></em>, <em class="sig-param"><span class="n">batch_size</span></em>, <em class="sig-param"><span class="n">drop_last</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#DynamicLenBatchSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.DynamicLenBatchSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dynamic batch length data sampler.
+Should be used with <cite>catalyst.utils.trim_tensors</cite>.</p>
+<p>Adapted from “Dynamic minibatch trimming to improve BERT training speed”
+<a class="reference external" href="https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779">https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sampler</strong> (<em>torch.utils.data.Sampler</em>) – Base sampler.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – Size of minibatch.</p></li>
+<li><p><strong>drop_last</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the sampler will drop the last batch</p></li>
+<li><p><strong>its size would be less than batch_size.</strong> (<em>if</em>) – </p></li>
+</ul>
+</dd>
+</dl>
+<p>Usage example:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torch.utils</span> <span class="kn">import</span> <span class="n">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">catalyst.data</span> <span class="kn">import</span> <span class="n">DynamicLenBatchSampler</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">TensorDataset</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">input_ids</span><span class="p">,</span> <span class="n">input_mask</span><span class="p">,</span> <span class="n">segment_ids</span><span class="p">,</span> <span class="n">labels</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sampler_</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">RandomSampler</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sampler</span> <span class="o">=</span> <span class="n">DynamicLenBatchSampler</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">sampler_</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">drop_last</span><span class="o">=</span><span class="kc">False</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loader</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">loader</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">tensors</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">trim_tensors</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">b_input_ids</span><span class="p">,</span> <span class="n">b_input_mask</span><span class="p">,</span> <span class="n">b_segment_ids</span><span class="p">,</span> <span class="n">b_labels</span> <span class="o">=</span>         <span class="o">&gt;&gt;&gt;</span>         <span class="nb">tuple</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tensors</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="catalyst.data.sampler.DynamicLenBatchSampler.__iter__">
+<code class="sig-name descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#DynamicLenBatchSampler.__iter__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.DynamicLenBatchSampler.__iter__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iteration over BatchSampler.</p>
 </dd></dl>
 
 </dd></dl>

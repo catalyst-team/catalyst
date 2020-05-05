@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.torch &mdash; Catalyst 20.04.2 documentation</title>
+  <title>catalyst.utils.torch &mdash; Catalyst 20.05 documentation</title>
   
 
   
@@ -144,7 +144,7 @@
               
               
                 <div class="version">
-                  20.04
+                  20.05
                 </div>
               
             
@@ -548,6 +548,26 @@
     <span class="k">return</span> <span class="n">tensor</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span></div>
 
 
+<div class="viewcode-block" id="trim_tensors"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.trim_tensors">[docs]</a><span class="k">def</span> <span class="nf">trim_tensors</span><span class="p">(</span><span class="n">tensors</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Trim padding off of a batch of tensors to the smallest possible length.</span>
+<span class="sd">    Should be used with `catalyst.data.DynamicLenBatchSampler`.</span>
+
+<span class="sd">    Adapted from &quot;Dynamic minibatch trimming to improve BERT training speed&quot;</span>
+<span class="sd">    https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tensors ([torch.tensor]): list of tensors to trim.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        ([torch.tensor]): list of trimmed tensors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">max_len</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">tensors</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">max_len</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">tensors</span> <span class="o">=</span> <span class="p">[</span><span class="n">tsr</span><span class="p">[:,</span> <span class="p">:</span><span class="n">max_len</span><span class="p">]</span> <span class="k">for</span> <span class="n">tsr</span> <span class="ow">in</span> <span class="n">tensors</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">tensors</span></div>
+
+
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;get_optimizable_params&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_optimizer_momentum&quot;</span><span class="p">,</span>
@@ -561,6 +581,7 @@
     <span class="s2">&quot;set_requires_grad&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_network_output&quot;</span><span class="p">,</span>
     <span class="s2">&quot;detach&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;trim_tensors&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Core &mdash; Catalyst 20.04.2 documentation</title>
+  <title>Core &mdash; Catalyst 20.05 documentation</title>
   
 
   
@@ -146,7 +146,7 @@
               
               
                 <div class="version">
-                  20.04
+                  20.05
                 </div>
               
             
@@ -1412,16 +1412,25 @@ Please use <cite>state.is_train_loader</cite> instead.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>save_n_best</strong> (<em>int</em>) – number of best checkpoint to keep</p></li>
+<li><p><strong>save_n_best</strong> (<em>int</em>) – number of best checkpoint to keep,
+if <code class="docutils literal notranslate"><span class="pre">0</span></code> then  store only last state of model and
+<code class="docutils literal notranslate"><span class="pre">load_on_stage_end</span></code> should be one of
+<code class="docutils literal notranslate"><span class="pre">last</span></code> or <code class="docutils literal notranslate"><span class="pre">last_full</span></code>.</p></li>
 <li><p><strong>resume</strong> (<em>str</em>) – path to checkpoint to load
 and initialize runner state</p></li>
+<li><p><strong>resume_dir</strong> (<em>str</em>) – directory with checkpoints,
+if specified in combination with <code class="docutils literal notranslate"><span class="pre">resume</span></code>
+than resume checkpoint will be loaded from <code class="docutils literal notranslate"><span class="pre">resume_dir</span></code></p></li>
 <li><p><strong>metrics_filename</strong> (<em>str</em>) – filename to save metrics
 in checkpoint folder. Must ends on <code class="docutils literal notranslate"><span class="pre">.json</span></code> or <code class="docutils literal notranslate"><span class="pre">.yml</span></code></p></li>
 <li><p><strong>load_on_stage_end</strong> (<em>str</em>) – name of the model to load
 at the end of the stage.
-You can use <code class="docutils literal notranslate"><span class="pre">best</span></code> to load the best model according
-to validation metrics, or <code class="docutils literal notranslate"><span class="pre">last</span></code> to use just the last one
-(default behaviour).</p></li>
+You can use <code class="docutils literal notranslate"><span class="pre">best</span></code>, <code class="docutils literal notranslate"><span class="pre">best_full</span></code>
+to load the best model according to validation metrics,
+or <code class="docutils literal notranslate"><span class="pre">last</span></code> <code class="docutils literal notranslate"><span class="pre">last_full</span></code> (default behaviour)
+to use just the last one.
+If None then no action is required at stage end
+and will be used last state.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1430,55 +1439,112 @@ to validation metrics, or <code class="docutils literal notranslate"><span class
 <dl class="py method">
 <dt id="catalyst.core.callbacks.checkpoint.CheckpointCallback.get_checkpoint_suffix">
 <code class="sig-name descname">get_checkpoint_suffix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">checkpoint</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.get_checkpoint_suffix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.get_checkpoint_suffix" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><p>Create checkpoint filename suffix based on checkpoint data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>checkpoint</strong> (<em>dict</em>) – checkpoint dict,
+should contain <code class="docutils literal notranslate"><span class="pre">stage_name</span></code> and <code class="docutils literal notranslate"><span class="pre">epoch</span></code> keys.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="catalyst.core.callbacks.checkpoint.CheckpointCallback.on_epoch_end">
-<code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.on_epoch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.on_epoch_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collect and save checkpoint after epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – training state</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="catalyst.core.callbacks.checkpoint.CheckpointCallback.on_stage_end">
-<code class="sig-name descname">on_stage_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.on_stage_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<code class="sig-name descname">on_stage_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.on_stage_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show information about best checkpoints during the stage and
+load model specified in <code class="docutils literal notranslate"><span class="pre">load_on_stage_end</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – training state</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="catalyst.core.callbacks.checkpoint.CheckpointCallback.on_stage_start">
-<code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Setup model for stage.</p>
+<p>NOTE: If CheckpointCallback initialized with <code class="docutils literal notranslate"><span class="pre">resume</span></code>
+(as path to checkpoint file) or <code class="docutils literal notranslate"><span class="pre">resume</span></code> (as filename)
+and <code class="docutils literal notranslate"><span class="pre">resume_dir</span></code> (as directory with file)
+then will be performed loading checkpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – training state</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="catalyst.core.callbacks.checkpoint.CheckpointCallback.process_checkpoint">
-<code class="sig-name descname">process_checkpoint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">checkpoint</span><span class="p">:</span> <span class="n">Dict</span></em>, <em class="sig-param"><span class="n">is_best</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">main_metric</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'loss'</span></em>, <em class="sig-param"><span class="n">minimize_metric</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.process_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.process_checkpoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<code class="sig-name descname">process_checkpoint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">checkpoint</span><span class="p">:</span> <span class="n">Dict</span></em>, <em class="sig-param"><span class="n">is_best</span><span class="p">:</span> <span class="n">bool</span></em>, <em class="sig-param"><span class="n">main_metric</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'loss'</span></em>, <em class="sig-param"><span class="n">minimize_metric</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.process_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.process_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save checkpoint and metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logdir</strong> (<em>str</em><em> or </em><em>Path object</em>) – directory for storing checkpoints</p></li>
+<li><p><strong>checkpoint</strong> (<em>dict</em>) – dict with checkpoint data</p></li>
+<li><p><strong>is_best</strong> (<em>bool</em>) – indicator to save best checkpoint,
+if true then will be saved two additional checkpoints -
+<code class="docutils literal notranslate"><span class="pre">best</span></code> and <code class="docutils literal notranslate"><span class="pre">best_full</span></code>.</p></li>
+<li><p><strong>main_metric</strong> (<em>str</em>) – metric to use for selecting the best model</p></li>
+<li><p><strong>minimize_metric</strong> (<em>bool</em>) – indicator for selecting best metric,
+if true then best metric will be the metric with
+the lowest value, otherwise with the greatest value.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="catalyst.core.callbacks.checkpoint.CheckpointCallback.process_metrics">
-<code class="sig-name descname">process_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">last_valid_metrics</span></em><span class="sig-paren">)</span> &#x2192; Dict<a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.process_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.process_metrics" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<code class="sig-name descname">process_metrics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">last_valid_metrics</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>float<span class="p">]</span></span></em><span class="sig-paren">)</span> &#x2192; Dict<a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.process_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.process_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add last validation metrics to list of previous validation metrics
+and keep <code class="docutils literal notranslate"><span class="pre">save_n_best</span></code> metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>last_valid_metrics</strong> (<em>dict</em>) – dict with metrics
+from last validation step.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="catalyst.core.callbacks.checkpoint.CheckpointCallback.truncate_checkpoints">
 <code class="sig-name descname">truncate_checkpoints</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">minimize_metric</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.truncate_checkpoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.truncate_checkpoints" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><p>Keep <code class="docutils literal notranslate"><span class="pre">save_n_best</span></code> checkpoints based on main metric.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>minimize_metric</strong> (<em>bool</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> then keep</p></li>
+<li><p><strong>checkpoints with the lowest/highest values</strong> (<em>save_n_best</em>) – </p></li>
+<li><p><strong>the main metric.</strong> (<em>of</em>) – </p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
 <dt id="catalyst.core.callbacks.checkpoint.IterationCheckpointCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.checkpoint.</code><code class="sig-name descname">IterationCheckpointCallback</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_n_last</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">period</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">100</span></em>, <em class="sig-param"><span class="n">stage_restart</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">metrics_filename</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'_metrics_iter.json'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#IterationCheckpointCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.checkpoint.</code><code class="sig-name descname">IterationCheckpointCallback</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_n_last</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">period</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">100</span></em>, <em class="sig-param"><span class="n">stage_restart</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">metrics_filename</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'_metrics_iter.json'</span></em>, <em class="sig-param"><span class="n">load_on_stage_end</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'best_full'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#IterationCheckpointCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.checkpoint.BaseCheckpointCallback</span></code></p>
 <p>Iteration checkpoint callback to save your model/criterion/optimizer.</p>
 <dl class="py method">
 <dt id="catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_n_last</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">period</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">100</span></em>, <em class="sig-param"><span class="n">stage_restart</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">metrics_filename</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'_metrics_iter.json'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#IterationCheckpointCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_n_last</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">period</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">100</span></em>, <em class="sig-param"><span class="n">stage_restart</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">metrics_filename</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'_metrics_iter.json'</span></em>, <em class="sig-param"><span class="n">load_on_stage_end</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'best_full'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#IterationCheckpointCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1487,6 +1553,11 @@ to validation metrics, or <code class="docutils literal notranslate"><span class
 <li><p><strong>stage_restart</strong> (<em>bool</em>) – restart counter every stage or not</p></li>
 <li><p><strong>metrics_filename</strong> (<em>str</em>) – filename to save metrics
 in checkpoint folder. Must ends on <code class="docutils literal notranslate"><span class="pre">.json</span></code> or <code class="docutils literal notranslate"><span class="pre">.yml</span></code></p></li>
+<li><p><strong>load_on_stage_end</strong> (<em>str</em>) – name of the model to load
+at the end of the stage.
+You can use <code class="docutils literal notranslate"><span class="pre">best</span></code>, <code class="docutils literal notranslate"><span class="pre">best_full</span></code> (default)
+to load the best model according to validation metrics,
+or <code class="docutils literal notranslate"><span class="pre">last</span></code> <code class="docutils literal notranslate"><span class="pre">last_full</span></code> to use just the last one.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1495,37 +1566,73 @@ in checkpoint folder. Must ends on <code class="docutils literal notranslate"><s
 <dl class="py method">
 <dt id="catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.get_checkpoint_suffix">
 <code class="sig-name descname">get_checkpoint_suffix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">checkpoint</span><span class="p">:</span> <span class="n">dict</span></em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#IterationCheckpointCallback.get_checkpoint_suffix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.get_checkpoint_suffix" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><p>Create checkpoint filename suffix based on checkpoint data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>checkpoint</strong> (<em>dict</em>) – checkpoint dict,
+should contain <code class="docutils literal notranslate"><span class="pre">stage_name</span></code> and <code class="docutils literal notranslate"><span class="pre">epoch</span></code> keys.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.on_batch_end">
 <code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#IterationCheckpointCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><p>Save checkpoint based on batches count.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – training state</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.on_stage_end">
+<code class="sig-name descname">on_stage_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#IterationCheckpointCallback.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.on_stage_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load model specified in <code class="docutils literal notranslate"><span class="pre">load_on_stage_end</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – training state</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.on_stage_start">
 <code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#IterationCheckpointCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><p>Reset iterations counter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – training state</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.process_checkpoint">
 <code class="sig-name descname">process_checkpoint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">checkpoint</span><span class="p">:</span> <span class="n">Dict</span></em>, <em class="sig-param"><span class="n">batch_metrics</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>float<span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#IterationCheckpointCallback.process_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.process_checkpoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><p>Save checkpoint and metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logdir</strong> (<em>str</em><em> or </em><em>Path object</em>) – directory for storing checkpoints</p></li>
+<li><p><strong>checkpoint</strong> (<em>dict</em>) – dict with checkpoint data</p></li>
+<li><p><strong>batch_metrics</strong> (<em>dict</em>) – dict with metrics based on a few batches</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.process_metrics">
 <code class="sig-name descname">process_metrics</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Dict<a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#IterationCheckpointCallback.process_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.process_metrics" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><p>Update metrics with last <code class="docutils literal notranslate"><span class="pre">save_n_last</span></code> checkpoints.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.truncate_checkpoints">
 <code class="sig-name descname">truncate_checkpoints</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#IterationCheckpointCallback.truncate_checkpoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.truncate_checkpoints" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome</p>
+<dd><p>Keep <code class="docutils literal notranslate"><span class="pre">save_n_best</span></code> checkpoints based on main metric.</p>
 </dd></dl>
 
 </dd></dl>

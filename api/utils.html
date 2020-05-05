@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utilities &mdash; Catalyst 20.04.2 documentation</title>
+  <title>Utilities &mdash; Catalyst 20.05 documentation</title>
   
 
   
@@ -146,7 +146,7 @@
               
               
                 <div class="version">
-                  20.04
+                  20.05
                 </div>
               
             
@@ -517,24 +517,36 @@ for distributed and FP16 method</p></li>
 <dt id="catalyst.utils.distributed.is_wrapped_with_ddp">
 <code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">is_wrapped_with_ddp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#is_wrapped_with_ddp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.is_wrapped_with_ddp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks whether model is wrapped with DataParallel/DistributedDataParallel.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 20.05: </span>This will be removed in 20.06. Use check_ddp_wrapped instead.</p>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt id="catalyst.utils.distributed.is_torch_distributed_initialized">
 <code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">is_torch_distributed_initialized</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#is_torch_distributed_initialized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.is_torch_distributed_initialized" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if torch.distributed is available and initialized.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 20.05: </span>This will be removed in 20.06. Use check_torch_distributed_initialized instead.</p>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt id="catalyst.utils.distributed.is_slurm_available">
 <code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">is_slurm_available</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#is_slurm_available"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.is_slurm_available" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if slurm is available.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 20.05: </span>This will be removed in 20.06. Use check_slurm_available instead.</p>
+</div>
 </dd></dl>
 
 <dl class="py function">
 <dt id="catalyst.utils.distributed.is_apex_available">
 <code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">is_apex_available</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#is_apex_available"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.is_apex_available" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if apex is available.</p>
+<div class="deprecated">
+<p><span class="versionmodified deprecated">Deprecated since version 20.05: </span>This will be removed in 20.06. Use check_apex_available instead.</p>
+</div>
 </dd></dl>
 
 </div>
@@ -1097,6 +1109,26 @@ convert it to numpy array</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>numpy ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="catalyst.utils.torch.trim_tensors">
+<code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">trim_tensors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tensors</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#trim_tensors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.trim_tensors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trim padding off of a batch of tensors to the smallest possible length.
+Should be used with <cite>catalyst.data.DynamicLenBatchSampler</cite>.</p>
+<p>Adapted from “Dynamic minibatch trimming to improve BERT training speed”
+<a class="reference external" href="https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779">https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tensors</strong> (<em>[</em><em>torch.tensor</em><em>]</em>) – list of tensors to trim.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>list of trimmed tensors.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>([torch.tensor])</p>
 </dd>
 </dl>
 </dd></dl>

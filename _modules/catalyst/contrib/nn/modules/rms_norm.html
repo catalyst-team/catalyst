@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contribution &mdash; Catalyst 20.05 documentation</title>
+  <title>catalyst.contrib.nn.modules.rms_norm &mdash; Catalyst 20.05 documentation</title>
   
 
   
@@ -25,24 +25,22 @@
 
   
 
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Core" href="../api/core.html" />
-    <link rel="prev" title="Distributed training" href="distributed.html" /> 
+  <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" /> -->
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
 
   
-  <script src="../_static/js/modernizr.min.js"></script>
+  <script src="../../../../../_static/js/modernizr.min.js"></script>
 
   <!-- Preload the theme fonts -->
 
-<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
 
 <!-- Preload the katex fonts -->
 
@@ -158,7 +156,7 @@
 
 
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search Docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -175,19 +173,19 @@
             
             
               <p class="caption"><span class="caption-text">Overview</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="distributed.html">Distributed training</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Contribution</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../info/distributed.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../info/contributing.html">Contribution</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/data.html">Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/utils.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/contrib.html">Contrib</a></li>
 </ul>
 
             
@@ -220,7 +218,7 @@
   <ul class="catalyst-breadcrumbs">
     
       <li>
-        <a href="../index.html">
+        <a href="../../../../../index.html">
           
             Docs
           
@@ -228,16 +226,12 @@
       </li>
 
         
-      <li>Contribution</li>
+          <li><a href="../../../../index.html">Module code</a> &gt;</li>
+        
+      <li>catalyst.contrib.nn.modules.rms_norm</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
-        
-            
-            
-              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/info/contributing.rst" class="fa fa-github"> Edit on GitHub</a>
-            
-          
         
       </li>
     
@@ -260,125 +254,49 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <div class="section" id="contribution">
-<h1>Contribution<a class="headerlink" href="#contribution" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="issues">
-<h2>Issues<a class="headerlink" href="#issues" title="Permalink to this headline">¶</a></h2>
-<p>We use <a class="reference external" href="https://github.com/catalyst-team/catalyst/issues">GitHub issues</a> for bug reports and feature requests.</p>
-<div class="section" id="step-by-step-guide">
-<h3>Step-by-step guide<a class="headerlink" href="#step-by-step-guide" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="new-feature">
-<h4>New feature<a class="headerlink" href="#new-feature" title="Permalink to this headline">¶</a></h4>
-<ol class="arabic simple">
-<li><p>Make an issue with your feature description;</p></li>
-<li><p>We shall discuss the design and its implementation details;</p></li>
-<li><p>Once we agree that the plan looks good, go ahead and implement it.</p></li>
-</ol>
-</div>
-<div class="section" id="bugfix">
-<h4>Bugfix<a class="headerlink" href="#bugfix" title="Permalink to this headline">¶</a></h4>
-<ol class="arabic simple">
-<li><p>Goto <a class="reference external" href="https://github.com/catalyst-team/catalyst/issues">GitHub issues</a>;</p></li>
-<li><p>Pick an issue and comment on the task that you want to work on this
-feature;</p></li>
-<li><p>If you need more context on a specific issue, please ask, and we will
-discuss the details.</p></li>
-</ol>
-<p>Once you finish implementing a feature or bugfix, please send a Pull
-Request.</p>
-<p>If you are not familiar with creating a Pull Request, here are some
-guides:</p>
-<ul class="simple">
-<li><p><a class="reference external" href="http://stackoverflow.com/questions/14680711/how-to-do-a-github-pull-request">http://stackoverflow.com/questions/14680711/how-to-do-a-github-pull-request</a></p></li>
-<li><p><a class="reference external" href="https://help.github.com/articles/creating-a-pull-request/">https://help.github.com/articles/creating-a-pull-request/</a></p></li>
-</ul>
-</div>
-<div class="section" id="contribution-best-practices">
-<h4>Contribution best practices<a class="headerlink" href="#contribution-best-practices" title="Permalink to this headline">¶</a></h4>
-<ol class="arabic simple">
-<li><p>Install requirements</p></li>
-</ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>brew install bash <span class="c1"># for MacOS users</span>
-pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
-</pre></div>
-</div>
-<ol class="arabic simple" start="2">
-<li><p>Break your work into small, single-purpose updates if possible. It’s much harder to merge in a large change with a lot of disjoint features.</p></li>
-<li><p>Submit the update as a GitHub pull request against the <cite>master</cite> branch.</p></li>
-<li><p>Make sure that you provide docstrings for all your new methods and classes.</p></li>
-<li><p>Add new unit tests for your code.</p></li>
-<li><p>Check the codestyle</p></li>
-<li><p>Make sure that your code passes the unit tests</p></li>
-</ol>
-</div>
-</div>
-<div class="section" id="codestyle">
-<h3>Codestyle<a class="headerlink" href="#codestyle" title="Permalink to this headline">¶</a></h3>
-<p>Do not forget to check the codestyle for your PR with</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>catalyst-make-codestyle <span class="o">&amp;&amp;</span> catalyst-check-codestyle
-</pre></div>
-</div>
-<p>Make sure to have your python packages complied with <cite>requirements/requirements.txt</cite> and <cite>requirements/requirements-dev.txt</cite> to get codestyle run clean.</p>
-</div>
-<div class="section" id="unit-tests">
-<h3>Unit tests<a class="headerlink" href="#unit-tests" title="Permalink to this headline">¶</a></h3>
-<p>Do not forget to check that your code passes the unit tests</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest .
-</pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="documentation">
-<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
-<p>Catalyst uses <a class="reference external" href="http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html">Google style</a> for formatting <a class="reference external" href="https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings">docstrings</a>. Length of line
-inside docstrings block must be limited to 80 characters to fit into
-Jupyter documentation popups.</p>
-<div class="section" id="check-that-you-have-written-working-docs">
-<h3>Check that you have written working docs<a class="headerlink" href="#check-that-you-have-written-working-docs" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make check-docs
-</pre></div>
-</div>
-<p>The command requires Sphinx and some sphinx-specific libraries.
-If you don’t want to install them, you may make a catalyst-dev container</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make docker-dev
-docker run <span class="se">\\</span>
-    -v <span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/:/workspace/ <span class="se">\\</span>
-    catalyst-dev:latest <span class="se">\\</span>
-    bash -c <span class="s2">&quot;make check-docs&quot;</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="to-build-docs-add-environment-variable-remove-builds-0">
-<h3>To build docs add environment variable REMOVE_BUILDS=0<a class="headerlink" href="#to-build-docs-add-environment-variable-remove-builds-0" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">REMOVE_BUILDS</span><span class="o">=</span><span class="m">0</span> make check-docs
-</pre></div>
-</div>
-<p>or through docker</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>docker run <span class="se">\\</span>
-    -v <span class="sb">`</span><span class="nb">pwd</span><span class="sb">`</span>/:/workspace/ <span class="se">\\</span>
-    catalyst-dev:latest <span class="se">\\</span>
-    bash -c <span class="s2">&quot;REMOVE_BUILDS=0 make check-docs&quot;</span>
-</pre></div>
-</div>
-<p>The docs will be stored in <cite>builds/</cite> folder.</p>
-</div>
-</div>
-</div>
+  <h1>Source code for catalyst.contrib.nn.modules.rms_norm</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 
+
+<div class="viewcode-block" id="RMSNorm"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.modules.rms_norm.RMSNorm">[docs]</a><span class="k">class</span> <span class="nc">RMSNorm</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An implementation of RMS Normalization.</span>
+
+<span class="sd">    @TODO: Docs (link to paper). Contribution is welcome.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RMSNorm.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.modules.rms_norm.RMSNorm.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">dimension</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="n">is_bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            dimension (int): the dimension of the layer output to normalize</span>
+<span class="sd">            epsilon (float): an epsilon to prevent dividing by zero</span>
+<span class="sd">                in case the layer has zero variance. (default = 1e-8)</span>
+<span class="sd">            is_bias (bool): a boolean value whether to include bias term</span>
+<span class="sd">                while normalization</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="n">dimension</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">epsilon</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_bias</span> <span class="o">=</span> <span class="n">is_bias</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bias</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="RMSNorm.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.modules.rms_norm.RMSNorm.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+        <span class="n">x_std</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+        <span class="n">x_norm</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="p">(</span><span class="n">x_std</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_bias</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">*</span> <span class="n">x_norm</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">*</span> <span class="n">x_norm</span></div></div>
+</pre></div>
 
              </article>
              
             </div>
             <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../api/core.html" class="btn btn-neutral float-right" title="Core" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
-      
-      
-        <a href="distributed.html" class="btn btn-neutral" title="Distributed training" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
-      
-    </div>
   
 
   <hr>
@@ -403,28 +321,7 @@ docker run <span class="se">\\</span>
         <div class="catalyst-content-right" id="catalyst-content-right">
           <div class="catalyst-right-menu" id="catalyst-right-menu">
             <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
-              <ul>
-<li><a class="reference internal" href="#">Contribution</a><ul>
-<li><a class="reference internal" href="#issues">Issues</a><ul>
-<li><a class="reference internal" href="#step-by-step-guide">Step-by-step guide</a><ul>
-<li><a class="reference internal" href="#new-feature">New feature</a></li>
-<li><a class="reference internal" href="#bugfix">Bugfix</a></li>
-<li><a class="reference internal" href="#contribution-best-practices">Contribution best practices</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#codestyle">Codestyle</a></li>
-<li><a class="reference internal" href="#unit-tests">Unit tests</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#documentation">Documentation</a><ul>
-<li><a class="reference internal" href="#check-that-you-have-written-working-docs">Check that you have written working docs</a></li>
-<li><a class="reference internal" href="#to-build-docs-add-environment-variable-remove-builds-0">To build docs add environment variable REMOVE_BUILDS=0</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
+              
             </div>
           </div>
         </div>
@@ -437,19 +334,19 @@ docker run <span class="se">\\</span>
   
 
      
-       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-         <script src="../_static/jquery.js"></script>
-         <script src="../_static/underscore.js"></script>
-         <script src="../_static/doctools.js"></script>
-         <script src="../_static/language_data.js"></script>
+       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
+         <script src="../../../../../_static/jquery.js"></script>
+         <script src="../../../../../_static/underscore.js"></script>
+         <script src="../../../../../_static/doctools.js"></script>
+         <script src="../../../../../_static/language_data.js"></script>
          <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
      
 
   
 
-  <script type="text/javascript" src="../_static/js/vendor/popper.min.js"></script>
-  <script type="text/javascript" src="../_static/js/vendor/bootstrap.min.js"></script>
-  <script type="text/javascript" src="../_static/js/theme.js"></script>
+  <script type="text/javascript" src="../../../../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../../../../_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {
@@ -537,7 +434,7 @@ docker run <span class="se">\\</span>
 
   <!-- End Mobile Menu -->
 
-  <script type="text/javascript" src="../_static/js/vendor/anchor.min.js"></script>
+  <script type="text/javascript" src="../../../../../_static/js/vendor/anchor.min.js"></script>
 
   <script type="text/javascript">
     $(document).ready(function() {
