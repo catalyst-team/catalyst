@@ -76,9 +76,6 @@ import logging
 
 from catalyst.__version__ import __version__
 from catalyst.data.scripts import (
-    image2embedding,
-    process_images,
-    project_embeddings,
     split_dataframe,
     tag2label,
 )
@@ -87,14 +84,25 @@ from catalyst.tools import settings
 logger = logging.getLogger(__name__)
 
 COMMANDS = OrderedDict(
-    [
-        ("tag2label", tag2label),
-        ("process-images", process_images),
-        ("split-dataframe", split_dataframe),
-        ("image2embedding", image2embedding),
-        ("project-embeddings", project_embeddings),
-    ]
+    [("tag2label", tag2label), ("split-dataframe", split_dataframe)]
 )
+
+try:
+    import imageio  # noqa: F401
+    from catalyst.data.scripts import (
+        image2embedding, process_images, project_embeddings
+    )
+
+    COMMANDS["process-images"] = process_images
+    COMMANDS["image2embedding"] = image2embedding
+    COMMANDS["project-embeddings"] = project_embeddings
+except ImportError as ex:
+    if settings.cv_required:
+        logger.warning(
+            "some of catalyst-cv dependencies not available,"
+            " to install dependencies, run `pip install catalyst[cv]`."
+        )
+        raise ex
 
 try:
     import transformers  # noqa: F401

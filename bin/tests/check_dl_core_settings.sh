@@ -3,6 +3,11 @@
 # Cause the script to exit if a single command fails
 set -eo pipefail -v
 
+pip uninstall -r requirements/requirements-contrib.txt -y
+pip uninstall -r requirements/requirements-cv.txt -y
+pip uninstall -r requirements/requirements-ecosystem.txt -y
+pip uninstall -r requirements/requirements-ml.txt -y
+pip uninstall -r requirements/requirements-nlp.txt -y
 pip install -r requirements/requirements.txt
 
 ################################  pipeline 00  ################################
@@ -81,12 +86,12 @@ try:
     from catalyst.contrib.dl.callbacks import InferMaskCallback
     from catalyst.contrib.models import cv as cv_models
     from catalyst.contrib.utils import imread, imwrite
-    from catalyst.data.__main__ import COMMANDS as DATA_SCRIPTS
+    from catalyst.data.__main__ import COMMANDS
 
     assert not (
-        'process-images' in DATA_SCRIPTS
-        or 'process-images' in DATA_SCRIPTS
-        or 'project-embeddings' in DATA_SCRIPTS
+        'process-images' in COMMANDS
+        or 'process-images' in COMMANDS
+        or 'project-embeddings' in COMMANDS
     )
 except (ImportError, AssertionError):
     pass  # Ok
@@ -101,12 +106,12 @@ from catalyst.contrib.data import cv as cv_data
 from catalyst.contrib.dl.callbacks import InferMaskCallback
 from catalyst.contrib.models import cv as cv_models
 from catalyst.contrib.utils import imread, imwrite
-from catalyst.data.__main__ import COMMANDS as DATA_SCRIPTS
+from catalyst.data.__main__ import COMMANDS
 
 assert (
-    'process-images' in DATA_SCRIPTS
-    and 'process-images' in DATA_SCRIPTS
-    and 'project-embeddings' in DATA_SCRIPTS
+    'process-images' in COMMANDS
+    and 'process-images' in COMMANDS
+    and 'project-embeddings' in COMMANDS
 )
 """
 
@@ -161,10 +166,9 @@ try:
     from catalyst.contrib.models import nlp as nlp_models
     from catalyst.contrib.utils import tokenize_text, process_bert_output
     from catalyst.contrib.__main__ import COMMANDS as CONTRIB_SCRIPTS
-    from catalyst.data.__main__ import COMMANDS as DATA_SCRIPTS
+    from catalyst.data.__main__ import COMMANDS
 
-    assert 'text2embedding' not in CONTRIB_SCRIPTS
-    assert 'text2embedding' not in DATA_SCRIPTS
+    assert 'text2embedding' not in COMMANDS
 except (ImportError, AssertionError):
     pass  # Ok
 else:
@@ -177,11 +181,9 @@ python -c """
 from catalyst.contrib.data import nlp as nlp_data
 from catalyst.contrib.models import nlp as nlp_models
 from catalyst.contrib.utils import tokenize_text, process_bert_output
-from catalyst.contrib.__main__ import COMMANDS as CONTRIB_SCRIPTS
-from catalyst.data.__main__ import COMMANDS as DATA_SCRIPTS
+from catalyst.data.__main__ import COMMANDS
 
-assert 'text2embedding' in CONTRIB_SCRIPTS
-assert 'text2embedding' in DATA_SCRIPTS
+assert 'text2embedding' in COMMANDS
 """
 
 
