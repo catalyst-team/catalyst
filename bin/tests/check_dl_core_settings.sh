@@ -5,7 +5,8 @@ set -eo pipefail -v
 
 pip install -r requirements/requirements.txt
 
-###########################  check [catalyst-core]  ###########################
+################################  pipeline 00  ################################
+# checking catalyst-core loading (default)
 cat <<EOT > .catalyst
 [catalyst]
 contrib_required = false
@@ -20,14 +21,15 @@ from catalyst.contrib import utils
 
 try:
     callbacks.AlchemyLogger
-except ImportError:
+except (AttributeError, ImportError):
     pass  # Ok
 else:
     raise AssertionError('\'ImportError\' expected')
 """
 
 
-##########################  check [catalyst-contrib]  #########################
+################################  pipeline 01  ################################
+# checking catalyst-contrib dependencies loading
 cat <<EOT > .catalyst
 [catalyst]
 contrib_required = true
@@ -36,7 +38,7 @@ ml_required = false
 nlp_required = false
 EOT
 
-# fail if requirements not installed
+# check if fail if requirements not installed
 python -c """
 from catalyst.tools import settings
 
@@ -52,12 +54,14 @@ else:
 
 pip install -r requirements/requirements-contrib.txt
 pip install -r requirements/requirements-ecosystem.txt
+
 python -c """
 from catalyst.contrib.dl.callbacks import AlchemyLogger, VisdomLogger
 """
 
 
-############################  check [catalyst-cv]  ############################
+################################  pipeline 02  ################################
+# checking catalyst-cv dependencies loading
 cat <<EOT > .catalyst
 [catalyst]
 contrib_required = false
@@ -66,7 +70,7 @@ ml_required = false
 nlp_required = false
 EOT
 
-# fail if requirements not installed
+# check if fail if requirements not installed
 python -c """
 from catalyst.tools import settings
 
@@ -91,6 +95,7 @@ else:
 """
 
 pip install -r requirements/requirements-cv.txt
+
 python -c """
 from catalyst.contrib.data import cv as cv_data
 from catalyst.contrib.dl.callbacks import InferMaskCallback
@@ -106,7 +111,8 @@ assert (
 """
 
 
-############################  check [catalyst-ml]  ############################
+################################  pipeline 03  ################################
+# checking catalyst-ml dependencies loading
 cat <<EOT > .catalyst
 [catalyst]
 contrib_required = false
@@ -115,7 +121,7 @@ ml_required = true
 nlp_required = false
 EOT
 
-# fail if requirements not installed
+# check if fail if requirements not installed
 python -c """
 try:
     from catalyst.contrib.__main__ import COMMANDS
@@ -130,6 +136,7 @@ else:
 """
 
 pip install -r requirements/requirements-ml.txt
+
 python -c """
 from catalyst.contrib.__main__ import COMMANDS
 
@@ -137,7 +144,8 @@ assert 'check-index-model' in COMMANDS and 'create-index-model' in COMMANDS
 """
 
 
-############################  check [catalyst-nlp]  ###########################
+################################  pipeline 04  ################################
+# checking catalyst-nlp dependencies loading
 cat <<EOT > .catalyst
 [catalyst]
 contrib_required = false
@@ -146,7 +154,7 @@ ml_required = false
 nlp_required = true
 EOT
 
-# fail if requirements not installed
+# check if fail if requirements not installed
 python -c """
 try:
     from catalyst.contrib.data import nlp as nlp_data
@@ -164,6 +172,7 @@ else:
 """
 
 pip install -r requirements/requirements-nlp.txt
+
 python -c """
 from catalyst.contrib.data import nlp as nlp_data
 from catalyst.contrib.models import nlp as nlp_models

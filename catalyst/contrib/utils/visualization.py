@@ -2,7 +2,7 @@ import itertools
 
 import numpy as np
 
-from .image import tensor_from_rgb_image
+from .cv import tensor_from_rgb_image
 
 
 def plot_confusion_matrix(
