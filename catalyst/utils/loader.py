@@ -16,10 +16,7 @@ def get_native_batch_from_loader(
     """
     dataset = loader.dataset
     collate_fn = loader.collate_fn
-
-    sample = collate_fn([dataset[batch_index]])
-
-    return sample
+    return collate_fn([dataset[batch_index]])
 
 
 def get_native_batch_from_loaders(
@@ -28,7 +25,7 @@ def get_native_batch_from_loaders(
         batch_index: int = 0
 ):
     """
-    Returns a batch from experiment loader
+    Returns a batch from experiment loaders by its index or name.
 
     Args:
         loaders (Dict[str, DataLoader]): Loaders list to get loader from

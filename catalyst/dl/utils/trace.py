@@ -21,7 +21,20 @@ if TYPE_CHECKING:
     from catalyst.dl import Runner  # noqa: F401
 
 
-def get_input_argnames(fn: Callable[..., Any], exclude: List[str] = None):
+def get_input_argnames(
+        fn: Callable[..., Any],
+        exclude: List[str] = None
+) -> List[str]:
+    """
+    Function to get input argument names of function.
+
+    Args:
+        fn (Callable[..., Any]): Function to get argument names from
+        exclude (List[str]): List of string of names to exclude
+
+    Returns:
+        (List[str]): List of input argument names
+    """
     argspec = inspect.getfullargspec(fn)
     assert (
             argspec.varargs is None and argspec.varkw is None
@@ -214,7 +227,7 @@ def get_trace_name(
     requires_grad: bool = False,
     opt_level: str = None,
     additional_string: str = None,
-):
+) -> str:
     """Creates a file name for the traced model.
 
     Args:
@@ -223,6 +236,9 @@ def get_trace_name(
         requires_grad (bool): flag if model was traced with gradients
         opt_level (str): opt_level if model was traced in FP16
         additional_string (str): any additional information
+
+    Returns:
+        file_name (str): Filename for traced model to be saved.
     """
     file_name = f"traced"
     if additional_string is not None:
