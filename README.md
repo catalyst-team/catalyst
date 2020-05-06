@@ -884,7 +884,7 @@ We appreciate any type of feedback. Thank you!
 ### Acknowledgments
 
 Since the beginning of the development of the Сatalyst, 
-a lot of people have influenced it in a lot of different ways. 
+a lot of people have influenced it in a lot of different ways. <br/>
 HUGE THANK YOU to:
 
 - [Eugene Kachan](https://www.linkedin.com/in/yauheni-kachan/) ([bagxi](https://github.com/bagxi)) for many Config API improvements and CV pipelines
