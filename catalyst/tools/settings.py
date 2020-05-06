@@ -16,12 +16,12 @@ class Settings(FrozenClass):
         ml_required: bool = False,
         nlp_required: bool = False,
         alchemy_logger_required: Optional[bool] = None,
-        visdom_logger_required: Optional[bool] = None,
         neptune_logger_required: Optional[bool] = None,
+        visdom_logger_required: Optional[bool] = None,
         wandb_logger_required: Optional[bool] = None,
         plotly_required: Optional[bool] = None,
-        telegram_logger_token: str = "",
-        telegram_logger_chat_id: str = "",
+        telegram_logger_token: Optional[str] = None,
+        telegram_logger_chat_id: Optional[str] = None,
         use_lz4: bool = False,
         use_pyarrow: bool = False,
         albumentations_required: Optional[bool] = None,
@@ -50,11 +50,11 @@ class Settings(FrozenClass):
         self.alchemy_logger_required: bool = self._optional_value(
             alchemy_logger_required, default=contrib_required
         )
-        self.visdom_logger_required: bool = self._optional_value(
-            visdom_logger_required, default=contrib_required
-        )
         self.neptune_logger_required: bool = self._optional_value(
             neptune_logger_required, default=contrib_required
+        )
+        self.visdom_logger_required: bool = self._optional_value(
+            visdom_logger_required, default=contrib_required
         )
         self.wandb_logger_required: bool = self._optional_value(
             wandb_logger_required, default=contrib_required

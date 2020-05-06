@@ -75,10 +75,7 @@ from collections import OrderedDict
 import logging
 
 from catalyst.__version__ import __version__
-from catalyst.data.scripts import (
-    split_dataframe,
-    tag2label,
-)
+from catalyst.data.scripts import split_dataframe, tag2label
 from catalyst.tools import settings
 
 logger = logging.getLogger(__name__)
@@ -90,7 +87,9 @@ COMMANDS = OrderedDict(
 try:
     import imageio  # noqa: F401
     from catalyst.data.scripts import (
-        image2embedding, process_images, project_embeddings
+        image2embedding,
+        process_images,
+        project_embeddings,
     )
 
     COMMANDS["process-images"] = process_images
