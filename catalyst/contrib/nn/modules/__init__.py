@@ -1,7 +1,7 @@
 # flake8: noqa
 from torch.nn.modules import *
 
-from .common import Flatten, Lambda, Normalize
+from .common import Flatten, GaussianNoise, Lambda, Normalize
 from .lama import LamaPooling, TemporalAttentionPooling, TemporalConcatPooling
 from .pooling import (
     GlobalAttnPool2d,
@@ -13,3 +13,8 @@ from .pooling import (
     GlobalMaxPool2d,
 )
 from .rms_norm import RMSNorm
+from .se import (
+    ChannelSqueezeAndSpatialExcitation,
+    ConcurrentSpatialAndChannelSqueezeAndChannelExcitation,
+    SqueezeAndExcitation,
+)

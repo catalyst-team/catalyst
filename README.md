@@ -4,24 +4,21 @@
 
 **Accelerated DL R&D**
 
-![CI_status_torch10](https://github.com/catalyst-team/catalyst/workflows/codestyle/badge.svg?branch=master&event=push)
-[![Build Status](http://66.248.205.49:8111/app/rest/builds/buildType:id:Catalyst_Deploy/statusIcon.svg)](http://66.248.205.49:8111/project.html?projectId=Catalyst&tab=projectOverview&guest=1)
 [![CodeFactor](https://www.codefactor.io/repository/github/catalyst-team/catalyst/badge)](https://www.codefactor.io/repository/github/catalyst-team/catalyst)
 [![Pipi version](https://img.shields.io/pypi/v/catalyst.svg)](https://pypi.org/project/catalyst/)
 [![Docs](https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v)](https://catalyst-team.github.io/catalyst/index.html)
-
-[![Twitter](https://img.shields.io/badge/news-on%20twitter-499feb)](https://twitter.com/catalyst_core)
-[![Telegram](https://img.shields.io/badge/channel-on%20telegram-blue)](https://t.me/catalyst_team)
-[![Slack](https://img.shields.io/badge/Catalyst-slack-success)](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw)
-[![Github contributors](https://img.shields.io/github/contributors/catalyst-team/catalyst.svg?logo=github&logoColor=white)](https://github.com/catalyst-team/catalyst/graphs/contributors)
 [![PyPI Status](https://pepy.tech/badge/catalyst)](https://pepy.tech/project/catalyst)
 
-![torch 1.1](https://github.com/catalyst-team/catalyst/workflows/torch%201.1/badge.svg?branch=master&event=push)
-![torch 1.2](https://github.com/catalyst-team/catalyst/workflows/torch%201.2/badge.svg?branch=master&event=push)
-![torch 1.3](https://github.com/catalyst-team/catalyst/workflows/torch%201.3/badge.svg?branch=master&event=push)
-![torch 1.4](https://github.com/catalyst-team/catalyst/workflows/torch%201.4/badge.svg?branch=master&event=push)
-![torch 1.5](https://github.com/catalyst-team/catalyst/workflows/torch%201.5/badge.svg?branch=master&event=push)
+[![Twitter](https://img.shields.io/badge/news-twitter-499feb)](https://twitter.com/catalyst_core)
+[![Telegram](https://img.shields.io/badge/channel-telegram-blue)](https://t.me/catalyst_team)
+[![Slack](https://img.shields.io/badge/Catalyst-slack-success)](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw)
+[![Github contributors](https://img.shields.io/github/contributors/catalyst-team/catalyst.svg?logo=github&logoColor=white)](https://github.com/catalyst-team/catalyst/graphs/contributors)
 
+![codestyle](https://github.com/catalyst-team/catalyst/workflows/codestyle/badge.svg?branch=master&event=push)
+![catalyst](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
+![catalyst-cv](https://github.com/catalyst-team/catalyst/workflows/catalyst-cv/badge.svg?branch=master&event=push)
+![catalyst-nlp](https://github.com/catalyst-team/catalyst/workflows/catalyst-nlp/badge.svg?branch=master&event=push)
+[![Build Status](http://66.248.205.49:8111/app/rest/builds/buildType:id:Catalyst_Deploy/statusIcon.svg)](http://66.248.205.49:8111/project.html?projectId=Catalyst&tab=projectOverview&guest=1)
 </div>
 
 PyTorch framework for Deep Learning research and development.
@@ -104,8 +101,9 @@ for prediction in runner.predict_loader(loader=loaders["valid"]):
 traced_model = runner.trace(loader=loaders["valid"])
 ```
 
-- [Customizing what happens in `train`](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb)
-- [Demo with minimal examples for ML, CV, NLP, GANs and RecSys](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
+- [Customizing what happens in `train`](https://colab.research.google.com/drive/1T5G_OVLYHq483l80ikabXRsx_WB3rwPf?usp=sharing)
+- [Colab with ML, CV, NLP, GANs and RecSys demos](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
+- [Minimal examples](#minimal-examples)
 - For Catalyst.RL introduction, please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
 
 
@@ -125,6 +123,7 @@ traced_model = runner.trace(loader=loaders["valid"])
 - [Community](#community)
   * [Contribution guide](#contribution-guide)
   * [User feedback](#user-feedback)
+  * [Acknowledgments](#acknowledgments)
   * [Trusted by](#trusted-by)
   * [Supported by](#supported-by)
   * [Citation](#citation)
@@ -882,9 +881,34 @@ We have created `catalyst.team.core@gmail.com` for "user feedback".
 We appreciate any type of feedback. Thank you!
 
 
+### Acknowledgments
+
+Since the beginning of the development of the Сatalyst, 
+a lot of people have influenced it in a lot of different ways. <br/>
+HUGE THANK YOU to:
+
+- [Eugene Kachan](https://www.linkedin.com/in/yauheni-kachan/) ([bagxi](https://github.com/bagxi)) for many Config API improvements and CV pipelines
+- [Artem Zolkin](https://www.linkedin.com/in/artem-zolkin-b5155571/) ([arquestro](https://github.com/Arquestro)) for best ever documentation
+- [David Kuryakin](https://www.linkedin.com/in/dkuryakin/) ([dkuryakin](https://github.com/dkuryakin)) for ReAction design
+- [Evgeny Semyonov](https://www.linkedin.com/in/ewan-semyonov/) ([lightforever](https://github.com/lightforever)) for MLComp creation
+- [Andrey Zharkov](https://www.linkedin.com/in/andrey-zharkov-8554a1153/) ([asmekal](https://github.com/asmekal)) for Catalyst.GAN initiative
+- [Roman Tezikov](https://www.linkedin.com/in/roman-tezikov/) ([tezromach](https://github.com/TezRomacH)) for great Catalyst tutorials
+- [Aleksey Grinchuk](https://www.facebook.com/grinchuk.alexey) ([alexgrinch](https://github.com/AlexGrinch)) and [Valentin Khrulkov](https://www.linkedin.com/in/vkhrulkov/) ([khrulkovv](https://github.com/KhrulkovV)) for many RL algorithms implemented together
+- [Alex Gaziev](https://www.linkedin.com/in/alexgaziev/) ([gazay](https://github.com/gazay)) for a bunch of Config API improvements
+- [Yury Kashnitsky](https://www.linkedin.com/in/kashnitskiy/) ([yorko](https://github.com/Yorko)) for Catalyst.NLP movement
+- [Eugene Khvedchenya](https://www.linkedin.com/in/cvtalks/) ([bloodaxe](https://github.com/BloodAxe)) for Pytorch-toolbelt library
+- [Nguyen Xuan Bac](https://www.linkedin.com/in/bac-nguyen-xuan-70340b66/) ([ngxbac](https://github.com/ngxbac)) and [Andrey Lukyanenko](https://www.linkedin.com/in/andlukyane/) ([erlemar](https://github.com/erlemar)) for many Kaggle Catalyst-based solutions
+- [Vsevolod Poletaev](https://www.linkedin.com/in/vsevolod-poletaev-468071165/) ([hexfaker](https://github.com/hexfaker)) for Experiment idea and PoC
+- [Aleksandr Belskikh](https://www.linkedin.com/in/belskikh/) ([belskikh](https://github.com/belskikh)) for Callbacks-based system inspiration
+- [Artur Kuzin](https://www.linkedin.com/in/n01z3/) ([n01z3](https://github.com/n01z3)) for multi-stage pipelines proposal
+- [Vladimir Iglovikov](https://www.linkedin.com/in/iglovikov/) ([ternaus](https://github.com/ternaus)) for countless pieces of useful advices
+- and [Ivan Stepanenko](https://www.facebook.com/istepanenko) for awesome Catalyst.Ecosystem design
+
+
 ### Trusted by
 - [Awecom](https://www.awecom.com)
 - Researchers@[Center for Translational Research in Neuroimaging and Data Science (TReNDS)](https://trendscenter.org)
+- [Deep Learning School](https://en.dlschool.org)
 - Researchers@[Emory University](https://www.emory.edu)
 - [Evil Martians](https://evilmartians.com)
 - Researchers@[Georgia Institute of Technology](https://www.gatech.edu)

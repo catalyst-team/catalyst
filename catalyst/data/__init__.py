@@ -13,5 +13,6 @@ from .reader import LambdaReader, ReaderCompose, ReaderSpec, ScalarReader
 from .sampler import (
     BalanceClassSampler,
     DistributedSamplerWrapper,
+    DynamicLenBatchSampler,
     MiniEpochSampler,
 )
