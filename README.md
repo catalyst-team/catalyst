@@ -123,6 +123,7 @@ traced_model = runner.trace(loader=loaders["valid"])
 - [Community](#community)
   * [Contribution guide](#contribution-guide)
   * [User feedback](#user-feedback)
+  * [Acknowledgments](#acknowledgments)
   * [Trusted by](#trusted-by)
   * [Supported by](#supported-by)
   * [Citation](#citation)
@@ -880,9 +881,34 @@ We have created `catalyst.team.core@gmail.com` for "user feedback".
 We appreciate any type of feedback. Thank you!
 
 
+### Acknowledgments
+
+Since the beginning of the development of the Сatalyst, 
+a lot of people have influenced it in a lot of different ways. 
+HUGE THANK YOU to:
+
+- [Eugene Kachan](https://www.linkedin.com/in/yauheni-kachan/) ([bagxi](https://github.com/bagxi)) for many Config API improvements and CV pipelines
+- [Artem Zolkin](https://www.linkedin.com/in/artem-zolkin-b5155571/) ([arquestro](https://github.com/Arquestro)) for best ever documentation
+- [David Kuryakin](https://www.linkedin.com/in/dkuryakin/) ([dkuryakin](https://github.com/dkuryakin)) for ReAction design
+- [Evgeny Semyonov](https://www.linkedin.com/in/ewan-semyonov/) ([lightforever](https://github.com/lightforever)) for MLComp creation
+- [Andrey Zharkov](https://www.linkedin.com/in/andrey-zharkov-8554a1153/) ([asmekal](https://github.com/asmekal)) for Catalyst.GAN initiative
+- [Roman Tezikov](https://www.linkedin.com/in/roman-tezikov/) ([tezromach](https://github.com/TezRomacH)) for great Catalyst tutorials
+- [Aleksey Grinchuk](https://www.facebook.com/grinchuk.alexey) ([alexgrinch](https://github.com/AlexGrinch)) and [Valentin Khrulkov](https://www.linkedin.com/in/vkhrulkov/) ([khrulkovv](https://github.com/KhrulkovV)) for many RL algorithms implemented together
+- [Alex Gaziev](https://www.linkedin.com/in/alexgaziev/) ([gazay](https://github.com/gazay)) for a bunch of Config API improvements
+- [Yury Kashnitsky](https://www.linkedin.com/in/kashnitskiy/) ([yorko](https://github.com/Yorko)) for Catalyst.NLP movement
+- [Eugene Khvedchenya](https://www.linkedin.com/in/cvtalks/) ([bloodaxe](https://github.com/BloodAxe)) for Pytorch-toolbelt library
+- [Nguyen Xuan Bac](https://www.linkedin.com/in/bac-nguyen-xuan-70340b66/) ([ngxbac](https://github.com/ngxbac)) and [Andrey Lukyanenko](https://www.linkedin.com/in/andlukyane/) ([erlemar](https://github.com/erlemar)) for many Kaggle Catalyst-based solutions
+- [Vsevolod Poletaev](https://www.linkedin.com/in/vsevolod-poletaev-468071165/) ([hexfaker](https://github.com/hexfaker)) for Experiment idea and PoC
+- [Aleksandr Belskikh](https://www.linkedin.com/in/belskikh/) ([belskikh](https://github.com/belskikh)) for Callbacks-based system inspiration
+- [Artur Kuzin](https://www.linkedin.com/in/n01z3/) ([n01z3](https://github.com/n01z3)) for multi-stage pipelines proposal
+- [Vladimir Iglovikov](https://www.linkedin.com/in/iglovikov/) ([ternaus](https://github.com/ternaus)) for countless pieces of useful advices
+- and [Ivan Stepanenko](https://www.facebook.com/istepanenko) for awesome Catalyst.Ecosystem design
+
+
 ### Trusted by
 - [Awecom](https://www.awecom.com)
 - Researchers@[Center for Translational Research in Neuroimaging and Data Science (TReNDS)](https://trendscenter.org)
+- [Deep Learning School](https://en.dlschool.org)
 - Researchers@[Emory University](https://www.emory.edu)
 - [Evil Martians](https://evilmartians.com)
 - Researchers@[Georgia Institute of Technology](https://www.gatech.edu)
