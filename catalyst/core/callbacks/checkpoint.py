@@ -144,7 +144,8 @@ class CheckpointCallback(BaseCheckpointCallback):
                 to use just the last one.
                 If None then no action is required at stage end
                 and will be used last state.
-            preload_best (bool): load best state on stage start after first stage
+            preload_best (bool): load best state on stage start
+                after first stage
         """
         super().__init__(metrics_filename)
         assert load_on_stage_end in [
