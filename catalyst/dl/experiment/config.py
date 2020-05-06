@@ -485,6 +485,10 @@ class ConfigExperiment(_StageBasedExperiment):
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
 
+        for callback_obj in callbacks.values():
+            if isinstance(callback_obj, CheckpointCallback):
+                callback_obj.preload_best = True
+
         return callbacks
 
 
