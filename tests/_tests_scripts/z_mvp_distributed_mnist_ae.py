@@ -4,10 +4,9 @@ import os
 import torch
 from torch import nn
 from torch.nn import functional as F
-from torchvision import transforms
-from torchvision.datasets import MNIST
 
 from catalyst import dl, utils
+from catalyst.contrib.data.dataset import MNIST, ToTensor
 from catalyst.utils import metrics
 
 
@@ -78,10 +77,7 @@ def datasets_fn():
     Docs.
     """
     dataset = MNIST(
-        os.getcwd(),
-        train=False,
-        download=True,
-        transform=transforms.ToTensor(),
+        os.getcwd(), train=False, download=True, transform=ToTensor(),
     )
     return {"train": dataset, "valid": dataset}
 

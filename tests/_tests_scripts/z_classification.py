@@ -19,25 +19,23 @@ import torch
 import torchvision
 import torchvision.transforms as transforms
 
+from catalyst.contrib.data.dataset import MNIST, ToTensor, Compose, Normalize
+
 bs = 32
 num_workers = 0
 
-data_transform = transforms.Compose(
-    [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
-)
+data_transform = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
 loaders = collections.OrderedDict()
 
-trainset = torchvision.datasets.MNIST(
+trainset = MNIST(
     "./data", train=False, download=True, transform=data_transform
 )
 trainloader = torch.utils.data.DataLoader(
     trainset, batch_size=bs, shuffle=True, num_workers=num_workers
 )
 
-testset = torchvision.datasets.MNIST(
-    "./data", train=False, download=True, transform=data_transform
-)
+testset = MNIST("./data", train=False, download=True, transform=data_transform)
 testloader = torch.utils.data.DataLoader(
     testset, batch_size=bs, shuffle=False, num_workers=num_workers
 )

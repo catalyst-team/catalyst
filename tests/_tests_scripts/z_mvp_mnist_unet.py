@@ -5,10 +5,9 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from torchvision import transforms
-from torchvision.datasets import MNIST
 
 from catalyst import dl
+from catalyst.contrib.data.dataset import MNIST, ToTensor
 from catalyst.utils import metrics
 
 
