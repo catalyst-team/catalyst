@@ -446,6 +446,8 @@ class ConfigExperiment(_StageBasedExperiment):
         callbacks = OrderedDict()
         for key, callback_params in callbacks_params.items():
             callback = self._get_callback(**callback_params)
+            if isinstance(callback, CheckpointCallback):
+                callback.preload_best = True
             callbacks[key] = callback
 
         default_callbacks = []
@@ -483,11 +485,10 @@ class ConfigExperiment(_StageBasedExperiment):
                     is_already_present = True
                     break
             if not is_already_present:
-                callbacks[callback_name] = callback_fn()
-
-        for callback_obj in callbacks.values():
-            if isinstance(callback_obj, CheckpointCallback):
-                callback_obj.preload_best = True
+                callback = callback_fn()
+                if isinstance(callback, CheckpointCallback):
+                    callback.preload_best = True
+                callbacks[callback_name] = callback
 
         return callbacks
 
