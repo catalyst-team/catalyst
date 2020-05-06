@@ -45,16 +45,8 @@ def normalize(tensor, mean, std, inplace=False):
     Returns:
         Tensor: Normalized Tensor image.
     """
-    if not torch.is_tensor(tensor):
-        raise TypeError(
-            f"tensor should be a torch tensor. Got {type(tensor)}."
-        )
-
-    if tensor.ndimension() != 3:
-        raise ValueError(
-            f"Expected tensor to be a tensor image of size (C, H, W)."
-            f" Got tensor.size() = {tensor.size()}."
-        )
+    if not (torch.is_tensor(tensor) and tensor.ndimension() == 3):
+        raise TypeError("tensor is not a torch image.")
 
     if not inplace:
         tensor = tensor.clone()
@@ -62,16 +54,7 @@ def normalize(tensor, mean, std, inplace=False):
     dtype = tensor.dtype
     mean = torch.as_tensor(mean, dtype=dtype, device=tensor.device)
     std = torch.as_tensor(std, dtype=dtype, device=tensor.device)
-    if (std == 0).any():
-        raise ValueError(
-            f"std evaluated to zero after conversion to {dtype},"
-            f" leading to division by zero."
-        )
-    if mean.ndim == 1:
-        mean = mean[:, None, None]
-    if std.ndim == 1:
-        std = std[:, None, None]
-    tensor.sub_(mean).div_(std)
+    tensor.sub_(mean[:, None, None]).div_(std[:, None, None])
     return tensor
 
 

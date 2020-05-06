@@ -9,8 +9,6 @@ from torch.utils.data import Dataset
 from catalyst.contrib.data.dataset.utils import download_and_extract_archive
 
 
-# transforms.ToTensor()
-# [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
 class MNIST(Dataset):
     """`MNIST <http://yann.lecun.com/exdb/mnist/>`_ Dataset."""
 
