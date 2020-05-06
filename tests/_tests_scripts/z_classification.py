@@ -16,8 +16,6 @@ if os.getenv("USE_DDP", "0") != "0":
 
 import collections
 import torch
-import torchvision
-import torchvision.transforms as transforms
 
 from catalyst.contrib.data.dataset import MNIST, ToTensor, Compose, Normalize
 
