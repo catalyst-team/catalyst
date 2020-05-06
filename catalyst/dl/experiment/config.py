@@ -160,12 +160,7 @@ class ConfigExperiment(_StageBasedExperiment):
         return self.stages_config[stage].get("state_params", {})
 
     def _preprocess_model_for_stage(self, stage: str, model: Model):
-        stage_index = self.stages.index(stage)
-        # @TODO: remove to callbacks
-        if stage_index > 0:
-            checkpoint_path = f"{self.logdir}/checkpoints/best.pth"
-            checkpoint = utils.load_checkpoint(checkpoint_path)
-            utils.unpack_checkpoint(checkpoint, model=model)
+        # stage_index = self.stages.index(stage)
         return model
 
     def _postprocess_model_for_stage(self, stage: str, model: Model):
@@ -442,6 +437,12 @@ class ConfigExperiment(_StageBasedExperiment):
             return ConfigExperiment._get_callback(**wrapper_params)
         return callback
 
+    @staticmethod
+    def _preload_best_in_checkpoints(callbacks: OrderedDict) -> None:
+        for callback in callbacks.values():
+            if isinstance(callback, CheckpointCallback):
+                callback.preload_best = True
+
     def get_callbacks(self, stage: str) -> "OrderedDict[Callback]":
         """Returns the callbacks for a given stage."""
         callbacks_params = self.stages_config[stage].get(
@@ -489,6 +490,8 @@ class ConfigExperiment(_StageBasedExperiment):
                     break
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
+
+        self._preload_best_in_checkpoints(callbacks)
 
         return callbacks
 

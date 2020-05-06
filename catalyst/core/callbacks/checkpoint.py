@@ -121,6 +121,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         resume_dir: str = None,
         metrics_filename: str = "_metrics.json",
         load_on_stage_end: str = None,
+        preload_best: bool = False,
     ):
         """
         Args:
@@ -143,6 +144,8 @@ class CheckpointCallback(BaseCheckpointCallback):
                 to use just the last one.
                 If None then no action is required at stage end
                 and will be used last state.
+            preload_best (bool): load best state on stage start
+                after first stage
         """
         super().__init__(metrics_filename)
         assert load_on_stage_end in [
@@ -162,6 +165,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         self.resume = resume
         self.resume_dir = resume_dir
         self.load_on_stage_end = load_on_stage_end
+        self.preload_best = preload_best
 
         self.top_best_metrics = []
         self.metrics_history = []
@@ -337,6 +341,12 @@ class CheckpointCallback(BaseCheckpointCallback):
         if self.resume is not None:
             _load_checkpoint(filename=self.resume, state=state)
             self.resume = None
+        else:
+            best_checkpoint = f"{state.logdir}/checkpoints/best.pth"
+            if os.path.exists(best_checkpoint) and self.preload_best:
+                _load_checkpoint(
+                    filename=best_checkpoint, state=state, load_full=False
+                )
 
     def on_epoch_end(self, state: State) -> None:
         """
