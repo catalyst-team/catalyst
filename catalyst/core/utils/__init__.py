@@ -5,3 +5,4 @@ from catalyst.utils import *
 
 from .callbacks import filter_callbacks_by_node, sort_callbacks_by_order
 from .data import get_loaders_from_params, validate_loaders
+from .trace import trace_model_from_checkpoint

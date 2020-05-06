@@ -28,23 +28,22 @@ class TracerCallback(Callback):
     ):
         """
         Traces model using created experiment and runner.
-
-        :param metric_key (str): Metric key we should trace model based on
-        :param mode (str): Metric max or min value affects tracing.
-        :param method_name (str): Model's method name that will be
-            used as entrypoint during tracing
-        :param checkpoint_name (str): Checkpoint's name to trace
-        :param stage (str): Stage from experiment from which model and loader
-            will be taken
-        :param loader (str): Loader name to get the batch from
-        :param trace_mode (str): Mode for model to trace
-            (``train`` or ``eval``)
-        :param requires_grad (bool): Flag to use grads
-        :param opt_level (str): AMP FP16 init level
-        :param out_dir (str): Directory to save model to
-        :param out_model: Path to save model to (override out_dir)
+        
+        Args:
+            metric_key (str): Metric key we should trace model based on
+            mode (str): Metric max or min value affects tracing.
+            method_name (str): Model's method name that will be
+                used as entrypoint during tracing
+            stage (str): Stage from experiment from which model and loader
+                will be taken
+            loader (str): Loader name to get the batch from
+            trace_mode (str): Mode for model to trace
+                (``train`` or ``eval``)
+            requires_grad (bool): Flag to use grads
+            opt_level (str): AMP FP16 init level
+            out_dir (str): Directory to save model to
+            out_model: Path to save model to (override out_dir)
         """
-
         if trace_mode not in ["train", "eval"]:
             raise ValueError(
                 f"Unknown trace_mode '{trace_mode}'. "

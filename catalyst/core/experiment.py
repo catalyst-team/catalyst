@@ -355,12 +355,4 @@ class _Experiment(ABC):
         pass
 
 
-class _StageBasedExperiment(_Experiment):
-    """
-    Experiment that provides constant
-    datasources during training/inference stage.
-    """
-    pass
-
-
-__all__ = ["_Experiment", "_StageBasedExperiment"]
+__all__ = ["_Experiment"]
