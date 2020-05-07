@@ -6,7 +6,7 @@ Various accuracy metrics:
 """
 import numpy as np
 
-from catalyst.utils import get_activation_fn
+from catalyst.utils.torch import get_activation_fn
 
 
 def accuracy(

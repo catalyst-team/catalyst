@@ -2,6 +2,8 @@
 import logging
 import os
 
+from catalyst.tools import settings
+
 from .cutmix_callback import CutmixCallback
 from .knn import KNNMetricCallback
 from .optimizer import SaveModelGradsCallback
@@ -10,10 +12,21 @@ from .telegram_logger import TelegramLogger
 logger = logging.getLogger(__name__)
 
 try:
+    import imageio
+    from .inference import InferMaskCallback
+except ImportError as ex:
+    if settings.cv_required:
+        logger.warning(
+            "some of catalyst-cv dependencies not available,"
+            " to install dependencies, run `pip install catalyst[cv]`."
+        )
+        raise ex
+
+try:
     import alchemy
     from .alchemy import AlchemyLogger
 except ImportError as ex:
-    if os.environ.get("USE_ALCHEMY", "0") == "1":
+    if settings.alchemy_logger_required:
         logger.warning(
             "alchemy not available, to install alchemy, "
             "run `pip install alchemy`."
@@ -24,7 +37,7 @@ try:
     import visdom
     from .visdom_logger import VisdomLogger
 except ImportError as ex:
-    if os.environ.get("USE_VISDOM", "0") == "1":
+    if settings.visdom_logger_required:
         logger.warning(
             "visdom not available, to install visdom, "
             "run `pip install visdom`."
@@ -35,7 +48,7 @@ try:
     import neptune
     from .neptune import NeptuneLogger
 except ImportError as ex:
-    if os.environ.get("USE_NEPTUNE", "0") == "1":
+    if settings.neptune_logger_required:
         logger.warning(
             "neptune not available, to install neptune, "
             "run `pip install neptune-client`."
@@ -46,7 +59,7 @@ try:
     import wandb
     from .wandb import WandbLogger
 except ImportError as ex:
-    if os.environ.get("USE_WANDB", "0") == "1":
+    if settings.wandb_logger_required:
         logger.warning(
             "wandb not available, to install wandb, "
             "run `pip install wandb`."

@@ -10,7 +10,7 @@ from catalyst.core import (
     State,
     utils,
 )
-from catalyst.utils.tools.typing import Optimizer
+from catalyst.tools.typing import Optimizer
 
 logger = logging.getLogger(__name__)
 

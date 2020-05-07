@@ -4,7 +4,6 @@ from io import BytesIO
 from pathlib import Path
 from unittest.mock import patch
 
-import cv2
 import numpy as np
 import pytest
 
@@ -23,14 +22,12 @@ def _get_test_data():
     x     1.0          1
     y    -1.0          1
     x     2.0          2
-    z     zeros 2×2×3  1
 
     The first event is empty with wall_time = 1557489465
 
     log.add_scalar("x", 1.0, global_step=1)
     log.add_scalar("y", -1.0, global_step=1)
     log.add_scalar("x", 2.0, global_step=2)
-    log.add_image("z", np.zeros((2, 2, 1)), global_step=1)
     """
 
     data_raw = [
@@ -38,15 +35,6 @@ def _get_test_data():
         {"tag": "x", "value": 1.0, "step": 1, "type": "scalar"},
         {"tag": "y", "value": -1.0, "step": 1, "type": "scalar"},
         {"tag": "x", "value": 2.0, "step": 2, "type": "scalar"},
-        {
-            "tag": "z",
-            "value": np.zeros((2, 2, 3)),
-            "height": 2,
-            "width": 2,
-            "channels": 3,
-            "step": 1,
-            "type": "image",
-        },
     ]
     # noqa: Q000
     data = (
@@ -67,12 +55,6 @@ def _get_test_data():
     return data, data_raw
 
 
-def _compare_image_data(png, data):
-    png_buf = np.frombuffer(png, np.uint8)
-    png_decoded = cv2.imdecode(png_buf, cv2.IMREAD_COLOR)
-    assert np.all(png_decoded == data), "Corrupted image data"
-
-
 def test_events_reader_successful():
     """@TODO: Docs. Contribution is welcome."""
     data, data_raw = _get_test_data()
@@ -87,15 +69,6 @@ def test_events_reader_successful():
                 assert event.summary.value[0].tag == event_raw["tag"]
                 assert (
                     event.summary.value[0].simple_value == event_raw["value"]
-                )
-            elif event_raw["type"] == "image":
-                assert event.summary.value[0].HasField("image")
-                assert event.summary.value[0].image.height == 2
-                assert event.summary.value[0].image.width == 2
-                assert event.summary.value[0].image.colorspace == 3
-                _compare_image_data(
-                    event.summary.value[0].image.encoded_image_string,
-                    event_raw["value"],
                 )
 
 
@@ -141,7 +114,7 @@ def _open(path, mode):
 @patch("builtins.open", _open)
 def test_summary_reader_iterate():
     """@TODO: Docs. Contribution is welcome."""
-    reader = SummaryReader("logs", types=["scalar", "image"])
+    reader = SummaryReader("logs", types=["scalar"])
     _, data_raw = _get_test_data()
     data_raw2 = 2 * [d for d in data_raw if d is not None]
     items = list(reader)
@@ -161,7 +134,7 @@ def test_summary_reader_iterate():
 def test_summary_reader_filter():
     """@TODO: Docs. Contribution is welcome."""
     tags = ["x", "z"]
-    reader = SummaryReader("logs", tag_filter=tags, types=["scalar", "image"])
+    reader = SummaryReader("logs", tag_filter=tags, types=["scalar"])
     _, data_raw = _get_test_data()
     data_raw2 = 2 * [d for d in data_raw if d is not None and d["tag"] in tags]
     items = list(reader)

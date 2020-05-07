@@ -4,7 +4,7 @@ import numpy as np
 
 from torch.optim import Optimizer
 
-from catalyst.utils import get_optimizer_momentum
+from catalyst.utils.torch import get_optimizer_momentum
 
 from .base import BatchScheduler
 

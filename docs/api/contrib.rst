@@ -260,13 +260,6 @@ Serialization
     :undoc-members:
     :show-inheritance:
 
-Text
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.text
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Visualization
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.utils.visualization
