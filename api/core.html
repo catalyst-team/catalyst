@@ -434,7 +434,7 @@ dataset creation</p></li>
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>OrderedDict[str, <a class="reference internal" href="utils.html#catalyst.utils.tools.typing.Dataset" title="catalyst.utils.tools.typing.Dataset">Dataset</a>]</p>
+<dd class="field-odd"><p>OrderedDict[str, <a class="reference internal" href="utils.html#catalyst.tools.typing.Dataset" title="catalyst.tools.typing.Dataset">Dataset</a>]</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -568,7 +568,7 @@ like “pretrain” / “train” / “finetune” / etc</p></li>
 <dd class="field-even"><p>optimizer for a given stage and model.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="utils.html#catalyst.utils.tools.typing.Optimizer" title="catalyst.utils.tools.typing.Optimizer">Optimizer</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="utils.html#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer">Optimizer</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -589,7 +589,7 @@ like “pretrain” / “train” / “finetune” / etc</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>stage</strong> (<em>str</em>) – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p></li>
-<li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.utils.tools.typing.Optimizer" title="catalyst.utils.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer to schedule with stage scheduler</p></li>
+<li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer to schedule with stage scheduler</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1105,7 +1105,7 @@ for example:</p>
 <dl class="py class">
 <dt id="catalyst.core.state.State">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.state.</code><code class="sig-name descname">State</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">device</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>torch.device<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>torch.nn.modules.module.Module<span class="p">, </span>Dict<span class="p">[</span>str<span class="p">, </span>torch.nn.modules.module.Module<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">criterion</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>torch.nn.modules.module.Module<span class="p">, </span>Dict<span class="p">[</span>str<span class="p">, </span>torch.nn.modules.module.Module<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>torch.optim.optimizer.Optimizer<span class="p">, </span>Dict<span class="p">[</span>str<span class="p">, </span>torch.optim.optimizer.Optimizer<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">scheduler</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>torch.optim.lr_scheduler._LRScheduler<span class="p">, </span>Dict<span class="p">[</span>str<span class="p">, </span>torch.optim.lr_scheduler._LRScheduler<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">callbacks</span><span class="p">:</span> <span class="n">Dict<span class="p">[</span>str<span class="p">, </span>Callback<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stage</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'infer'</span></em>, <em class="sig-param"><span class="n">num_epochs</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">main_metric</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'loss'</span></em>, <em class="sig-param"><span class="n">minimize_metric</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">valid_loader</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'valid'</span></em>, <em class="sig-param"><span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">is_check_run</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/state.html#State"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.state.State" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="utils.html#catalyst.utils.tools.frozen_class.FrozenClass" title="catalyst.utils.tools.frozen_class.FrozenClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.utils.tools.frozen_class.FrozenClass</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="utils.html#catalyst.tools.frozen_class.FrozenClass" title="catalyst.tools.frozen_class.FrozenClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.tools.frozen_class.FrozenClass</span></code></a></p>
 <p>Some intermediate storage between Experiment and Runner
 that saves the current state of the Experiments –
 model, criterion, optimizer, schedulers, metrics, loggers, loaders, etc</p>
@@ -1693,12 +1693,12 @@ there are several of them and they are in a dictionary format.</p></li>
 <span id="early-stop"></span><h3><a class="toc-backref" href="#id10">Early Stop</a><a class="headerlink" href="#module-catalyst.core.callbacks.early_stop" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt id="catalyst.core.callbacks.early_stop.CheckRunCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.early_stop.</code><code class="sig-name descname">CheckRunCallback</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_batch_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">2</span></em>, <em class="sig-param"><span class="n">num_epoch_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/early_stop.html#CheckRunCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.early_stop.CheckRunCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.early_stop.</code><code class="sig-name descname">CheckRunCallback</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_batch_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">3</span></em>, <em class="sig-param"><span class="n">num_epoch_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/early_stop.html#CheckRunCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.early_stop.CheckRunCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
 <p>&#64;TODO: Docs. Contribution is welcome.</p>
 <dl class="py method">
 <dt id="catalyst.core.callbacks.early_stop.CheckRunCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_batch_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">2</span></em>, <em class="sig-param"><span class="n">num_epoch_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/early_stop.html#CheckRunCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.early_stop.CheckRunCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">num_batch_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">3</span></em>, <em class="sig-param"><span class="n">num_epoch_steps</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">2</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/early_stop.html#CheckRunCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.early_stop.CheckRunCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
 </dd></dl>
 
@@ -2110,7 +2110,7 @@ regularization.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.utils.tools.typing.Optimizer" title="catalyst.utils.tools.typing.Optimizer"><em>Optimizer</em></a>) – the optimizer</p></li>
+<li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer"><em>Optimizer</em></a>) – the optimizer</p></li>
 <li><p><strong>optimizer_wds</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – list of weight decay parameters
 for each param group</p></li>
 <li><p><strong>grad_clip_fn</strong> (<em>Callable</em>) – function for gradient clipping</p></li>

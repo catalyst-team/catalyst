@@ -292,7 +292,7 @@ you can use to declare experiment in code.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<em>Model</em>) – model</p></li>
-<li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="utils.html#catalyst.utils.tools.typing.Dataset" title="catalyst.utils.tools.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
+<li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="utils.html#catalyst.tools.typing.Dataset" title="catalyst.tools.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
 with one or several  <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code>
 for training, validation or inference
 used for Loaders automatic creation
@@ -304,7 +304,7 @@ for training, validation or inference</p></li>
 <li><p><strong>logdir</strong> (<em>str</em>) – path to output directory</p></li>
 <li><p><strong>stage</strong> (<em>str</em>) – current stage</p></li>
 <li><p><strong>criterion</strong> (<em>Criterion</em>) – criterion function</p></li>
-<li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.utils.tools.typing.Optimizer" title="catalyst.utils.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer</p></li>
+<li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer</p></li>
 <li><p><strong>scheduler</strong> (<em>Scheduler</em>) – scheduler</p></li>
 <li><p><strong>num_epochs</strong> (<em>int</em>) – number of experiment’s epochs</p></li>
 <li><p><strong>valid_loader</strong> (<em>str</em>) – loader name used to calculate
@@ -588,7 +588,7 @@ training stages.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<em>Model</em>) – model for inference</p></li>
-<li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="utils.html#catalyst.utils.tools.typing.Dataset" title="catalyst.utils.tools.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
+<li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="utils.html#catalyst.tools.typing.Dataset" title="catalyst.tools.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
 with one or several  <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code>
 for training, validation or inference
 used for Loaders automatic creation
@@ -692,9 +692,9 @@ tracing params to FP16</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<em>Model</em>) – model to train</p></li>
 <li><p><strong>criterion</strong> (<em>Criterion</em>) – criterion function for training</p></li>
-<li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.utils.tools.typing.Optimizer" title="catalyst.utils.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer for training</p></li>
+<li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer for training</p></li>
 <li><p><strong>scheduler</strong> (<em>Scheduler</em>) – scheduler for training</p></li>
-<li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="utils.html#catalyst.utils.tools.typing.Dataset" title="catalyst.utils.tools.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
+<li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="utils.html#catalyst.tools.typing.Dataset" title="catalyst.tools.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
 with one or several  <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code>
 for training, validation or inference
 used for Loaders automatic creation
@@ -911,56 +911,6 @@ from DataLoader.</p></li>
 <dl class="py method">
 <dt id="catalyst.dl.callbacks.inference.InferCallback.on_stage_start">
 <code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/inference.html#InferCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.inference.InferCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Stage start hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – current state</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="catalyst.dl.callbacks.inference.InferMaskCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.inference.</code><code class="sig-name descname">InferMaskCallback</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">out_dir</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out_prefix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">input_key</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output_key</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name_key</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mean</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">std</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">mask_strength</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">mask_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'soft'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/inference.html#InferMaskCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.inference.InferMaskCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
-<p>&#64;TODO: Docs. Contribution is welcome.</p>
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.inference.InferMaskCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">out_dir</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out_prefix</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">input_key</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">output_key</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">name_key</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mean</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">std</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">mask_strength</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">mask_type</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'soft'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/inference.html#InferMaskCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.inference.InferMaskCallback.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&#64;TODO</strong> – Docs. Contribution is welcome</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.inference.InferMaskCallback.on_batch_end">
-<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/inference.html#InferMaskCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.inference.InferMaskCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Batch end hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – current state</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.inference.InferMaskCallback.on_loader_start">
-<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/inference.html#InferMaskCallback.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.inference.InferMaskCallback.on_loader_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loader start hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>state</strong> (<a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – current state</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="catalyst.dl.callbacks.inference.InferMaskCallback.on_stage_start">
-<code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/inference.html#InferMaskCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.inference.InferMaskCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stage start hook.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

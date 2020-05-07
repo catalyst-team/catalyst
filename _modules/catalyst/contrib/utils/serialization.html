@@ -256,23 +256,21 @@
               
   <h1>Source code for catalyst.contrib.utils.serialization</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
+
+<span class="kn">from</span> <span class="nn">catalyst.tools</span> <span class="kn">import</span> <span class="n">settings</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="kn">import</span> <span class="nn">pyarrow</span>
-
-    <span class="n">PYARROW_ENABLED</span> <span class="o">=</span> <span class="kc">True</span>
-<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;USE_PYARROW&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">use_pyarrow</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pyarrow</span>
+    <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
             <span class="s2">&quot;pyarrow not available, switching to pickle. &quot;</span>
             <span class="s2">&quot;To install pyarrow, run `pip install pyarrow`.&quot;</span>
         <span class="p">)</span>
         <span class="k">raise</span> <span class="n">ex</span>
-    <span class="n">PYARROW_ENABLED</span> <span class="o">=</span> <span class="kc">False</span>
 
 
 <span class="k">def</span> <span class="nf">pyarrow_serialize</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
@@ -323,7 +321,7 @@
     <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
 
-<span class="k">if</span> <span class="n">PYARROW_ENABLED</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">use_pyarrow</span><span class="p">:</span>
     <span class="n">serialize</span> <span class="o">=</span> <span class="n">pyarrow_serialize</span>
     <span class="n">deserialize</span> <span class="o">=</span> <span class="n">pyarrow_deserialize</span>
 <span class="k">else</span><span class="p">:</span>

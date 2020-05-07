@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.tools.time_manager &mdash; Catalyst 20.05 documentation</title>
+  <title>catalyst.tools.frozen_class &mdash; Catalyst 20.05 documentation</title>
   
 
   
@@ -25,22 +25,22 @@
 
   
 
-  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
-  <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
-    <link rel="index" title="Index" href="../../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../../search.html" /> 
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> -->
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
 
   
-  <script src="../../../../_static/js/modernizr.min.js"></script>
+  <script src="../../../_static/js/modernizr.min.js"></script>
 
   <!-- Preload the theme fonts -->
 
-<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
 
 <!-- Preload the katex fonts -->
 
@@ -156,7 +156,7 @@
 
 
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search Docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -174,18 +174,18 @@
             
               <p class="caption"><span class="caption-text">Overview</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Catalyst</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../info/examples.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../info/distributed.html">Distributed training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../info/contributing.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../info/distributed.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../info/contributing.html">Contribution</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
 </ul>
 
             
@@ -218,7 +218,7 @@
   <ul class="catalyst-breadcrumbs">
     
       <li>
-        <a href="../../../../index.html">
+        <a href="../../../index.html">
           
             Docs
           
@@ -226,9 +226,9 @@
       </li>
 
         
-          <li><a href="../../../index.html">Module code</a> &gt;</li>
+          <li><a href="../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.utils.tools.time_manager</li>
+      <li>catalyst.tools.frozen_class</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -254,47 +254,30 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.utils.tools.time_manager</h1><div class="highlight"><pre>
+  <h1>Source code for catalyst.tools.frozen_class</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Simple timer.</span>
+<span class="sd">Frozen class.</span>
+<span class="sd">Example of usage can be found in :py:class:`catalyst.core.state.State`.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
 
 
-<div class="viewcode-block" id="TimeManager"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.tools.time_manager.TimeManager">[docs]</a><span class="k">class</span> <span class="nc">TimeManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="FrozenClass"><a class="viewcode-back" href="../../../api/utils.html#catalyst.tools.frozen_class.FrozenClass">[docs]</a><span class="k">class</span> <span class="nc">FrozenClass</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class which prohibit ``__setattr__`` on existing attributes.</span>
 
-<div class="viewcode-block" id="TimeManager.__init__"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.tools.time_manager.TimeManager.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; class State(FrozenClass):</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">__isfrozen</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">elapsed</span> <span class="o">=</span> <span class="p">{}</span></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__isfrozen</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%r</span><span class="s2"> is a frozen class&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
-<div class="viewcode-block" id="TimeManager.start"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.tools.time_manager.TimeManager.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Starts timer ``name``.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            name (str): name of a timer</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="TimeManager.stop"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.tools.time_manager.TimeManager.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Stops timer ``name``.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            name (str): name of a timer</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Timer &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; wasn&#39;t started&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">elapsed</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
-
-<div class="viewcode-block" id="TimeManager.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.tools.time_manager.TimeManager.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Reset all previous timers.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">elapsed</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span> <span class="o">=</span> <span class="p">{}</span></div></div>
-
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;TimeManager&quot;</span><span class="p">]</span>
+    <span class="k">def</span> <span class="nf">_freeze</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__isfrozen</span> <span class="o">=</span> <span class="kc">True</span></div>
 </pre></div>
 
              </article>
@@ -338,19 +321,19 @@
   
 
      
-       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
-         <script src="../../../../_static/jquery.js"></script>
-         <script src="../../../../_static/underscore.js"></script>
-         <script src="../../../../_static/doctools.js"></script>
-         <script src="../../../../_static/language_data.js"></script>
+       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+         <script src="../../../_static/jquery.js"></script>
+         <script src="../../../_static/underscore.js"></script>
+         <script src="../../../_static/doctools.js"></script>
+         <script src="../../../_static/language_data.js"></script>
          <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
      
 
   
 
-  <script type="text/javascript" src="../../../../_static/js/vendor/popper.min.js"></script>
-  <script type="text/javascript" src="../../../../_static/js/vendor/bootstrap.min.js"></script>
-  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  <script type="text/javascript" src="../../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../../_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {
@@ -438,7 +421,7 @@
 
   <!-- End Mobile Menu -->
 
-  <script type="text/javascript" src="../../../../_static/js/vendor/anchor.min.js"></script>
+  <script type="text/javascript" src="../../../_static/js/vendor/anchor.min.js"></script>
 
   <script type="text/javascript">
     $(document).ready(function() {
