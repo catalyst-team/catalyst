@@ -14,7 +14,7 @@ LOGFILE=${CHECKPOINTS}/_metrics.json
 
 
 function check_file_existence {
-    if [[ ! -f $1 ]]
+    if [[ ! -f "$1" ]]
     then
         echo "There is no '$1'!"
         exit 1
@@ -33,8 +33,8 @@ function check_num_files {
 
 
 function check_checkpoints {
-    check_num_files "${CHECKPOINTS}/${1}.pth" $2
-    check_num_files "${CHECKPOINTS}/${1}_full.pth" $2
+    check_num_files "${1}.pth" $2
+    check_num_files "${1}_full.pth" $2
 }
 
 
@@ -49,18 +49,13 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --config=${EXPDIR}/config0.yml \
   --logdir=${LOGDIR}
 
-if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-    echo "File $LOGFILE does not exist"
-    exit 1
-fi
-
+check_file_existence ${LOGFILE}
 cat ${LOGFILE}
 echo ${LOG_MSG}
 
-check_file_existence ${LOGFILE}
-check_checkpoints "best" 1
-check_checkpoints "last" 1
-check_checkpoints "stage1\.[[:digit:]]" 1
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
 check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
@@ -77,18 +72,13 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --config=${EXPDIR}/config1.yml \
   --logdir=${LOGDIR}
 
-if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-    echo "File $LOGFILE does not exist"
-    exit 1
-fi
-
+check_file_existence ${LOGFILE}
 cat $LOGFILE;
 echo ${LOG_MSG};
 
-check_file_existence ${LOGFILE}
-check_checkpoints "best" 1
-check_checkpoints "last" 1
-check_checkpoints "stage1\.[[:digit:]]" 1
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
 check_num_files ${CHECKPOINTS} 7  # 3x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
@@ -105,20 +95,15 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --config=${EXPDIR}/config2.yml \
   --logdir=${LOGDIR}
 
-if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-    echo "File $LOGFILE does not exist"
-    exit 1
-fi
-
+check_file_existence ${LOGFILE}
 cat ${LOGFILE}
 echo ${LOG_MSG}
 
-check_file_existence ${LOGFILE}
-check_checkpoints "best" 1
-check_checkpoints "last" 1
-check_checkpoints "stage1\.[[:digit:]]" 1
-check_checkpoints "stage2\.[[:digit:]]" 1
-check_checkpoints "stage3\.[[:digit:]]" 1
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
+check_checkpoints "${CHECKPOINTS}/stage2\.[[:digit:]]" 1
+check_checkpoints "${CHECKPOINTS}/stage3\.[[:digit:]]" 1
 check_num_files ${CHECKPOINTS} 11  # 5x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
@@ -135,18 +120,13 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --config=${EXPDIR}/config3.yml \
   --logdir=${LOGDIR}
 
-if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-    echo "File $LOGFILE does not exist"
-    exit 1
-fi
-
+check_file_existence ${LOGFILE}
 cat $LOGFILE;
 echo ${LOG_MSG};
 
-check_file_existence ${LOGFILE}
-check_checkpoints "best" 1
-check_checkpoints "last" 1
-check_checkpoints "stage1\.[[:digit:]]" 3
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 3
 check_num_files ${CHECKPOINTS} 11  # 5x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
@@ -163,20 +143,15 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --config=${EXPDIR}/config4.yml \
   --logdir=${LOGDIR}
 
-if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-    echo "File $LOGFILE does not exist"
-    exit 1
-fi
-
+check_file_existence ${LOGFILE}
 cat ${LOGFILE}
 echo ${LOG_MSG}
 
-check_file_existence ${LOGFILE}
-check_checkpoints "best" 1
-check_checkpoints "last" 1
-check_checkpoints "stage1\.[[:digit:]]" 3
-check_checkpoints "stage2\.[[:digit:]]" 3
-check_checkpoints "stage3\.[[:digit:]]" 3
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 3
+check_checkpoints "${CHECKPOINTS}/stage2\.[[:digit:]]" 3
+check_checkpoints "${CHECKPOINTS}/stage3\.[[:digit:]]" 3
 check_num_files ${CHECKPOINTS} 23  # 11x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
@@ -193,17 +168,12 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --config=${EXPDIR}/config5.yml \
   --logdir=${LOGDIR}
 
-if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-    echo "File $LOGFILE does not exist"
-    exit 1
-fi
-
+check_file_existence ${LOGFILE}
 cat ${LOGFILE}
 echo ${LOG_MSG}
 
-check_file_existence ${LOGFILE}
-check_checkpoints "best" 1
-check_checkpoints "last" 1
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
 check_num_files ${CHECKPOINTS} 5  # 2x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
@@ -220,17 +190,12 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --config=${EXPDIR}/config6.yml \
   --logdir=${LOGDIR}
 
-if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-    echo "File $LOGFILE does not exist"
-    exit 1
-fi
-
+check_file_existence ${LOGFILE}
 cat ${LOGFILE}
 echo ${LOG_MSG}
 
-check_file_existence ${LOGFILE}
-check_checkpoints "best" 1
-check_checkpoints "last" 1
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
 check_num_files ${CHECKPOINTS} 5  # 2x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
@@ -247,18 +212,13 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --config=${EXPDIR}/config7.yml \
   --logdir=${LOGDIR}
 
-if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-    echo "File $LOGFILE does not exist"
-    exit 1
-fi
-
+check_file_existence ${LOGFILE}
 cat ${LOGFILE}
 echo ${LOG_MSG}
 
-check_file_existence ${LOGFILE}
-check_checkpoints "best" 1
-check_checkpoints "last" 1
-check_checkpoints "stage1\.[[:digit:]]" 1
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
 check_num_files ${CHECKPOINTS} 7  # 3x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
@@ -275,20 +235,15 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --config=${EXPDIR}/config8.yml \
   --logdir=${LOGDIR}
 
-if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-    echo "File $LOGFILE does not exist"
-    exit 1
-fi
-
+check_file_existence ${LOGFILE}
 cat ${LOGFILE}
 echo ${LOG_MSG}
 
-check_file_existence ${LOGFILE}
-check_checkpoints "best" 1
-check_checkpoints "last" 1
-check_checkpoints "stage1\.[[:digit:]]" 3
-check_checkpoints "stage2\.[[:digit:]]" 3
-check_checkpoints "stage3\.[[:digit:]]" 3
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 3
+check_checkpoints "${CHECKPOINTS}/stage2\.[[:digit:]]" 3
+check_checkpoints "${CHECKPOINTS}/stage3\.[[:digit:]]" 3
 check_num_files ${CHECKPOINTS} 23  # 11x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
@@ -306,19 +261,14 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --config=${EXPDIR}/config9.yml \
   --logdir=${LOGDIR}
 
-if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-    echo "File $LOGFILE does not exist"
-    exit 1
-fi
-
+check_file_existence ${LOGFILE}
 cat ${LOGFILE}
 echo ${LOG_MSG}
 
-check_file_existence ${LOGFILE}
-check_checkpoints "best" 1
-check_checkpoints "last" 1
-check_checkpoints "stage1\.[[:digit:]]" 1
-check_checkpoints "stage2\.[[:digit:]]" 1
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
+check_checkpoints "${CHECKPOINTS}/stage2\.[[:digit:]]" 1
 check_num_files ${CHECKPOINTS} 9  # 4x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
@@ -336,19 +286,14 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --config=${EXPDIR}/config10.yml \
   --logdir=${LOGDIR}
 
-if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-    echo "File $LOGFILE does not exist"
-    exit 1
-fi
-
+check_file_existence ${LOGFILE}
 cat ${LOGFILE}
 echo ${LOG_MSG}
 
-check_file_existence ${LOGFILE}
-check_checkpoints "best" 1
-check_checkpoints "last" 1
-check_checkpoints "stage1\.[[:digit:]]" 3
-check_checkpoints "stage2\.[[:digit:]]" 3
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 3
+check_checkpoints "${CHECKPOINTS}/stage2\.[[:digit:]]" 3
 check_num_files ${CHECKPOINTS} 17  # 8x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
@@ -366,19 +311,133 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --config=${EXPDIR}/config11.yml \
   --logdir=${LOGDIR}
 
-if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-    echo "File $LOGFILE does not exist"
-    exit 1
-fi
-
+check_file_existence ${LOGFILE}
 cat ${LOGFILE}
 echo ${LOG_MSG}
 
-check_file_existence ${LOGFILE}
-check_checkpoints "best" 1
-check_checkpoints "last" 1
-check_checkpoints "stage1\.[[:digit:]]" 1
-check_checkpoints "stage2\.[[:digit:]]" 1
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
+check_checkpoints "${CHECKPOINTS}/stage2\.[[:digit:]]" 1
 check_num_files ${CHECKPOINTS} 9  # 4x2 checkpoints + metrics.json
+
+rm -rf ${LOGDIR}
+
+################################  pipeline 12  ################################
+# testing resume option
+LOG_MSG='pipeline 12'
+echo ${LOG_MSG}
+
+LOGDIR=./tests/logs/_tests_dl_callbacks/for_resume
+CHECKPOINTS=${LOGDIR}/checkpoints
+LOGFILE=${CHECKPOINTS}/_metrics.json
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config0.yml \
+  --logdir=${LOGDIR}
+
+check_file_existence $LOGFILE
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
+check_num_files $CHECKPOINTS 7   # 3x2 checkpoints + metrics.json
+
+LOGDIR=./tests/logs/_tests_dl_callbacks/resumed
+CHECKPOINTS=${LOGDIR}/checkpoints
+LOGFILE=${CHECKPOINTS}/_metrics.json
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config12.yml \
+  --logdir=${LOGDIR}
+
+check_file_existence ${LOGFILE}
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
+
+rm -rf ${LOGDIR}
+
+
+################################  pipeline 13  ################################
+# testing resume and resume_dir option
+LOG_MSG='pipeline 13'
+echo ${LOG_MSG}
+
+LOGDIR=./tests/logs/_tests_dl_callbacks/for_resume
+CHECKPOINTS=${LOGDIR}/checkpoints
+LOGFILE=${CHECKPOINTS}/_metrics.json
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config0.yml \
+  --logdir=${LOGDIR}
+
+check_file_existence ${LOGFILE}
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
+
+LOGDIR=./tests/logs/_tests_dl_callbacks/resumed
+CHECKPOINTS=${LOGDIR}/checkpoints
+LOGFILE=${CHECKPOINTS}/_metrics.json
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config13.yml \
+  --logdir=${LOGDIR}
+
+check_file_existence ${LOGFILE}
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
+
+rm -rf ${LOGDIR}
+
+################################  pipeline 14  ################################
+# testing on_stage_start option
+LOG_MSG='pipeline 14'
+echo ${LOG_MSG}
+
+LOGDIR=./tests/logs/_tests_dl_callbacks
+CHECKPOINTS=${LOGDIR}/checkpoints
+LOGFILE=${CHECKPOINTS}/_metrics.json
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config14.yml \
+  --logdir=${LOGDIR}
+
+check_file_existence ${LOGFILE}
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
+check_checkpoints "${CHECKPOINTS}/stage2\.[[:digit:]]" 2
+check_checkpoints "${CHECKPOINTS}/stage3\.[[:digit:]]" 3
+check_num_files ${CHECKPOINTS} 17   # 8x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
