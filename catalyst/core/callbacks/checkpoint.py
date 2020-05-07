@@ -138,7 +138,6 @@ class CheckpointCallback(BaseCheckpointCallback):
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
             load_on_stage_start (str): load best state of the model,
                 this state will be loaded on all stages exept first.
-                By default will use ``last`` state.
                 For the first initialization please use ``resume`` and
                 ``resume_dir`` arguments.
             load_on_stage_end (str): name of the model to load
@@ -224,8 +223,8 @@ class CheckpointCallback(BaseCheckpointCallback):
 
         Args:
             minimize_metric (bool): if ``True`` then keep
-            ``save_n_best`` checkpoints with the lowest/highest values
-            of the main metric.
+                ``save_n_best`` checkpoints with the lowest/highest values
+                of the main metric.
         """
         self.top_best_metrics = sorted(
             self.top_best_metrics,

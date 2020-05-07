@@ -441,7 +441,8 @@ class ConfigExperiment(_StageBasedExperiment):
     def _preload_best_in_checkpoints(callbacks: OrderedDict) -> None:
         for callback in callbacks.values():
             if isinstance(callback, CheckpointCallback):
-                callback.load_on_stage_start = "best"
+                if callback.load_on_stage_start is None:
+                    callback.load_on_stage_start = "best"
 
     def get_callbacks(self, stage: str) -> "OrderedDict[Callback]":
         """Returns the callbacks for a given stage."""
