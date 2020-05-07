@@ -120,8 +120,8 @@ class CheckpointCallback(BaseCheckpointCallback):
         resume: str = None,
         resume_dir: str = None,
         metrics_filename: str = "_metrics.json",
+        load_on_stage_start: str = None,
         load_on_stage_end: str = None,
-        preload_best: bool = False,
     ):
         """
         Args:
@@ -136,6 +136,11 @@ class CheckpointCallback(BaseCheckpointCallback):
                 than resume checkpoint will be loaded from ``resume_dir``
             metrics_filename (str): filename to save metrics
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
+            load_on_stage_start (str): load best state of the model,
+                this state will be loaded on all stages exept first.
+                By default will use ``last`` state.
+                For the first initialization please use ``resume`` and
+                ``resume_dir`` arguments.
             load_on_stage_end (str): name of the model to load
                 at the end of the stage.
                 You can use ``best``, ``best_full``
@@ -144,17 +149,17 @@ class CheckpointCallback(BaseCheckpointCallback):
                 to use just the last one.
                 If None then no action is required at stage end
                 and will be used last state.
-            preload_best (bool): load best state on stage start
-                after first stage
         """
         super().__init__(metrics_filename)
-        assert load_on_stage_end in [
+        _possible_states = {
             None,
             "best",
             "last",
             "best_full",
             "last_full",
-        ]
+        }
+        assert load_on_stage_start in _possible_states
+        assert load_on_stage_end in _possible_states
         assert save_n_best >= 0
         if save_n_best == 0:
             assert load_on_stage_end in (None, "last", "last_full")
@@ -165,7 +170,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         self.resume = resume
         self.resume_dir = resume_dir
         self.load_on_stage_end = load_on_stage_end
-        self.preload_best = preload_best
+        self.load_on_stage_start = load_on_stage_start
 
         self.top_best_metrics = []
         self.metrics_history = []
@@ -342,10 +347,12 @@ class CheckpointCallback(BaseCheckpointCallback):
             _load_checkpoint(filename=self.resume, state=state)
             self.resume = None
         else:
-            best_checkpoint = f"{state.logdir}/checkpoints/best.pth"
-            if os.path.exists(best_checkpoint) and self.preload_best:
+            checkpoint = f"{state.logdir}/checkpoints/{self.load_on_stage_start}.pth"
+            if self.load_on_stage_start and os.path.exists(checkpoint):
                 _load_checkpoint(
-                    filename=best_checkpoint, state=state, load_full=False
+                    filename=checkpoint,
+                    state=state,
+                    load_full=self.load_on_stage_start.endswith("full")
                 )
 
     def on_epoch_end(self, state: State) -> None:
