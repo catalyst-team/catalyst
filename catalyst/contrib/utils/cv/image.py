@@ -8,15 +8,11 @@ import imageio
 import numpy as np
 from skimage.color import label2rgb, rgb2gray
 
-import torch
-
-_IMAGENET_STD = (0.229, 0.224, 0.225)
-_IMAGENET_MEAN = (0.485, 0.456, 0.406)
+from catalyst.tools import settings
 
 logger = logging.getLogger(__name__)
 
-JPEG4PY_ENABLED = False
-if os.environ.get("FORCE_JPEG_TURBO", False):
+if settings.use_libjpeg_turbo:
     try:
         import jpeg4py as jpeg
 
@@ -26,17 +22,18 @@ if os.environ.get("FORCE_JPEG_TURBO", False):
             imageio.imwrite(fp.name, img)
             img = jpeg.JPEG(fp.name).decode()
 
-        JPEG4PY_ENABLED = True
-    except ImportError:
+    except ImportError as ex:
         logger.warning(
             "jpeg4py not available. "
             "To install jpeg4py, run `pip install jpeg4py`."
         )
-    except OSError:
+        raise ex
+    except OSError as ex:
         logger.warning(
             "libjpeg-turbo not available. "
             "To install libjpeg-turbo, run `apt-get install libturbojpeg`."
         )
+        raise ex
 
 
 def imread(
@@ -66,7 +63,9 @@ def imread(
         rootpath = str(rootpath)
         uri = uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
 
-    if JPEG4PY_ENABLED and uri.endswith(("jpg", "JPG", "jpeg", "JPEG")):
+    if settings.use_libjpeg_turbo and uri.endswith(
+        ("jpg", "JPG", "jpeg", "JPEG")
+    ):
         img = jpeg.JPEG(uri).decode()
     else:
         # @TODO: add tiff support, currently – jpg and png
@@ -128,63 +127,6 @@ def mimwrite_with_meta(uri, ims, meta, **kwargs):
             writer.append_data(i)
 
 
-def tensor_from_rgb_image(image: np.ndarray) -> torch.Tensor:
-    """@TODO: Docs. Contribution is welcome."""
-    image = np.moveaxis(image, -1, 0)
-    image = np.ascontiguousarray(image)
-    image = torch.from_numpy(image)
-    return image
-
-
-def tensor_to_ndimage(
-    images: torch.Tensor,
-    denormalize: bool = True,
-    mean: Tuple[float, float, float] = _IMAGENET_MEAN,
-    std: Tuple[float, float, float] = _IMAGENET_STD,
-    move_channels_dim: bool = True,
-    dtype=np.float32,
-) -> np.ndarray:
-    """
-    Convert float image(s) with standard normalization to
-    np.ndarray with [0..1] when dtype is np.float32 and [0..255]
-    when dtype is `np.uint8`.
-
-    Args:
-        images (torch.Tensor): [B]xCxHxW float tensor
-        denormalize (bool): if True, multiply image(s) by std and add mean
-        mean (Tuple[float, float, float]): per channel mean to add
-        std (Tuple[float, float, float]): per channel std to multiply
-        move_channels_dim (bool): if True, convert tensor to [B]xHxWxC format
-        dtype: result ndarray dtype. Only float32 and uint8 are supported
-
-    Returns:
-        [B]xHxWxC np.ndarray of dtype
-    """
-    if denormalize:
-        has_batch_dim = len(images.shape) == 4
-
-        mean = images.new_tensor(mean).view(
-            *((1,) if has_batch_dim else ()), len(mean), 1, 1
-        )
-        std = images.new_tensor(std).view(
-            *((1,) if has_batch_dim else ()), len(std), 1, 1
-        )
-
-        images = images * std + mean
-
-    images = images.clamp(0, 1).numpy()
-
-    if move_channels_dim:
-        images = np.moveaxis(images, -3, -1)
-
-    if dtype == np.uint8:
-        images = (images * 255).round().astype(dtype)
-    else:
-        assert dtype == np.float32, "Only float32 and uint8 are supported"
-
-    return images
-
-
 def mask_to_overlay_image(
     image: np.ndarray,
     masks: List[np.ndarray],
@@ -240,6 +182,4 @@ __all__ = [
     "mask_to_overlay_image",
     "mimread",
     "mimwrite_with_meta",
-    "tensor_from_rgb_image",
-    "tensor_to_ndimage",
 ]

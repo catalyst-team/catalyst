@@ -18,7 +18,7 @@ from catalyst.contrib.registry import (
     TRANSFORMS,
 )
 from catalyst.core.registry import Callback, CALLBACKS
-from catalyst.utils.tools.registry import Registry
+from catalyst.tools.registry import Registry
 
 
 def _callbacks_loader(r: Registry):

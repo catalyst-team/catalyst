@@ -4,10 +4,9 @@ import os
 import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from torchvision.datasets import MNIST
-from torchvision.transforms import ToTensor
 
 from catalyst import dl
+from catalyst.contrib.data.dataset import MNIST, ToTensor
 from catalyst.utils import metrics
 
 model = torch.nn.Linear(28 * 28, 10)

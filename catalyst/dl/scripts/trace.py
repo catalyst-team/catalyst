@@ -6,7 +6,7 @@ from pathlib import Path
 import torch
 
 from catalyst.dl import Experiment, utils
-from catalyst.utils.tools.typing import Device
+from catalyst.tools.typing import Device
 
 
 def trace_model_from_checkpoint(

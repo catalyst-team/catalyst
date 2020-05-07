@@ -18,14 +18,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from catalyst.utils import (
-    boolean_flag,
-    get_pool,
-    has_image_extension,
-    imread,
-    imwrite,
-    tqdm_parallel_imap,
-)
+from catalyst import utils
 
 # Limit cv2's processor usage
 # cv2.setNumThreads() doesn't work
@@ -65,13 +58,15 @@ def build_args(parser):
         help="Output images size. E.g. 224, 448",
     )
 
-    boolean_flag(parser, "clear-exif", default=True, help="Clear EXIF data")
+    utils.boolean_flag(
+        parser, "clear-exif", default=True, help="Clear EXIF data"
+    )
 
-    boolean_flag(
+    utils.boolean_flag(
         parser, "grayscale", default=False, help="Read images in grayscale"
     )
 
-    boolean_flag(
+    utils.boolean_flag(
         parser,
         "expand-dims",
         default=True,
@@ -168,7 +163,7 @@ class Preprocessor:
                 # imread does not have exifrotate for non-jpeg type
                 kwargs["exifrotate"] = not self.clear_exif
 
-            image = np.array(imread(uri=image_path, **kwargs))
+            image = np.array(utils.imread(uri=image_path, **kwargs))
         except Exception as e:
             print(f"Cannot read file {image_path}, exception: {e}")
             return
@@ -180,7 +175,7 @@ class Preprocessor:
         target_path.parent.mkdir(parents=True, exist_ok=True)
 
         image = image.clip(0, 255).round().astype(np.uint8)
-        imwrite(target_path, image)
+        utils.imwrite(target_path, image)
 
     def process_all(self, pool: Pool):
         """@TODO: Docs. Contribution is welcome."""
@@ -191,11 +186,11 @@ class Preprocessor:
                 [
                     root / filename
                     for filename in files
-                    if has_image_extension(filename)
+                    if utils.has_image_extension(filename)
                 ]
             )
 
-        tqdm_parallel_imap(self.preprocess, images, pool)
+        utils.tqdm_parallel_imap(self.preprocess, images, pool)
 
 
 def main(args, _=None):
@@ -204,7 +199,7 @@ def main(args, _=None):
     args.pop("command", None)
     num_workers = args.pop("num_workers")
 
-    with get_pool(num_workers) as p:
+    with utils.get_pool(num_workers) as p:
         Preprocessor(**args).process_all(p)
 
 

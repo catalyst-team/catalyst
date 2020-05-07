@@ -1,10 +1,10 @@
 import numpy as np
 
 import torch
-from torchvision.transforms.functional import normalize, to_tensor
 
 from catalyst import utils
-from catalyst.contrib.utils.image import _IMAGENET_MEAN, _IMAGENET_STD
+from catalyst.contrib.data.dataset.transforms import normalize, to_tensor
+from catalyst.contrib.utils.cv.tensor import _IMAGENET_MEAN, _IMAGENET_STD
 
 
 def test_imread():

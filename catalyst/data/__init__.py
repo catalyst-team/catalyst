@@ -9,14 +9,7 @@ from .dataset import (
     NumpyDataset,
     PathsDataset,
 )
-from .reader import (
-    ImageReader,
-    LambdaReader,
-    MaskReader,
-    ReaderCompose,
-    ReaderSpec,
-    ScalarReader,
-)
+from .reader import LambdaReader, ReaderCompose, ReaderSpec, ScalarReader
 from .sampler import (
     BalanceClassSampler,
     DistributedSamplerWrapper,

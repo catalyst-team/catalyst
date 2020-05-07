@@ -103,28 +103,28 @@ Tools
 
 Frozen Class
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.tools.frozen_class
+.. automodule:: catalyst.tools.frozen_class
     :members:
     :undoc-members:
     :show-inheritance:
 
 Registry
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.tools.registry
+.. automodule:: catalyst.tools.registry
     :members:
     :undoc-members:
     :show-inheritance:
 
 Time Manager
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.tools.time_manager
+.. automodule:: catalyst.tools.time_manager
     :members:
     :undoc-members:
     :show-inheritance:
 
 Typing
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.tools.typing
+.. automodule:: catalyst.tools.typing
     :members:
     :undoc-members:
     :show-inheritance:

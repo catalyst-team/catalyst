@@ -1,8 +1,6 @@
 from collections import OrderedDict
 
-import torchvision
-from torchvision import transforms
-
+from catalyst.contrib.data.dataset import Compose, MNIST, Normalize, ToTensor
 from catalyst.dl import ConfigExperiment
 
 
@@ -16,9 +14,7 @@ class Experiment(ConfigExperiment):
         """
         @TODO: Docs. Contribution is welcome
         """
-        return transforms.Compose(
-            [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
-        )
+        return Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
     def get_datasets(self, stage: str, **kwargs):
         """
@@ -27,13 +23,13 @@ class Experiment(ConfigExperiment):
         datasets = OrderedDict()
 
         if stage != "infer":
-            trainset = torchvision.datasets.MNIST(
+            trainset = MNIST(
                 "./data",
                 train=False,
                 download=True,
                 transform=Experiment.get_transforms(stage=stage, mode="train"),
             )
-            testset = torchvision.datasets.MNIST(
+            testset = MNIST(
                 "./data",
                 train=False,
                 download=True,
@@ -43,7 +39,7 @@ class Experiment(ConfigExperiment):
             datasets["train"] = trainset
             datasets["valid"] = testset
         else:
-            testset = torchvision.datasets.MNIST(
+            testset = MNIST(
                 "./data",
                 train=False,
                 download=True,
