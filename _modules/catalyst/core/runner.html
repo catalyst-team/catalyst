@@ -264,12 +264,8 @@
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">DistributedSampler</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.tools.settings</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">LOADER_INFER_PREFIX</span><span class="p">,</span>
-    <span class="n">LOADER_TRAIN_PREFIX</span><span class="p">,</span>
-    <span class="n">LOADER_VALID_PREFIX</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.tools.typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">catalyst.tools</span> <span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Criterion</span><span class="p">,</span>
     <span class="n">Device</span><span class="p">,</span>
     <span class="n">Model</span><span class="p">,</span>
@@ -687,15 +683,22 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># @TODO: add check for non distributed run for inference</span>
             <span class="k">assert</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span>
-                <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">LOADER_TRAIN_PREFIX</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">loaders</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">loader_train_prefix</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">loaders</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
             <span class="p">),</span> <span class="s2">&quot;for inference no train loader should be passed&quot;</span>
 
         <span class="k">for</span> <span class="n">loader_name</span><span class="p">,</span> <span class="n">loader</span> <span class="ow">in</span> <span class="n">loaders</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">state</span><span class="o">.</span><span class="n">loader_name</span> <span class="o">=</span> <span class="n">loader_name</span>
             <span class="n">state</span><span class="o">.</span><span class="n">loader_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span>
-            <span class="n">state</span><span class="o">.</span><span class="n">is_train_loader</span> <span class="o">=</span> <span class="n">loader_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">LOADER_TRAIN_PREFIX</span><span class="p">)</span>
-            <span class="n">state</span><span class="o">.</span><span class="n">is_valid_loader</span> <span class="o">=</span> <span class="n">loader_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">LOADER_VALID_PREFIX</span><span class="p">)</span>
-            <span class="n">state</span><span class="o">.</span><span class="n">is_infer_loader</span> <span class="o">=</span> <span class="n">loader_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">LOADER_INFER_PREFIX</span><span class="p">)</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">is_train_loader</span> <span class="o">=</span> <span class="n">loader_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+                <span class="n">settings</span><span class="o">.</span><span class="n">loader_train_prefix</span>
+            <span class="p">)</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">is_valid_loader</span> <span class="o">=</span> <span class="n">loader_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+                <span class="n">settings</span><span class="o">.</span><span class="n">loader_valid_prefix</span>
+            <span class="p">)</span>
+            <span class="n">state</span><span class="o">.</span><span class="n">is_infer_loader</span> <span class="o">=</span> <span class="n">loader_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+                <span class="n">settings</span><span class="o">.</span><span class="n">loader_infer_prefix</span>
+            <span class="p">)</span>
             <span class="n">utils</span><span class="o">.</span><span class="n">maybe_recursive_call</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">,</span>
             <span class="p">)</span>

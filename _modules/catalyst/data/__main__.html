@@ -330,28 +330,35 @@
 <span class="kn">from</span> <span class="nn">argparse</span> <span class="kn">import</span> <span class="n">ArgumentParser</span><span class="p">,</span> <span class="n">RawTextHelpFormatter</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.__version__</span> <span class="kn">import</span> <span class="n">__version__</span>
-<span class="kn">from</span> <span class="nn">catalyst.data.scripts</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">image2embedding</span><span class="p">,</span>
-    <span class="n">process_images</span><span class="p">,</span>
-    <span class="n">project_embeddings</span><span class="p">,</span>
-    <span class="n">split_dataframe</span><span class="p">,</span>
-    <span class="n">tag2label</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catalyst.data.scripts</span> <span class="kn">import</span> <span class="n">split_dataframe</span><span class="p">,</span> <span class="n">tag2label</span>
+<span class="kn">from</span> <span class="nn">catalyst.tools</span> <span class="kn">import</span> <span class="n">settings</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 <span class="n">COMMANDS</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="p">(</span><span class="s2">&quot;tag2label&quot;</span><span class="p">,</span> <span class="n">tag2label</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;process-images&quot;</span><span class="p">,</span> <span class="n">process_images</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;split-dataframe&quot;</span><span class="p">,</span> <span class="n">split_dataframe</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;image2embedding&quot;</span><span class="p">,</span> <span class="n">image2embedding</span><span class="p">),</span>
-        <span class="p">(</span><span class="s2">&quot;project-embeddings&quot;</span><span class="p">,</span> <span class="n">project_embeddings</span><span class="p">),</span>
-    <span class="p">]</span>
+    <span class="p">[(</span><span class="s2">&quot;tag2label&quot;</span><span class="p">,</span> <span class="n">tag2label</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;split-dataframe&quot;</span><span class="p">,</span> <span class="n">split_dataframe</span><span class="p">)]</span>
 <span class="p">)</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">imageio</span>  <span class="c1"># noqa: F401</span>
+    <span class="kn">from</span> <span class="nn">catalyst.data.scripts</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">image2embedding</span><span class="p">,</span>
+        <span class="n">process_images</span><span class="p">,</span>
+        <span class="n">project_embeddings</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">COMMANDS</span><span class="p">[</span><span class="s2">&quot;process-images&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">process_images</span>
+    <span class="n">COMMANDS</span><span class="p">[</span><span class="s2">&quot;image2embedding&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">image2embedding</span>
+    <span class="n">COMMANDS</span><span class="p">[</span><span class="s2">&quot;project-embeddings&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">project_embeddings</span>
+<span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">cv_required</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;some of catalyst-cv dependencies not available,&quot;</span>
+            <span class="s2">&quot; to install dependencies, run `pip install catalyst[cv]`.&quot;</span>
+        <span class="p">)</span>
+        <span class="k">raise</span> <span class="n">ex</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">transformers</span>  <span class="c1"># noqa: F401</span>
@@ -359,7 +366,7 @@
 
     <span class="n">COMMANDS</span><span class="p">[</span><span class="s2">&quot;text2embedding&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">text2embedding</span>
 <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;USE_TRANSFORMERS&quot;</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;1&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">transformers_required</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
             <span class="s2">&quot;transformers not available, to install transformers,&quot;</span>
             <span class="s2">&quot; run `pip install transformers`.&quot;</span>

@@ -284,10 +284,10 @@
 </li>
 <li><p><a class="reference internal" href="#tools" id="id14">Tools</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.utils.tools.frozen_class" id="id15">Frozen Class</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.utils.tools.registry" id="id16">Registry</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.utils.tools.time_manager" id="id17">Time Manager</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.utils.tools.typing" id="id18">Typing</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.tools.frozen_class" id="id15">Frozen Class</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.tools.registry" id="id16">Registry</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.tools.time_manager" id="id17">Time Manager</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.tools.typing" id="id18">Typing</a></p></li>
 </ul>
 </li>
 <li><p><a class="reference internal" href="#metrics" id="id19">Metrics</a></p>
@@ -503,7 +503,7 @@ otherwise <code class="docutils literal notranslate"><span class="pre">-1</span>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<em>Model</em>) – torch model</p></li>
 <li><p><strong>criterion</strong> (<em>Criterion</em>) – criterion function</p></li>
-<li><p><strong>optimizer</strong> (<a class="reference internal" href="#catalyst.utils.tools.typing.Optimizer" title="catalyst.utils.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer</p></li>
+<li><p><strong>optimizer</strong> (<a class="reference internal" href="#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer</p></li>
 <li><p><strong>scheduler</strong> (<em>Scheduler</em>) – scheduler</p></li>
 <li><p><strong>distributed_params</strong> (<em>dict</em><em>, </em><em>optional</em>) – dict with the parameters
 for distributed and FP16 method</p></li>
@@ -1137,13 +1137,13 @@ Should be used with <cite>catalyst.data.DynamicLenBatchSampler</cite>.</p>
 </div>
 <div class="section" id="tools">
 <h2><a class="toc-backref" href="#id14">Tools</a><a class="headerlink" href="#tools" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="module-catalyst.utils.tools.frozen_class">
-<span id="frozen-class"></span><h3><a class="toc-backref" href="#id15">Frozen Class</a><a class="headerlink" href="#module-catalyst.utils.tools.frozen_class" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="module-catalyst.tools.frozen_class">
+<span id="frozen-class"></span><h3><a class="toc-backref" href="#id15">Frozen Class</a><a class="headerlink" href="#module-catalyst.tools.frozen_class" title="Permalink to this headline">¶</a></h3>
 <p>Frozen class.
 Example of usage can be found in <a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.state.State</span></code></a>.</p>
 <dl class="py class">
-<dt id="catalyst.utils.tools.frozen_class.FrozenClass">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.utils.tools.frozen_class.</code><code class="sig-name descname">FrozenClass</code><a class="reference internal" href="../_modules/catalyst/utils/tools/frozen_class.html#FrozenClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.frozen_class.FrozenClass" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.frozen_class.FrozenClass">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.frozen_class.</code><code class="sig-name descname">FrozenClass</code><a class="reference internal" href="../_modules/catalyst/tools/frozen_class.html#FrozenClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.frozen_class.FrozenClass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class which prohibit <code class="docutils literal notranslate"><span class="pre">__setattr__</span></code> on existing attributes.</p>
 <p class="rubric">Examples</p>
@@ -1153,18 +1153,18 @@ Example of usage can be found in <a class="reference internal" href="core.html#c
 </dd></dl>
 
 </div>
-<div class="section" id="module-catalyst.utils.tools.registry">
-<span id="registry"></span><h3><a class="toc-backref" href="#id16">Registry</a><a class="headerlink" href="#module-catalyst.utils.tools.registry" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="module-catalyst.tools.registry">
+<span id="registry"></span><h3><a class="toc-backref" href="#id16">Registry</a><a class="headerlink" href="#module-catalyst.tools.registry" title="Permalink to this headline">¶</a></h3>
 <p>Registry.
 .. todo:: Representative docstring for this module</p>
 <dl class="py class">
-<dt id="catalyst.utils.tools.registry.Registry">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.utils.tools.registry.</code><code class="sig-name descname">Registry</code><span class="sig-paren">(</span><em class="sig-param">default_name_key: str, default_meta_factory: Callable[[Union[Type, Callable[..., Any]], Tuple, Mapping], Any] = &lt;function _default_meta_factory&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tools/registry.html#Registry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.registry.Registry" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.registry.Registry">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.registry.</code><code class="sig-name descname">Registry</code><span class="sig-paren">(</span><em class="sig-param">default_name_key: str, default_meta_factory: Callable[[Union[Type, Callable[..., Any]], Tuple, Mapping], Any] = &lt;function _default_meta_factory&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableMapping</span></code></p>
 <p>Universal class allowing to add and access various factories by name.</p>
 <dl class="py method">
-<dt id="catalyst.utils.tools.registry.Registry.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">default_name_key: str, default_meta_factory: Callable[[Union[Type, Callable[..., Any]], Tuple, Mapping], Any] = &lt;function _default_meta_factory&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tools/registry.html#Registry.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.registry.Registry.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.registry.Registry.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">default_name_key: str, default_meta_factory: Callable[[Union[Type, Callable[..., Any]], Tuple, Mapping], Any] = &lt;function _default_meta_factory&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1178,8 +1178,8 @@ that calls factory. Optional. Default just calls factory.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.utils.tools.registry.Registry.add">
-<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factory</span><span class="p">:</span> <span class="n">Union[Type, Callable[…, Any]]</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">factories</span><span class="p">:</span> <span class="n">Union[Type, Callable[…, Any]]</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">named_factories</span><span class="p">:</span> <span class="n">Union[Type, Callable[…, Any]]</span></em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[…, Any]]<a class="reference internal" href="../_modules/catalyst/utils/tools/registry.html#Registry.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.registry.Registry.add" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.registry.Registry.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">factory</span><span class="p">:</span> <span class="n">Union[Type, Callable[…, Any]]</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">factories</span><span class="p">:</span> <span class="n">Union[Type, Callable[…, Any]]</span></em>, <em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">named_factories</span><span class="p">:</span> <span class="n">Union[Type, Callable[…, Any]]</span></em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[…, Any]]<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -1202,8 +1202,8 @@ single instance.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.utils.tools.registry.Registry.add_from_module">
-<code class="sig-name descname">add_from_module</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">module</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>List<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/tools/registry.html#Registry.add_from_module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.registry.Registry.add_from_module" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.registry.Registry.add_from_module">
+<code class="sig-name descname">add_from_module</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">module</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>List<span class="p">[</span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.add_from_module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.add_from_module" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds all factories present in module.
 If <code class="docutils literal notranslate"><span class="pre">__all__</span></code> attribute is present, takes ony what mentioned in it.</p>
 <dl class="field-list simple">
@@ -1219,8 +1219,8 @@ as aliases.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.utils.tools.registry.Registry.all">
-<code class="sig-name descname">all</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>str<span class="p">]</span><a class="reference internal" href="../_modules/catalyst/utils/tools/registry.html#Registry.all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.registry.Registry.all" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.registry.Registry.all">
+<code class="sig-name descname">all</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span>str<span class="p">]</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.all" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>list of names of registered items</p>
@@ -1229,8 +1229,8 @@ as aliases.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.utils.tools.registry.Registry.get">
-<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[…, Any], None]<a class="reference internal" href="../_modules/catalyst/utils/tools/registry.html#Registry.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.registry.Registry.get" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.registry.Registry.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[…, Any], None]<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves factory, without creating any objects with it
 or raises error.</p>
 <dl class="field-list simple">
@@ -1247,8 +1247,8 @@ or raises error.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.utils.tools.registry.Registry.get_from_params">
-<code class="sig-name descname">get_from_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">meta_factory</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span>Any<span class="p">, </span>Tuple<span class="p">[</span>Any<span class="p">, </span>Mapping<span class="p">[</span>str<span class="p">, </span>Any<span class="p">]</span><span class="p">]</span><span class="p">]</span><a class="reference internal" href="../_modules/catalyst/utils/tools/registry.html#Registry.get_from_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.registry.Registry.get_from_params" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.registry.Registry.get_from_params">
+<code class="sig-name descname">get_from_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">meta_factory</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; Union<span class="p">[</span>Any<span class="p">, </span>Tuple<span class="p">[</span>Any<span class="p">, </span>Mapping<span class="p">[</span>str<span class="p">, </span>Any<span class="p">]</span><span class="p">]</span><span class="p">]</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get_from_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get_from_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates instance based in configuration dict with <code class="docutils literal notranslate"><span class="pre">instantiation_fn</span></code>.
 If <code class="docutils literal notranslate"><span class="pre">config[name_key]</span></code> is None, None is returned.</p>
 <dl class="field-list simple">
@@ -1266,14 +1266,14 @@ If not provided, default is used.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.utils.tools.registry.Registry.get_if_str">
-<code class="sig-name descname">get_if_str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span><span class="p">:</span> <span class="n">Union[str, Type, Callable[…, Any]]</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tools/registry.html#Registry.get_if_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.registry.Registry.get_if_str" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.registry.Registry.get_if_str">
+<code class="sig-name descname">get_if_str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obj</span><span class="p">:</span> <span class="n">Union[str, Type, Callable[…, Any]]</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get_if_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get_if_str" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns object from the registry if <code class="docutils literal notranslate"><span class="pre">obj</span></code> type is string.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.utils.tools.registry.Registry.get_instance">
-<code class="sig-name descname">get_instance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">meta_factory</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tools/registry.html#Registry.get_instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.registry.Registry.get_instance" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.registry.Registry.get_instance">
+<code class="sig-name descname">get_instance</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="n">meta_factory</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get_instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get_instance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates instance by calling specified factory
 with <code class="docutils literal notranslate"><span class="pre">instantiate_fn</span></code>.</p>
 <dl class="field-list simple">
@@ -1293,8 +1293,8 @@ If not provided, default is used</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.utils.tools.registry.Registry.late_add">
-<code class="sig-name descname">late_add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cb</span><span class="p">:</span> <span class="n">Callable[Registry, None]</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tools/registry.html#Registry.late_add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.registry.Registry.late_add" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.registry.Registry.late_add">
+<code class="sig-name descname">late_add</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cb</span><span class="p">:</span> <span class="n">Callable[Registry, None]</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.late_add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.late_add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows to prevent cycle imports by delaying some imports till next
 registry query.</p>
 <dl class="field-list simple">
@@ -1306,8 +1306,8 @@ register factories</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.utils.tools.registry.Registry.len">
-<code class="sig-name descname">len</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/catalyst/utils/tools/registry.html#Registry.len"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.registry.Registry.len" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.registry.Registry.len">
+<code class="sig-name descname">len</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.len"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.len" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>length of registered items</p>
@@ -1318,13 +1318,13 @@ register factories</p>
 </dd></dl>
 
 <dl class="py exception">
-<dt id="catalyst.utils.tools.registry.RegistryException">
-<em class="property">exception </em><code class="sig-prename descclassname">catalyst.utils.tools.registry.</code><code class="sig-name descname">RegistryException</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tools/registry.html#RegistryException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.registry.RegistryException" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.registry.RegistryException">
+<em class="property">exception </em><code class="sig-prename descclassname">catalyst.tools.registry.</code><code class="sig-name descname">RegistryException</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#RegistryException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.RegistryException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>Exception class for all registry errors.</p>
 <dl class="py method">
-<dt id="catalyst.utils.tools.registry.RegistryException.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tools/registry.html#RegistryException.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.registry.RegistryException.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.registry.RegistryException.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">message</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#RegistryException.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.RegistryException.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Init.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1336,29 +1336,29 @@ register factories</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-catalyst.utils.tools.time_manager">
-<span id="time-manager"></span><h3><a class="toc-backref" href="#id17">Time Manager</a><a class="headerlink" href="#module-catalyst.utils.tools.time_manager" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="module-catalyst.tools.time_manager">
+<span id="time-manager"></span><h3><a class="toc-backref" href="#id17">Time Manager</a><a class="headerlink" href="#module-catalyst.tools.time_manager" title="Permalink to this headline">¶</a></h3>
 <p>Simple timer.</p>
 <dl class="py class">
-<dt id="catalyst.utils.tools.time_manager.TimeManager">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.utils.tools.time_manager.</code><code class="sig-name descname">TimeManager</code><a class="reference internal" href="../_modules/catalyst/utils/tools/time_manager.html#TimeManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.time_manager.TimeManager" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.time_manager.TimeManager">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.time_manager.</code><code class="sig-name descname">TimeManager</code><a class="reference internal" href="../_modules/catalyst/tools/time_manager.html#TimeManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.time_manager.TimeManager" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>&#64;TODO: Docs. Contribution is welcome.</p>
 <dl class="py method">
-<dt id="catalyst.utils.tools.time_manager.TimeManager.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/tools/time_manager.html#TimeManager.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.time_manager.TimeManager.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.time_manager.TimeManager.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/time_manager.html#TimeManager.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.time_manager.TimeManager.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.utils.tools.time_manager.TimeManager.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/tools/time_manager.html#TimeManager.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.time_manager.TimeManager.reset" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.time_manager.TimeManager.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/tools/time_manager.html#TimeManager.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.time_manager.TimeManager.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset all previous timers.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.utils.tools.time_manager.TimeManager.start">
-<code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/tools/time_manager.html#TimeManager.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.time_manager.TimeManager.start" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.time_manager.TimeManager.start">
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/tools/time_manager.html#TimeManager.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.time_manager.TimeManager.start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Starts timer <code class="docutils literal notranslate"><span class="pre">name</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1368,8 +1368,8 @@ register factories</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.utils.tools.time_manager.TimeManager.stop">
-<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/tools/time_manager.html#TimeManager.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.time_manager.TimeManager.stop" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.time_manager.TimeManager.stop">
+<code class="sig-name descname">stop</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/tools/time_manager.html#TimeManager.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.time_manager.TimeManager.stop" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stops timer <code class="docutils literal notranslate"><span class="pre">name</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1381,24 +1381,24 @@ register factories</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-catalyst.utils.tools.typing">
-<span id="typing"></span><h3><a class="toc-backref" href="#id18">Typing</a><a class="headerlink" href="#module-catalyst.utils.tools.typing" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="module-catalyst.tools.typing">
+<span id="typing"></span><h3><a class="toc-backref" href="#id18">Typing</a><a class="headerlink" href="#module-catalyst.tools.typing" title="Permalink to this headline">¶</a></h3>
 <p>All Catalyst custom types are defined in this module.</p>
 <dl class="py attribute">
-<dt id="catalyst.utils.tools.typing.Model">
-<code class="sig-prename descclassname">catalyst.utils.tools.typing.</code><code class="sig-name descname">Model</code><a class="headerlink" href="#catalyst.utils.tools.typing.Model" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.typing.Model">
+<code class="sig-prename descclassname">catalyst.tools.typing.</code><code class="sig-name descname">Model</code><a class="headerlink" href="#catalyst.tools.typing.Model" title="Permalink to this definition">¶</a></dt>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="catalyst.utils.tools.typing.Criterion">
-<code class="sig-prename descclassname">catalyst.utils.tools.typing.</code><code class="sig-name descname">Criterion</code><a class="headerlink" href="#catalyst.utils.tools.typing.Criterion" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.typing.Criterion">
+<code class="sig-prename descclassname">catalyst.tools.typing.</code><code class="sig-name descname">Criterion</code><a class="headerlink" href="#catalyst.tools.typing.Criterion" title="Permalink to this definition">¶</a></dt>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="catalyst.utils.tools.typing.Optimizer">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.utils.tools.typing.</code><code class="sig-name descname">Optimizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em>, <em class="sig-param"><span class="n">defaults</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch/optim/optimizer.html#Optimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.typing.Optimizer" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.typing.Optimizer">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.typing.</code><code class="sig-name descname">Optimizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em>, <em class="sig-param"><span class="n">defaults</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch/optim/optimizer.html#Optimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.typing.Optimizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Base class for all optimizers.</p>
 <div class="admonition warning">
@@ -1418,11 +1418,11 @@ options (used when a parameter group doesn’t specify them).</p></li>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="catalyst.utils.tools.typing.Optimizer.add_param_group">
-<code class="sig-name descname">add_param_group</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">param_group</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch/optim/optimizer.html#Optimizer.add_param_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.typing.Optimizer.add_param_group" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a param group to the <a class="reference internal" href="#catalyst.utils.tools.typing.Optimizer" title="catalyst.utils.tools.typing.Optimizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Optimizer</span></code></a> s <cite>param_groups</cite>.</p>
+<dt id="catalyst.tools.typing.Optimizer.add_param_group">
+<code class="sig-name descname">add_param_group</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">param_group</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch/optim/optimizer.html#Optimizer.add_param_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.typing.Optimizer.add_param_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a param group to the <a class="reference internal" href="#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Optimizer</span></code></a> s <cite>param_groups</cite>.</p>
 <p>This can be useful when fine tuning a pre-trained network as frozen layers can be made
-trainable and added to the <a class="reference internal" href="#catalyst.utils.tools.typing.Optimizer" title="catalyst.utils.tools.typing.Optimizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Optimizer</span></code></a> as training progresses.</p>
+trainable and added to the <a class="reference internal" href="#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">Optimizer</span></code></a> as training progresses.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1434,20 +1434,20 @@ trainable and added to the <a class="reference internal" href="#catalyst.utils.t
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.utils.tools.typing.Optimizer.load_state_dict">
-<code class="sig-name descname">load_state_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state_dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch/optim/optimizer.html#Optimizer.load_state_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.typing.Optimizer.load_state_dict" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.typing.Optimizer.load_state_dict">
+<code class="sig-name descname">load_state_dict</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state_dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch/optim/optimizer.html#Optimizer.load_state_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.typing.Optimizer.load_state_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loads the optimizer state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>state_dict</strong> (<em>dict</em>) – optimizer state. Should be an object returned
-from a call to <a class="reference internal" href="#catalyst.utils.tools.typing.Optimizer.state_dict" title="catalyst.utils.tools.typing.Optimizer.state_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">state_dict()</span></code></a>.</p>
+from a call to <a class="reference internal" href="#catalyst.tools.typing.Optimizer.state_dict" title="catalyst.tools.typing.Optimizer.state_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">state_dict()</span></code></a>.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.utils.tools.typing.Optimizer.state_dict">
-<code class="sig-name descname">state_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch/optim/optimizer.html#Optimizer.state_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.typing.Optimizer.state_dict" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.typing.Optimizer.state_dict">
+<code class="sig-name descname">state_dict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch/optim/optimizer.html#Optimizer.state_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.typing.Optimizer.state_dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the state of the optimizer as a <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>.</p>
 <p>It contains two entries:</p>
 <ul class="simple">
@@ -1461,8 +1461,8 @@ from a call to <a class="reference internal" href="#catalyst.utils.tools.typing.
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.utils.tools.typing.Optimizer.step">
-<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">closure</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch/optim/optimizer.html#Optimizer.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.typing.Optimizer.step" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.typing.Optimizer.step">
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">closure</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch/optim/optimizer.html#Optimizer.step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.typing.Optimizer.step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs a single optimization step (parameter update).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1473,24 +1473,24 @@ returns the loss. Optional for most optimizers.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.utils.tools.typing.Optimizer.zero_grad">
-<code class="sig-name descname">zero_grad</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch/optim/optimizer.html#Optimizer.zero_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.typing.Optimizer.zero_grad" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.typing.Optimizer.zero_grad">
+<code class="sig-name descname">zero_grad</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch/optim/optimizer.html#Optimizer.zero_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.typing.Optimizer.zero_grad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clears the gradients of all optimized <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code> s.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="catalyst.utils.tools.typing.Scheduler">
-<code class="sig-prename descclassname">catalyst.utils.tools.typing.</code><code class="sig-name descname">Scheduler</code><a class="headerlink" href="#catalyst.utils.tools.typing.Scheduler" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.typing.Scheduler">
+<code class="sig-prename descclassname">catalyst.tools.typing.</code><code class="sig-name descname">Scheduler</code><a class="headerlink" href="#catalyst.tools.typing.Scheduler" title="Permalink to this definition">¶</a></dt>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.optim.lr_scheduler._LRScheduler</span></code></p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="catalyst.utils.tools.typing.Dataset">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.utils.tools.typing.</code><code class="sig-name descname">Dataset</code><a class="reference internal" href="../_modules/torch/utils/data/dataset.html#Dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tools.typing.Dataset" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.tools.typing.Dataset">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.typing.</code><code class="sig-name descname">Dataset</code><a class="reference internal" href="../_modules/torch/utils/data/dataset.html#Dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.typing.Dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>An abstract class representing a <a class="reference internal" href="#catalyst.utils.tools.typing.Dataset" title="catalyst.utils.tools.typing.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>.</p>
+<p>An abstract class representing a <a class="reference internal" href="#catalyst.tools.typing.Dataset" title="catalyst.tools.typing.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>.</p>
 <p>All datasets that represent a map from keys to data samples should subclass
 it. All subclasses should overwrite <code class="xref py py-meth docutils literal notranslate"><span class="pre">__getitem__()</span></code>, supporting fetching a
 data sample for a given key. Subclasses could also optionally overwrite
@@ -2448,10 +2448,10 @@ segmentation.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#tools">Tools</a><ul>
-<li><a class="reference internal" href="#module-catalyst.utils.tools.frozen_class">Frozen Class</a></li>
-<li><a class="reference internal" href="#module-catalyst.utils.tools.registry">Registry</a></li>
-<li><a class="reference internal" href="#module-catalyst.utils.tools.time_manager">Time Manager</a></li>
-<li><a class="reference internal" href="#module-catalyst.utils.tools.typing">Typing</a></li>
+<li><a class="reference internal" href="#module-catalyst.tools.frozen_class">Frozen Class</a></li>
+<li><a class="reference internal" href="#module-catalyst.tools.registry">Registry</a></li>
+<li><a class="reference internal" href="#module-catalyst.tools.time_manager">Time Manager</a></li>
+<li><a class="reference internal" href="#module-catalyst.tools.typing">Typing</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#metrics">Metrics</a><ul>
