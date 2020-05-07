@@ -162,8 +162,9 @@ class ConfigFileFinder:
 
         return config, found_files
 
-    def local_config_files(self) -> List[str]:
-        """Find all local config files which actually exist.
+    def local_config_files(self) -> List[str]:  # noqa: D202
+        """
+        Find all local config files which actually exist.
 
         Returns:
             List[str]: List of files that exist that are
