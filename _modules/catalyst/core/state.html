@@ -263,9 +263,13 @@
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">catalyst.tools</span> <span class="kn">import</span> <span class="n">settings</span>
-<span class="kn">from</span> <span class="nn">catalyst.tools.frozen_class</span> <span class="kn">import</span> <span class="n">FrozenClass</span>
-<span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.tools.frozen_class</span> <span class="kn">import</span> <span class="n">FrozenClass</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.tools.settings</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">LOADER_VALID_PREFIX</span><span class="p">,</span>
+    <span class="n">STAGE_INFER_PREFIX</span><span class="p">,</span>
+    <span class="n">STATE_MAIN_METRIC</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.tools.typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Criterion</span><span class="p">,</span>
     <span class="n">Device</span><span class="p">,</span>
     <span class="n">Model</span><span class="p">,</span>
@@ -541,11 +545,11 @@
         <span class="n">scheduler</span><span class="p">:</span> <span class="n">StateScheduler</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">callbacks</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Callback&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">stage_infer_prefix</span><span class="p">,</span>  <span class="c1"># @TODO: wtf?</span>
+        <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">STAGE_INFER_PREFIX</span><span class="p">,</span>
         <span class="n">num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="n">main_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+        <span class="n">main_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">STATE_MAIN_METRIC</span><span class="p">,</span>
         <span class="n">minimize_metric</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">valid_loader</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">loader_valid_prefix</span><span class="p">,</span>
+        <span class="n">valid_loader</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">LOADER_VALID_PREFIX</span><span class="p">,</span>
         <span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">is_check_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
@@ -627,7 +631,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">is_valid_loader</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_infer_loader</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_infer_stage</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
-            <span class="n">settings</span><span class="o">.</span><span class="n">stage_infer_prefix</span>
+            <span class="n">STAGE_INFER_PREFIX</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">need_early_stop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">need_exception_reraise</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>

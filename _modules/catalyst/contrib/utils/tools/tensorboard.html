@@ -272,6 +272,7 @@
     <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CRC32C_SW_MODE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span>
 <span class="kn">from</span> <span class="nn">crc32c</span> <span class="kn">import</span> <span class="n">crc32</span> <span class="k">as</span> <span class="n">crc32c</span>  <span class="c1"># noqa: E402</span>
 
+<span class="kn">import</span> <span class="nn">cv2</span>  <span class="c1"># noqa: E402</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># noqa: E402</span>
 
 <span class="c1"># Native tensorboard support from 1.2.0 version of PyTorch</span>
@@ -401,15 +402,33 @@
     <span class="k">return</span> <span class="kc">None</span>
 
 
+<span class="k">def</span> <span class="nf">_get_image</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Decode an image event.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        value: A value field of an event</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Decoded image</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">):</span>
+        <span class="n">encoded_image</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">encoded_image_string</span>
+        <span class="n">buf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">encoded_image</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">cv2</span><span class="o">.</span><span class="n">imdecode</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="n">cv2</span><span class="o">.</span><span class="n">IMREAD_COLOR</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
 <div class="viewcode-block" id="SummaryReader"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.utils.tools.tensorboard.SummaryReader">[docs]</a><span class="k">class</span> <span class="nc">SummaryReader</span><span class="p">(</span><span class="n">Iterable</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Iterates over events in all the files in the current logdir.</span>
 
 <span class="sd">    .. note::</span>
-<span class="sd">        Only scalars are supported at the moment.</span>
+<span class="sd">        Only scalars and images are supported at the moment.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_DECODERS</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;scalar&quot;</span><span class="p">:</span> <span class="n">_get_scalar</span><span class="p">,</span>
+        <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="n">_get_image</span><span class="p">,</span>
     <span class="p">}</span>
 
 <div class="viewcode-block" id="SummaryReader.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.utils.tools.tensorboard.SummaryReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>

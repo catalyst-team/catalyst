@@ -276,8 +276,8 @@
     <span class="n">ValidationManagerCallback</span><span class="p">,</span>
     <span class="n">VerboseLogger</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">catalyst.tools</span> <span class="kn">import</span> <span class="n">settings</span>
-<span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.tools.settings</span> <span class="kn">import</span> <span class="n">STAGE_INFER_PREFIX</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.tools.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
 
 
 <div class="viewcode-block" id="Experiment"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.core.Experiment">[docs]</a><span class="k">class</span> <span class="nc">Experiment</span><span class="p">(</span><span class="n">_StageBasedExperiment</span><span class="p">):</span>
@@ -413,7 +413,7 @@
             <span class="n">loaders</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_loaders_from_params</span><span class="p">(</span>
                 <span class="n">initial_seed</span><span class="o">=</span><span class="n">initial_seed</span><span class="p">,</span> <span class="o">**</span><span class="n">datasets</span><span class="p">,</span>
             <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">stage</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">stage_infer_prefix</span><span class="p">):</span>  <span class="c1"># train stage</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stage</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">STAGE_INFER_PREFIX</span><span class="p">):</span>  <span class="c1"># train stage</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loaders</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
                 <span class="n">valid_loader</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">loaders</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
