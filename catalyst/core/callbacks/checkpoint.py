@@ -347,12 +347,14 @@ class CheckpointCallback(BaseCheckpointCallback):
             _load_checkpoint(filename=self.resume, state=state)
             self.resume = None
         else:
-            checkpoint = f"{state.logdir}/checkpoints/{self.load_on_stage_start}.pth"
+            checkpoint = (
+                f"{state.logdir}/checkpoints/{self.load_on_stage_start}.pth"
+            )
             if self.load_on_stage_start and os.path.exists(checkpoint):
                 _load_checkpoint(
                     filename=checkpoint,
                     state=state,
-                    load_full=self.load_on_stage_start.endswith("full")
+                    load_full=self.load_on_stage_start.endswith("full"),
                 )
 
     def on_epoch_end(self, state: State) -> None:
