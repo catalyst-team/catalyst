@@ -138,16 +138,11 @@ def trace_model(
 
         model = model.to(device)
         model = amp.initialize(model, optimizers=None, opt_level=opt_level)
-        # TODO: remove `check_trace=False`
-        # after fixing this bug https://github.com/pytorch/pytorch/issues/23993
-        params = {**predict_params, "check_trace": False}
-    else:
-        params = predict_params
 
     getattr(model, mode)()
     set_requires_grad(model, requires_grad=requires_grad)
 
-    predict_fn(tracer, batch, **params)
+    predict_fn(tracer, batch, **predict_params)
 
     return tracer.tracing_result
 

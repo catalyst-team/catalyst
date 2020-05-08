@@ -1,6 +1,7 @@
 from typing import Union  # isort:skip
 from operator import lt, gt
 
+import warnings
 
 from pathlib import Path
 
@@ -49,6 +50,14 @@ class TracerCallback(Callback):
                 f"Unknown trace_mode '{trace_mode}'. "
                 f"Must be 'eval' or 'train'")
 
+        if opt_level is not None:
+            warnings.warn(
+                "TracerCallback: "
+                "`opt_level` is not supported yet, "
+                "model will be traced as is",
+                stacklevel=2,
+            )
+
         if mode == "max":
             self.compare_fn = gt
             self.default_value = float('-inf')
@@ -63,7 +72,7 @@ class TracerCallback(Callback):
         self.requires_grad = requires_grad
         self.method_name = method_name
         self.trace_mode = trace_mode
-        self.opt_level = opt_level
+        self.opt_level = None
         self.stage = stage
 
         if out_model is not None and not isinstance(out_model, Path):
