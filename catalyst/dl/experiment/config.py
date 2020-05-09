@@ -451,10 +451,8 @@ class ConfigExperiment(_StageBasedExperiment):
             if isinstance(callback, CheckpointCallback):
                 if callback.load_on_stage_start is None:
                     callback.load_on_stage_start = "best"
-                if (
-                    isinstance(callback.load_on_stage_start, dict)
-                    and "model" not in callback.load_on_stage_start
-                ):
+                if isinstance(callback.load_on_stage_start, dict) \
+                    and "model" not in callback.load_on_stage_start:
                     callback.load_on_stage_start["model"] = "best"
 
     def get_callbacks(self, stage: str) -> "OrderedDict[Callback]":
