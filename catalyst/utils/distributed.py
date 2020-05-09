@@ -26,7 +26,7 @@ warnings.simplefilter("once")
 warnings.filterwarnings("once")
 
 
-def is_wrapped_with_ddp(model: nn.Module) -> bool:
+def check_ddp_wrapped(model: nn.Module) -> bool:
     """
     Checks whether model is wrapped with DataParallel/DistributedDataParallel.
     """
@@ -56,7 +56,7 @@ def get_nn_from_ddp_module(model: nn.Module) -> nn.Module:
     Returns:
         A model
     """
-    if is_wrapped_with_ddp(model):
+    if check_ddp_wrapped(model):
         model = model.module
     return model
 
@@ -235,7 +235,7 @@ def process_components(
 
     model: Model = maybe_recursive_call(model, "to", device=device)
 
-    if is_wrapped_with_ddp(model):
+    if check_ddp_wrapped(model):
         pass
     # distributed data parallel run (ddp) (with apex support)
     elif get_rank() >= 0:
@@ -302,7 +302,7 @@ __all__ = [
     "is_slurm_available",
     "is_torch_distributed_initialized",
     "initialize_apex",
-    "is_wrapped_with_ddp",
+    "check_ddp_wrapped",
     "get_distributed_env",
     "get_distributed_params",
     "get_nn_from_ddp_module",

@@ -34,7 +34,7 @@ from .distributed import (
     get_distributed_env,
     get_rank,
     get_distributed_mean,
-    is_wrapped_with_ddp,
+    check_ddp_wrapped,
     is_torch_distributed_initialized,
     is_slurm_available,
     is_apex_available,

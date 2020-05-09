@@ -5,23 +5,27 @@ from pathlib import Path
 from torch import nn
 from torch.jit import ScriptModule, trace, load, save
 
-from catalyst.dl import State
+from catalyst.dl import Experiment, State
 from catalyst.utils.tools.typing import Device, Model
 from catalyst.utils import (
     assert_fp16_available,
-    is_wrapped_with_ddp,
+    check_ddp_wrapped,
     set_requires_grad,
     get_requires_grad,
-    get_native_batch_from_loaders,
     get_fn_argsnames,
     any2device,
+    import_experiment_and_runner,
+    unpack_checkpoint,
+    get_native_batch_from_loaders,
+    load_checkpoint,
+    load_config,
 )
 
 if TYPE_CHECKING:
     from catalyst.dl import Runner  # noqa: F401
 
 
-def get_input_argnames(
+def _get_input_argnames(
         fn: Callable[..., Any],
         exclude: List[str] = None
 ) -> List[str]:
@@ -37,7 +41,7 @@ def get_input_argnames(
     """
     argspec = inspect.getfullargspec(fn)
     assert (
-            argspec.varargs is None and argspec.varkw is None
+        argspec.varargs is None and argspec.varkw is None
     ), "not supported by PyTorch"
 
     return get_fn_argsnames(fn, exclude=exclude)
@@ -77,7 +81,7 @@ class _TracingModelWrapper(nn.Module):
             assert len(args) == 0, "only KV support implemented"
 
             fn = getattr(self.model, self.method_name)
-            method_argnames = get_input_argnames(fn=fn, exclude=["self"])
+            method_argnames = _get_input_argnames(fn=fn, exclude=["self"])
             method_input = tuple(kwargs[name] for name in method_argnames)
 
             self.tracing_result = trace(method_model, method_input)
@@ -147,10 +151,95 @@ def trace_model(
     return tracer.tracing_result
 
 
+def trace_model_from_checkpoint(
+    logdir: Path,
+    method_name: str,
+    checkpoint_name: str,
+    stage: str = None,
+    loader: Union[str, int] = None,
+    mode: str = "eval",
+    requires_grad: bool = False,
+    opt_level: str = None,
+    device: Device = "cpu",
+):
+    """
+    Traces model using created experiment and runner.
+
+    Args:
+        logdir (Union[str, Path]): Path to Catalyst logdir with model
+        checkpoint_name (str): Name of model checkpoint to use
+        stage (str): experiment's stage name
+        loader (Union[str, int]): experiment's loader name or its index
+        method_name (str): Model's method name that will be
+            used as entrypoint during tracing
+        mode (str): Mode for model to trace (``train`` or ``eval``)
+        requires_grad (bool): Flag to use grads
+        opt_level (str): AMP FP16 init level
+        device (str): Torch device
+
+    Returns:
+        the traced model
+    """
+    config_path = logdir / "configs" / "_config.json"
+    checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
+    print("Load config")
+    config: Dict[str, dict] = load_config(config_path)
+    runner_params = config.get("runner_params", {}) or {}
+
+    # Get expdir name
+    config_expdir = Path(config["args"]["expdir"])
+    # We will use copy of expdir from logs for reproducibility
+    expdir = Path(logdir) / "code" / config_expdir.name
+
+    print("Import experiment and runner from logdir")
+    ExperimentType, RunnerType = import_experiment_and_runner(expdir)
+    experiment: Experiment = ExperimentType(config)
+
+    print(f"Load model state from checkpoints/{checkpoint_name}.pth")
+    if stage is None:
+        stage = list(experiment.stages)[0]
+
+    model = experiment.get_model(stage)
+    checkpoint = load_checkpoint(checkpoint_path)
+    unpack_checkpoint(checkpoint, model=model)
+
+    runner: RunnerType = RunnerType(**runner_params)
+    runner.model, runner.device = model, device
+
+    if loader is None:
+        loader = 0
+    batch = get_native_batch_from_loaders(
+        loaders=experiment.get_loaders(stage),
+        loader=loader
+    )
+
+    # function to run prediction on batch
+    def predict_fn(model, inputs, **kwargs):
+        _model = runner.model
+        runner.model = model
+        result = runner.predict_batch(inputs, **kwargs)
+        runner.model = _model
+        return result
+
+    print("Tracing")
+    traced_model = trace_model(
+        model=model,
+        predict_fn=predict_fn,
+        batch=batch,
+        method_name=method_name,
+        mode=mode,
+        requires_grad=requires_grad,
+        opt_level=opt_level,
+        device=device,
+    )
+
+    print("Done")
+    return traced_model
+
+
 def trace_model_from_state(
     state: State,
     method_name: str = "forward",
-    loader: Union[str, int] = None,
     mode: str = "eval",
     requires_grad: bool = False,
     opt_level: str = None,
@@ -163,7 +252,6 @@ def trace_model_from_state(
         state (State): Current runner state.
         method_name (str): Model's method name that will be
             used as entrypoint during tracing
-        loader (Union[str, int]): experiment's loader name or its index
         mode (str): Mode for model to trace (``train`` or ``eval``)
         requires_grad (bool): Flag to use grads
         opt_level (str): AMP FP16 init level
@@ -173,18 +261,15 @@ def trace_model_from_state(
         (ScriptModule): Traced model
     """
     model = state.model
-    if is_wrapped_with_ddp(model):
+    if check_ddp_wrapped(model):
         model = model.module
 
     # getting input names of args for method since we don't have Runner
     # and we don't know input_key to preprocess batch for method call
     fn = getattr(model, method_name)
-    method_argnames = get_input_argnames(fn=fn, exclude=["self"])
+    method_argnames = _get_input_argnames(fn=fn, exclude=["self"])
 
-    # getting batch from loaders and filter it by method argnames
-    if loader is None:
-        loader = 0
-    batch = get_native_batch_from_loaders(state.loaders, loader)
+    batch = state.input
     batch = any2device({name: batch[name] for name in method_argnames}, device)
 
     # Dumping previous state of the model, we will need it to restore
@@ -292,6 +377,9 @@ def save_traced_model(
 
         output: Path = out_dir
         if output is None:
+            if logdir is None:
+                raise ValueError("One of `logdir`, `out_dir` or `out_model` "
+                                 "should be specified")
             output: Path = Path(logdir) / "trace"
 
         output.mkdir(exist_ok=True, parents=True)
@@ -337,6 +425,7 @@ def load_traced_model(
 
 __all__ = [
     "trace_model",
+    "trace_model_from_checkpoint",
     "trace_model_from_state",
     "get_trace_name",
     "save_traced_model",
