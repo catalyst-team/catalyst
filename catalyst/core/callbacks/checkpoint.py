@@ -105,22 +105,31 @@ def _required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]:
         and values is a list of states which should be loaded
         from thouse file.
     """
+    if load_map is None:
+        return OrderedDict()
+
     default_states = {"best", "best_full", "last", "last_full"}
     required_full = ["criterion", "optimizer", "scheduler"]
     experiment_parts = ["model"] + required_full
+
     # keep required parts
     experiment_parts = list(
-        filter(lambda key: key in load_map, experiment_parts)
+        filter(lambda part: part in load_map, experiment_parts)
     )
-    required_files = OrderedDict()  # key - filename, value - keys to load
+
+    # avoid unnecessary loading
+    if "model" in experiment_parts and len(experiment_parts) > 1:
+        required_full.append("model")
+
+    # mapping - <filename>: <list of parts to load from this file>
+    required_files = OrderedDict()
     for k in experiment_parts:
-        fname = load_map[k]
+        part = load_map[k]
         # specified default state
         if load_map[k] in default_states:
-            fname = load_map[k]
             if k in required_full and not load_map[k].endswith("_full"):
-                fname = fname + "_full"
-            fname = f"{logdir}/checkpoints/{fname}.pth"
+                part = part + "_full"
+            fname = f"{logdir}/checkpoints/{part}.pth"
         # in other case specified path to checkpoint
         required_files[fname] = required_files.get(fname, []) + [k]
     return required_files
@@ -476,9 +485,8 @@ class CheckpointCallback(BaseCheckpointCallback):
             self._load_state(state, mapping=self.resume, load_full=True)
             self.resume = None
         else:
-            _exists_checkpoint = True
+            _exists_checkpoint = False
             _load_full = False
-
             if isinstance(self.load_on_stage_start, str):
                 _exists_checkpoint = os.path.isfile(
                     "{}/checkpoints/{}.pth".format(
@@ -486,7 +494,7 @@ class CheckpointCallback(BaseCheckpointCallback):
                     )
                 )
                 _load_full = self.load_on_stage_start.endswith("full")
-            else:
+            elif isinstance(self.load_on_stage_start, dict):
                 required_files = _required_files(
                     state.logdir, self.load_on_stage_start
                 ).keys()
@@ -494,7 +502,7 @@ class CheckpointCallback(BaseCheckpointCallback):
                     os.path.isfile(file) for file in required_files
                 )
 
-            if self.load_on_stage_start and _exists_checkpoint:
+            if self.load_on_stage_start is not None and _exists_checkpoint:
                 self._load_state(
                     state,
                     mapping=self.load_on_stage_start,
