@@ -499,3 +499,154 @@ check_checkpoints "${CHECKPOINTS}/stage3\.[[:digit:]]" 3
 check_num_files ${CHECKPOINTS} 17   # 8x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
+
+################################  pipeline 17  ################################
+
+LOG_MSG='pipeline 17'
+echo ${LOG_MSG}
+
+LOGDIR=./tests/logs/_tests_dl_callbacks
+CHECKPOINTS=${LOGDIR}/checkpoints
+LOGFILE=${CHECKPOINTS}/_metrics.json
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} 
+  python3 -c "
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst.dl import SupervisedRunner, State, Callback, CallbackOrder, CheckpointCallback
+
+# experiment_setup
+logdir = '${LOGDIR}'
+num_epochs = 5
+
+# data
+num_samples, num_features = int(1e4), int(1e1)
+X = torch.rand(num_samples, num_features)
+y = torch.randint(0, 5, size=[num_samples])
+dataset = TensorDataset(X, y)
+loader = DataLoader(dataset, batch_size=32, num_workers=1)
+loaders = {'train': loader, 'valid': loader}
+
+# model, criterion, optimizer, scheduler
+model = torch.nn.Linear(num_features, 5)
+criterion = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters())
+runner = SupervisedRunner()
+
+# first stage
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    loaders=loaders,
+    logdir=logdir,
+    num_epochs=num_epochs,
+    verbose=False,
+    callbacks=[
+        CheckpointCallback(
+            save_n_best=2,
+            load_on_stage_end='best'
+        ),
+    ]
+)
+"
+
+check_file_existence ${LOGFILE}
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/train\.[[:digit:]]" 2
+check_num_files ${CHECKPOINTS} 9   # 4x2 checkpoints + metrics.json
+
+rm -rf ${LOGDIR}
+
+
+################################  pipeline 18  ################################
+
+LOG_MSG='pipeline 18'
+echo ${LOG_MSG}
+
+LOGDIR=./tests/logs/_tests_dl_callbacks
+CHECKPOINTS=${LOGDIR}/checkpoints
+LOGFILE=${CHECKPOINTS}/_metrics.json
+
+rm -rf ${LOGDIR}
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} 
+  python3 -c "
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst.dl import SupervisedRunner, State, Callback, CallbackOrder, CheckpointCallback
+
+# experiment_setup
+logdir = '${LOGDIR}'
+num_epochs = 5
+
+# data
+num_samples, num_features = int(1e4), int(1e1)
+X = torch.rand(num_samples, num_features)
+y = torch.randint(0, 5, size=[num_samples])
+dataset = TensorDataset(X, y)
+loader = DataLoader(dataset, batch_size=32, num_workers=1)
+loaders = {'train': loader, 'valid': loader}
+
+# model, criterion, optimizer, scheduler
+model = torch.nn.Linear(num_features, 5)
+criterion = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters())
+runner = SupervisedRunner()
+
+# first stage
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    loaders=loaders,
+    logdir=logdir,
+    num_epochs=num_epochs,
+    verbose=False,
+    callbacks=[
+        CheckpointCallback(
+            save_n_best=2,
+            load_on_stage_end={
+                'model': 'best',
+                'criterion': 'best',
+                'optimizer': 'last',
+            }
+        ),
+    ]
+)
+# second stage
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    loaders=loaders,
+    logdir=logdir,
+    num_epochs=num_epochs,
+    verbose=False,
+    callbacks=[
+        CheckpointCallback(
+            save_n_best=3,
+            load_on_stage_start={
+                'model': 'last',
+                'criterion': 'last',
+                'optimizer': 'best',
+            }
+        ),
+    ]
+)
+"
+
+check_file_existence ${LOGFILE}
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/train\.[[:digit:]]" 3
+check_num_files ${CHECKPOINTS} 11   # 5x2 checkpoints + metrics.json
+
+rm -rf ${LOGDIR}
