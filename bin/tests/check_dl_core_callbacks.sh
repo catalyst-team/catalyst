@@ -441,3 +441,61 @@ check_checkpoints "${CHECKPOINTS}/stage3\.[[:digit:]]" 3
 check_num_files ${CHECKPOINTS} 17   # 8x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR}
+
+################################  pipeline 15  ################################
+# testing on_stage_start option with different loading states
+LOG_MSG='pipeline 15'
+echo ${LOG_MSG}
+
+LOGDIR=./tests/logs/_tests_dl_callbacks
+CHECKPOINTS=${LOGDIR}/checkpoints
+LOGFILE=${CHECKPOINTS}/_metrics.json
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config15.yml \
+  --logdir=${LOGDIR}
+
+check_file_existence ${LOGFILE}
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
+check_checkpoints "${CHECKPOINTS}/stage2\.[[:digit:]]" 2
+check_checkpoints "${CHECKPOINTS}/stage3\.[[:digit:]]" 3
+check_num_files ${CHECKPOINTS} 17   # 8x2 checkpoints + metrics.json
+
+rm -rf ${LOGDIR}
+
+
+################################  pipeline 16  ################################
+# testing on_stage_start option with different loading states and
+# missing model state (should load best)
+LOG_MSG='pipeline 16'
+echo ${LOG_MSG}
+
+LOGDIR=./tests/logs/_tests_dl_callbacks
+CHECKPOINTS=${LOGDIR}/checkpoints
+LOGFILE=${CHECKPOINTS}/_metrics.json
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config16.yml \
+  --logdir=${LOGDIR}
+
+check_file_existence ${LOGFILE}
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
+check_checkpoints "${CHECKPOINTS}/stage2\.[[:digit:]]" 2
+check_checkpoints "${CHECKPOINTS}/stage3\.[[:digit:]]" 3
+check_num_files ${CHECKPOINTS} 17   # 8x2 checkpoints + metrics.json
+
+rm -rf ${LOGDIR}

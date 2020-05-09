@@ -438,11 +438,24 @@ class ConfigExperiment(_StageBasedExperiment):
         return callback
 
     @staticmethod
-    def _preload_best_in_checkpoints(callbacks: OrderedDict) -> None:
+    def _process_callbacks(callbacks: OrderedDict) -> None:
+        """
+        Iterate over each of the callbacks and update
+        approptiate parameters required for success
+        run of config experiment.
+
+        Arguments:
+            callbacks (OrderedDict): finalized order of callbacks.
+        """
         for callback in callbacks.values():
             if isinstance(callback, CheckpointCallback):
                 if callback.load_on_stage_start is None:
                     callback.load_on_stage_start = "best"
+                if (
+                    isinstance(callback.load_on_stage_start, dict)
+                    and "model" not in callback.load_on_stage_start
+                ):
+                    callback.load_on_stage_start["model"] = "best"
 
     def get_callbacks(self, stage: str) -> "OrderedDict[Callback]":
         """Returns the callbacks for a given stage."""
@@ -492,7 +505,7 @@ class ConfigExperiment(_StageBasedExperiment):
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
 
-        self._preload_best_in_checkpoints(callbacks)
+        self._process_callbacks(callbacks)
 
         return callbacks
 
