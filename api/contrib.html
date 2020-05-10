@@ -528,6 +528,61 @@ by Learning an Invariant Mapping</a>.</p>
 
 </dd></dl>
 
+<span class="target" id="module-catalyst.contrib.nn.criterion.circle"></span><dl class="py class">
+<dt id="catalyst.contrib.nn.criterion.circle.CircleLoss">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.circle.</code><code class="sig-name descname">CircleLoss</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">margin</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">gamma</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/circle.html#CircleLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.circle.CircleLoss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>CircleLoss from
+“Circle Loss: A Unified Perspective of Pair Similarity Optimization”
+<a class="reference external" href="https://arxiv.org/abs/2002.10857">https://arxiv.org/abs/2002.10857</a></p>
+<p>Adapter from:
+<a class="reference external" href="https://github.com/TinyZeaMays/CircleLoss">https://github.com/TinyZeaMays/CircleLoss</a></p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">catalyst.contrib.nn</span> <span class="kn">import</span> <span class="n">CircleLoss</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">features</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">labels</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">high</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">256</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">criterion</span> <span class="o">=</span> <span class="n">CircleLoss</span><span class="p">(</span><span class="n">margin</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mi">256</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">criterion</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="catalyst.contrib.nn.criterion.circle.CircleLoss.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">margin</span><span class="p">:</span> <span class="n">float</span></em>, <em class="sig-param"><span class="n">gamma</span><span class="p">:</span> <span class="n">float</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/circle.html#CircleLoss.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.circle.CircleLoss.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>margin</strong> – margin to use</p></li>
+<li><p><strong>gamma</strong> – gamma to use</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.contrib.nn.criterion.circle.CircleLoss.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">normed_features</span><span class="p">:</span> <span class="n">torch.Tensor</span></em>, <em class="sig-param"><span class="n">labels</span><span class="p">:</span> <span class="n">torch.Tensor</span></em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/circle.html#CircleLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.circle.CircleLoss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>normed_features</strong> – batch with samples features of shape
+[bs; feature_len]</p></li>
+<li><p><strong>labels</strong> – batch with samples correct labels of shape [bs; ]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>circle loss</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(Tensor)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <span class="target" id="module-catalyst.contrib.nn.criterion.dice"></span><dl class="py class">
 <dt id="catalyst.contrib.nn.criterion.dice.BCEDiceLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.dice.</code><code class="sig-name descname">BCEDiceLoss</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">eps</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">1e-07</span></em>, <em class="sig-param"><span class="n">threshold</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">activation</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'Sigmoid'</span></em>, <em class="sig-param"><span class="n">bce_weight</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.5</span></em>, <em class="sig-param"><span class="n">dice_weight</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0.5</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/dice.html#BCEDiceLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.dice.BCEDiceLoss" title="Permalink to this definition">¶</a></dt>

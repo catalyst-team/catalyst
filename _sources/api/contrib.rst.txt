@@ -37,6 +37,11 @@ Criterion
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: catalyst.contrib.nn.criterion.circle
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 .. automodule:: catalyst.contrib.nn.criterion.dice
     :members:
     :undoc-members:
