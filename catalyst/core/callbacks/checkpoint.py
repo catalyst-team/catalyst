@@ -235,23 +235,65 @@ class CheckpointCallback(BaseCheckpointCallback):
                 if ``0`` then  store only last state of model and
                 ``load_on_stage_end`` should be one of
                 ``last`` or ``last_full``.
+
             resume (str): path to checkpoint to load
                 and initialize runner state
+
             resume_dir (str): directory with checkpoints,
                 if specified in combination with ``resume``
                 than resume checkpoint will be loaded from ``resume_dir``
+
             metrics_filename (str): filename to save metrics
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
-            load_on_stage_start (str): load best state of the model,
-                this state will be loaded on all stages exept first.
+
+            load_on_stage_start (str or Dict[str, str]): load specified
+                state/model at stage start.
+                If passed string then will be performed initialization from
+                specified state (``best``/``best_full``/``last``/``last_full``)
+                or checkpoint file.
+
+                If passed dict then will be performed initialization only
+                for specified parts - model, criterion, optimizer, scheduler.
+                Criterion, optimizer, scheduler are optional keys.
+                Expected dictionary in format:
+                ```
+                {
+                    "model": <best/best_full/last/last_full/checkpoint>,
+                    "criterion": <best/best_full/last/last_full/checkpoint>,
+                    "optimizer": <best/best_full/last/last_full/checkpoint>,
+                    "scheduler": <best/best_full/last/last_full/checkpoint>,
+                }
+                ```
+                All other keys will be ignored.
+
+                NOTE: For loading criterion, optimizer, scheduler
+                required full checkpoint.
+                If specified not only model then model will be loaded
+                from full checkpoint.
+
                 For the first initialization please use ``resume`` and
                 ``resume_dir`` arguments.
-            load_on_stage_end (str): name of the model to load
-                at the end of the stage.
-                You can use ``best``, ``best_full``
-                to load the best model according to validation metrics,
-                or ``last`` ``last_full`` (default behaviour)
-                to use just the last one.
+
+                Loading will be performed on all stages except first.
+
+                If None then no action is required at stage start and:
+                - Config API: will be used best state of model
+                - Notebook API: no action will be performed
+                (will be used last state)
+
+            load_on_stage_end (str or Dict[str, str]): load specified
+                state/model at stage end.
+
+                If passed string then will be performed initialization from
+                specified state (``best``/``best_full``/``last``/``last_full``)
+                or checkpoint file.
+
+                If passed dict then will be performed initialization only
+                for specified parts - model, criterion, optimizer, scheduler.
+                Logic for dict is the same as for ``load_on_stage_start``.
+
+                Loading will be performed allways at stage end.
+
                 If None then no action is required at stage end
                 and will be used last state.
         """
