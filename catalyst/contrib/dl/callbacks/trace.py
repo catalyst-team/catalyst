@@ -82,6 +82,12 @@ class TracerCallback(Callback):
         self.out_dir = out_dir
 
     def on_epoch_end(self, state: State):
+        """
+        Performing model tracing on epoch end if condition metric is improved.
+
+        Args:
+            state (State): current state
+        """
 
         score = state.valid_metrics[self.metric]
 

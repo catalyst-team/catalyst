@@ -48,7 +48,10 @@ from .distributed import (
 )
 from .hash import get_hash, get_short_hash
 from .initialization import get_optimal_inner_init, outer_init
-from .loader import get_native_batch_from_loaders
+from .loader import (
+    get_native_batch_from_loader,
+    get_native_batch_from_loaders,
+)
 from .misc import (
     copy_directory,
     format_metric,
