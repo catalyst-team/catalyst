@@ -574,7 +574,10 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 LOG_MSG='pipeline 17'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} python3 -c "
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  USE_DDP=0 \
+  USE_APEX=0 \
+  python3 -c "
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import SupervisedRunner, State, Callback, CallbackOrder, CheckpointCallback
@@ -635,7 +638,10 @@ rm -rf ${LOGDIR}
 LOG_MSG='pipeline 18'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} python3 -c "
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  USE_DDP=0 \
+  USE_APEX=0 \
+  python3 -c "
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import SupervisedRunner, State, Callback, CallbackOrder, CheckpointCallback
