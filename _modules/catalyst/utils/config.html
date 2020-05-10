@@ -305,7 +305,8 @@
     <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">encoding</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Loads config by giving path. Supports YAML and JSON files.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads config by giving path. Supports YAML and JSON files.</span>
 
 <span class="sd">    Examples:</span>
 <span class="sd">        &gt;&gt;&gt; load(path=&quot;./config.yml&quot;, ordered=True)</span>
@@ -322,6 +323,11 @@
 <span class="sd">    Raises:</span>
 <span class="sd">        Exception: if path ``path`` doesn&#39;t exists</span>
 <span class="sd">            or file format is not YAML or JSON</span>
+
+<span class="sd">    Adapted from</span>
+<span class="sd">    https://github.com/TezRomacH/safitty/blob/v1.2.0/safitty/parser.py#L63</span>
+<span class="sd">    which was adapted from</span>
+<span class="sd">    https://github.com/catalyst-team/catalyst/blob/v19.03/catalyst/utils/config.py#L10</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
@@ -367,7 +373,8 @@
     <span class="n">ensure_ascii</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">indent</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Saves config to file. Path must be either YAML or JSON.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Saves config to file. Path must be either YAML or JSON.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        config (Union[Dict, List]): config to save</span>
@@ -377,6 +384,11 @@
 <span class="sd">        ensure_ascii (bool): Used for JSON, if True non-ASCII</span>
 <span class="sd">        characters are escaped in JSON strings.</span>
 <span class="sd">        indent (int): Used for JSON</span>
+
+<span class="sd">    Adapted from</span>
+<span class="sd">    https://github.com/TezRomacH/safitty/blob/v1.2.0/safitty/parser.py#L110</span>
+<span class="sd">    which was adapted from</span>
+<span class="sd">    https://github.com/catalyst-team/catalyst/blob/v19.03/catalyst/utils/config.py#L38</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
