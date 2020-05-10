@@ -12,6 +12,9 @@ from catalyst.dl.utils import (
 
 
 class TracerCallback(Callback):
+    """
+    Traces model during training if `metric` provided is improved.
+    """
 
     def __init__(
             self,
@@ -26,25 +29,22 @@ class TracerCallback(Callback):
             out_model: Union[str, Path] = None,
     ):
         """
-        Traces model using created experiment and runner.
-
         Args:
             metric (str): Metric key we should trace model based on
             minimize (bool): Whether do we minimize metric or not
+            min_delta (float): Minimum value of change for metric to be
+                considered as improved
             method_name (str): Model's method name that will be
                 used as entrypoint during tracing
-            trace_mode (str): Mode for model to trace
-                (``train`` or ``eval``)
             requires_grad (bool): Flag to use grads
             opt_level (str): AMP FP16 init level
+            trace_mode (str): Mode for model to trace
+                (``train`` or ``eval``)
             out_dir (Union[str, Path]): Directory to save model to
             out_model (Union[str, Path]): Path to save model to
                 (overrides `out_dir` argument)
         """
-        super(TracerCallback, self).__init__(
-            order=CallbackOrder.External,
-            node=CallbackNode.All
-        )
+        super().__init__(order=CallbackOrder.External, node=CallbackNode.All)
 
         if trace_mode not in ["train", "eval"]:
             raise ValueError(
