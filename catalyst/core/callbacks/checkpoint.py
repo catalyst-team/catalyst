@@ -31,19 +31,18 @@ def _load_checkpoint(
     *, filename, state: State, load_full: bool = True
 ) -> None:
     """
-    Load checkpoint from file.
+    Load checkpoint from a file.
 
     Arguments:
         filename (str): path to checkpoint
         state (State): training state
-        load_full (bool): if true then will be performed
+        load_full (bool): if true (default) then will be performed
             loading states for criterion, optimizer and scheduler.
             File should contain keys required for
             loading model (``'model_state_dict'``),
             criterion (``'criterion_state_dict'``) (only for full load),
             optimizer (``'optimizer_state_dict'``),
             scheduler (``'scheduler_state_dict'``).
-            Default - True
 
     Raises:
         FileNotFoundError: when file specified in ``filename``
@@ -88,7 +87,7 @@ def _load_checkpoint(
 
 def _required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]:
     """
-    Generate required files for reading model, criterion,
+    Generate required files for load model, criterion,
     scheduler, optimizer specified in ``load_map``.
 
     Expected that ``load_map`` contains keys:
@@ -101,16 +100,14 @@ def _required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]:
             what should be loaded
 
     Returns:
-        Dict with files to use where keys - path to files
-        and values is a list of states which should be loaded
-        from thouse file.
+        Mapping from file to parts required from this file.
     """
     if load_map is None:
         return OrderedDict()
 
     default_states = {"best", "best_full", "last", "last_full"}
-    required_full = ["criterion", "optimizer", "scheduler"]
-    experiment_parts = ["model"] + required_full
+    required_full_checkpoint = ["criterion", "optimizer", "scheduler"]
+    experiment_parts = ["model"] + required_full_checkpoint
 
     # keep required parts
     experiment_parts = list(
@@ -119,19 +116,20 @@ def _required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]:
 
     # avoid unnecessary loading
     if "model" in experiment_parts and len(experiment_parts) > 1:
-        required_full.append("model")
+        required_full_checkpoint.append("model")
 
     # mapping - <filename>: <list of parts to load from this file>
     required_files = OrderedDict()
-    for k in experiment_parts:
-        part = load_map[k]
+    for part in experiment_parts:
+        fname = load_map[part]
+        required_full = fname.endswith("_full")
         # specified default state
-        if load_map[k] in default_states:
-            if k in required_full and not load_map[k].endswith("_full"):
-                part = part + "_full"
-            fname = f"{logdir}/checkpoints/{part}.pth"
+        if fname in default_states:
+            if part in required_full_checkpoint and not required_full:
+                fname = fname + "_full"
+            fname = f"{logdir}/checkpoints/{fname}.pth"
         # in other case specified path to checkpoint
-        required_files[fname] = required_files.get(fname, []) + [k]
+        required_files[fname] = required_files.get(fname, []) + [part]
     return required_files
 
 
@@ -139,7 +137,7 @@ def _load_states_from_file_map(
     *, state: State, load_map: Dict[str, str]
 ) -> None:
     """
-    Load state of model, criterion, optimizer, scheduler
+    Load state of a model, criterion, optimizer, scheduler
     from files specified in ``load_map``.
 
     Arguments:
@@ -151,11 +149,11 @@ def _load_states_from_file_map(
             Expected that values will be states (``'best'``,
             ``"best_full"``, ``"last"``, ``"last_full"``) or
             path to checkpoint.
-            NOTE: for succesfull loading state of criterion,
-            optimizer, scheduler required a full checkpoint.
+            NOTE: for successful load criterion, optimizer,
+            scheduler states required a full checkpoint.
 
     Raises:
-        FileNotFoundError: when file or state specified in ``load_map``
+        FileNotFoundError: when file/state specified in ``load_map``
             is not exist.
     """
     required_files = _required_files(state.logdir, load_map)
@@ -166,11 +164,11 @@ def _load_states_from_file_map(
 
     # extracting parts from files
     for filename, parts_to_load in required_files.items():
-        print(f"==> Loading {', '.join(parts_to_load)} from {filename}")
+        print(f"=> Loading {', '.join(parts_to_load)} from {filename}")
         checkpoint = utils.load_checkpoint(filename)
         to_unpack = {part: getattr(state, part) for part in parts_to_load}
         utils.unpack_checkpoint(checkpoint, **to_unpack)
-        print(f"    loaded: {', '.join(parts_to_load)}")
+        print(f"   loaded: {', '.join(parts_to_load)}")
 
 
 class BaseCheckpointCallback(Callback):
