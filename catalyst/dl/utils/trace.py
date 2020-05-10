@@ -6,7 +6,7 @@ from torch import nn
 from torch.jit import ScriptModule, trace, load, save
 
 from catalyst.dl import Experiment, State
-from catalyst.utils.tools.typing import Device, Model
+from catalyst.tools.typing import Device, Model
 from catalyst.utils import (
     assert_fp16_available,
     check_ddp_wrapped,
