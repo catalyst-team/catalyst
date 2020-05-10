@@ -6,6 +6,8 @@ import os
 
 logger = logging.getLogger(__name__)
 
+from catalyst.tools import settings
+
 from .argparse import boolean_flag
 from .compression import pack, pack_if_needed, unpack, unpack_if_needed
 from .confusion_matrix import (
@@ -13,23 +15,14 @@ from .confusion_matrix import (
     calculate_confusion_matrix_from_arrays,
     calculate_confusion_matrix_from_tensors,
 )
+from .cv import *
 from .dataset import create_dataset, split_dataset_train_test, create_dataframe
-from .image import (
-    has_image_extension,
-    imread,
-    imwrite,
-    imsave,
-    mask_to_overlay_image,
-    mimread,
-    mimwrite_with_meta,
-    tensor_from_rgb_image,
-    tensor_to_ndimage,
-)
 from .misc import (
     args_are_not_none,
     make_tuple,
     pairwise,
 )
+from .nlp import *
 from .pandas import (
     dataframe_to_list,
     folds_to_list,
@@ -53,21 +46,10 @@ try:
     import plotly  # noqa: F401
     from .plotly import plot_tensorboard_log, plot_metrics
 except ImportError as ex:
-    if os.environ.get("USE_PLOTLY", "0") == "1":
+    if settings.plotly_required:
         logger.warning(
             "plotly not available, to install plotly,"
             " run `pip install plotly`."
-        )
-        raise ex
-
-try:
-    import transformers  # noqa: F401
-    from .text import tokenize_text, process_bert_output
-except ImportError as ex:
-    if os.environ.get("USE_TRANSFORMERS", "0") == "1":
-        logger.warning(
-            "transformers not available, to install transformers,"
-            " run `pip install transformers`."
         )
         raise ex
 

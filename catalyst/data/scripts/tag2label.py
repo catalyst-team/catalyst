@@ -3,13 +3,7 @@ import json
 
 import pandas as pd
 
-from catalyst.utils import (
-    boolean_flag,
-    create_dataframe,
-    create_dataset,
-    get_dataset_labeling,
-    separate_tags,
-)
+from catalyst import utils
 
 
 def build_args(parser):
@@ -51,7 +45,7 @@ def build_args(parser):
         default=None,
         help="Separator if you want to use several target columns",
     )
-    boolean_flag(
+    utils.boolean_flag(
         parser, "recursive", default=False, help="Include subdirs in dataset",
     )
 
@@ -83,12 +77,14 @@ def _prepare_df_from_dirs(in_dirs, tag_column_name, recursive: bool = False):
         if not in_dir.endswith("/"):
             in_dir = f"{in_dir}/"
 
-        dataset = create_dataset(
+        dataset = utils.create_dataset(
             f"{in_dir}/**", process_fn=process_fn, recursive=recursive
         )
 
         dfs.append(
-            create_dataframe(dataset, columns=[tag_column_name, "filepath"])
+            utils.create_dataframe(
+                dataset, columns=[tag_column_name, "filepath"]
+            )
         )
 
     df = pd.concat(dfs).reset_index(drop=True)
@@ -107,11 +103,11 @@ def main(args, _=None):
         raise Exception
 
     if args.tag_delim is not None:
-        df = separate_tags(
+        df = utils.separate_tags(
             df, tag_column=args.tag_column, tag_delim=args.tag_delim
         )
 
-    tag2lbl = get_dataset_labeling(df, args.tag_column)
+    tag2lbl = utils.get_dataset_labeling(df, args.tag_column)
     print("Num classes: ", len(tag2lbl))
 
     with open(args.out_labeling, "w") as fout:

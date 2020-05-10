@@ -19,8 +19,8 @@ from catalyst.dl import (
     ValidationManagerCallback,
     VerboseLogger,
 )
-from catalyst.utils.tools.settings import STAGE_INFER_PREFIX
-from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
+from catalyst.tools import settings
+from catalyst.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
 class Experiment(_Experiment):
@@ -156,7 +156,7 @@ class Experiment(_Experiment):
             loaders = utils.get_loaders_from_params(
                 initial_seed=initial_seed, **datasets,
             )
-        if not stage.startswith(STAGE_INFER_PREFIX):  # train stage
+        if not stage.startswith(settings.stage_infer_prefix):  # train stage
             if len(loaders) == 1:
                 valid_loader = list(loaders.keys())[0]
                 warnings.warn(

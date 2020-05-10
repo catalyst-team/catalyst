@@ -3,7 +3,7 @@ from abc import ABC
 
 from torch.optim.lr_scheduler import _LRScheduler
 
-from catalyst.utils import set_optimizer_momentum
+from catalyst.utils.torch import set_optimizer_momentum
 
 
 class BaseScheduler(_LRScheduler, ABC):

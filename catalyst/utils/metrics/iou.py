@@ -7,7 +7,7 @@ from functools import partial
 
 import torch
 
-from catalyst.utils import get_activation_fn
+from catalyst.utils.torch import get_activation_fn
 
 
 def iou(

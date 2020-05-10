@@ -101,6 +101,17 @@ Modules
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: catalyst.contrib.nn.modules.rms_norm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.contrib.nn.modules.se
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 
 Optimizers
 ~~~~~~~~~~~~~~~~
@@ -245,13 +256,6 @@ Plotly
 Serialization
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.utils.serialization
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Text
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.text
     :members:
     :undoc-members:
     :show-inheritance:

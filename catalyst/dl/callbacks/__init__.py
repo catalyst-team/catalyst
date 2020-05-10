@@ -4,7 +4,7 @@ from catalyst.core.callback import *
 from catalyst.core.callbacks import *
 
 from .confusion_matrix import ConfusionMatrixCallback
-from .inference import InferCallback, InferMaskCallback
+from .inference import InferCallback
 from .meter import MeterMetricsCallback
 from .metrics import (
     AccuracyCallback,

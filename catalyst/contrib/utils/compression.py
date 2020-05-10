@@ -1,26 +1,23 @@
 import base64
 import logging
-import os
 
 import numpy as np
 from six import string_types
+
+from catalyst.tools import settings
 
 from .serialization import deserialize, serialize
 
 logger = logging.getLogger(__name__)
 
-try:
-    import lz4.frame
-
-    LZ4_ENABLED = True
-except ImportError as ex:
-    if os.environ.get("USE_LZ4", "0") == "1":
+if settings.use_lz4:
+    try:
+        import lz4.frame
+    except ImportError as ex:
         logger.warning(
-            "lz4 not available, disabling compression. "
-            "To install lz4, run `pip install lz4`."
+            "lz4 not available, to install lz4, run `pip install lz4`."
         )
         raise ex
-    LZ4_ENABLED = False
 
 
 def is_compressed(data):
@@ -30,7 +27,7 @@ def is_compressed(data):
 
 def compress(data):
     """@TODO: Docs. Contribution is welcome."""
-    if LZ4_ENABLED:
+    if settings.use_lz4:
         data = serialize(data)
         data = lz4.frame.compress(data)
         data = base64.b64encode(data).decode("ascii")
@@ -46,7 +43,7 @@ def compress_if_needed(data):
 
 def decompress(data):
     """@TODO: Docs. Contribution is welcome."""
-    if LZ4_ENABLED:
+    if settings.use_lz4:
         data = base64.b64decode(data)
         data = lz4.frame.decompress(data)
         data = deserialize(data)
@@ -60,7 +57,7 @@ def decompress_if_needed(data):
     return data
 
 
-if LZ4_ENABLED:
+if settings.use_lz4:
     pack = compress
     pack_if_needed = compress_if_needed
     unpack = decompress

@@ -4,13 +4,13 @@
 set -eo pipefail -v
 
 
-####################################  DL  #####################################
-bash ./bin/tests/check_dl_base.sh
+###################################  CORE  ####################################
+(set -e; for f in ./bin/tests/check_dl_core*.sh; do bash "$f"; done)
 
 
 ####################################  CV  #####################################
-bash ./bin/tests/check_dl_cv.sh
+(set -e; for f in ./bin/tests/check_dl_cv*.sh; do bash "$f"; done)
 
 
 ####################################  NLP  ####################################
-bash ./bin/tests/check_dl_nlp.sh
+(set -e; for f in ./bin/tests/check_dl_nlp*.sh; do bash "$f"; done)

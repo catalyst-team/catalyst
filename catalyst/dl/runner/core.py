@@ -13,7 +13,7 @@ from catalyst.core import (
     State,
 )
 from catalyst.dl import Experiment, utils
-from catalyst.utils.tools.typing import (
+from catalyst.tools.typing import (
     Criterion,
     Device,
     Model,

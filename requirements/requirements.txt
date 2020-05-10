@@ -17,15 +17,8 @@ tensorboardX
 crc32c>=1.7
 plotly>=4.1.0
 
-# cv -> catalyst[cv]
-torchvision>=0.3.0
-Pillow
-imageio
-opencv-python
-scikit-image>=0.14.2
-
 # Used in scripts  -> contrib (?)
 matplotlib
 pandas>=0.22
 scikit-learn>=0.20
-GitPython>=2.1.11
+GitPython>=3.1.1

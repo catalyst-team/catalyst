@@ -1,12 +1,11 @@
 from typing import Tuple
 from collections import OrderedDict
 
-import torchvision
-
+from catalyst.contrib.data.dataset import MNIST as _MNIST
 from catalyst.dl.experiment import ConfigExperiment
 
 
-class MNIST(torchvision.datasets.MNIST):
+class MNIST(_MNIST):
     """`MNIST <http://yann.lecun.com/exdb/mnist/>`_ Dataset."""
 
     def __getitem__(self, index: int) -> Tuple:
