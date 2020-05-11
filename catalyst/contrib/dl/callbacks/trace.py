@@ -21,6 +21,8 @@ class TracerCallback(Callback):
             metric: str = "loss",
             minimize: bool = True,
             min_delta: float = 1e-6,
+            mode: str = "best",
+            do_once: bool = True,
             method_name: str = "forward",
             requires_grad: bool = False,
             opt_level: str = None,
@@ -34,6 +36,8 @@ class TracerCallback(Callback):
             minimize (bool): Whether do we minimize metric or not
             min_delta (float): Minimum value of change for metric to be
                 considered as improved
+            mode (str): One of `best` or `last`
+            do_once (str): Whether do we trace once per stage or every epoch
             method_name (str): Model's method name that will be
                 used as entrypoint during tracing
             requires_grad (bool): Flag to use grads
@@ -48,8 +52,13 @@ class TracerCallback(Callback):
 
         if trace_mode not in ["train", "eval"]:
             raise ValueError(
-                f"Unknown trace_mode '{trace_mode}'. "
+                f"Unknown `trace_mode` '{trace_mode}'. "
                 f"Must be 'eval' or 'train'")
+
+        if mode not in ["best", "last"]:
+            raise ValueError(
+                f"Unknown `mode` '{mode}'. "
+                f"Must be 'best' or 'last'")
 
         if opt_level is not None:
             warnings.warn(
@@ -60,7 +69,8 @@ class TracerCallback(Callback):
             )
 
         self.metric = metric
-
+        self.mode = mode
+        self.do_once = do_once
         self.best_score = None
         self.is_better = None
         if minimize:
@@ -81,46 +91,75 @@ class TracerCallback(Callback):
             out_dir = Path(out_dir)
         self.out_dir = out_dir
 
-    def on_epoch_end(self, state: State):
+    def _trace(self, state: State):
         """
         Performing model tracing on epoch end if condition metric is improved.
 
         Args:
-            state (State): current state
+            state (State): Current state
         """
+        if self.opt_level is not None:
+            device = "cuda"
+        else:
+            device = "cpu"
 
-        score = state.valid_metrics[self.metric]
+        # the only case we need to restore model from previous checkpoint
+        # is when we need to trace best model only once in the end of stage
+        checkpoint_name_to_restore = None
+        if self.do_once and self.mode == "best":
+            checkpoint_name_to_restore = "best"
 
-        if self.best_score is None:
-            self.best_score = score
+        traced_model = trace_model_from_state(
+            state=state,
+            checkpoint_name=checkpoint_name_to_restore,
+            method_name=self.method_name,
+            mode=self.trace_mode,
+            requires_grad=self.requires_grad,
+            opt_level=self.opt_level,
+            device=device,
+        )
 
-        if self.is_better(score, self.best_score):
-            self.best_score = score
+        save_traced_model(
+            model=traced_model,
+            logdir=state.logdir,
+            checkpoint_name=self.mode,
+            method_name=self.method_name,
+            mode=self.trace_mode,
+            requires_grad=self.requires_grad,
+            opt_level=self.opt_level,
+            out_model=self.out_model,
+            out_dir=self.out_dir,
+        )
 
-            if self.opt_level is not None:
-                device = "cuda"
+    def on_epoch_end(self, state: State):
+        """
+        Performing model tracing on epoch end if condition metric is improved
+
+        Args:
+            state (State): Current state
+        """
+        if not self.do_once:
+            if self.mode == "best":
+                score = state.valid_metrics[self.metric]
+
+                if self.best_score is None:
+                    self.best_score = score
+
+                if self.is_better(score, self.best_score):
+                    self.best_score = score
+                    self._trace(state)
             else:
-                device = "cpu"
+                self._trace(state)
 
-            traced_model = trace_model_from_state(
-                state=state,
-                method_name=self.method_name,
-                mode=self.trace_mode,
-                requires_grad=self.requires_grad,
-                opt_level=self.opt_level,
-                device=device,
-            )
+    def on_stage_end(self, state: State):
+        """
+        Performing model tracing on stage end if `do_once` is True.
 
-            save_traced_model(
-                model=traced_model,
-                logdir=state.logdir,
-                method_name=self.method_name,
-                mode=self.trace_mode,
-                requires_grad=self.requires_grad,
-                opt_level=self.opt_level,
-                out_model=self.out_model,
-                out_dir=self.out_dir,
-            )
+        Args:
+            state (State): Current state
+        """
+        if self.do_once:
+            self._trace(state)
 
 
 __all__ = [

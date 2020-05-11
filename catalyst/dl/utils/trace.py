@@ -9,14 +9,15 @@ from catalyst.dl import Experiment, State
 from catalyst.tools.typing import Device, Model
 from catalyst.utils import (
     assert_fp16_available,
-    check_ddp_wrapped,
+    get_nn_from_ddp_module,
     set_requires_grad,
     get_requires_grad,
     get_fn_argsnames,
     any2device,
     import_experiment_and_runner,
-    unpack_checkpoint,
     get_native_batch_from_loaders,
+    unpack_checkpoint,
+    pack_checkpoint,
     load_checkpoint,
     load_config,
 )
@@ -239,6 +240,7 @@ def trace_model_from_checkpoint(
 
 def trace_model_from_state(
     state: State,
+    checkpoint_name: str = None,
     method_name: str = "forward",
     mode: str = "eval",
     requires_grad: bool = False,
@@ -250,6 +252,8 @@ def trace_model_from_state(
 
     Args:
         state (State): Current runner state.
+        checkpoint_name (str): Name of model checkpoint to use, if None
+            traces current model from state
         method_name (str): Model's method name that will be
             used as entrypoint during tracing
         mode (str): Mode for model to trace (``train`` or ``eval``)
@@ -260,9 +264,14 @@ def trace_model_from_state(
     Returns:
         (ScriptModule): Traced model
     """
-    model = state.model
-    if check_ddp_wrapped(model):
-        model = model.module
+    logdir = state.logdir
+    model = get_nn_from_ddp_module(state.model)
+
+    if checkpoint_name is not None:
+        dumped_checkpoint = pack_checkpoint(model=model)
+        checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
+        checkpoint = load_checkpoint(filepath=checkpoint_path)
+        unpack_checkpoint(checkpoint=checkpoint, model=model)
 
     # getting input names of args for method since we don't have Runner
     # and we don't know input_key to preprocess batch for method call
@@ -292,6 +301,9 @@ def trace_model_from_state(
         opt_level=opt_level,
         device=device,
     )
+
+    if checkpoint_name is not None:
+        unpack_checkpoint(checkpoint=dumped_checkpoint, model=model)
 
     # Restore previous state of the model
     getattr(model, "train" if _is_training else "eval")()
