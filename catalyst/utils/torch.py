@@ -236,7 +236,7 @@ def get_requires_grad(model: Model):
     Returns:
         requires_grad (Dict[str, bool]): value
     """
-    requires_grad = dict()
+    requires_grad = {}
     for name, param in model.named_parameters():
         requires_grad[name] = param.requires_grad
     return requires_grad

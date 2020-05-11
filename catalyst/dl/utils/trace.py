@@ -1,18 +1,19 @@
-from typing import (
-    TYPE_CHECKING,
+from typing import (  # isort:skip
     Any,
+    Callable,
     Dict,
     List,
-    Callable,
+    TYPE_CHECKING,
     Union,
-)  # isort:skip
+)
 import inspect
 from pathlib import Path
 
 from torch import nn
 from torch.jit import load, save, ScriptModule, trace
 
-from catalyst.dl import Experiment, State
+from catalyst.core.state import State
+from catalyst.dl.experiment.config import ConfigExperiment
 from catalyst.tools.typing import Device, Model
 from catalyst.utils import (
     any2device,
@@ -198,7 +199,7 @@ def trace_model_from_checkpoint(
 
     print("Import experiment and runner from logdir")
     ExperimentType, RunnerType = import_experiment_and_runner(expdir)
-    experiment: Experiment = ExperimentType(config)
+    experiment: ConfigExperiment = ExperimentType(config)
 
     print(f"Load model state from checkpoints/{checkpoint_name}.pth")
     if stage is None:
@@ -383,7 +384,6 @@ def save_traced_model(
             (overrides logdir & out_dir)
         checkpoint_name (str): Checkpoint name used to restore the model
     """
-
     if out_model is None:
         file_name = get_trace_name(
             method_name=method_name,

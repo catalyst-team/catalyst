@@ -1,6 +1,5 @@
 from typing import Any, Callable, Dict, Generator, List, Mapping, Union
 from collections import OrderedDict
-from pathlib import Path
 
 import torch
 from torch.jit import ScriptModule

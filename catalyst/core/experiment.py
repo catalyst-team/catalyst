@@ -1,4 +1,4 @@
-from typing import Any, Dict, Iterable, Mapping, Tuple, Union
+from typing import Any, Dict, Iterable, Mapping, Tuple
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 

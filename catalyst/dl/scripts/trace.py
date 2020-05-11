@@ -1,4 +1,3 @@
-from typing import Dict, Union
 import argparse
 from argparse import ArgumentParser
 from pathlib import Path
