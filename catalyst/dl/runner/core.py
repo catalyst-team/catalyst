@@ -354,11 +354,11 @@ class Runner(_StageBasedRunner):
         # Dumping previous state of the model, we will need it to restore
         _device, _is_training, _requires_grad = (
             self.device,
-            model.training,
-            utils.get_requires_grad(model),
+            self.model.training,
+            utils.get_requires_grad(self.model),
         )
 
-        model.to(device)
+        self.model.to(device)
 
         # function to run prediction on batch
         def predict_fn(model, inputs, **kwargs):
@@ -391,9 +391,9 @@ class Runner(_StageBasedRunner):
             )
 
         # Restore previous state of the model
-        getattr(model, "train" if _is_training else "eval")()
-        utils.set_requires_grad(model, _requires_grad)
-        model.to(_device)
+        getattr(self.model, "train" if _is_training else "eval")()
+        utils.set_requires_grad(self.model, _requires_grad)
+        self.model.to(_device)
 
         return traced_model
 
