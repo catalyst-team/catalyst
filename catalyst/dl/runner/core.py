@@ -324,8 +324,6 @@ class Runner(_StageBasedRunner):
             device (Device): Torch device or a string
             predict_params (dict): additional parameters for model forward
         """
-        assert logdir is not None, "`logdir` parameter should be specified"
-
         if batch is None:
             if loader is None:
                 raise ValueError(
@@ -382,14 +380,15 @@ class Runner(_StageBasedRunner):
             predict_params=predict_params,
         )
 
-        utils.save_traced_model(
-            model=traced_model,
-            logdir=logdir,
-            method_name=method_name,
-            mode=mode,
-            requires_grad=requires_grad,
-            opt_level=opt_level,
-        )
+        if logdir is not None:
+            utils.save_traced_model(
+                model=traced_model,
+                logdir=logdir,
+                method_name=method_name,
+                mode=mode,
+                requires_grad=requires_grad,
+                opt_level=opt_level,
+            )
 
         # Restore previous state of the model
         getattr(model, "train" if _is_training else "eval")()
