@@ -355,8 +355,11 @@ class Runner(_StageBasedRunner):
             device = self.device
 
         # Dumping previous state of the model, we will need it to restore
-        _device, _is_training, _requires_grad = \
-            self.device, model.training, utils.get_requires_grad(model)
+        _device, _is_training, _requires_grad = (
+            self.device,
+            model.training,
+            utils.get_requires_grad(model),
+        )
 
         model.to(device)
 
@@ -386,7 +389,7 @@ class Runner(_StageBasedRunner):
             method_name=method_name,
             mode=mode,
             requires_grad=requires_grad,
-            opt_level=opt_level
+            opt_level=opt_level,
         )
 
         # Restore previous state of the model

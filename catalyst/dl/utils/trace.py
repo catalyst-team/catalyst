@@ -1,25 +1,32 @@
-from typing import TYPE_CHECKING, Any, Dict, List, Callable, Union  # isort:skip
+from typing import (
+    TYPE_CHECKING,
+    Any,
+    Dict,
+    List,
+    Callable,
+    Union,
+)  # isort:skip
 import inspect
 from pathlib import Path
 
 from torch import nn
-from torch.jit import ScriptModule, trace, load, save
+from torch.jit import load, save, ScriptModule, trace
 
 from catalyst.dl import Experiment, State
 from catalyst.tools.typing import Device, Model
 from catalyst.utils import (
-    assert_fp16_available,
-    get_nn_from_ddp_module,
-    set_requires_grad,
-    get_requires_grad,
-    get_fn_argsnames,
     any2device,
-    import_experiment_and_runner,
+    assert_fp16_available,
+    get_fn_argsnames,
     get_native_batch_from_loaders,
-    unpack_checkpoint,
-    pack_checkpoint,
+    get_nn_from_ddp_module,
+    get_requires_grad,
+    import_experiment_and_runner,
     load_checkpoint,
     load_config,
+    pack_checkpoint,
+    set_requires_grad,
+    unpack_checkpoint,
 )
 
 if TYPE_CHECKING:
@@ -27,8 +34,7 @@ if TYPE_CHECKING:
 
 
 def _get_input_argnames(
-        fn: Callable[..., Any],
-        exclude: List[str] = None
+    fn: Callable[..., Any], exclude: List[str] = None
 ) -> List[str]:
     """
     Function to get input argument names of function.
@@ -88,9 +94,7 @@ class _TracingModelWrapper(nn.Module):
             self.tracing_result = trace(method_model, method_input)
         except Exception:
             # for backward compatibility
-            self.tracing_result = trace(
-                method_model, *args, **kwargs
-            )
+            self.tracing_result = trace(method_model, *args, **kwargs)
         output = self.model.forward(*args, **kwargs)
 
         return output
@@ -210,8 +214,7 @@ def trace_model_from_checkpoint(
     if loader is None:
         loader = 0
     batch = get_native_batch_from_loaders(
-        loaders=experiment.get_loaders(stage),
-        loader=loader
+        loaders=experiment.get_loaders(stage), loader=loader
     )
 
     # function to run prediction on batch
@@ -282,8 +285,11 @@ def trace_model_from_state(
     batch = any2device({name: batch[name] for name in method_argnames}, device)
 
     # Dumping previous state of the model, we will need it to restore
-    _device, _is_training, _requires_grad = \
-        state.device, model.training, get_requires_grad(model)
+    _device, _is_training, _requires_grad = (
+        state.device,
+        model.training,
+        get_requires_grad(model),
+    )
 
     model.to(device)
 
@@ -390,8 +396,10 @@ def save_traced_model(
         output: Path = out_dir
         if output is None:
             if logdir is None:
-                raise ValueError("One of `logdir`, `out_dir` or `out_model` "
-                                 "should be specified")
+                raise ValueError(
+                    "One of `logdir`, `out_dir` or `out_model` "
+                    "should be specified"
+                )
             output: Path = Path(logdir) / "trace"
 
         output.mkdir(exist_ok=True, parents=True)

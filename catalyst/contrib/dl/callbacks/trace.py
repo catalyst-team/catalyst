@@ -1,14 +1,10 @@
 from typing import Union  # isort:skip
 
+from pathlib import Path
 import warnings
 
-from pathlib import Path
-
-from catalyst.dl import Callback, CallbackOrder, CallbackNode, State
-from catalyst.dl.utils import (
-    trace_model_from_state,
-    save_traced_model,
-)
+from catalyst.dl import Callback, CallbackNode, CallbackOrder, State
+from catalyst.dl.utils import save_traced_model, trace_model_from_state
 
 
 class TracerCallback(Callback):
@@ -17,18 +13,18 @@ class TracerCallback(Callback):
     """
 
     def __init__(
-            self,
-            metric: str = "loss",
-            minimize: bool = True,
-            min_delta: float = 1e-6,
-            mode: str = "best",
-            do_once: bool = True,
-            method_name: str = "forward",
-            requires_grad: bool = False,
-            opt_level: str = None,
-            trace_mode: str = "eval",
-            out_dir: Union[str, Path] = None,
-            out_model: Union[str, Path] = None,
+        self,
+        metric: str = "loss",
+        minimize: bool = True,
+        min_delta: float = 1e-6,
+        mode: str = "best",
+        do_once: bool = True,
+        method_name: str = "forward",
+        requires_grad: bool = False,
+        opt_level: str = None,
+        trace_mode: str = "eval",
+        out_dir: Union[str, Path] = None,
+        out_model: Union[str, Path] = None,
     ):
         """
         Args:
@@ -53,12 +49,13 @@ class TracerCallback(Callback):
         if trace_mode not in ["train", "eval"]:
             raise ValueError(
                 f"Unknown `trace_mode` '{trace_mode}'. "
-                f"Must be 'eval' or 'train'")
+                f"Must be 'eval' or 'train'"
+            )
 
         if mode not in ["best", "last"]:
             raise ValueError(
-                f"Unknown `mode` '{mode}'. "
-                f"Must be 'best' or 'last'")
+                f"Unknown `mode` '{mode}'. " f"Must be 'best' or 'last'"
+            )
 
         if opt_level is not None:
             warnings.warn(
@@ -162,6 +159,4 @@ class TracerCallback(Callback):
             self._trace(state)
 
 
-__all__ = [
-    "TracerCallback"
-]
+__all__ = ["TracerCallback"]

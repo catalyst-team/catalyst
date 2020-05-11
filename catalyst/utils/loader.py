@@ -3,10 +3,7 @@ from typing import Dict, Union  # isort:skip
 from torch.utils.data import DataLoader
 
 
-def get_native_batch_from_loader(
-        loader: DataLoader,
-        batch_index: int = 0
-):
+def get_native_batch_from_loader(loader: DataLoader, batch_index: int = 0):
     """
     Returns a batch from experiment loader
 
@@ -20,9 +17,9 @@ def get_native_batch_from_loader(
 
 
 def get_native_batch_from_loaders(
-        loaders: Dict[str, DataLoader],
-        loader: Union[str, int] = 0,
-        batch_index: int = 0
+    loaders: Dict[str, DataLoader],
+    loader: Union[str, int] = 0,
+    batch_index: int = 0,
 ):
     """
     Returns a batch from experiment loaders by its index or name.
@@ -40,8 +37,7 @@ def get_native_batch_from_loaders(
         raise TypeError("Loader parameter must be a string or an integer")
 
     return get_native_batch_from_loader(
-        loader=_loader,
-        batch_index=batch_index
+        loader=_loader, batch_index=batch_index
     )
 
 

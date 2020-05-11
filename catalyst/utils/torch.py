@@ -243,8 +243,7 @@ def get_requires_grad(model: Model):
 
 
 def set_requires_grad(
-        model: Model,
-        requires_grad: Union[bool, Dict[str, bool]]
+    model: Model, requires_grad: Union[bool, Dict[str, bool]]
 ):
     """Sets the ``requires_grad`` value for all model parameters.
 
@@ -262,8 +261,9 @@ def set_requires_grad(
     """
     if isinstance(requires_grad, dict):
         for name, param in model.named_parameters():
-            assert name in requires_grad, \
-                f"Parameter `{name}` does not exist in requires_grad"
+            assert (
+                name in requires_grad
+            ), f"Parameter `{name}` does not exist in requires_grad"
             param.requires_grad = requires_grad[name]
     else:
         requires_grad = bool(requires_grad)

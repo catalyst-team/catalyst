@@ -3,10 +3,7 @@ import argparse
 from argparse import ArgumentParser
 from pathlib import Path
 
-from catalyst.dl.utils import (
-    trace_model_from_checkpoint,
-    save_traced_model,
-)
+from catalyst.dl.utils import save_traced_model, trace_model_from_checkpoint
 
 
 def build_args(parser: ArgumentParser):
@@ -114,7 +111,7 @@ def main(args, _):
         opt_level=opt_level,
         out_model=args.out_model,
         out_dir=args.out_dir,
-        checkpoint_name=checkpoint_name
+        checkpoint_name=checkpoint_name,
     )
 
 
