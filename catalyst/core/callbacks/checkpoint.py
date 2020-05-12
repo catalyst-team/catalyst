@@ -149,7 +149,7 @@ def _load_states_from_file_map(
             Expected that values will be states (``'best'``,
             ``"best_full"``, ``"last"``, ``"last_full"``) or
             path to checkpoint.
-            NOTE: for successful load criterion, optimizer,
+            **NOTE:** for successful load criterion, optimizer,
             scheduler states required a full checkpoint.
 
     Raises:
@@ -246,50 +246,64 @@ class CheckpointCallback(BaseCheckpointCallback):
             load_on_stage_start (str or Dict[str, str]): load specified
                 state/model at stage start.
 
-                If passed string then will be performed initialization from
+                If passed **string** then will be performed initialization from
                 specified state (``best``/``best_full``/``last``/``last_full``)
                 or checkpoint file.
 
-                If passed dict then will be performed initialization only
+                If passed **dict** then will be performed initialization only
                 for specified parts - model, criterion, optimizer, scheduler.
-                Criterion, optimizer, scheduler are optional keys.
+
                 Dictionary should look like:
 
-                {"model": <best/best_full/last/last_full/checkpoint path>,
-                 "criterion": <best/best_full/last/last_full/checkpoint path>,
-                 "optimizer": <best/best_full/last/last_full/checkpoint path>,
-                 "scheduler": <best/best_full/last/last_full/checkpoint path>}
+                .. code-block:: python
 
-                All other keys will be ignored.
+                    {
+                        "model": "model state",
+                        "criterion": "criterion state",
+                        "optimizer": "optimizer state",
+                        "scheduler": "scheduler state",
+                    }
 
-                NOTE: For loading criterion, optimizer, scheduler
-                required full checkpoint.
-                If specified not only model then model will be loaded
-                from full checkpoint.
+                where instead of state you should use
+                ``"best"``/``"best_full"``/``"last"``/``"last_full"`` or
+                path to checkpoint. All other keys will be ignored.
 
-                For the first initialization please use ``resume`` and
+                If ``None`` then no action is required at stage start and:
+
+                - Config API - will be used best state of model
+                - Notebook API - no action will be performed (will be
+                  used the last state)
+
+                For initialization of a first stage please use ``resume`` and
                 ``resume_dir`` arguments.
 
-                Loading will be performed on all stages except first.
-                If None then no action is required at stage start and:
-                - Config API: will be used best state of model
-                - Notebook API: no action will be performed
-                (will be used last state)
+                **NOTE:** Loading will be performed on all stages except first.
+
+                **NOTE:** Criterion, optimizer and scheduler are optional keys
+                and should be loaded from full checkpoint.
+
+                Model state can be loaded from any checkpoint.
+
+                When dict contains keys for model and some other part
+                (for example ``{"model": "last", "optimizer": "last"}``)
+                and they match in prefix (``"best"`` and
+                ``"best_full"``) then will be loaded full checkpoint
+                because it contains required states.
             load_on_stage_end (str or Dict[str, str]): load specified
                 state/model at stage end.
 
-                If passed string then will be performed initialization from
+                If passed **string** then will be performed initialization from
                 specified state (``best``/``best_full``/``last``/``last_full``)
                 or checkpoint file.
 
-                If passed dict then will be performed initialization only
+                If passed **dict** then will be performed initialization only
                 for specified parts - model, criterion, optimizer, scheduler.
                 Logic for dict is the same as for ``load_on_stage_start``.
 
-                Loading will be performed allways at stage end.
+                If ``None`` then no action is required at stage end
+                and will be used the last state.
 
-                If None then no action is required at stage end
-                and will be used last state.
+                **NOTE:** Loading will be performed always at stage end.
         """
         super().__init__(metrics_filename)
         _possible_states = {
@@ -499,7 +513,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         """
         Setup model for stage.
 
-        NOTE: If CheckpointCallback initialized with ``resume``
+        **NOTE:** If CheckpointCallback initialized with ``resume``
         (as path to checkpoint file) or ``resume`` (as filename)
         and ``resume_dir`` (as directory with file)
         then will be performed loading checkpoint.
@@ -600,9 +614,10 @@ class CheckpointCallback(BaseCheckpointCallback):
                 ]
             )
         print(log_message)
-
+        _not_required_load_states = {"last", "last_full"}
         if (
-            self.load_on_stage_end in ["best", "best_full"]
+            isinstance(self.load_on_stage_end, str)
+            and self.load_on_stage_end not in _not_required_load_states
             and self.save_n_best > 0
         ):
             _load_full = (
@@ -613,6 +628,13 @@ class CheckpointCallback(BaseCheckpointCallback):
             self._load_state(
                 state, mapping=self.load_on_stage_end, load_full=_load_full,
             )
+        elif isinstance(self.load_on_stage_end, dict) and self.save_n_best > 0:
+            to_load = {
+                k: v
+                for k, v in self.load_on_stage_end.items()
+                if v not in _not_required_load_states
+            }
+            self._load_state(state, mapping=to_load)
 
 
 class IterationCheckpointCallback(BaseCheckpointCallback):
