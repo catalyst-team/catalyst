@@ -123,6 +123,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 
 cat ${EXP_OUTPUT}
 check_line_counts ${EXP_OUTPUT} "=> Loading" 2
+check_line_counts ${EXP_OUTPUT} "=> Loading .*best\.pth" 2
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -177,6 +178,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 
 cat ${EXP_OUTPUT}
 check_line_counts ${EXP_OUTPUT} "=> Loading" 2
+check_line_counts ${EXP_OUTPUT} "=> Loading .*best\.pth" 2
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -219,6 +221,8 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 
 ################################  pipeline 06  ################################
 # checking with zepo checkpoints and one stage
+# spoiler - no loading at the end of a stage, only load last state at stage start
+# this means that will be default behaviour - loaded best state
 LOG_MSG='pipeline 06'
 echo ${LOG_MSG}
 
@@ -230,6 +234,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 
 cat ${EXP_OUTPUT}
 check_line_counts ${EXP_OUTPUT} "=> Loading" 2
+check_line_counts ${EXP_OUTPUT} "=> Loading .*best\.pth" 2
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -280,7 +285,9 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --logdir=${LOGDIR} > ${EXP_OUTPUT}
 
 cat ${EXP_OUTPUT}
-check_line_counts ${EXP_OUTPUT} "=> Loading" 2
+check_line_counts ${EXP_OUTPUT} "=> Loading" 5
+check_line_counts ${EXP_OUTPUT} "=> Loading .*best\.pth" 2
+check_line_counts ${EXP_OUTPUT} "=> Loading .*best_full\.pth" 3
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -310,6 +317,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 
 cat ${EXP_OUTPUT}
 check_line_counts ${EXP_OUTPUT} "=> Loading" 2
+check_line_counts ${EXP_OUTPUT} "=> Loading .*best\.pth" 2
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -338,6 +346,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 
 cat ${EXP_OUTPUT}
 check_line_counts ${EXP_OUTPUT} "=> Loading" 2
+check_line_counts ${EXP_OUTPUT} "=> Loading .*best\.pth" 2
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -366,6 +375,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 
 cat ${EXP_OUTPUT}
 check_line_counts ${EXP_OUTPUT} "=> Loading" 1
+check_line_counts ${EXP_OUTPUT} "=> Loading .*best\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -499,6 +509,8 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 
 cat ${EXP_OUTPUT}
 check_line_counts ${EXP_OUTPUT} "=> Loading" 2
+check_line_counts ${EXP_OUTPUT} "=> Loading .*last\.pth" 1
+check_line_counts ${EXP_OUTPUT} "=> Loading .*best\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -526,6 +538,8 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 
 cat ${EXP_OUTPUT}
 check_line_counts ${EXP_OUTPUT} "=> Loading" 4
+check_line_counts ${EXP_OUTPUT} "=> Loading .*best_full\.pth" 2
+check_line_counts ${EXP_OUTPUT} "=> Loading .*last_full\.pth" 2
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -555,6 +569,8 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 
 cat ${EXP_OUTPUT}
 check_line_counts ${EXP_OUTPUT} "=> Loading" 4
+check_line_counts ${EXP_OUTPUT} "=> Loading .*best_full\.pth" 2
+check_line_counts ${EXP_OUTPUT} "=> Loading .*last_full\.pth" 2
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -620,6 +636,7 @@ runner.train(
 
 cat ${EXP_OUTPUT}
 check_line_counts ${EXP_OUTPUT} "=> Loading" 1
+check_line_counts ${EXP_OUTPUT} "=> Loading .*best\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -707,7 +724,9 @@ runner.train(
 " > ${EXP_OUTPUT}
 
 cat ${EXP_OUTPUT}
-check_line_counts ${EXP_OUTPUT} "=> Loading" 2
+check_line_counts ${EXP_OUTPUT} "=> Loading" 3
+check_line_counts ${EXP_OUTPUT} "=> Loading .*best_full\.pth" 2
+check_line_counts ${EXP_OUTPUT} "=> Loading .*last_full\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}

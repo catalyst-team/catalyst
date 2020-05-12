@@ -54,7 +54,7 @@ stages:
       saver:
         callback: CheckpointCallback
         save_n_best: &nbest 3
-        load_on_stage_end: &end_load last_full
+        load_on_stage_end: &end_load best_full
 
   stage2:
     state_params:
