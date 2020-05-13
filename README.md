@@ -48,9 +48,8 @@ import os
 import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from torchvision.datasets import MNIST
-from torchvision.transforms import ToTensor
 from catalyst import dl
+from catalyst.contrib.data.dataset import MNIST, ToTensor
 from catalyst.utils import metrics
 
 model = torch.nn.Linear(28 * 28, 10)
@@ -212,17 +211,16 @@ import os
 import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from torchvision.datasets import MNIST
-from torchvision import transforms
 from catalyst import dl
+from catalyst.contrib.data.dataset import MNIST, ToTensor
 from catalyst.utils import metrics
 
 model = torch.nn.Linear(28 * 28, 10)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
 loaders = {
-    "train": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=transforms.ToTensor()), batch_size=32),
-    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=transforms.ToTensor()), batch_size=32),
+    "train": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
 }
 
 class CustomRunner(dl.Runner):
@@ -266,9 +264,8 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from torchvision.datasets import MNIST
-from torchvision import transforms
 from catalyst import dl
+from catalyst.contrib.data.dataset import MNIST, ToTensor
 from catalyst.utils import metrics
 
 class ClassifyAE(nn.Module):
@@ -289,8 +286,8 @@ model = ClassifyAE(28 * 28, 128, 10)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
 loaders = {
-    "train": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=transforms.ToTensor()), batch_size=32),
-    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=transforms.ToTensor()), batch_size=32),
+    "train": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
 }
 
 class CustomRunner(dl.Runner):
@@ -340,9 +337,8 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from torchvision.datasets import MNIST
-from torchvision import transforms
 from catalyst import dl
+from catalyst.contrib.data.dataset import MNIST, ToTensor
 from catalyst.utils import metrics
 
 LOG_SCALE_MAX = 2
@@ -385,8 +381,8 @@ model = ClassifyVAE(28 * 28, 64, 10)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
 loaders = {
-    "train": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=transforms.ToTensor()), batch_size=32),
-    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=transforms.ToTensor()), batch_size=32),
+    "train": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
 }
 
 class CustomRunner(dl.Runner):
@@ -439,9 +435,8 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from torchvision.datasets import MNIST
-from torchvision import transforms
 from catalyst import dl
+from catalyst.contrib.data.dataset import MNIST, ToTensor
 from catalyst.utils import metrics
 
 class ClassifyUnet(nn.Module):
@@ -463,8 +458,8 @@ model = ClassifyUnet(1, 28, 10)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
 loaders = {
-    "train": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=transforms.ToTensor()), batch_size=32),
-    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=transforms.ToTensor()), batch_size=32),
+    "train": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
 }
 
 class CustomRunner(dl.Runner):
@@ -515,10 +510,9 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from torchvision.datasets import MNIST
-from torchvision import transforms
 from catalyst import dl
-from catalyst.contrib.nn.modules import GlobalMaxPool2d, Flatten, Lambda
+from catalyst.contrib.data.dataset import MNIST, ToTensor
+from catalyst.contrib.nn.modules import Flatten, GlobalMaxPool2d, Lambda
 
 latent_dim = 128
 generator = nn.Sequential(
@@ -549,7 +543,7 @@ optimizer = {
     "discriminator": torch.optim.Adam(discriminator.parameters(), lr=0.0003, betas=(0.5, 0.999)),
 }
 loaders = {
-    "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=transforms.ToTensor()), batch_size=32),
+    "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
 }
 
 class CustomRunner(dl.Runner):
@@ -673,9 +667,8 @@ import os
 import torch
 from torch import nn
 from torch.nn import functional as F
-from torchvision.datasets import MNIST
-from torchvision import transforms
 from catalyst import dl, utils
+from catalyst.contrib.data.dataset import MNIST, ToTensor
 from catalyst.utils import metrics
 
 class ClassifyAE(nn.Module):
@@ -718,7 +711,7 @@ class CustomRunner(dl.Runner):
             self.state.optimizer.zero_grad()
 
 def datasets_fn():
-    dataset = MNIST(os.getcwd(), train=False, download=True, transform=transforms.ToTensor())
+    dataset = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
     return {"train": dataset, "valid": dataset}
 
 def train():
@@ -892,16 +885,16 @@ HUGE THANK YOU to:
 - [David Kuryakin](https://www.linkedin.com/in/dkuryakin/) ([dkuryakin](https://github.com/dkuryakin)) for ReAction design
 - [Evgeny Semyonov](https://www.linkedin.com/in/ewan-semyonov/) ([lightforever](https://github.com/lightforever)) for MLComp creation
 - [Andrey Zharkov](https://www.linkedin.com/in/andrey-zharkov-8554a1153/) ([asmekal](https://github.com/asmekal)) for Catalyst.GAN initiative
-- [Roman Tezikov](https://www.linkedin.com/in/roman-tezikov/) ([tezromach](https://github.com/TezRomacH)) for great Catalyst tutorials
 - [Aleksey Grinchuk](https://www.facebook.com/grinchuk.alexey) ([alexgrinch](https://github.com/AlexGrinch)) and [Valentin Khrulkov](https://www.linkedin.com/in/vkhrulkov/) ([khrulkovv](https://github.com/KhrulkovV)) for many RL algorithms implemented together
 - [Alex Gaziev](https://www.linkedin.com/in/alexgaziev/) ([gazay](https://github.com/gazay)) for a bunch of Config API improvements
-- [Yury Kashnitsky](https://www.linkedin.com/in/kashnitskiy/) ([yorko](https://github.com/Yorko)) for Catalyst.NLP movement
 - [Eugene Khvedchenya](https://www.linkedin.com/in/cvtalks/) ([bloodaxe](https://github.com/BloodAxe)) for Pytorch-toolbelt library
+- [Yury Kashnitsky](https://www.linkedin.com/in/kashnitskiy/) ([yorko](https://github.com/Yorko)) for Catalyst.NLP movement
+- [Vladimir Iglovikov](https://www.linkedin.com/in/iglovikov/) ([ternaus](https://github.com/ternaus)) for countless pieces of useful advices
 - [Nguyen Xuan Bac](https://www.linkedin.com/in/bac-nguyen-xuan-70340b66/) ([ngxbac](https://github.com/ngxbac)) and [Andrey Lukyanenko](https://www.linkedin.com/in/andlukyane/) ([erlemar](https://github.com/erlemar)) for many Kaggle Catalyst-based solutions
+- [Roman Tezikov](https://www.linkedin.com/in/roman-tezikov/) ([tezromach](https://github.com/TezRomacH)) for great Catalyst tutorials
 - [Vsevolod Poletaev](https://www.linkedin.com/in/vsevolod-poletaev-468071165/) ([hexfaker](https://github.com/hexfaker)) for Experiment idea and PoC
 - [Aleksandr Belskikh](https://www.linkedin.com/in/belskikh/) ([belskikh](https://github.com/belskikh)) for Callbacks-based system inspiration
 - [Artur Kuzin](https://www.linkedin.com/in/n01z3/) ([n01z3](https://github.com/n01z3)) for multi-stage pipelines proposal
-- [Vladimir Iglovikov](https://www.linkedin.com/in/iglovikov/) ([ternaus](https://github.com/ternaus)) for countless pieces of useful advices
 - and [Ivan Stepanenko](https://www.facebook.com/istepanenko) for awesome Catalyst.Ecosystem design
 
 

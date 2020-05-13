@@ -32,7 +32,7 @@ from catalyst.dl.registry import (
     SCHEDULERS,
     TRANSFORMS,
 )
-from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
+from catalyst.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
 class ConfigExperiment(_StageBasedExperiment):

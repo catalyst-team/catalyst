@@ -6,12 +6,12 @@ import torch
 from torch import nn
 from torch.jit import ScriptModule
 
+from catalyst.tools.typing import Device, Model
 from catalyst.utils import (
     assert_fp16_available,
     get_fn_argsnames,
     set_requires_grad,
 )
-from catalyst.utils.tools.typing import Device, Model
 
 if TYPE_CHECKING:
     from catalyst.dl import Runner  # noqa: F401

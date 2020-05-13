@@ -7,10 +7,9 @@ import torch
 import torch.nn as nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
-from torchvision.datasets import MNIST
-import torchvision.transforms as transforms
 
 from catalyst.contrib import registry
+from catalyst.contrib.data.dataset import MNIST, ToTensor
 from catalyst.contrib.dl.callbacks.optimizer import SaveModelGradsCallback
 from catalyst.core import (
     Callback,
@@ -82,7 +81,7 @@ class _SimpleNet(nn.Module):
 
 
 def _get_loaders(*, root: str, batch_size: int = 1, num_workers: int = 1):
-    data_transform = transforms.ToTensor()
+    data_transform = ToTensor()
 
     trainset = MNIST(
         root=root, train=True, download=True, transform=data_transform

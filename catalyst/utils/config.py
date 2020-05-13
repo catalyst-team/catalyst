@@ -48,7 +48,8 @@ def load_config(
     data_format: str = None,
     encoding: str = "utf-8",
 ) -> Union[Dict, List]:
-    """Loads config by giving path. Supports YAML and JSON files.
+    """
+    Loads config by giving path. Supports YAML and JSON files.
 
     Examples:
         >>> load(path="./config.yml", ordered=True)
@@ -65,6 +66,11 @@ def load_config(
     Raises:
         Exception: if path ``path`` doesn't exists
             or file format is not YAML or JSON
+
+    Adapted from
+    https://github.com/TezRomacH/safitty/blob/v1.2.0/safitty/parser.py#L63
+    which was adapted from
+    https://github.com/catalyst-team/catalyst/blob/v19.03/catalyst/utils/config.py#L10
     """
     path = Path(path)
 
@@ -110,7 +116,8 @@ def save_config(
     ensure_ascii: bool = False,
     indent: int = 2,
 ) -> None:
-    """Saves config to file. Path must be either YAML or JSON.
+    """
+    Saves config to file. Path must be either YAML or JSON.
 
     Args:
         config (Union[Dict, List]): config to save
@@ -120,6 +127,11 @@ def save_config(
         ensure_ascii (bool): Used for JSON, if True non-ASCII
         characters are escaped in JSON strings.
         indent (int): Used for JSON
+
+    Adapted from
+    https://github.com/TezRomacH/safitty/blob/v1.2.0/safitty/parser.py#L110
+    which was adapted from
+    https://github.com/catalyst-team/catalyst/blob/v19.03/catalyst/utils/config.py#L38
     """
     path = Path(path)
 

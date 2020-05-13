@@ -59,7 +59,7 @@ function check_line_counts {
 }
 
 ################################  pipeline 00  ################################
-# checking dafult parameters of checkpoint and one stage
+# checking default parameters of checkpoint and one stage
 LOG_MSG='pipeline 00'
 echo ${LOG_MSG}
 
@@ -304,7 +304,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 
 
 ################################  pipeline 09  ################################
-# checking with one checkpoint and two stages 
+# checking with one checkpoint and two stages
 # with different ''load_on_stage_end'' options
 LOG_MSG='pipeline 09'
 echo ${LOG_MSG}
@@ -333,7 +333,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 
 
 ################################  pipeline 10  ################################
-# checking with three checkpoints and two stages 
+# checking with three checkpoints and two stages
 # with different ''load_on_stage_end'' options
 LOG_MSG='pipeline 10'
 echo ${LOG_MSG}

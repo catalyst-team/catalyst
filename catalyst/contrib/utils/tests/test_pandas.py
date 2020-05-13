@@ -1,6 +1,6 @@
 import pytest
 
-from catalyst.utils import pandas
+from catalyst.contrib.utils import pandas
 
 
 def test_folds_to_list():

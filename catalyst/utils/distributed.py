@@ -14,7 +14,7 @@ from torch import nn
 import torch.distributed
 
 from catalyst import __version__
-from catalyst.utils.tools.typing import (
+from catalyst.tools.typing import (
     Criterion,
     Device,
     Model,

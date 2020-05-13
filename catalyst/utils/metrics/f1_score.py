@@ -3,7 +3,7 @@ F1 score.
 """
 import torch
 
-from catalyst.utils import get_activation_fn
+from catalyst.utils.torch import get_activation_fn
 
 
 def f1_score(

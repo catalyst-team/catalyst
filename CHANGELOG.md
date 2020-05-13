@@ -8,7 +8,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- `CheckpointCallback`: new argument `load_on_stage_start` which accepts `str` and `Dict[str, str]` ([#797](https://github.com/catalyst-team/catalyst/pull/797))
+
+- Added Circle loss implementation ([#802](https://github.com/catalyst-team/catalyst/pull/802))
+- `CheckpointCallback`: new argument `load_on_stage_start` which accepts `str` and `Dict[str, str]` ([#797](https://github.com/
+
 
 ### Changed
 
@@ -22,7 +25,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - 
 
-## [20.05] - YYYY-MM-DD
+## [20.05] - 2020-05-07
 
 ### Added
 
@@ -46,6 +49,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Github actions CI was updated ([#754](https://github.com/catalyst-team/catalyst/pull/754))
 - Changed default `num_epochs` to 1 for `State` ([#756](https://github.com/catalyst-team/catalyst/pull/756))
 - Changed `state.batch_in`/`state.batch_out` to `state.input`/`state.output` ([#763](https://github.com/catalyst-team/catalyst/pull/763))
+- Moved `torchvision` dependency from `catalyst` to `catalyst[cv]` ([#738](https://github.com/catalyst-team/catalyst/pull/738)))
 
 ### Removed
 
@@ -64,7 +68,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Fixed Dockerfile dependency ([#780](https://github.com/catalyst-team/catalyst/pull/780))
 
 
-## [20.04] - 2020-04-21
+## [20.04] - 2020-04-06
 
 ### Added
 

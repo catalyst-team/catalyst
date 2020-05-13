@@ -37,6 +37,11 @@ Criterion
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: catalyst.contrib.nn.criterion.circle
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 .. automodule:: catalyst.contrib.nn.criterion.dice
     :members:
     :undoc-members:
@@ -256,13 +261,6 @@ Plotly
 Serialization
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.utils.serialization
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Text
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.text
     :members:
     :undoc-members:
     :show-inheritance:

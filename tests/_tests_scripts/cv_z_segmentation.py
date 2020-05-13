@@ -40,8 +40,7 @@ valid_data = data[:2]
 import collections
 import numpy as np
 import torch
-import torchvision
-import torchvision.transforms as transforms
+from catalyst.contrib.data.dataset import Compose, Normalize
 from catalyst.data import Augmentor
 from catalyst.dl import utils
 from catalyst.contrib.nn.criterion import (
@@ -83,7 +82,7 @@ def get_loaders(transform):
     return loaders
 
 
-data_transform = transforms.Compose(
+data_transform = Compose(
     [
         Augmentor(
             dict_key="features",
@@ -91,10 +90,7 @@ data_transform = transforms.Compose(
                 x.copy().astype(np.float32) / 255.0
             ).unsqueeze_(0),
         ),
-        Augmentor(
-            dict_key="features",
-            augment_fn=transforms.Normalize((0.5,), (0.5,)),
-        ),
+        Augmentor(dict_key="features", augment_fn=Normalize((0.5,), (0.5,)),),
         Augmentor(
             dict_key="targets",
             augment_fn=lambda x: torch.from_numpy(
@@ -205,7 +201,7 @@ runner.train(
 # Multiclasses checks
 # lovasz LovaszLossMultiClass criterion
 
-data_transform = transforms.Compose(
+data_transform = Compose(
     [
         Augmentor(
             dict_key="features",
@@ -213,10 +209,7 @@ data_transform = transforms.Compose(
                 x.copy().astype(np.float32) / 255.0
             ).unsqueeze_(0),
         ),
-        Augmentor(
-            dict_key="features",
-            augment_fn=transforms.Normalize((0.5,), (0.5,)),
-        ),
+        Augmentor(dict_key="features", augment_fn=Normalize((0.5,), (0.5,)),),
         Augmentor(
             dict_key="targets",
             augment_fn=lambda x: torch.from_numpy(
@@ -251,7 +244,7 @@ def transform_targets(x):
     return np.vstack([x1, x2]) / 255.0
 
 
-data_transform = transforms.Compose(
+data_transform = Compose(
     [
         Augmentor(
             dict_key="features",
@@ -259,10 +252,7 @@ data_transform = transforms.Compose(
                 x.copy().astype(np.float32) / 255.0
             ).unsqueeze_(0),
         ),
-        Augmentor(
-            dict_key="features",
-            augment_fn=transforms.Normalize((0.5,), (0.5,)),
-        ),
+        Augmentor(dict_key="features", augment_fn=Normalize((0.5,), (0.5,)),),
         Augmentor(
             dict_key="targets",
             augment_fn=lambda x: torch.from_numpy(transform_targets(x)),

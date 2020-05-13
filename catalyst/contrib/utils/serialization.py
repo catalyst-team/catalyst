@@ -1,21 +1,19 @@
 import logging
-import os
 import pickle
+
+from catalyst.tools import settings
 
 logger = logging.getLogger(__name__)
 
-try:
-    import pyarrow
-
-    PYARROW_ENABLED = True
-except ImportError as ex:
-    if os.environ.get("USE_PYARROW", "0") == "1":
+if settings.use_pyarrow:
+    try:
+        import pyarrow
+    except ImportError as ex:
         logger.warning(
             "pyarrow not available, switching to pickle. "
             "To install pyarrow, run `pip install pyarrow`."
         )
         raise ex
-    PYARROW_ENABLED = False
 
 
 def pyarrow_serialize(data):
@@ -66,7 +64,7 @@ def pickle_deserialize(data):
     return pickle.loads(data)
 
 
-if PYARROW_ENABLED:
+if settings.use_pyarrow:
     serialize = pyarrow_serialize
     deserialize = pyarrow_deserialize
 else:
