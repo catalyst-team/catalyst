@@ -277,9 +277,6 @@ class CheckpointCallback(BaseCheckpointCallback):
                 - Notebook API - no action will be performed (will be
                   used the last state)
 
-                For initialization of a first stage please use ``resume`` and
-                ``resume_dir`` arguments.
-
                 **NOTE:** Loading will be performed on all stages except first.
 
                 **NOTE:** Criterion, optimizer and scheduler are optional keys
