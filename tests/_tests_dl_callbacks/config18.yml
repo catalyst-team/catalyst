@@ -53,6 +53,6 @@ stages:
         reduced_metric: *reduced_metric
       saver:
         callback: CheckpointCallback
-        load_on_stage_start: 
+        load_on_stage_start:
           model: ./tests/logs/_tests_dl_callbacks/for_resume/checkpoints/best.pth
           optimizer: ./tests/logs/_tests_dl_callbacks/for_resume/checkpoints/last_full.pth
