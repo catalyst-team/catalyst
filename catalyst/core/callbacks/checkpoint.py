@@ -217,7 +217,8 @@ class BaseCheckpointCallback(Callback):
 
 class CheckpointCallback(BaseCheckpointCallback):
     """
-    Checkpoint callback to save/restore your model/criterion/optimizer/metrics.
+    Checkpoint callback to save/restore your
+    model/criterion/optimizer/scheduler.
     """
 
     def __init__(
@@ -253,22 +254,24 @@ class CheckpointCallback(BaseCheckpointCallback):
                 If passed **dict** then will be performed initialization only
                 for specified parts - model, criterion, optimizer, scheduler.
 
-                Dictionary should look like:
+                Example:
 
-                .. code-block:: python
+                    >>> # possible checkpoints to use:
+                    >>> #   "best"/"best_full"/"last"/"last_full"
+                    >>> #   or path to specific checkpoint
+                    >>> to_load = {
+                    >>>    "model": "path/to/checkpoint.pth",
+                    >>>    "criterion": "best",
+                    >>>    "optimizer": "last_full",
+                    >>>    "scheduler": "best_full",
+                    >>> }
+                    >>> CheckpointCallback(load_on_stage_start=to_load)
 
-                    {
-                        "model": "model state",
-                        "criterion": "criterion state",
-                        "optimizer": "optimizer state",
-                        "scheduler": "scheduler state",
-                    }
+                All other keys instead of ``"model"``, ``"criterion"``,
+                ``"optimizer"`` and ``"scheduler"`` will be ignored.
 
-                where instead of state you should use
-                ``"best"``/``"best_full"``/``"last"``/``"last_full"`` or
-                path to checkpoint. All other keys will be ignored.
-
-                If ``None`` then no action is required at stage start and:
+                If ``None`` or an empty dict (or dict without mentioned
+                above keys) then no action is required at stage start and:
 
                 - Config API - will be used best state of model
                 - Notebook API - no action will be performed (will be
