@@ -417,12 +417,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_params&quot;</span><span class="p">,</span> <span class="p">{})</span></div>
 
     <span class="k">def</span> <span class="nf">_preprocess_model_for_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">):</span>
-        <span class="n">stage_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
-        <span class="c1"># @TODO: remove to callbacks</span>
-        <span class="k">if</span> <span class="n">stage_index</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">checkpoint_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="si">}</span><span class="s2">/checkpoints/best.pth&quot;</span>
-            <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="p">)</span>
-            <span class="n">utils</span><span class="o">.</span><span class="n">unpack_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+        <span class="c1"># stage_index = self.stages.index(stage)</span>
         <span class="k">return</span> <span class="n">model</span>
 
     <span class="k">def</span> <span class="nf">_postprocess_model_for_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">):</span>
@@ -699,6 +694,26 @@
             <span class="k">return</span> <span class="n">ConfigExperiment</span><span class="o">.</span><span class="n">_get_callback</span><span class="p">(</span><span class="o">**</span><span class="n">wrapper_params</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">callback</span>
 
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_process_callbacks</span><span class="p">(</span><span class="n">callbacks</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Iterate over each of the callbacks and update</span>
+<span class="sd">        approptiate parameters required for success</span>
+<span class="sd">        run of config experiment.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            callbacks (OrderedDict): finalized order of callbacks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">callback</span><span class="o">.</span><span class="n">load_on_stage_start</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">callback</span><span class="o">.</span><span class="n">load_on_stage_start</span> <span class="o">=</span> <span class="s2">&quot;best&quot;</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="o">.</span><span class="n">load_on_stage_start</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="s2">&quot;model&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">callback</span><span class="o">.</span><span class="n">load_on_stage_start</span>
+                <span class="p">):</span>
+                    <span class="n">callback</span><span class="o">.</span><span class="n">load_on_stage_start</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;best&quot;</span>
+
 <div class="viewcode-block" id="ConfigExperiment.get_callbacks"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[Callback]&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the callbacks for a given stage.&quot;&quot;&quot;</span>
         <span class="n">callbacks_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
@@ -746,6 +761,8 @@
                     <span class="k">break</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">is_already_present</span><span class="p">:</span>
                 <span class="n">callbacks</span><span class="p">[</span><span class="n">callback_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">callback_fn</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_process_callbacks</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">callbacks</span></div></div>
 

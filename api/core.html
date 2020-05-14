@@ -1403,12 +1403,13 @@ Please use <cite>state.is_train_loader</cite> instead.</p>
 <span id="checkpoint"></span><h3><a class="toc-backref" href="#id8">Checkpoint</a><a class="headerlink" href="#module-catalyst.core.callbacks.checkpoint" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt id="catalyst.core.callbacks.checkpoint.CheckpointCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.checkpoint.</code><code class="sig-name descname">CheckpointCallback</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_n_best</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">resume</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resume_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">metrics_filename</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'_metrics.json'</span></em>, <em class="sig-param"><span class="n">load_on_stage_end</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.checkpoint.</code><code class="sig-name descname">CheckpointCallback</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_n_best</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">resume</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resume_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">metrics_filename</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'_metrics.json'</span></em>, <em class="sig-param"><span class="n">load_on_stage_start</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>Dict<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">load_on_stage_end</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>Dict<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.checkpoint.BaseCheckpointCallback</span></code></p>
-<p>Checkpoint callback to save/restore your model/criterion/optimizer/metrics.</p>
+<p>Checkpoint callback to save/restore your
+model/criterion/optimizer/scheduler.</p>
 <dl class="py method">
 <dt id="catalyst.core.callbacks.checkpoint.CheckpointCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_n_best</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">resume</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resume_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">metrics_filename</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'_metrics.json'</span></em>, <em class="sig-param"><span class="n">load_on_stage_end</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">save_n_best</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">resume</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">resume_dir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">metrics_filename</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'_metrics.json'</span></em>, <em class="sig-param"><span class="n">load_on_stage_start</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>Dict<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">load_on_stage_end</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>Dict<span class="p">[</span>str<span class="p">, </span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1422,15 +1423,59 @@ and initialize runner state</p></li>
 if specified in combination with <code class="docutils literal notranslate"><span class="pre">resume</span></code>
 than resume checkpoint will be loaded from <code class="docutils literal notranslate"><span class="pre">resume_dir</span></code></p></li>
 <li><p><strong>metrics_filename</strong> (<em>str</em>) – filename to save metrics
-in checkpoint folder. Must ends on <code class="docutils literal notranslate"><span class="pre">.json</span></code> or <code class="docutils literal notranslate"><span class="pre">.yml</span></code></p></li>
-<li><p><strong>load_on_stage_end</strong> (<em>str</em>) – name of the model to load
-at the end of the stage.
-You can use <code class="docutils literal notranslate"><span class="pre">best</span></code>, <code class="docutils literal notranslate"><span class="pre">best_full</span></code>
-to load the best model according to validation metrics,
-or <code class="docutils literal notranslate"><span class="pre">last</span></code> <code class="docutils literal notranslate"><span class="pre">last_full</span></code> (default behaviour)
-to use just the last one.
-If None then no action is required at stage end
-and will be used last state.</p></li>
+in checkpoint folder.
+Must ends on <code class="docutils literal notranslate"><span class="pre">.json</span></code> or <code class="docutils literal notranslate"><span class="pre">.yml</span></code></p></li>
+<li><p><strong>load_on_stage_start</strong> (<em>str</em><em> or </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – <p>load specified
+state/model at stage start.</p>
+<p>If passed <strong>string</strong> then will be performed initialization from
+specified state (<code class="docutils literal notranslate"><span class="pre">best</span></code>/<code class="docutils literal notranslate"><span class="pre">best_full</span></code>/<code class="docutils literal notranslate"><span class="pre">last</span></code>/<code class="docutils literal notranslate"><span class="pre">last_full</span></code>)
+or checkpoint file.</p>
+<p>If passed <strong>dict</strong> then will be performed initialization only
+for specified parts - model, criterion, optimizer, scheduler.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># possible checkpoints to use:</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#   &quot;best&quot;/&quot;best_full&quot;/&quot;last&quot;/&quot;last_full&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#   or path to specific checkpoint</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">to_load</span> <span class="o">=</span> <span class="p">{</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;path/to/checkpoint.pth&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="s2">&quot;criterion&quot;</span><span class="p">:</span> <span class="s2">&quot;best&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="s2">&quot;optimizer&quot;</span><span class="p">:</span> <span class="s2">&quot;last_full&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="s2">&quot;scheduler&quot;</span><span class="p">:</span> <span class="s2">&quot;best_full&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">CheckpointCallback</span><span class="p">(</span><span class="n">load_on_stage_start</span><span class="o">=</span><span class="n">to_load</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All other keys instead of <code class="docutils literal notranslate"><span class="pre">&quot;model&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;criterion&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;optimizer&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;scheduler&quot;</span></code> will be ignored.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">None</span></code> or an empty dict (or dict without mentioned
+above keys) then no action is required at stage start and:</p>
+<ul>
+<li><p>Config API - will be used best state of model</p></li>
+<li><p>Notebook API - no action will be performed (will be
+used the last state)</p></li>
+</ul>
+<p><strong>NOTE:</strong> Loading will be performed on all stages except first.</p>
+<p><strong>NOTE:</strong> Criterion, optimizer and scheduler are optional keys
+and should be loaded from full checkpoint.</p>
+<p>Model state can be loaded from any checkpoint.</p>
+<p>When dict contains keys for model and some other part
+(for example <code class="docutils literal notranslate"><span class="pre">{&quot;model&quot;:</span> <span class="pre">&quot;last&quot;,</span> <span class="pre">&quot;optimizer&quot;:</span> <span class="pre">&quot;last&quot;}</span></code>)
+and they match in prefix (<code class="docutils literal notranslate"><span class="pre">&quot;best&quot;</span></code> and
+<code class="docutils literal notranslate"><span class="pre">&quot;best_full&quot;</span></code>) then will be loaded full checkpoint
+because it contains required states.</p>
+</p></li>
+<li><p><strong>load_on_stage_end</strong> (<em>str</em><em> or </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – <p>load specified
+state/model at stage end.</p>
+<p>If passed <strong>string</strong> then will be performed initialization from
+specified state (<code class="docutils literal notranslate"><span class="pre">best</span></code>/<code class="docutils literal notranslate"><span class="pre">best_full</span></code>/<code class="docutils literal notranslate"><span class="pre">last</span></code>/<code class="docutils literal notranslate"><span class="pre">last_full</span></code>)
+or checkpoint file.</p>
+<p>If passed <strong>dict</strong> then will be performed initialization only
+for specified parts - model, criterion, optimizer, scheduler.
+Logic for dict is the same as for <code class="docutils literal notranslate"><span class="pre">load_on_stage_start</span></code>.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">None</span></code> then no action is required at stage end
+and will be used the last state.</p>
+<p><strong>NOTE:</strong> Loading will be performed always at stage end.</p>
+</p></li>
 </ul>
 </dd>
 </dl>
@@ -1475,7 +1520,7 @@ load model specified in <code class="docutils literal notranslate"><span class="
 <dt id="catalyst.core.callbacks.checkpoint.CheckpointCallback.on_stage_start">
 <code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Setup model for stage.</p>
-<p>NOTE: If CheckpointCallback initialized with <code class="docutils literal notranslate"><span class="pre">resume</span></code>
+<p><strong>NOTE:</strong> If CheckpointCallback initialized with <code class="docutils literal notranslate"><span class="pre">resume</span></code>
 (as path to checkpoint file) or <code class="docutils literal notranslate"><span class="pre">resume</span></code> (as filename)
 and <code class="docutils literal notranslate"><span class="pre">resume_dir</span></code> (as directory with file)
 then will be performed loading checkpoint.</p>
@@ -1526,11 +1571,9 @@ from last validation step.</p>
 <dd><p>Keep <code class="docutils literal notranslate"><span class="pre">save_n_best</span></code> checkpoints based on main metric.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>minimize_metric</strong> (<em>bool</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> then keep</p></li>
-<li><p><strong>checkpoints with the lowest/highest values</strong> (<em>save_n_best</em>) – </p></li>
-<li><p><strong>the main metric.</strong> (<em>of</em>) – </p></li>
-</ul>
+<dd class="field-odd"><p><strong>minimize_metric</strong> (<em>bool</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> then keep
+<code class="docutils literal notranslate"><span class="pre">save_n_best</span></code> checkpoints with the lowest/highest values
+of the main metric.</p>
 </dd>
 </dl>
 </dd></dl>
