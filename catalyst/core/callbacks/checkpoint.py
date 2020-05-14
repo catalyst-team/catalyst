@@ -27,11 +27,31 @@ def _pack_state(state: State):
     return checkpoint
 
 
-def _load_checkpoint(*, filename, state: State, load_full: bool = True):
-    if not os.path.isfile(filename):
-        raise Exception(f"No checkpoint found at {filename}")
+def _load_checkpoint(
+    *, filename, state: State, load_full: bool = True
+) -> None:
+    """
+    Load checkpoint from a file.
 
-    print(f"=> loading checkpoint {filename}")
+    Arguments:
+        filename (str): path to checkpoint
+        state (State): training state
+        load_full (bool): if true (default) then will be performed
+            loading states for criterion, optimizer and scheduler.
+            File should contain keys required for
+            loading model (``'model_state_dict'``),
+            criterion (``'criterion_state_dict'``) (only for full load),
+            optimizer (``'optimizer_state_dict'``),
+            scheduler (``'scheduler_state_dict'``).
+
+    Raises:
+        FileNotFoundError: when file specified in ``filename``
+            is not exist.
+    """
+    if not os.path.isfile(filename):
+        raise FileNotFoundError(f"No checkpoint found at {filename}!")
+
+    print(f"=> Loading checkpoint {filename}")
     checkpoint = utils.load_checkpoint(filename)
 
     if not state.stage_name.startswith("infer") and load_full:
@@ -63,6 +83,92 @@ def _load_checkpoint(*, filename, state: State, load_full: bool = True):
         )
 
         print(f"loaded model checkpoint {filename}")
+
+
+def _required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]:
+    """
+    Generate required files for load model, criterion,
+    scheduler, optimizer specified in ``load_map``.
+
+    Expected that ``load_map`` contains keys:
+    ``"model"``, ``"criterion"``, ``"optimizer"``, ``"scheduler"``.
+    Otherwise an empty dict will be generated.
+
+    Arguments:
+        logdir (str): directory with logs
+        load_map (Dict[str, str]): dict with specification
+            what should be loaded
+
+    Returns:
+        Mapping from file to parts required from this file.
+    """
+    if load_map is None:
+        return OrderedDict()
+
+    default_states = {"best", "best_full", "last", "last_full"}
+    required_full_checkpoint = ["criterion", "optimizer", "scheduler"]
+    experiment_parts = ["model"] + required_full_checkpoint
+
+    # keep required parts
+    experiment_parts = list(
+        filter(lambda part: part in load_map, experiment_parts)
+    )
+
+    # avoid unnecessary loading
+    if "model" in experiment_parts and len(experiment_parts) > 1:
+        required_full_checkpoint.append("model")
+
+    # mapping - <filename>: <list of parts to load from this file>
+    required_files = OrderedDict()
+    for part in experiment_parts:
+        fname = load_map[part]
+        required_full = fname.endswith("_full")
+        # specified default state
+        if fname in default_states:
+            if part in required_full_checkpoint and not required_full:
+                fname = fname + "_full"
+            fname = f"{logdir}/checkpoints/{fname}.pth"
+        # in other case specified path to checkpoint
+        required_files[fname] = required_files.get(fname, []) + [part]
+    return required_files
+
+
+def _load_states_from_file_map(
+    *, state: State, load_map: Dict[str, str]
+) -> None:
+    """
+    Load state of a model, criterion, optimizer, scheduler
+    from files specified in ``load_map``.
+
+    Arguments:
+        state (State): training state
+        load_map (Dict[str, str]): dict with mappings to load.
+            Expected keys - ``'model'``, ``'criterion'``
+            ``'optimizer'``, ``'scheduler'``, other keys will be
+            ignored.
+            Expected that values will be states (``'best'``,
+            ``"best_full"``, ``"last"``, ``"last_full"``) or
+            path to checkpoint.
+            **NOTE:** for successful load criterion, optimizer,
+            scheduler states required a full checkpoint.
+
+    Raises:
+        FileNotFoundError: when file/state specified in ``load_map``
+            is not exist.
+    """
+    required_files = _required_files(state.logdir, load_map)
+
+    for filename in required_files.keys():
+        if not os.path.isfile(filename):
+            raise FileNotFoundError(f"No checkpoint found at {filename}!")
+
+    # extracting parts from files
+    for filename, parts_to_load in required_files.items():
+        print(f"=> Loading {', '.join(parts_to_load)} from {filename}")
+        checkpoint = utils.load_checkpoint(filename)
+        to_unpack = {part: getattr(state, part) for part in parts_to_load}
+        utils.unpack_checkpoint(checkpoint, **to_unpack)
+        print(f"   loaded: {', '.join(parts_to_load)}")
 
 
 class BaseCheckpointCallback(Callback):
@@ -111,7 +217,8 @@ class BaseCheckpointCallback(Callback):
 
 class CheckpointCallback(BaseCheckpointCallback):
     """
-    Checkpoint callback to save/restore your model/criterion/optimizer/metrics.
+    Checkpoint callback to save/restore your
+    model/criterion/optimizer/scheduler.
     """
 
     def __init__(
@@ -120,7 +227,8 @@ class CheckpointCallback(BaseCheckpointCallback):
         resume: str = None,
         resume_dir: str = None,
         metrics_filename: str = "_metrics.json",
-        load_on_stage_end: str = None,
+        load_on_stage_start: Union[str, Dict[str, str]] = None,
+        load_on_stage_end: Union[str, Dict[str, str]] = None,
     ):
         """
         Args:
@@ -134,33 +242,91 @@ class CheckpointCallback(BaseCheckpointCallback):
                 if specified in combination with ``resume``
                 than resume checkpoint will be loaded from ``resume_dir``
             metrics_filename (str): filename to save metrics
-                in checkpoint folder. Must ends on ``.json`` or ``.yml``
-            load_on_stage_end (str): name of the model to load
-                at the end of the stage.
-                You can use ``best``, ``best_full``
-                to load the best model according to validation metrics,
-                or ``last`` ``last_full`` (default behaviour)
-                to use just the last one.
-                If None then no action is required at stage end
-                and will be used last state.
+                in checkpoint folder.
+                Must ends on ``.json`` or ``.yml``
+            load_on_stage_start (str or Dict[str, str]): load specified
+                state/model at stage start.
+
+                If passed **string** then will be performed initialization from
+                specified state (``best``/``best_full``/``last``/``last_full``)
+                or checkpoint file.
+
+                If passed **dict** then will be performed initialization only
+                for specified parts - model, criterion, optimizer, scheduler.
+
+                Example:
+
+                    >>> # possible checkpoints to use:
+                    >>> #   "best"/"best_full"/"last"/"last_full"
+                    >>> #   or path to specific checkpoint
+                    >>> to_load = {
+                    >>>    "model": "path/to/checkpoint.pth",
+                    >>>    "criterion": "best",
+                    >>>    "optimizer": "last_full",
+                    >>>    "scheduler": "best_full",
+                    >>> }
+                    >>> CheckpointCallback(load_on_stage_start=to_load)
+
+                All other keys instead of ``"model"``, ``"criterion"``,
+                ``"optimizer"`` and ``"scheduler"`` will be ignored.
+
+                If ``None`` or an empty dict (or dict without mentioned
+                above keys) then no action is required at stage start and:
+
+                - Config API - will be used best state of model
+                - Notebook API - no action will be performed (will be
+                  used the last state)
+
+                **NOTE:** Loading will be performed on all stages except first.
+
+                **NOTE:** Criterion, optimizer and scheduler are optional keys
+                and should be loaded from full checkpoint.
+
+                Model state can be loaded from any checkpoint.
+
+                When dict contains keys for model and some other part
+                (for example ``{"model": "last", "optimizer": "last"}``)
+                and they match in prefix (``"best"`` and
+                ``"best_full"``) then will be loaded full checkpoint
+                because it contains required states.
+            load_on_stage_end (str or Dict[str, str]): load specified
+                state/model at stage end.
+
+                If passed **string** then will be performed initialization from
+                specified state (``best``/``best_full``/``last``/``last_full``)
+                or checkpoint file.
+
+                If passed **dict** then will be performed initialization only
+                for specified parts - model, criterion, optimizer, scheduler.
+                Logic for dict is the same as for ``load_on_stage_start``.
+
+                If ``None`` then no action is required at stage end
+                and will be used the last state.
+
+                **NOTE:** Loading will be performed always at stage end.
         """
         super().__init__(metrics_filename)
-        assert load_on_stage_end in [
+        _possible_states = {
             None,
             "best",
             "last",
             "best_full",
             "last_full",
-        ]
+        }
         assert save_n_best >= 0
         if save_n_best == 0:
             assert load_on_stage_end in (None, "last", "last_full")
+        if isinstance(load_on_stage_start, str):
+            assert load_on_stage_start in _possible_states
+        if isinstance(load_on_stage_end, str):
+            assert load_on_stage_end in _possible_states
         if resume_dir is not None:
             assert resume is not None
 
         self.save_n_best = save_n_best
         self.resume = resume
         self.resume_dir = resume_dir
+        self.load_on_stage_start = load_on_stage_start
         self.load_on_stage_end = load_on_stage_end
 
         self.top_best_metrics = []
@@ -215,8 +381,8 @@ class CheckpointCallback(BaseCheckpointCallback):
 
         Args:
             minimize_metric (bool): if ``True`` then keep
-            ``save_n_best`` checkpoints with the lowest/highest values
-            of the main metric.
+                ``save_n_best`` checkpoints with the lowest/highest values
+                of the main metric.
         """
         self.top_best_metrics = sorted(
             self.top_best_metrics,
@@ -314,11 +480,40 @@ class CheckpointCallback(BaseCheckpointCallback):
         metrics = self.process_metrics(valid_metrics)
         self.save_metric(logdir, metrics)
 
+    @staticmethod
+    def _load_state(
+        state: State,
+        mapping: Union[str, Dict[str, str]],
+        load_full: bool = False,
+    ) -> None:
+        """
+        Selects a loading method based on type of mapping.
+
+        Args:
+            state (State): training state
+            mapping (str or dict): mapping to use for loading
+            load_full (bool): load a full model, used only
+                when mapping type is string
+
+        """
+        if isinstance(mapping, str):
+            if mapping in {"best", "best_full", "last", "last_full"}:
+                checkpoint = f"{state.logdir}/checkpoints/{mapping}.pth"
+            else:
+                checkpoint = mapping
+            _load_checkpoint(
+                filename=checkpoint, state=state, load_full=load_full,
+            )
+        elif isinstance(mapping, dict):
+            _load_states_from_file_map(
+                state=state, load_map=mapping,
+            )
+
     def on_stage_start(self, state: State) -> None:
         """
         Setup model for stage.
 
-        NOTE: If CheckpointCallback initialized with ``resume``
+        **NOTE:** If CheckpointCallback initialized with ``resume``
         (as path to checkpoint file) or ``resume`` (as filename)
         and ``resume_dir`` (as directory with file)
         then will be performed loading checkpoint.
@@ -335,8 +530,32 @@ class CheckpointCallback(BaseCheckpointCallback):
             self.resume = str(self.resume_dir) + "/" + str(self.resume)
 
         if self.resume is not None:
-            _load_checkpoint(filename=self.resume, state=state)
+            self._load_state(state, mapping=self.resume, load_full=True)
             self.resume = None
+        else:
+            _exists_checkpoint = False
+            _load_full = False
+            if isinstance(self.load_on_stage_start, str):
+                _exists_checkpoint = os.path.isfile(
+                    "{}/checkpoints/{}.pth".format(
+                        state.logdir, self.load_on_stage_start
+                    )
+                )
+                _load_full = self.load_on_stage_start.endswith("full")
+            elif isinstance(self.load_on_stage_start, dict):
+                required_files = _required_files(
+                    state.logdir, self.load_on_stage_start
+                ).keys()
+                _exists_checkpoint = all(
+                    os.path.isfile(file) for file in required_files
+                )
+
+            if self.load_on_stage_start is not None and _exists_checkpoint:
+                self._load_state(
+                    state,
+                    mapping=self.load_on_stage_start,
+                    load_full=_load_full,
+                )
 
     def on_epoch_end(self, state: State) -> None:
         """
@@ -395,18 +614,27 @@ class CheckpointCallback(BaseCheckpointCallback):
                 ]
             )
         print(log_message)
-
+        _not_required_load_states = {"last", "last_full"}
         if (
-            self.load_on_stage_end in ["best", "best_full"]
+            isinstance(self.load_on_stage_end, str)
+            and self.load_on_stage_end not in _not_required_load_states
             and self.save_n_best > 0
         ):
-            resume = f"{state.logdir}/checkpoints/{self.load_on_stage_end}.pth"
-            print(f"Loading {self.load_on_stage_end} model from {resume}")
-            _load_checkpoint(
-                filename=resume,
-                state=state,
-                load_full=self.load_on_stage_end.endswith("full"),
+            _load_full = (
+                self.load_on_stage_end.endswith("full")
+                if isinstance(self.load_on_stage_end, str)
+                else False
             )
+            self._load_state(
+                state, mapping=self.load_on_stage_end, load_full=_load_full,
+            )
+        elif isinstance(self.load_on_stage_end, dict) and self.save_n_best > 0:
+            to_load = {
+                k: v
+                for k, v in self.load_on_stage_end.items()
+                if v not in _not_required_load_states
+            }
+            self._load_state(state, mapping=to_load)
 
 
 class IterationCheckpointCallback(BaseCheckpointCallback):

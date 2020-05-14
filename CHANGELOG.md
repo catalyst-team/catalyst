@@ -8,11 +8,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+
 - Added Circle loss implementation ([#802](https://github.com/catalyst-team/catalyst/pull/802))
+- `CheckpointCallback`: new argument `load_on_stage_start` which accepts `str` and `Dict[str, str]` ([#797](https://github.com/
+
 
 ### Changed
 
-- 
+- `CheckpointCallback`: additional logic for argument `load_on_stage_end` - accepts `str` and `Dict[str, str]` ([#797](https://github.com/catalyst-team/catalyst/pull/797))
 
 ### Removed
 

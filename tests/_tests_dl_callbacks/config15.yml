@@ -53,8 +53,7 @@ stages:
         reduced_metric: *reduced_metric
       saver:
         callback: CheckpointCallback
-        save_n_best: &nbest 3
-        load_on_stage_end: &end_load best_full
+        save_n_best: 1
 
   stage2:
     state_params:
@@ -80,8 +79,10 @@ stages:
         reduced_metric: *reduced_metric
       saver:
         callback: CheckpointCallback
-        save_n_best: *nbest
-        load_on_stage_end: *end_load
+        save_n_best: 2
+        load_on_stage_start:
+          model: best
+          optimizer: last
 
   stage3:
     state_params:
@@ -107,5 +108,8 @@ stages:
         reduced_metric: *reduced_metric
       saver:
         callback: CheckpointCallback
-        save_n_best: *nbest
-        load_on_stage_end: *end_load
+        save_n_best: 3
+        load_on_stage_start:
+          model: last_full
+          optimizer: best
+          scheduler: last_full
