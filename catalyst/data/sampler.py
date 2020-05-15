@@ -16,7 +16,9 @@ class BalanceClassSampler(Sampler):
     Allows you to create stratified sample on unbalanced classes.
     """
 
-    def __init__(self, labels: List[int], mode: Union[str, int] = "downsampling"):
+    def __init__(
+        self, labels: List[int], mode: Union[str, int] = "downsampling"
+    ):
         """
         Args:
             labels (List[int]): list of class label
