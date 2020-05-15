@@ -253,7 +253,7 @@ class VisdomLogger(Callback):
             metrics_ = state.batch_metrics
             self._log_metrics(
                 metrics=metrics_,
-                step=state.global_step,
+                step=state.global_samples,
                 mode=mode,
                 suffix=self.batch_log_suffix,
             )

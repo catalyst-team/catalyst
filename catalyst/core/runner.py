@@ -230,6 +230,7 @@ class _Runner(ABC):
             migrating_params.update(
                 {
                     "global_step": self.state.global_step,
+                    "global_samples": self.state.global_samples,
                     "global_epoch": self.state.global_epoch,
                     "resume": getattr(self.state, "resume", None),
                 }

@@ -197,15 +197,24 @@ class State(FrozenClass):
     **state.loader_step** - int, numerical indicator \
     for batch index in current loader
 
-    **state.loader_len** - int, maximum number of batches in current loaders
+    **state.loader_len** - int, maximum number of batches in current loader
+
+    **state.loader_samples** - int, numerical indicator \
+    for number of samples passed through our model in current loader
+
+    **state.loader_batch_size** - int, batch size parameter in current loader
 
 
-    **state.batch_size** - int, typical Deep Learning batch size parameter
+    **state.batch_size** - int, length of the current batch
 
 
     **state.global_step** - int, numerical indicator, counter for all batches,\
     that passes through our model during training, validation and\
     inference stages
+
+    **state.global_samples** - int, numerical indicator, counter for all\
+    individual samples, that passes through our model during training,\
+    validation and inference stages
 
     **state.global_epoch** - int, numerical indicator, counter for all epochs,\
     that have passed during model training, validation and\
