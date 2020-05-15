@@ -1,4 +1,4 @@
-from typing import Any, Iterable, Optional, List
+from typing import Any, Iterable, List, Optional
 from itertools import tee
 
 

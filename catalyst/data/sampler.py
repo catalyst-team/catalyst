@@ -1,15 +1,16 @@
 from typing import Iterator, List, Optional, Union
+from collections import Counter
 from operator import itemgetter
-from random import sample, choices
+from random import choices, sample
 
 import numpy as np
 
 import torch
 from torch.utils.data import DistributedSampler
 from torch.utils.data.sampler import BatchSampler, Sampler
-from collections import Counter
-from catalyst.data import DatasetFromSampler
+
 from catalyst.contrib.utils.misc import find_all
+from catalyst.data import DatasetFromSampler
 
 
 class BalanceClassSampler(Sampler):
@@ -19,7 +20,7 @@ class BalanceClassSampler(Sampler):
     """
 
     def __init__(
-            self, labels: List[int], mode: Union[str, int] = "downsampling"
+        self, labels: List[int], mode: Union[str, int] = "downsampling"
     ):
         """
         Args:
@@ -123,8 +124,9 @@ class BalancecBatchSampler(Sampler):
 
         assert isinstance(p, int) and isinstance(k, int)
         assert (1 < p <= len(classes)) and (1 < k)
-        assert all([n > 1 for n in Counter(labels).values()]), \
-            'Each class shoud contain at least 2 instances to fit (1)'
+        assert all(
+            [n > 1 for n in Counter(labels).values()]
+        ), "Each class shoud contain at least 2 instances to fit (1)"
 
         self._labels = tuple(labels)  # to make it immutable
         self._p = p
@@ -185,11 +187,11 @@ class MiniEpochSampler(Sampler):
     """
 
     def __init__(
-            self,
-            data_len: int,
-            mini_epoch_len: int,
-            drop_last: bool = False,
-            shuffle: str = None,
+        self,
+        data_len: int,
+        mini_epoch_len: int,
+        drop_last: bool = False,
+        shuffle: str = None,
     ):
         """
         Args:
@@ -234,7 +236,7 @@ class MiniEpochSampler(Sampler):
     def shuffle(self) -> None:
         """@TODO: Docs. Contribution is welcome."""
         if self.shuffle_type == "per_mini_epoch" or (
-                self.shuffle_type == "per_epoch" and self.state_i == 0
+            self.shuffle_type == "per_epoch" and self.state_i == 0
         ):
             if self.data_len >= self.mini_epoch_len:
                 self.indices = self._indices
@@ -340,8 +342,8 @@ class DynamicLenBatchSampler(BatchSampler):
             yield batch
 
         assert len(self) == yielded, (
-                "produced an inccorect number of batches. "
-                "expected %i, but yielded %i" % (len(self), yielded)
+            "produced an inccorect number of batches. "
+            "expected %i, but yielded %i" % (len(self), yielded)
         )
 
 
@@ -361,11 +363,11 @@ class DistributedSamplerWrapper(DistributedSampler):
     """
 
     def __init__(
-            self,
-            sampler,
-            num_replicas: Optional[int] = None,
-            rank: Optional[int] = None,
-            shuffle: bool = True,
+        self,
+        sampler,
+        num_replicas: Optional[int] = None,
+        rank: Optional[int] = None,
+        shuffle: bool = True,
     ):
         """
         Args:
