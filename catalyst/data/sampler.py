@@ -1,4 +1,4 @@
-from typing import Iterator, List, Optional
+from typing import Iterator, List, Optional, Union
 from operator import itemgetter
 
 import numpy as np
@@ -16,7 +16,7 @@ class BalanceClassSampler(Sampler):
     Allows you to create stratified sample on unbalanced classes.
     """
 
-    def __init__(self, labels: List[int], mode: str = "downsampling"):
+    def __init__(self, labels: List[int], mode: Union[str, int] = "downsampling"):
         """
         Args:
             labels (List[int]): list of class label
