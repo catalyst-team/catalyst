@@ -1,4 +1,4 @@
-from typing import Any, Iterable, Optional
+from typing import Any, Iterable, Optional, List
 from itertools import tee
 
 
@@ -56,4 +56,18 @@ def args_are_not_none(*args: Optional[Any]) -> bool:
     return True
 
 
-__all__ = ["args_are_not_none", "make_tuple", "pairwise"]
+def find_all(x: Iterable[Any], x0: Any) -> List[int]:
+    """
+
+    Args:
+        x: list of any
+        x0: query element
+
+    Returns: indices of the all elements equal x0
+
+    """
+    inds = [i for i, el in enumerate(x) if el == x0]
+    return inds
+
+
+__all__ = ["args_are_not_none", "make_tuple", "pairwise", "find_all"]
