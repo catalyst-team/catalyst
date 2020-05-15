@@ -75,7 +75,7 @@ class LMDataset(torch.utils.data.Dataset):
 
     def __len__(self):
         """Return length of dataloader"""
-        return len(self.length)
+        return self.length
 
     def __getitem__(self, idx) -> torch.Tensor:
         """
