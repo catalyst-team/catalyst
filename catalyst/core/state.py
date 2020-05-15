@@ -347,10 +347,13 @@ class State(FrozenClass):
 
         self.loader_name: str = None
         self.loader_step: int = 0
+        self.loader_samples: int = 0
         self.loader_len: int = 0
+        self.loader_batch_size = 0
 
         self.batch_size: int = 0
 
+        self.global_samples: int = 0
         self.global_step: int = 0
         self.global_epoch: int = 1
 

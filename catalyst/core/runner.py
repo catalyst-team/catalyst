@@ -367,7 +367,9 @@ class _Runner(ABC):
             batch (Mapping[str, Any]): dictionary with data batches
                 from DataLoader.
         """
-        self.state.global_step += self.state.batch_size
+        self.state.batch_size = next(iter(batch.values())).shape[0]
+        self.state.global_samples += self.state.batch_size
+        self.state.loader_samples += self.state.batch_size
         batch = self._batch2device(batch, self.device)
         self.state.input = batch
 
@@ -383,17 +385,15 @@ class _Runner(ABC):
         Args:
             loader (DataLoader): dataloader to iterate
         """
-        self.state.batch_size = (
+        self.state.loader_batch_size = (
             loader.batch_sampler.batch_size
             if loader.batch_sampler is not None
             else loader.batch_size
         )
-        self.state.global_step = (
-            self.state.global_step
-            or self.state.global_epoch * len(loader) * self.state.batch_size
-        )
 
+        self.state.loader_samples = 0
         for i, batch in enumerate(loader):
+            self.state.global_step += 1
             self.state.loader_step = i + 1
             self._run_batch(batch)
             if self.state.need_early_stop:

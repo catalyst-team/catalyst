@@ -23,8 +23,9 @@ class AverageValueMeter(meter.Meter):
         self.mean_old = 0.0
         self.m_s = 0.0
         self.std = np.nan
+        self.n_samples = 0
 
-    def add(self, value) -> None:
+    def add(self, value, batch_size) -> None:
         """Add a new observation.
 
         Updates of mean and std are going online, with
@@ -41,6 +42,7 @@ class AverageValueMeter(meter.Meter):
         """
         self.val = value
         self.n += 1
+        self.n_samples += batch_size
 
         if self.n == 1:
             self.mean = 0.0 + value  # Force a copy in torch/numpy
@@ -48,10 +50,10 @@ class AverageValueMeter(meter.Meter):
             self.mean_old = self.mean
             self.m_s = 0.0
         else:
-            self.mean = self.mean_old + (value - self.mean_old) / float(self.n)
-            self.m_s += (value - self.mean_old) * (value - self.mean)
+            self.mean = self.mean_old + (value - self.mean_old) * batch_size / float(self.n_samples)
+            self.m_s += (value - self.mean_old) * (value - self.mean) * batch_size
             self.mean_old = self.mean
-            self.std = np.sqrt(self.m_s / (self.n - 1.0))
+            self.std = np.sqrt(self.m_s / (self.n_samples - 1.0))
 
     def value(self):
         """Returns meter values.
