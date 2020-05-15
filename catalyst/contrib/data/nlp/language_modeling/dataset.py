@@ -72,8 +72,8 @@ class LMDataset(torch.utils.data.Dataset):
     def __getitem__(self, idx) -> torch.Tensor:
         if not self.lazy:
             return torch.tensor(self.encoded[idx])
-        else:
-            encoded = self.tokenizer.encode(
-                self.texts[idx], max_len=max_seq_length
-            )
-            return torch.tensor(encoded)
+        
+        encoded = self.tokenizer.encode(
+            self.texts[idx], max_len=max_seq_length
+        )
+        return torch.tensor(encoded)
