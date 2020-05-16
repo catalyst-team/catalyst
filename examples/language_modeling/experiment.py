@@ -68,14 +68,15 @@ class Experiment(ConfigExperiment):
         collate_fn = DataCollatorForLanguageModeling(
             self.tokenizer
         ).collate_batch
-
+        loaders_params = {"train": {"collate_fn": collate_fn}}
         loaders = utils.get_loaders_from_params(
             get_datasets_fn=self.get_datasets,
             initial_seed=self.initial_seed,
             stage=stage,
-            collate_fn=collate_fn,
+            loaders_params=loaders_params,
             **data_params,
         )
+
         return loaders
 
     def get_model(self, stage: str):
