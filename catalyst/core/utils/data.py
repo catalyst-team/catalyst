@@ -77,6 +77,7 @@ def get_loaders_from_params(
     samplers_params: Dict[str, Any] = None,
     initial_seed: int = 42,
     get_datasets_fn: Callable = None,
+    collate_fn: Callable = None,
     **data_params,
 ) -> "OrderedDict[str, DataLoader]":
     """
@@ -97,6 +98,7 @@ def get_loaders_from_params(
             workers
         get_datasets_fn(Callable): callable function to get dictionary with
             ``torch.utils.data.Datasets``
+        collate_fn(Callable): ``collate_fn`` for ``torch.utils.data.DataLoader``
         **data_params: additional data parameters
             or dictionary with ``torch.utils.data.Datasets`` to use for
             pytorch dataloaders creation
@@ -159,6 +161,7 @@ def get_loaders_from_params(
             "num_workers": num_workers,
             "pin_memory": torch.cuda.is_available(),
             "drop_last": drop_last,
+            "collate_fn": collate_fn,
             **loader_params,
         }
 
