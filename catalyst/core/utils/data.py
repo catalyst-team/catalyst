@@ -98,7 +98,7 @@ def get_loaders_from_params(
             workers
         get_datasets_fn(Callable): callable function to get dictionary with
             ``torch.utils.data.Datasets``
-        collate_fn(Callable): ``collate_fn`` for ``torch.utils.data.DataLoader``
+        collate_fn(Callable): ``collate_fn`` for DataLoader
         **data_params: additional data parameters
             or dictionary with ``torch.utils.data.Datasets`` to use for
             pytorch dataloaders creation

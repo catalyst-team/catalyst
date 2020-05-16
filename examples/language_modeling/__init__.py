@@ -1,6 +1,6 @@
-from catalyst.contrib.dl.runner import (  # noqa: F501
-    HuggingfaceRunner as Runner,
-)
-from catalyst.dl import registry
+# flake8: noqa
+# pylint: disable=unused-import
+
+from catalyst.contrib.dl.runner import HuggingfaceRunner as Runner
 
 from .experiment import Experiment

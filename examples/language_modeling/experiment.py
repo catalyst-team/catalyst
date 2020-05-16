@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from torch.utils.data import DataLoader  # noqa: F401
 from transformers import AutoModelWithLMHead, AutoTokenizer
 from transformers.data.data_collator import DataCollatorForLanguageModeling
 
@@ -38,15 +39,11 @@ class Experiment(ConfigExperiment):
         train_filename: str,
         text_field: str,
         max_sequence_length: int,
-        model_name: str,
         **kwargs
     ):
         """
         @TODO: Docs. Contribution is welcome
         """
-
-        tokenizer = self.tokenizer
-
         datasets = OrderedDict()
 
         path_to_data = Path(path_to_data)
@@ -82,6 +79,7 @@ class Experiment(ConfigExperiment):
         return loaders
 
     def get_model(self, stage: str):
+        """@TODO"""
         model_params = self._config["model_params"]
         model = AutoModelWithLMHead.from_pretrained(**model_params)
         return model
