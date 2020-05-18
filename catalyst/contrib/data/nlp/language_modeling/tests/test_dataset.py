@@ -1,9 +1,7 @@
 import torch  # noqa: F401
 from transformers import AutoTokenizer
 
-from catalyst.contrib.data.nlp.language_modeling import (
-    LanguageModelingMDataset,
-)
+from catalyst.contrib.data.nlp.language_modeling import LanguageModelingDataset
 
 texts = [
     """Bonaparte Crossing the Alps is an oil-on-canvas painting by French artist""",  # noqa: E501
@@ -13,7 +11,7 @@ texts = [
 
 def test_tokenizer_str():
     """Test initialization with string"""
-    dataset = LanguageModelingMDataset(texts, "bert-base-uncased")
+    dataset = LanguageModelingDataset(texts, "bert-base-uncased")
     assert dataset[0] is not None
     assert len(dataset) == 2
 
@@ -21,6 +19,6 @@ def test_tokenizer_str():
 def test_tokenizer_tokenizer():
     """Test initialization with tokenizer"""
     tok = AutoTokenizer.from_pretrained("bert-base-uncased")
-    dataset = LanguageModelingMDataset(texts, tok)
+    dataset = LanguageModelingDataset(texts, tok)
     assert dataset[0] is not None
     assert len(dataset) == 2
