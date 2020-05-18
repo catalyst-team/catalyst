@@ -45,8 +45,8 @@ class LMDataset(torch.utils.data.Dataset):
             self.tokenizer = tokenizer
         else:
             raise TypeError(
-                "tokenizer argument should be model name"
-                + " or huggingface pre trained tokenizer"
+                "tokenizer argument should be a model name"
+                + " or huggingface PreTrainedTokenizer"
             )
 
         self.max_seq_length = max_seq_length
