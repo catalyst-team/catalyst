@@ -1,2 +1,2 @@
 # flake8: noqa
-from .dataset import LMDataset
+from .dataset import LanguageModelingDataset

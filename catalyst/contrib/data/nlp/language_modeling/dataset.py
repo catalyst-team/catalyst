@@ -8,7 +8,7 @@ import transformers
 from transformers import AutoTokenizer
 
 
-class LMDataset(torch.utils.data.Dataset):
+class LanguageModelingDataset(torch.utils.data.Dataset):
     """
     Dataset for (masked) language model task.
     Can sort sequnces for efficient padding.
