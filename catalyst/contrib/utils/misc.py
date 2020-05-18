@@ -56,7 +56,7 @@ def args_are_not_none(*args: Optional[Any]) -> bool:
     return True
 
 
-def find_all(x: Iterable[Any], x0: Any) -> List[int]:
+def find_value_ids(x: Iterable[Any], x0: Any) -> List[int]:
     """
 
     Args:
@@ -70,4 +70,4 @@ def find_all(x: Iterable[Any], x0: Any) -> List[int]:
     return inds
 
 
-__all__ = ["args_are_not_none", "make_tuple", "pairwise", "find_all"]
+__all__ = ["args_are_not_none", "make_tuple", "pairwise", "find_value_ids"]

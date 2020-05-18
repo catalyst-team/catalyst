@@ -1,4 +1,4 @@
-from typing import Iterator, List, Optional, Union
+from typing import Iterator, List, Optional, Union, Tuple
 from collections import Counter
 from operator import itemgetter
 from random import choices, sample
@@ -9,7 +9,7 @@ import torch
 from torch.utils.data import DistributedSampler
 from torch.utils.data.sampler import BatchSampler, Sampler
 
-from catalyst.contrib.utils.misc import find_all
+from catalyst.contrib.utils.misc import find_value_ids
 from catalyst.data import DatasetFromSampler
 
 
@@ -20,7 +20,7 @@ class BalanceClassSampler(Sampler):
     """
 
     def __init__(
-        self, labels: List[int], mode: Union[str, int] = "downsampling"
+            self, labels: List[int], mode: Union[str, int] = "downsampling"
     ):
         """
         Args:
@@ -132,15 +132,15 @@ class BalancecBatchSampler(Sampler):
         self._p = p
         self._k = k
 
-        self._bs = self._p * self._k
+        self._batch_size = self._p * self._k
         self._classes = classes
 
         # to satisfy statement (1)
-        n_classes = len(self._classes)
-        if n_classes % self._p == 1:
-            self._n_epoch_classes = n_classes - 1
+        num_classes = len(self._classes)
+        if num_classes % self._p == 1:
+            self._num_epoch_classes = num_classes - 1
         else:
-            self._n_epoch_classes = n_classes
+            self._num_epoch_classes = num_classes
 
     @property
     def batch_size(self) -> int:
@@ -149,23 +149,27 @@ class BalancecBatchSampler(Sampler):
         Returns: this value should be used in DataLoader as batch size
 
         """
-        return self._bs
+        return self._batch_size
 
     @property
     def batches_in_epoch(self) -> int:
-        return int(np.ceil(self._n_epoch_classes / self._p))
+        return int(np.ceil(self._num_epoch_classes / self._p))
 
     def __len__(self) -> int:
-        return self._n_epoch_classes * self._k
+        return self._num_epoch_classes * self._k
 
     def __iter__(self) -> Iterator[int]:
         inds = []
 
-        for cls in sample(self._classes, self._n_epoch_classes):
-            all_cls_inds = find_all(self._labels, cls)
+        for cls in sample(self._classes, self._num_epoch_classes):
+            all_cls_inds = find_value_ids(self._labels, cls)
 
-            if len(all_cls_inds) < self._k:
-                selected_inds = choices(all_cls_inds, k=self._k)
+            # we've checked in __init__ that this value must be > 1
+            num_samples_exists = len(all_cls_inds)
+
+            if num_samples_exists < self._k:
+                selected_inds = sample(all_cls_inds, k=num_samples_exists) + \
+                                choices(all_cls_inds, k=self._k - num_samples_exists)
             else:
                 selected_inds = sample(all_cls_inds, k=self._k)
 
@@ -187,11 +191,11 @@ class MiniEpochSampler(Sampler):
     """
 
     def __init__(
-        self,
-        data_len: int,
-        mini_epoch_len: int,
-        drop_last: bool = False,
-        shuffle: str = None,
+            self,
+            data_len: int,
+            mini_epoch_len: int,
+            drop_last: bool = False,
+            shuffle: str = None,
     ):
         """
         Args:
@@ -236,7 +240,7 @@ class MiniEpochSampler(Sampler):
     def shuffle(self) -> None:
         """@TODO: Docs. Contribution is welcome."""
         if self.shuffle_type == "per_mini_epoch" or (
-            self.shuffle_type == "per_epoch" and self.state_i == 0
+                self.shuffle_type == "per_epoch" and self.state_i == 0
         ):
             if self.data_len >= self.mini_epoch_len:
                 self.indices = self._indices
@@ -342,8 +346,8 @@ class DynamicLenBatchSampler(BatchSampler):
             yield batch
 
         assert len(self) == yielded, (
-            "produced an inccorect number of batches. "
-            "expected %i, but yielded %i" % (len(self), yielded)
+                "produced an inccorect number of batches. "
+                "expected %i, but yielded %i" % (len(self), yielded)
         )
 
 
@@ -363,11 +367,11 @@ class DistributedSamplerWrapper(DistributedSampler):
     """
 
     def __init__(
-        self,
-        sampler,
-        num_replicas: Optional[int] = None,
-        rank: Optional[int] = None,
-        shuffle: bool = True,
+            self,
+            sampler,
+            num_replicas: Optional[int] = None,
+            rank: Optional[int] = None,
+            shuffle: bool = True,
     ):
         """
         Args:
