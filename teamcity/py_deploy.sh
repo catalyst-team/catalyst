@@ -22,7 +22,7 @@ if [ $GIT_BRANCH == 'refs/heads/master' ]; then
 
   git clone --single-branch --branch gh-pages https://GH_TOKEN:$GH_TOKEN@github.com/catalyst-team/catalyst.git
 
-  cd catalyst
+  cd catalyst/master
   rm -rf *
   cp -a $TEMP/builds/* .
 
