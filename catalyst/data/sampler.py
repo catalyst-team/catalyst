@@ -1,4 +1,4 @@
-from typing import Iterator, List, Optional, Union, Tuple
+from typing import Iterator, List, Optional, Tuple, Union
 from collections import Counter
 from operator import itemgetter
 from random import choices, sample
@@ -20,7 +20,7 @@ class BalanceClassSampler(Sampler):
     """
 
     def __init__(
-            self, labels: List[int], mode: Union[str, int] = "downsampling"
+        self, labels: List[int], mode: Union[str, int] = "downsampling"
     ):
         """
         Args:
@@ -168,8 +168,9 @@ class BalancecBatchSampler(Sampler):
             num_samples_exists = len(all_cls_inds)
 
             if num_samples_exists < self._k:
-                selected_inds = sample(all_cls_inds, k=num_samples_exists) + \
-                                choices(all_cls_inds, k=self._k - num_samples_exists)
+                selected_inds = sample(
+                    all_cls_inds, k=num_samples_exists
+                ) + choices(all_cls_inds, k=self._k - num_samples_exists)
             else:
                 selected_inds = sample(all_cls_inds, k=self._k)
 
@@ -191,11 +192,11 @@ class MiniEpochSampler(Sampler):
     """
 
     def __init__(
-            self,
-            data_len: int,
-            mini_epoch_len: int,
-            drop_last: bool = False,
-            shuffle: str = None,
+        self,
+        data_len: int,
+        mini_epoch_len: int,
+        drop_last: bool = False,
+        shuffle: str = None,
     ):
         """
         Args:
@@ -240,7 +241,7 @@ class MiniEpochSampler(Sampler):
     def shuffle(self) -> None:
         """@TODO: Docs. Contribution is welcome."""
         if self.shuffle_type == "per_mini_epoch" or (
-                self.shuffle_type == "per_epoch" and self.state_i == 0
+            self.shuffle_type == "per_epoch" and self.state_i == 0
         ):
             if self.data_len >= self.mini_epoch_len:
                 self.indices = self._indices
@@ -346,8 +347,8 @@ class DynamicLenBatchSampler(BatchSampler):
             yield batch
 
         assert len(self) == yielded, (
-                "produced an inccorect number of batches. "
-                "expected %i, but yielded %i" % (len(self), yielded)
+            "produced an inccorect number of batches. "
+            "expected %i, but yielded %i" % (len(self), yielded)
         )
 
 
@@ -367,11 +368,11 @@ class DistributedSamplerWrapper(DistributedSampler):
     """
 
     def __init__(
-            self,
-            sampler,
-            num_replicas: Optional[int] = None,
-            rank: Optional[int] = None,
-            shuffle: bool = True,
+        self,
+        sampler,
+        num_replicas: Optional[int] = None,
+        rank: Optional[int] = None,
+        shuffle: bool = True,
     ):
         """
         Args:
