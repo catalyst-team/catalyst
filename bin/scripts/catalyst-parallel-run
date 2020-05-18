@@ -12,7 +12,23 @@ set -e
 # usage:
 # cat ./runs.txt | catalyst-parallel-run {NUM_GPUS} {LOGDIR} {NUM_JOBS_PER_GPU}
 
-# example:
+# usage example:
+# -----------------------------------------------------------------------------
+# runs.txt, Config API example:
+# catalyst-dl run -C=/path/to/config --some/modified/hyperparameter="new_value":str
+# catalyst-dl run -C=/path/to/config --some/modified/hyperparameter=1:int
+# catalyst-dl run -C=/path/to/config --some/modified/hyperparameter=2:float
+# catalyst-dl run -C=/path/to/config --some/modified/hyperparameter='["drop", "layer", "norm", "act"]':list
+# catalyst-dl run -C=/path/to/config --some/modified/hyperparameter='{"module": "Dropout", "p": 0.2}':dict
+# ...
+# -----------------------------------------------------------------------------
+# runs.txt, Notebook API example:
+# python /path/to/script1.py
+# python /path/to/script2.py
+# python /path/to/script3.py
+# ...
+# -----------------------------------------------------------------------------
+# command example:
 # cat ./runs.txt | catalyst-parallel-run 2 ./logs/"$(date +%s)" 4
 
 NUM_GPUS=${1:-4}
