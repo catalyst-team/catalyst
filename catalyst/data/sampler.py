@@ -1,4 +1,4 @@
-from typing import Iterator, List, Optional, Tuple, Union
+from typing import Iterator, List, Optional, Union
 from collections import Counter
 from operator import itemgetter
 from random import choices, sample
@@ -86,7 +86,7 @@ class BalanceBatchSampler(Sampler):
     This kind of sampler can be used for both metric learning and
     classification task.
 
-    Sampler with the given strategy for the dataset with C unique classes:
+    Sampler with the given strategy for the C unique classes dataset:
     - Selection P of C classes for the 1st batch
     - Selection K instances for each class for the 1st batch
     - Selection P of C - P remaining classes for 2nd batch
@@ -104,9 +104,10 @@ class BalanceBatchSampler(Sampler):
     P and K should be > 1. (1)
 
     Behavior in corner cases:
-    - If a class does not contain K instances, a choice will be made with repetition.
-    - If C % P == 1 then one of the classes should be dropped otherwise
-      statement (1) will not be met.
+    - If a class does not contain K instances,
+      a choice will be made with repetition.
+    - If C % P == 1 then one of the classes should be dropped
+      otherwise statement (1) will not be met.
 
     This type of sampling can be found in the classical paper of Person Re-Id:
     "In Defense of the Triplet Loss for Person Re-Identification",
@@ -115,7 +116,6 @@ class BalanceBatchSampler(Sampler):
 
     def __init__(self, labels: List[int], p: int, k: int):
         """
-
         Args:
             labels: list of classes labeles for each elem in the dataset
             p: number of classes in a batch, should be > 1
@@ -127,9 +127,8 @@ class BalanceBatchSampler(Sampler):
 
         assert isinstance(p, int) and isinstance(k, int)
         assert (1 < p <= len(classes)) and (1 < k)
-        assert all(
-            [n > 1 for n in Counter(labels).values()]
-        ), "Each class shoud contain at least 2 instances to fit (1)"
+        assert all(n > 1 for n in Counter(labels).values()),\
+            "Each class shoud contain at least 2 instances to fit (1)"
 
         self._labels = tuple(labels)  # to make it immutable
         self._p = p
@@ -156,12 +155,27 @@ class BalanceBatchSampler(Sampler):
 
     @property
     def batches_in_epoch(self) -> int:
+        """
+
+        Returns: number of batches in an epoch
+
+        """
         return int(np.ceil(self._num_epoch_classes / self._p))
 
     def __len__(self) -> int:
+        """
+
+        Returns: number of samples in an epoch
+
+        """
         return self._num_epoch_classes * self._k
 
     def __iter__(self) -> Iterator[int]:
+        """
+
+        Returns: indeces for sampling dataset elems during an epoch
+
+        """
         inds = []
 
         for cls in sample(self._classes, self._num_epoch_classes):
