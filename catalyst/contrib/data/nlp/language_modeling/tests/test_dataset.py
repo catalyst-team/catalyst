@@ -30,11 +30,13 @@ def test_tokenizer_tokenizer():
 def test_exception_with_sort():
     """Test lazy=True sort=True case"""
     tok = AutoTokenizer.from_pretrained("bert-base-uncased")
-    dataset = LanguageModelingDataset(texts, tok, lazy=True, sort=True)
+    dataset = LanguageModelingDataset(  # noqa: F841
+        texts, tok, lazy=True, sort=True
+    )
 
-    
+
 @pytest.mark.xfail(raises=TypeError)
 def test_tokenizer_type_error():
     """Test if tonenizer neither hf nor string"""
     tok = lambda x: x
-    dataset = LanguageModelingDataset(texts, tok)
+    dataset = LanguageModelingDataset(texts, tok)  # noqa: F841

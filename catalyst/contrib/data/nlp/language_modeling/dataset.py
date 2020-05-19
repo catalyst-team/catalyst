@@ -70,7 +70,7 @@ class LanguageModelingDataset(torch.utils.data.Dataset):
             ]
             if sort:
                 self.encoded.sort(key=len)
-            
+
         self.length = len(texts)
 
         self._getitem_fn = (
@@ -89,6 +89,7 @@ class LanguageModelingDataset(torch.utils.data.Dataset):
             self.texts[idx], max_len=self.max_seq_length
         )
         return torch.tensor(encoded)
-    
+
     def __getitem__(self, idx):
+        """Return tokenized and encoded sequence"""
         return self._getitem_fn(idx)
