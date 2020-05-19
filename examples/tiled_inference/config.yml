@@ -15,7 +15,7 @@ stages:
     data_params:
       batch_size: 16
       num_workers: 4
-      image_path: "./tiled_inference/car_8k.jpg"
+      image_path: "./tiled_inference/car_fhd.jpg"
       save_dir: "./logs/tiled_inference/predictions/"
       num_classes: *num_classes
       tile_size: 448
@@ -24,7 +24,7 @@ stages:
     callbacks_params:
       loader:
         callback: CheckpointCallback
-        resume: "./tiled_inference/checkpoint.pth"
+        resume: "./tiled_inference/car_fhd.best.pth"
 
     transform_params:
 
