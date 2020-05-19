@@ -1,0 +1,902 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>catalyst.core.state &mdash; Catalyst 20.05 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> -->
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://github.com/catalyst-team/catalyst" aria-label="Catalyst"></a>
+
+      <div class="main-menu">
+        <ul>
+
+          <li>
+            <div class="ecosystem-dropdown">
+              <a id="dropdownMenuButtonEcosystem" data-toggle="ecosystem-dropdown">
+                Catalyst.Ecosystem
+              </a>
+              <div class="ecosystem-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://alchemy.host">
+                  <span class=dropdown-title>Catalyst.Alchemy</span>
+                  <p>Experiments monitoring and sharing</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">
+                  <span class=dropdown-title>Catalyst.Reaction</span>
+                  <p>Convenient DL models serving</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/mlcomp">
+                  <span class=dropdown-title>Catalyst.MLcomp</span>
+                  <p>Supervise and orchestrate your experiments</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <div class="projects-dropdown">
+              <a id="dropdownMenuButtonProjects" data-toggle="projects-dropdown">
+                Catalyst.Projects
+              </a>
+              <div class="projects-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">
+                  <span class=dropdown-title>Catalyst.Neuro</span>
+                  <p>Catalyst.Team and TReNDS collaborative project</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">
+                  <span class=dropdown-title>Catalyst.Classification</span>
+                  <p>Image classification pipelines with transfer learning</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">
+                  <span class=dropdown-title>Catalyst.Segmentation</span>
+                  <p>Image segmentation pipelines with transfer learning</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">
+                  <span class=dropdown-title>Catalyst.GAN</span>
+                  <p>GAN pipelines</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Github</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+
+  </div>
+</div>
+
+
+<body class="catalyst-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="catalyst-left-menu" id="catalyst-left-menu">
+      <div class="catalyst-side-scroll">
+        <div class="catalyst-menu catalyst-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="catalyst-left-menu-search">
+            
+
+            
+              
+              
+                <div class="version">
+                  20.05
+                </div>
+              
+            
+
+            
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+            
+          </div>
+
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../info/distributed.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../info/contributing.html">Contribution</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <div class="catalyst-container">
+      <div class="catalyst-page-level-bar" id="catalyst-page-level-bar">
+        <div class="catalyst-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="catalyst-breadcrumbs">
+    
+      <li>
+        <a href="../../../index.html">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+          <li><a href="../../index.html">Module code</a> &gt;</li>
+        
+      <li>catalyst.core.state</li>
+    
+    
+      <li class="catalyst-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="catalyst-shortcuts-wrapper" id="catalyst-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="catalyst-content-wrap" class="catalyst-content-wrap">
+        <div class="catalyst-content-left">
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
+              
+  <h1>Source code for catalyst.core.state</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+
+<span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.tools</span> <span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">catalyst.tools.frozen_class</span> <span class="kn">import</span> <span class="n">FrozenClass</span>
+<span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Criterion</span><span class="p">,</span>
+    <span class="n">Device</span><span class="p">,</span>
+    <span class="n">Model</span><span class="p">,</span>
+    <span class="n">Optimizer</span><span class="p">,</span>
+    <span class="n">Scheduler</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">.callback</span> <span class="kn">import</span> <span class="n">Callback</span>  <span class="c1"># noqa: F401</span>
+
+<span class="n">StateModel</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Model</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Model</span><span class="p">]]</span>
+<span class="n">StateCriterion</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Criterion</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Criterion</span><span class="p">]]</span>
+<span class="n">StateOptimizer</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Optimizer</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">]]</span>
+<span class="n">StateScheduler</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Scheduler</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Scheduler</span><span class="p">]]</span>
+
+
+<div class="viewcode-block" id="State"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.state.State">[docs]</a><span class="k">class</span> <span class="nc">State</span><span class="p">(</span><span class="n">FrozenClass</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Some intermediate storage between Experiment and Runner</span>
+<span class="sd">    that saves the current state of the Experiments –</span>
+<span class="sd">    model, criterion, optimizer, schedulers, metrics, loggers, loaders, etc</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        To learn more about Catalyst Core concepts, please check out</span>
+
+<span class="sd">            - :py:mod:`catalyst.core.experiment._Experiment`</span>
+<span class="sd">            - :py:mod:`catalyst.core.runner._Runner`</span>
+<span class="sd">            - :py:mod:`catalyst.core.state.State`</span>
+<span class="sd">            - :py:mod:`catalyst.core.callback.Callback`</span>
+
+<span class="sd">    **state.loaders** - ordered dictionary with torch.DataLoaders; \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        state.loaders = {</span>
+<span class="sd">            &quot;train&quot;: MnistTrainLoader(),</span>
+<span class="sd">            &quot;valid&quot;: MnistValidLoader()</span>
+<span class="sd">        }</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        - &quot;*train*&quot; prefix is used for training loaders - \</span>
+<span class="sd">          metrics computations, backward pass, optimization</span>
+<span class="sd">        - &quot;*valid*&quot; prefix is used for validation loaders - \</span>
+<span class="sd">          metrics computations only</span>
+<span class="sd">        - &quot;*infer*&quot; prefix is used for inference loaders - \</span>
+<span class="sd">          dataset prediction</span>
+
+
+<span class="sd">    **state.model** - an instance of torch.nn.Module class, \</span>
+<span class="sd">    (should implement ``forward`` method); \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        state.model = torch.nn.Linear(10, 10)</span>
+
+<span class="sd">    **state.criterion** - an instance of torch.nn.Module class\</span>
+<span class="sd">    or torch.nn.modules.loss._Loss (should implement ``forward`` method); \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        state.criterion = torch.nn.CrossEntropyLoss()</span>
+
+<span class="sd">    **state.optimizer** - an instance of torch.optim.optimizer.Optimizer\</span>
+<span class="sd">    (should implement ``step`` method); \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        state.optimizer = torch.optim.Adam()</span>
+
+<span class="sd">    **state.scheduler** - an instance of torch.optim.lr_scheduler._LRScheduler\</span>
+<span class="sd">    (should implement ``step`` method); \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        state.scheduler = htorch.optim.lr_scheduler.ReduceLROnPlateau()</span>
+
+<span class="sd">    **state.device** - an instance of torch.device (CPU, GPU, TPU); \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        state.device = torch.device(&quot;cpu&quot;)</span>
+
+<span class="sd">    **state.callbacks** - ordered dictionary with Catalyst.Callback instances;\</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        state.callbacks = {</span>
+<span class="sd">            &quot;accuracy&quot;: AccuracyCallback(),</span>
+<span class="sd">            &quot;criterion&quot;: CriterionCallback(),</span>
+<span class="sd">            &quot;optim&quot;: OptimizerCallback(),</span>
+<span class="sd">            &quot;saver&quot;: CheckpointCallback()</span>
+<span class="sd">        }</span>
+
+
+<span class="sd">    **state.input** - dictionary, \</span>
+<span class="sd">    containing batch of data from currents DataLoader; \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        state.input = {</span>
+<span class="sd">            &quot;images&quot;: np.ndarray(batch_size, c, h, w),</span>
+<span class="sd">            &quot;targets&quot;: np.ndarray(batch_size, 1),</span>
+<span class="sd">        }</span>
+
+<span class="sd">    **state.output** - dictionary, \</span>
+<span class="sd">    containing model output for current batch; \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        state.output = {&quot;logits&quot;: torch.Tensor(batch_size, num_classes)}</span>
+
+<span class="sd">    **state.batch_metrics** - dictionary, flatten storage for batch metrics; \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        state.batch_metrics = {&quot;loss&quot;: ..., &quot;accuracy&quot;: ..., &quot;iou&quot;: ...}</span>
+
+<span class="sd">    **state.loader_metrics** - dictionary with aggregated batch statistics \</span>
+<span class="sd">    for loader (mean over all batches) and global loader metrics, like AUC; \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        state.loader_metrics = {&quot;loss&quot;: ..., &quot;accuracy&quot;: ..., &quot;auc&quot;: ...}</span>
+
+<span class="sd">    **state.epoch_metrics** - dictionary with summarized metrics \</span>
+<span class="sd">    for different loaders and global epoch metrics, like lr, momentum; \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        state.epoch_metrics = {</span>
+<span class="sd">            &quot;train_loss&quot;: ..., &quot;train_auc&quot;: ..., &quot;valid_loss&quot;: ...,</span>
+<span class="sd">            &quot;lr&quot;: ..., &quot;momentum&quot;: ...,</span>
+<span class="sd">        }</span>
+
+
+<span class="sd">    **state.is_best_valid** - bool, indicator flag</span>
+
+<span class="sd">        - ``True`` if this training epoch is best over all epochs</span>
+<span class="sd">        - ``False`` if not</span>
+
+<span class="sd">    **state.valid_metrics** - dictionary with validation metrics\</span>
+<span class="sd">    for currect epoch; \</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        state.valid_metrics = {&quot;loss&quot;: ..., &quot;accuracy&quot;: ..., &quot;auc&quot;: ...}</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        subdictionary of epoch_metrics</span>
+
+<span class="sd">    **state.best_valid_metrics** - dictionary with best validation metrics \</span>
+<span class="sd">    during whole training process</span>
+
+
+<span class="sd">    **state.distributed_rank** - distributed rank of current worker</span>
+
+<span class="sd">    **state.is_distributed_master** - bool, indicator flag</span>
+
+<span class="sd">        - ``True`` if is master node (state.distributed_rank == 0)</span>
+<span class="sd">        - ``False`` if is worker node (state.distributed_rank != 0)</span>
+
+<span class="sd">    **state.is_distributed_worker** - bool, indicator flag</span>
+
+<span class="sd">        - ``True`` if is worker node (state.distributed_rank &gt; 0)</span>
+<span class="sd">        - ``False`` if is master node (state.distributed_rank &lt;= 0)</span>
+
+
+<span class="sd">    **state.stage_name** - string, current stage name,\</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        state.stage_name = &quot;pretraining&quot; / &quot;training&quot; / &quot;finetuning&quot; / etc</span>
+
+<span class="sd">    **state.epoch** - int, numerical indicator for current stage epoch</span>
+
+<span class="sd">    **state.num_epochs** - int, maximum number of epochs, \</span>
+<span class="sd">    required for this stage</span>
+
+
+<span class="sd">    **state.loader_name** - string, current loader name\</span>
+<span class="sd">    for example,</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        state.loader_name = &quot;train_dataset1&quot; / &quot;valid_data2&quot; / &quot;infer_golden&quot;</span>
+
+<span class="sd">    **state.loader_step** - int, numerical indicator \</span>
+<span class="sd">    for batch index in current loader</span>
+
+<span class="sd">    **state.loader_len** - int, maximum number of batches in current loaders</span>
+
+
+<span class="sd">    **state.batch_size** - int, typical Deep Learning batch size parameter</span>
+
+
+<span class="sd">    **state.global_step** - int, numerical indicator, counter for all batches,\</span>
+<span class="sd">    that passes through our model during training, validation and\</span>
+<span class="sd">    inference stages</span>
+
+<span class="sd">    **state.global_epoch** - int, numerical indicator, counter for all epochs,\</span>
+<span class="sd">    that have passed during model training, validation and\</span>
+<span class="sd">    inference stages</span>
+
+
+<span class="sd">    **state.main_metric** - string, containing name of metric of interest \</span>
+<span class="sd">    for optimization, validation and checkpointing during training</span>
+
+<span class="sd">    **state.minimize_metric** - bool, indicator flag</span>
+
+<span class="sd">        - ``True`` if we need to minimize metric during training,\</span>
+<span class="sd">          like `Cross Entropy loss`</span>
+<span class="sd">        - ``False`` if we need to maximize metric during training, \</span>
+<span class="sd">          like `Accuracy` or `Intersection over Union`</span>
+
+<span class="sd">    **state.valid_loader** - string, name of validation loader \</span>
+<span class="sd">    for metric selection, validation and model checkpoining</span>
+
+
+<span class="sd">    **state.logdir** - string, path to logging directory to save\</span>
+<span class="sd">    all logs, metrics, checkpoints and artifacts</span>
+
+<span class="sd">    **state.checkpoint_data** - dictionary\</span>
+<span class="sd">    with all extra data for experiment tracking</span>
+
+
+<span class="sd">    **state.is_check_run** - bool, indicator flag</span>
+
+<span class="sd">        - ``True`` if you want to check you pipeline and \</span>
+<span class="sd">          run only 2 batches per loader and 2 epochs per stage</span>
+<span class="sd">        - ``False`` (default) if you want to just the pipeline</span>
+
+<span class="sd">    **state.is_train_loader** - bool, indicator flag</span>
+
+<span class="sd">        - ``True`` for training loaders</span>
+<span class="sd">        - ``False`` otherwise</span>
+
+<span class="sd">    **state.is_valid_loader** - bool, indicator flag</span>
+
+<span class="sd">        - ``True`` for validation loaders</span>
+<span class="sd">        - ``False`` otherwise</span>
+
+<span class="sd">    **state.is_infer_loader** - bool, indicator flag</span>
+
+<span class="sd">        - ``True`` for inference loaders</span>
+<span class="sd">        - ``False`` otherwise</span>
+
+<span class="sd">    **state.is_infer_stage** - bool, indicator flag</span>
+
+<span class="sd">        - ``True`` for inference stages</span>
+<span class="sd">        - ``False`` otherwise</span>
+
+<span class="sd">    **state.need_early_stop** - bool, indicator flag \</span>
+<span class="sd">    used for EarlyStopping and CheckRun Callbacks</span>
+
+<span class="sd">        - ``True`` if we need to stop the training</span>
+<span class="sd">        - ``False`` (default) otherwise</span>
+
+<span class="sd">    **state.need_exception_reraise** - bool, indicator flag</span>
+
+<span class="sd">        - ``True`` (default) if you want to show exception \</span>
+<span class="sd">          during pipeline and stop the training process</span>
+<span class="sd">        - ``False`` otherwise</span>
+
+<span class="sd">    **state.exception** - python Exception instance to raise (or not ;) )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="State.__init__"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.state.State.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">StateModel</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">criterion</span><span class="p">:</span> <span class="n">StateCriterion</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">optimizer</span><span class="p">:</span> <span class="n">StateOptimizer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">scheduler</span><span class="p">:</span> <span class="n">StateScheduler</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">callbacks</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Callback&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">stage_infer_prefix</span><span class="p">,</span>  <span class="c1"># @TODO: wtf?</span>
+        <span class="n">num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">main_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+        <span class="n">minimize_metric</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">valid_loader</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">loader_valid_prefix</span><span class="p">,</span>
+        <span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">is_check_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            @TODO: Docs. Contribution is welcome</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># main part</span>
+        <span class="c1"># data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loaders</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DataLoader</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># components</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">:</span> <span class="n">StateModel</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">:</span> <span class="n">StateCriterion</span> <span class="o">=</span> <span class="n">criterion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="p">:</span> <span class="n">StateOptimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="p">:</span> <span class="n">StateScheduler</span> <span class="o">=</span> <span class="n">scheduler</span>
+        <span class="c1"># extra components - PyTorch device</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">=</span> <span class="n">device</span>
+        <span class="c1"># extra components - Catalyst callbacks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;Callback&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">callbacks</span>
+
+        <span class="c1"># dataflow - model input, model output</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># metrics flow - batch, loader, epoch metrics</span>
+        <span class="c1"># let&#39;s use flatten storage for batch metrics</span>
+        <span class="c1"># batch_metrics = {&#39;loss&#39;: ..., &#39;accuracy&#39;: ..., &#39;iou&#39;: ...}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_metrics</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># just aggregated (aka mean over all batches)</span>
+        <span class="c1"># batch statistics for loader</span>
+        <span class="c1"># and global loader metrics, like AUC</span>
+        <span class="c1"># loader_metrics = {&#39;loss&#39;: ..., &#39;accuracy&#39;: ..., `auc`: ...}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_metrics</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># summarized metrics for different loaders</span>
+        <span class="c1"># and global epoch metrics, like lr, momentum</span>
+        <span class="c1"># epoch_metrics = {</span>
+        <span class="c1"># &#39;train_loss&#39;: ..., &#39;train_auc&#39;: ..., &#39;valid_loss&#39;: ...,</span>
+        <span class="c1"># &#39;lr&#39;: ..., &#39;momentum&#39;: ...,</span>
+        <span class="c1"># }</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epoch_metrics</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># validation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_best_valid</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_metrics</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_valid_metrics</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+        <span class="c1"># pipeline info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distributed_rank</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_distributed_master</span> <span class="o">=</span> <span class="o">~</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distributed_rank</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_distributed_worker</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributed_rank</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stage_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">stage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">num_epochs</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="c1"># metrics &amp; validation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">main_metric</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">minimize_metric</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">minimize_metric</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">valid_loader</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">valid_loader</span>
+
+        <span class="c1"># logging</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">logdir</span><span class="p">)</span> <span class="k">if</span> <span class="n">logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="c1"># extra checkpoint data for saving in checkpoint files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="n">checkpoint_data</span> <span class="ow">or</span> <span class="p">{}</span>
+
+        <span class="c1"># other</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_check_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">is_check_run</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_valid_loader</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_infer_loader</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_infer_stage</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
+            <span class="n">settings</span><span class="o">.</span><span class="n">stage_infer_prefix</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">need_early_stop</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">need_exception_reraise</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exception</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># kwargs</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_freeze</span><span class="p">()</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">batch_in</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Alias for `state.input`.</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            Deprecated, saved for backward compatibility.</span>
+<span class="sd">            Please use `state.batch_in` instead.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;`state.batch_in` was deprecated, &quot;</span>
+            <span class="s2">&quot;please use `state.input` instead&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">batch_out</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Alias for `state.output`.</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            Deprecated, saved for backward compatibility.</span>
+<span class="sd">            Please use `state.batch_out` instead.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;`state.batch_out` was deprecated, &quot;</span>
+            <span class="s2">&quot;please use `state.output` instead&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">output</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">need_backward_pass</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Alias for `state.is_train_loader`.</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            Deprecated, saved for backward compatibility.</span>
+<span class="sd">            Please use `state.is_train_loader` instead.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;`need_backward_pass` was deprecated, &quot;</span>
+            <span class="s2">&quot;please use `is_train_loader` instead&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span>
+
+<div class="viewcode-block" id="State.get_attr"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.state.State.get_attr">[docs]</a>    <span class="k">def</span> <span class="nf">get_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inner_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Alias for python `getattr` method. Useful for Callbacks preparation</span>
+<span class="sd">        and cases with multi-criterion, multi-optimizer setup.</span>
+<span class="sd">        For example, when you would like to train multi-task classification.</span>
+
+<span class="sd">        Used to get a named attribute from a `State` by `key` keyword;</span>
+<span class="sd">        for example\</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            # example 1</span>
+<span class="sd">            state.get_attr(&quot;criterion&quot;)</span>
+<span class="sd">            # is equivalent to</span>
+<span class="sd">            state.criterion</span>
+
+<span class="sd">            # example 2</span>
+<span class="sd">            state.get_attr(&quot;optimizer&quot;)</span>
+<span class="sd">            # is equivalent to</span>
+<span class="sd">            state.optimizer</span>
+
+<span class="sd">            # example 3</span>
+<span class="sd">            state.get_attr(&quot;scheduler&quot;)</span>
+<span class="sd">            # is equivalent to</span>
+<span class="sd">            state.scheduler</span>
+
+<span class="sd">        With `inner_key` usage, it suppose to find a dictionary under `key`\</span>
+<span class="sd">        and would get `inner_key` from this dict; for example,</span>
+<span class="sd">        ::</span>
+
+<span class="sd">            # example 1</span>
+<span class="sd">            state.get_attr(&quot;criterion&quot;, &quot;bce&quot;)</span>
+<span class="sd">            # is equivalent to</span>
+<span class="sd">            state.criterion[&quot;bce&quot;]</span>
+
+<span class="sd">            # example 2</span>
+<span class="sd">            state.get_attr(&quot;optimizer&quot;, &quot;adam&quot;)</span>
+<span class="sd">            # is equivalent to</span>
+<span class="sd">            state.optimizer[&quot;adam&quot;]</span>
+
+<span class="sd">            # example 3</span>
+<span class="sd">            state.get_attr(&quot;scheduler&quot;, &quot;adam&quot;)</span>
+<span class="sd">            # is equivalent to</span>
+<span class="sd">            state.scheduler[&quot;adam&quot;]</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key (str): name for attribute of interest,</span>
+<span class="sd">                like `criterion`, `optimizer`, `scheduler`</span>
+<span class="sd">            inner_key (str): name of inner dictionary key</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">inner_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)[</span><span class="n">inner_key</span><span class="p">]</span></div></div>
+</pre></div>
+
+             </article>
+             
+            </div>
+            <footer>
+  
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Scitator.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="catalyst-content-right" id="catalyst-content-right">
+          <div class="catalyst-right-menu" id="catalyst-right-menu">
+            <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
+              
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+         <script src="../../../_static/jquery.js"></script>
+         <script src="../../../_static/underscore.js"></script>
+         <script src="../../../_static/doctools.js"></script>
+         <script src="../../../_static/language_data.js"></script>
+         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../../_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+  <!-- Begin Footer -->
+
+  <footer class="site-footer" id="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://github.com/catalyst-team/catalyst" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Ecosystem</a></li>
+            <li><a class="nav-dropdown-item" href="https://alchemy.host">Catalyst.Alchemy</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">Catayst.Reaction</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/mlcomp">Catalyst.MLcomp</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Projects</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">Catalyst.Neuro</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">Catayst.Classification</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">Catalyst.Segmentation</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">Catalyst.GAN</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team/catalyst">Support us</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/issues" target="_blank">Github Issues</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+            <li><a href="https://www.patreon.com/catalyst_team" target="_blank">Patreon</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col follow-us-col">
+          <div class="footer-social-icons">
+            <a href="https://t.me/catalyst_team" target="_blank" class="telegram"></a>
+            <a href="https://twitter.com/catalyst_core" target="_blank" class="twitter"></a>
+            <a href="https://ods.ai/en/" target="_blank" class="ods"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://github.com/catalyst-team/catalyst" aria-label="Catalyst"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../../../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      catalystAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.catalyst-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
