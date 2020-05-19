@@ -56,17 +56,17 @@ def args_are_not_none(*args: Optional[Any]) -> bool:
     return True
 
 
-def find_value_ids(x: Iterable[Any], x0: Any) -> List[int]:
+def find_value_ids(it: Iterable[Any], value: Any) -> List[int]:
     """
 
     Args:
-        x: list of any
-        x0: query element
+        it: list of any
+        value: query element
 
     Returns: indices of the all elements equal x0
 
     """
-    inds = [i for i, el in enumerate(x) if el == x0]
+    inds = [i for i, el in enumerate(it) if el == value]
     return inds
 
 

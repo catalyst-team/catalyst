@@ -5,11 +5,11 @@ from random import randint, shuffle
 
 import pytest
 
-from catalyst.data.sampler import BalancecBatchSampler
+from catalyst.data.sampler import BalanceBatchSampler
 
 
 @pytest.fixture()
-def input_balancec_batch_sampler() -> List[Tuple[List[int], int, int]]:
+def input_balance_batch_sampler() -> List[Tuple[List[int], int, int]]:
     # data structure: (labels, p, k])
     input_cases = [
         # ideal case
@@ -41,10 +41,10 @@ def input_balancec_batch_sampler() -> List[Tuple[List[int], int, int]]:
     return input_cases
 
 
-def single_check_balancec_batch_sampler(
+def single_check_balance_batch_sampler(
     labels: List[int], p: int, k: int
 ) -> None:
-    sampler = BalancecBatchSampler(labels=labels, p=p, k=k)
+    sampler = BalanceBatchSampler(labels=labels, p=p, k=k)
     sampled_ids = list(sampler)
 
     sampled_classes = []
@@ -84,6 +84,6 @@ def single_check_balancec_batch_sampler(
     assert max(sampled_ids) <= len(labels) - 1
 
 
-def test_balancec_batch_sampler(input_balancec_batch_sampler):
-    for labels, p, k in input_balancec_batch_sampler:
-        single_check_balancec_batch_sampler(labels, p, k)
+def test_balance_batch_sampler(input_balance_batch_sampler):
+    for labels, p, k in input_balance_batch_sampler:
+        single_check_balance_batch_sampler(labels, p, k)

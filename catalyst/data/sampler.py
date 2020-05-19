@@ -81,8 +81,11 @@ class BalanceClassSampler(Sampler):
         return self.length
 
 
-class BalancecBatchSampler(Sampler):
+class BalanceBatchSampler(Sampler):
     """
+    This kind of sampler can be used for both metric learning and
+    classification task.
+
     Sampler with the given strategy for the dataset with C unique classes:
     - Selection P of C classes for the 1st batch
     - Selection K instances for each class for the 1st batch
@@ -402,7 +405,7 @@ class DistributedSamplerWrapper(DistributedSampler):
 
 __all__ = [
     "BalanceClassSampler",
-    "BalancecBatchSampler",
+    "BalanceBatchSampler",
     "MiniEpochSampler",
     "DistributedSamplerWrapper",
     "DynamicLenBatchSampler",
