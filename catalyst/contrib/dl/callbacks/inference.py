@@ -164,11 +164,6 @@ class TiledInferenceCallback(Callback):
 
         output = state.batch_out[self.output_key]
 
-        if self.num_classes == 1:
-            output = torch.sigmoid(output)
-        else:
-            output = F.softmax(output, dim=1)
-
         for predictions, x_min, y_min in zip(
             output, state.batch_in["x"], state.batch_in["y"],
         ):
@@ -188,14 +183,20 @@ class TiledInferenceCallback(Callback):
         """
         eps = torch.finfo(self.norm_mask.dtype).eps
         self.norm_mask = torch.clamp_min(self.norm_mask, eps)
-        probs = self.storage / self.norm_mask
-        _, h, w = probs.shape
+        logits = self.storage / self.norm_mask
+        _, h, w = logits.shape
         crop_slice = (
             slice(None),
             slice(self.margin_top, h - self.margin_bottom),
             slice(self.margin_left, w - self.margin_right),
         )
-        probs = probs[crop_slice]
+        logits = logits[crop_slice]
+
+        if self.num_classes == 1:
+            probs = torch.sigmoid(logits)
+        else:
+            probs = F.softmax(logits, dim=0)
+
         mask = torch.zeros_like(probs[0], dtype=torch.int32)
 
         for i, channel in enumerate(probs):
