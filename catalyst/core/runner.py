@@ -229,8 +229,8 @@ class _Runner(ABC):
         if self.state is not None and migrate_from_previous_stage:
             migrating_params.update(
                 {
-                    "global_step": self.state.global_step,
-                    "global_samples": self.state.global_samples,
+                    "global_batch_step": self.state.global_batch_step,
+                    "global_sample_step": self.state.global_sample_step,
                     "global_epoch": self.state.global_epoch,
                     "resume": getattr(self.state, "resume", None),
                 }
@@ -372,8 +372,8 @@ class _Runner(ABC):
             self.state.batch_size = len(batch[0])
         else:
             self.state.batch_size = next(iter(batch.values())).shape[0]
-        self.state.global_samples += self.state.batch_size
-        self.state.loader_samples += self.state.batch_size
+        self.state.global_sample_step += self.state.batch_size
+        self.state.loader_sample_step += self.state.batch_size
         batch = self._batch2device(batch, self.device)
         self.state.input = batch
 
@@ -395,10 +395,10 @@ class _Runner(ABC):
             else loader.batch_size
         )
 
-        self.state.loader_samples = 0
+        self.state.loader_sample_step = 0
         for i, batch in enumerate(loader):
-            self.state.global_step += 1
-            self.state.loader_step = i + 1
+            self.state.global_batch_step += 1
+            self.state.loader_batch_step = i + 1
             self._run_batch(batch)
             if self.state.need_early_stop:
                 self.state.need_early_stop = False

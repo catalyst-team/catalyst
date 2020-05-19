@@ -194,12 +194,12 @@ class State(FrozenClass):
 
         state.loader_name = "train_dataset1" / "valid_data2" / "infer_golden"
 
-    **state.loader_step** - int, numerical indicator \
+    **state.loader_batch_step** - int, numerical indicator \
     for batch index in current loader
 
     **state.loader_len** - int, maximum number of batches in current loader
 
-    **state.loader_samples** - int, numerical indicator \
+    **state.loader_sample_step** - int, numerical indicator \
     for number of samples passed through our model in current loader
 
     **state.loader_batch_size** - int, batch size parameter in current loader
@@ -208,11 +208,11 @@ class State(FrozenClass):
     **state.batch_size** - int, length of the current batch
 
 
-    **state.global_step** - int, numerical indicator, counter for all batches,\
+    **state.global_batch_step** - int, numerical indicator, counter for all batches,\
     that passes through our model during training, validation and\
     inference stages
 
-    **state.global_samples** - int, numerical indicator, counter for all\
+    **state.global_sample_step** - int, numerical indicator, counter for all\
     individual samples, that passes through our model during training,\
     validation and inference stages
 
@@ -355,15 +355,15 @@ class State(FrozenClass):
         self.num_epochs: int = num_epochs
 
         self.loader_name: str = None
-        self.loader_step: int = 0
-        self.loader_samples: int = 0
+        self.loader_batch_step: int = 0
+        self.loader_sample_step: int = 0
         self.loader_len: int = 0
         self.loader_batch_size = 0
 
         self.batch_size: int = 0
 
-        self.global_samples: int = 0
-        self.global_step: int = 0
+        self.global_sample_step: int = 0
+        self.global_batch_step: int = 0
         self.global_epoch: int = 1
 
         # metrics & validation

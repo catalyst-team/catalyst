@@ -25,9 +25,9 @@ def _get_test_data():
 
     The first event is empty with wall_time = 1557489465
 
-    log.add_scalar("x", 1.0, global_samples=1)
-    log.add_scalar("y", -1.0, global_samples=1)
-    log.add_scalar("x", 2.0, global_samples=2)
+    log.add_scalar("x", 1.0, global_step=1)
+    log.add_scalar("y", -1.0, global_step=1)
+    log.add_scalar("x", 2.0, global_step=2)
     """
 
     data_raw = [
