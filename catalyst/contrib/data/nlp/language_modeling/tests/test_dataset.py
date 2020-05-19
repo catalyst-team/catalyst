@@ -1,3 +1,5 @@
+import pytest
+
 import torch  # noqa: F401
 from transformers import AutoTokenizer
 
@@ -22,3 +24,17 @@ def test_tokenizer_tokenizer():
     dataset = LanguageModelingDataset(texts, tok)
     assert dataset[0] is not None
     assert len(dataset) == 2
+
+
+@pytest.mark.xfail(raises=Exception)
+def test_exception_with_sort():
+    """Test lazy=True sort=True case"""
+    tok = AutoTokenizer.from_pretrained("bert-base-uncased")
+    dataset = LanguageModelingDataset(texts, tok, lazy=True, sort=True)
+
+    
+@pytest.mark.xfail(raises=TypeError)
+def test_tokenizer_type_error():
+    """Test if tonenizer neither hf nor string"""
+    tok = lambda x: x
+    dataset = LanguageModelingDataset(texts, tok)

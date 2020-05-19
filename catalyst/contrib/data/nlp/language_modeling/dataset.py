@@ -31,7 +31,7 @@ class LanguageModelingDataset(torch.utils.data.Dataset):
             max_seq_length (int): max sequence length to tokenize
             sort (bool): If True then sort all sequences by length
                 for efficient padding
-            lazy (bool): If True then tokenize sequence
+            lazy (bool): If True then tokenize and encode sequence
                 in __getitem__ method
                 else will tokenize in __init__ also
                 if set to true sorting is unavialible
@@ -68,12 +68,12 @@ class LanguageModelingDataset(torch.utils.data.Dataset):
             raise Exception(
                 "lazy is set to True so we can't sort"
                 " sequences by length.\n"
-                "You should set sort=False if lazy=True"
+                "You should set sort=False and lazy=True"
                 " if you want to encode text in __get_item__ function"
             )
         self.length = len(texts)
 
-        self.__getitem__ = (
+        self._getitem_fn = (
             self._getitem_lazy if lazy else self._getitem_encoded
         )
 
@@ -89,3 +89,6 @@ class LanguageModelingDataset(torch.utils.data.Dataset):
             self.texts[idx], max_len=self.max_seq_length
         )
         return torch.tensor(encoded)
+    
+    def __getitem__(self, idx):
+        return self._getitem_fn(idx)
