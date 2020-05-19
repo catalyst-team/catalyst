@@ -1,4 +1,4 @@
-from typing import fix, List, Tuple
+from typing import List, Tuple
 from collections import Counter
 from operator import itemgetter
 from random import randint, shuffle
@@ -11,10 +11,8 @@ from catalyst.data.sampler import BalanceBatchSampler
 @pytest.fixture()
 def input_balance_batch_sampler() -> List[Tuple[List[int], int, int]]:
     """
-
     Returns: test data for sampler in the following format:
              list of (labels, p, k)
-
     """
     input_cases = [
         # ideal case
@@ -50,14 +48,12 @@ def single_check_balance_batch_sampler(
     labels: List[int], p: int, k: int
 ) -> None:
     """
-
     Args:
         labels: list of classes labels
         p: number of classes in a batch
         k: number of instances for each class in a batch
 
-    Returns:
-
+    Returns: None
     """
     sampler = BalanceBatchSampler(labels=labels, p=p, k=k)
     sampled_ids = list(sampler)
@@ -101,12 +97,10 @@ def single_check_balance_batch_sampler(
 
 def test_balance_batch_sampler(input_balance_batch_sampler) -> None:
     """
-
     Args:
         input_balance_batch_sampler: pytest fixture
 
-    Returns:
-
+    Returns: None
     """
     for labels, p, k in input_balance_batch_sampler:
         single_check_balance_batch_sampler(labels, p, k)
