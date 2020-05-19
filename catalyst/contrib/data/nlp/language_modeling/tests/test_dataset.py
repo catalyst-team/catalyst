@@ -37,6 +37,6 @@ def test_exception_with_sort():
 
 @pytest.mark.xfail(raises=TypeError)
 def test_tokenizer_type_error():
-    """Test if tonenizer neither hf nor string"""
+    """Test if tokenizer neither hf nor string"""
     tok = lambda x: x
     dataset = LanguageModelingDataset(texts, tok)  # noqa: F841
