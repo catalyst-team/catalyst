@@ -46,7 +46,7 @@ class AverageValueMeter(meter.Meter):
 
         if self.n == 1:
             self.mean = 0.0 + value  # Force a copy in torch/numpy
-            self.std = np.inf
+            self.std = 0.0
             self.mean_old = self.mean
             self.m_s = 0.0
         else:
@@ -76,3 +76,4 @@ class AverageValueMeter(meter.Meter):
         self.mean_old = 0.0
         self.m_s = 0.0
         self.std = np.nan
+        self.n_samples = 0
