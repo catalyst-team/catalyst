@@ -10,7 +10,7 @@ from catalyst.contrib.data.cv.datasets import get_image_margins
 from catalyst.core import Callback, CallbackOrder, State
 
 
-def pyramid_weights(height: int, width: int):
+def pyramid_weights(height: int, width: int) -> torch.Tensor:
     """
     Computes a weight matrix that assigns bigger weights
     on pixels at center and less weight to pixels on image boundary.

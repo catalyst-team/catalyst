@@ -32,6 +32,23 @@ def get_image_margins(
     Returns:
         OrderedDict with margins at all 4 edges of the image.
     """
+    assert tile_size_h <= image_h, (
+        f"`tile_size_h` ({tile_size_h}) must be less or equal than "
+        f"`image_h` ({image_h})."
+    )
+    assert tile_size_w <= image_w, (
+        f"`tile_size_w` ({tile_size_w}) must be less or equal than "
+        f"`image_w` ({image_w})."
+    )
+    assert tile_size_h > tile_step_h, (
+        f"`tile_size_h` ({tile_size_h}) must be greater than "
+        f"`tile_step_h` ({tile_step_h})."
+    )
+    assert tile_size_w > tile_step_w, (
+        f"`tile_size_w` ({tile_size_w}) must be greater than "
+        f"`tile_step_w` ({tile_step_w})."
+    )
+
     overlap_h = tile_size_h - tile_step_h
     overlap_w = tile_size_w - tile_step_w
 
@@ -43,15 +60,15 @@ def get_image_margins(
 
     margin_bottom = math.floor(num_extra_pixels_h / 2)
     margin_top = math.ceil(num_extra_pixels_h / 2)
-    margin_left = math.floor(num_extra_pixels_w / 2)
+    margin_left = math.ceil(num_extra_pixels_w / 2)
     margin_right = math.floor(num_extra_pixels_w / 2)
 
-    margins = OrderedDict(
-        margin_bottom=margin_bottom,
-        margin_top=margin_top,
-        margin_left=margin_left,
-        margin_right=margin_right,
-    )
+    margins = {
+        "margin_bottom": margin_bottom,
+        "margin_top": margin_top,
+        "margin_left": margin_left,
+        "margin_right": margin_right,
+    }
 
     return margins
 
@@ -79,28 +96,31 @@ class TiledImageDataset(Dataset):
         """
         super().__init__()
         image = skimage.io.imread(image_path)
-        self.image_h, self.image_w, _ = image.shape
+        self.image_h, self.image_w, *_ = image.shape
         self.input_key = input_key
         self.transform = transform
 
+        error_msg = (
+            "`{variable}` must be 2-dimensional or scalar, "
+            "got {ndim} dimensions."
+        )
+
         if isinstance(tile_size, (tuple, list)):
             tile_size_ndim = len(tile_size)
-            error_msg = (
-                f"Tile size must be 2-dimensional, "
-                f"got {tile_size_ndim} dimensions."
+            assert tile_size_ndim == 2, error_msg.format(
+                variable="tile_size",
+                ndim=tile_size_ndim,
             )
-            assert tile_size_ndim == 2, error_msg
             self.tile_size_h, self.tile_size_w = tile_size
         else:
             self.tile_size_h, self.tile_size_w = tile_size, tile_size
 
         if isinstance(tile_step, (tuple, list)):
             tile_step_ndim = len(tile_step)
-            error_msg = (
-                f"Tile step must be 2-dimensional, "
-                f"got {tile_step_ndim} dimensions."
+            assert tile_step_ndim == 2, error_msg.format(
+                variable="tile_step",
+                ndim=tile_step_ndim,
             )
-            assert tile_step_ndim == 2, error_msg
             self.tile_step_h, self.tile_step_w = tile_step
         else:
             self.tile_step_h, self.tile_step_w = tile_step, tile_step
@@ -111,23 +131,21 @@ class TiledImageDataset(Dataset):
             "tile size in {dim} ({tile_size})."
         )
 
-        if self.tile_step_h > self.tile_size_h:
-            raise ValueError(
-                error_msg.format(
-                    dim="height",
-                    tile_step=self.tile_step_h,
-                    tile_size=self.tile_size_h,
-                )
+        assert self.tile_step_h <= self.tile_size_h, (
+            error_msg.format(
+                dim="height",
+                tile_step=self.tile_step_h,
+                tile_size=self.tile_size_h,
             )
+        )
 
-        if self.tile_step_w > self.tile_size_w:
-            raise ValueError(
-                error_msg.format(
-                    dim="width",
-                    tile_step=self.tile_step_w,
-                    tile_size=self.tile_size_w,
-                )
+        assert self.tile_step_w <= self.tile_size_w, (
+            error_msg.format(
+                dim="width",
+                tile_step=self.tile_step_w,
+                tile_size=self.tile_size_w,
             )
+        )
 
         overlap_h = self.tile_size_h - self.tile_step_h
         overlap_w = self.tile_size_w - self.tile_step_w
