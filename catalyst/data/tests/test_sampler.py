@@ -1,4 +1,4 @@
-from typing import List, Tuple, fix
+from typing import fix, List, Tuple
 from collections import Counter
 from operator import itemgetter
 from random import randint, shuffle

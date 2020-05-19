@@ -127,8 +127,9 @@ class BalanceBatchSampler(Sampler):
 
         assert isinstance(p, int) and isinstance(k, int)
         assert (1 < p <= len(classes)) and (1 < k)
-        assert all(n > 1 for n in Counter(labels).values()),\
-            "Each class shoud contain at least 2 instances to fit (1)"
+        assert all(
+            n > 1 for n in Counter(labels).values()
+        ), "Each class shoud contain at least 2 instances to fit (1)"
 
         self._labels = tuple(labels)  # to make it immutable
         self._p = p
