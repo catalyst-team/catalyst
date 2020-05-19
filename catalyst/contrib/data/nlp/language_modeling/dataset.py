@@ -36,6 +36,13 @@ class LanguageModelingDataset(torch.utils.data.Dataset):
                 else will tokenize in __init__ also
                 if set to true sorting is unavialible
         """
+        if sort and lazy:
+            raise Exception(
+                "lazy is set to True so we can't sort"
+                " sequences by length.\n"
+                "You should set sort=False and lazy=True"
+                " if you want to encode text in __get_item__ function"
+            )
         if isinstance(tokenizer, str):
             self.tokenizer = AutoTokenizer.from_pretrained(tokenizer)
         elif isinstance(
@@ -63,14 +70,7 @@ class LanguageModelingDataset(torch.utils.data.Dataset):
             ]
             if sort:
                 self.encoded.sort(key=len)
-
-        elif sort:
-            raise Exception(
-                "lazy is set to True so we can't sort"
-                " sequences by length.\n"
-                "You should set sort=False and lazy=True"
-                " if you want to encode text in __get_item__ function"
-            )
+            
         self.length = len(texts)
 
         self._getitem_fn = (
