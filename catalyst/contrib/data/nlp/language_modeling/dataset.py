@@ -1,5 +1,4 @@
 from typing import Iterable, Union
-import warnings
 
 from tqdm.auto import tqdm
 
@@ -66,25 +65,26 @@ class LanguageModelingDataset(torch.utils.data.Dataset):
                 self.encoded.sort(key=len)
 
         elif sort:
-            warnings.warn(
-                "Warning! lazy set to True so we can't sort"
-                + " sequences by length.\n"
-                + "You should set sort=False if lazy=True"
+            raise Exception(
+                "lazy is set to True so we can't sort"
+                " sequences by length.\n"
+                "You should set sort=False if lazy=True"
+                " if you want to encode text in __get_item__ function"
             )
         self.length = len(texts)
+
+        self.__getitem__ = (
+            self._getitem_lazy if lazy else self._getitem_encoded
+        )
 
     def __len__(self):
         """Return length of dataloader"""
         return self.length
 
-    def __getitem__(self, idx) -> torch.Tensor:
-        """
-        If lazy is True then encode text and return
-        else just return already encoded text
-        """
-        if not self.lazy:
-            return torch.tensor(self.encoded[idx])
+    def _getitem_encoded(self, idx) -> torch.Tensor:
+        return torch.tensor(self.encoded[idx])
 
+    def _getitem_lazy(self, idx) -> torch.Tensor:
         encoded = self.tokenizer.encode(
             self.texts[idx], max_len=self.max_seq_length
         )
