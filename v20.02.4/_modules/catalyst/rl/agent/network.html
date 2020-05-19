@@ -1,0 +1,400 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>catalyst.rl.agent.network &#8212; Catalyst 20.02.4 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for catalyst.rl.agent.network</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">collections</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+
+<span class="kn">from</span> <span class="nn">catalyst.contrib.models</span> <span class="k">import</span> <span class="n">get_linear_net</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.nn.modules</span> <span class="k">import</span> <span class="n">LamaPooling</span><span class="p">,</span> <span class="n">TemporalConcatPooling</span>
+<span class="kn">from</span> <span class="nn">catalyst.rl</span> <span class="k">import</span> <span class="n">utils</span>
+
+
+<div class="viewcode-block" id="StateNet"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agent.network.StateNet">[docs]</a><span class="k">class</span> <span class="nc">StateNet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="StateNet.__init__"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agent.network.StateNet.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">main_net</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span>
+        <span class="n">observation_net</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">aggregation_net</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Abstract network, that takes some tensor</span>
+<span class="sd">        T of shape [bs; history_len; ...]</span>
+<span class="sd">        and outputs some representation tensor R</span>
+<span class="sd">        of shape [bs; representation_size]</span>
+
+<span class="sd">        input_T [bs; history_len; in_features]</span>
+
+<span class="sd">        -&gt; observation_net (aka observation_encoder) -&gt;</span>
+
+<span class="sd">        observations_representations [bs; history_len; obs_features]</span>
+
+<span class="sd">        -&gt; aggregation_net (flatten in simplified case) -&gt;</span>
+
+<span class="sd">        aggregated_representation [bs; hid_features]</span>
+
+<span class="sd">        -&gt; main_net -&gt;</span>
+
+<span class="sd">        output_T [bs; representation_size]</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            main_net:</span>
+<span class="sd">            observation_net:</span>
+<span class="sd">            aggregation_net:</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_net</span> <span class="o">=</span> <span class="n">main_net</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span> <span class="o">=</span> <span class="n">observation_net</span> <span class="ow">or</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aggregation_net</span> <span class="o">=</span> <span class="n">aggregation_net</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">aggregation_net</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_ff</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_process_state</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_state_ff_kv</span> \
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">)</span> \
+                <span class="k">else</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_state_ff</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aggregation_net</span><span class="p">,</span> <span class="p">(</span><span class="n">TemporalConcatPooling</span><span class="p">,</span> <span class="n">LamaPooling</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_temporal</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_process_state</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_state_temporal_kv</span> \
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">)</span> \
+                <span class="k">else</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_state_temporal</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_forward_ff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_state</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+    <span class="k">def</span> <span class="nf">_forward_temporal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_state</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregation_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+<div class="viewcode-block" id="StateNet.forward"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agent.network.StateNet.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+
+<div class="viewcode-block" id="StateNet.get_from_params"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agent.network.StateNet.get_from_params">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_from_params</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">state_shape</span><span class="p">,</span>
+        <span class="n">observation_net_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">aggregation_net_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">main_net_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;StateNet&quot;</span><span class="p">:</span>
+
+        <span class="k">assert</span> <span class="n">main_net_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="c1"># @TODO: refactor, too complicated; fast&amp;furious development</span>
+
+        <span class="n">main_net_in_features</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">observation_net_out_features</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># observation net</span>
+        <span class="k">if</span> <span class="n">observation_net_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">key_value_flag</span> <span class="o">=</span> <span class="n">observation_net_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_key_value&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">key_value_flag</span><span class="p">:</span>
+                <span class="n">observation_net</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">observation_net_params</span><span class="p">:</span>
+                    <span class="n">net_</span><span class="p">,</span> <span class="n">out_features_</span> <span class="o">=</span> \
+                        <span class="n">utils</span><span class="o">.</span><span class="n">get_observation_net</span><span class="p">(</span>
+                            <span class="n">state_shape</span><span class="p">[</span><span class="n">key</span><span class="p">],</span>
+                            <span class="o">**</span><span class="n">observation_net_params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                        <span class="p">)</span>
+                    <span class="n">observation_net</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">net_</span>
+                    <span class="n">observation_net_out_features</span> <span class="o">+=</span> <span class="n">out_features_</span>
+                <span class="n">observation_net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">(</span><span class="n">observation_net</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">observation_net</span><span class="p">,</span> <span class="n">observation_net_out_features</span> <span class="o">=</span> \
+                    <span class="n">utils</span><span class="o">.</span><span class="n">get_observation_net</span><span class="p">(</span>
+                        <span class="n">state_shape</span><span class="p">,</span>
+                        <span class="o">**</span><span class="n">observation_net_params</span>
+                    <span class="p">)</span>
+            <span class="n">main_net_in_features</span> <span class="o">+=</span> <span class="n">observation_net_out_features</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">observation_net</span><span class="p">,</span> <span class="n">observation_net_out_features</span> <span class="o">=</span> \
+                <span class="n">utils</span><span class="o">.</span><span class="n">get_observation_net</span><span class="p">(</span><span class="n">state_shape</span><span class="p">)</span>
+            <span class="n">main_net_in_features</span> <span class="o">+=</span> <span class="n">observation_net_out_features</span>
+
+        <span class="c1"># aggregation net</span>
+        <span class="k">if</span> <span class="n">aggregation_net_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">aggregation_type</span> <span class="o">=</span> \
+                <span class="n">aggregation_net_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_network_type&quot;</span><span class="p">,</span> <span class="s2">&quot;concat&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">aggregation_type</span> <span class="o">==</span> <span class="s2">&quot;concat&quot;</span><span class="p">:</span>
+                <span class="n">aggregation_net</span> <span class="o">=</span> <span class="n">TemporalConcatPooling</span><span class="p">(</span>
+                    <span class="n">observation_net_out_features</span><span class="p">,</span> <span class="o">**</span><span class="n">aggregation_net_params</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">aggregation_type</span> <span class="o">==</span> <span class="s2">&quot;lama&quot;</span><span class="p">:</span>
+                <span class="n">aggregation_net</span> <span class="o">=</span> <span class="n">LamaPooling</span><span class="p">(</span>
+                    <span class="n">observation_net_out_features</span><span class="p">,</span> <span class="o">**</span><span class="n">aggregation_net_params</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+            <span class="n">main_net_in_features</span> <span class="o">=</span> <span class="n">aggregation_net</span><span class="o">.</span><span class="n">out_features</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">aggregation_net</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># main net</span>
+        <span class="n">main_net_params</span><span class="p">[</span><span class="s2">&quot;in_features&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">main_net_in_features</span>
+        <span class="n">main_net</span> <span class="o">=</span> <span class="n">get_linear_net</span><span class="p">(</span><span class="o">**</span><span class="n">main_net_params</span><span class="p">)</span>
+
+        <span class="n">net</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">main_net</span><span class="o">=</span><span class="n">main_net</span><span class="p">,</span>
+            <span class="n">aggregation_net</span><span class="o">=</span><span class="n">aggregation_net</span><span class="p">,</span>
+            <span class="n">observation_net</span><span class="o">=</span><span class="n">observation_net</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">net</span></div></div>
+
+
+<div class="viewcode-block" id="StateActionNet"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agent.network.StateActionNet">[docs]</a><span class="k">class</span> <span class="nc">StateActionNet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">main_net</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span>
+        <span class="n">observation_net</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">action_net</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">aggregation_net</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_net</span> <span class="o">=</span> <span class="n">main_net</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span> <span class="o">=</span> <span class="n">observation_net</span> <span class="ow">or</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_net</span> <span class="o">=</span> <span class="n">action_net</span> <span class="ow">or</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">aggregation_net</span> <span class="o">=</span> <span class="n">aggregation_net</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">aggregation_net</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_ff</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_process_state</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_state_ff_kv</span> \
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">)</span> \
+                <span class="k">else</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_state_ff</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">aggregation_net</span><span class="p">,</span> <span class="p">(</span><span class="n">TemporalConcatPooling</span><span class="p">,</span> <span class="n">LamaPooling</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_temporal</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_process_state</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_state_temporal_kv</span> \
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">)</span> \
+                <span class="k">else</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_state_temporal</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_forward_ff</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="n">state_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span><span class="p">)</span>
+        <span class="n">action_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_net</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">state_</span><span class="p">,</span> <span class="n">action_</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+    <span class="k">def</span> <span class="nf">_forward_temporal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="n">state_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_net</span><span class="p">)</span>
+        <span class="n">state_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">aggregation_net</span><span class="p">(</span><span class="n">state_</span><span class="p">)</span>
+        <span class="n">action_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_net</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">((</span><span class="n">state_</span><span class="p">,</span> <span class="n">action_</span><span class="p">),</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_net</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+<div class="viewcode-block" id="StateActionNet.forward"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agent.network.StateActionNet.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_fn</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+
+<div class="viewcode-block" id="StateActionNet.get_from_params"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agent.network.StateActionNet.get_from_params">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_from_params</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">state_shape</span><span class="p">,</span>
+        <span class="n">action_shape</span><span class="p">,</span>
+        <span class="n">observation_net_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">action_net_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">aggregation_net_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">main_net_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;StateNet&quot;</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">main_net_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="c1"># @TODO: refactor, too complicated; fast&amp;furious development</span>
+
+        <span class="n">main_net_in_features</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">observation_net_out_features</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># observation net</span>
+        <span class="k">if</span> <span class="n">observation_net_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">key_value_flag</span> <span class="o">=</span> <span class="n">observation_net_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_key_value&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">key_value_flag</span><span class="p">:</span>
+                <span class="n">observation_net</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">observation_net_params</span><span class="p">:</span>
+                    <span class="n">net_</span><span class="p">,</span> <span class="n">out_features_</span> <span class="o">=</span> \
+                        <span class="n">utils</span><span class="o">.</span><span class="n">get_observation_net</span><span class="p">(</span>
+                            <span class="n">state_shape</span><span class="p">[</span><span class="n">key</span><span class="p">],</span>
+                            <span class="o">**</span><span class="n">observation_net_params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                        <span class="p">)</span>
+                    <span class="n">observation_net</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">net_</span>
+                    <span class="n">observation_net_out_features</span> <span class="o">+=</span> <span class="n">out_features_</span>
+                <span class="n">observation_net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">(</span><span class="n">observation_net</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">observation_net</span><span class="p">,</span> <span class="n">observation_net_out_features</span> <span class="o">=</span> \
+                    <span class="n">utils</span><span class="o">.</span><span class="n">get_observation_net</span><span class="p">(</span>
+                        <span class="n">state_shape</span><span class="p">,</span>
+                        <span class="o">**</span><span class="n">observation_net_params</span>
+                    <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">observation_net</span><span class="p">,</span> <span class="n">observation_net_out_features</span> <span class="o">=</span> \
+                <span class="n">utils</span><span class="o">.</span><span class="n">get_observation_net</span><span class="p">(</span><span class="n">state_shape</span><span class="p">)</span>
+        <span class="n">main_net_in_features</span> <span class="o">+=</span> <span class="n">observation_net_out_features</span>
+
+        <span class="c1"># aggregation net</span>
+        <span class="k">if</span> <span class="n">aggregation_net_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">aggregation_type</span> <span class="o">=</span> \
+                <span class="n">aggregation_net_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_network_type&quot;</span><span class="p">,</span> <span class="s2">&quot;concat&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">aggregation_type</span> <span class="o">==</span> <span class="s2">&quot;concat&quot;</span><span class="p">:</span>
+                <span class="n">aggregation_net</span> <span class="o">=</span> <span class="n">TemporalConcatPooling</span><span class="p">(</span>
+                    <span class="n">observation_net_out_features</span><span class="p">,</span> <span class="o">**</span><span class="n">aggregation_net_params</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="n">aggregation_type</span> <span class="o">==</span> <span class="s2">&quot;lama&quot;</span><span class="p">:</span>
+                <span class="n">aggregation_net</span> <span class="o">=</span> <span class="n">LamaPooling</span><span class="p">(</span>
+                    <span class="n">observation_net_out_features</span><span class="p">,</span> <span class="o">**</span><span class="n">aggregation_net_params</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+            <span class="n">main_net_in_features</span> <span class="o">=</span> <span class="n">aggregation_net</span><span class="o">.</span><span class="n">out_features</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">aggregation_net</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># action net</span>
+        <span class="k">if</span> <span class="n">action_net_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># @TODO: hacky solution for code reuse</span>
+            <span class="n">action_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">)</span> <span class="o">+</span> <span class="n">action_shape</span>
+            <span class="n">action_net</span><span class="p">,</span> <span class="n">action_net_out_features</span> <span class="o">=</span> \
+                <span class="n">utils</span><span class="o">.</span><span class="n">get_observation_net</span><span class="p">(</span><span class="n">action_shape</span><span class="p">,</span> <span class="o">**</span><span class="n">action_net_params</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">action_net</span><span class="p">,</span> <span class="n">action_net_out_features</span> <span class="o">=</span> \
+                <span class="n">utils</span><span class="o">.</span><span class="n">get_observation_net</span><span class="p">(</span><span class="n">action_shape</span><span class="p">)</span>
+        <span class="n">main_net_in_features</span> <span class="o">+=</span> <span class="n">action_net_out_features</span>
+
+        <span class="c1"># main net</span>
+        <span class="n">main_net_params</span><span class="p">[</span><span class="s2">&quot;in_features&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">main_net_in_features</span>
+        <span class="n">main_net</span> <span class="o">=</span> <span class="n">get_linear_net</span><span class="p">(</span><span class="o">**</span><span class="n">main_net_params</span><span class="p">)</span>
+
+        <span class="n">net</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span>
+            <span class="n">observation_net</span><span class="o">=</span><span class="n">observation_net</span><span class="p">,</span>
+            <span class="n">action_net</span><span class="o">=</span><span class="n">action_net</span><span class="p">,</span>
+            <span class="n">aggregation_net</span><span class="o">=</span><span class="n">aggregation_net</span><span class="p">,</span>
+            <span class="n">main_net</span><span class="o">=</span><span class="n">main_net</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">net</span></div></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;StateNet&quot;</span><span class="p">,</span> <span class="s2">&quot;StateActionNet&quot;</span><span class="p">]</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">Catalyst</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../info/contributing.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../info/license.html">Apache License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/rl.html">RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utils</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Scitator.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

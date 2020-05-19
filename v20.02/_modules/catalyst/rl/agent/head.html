@@ -1,0 +1,287 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>catalyst.rl.agent.head &#8212; Catalyst 20.02 documentation</title>
+    <link rel="stylesheet" href="../../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for catalyst.rl.agent.head</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">List</span>  <span class="c1"># isort:skip</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+
+<span class="kn">from</span> <span class="nn">catalyst.contrib.models</span> <span class="k">import</span> <span class="n">SequentialNet</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="k">import</span> <span class="n">outer_init</span>
+<span class="kn">from</span> <span class="nn">.policy</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">BernoulliPolicy</span><span class="p">,</span> <span class="n">CategoricalPolicy</span><span class="p">,</span> <span class="n">DiagonalGaussPolicy</span><span class="p">,</span> <span class="n">RealNVPPolicy</span><span class="p">,</span>
+    <span class="n">SquashingGaussPolicy</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="ValueHead"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agent.head.ValueHead">[docs]</a><span class="k">class</span> <span class="nc">ValueHead</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_build_head</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="n">out_features</span><span class="p">,</span> <span class="n">num_atoms</span><span class="p">,</span> <span class="n">bias</span><span class="p">):</span>
+        <span class="n">head</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span>
+            <span class="n">in_features</span><span class="o">=</span><span class="n">in_features</span><span class="p">,</span>
+            <span class="n">out_features</span><span class="o">=</span><span class="n">out_features</span> <span class="o">*</span> <span class="n">num_atoms</span><span class="p">,</span>
+            <span class="n">bias</span><span class="o">=</span><span class="n">bias</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">head</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">in_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">out_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">num_atoms</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">use_state_value_head</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">distribution</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">values_range</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_heads</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">hyperbolic_constant</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span> <span class="o">=</span> <span class="n">in_features</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span> <span class="o">=</span> <span class="n">out_features</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">bias</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span> <span class="o">=</span> <span class="n">num_atoms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_state_value_head</span> <span class="o">=</span> <span class="n">use_state_value_head</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">distribution</span> <span class="o">=</span> <span class="n">distribution</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">values_range</span> <span class="o">=</span> <span class="n">values_range</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span> <span class="o">=</span> <span class="n">num_heads</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_heads</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">hyperbolic_constant</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hyperbolic_constant</span> <span class="o">=</span> <span class="n">hyperbolic_constant</span>
+
+        <span class="k">if</span> <span class="n">distribution</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># mean case</span>
+            <span class="k">assert</span> <span class="n">values_range</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_atoms</span> <span class="o">==</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">distribution</span> <span class="o">==</span> <span class="s2">&quot;categorical&quot;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">values_range</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_atoms</span> <span class="o">&gt;</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">distribution</span> <span class="o">==</span> <span class="s2">&quot;quantile&quot;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">values_range</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">num_atoms</span> <span class="o">&gt;</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+        <span class="n">value_heads</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_build_head</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="n">out_features</span><span class="p">,</span> <span class="n">num_atoms</span><span class="p">,</span> <span class="n">bias</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_heads</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">value_heads</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span><span class="n">value_heads</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_state_value_head</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;Not implemented behaviour&quot;</span>
+            <span class="n">state_value_heads</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_build_head</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">num_atoms</span><span class="p">,</span> <span class="n">bias</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_heads</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state_value_heads</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span><span class="n">state_value_heads</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">outer_init</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ValueHead.forward"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agent.head.ValueHead.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">net</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">value_heads</span><span class="p">:</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">net</span><span class="p">(</span><span class="n">state</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">))</span>
+        <span class="c1"># batch_size(0) x num_heads(1) x num_outputs(2) x num_atoms(3)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_state_value_head</span><span class="p">:</span>
+            <span class="n">state_value</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">net</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_value_heads</span><span class="p">:</span>
+                <span class="n">state_value</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">net</span><span class="p">(</span><span class="n">state</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_atoms</span><span class="p">))</span>
+            <span class="c1"># batch_size(0) x num_heads(1) x num_outputs(2) x num_atoms(3)</span>
+            <span class="n">state_value</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">state_value</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+            <span class="n">x_mean</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">x_mean</span> <span class="o">+</span> <span class="n">state_value</span>
+
+        <span class="c1"># batch_size(0) x num_heads(1) x num_outputs(2) x num_atoms(3)</span>
+        <span class="k">return</span> <span class="n">x</span></div></div>
+
+
+<div class="viewcode-block" id="PolicyHead"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agent.head.PolicyHead">[docs]</a><span class="k">class</span> <span class="nc">PolicyHead</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">in_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">out_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">policy_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">out_activation</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">policy_type</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s2">&quot;categorical&quot;</span><span class="p">,</span> <span class="s2">&quot;bernoulli&quot;</span><span class="p">,</span> <span class="s2">&quot;diagonal-gauss&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;squashing-gauss&quot;</span><span class="p">,</span> <span class="s2">&quot;real-nvp&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="p">]</span>
+
+        <span class="c1"># @TODO: refactor</span>
+        <span class="n">layer_fn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span>
+        <span class="n">activation_fn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span>
+        <span class="n">squashing_fn</span> <span class="o">=</span> <span class="n">out_activation</span>
+        <span class="n">bias</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">policy_type</span> <span class="o">==</span> <span class="s2">&quot;categorical&quot;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">out_activation</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="n">head_size</span> <span class="o">=</span> <span class="n">out_features</span>
+            <span class="n">policy_net</span> <span class="o">=</span> <span class="n">CategoricalPolicy</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">policy_type</span> <span class="o">==</span> <span class="s2">&quot;bernoulli&quot;</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">out_activation</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="n">head_size</span> <span class="o">=</span> <span class="n">out_features</span>
+            <span class="n">policy_net</span> <span class="o">=</span> <span class="n">BernoulliPolicy</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">policy_type</span> <span class="o">==</span> <span class="s2">&quot;diagonal-gauss&quot;</span><span class="p">:</span>
+            <span class="n">head_size</span> <span class="o">=</span> <span class="n">out_features</span> <span class="o">*</span> <span class="mi">2</span>
+            <span class="n">policy_net</span> <span class="o">=</span> <span class="n">DiagonalGaussPolicy</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">policy_type</span> <span class="o">==</span> <span class="s2">&quot;squashing-gauss&quot;</span><span class="p">:</span>
+            <span class="n">out_activation</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">head_size</span> <span class="o">=</span> <span class="n">out_features</span> <span class="o">*</span> <span class="mi">2</span>
+            <span class="n">policy_net</span> <span class="o">=</span> <span class="n">SquashingGaussPolicy</span><span class="p">(</span><span class="n">squashing_fn</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">policy_type</span> <span class="o">==</span> <span class="s2">&quot;real-nvp&quot;</span><span class="p">:</span>
+            <span class="n">out_activation</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">head_size</span> <span class="o">=</span> <span class="n">out_features</span> <span class="o">*</span> <span class="mi">2</span>
+            <span class="n">policy_net</span> <span class="o">=</span> <span class="n">RealNVPPolicy</span><span class="p">(</span>
+                <span class="n">action_size</span><span class="o">=</span><span class="n">out_features</span><span class="p">,</span>
+                <span class="n">layer_fn</span><span class="o">=</span><span class="n">layer_fn</span><span class="p">,</span>
+                <span class="n">activation_fn</span><span class="o">=</span><span class="n">activation_fn</span><span class="p">,</span>
+                <span class="n">squashing_fn</span><span class="o">=</span><span class="n">squashing_fn</span><span class="p">,</span>
+                <span class="n">bias</span><span class="o">=</span><span class="n">bias</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">head_size</span> <span class="o">=</span> <span class="n">out_features</span>
+            <span class="n">policy_net</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">policy_type</span> <span class="o">=</span> <span class="s2">&quot;logits&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">policy_type</span> <span class="o">=</span> <span class="n">policy_type</span>
+
+        <span class="n">head_net</span> <span class="o">=</span> <span class="n">SequentialNet</span><span class="p">(</span>
+            <span class="n">hiddens</span><span class="o">=</span><span class="p">[</span><span class="n">in_features</span><span class="p">,</span> <span class="n">head_size</span><span class="p">],</span>
+            <span class="n">layer_fn</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;module&quot;</span><span class="p">:</span> <span class="n">layer_fn</span><span class="p">,</span> <span class="s2">&quot;bias&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+            <span class="n">activation_fn</span><span class="o">=</span><span class="n">out_activation</span><span class="p">,</span>
+            <span class="n">norm_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">head_net</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">outer_init</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head_net</span> <span class="o">=</span> <span class="n">head_net</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">policy_net</span> <span class="o">=</span> <span class="n">policy_net</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_policy_fn</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">policy_net</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_policy_fn</span> <span class="o">=</span> <span class="n">policy_net</span><span class="o">.</span><span class="n">forward</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_policy_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+<div class="viewcode-block" id="PolicyHead.forward"><a class="viewcode-back" href="../../../../api/rl.html#catalyst.rl.agent.head.PolicyHead.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">logprob</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">deterministic</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_net</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_policy_fn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">logprob</span><span class="p">,</span> <span class="n">deterministic</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span></div></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ValueHead&quot;</span><span class="p">,</span> <span class="s2">&quot;PolicyHead&quot;</span><span class="p">]</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../../index.html">Catalyst</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../info/contributing.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../info/license.html">Apache License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/rl.html">RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utils</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Scitator.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
