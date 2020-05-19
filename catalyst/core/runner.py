@@ -368,10 +368,10 @@ class _Runner(ABC):
             batch (Mapping[str, Any]): dictionary with data batches
                 from DataLoader.
         """
-        if isinstance(batch, list):
-            self.state.batch_size = len(batch[0])
-        else:
+        if isinstance(batch, dict):
             self.state.batch_size = next(iter(batch.values())).shape[0]
+        else:
+            self.state.batch_size = len(batch[0])
         self.state.global_sample_step += self.state.batch_size
         self.state.loader_sample_step += self.state.batch_size
         batch = self._batch2device(batch, self.device)
