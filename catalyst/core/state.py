@@ -208,8 +208,8 @@ class State(FrozenClass):
     **state.batch_size** - int, length of the current batch
 
 
-    **state.global_batch_step** - int, numerical indicator, counter for all batches,\
-    that passes through our model during training, validation and\
+    **state.global_batch_step** - int, numerical indicator, counter for all
+    batches, that passes through our model during training, validation and\
     inference stages
 
     **state.global_sample_step** - int, numerical indicator, counter for all\
