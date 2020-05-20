@@ -121,7 +121,6 @@ class BalanceBatchSampler(Sampler):
             p: number of classes in a batch, should be > 1
             k: number of instances of each class in a batch, should be > 1
         """
-
         super().__init__(self)
         classes = set(labels)
 
