@@ -258,7 +258,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.contrib.utils.misc</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">tee</span>
 
 
@@ -316,7 +316,19 @@
     <span class="k">return</span> <span class="kc">True</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;args_are_not_none&quot;</span><span class="p">,</span> <span class="s2">&quot;make_tuple&quot;</span><span class="p">,</span> <span class="s2">&quot;pairwise&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="find_value_ids"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.utils.misc.find_value_ids">[docs]</a><span class="k">def</span> <span class="nf">find_value_ids</span><span class="p">(</span><span class="n">it</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        it: list of any</span>
+<span class="sd">        value: query element</span>
+
+<span class="sd">    Returns: indices of the all elements equal x0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">inds</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">el</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">it</span><span class="p">)</span> <span class="k">if</span> <span class="n">el</span> <span class="o">==</span> <span class="n">value</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">inds</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;args_are_not_none&quot;</span><span class="p">,</span> <span class="s2">&quot;make_tuple&quot;</span><span class="p">,</span> <span class="s2">&quot;pairwise&quot;</span><span class="p">,</span> <span class="s2">&quot;find_value_ids&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

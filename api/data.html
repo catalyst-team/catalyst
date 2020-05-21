@@ -851,12 +851,12 @@ and applies all readers and mixins</p>
 <span id="sampler"></span><h2>Sampler<a class="headerlink" href="#module-catalyst.data.sampler" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="catalyst.data.sampler.BalanceClassSampler">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler.</code><code class="sig-name descname">BalanceClassSampler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">labels</span><span class="p">:</span> <span class="n">List<span class="p">[</span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'downsampling'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceClassSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceClassSampler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler.</code><code class="sig-name descname">BalanceClassSampler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">labels</span><span class="p">:</span> <span class="n">List<span class="p">[</span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'downsampling'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceClassSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceClassSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstraction over data sampler.</p>
 <p>Allows you to create stratified sample on unbalanced classes.</p>
 <dl class="py method">
 <dt id="catalyst.data.sampler.BalanceClassSampler.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">labels</span><span class="p">:</span> <span class="n">List<span class="p">[</span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'downsampling'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceClassSampler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceClassSampler.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">labels</span><span class="p">:</span> <span class="n">List<span class="p">[</span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'downsampling'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceClassSampler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceClassSampler.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -885,6 +885,83 @@ Must be one of [downsampling, upsampling]</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>length of result sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="catalyst.data.sampler.BalanceBatchSampler">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler.</code><code class="sig-name descname">BalanceBatchSampler</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">labels</span><span class="p">:</span> <span class="n">List<span class="p">[</span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">p</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">k</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceBatchSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceBatchSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This kind of sampler can be used for both metric learning and
+classification task.</p>
+<p>Sampler with the given strategy for the C unique classes dataset:
+- Selection P of C classes for the 1st batch
+- Selection K instances for each class for the 1st batch
+- Selection P of C - P remaining classes for 2nd batch
+- Selection K instances for each class for the 2nd batch
+- …
+The epoch ends when there are no classes left.
+So, the batch sise is P * K except the last one.</p>
+<p>Thus, in each epoch, all the classes will be selected once, but this
+does not mean that all the instances will be selected during the epoch.</p>
+<p>One of the purposes of this sampler is to be used for
+forming triplets and pos/neg pairs inside the batch.
+To guarante existance of these pairs in the batch,
+P and K should be &gt; 1. (1)</p>
+<p>Behavior in corner cases:
+- If a class does not contain K instances,
+a choice will be made with repetition.
+- If C % P == 1 then one of the classes should be dropped
+otherwise statement (1) will not be met.</p>
+<p>This type of sampling can be found in the classical paper of Person Re-Id:
+“In Defense of the Triplet Loss for Person Re-Identification”,
+where P equals 32 and K equals 4.</p>
+<dl class="py method">
+<dt id="catalyst.data.sampler.BalanceBatchSampler.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">labels</span><span class="p">:</span> <span class="n">List<span class="p">[</span>int<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">p</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">k</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceBatchSampler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceBatchSampler.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>labels</strong> – list of classes labeles for each elem in the dataset</p></li>
+<li><p><strong>p</strong> – number of classes in a batch, should be &gt; 1</p></li>
+<li><p><strong>k</strong> – number of instances of each class in a batch, should be &gt; 1</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.data.sampler.BalanceBatchSampler.__iter__">
+<code class="sig-name descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Iterator<span class="p">[</span>int<span class="p">]</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceBatchSampler.__iter__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceBatchSampler.__iter__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns: indeces for sampling dataset elems during an epoch</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.data.sampler.BalanceBatchSampler.__len__">
+<code class="sig-name descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceBatchSampler.__len__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceBatchSampler.__len__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns: number of samples in an epoch</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.data.sampler.BalanceBatchSampler.batch_size">
+<em class="property">property </em><code class="sig-name descname">batch_size</code><a class="headerlink" href="#catalyst.data.sampler.BalanceBatchSampler.batch_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>this value should be used in DataLoader as batch size</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Returns</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.data.sampler.BalanceBatchSampler.batches_in_epoch">
+<em class="property">property </em><code class="sig-name descname">batches_in_epoch</code><a class="headerlink" href="#catalyst.data.sampler.BalanceBatchSampler.batches_in_epoch" title="Permalink to this definition">¶</a></dt>
+<dd><p>number of batches in an epoch</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>Returns</p>
 </dd>
 </dl>
 </dd></dl>
