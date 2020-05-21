@@ -105,9 +105,9 @@ class BalanceBatchSampler(Sampler):
 
     Behavior in corner cases:
     - If a class does not contain K instances,
-      a choice will be made with repetition.
+    a choice will be made with repetition.
     - If C % P == 1 then one of the classes should be dropped
-      otherwise statement (1) will not be met.
+    otherwise statement (1) will not be met.
 
     This type of sampling can be found in the classical paper of Person Re-Id:
     "In Defense of the Triplet Loss for Person Re-Identification",

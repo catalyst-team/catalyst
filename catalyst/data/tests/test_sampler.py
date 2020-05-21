@@ -11,8 +11,7 @@ from catalyst.data.sampler import BalanceBatchSampler
 @pytest.fixture()
 def input_balance_batch_sampler() -> List[Tuple[List[int], int, int]]:
     """
-    Returns: test data for sampler in the following format:
-             list of (labels, p, k)
+    Returns: test data for sampler in the following order: (labels, p, k)
     """
     input_cases = [
         # ideal case
