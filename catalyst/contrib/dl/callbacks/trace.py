@@ -142,6 +142,8 @@ class TracerCallback(Callback):
                 if self.best_score is None:
                     self.best_score = score
 
+                # TODO: EarlyStoppingCallback and TracerCallback
+                #  will never work very first epoch
                 if self.is_better(score, self.best_score):
                     self.best_score = score
                     self._trace(state)
