@@ -234,6 +234,8 @@ def process_components(
 
     if device is None:
         device = get_device()
+    elif isinstance(device, str):
+        device = torch.device(device)
 
     is_apex_available = (
         distributed_params.pop("apex", True) and check_apex_available()
