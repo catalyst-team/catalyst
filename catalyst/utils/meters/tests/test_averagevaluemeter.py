@@ -5,15 +5,14 @@ from catalyst.utils import meters
 
 def test_averagevaluemeter():
     """Test for ``catalyst.utils.meters.AverageValueMeter``."""
+    meter = meters.AverageValueMeter()
 
     def batch_generator(length, batch_size=10):
         data = torch.rand(length)
         for i in range(length // batch_size):
-            yield data[i * batch_size: (i + 1) * batch_size]
+            yield data[i * batch_size : (i + 1) * batch_size]
         if length % batch_size:
-            yield data[-(length % batch_size):]
-
-    meter = meters.AverageValueMeter()
+            yield data[-(length % batch_size) :]
 
     def test(meter, length, batch_size):
         x2 = torch.zeros(length)
@@ -21,7 +20,7 @@ def test_averagevaluemeter():
         for batch in batch_generator(length, batch_size):
             bs = batch.shape[0]
             meter.add(batch.mean(), bs)
-            x2[i: i + bs] = batch.mean()
+            x2[i : i + bs] = batch.mean()
             i += bs
         assert torch.allclose(
             torch.tensor((x2.mean(), x2.std())), torch.tensor(meter.value())
