@@ -231,8 +231,11 @@ def process_components(
     distributed_params = distributed_params or {}
     distributed_params = copy.deepcopy(distributed_params)
     distributed_params.update(get_distributed_params())
+
     if device is None:
         device = get_device()
+    elif isinstance(device, str):
+        device = torch.device(device)
 
     is_apex_available = (
         distributed_params.pop("apex", True) and check_apex_available()
@@ -286,7 +289,11 @@ def process_components(
                 model, optimizer, **distributed_params
             )
 
-        if torch.cuda.device_count() > 1:
+        if (
+            torch.cuda.device_count() > 1
+            and device.type != "cpu"
+            and device.index is None
+        ):
             if isinstance(model, nn.Module):
                 model = nn.DataParallel(model)
             elif isinstance(model, dict):
