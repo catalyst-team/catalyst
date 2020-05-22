@@ -1,4 +1,4 @@
-from typing import Tuple, Union
+from typing import Dict, Tuple, Union
 import collections
 from pathlib import Path
 import shutil
@@ -24,7 +24,15 @@ from catalyst.dl.utils import get_trace_name
 
 @registry.Model
 class _SimpleNet(nn.Module):
+    """
+    Simple model for the testing.
+    """
+
     def __init__(self, input_shape: Tuple[int]):
+        """
+        Args:
+            input_shape (Tuple[int]): Shape of input tensor.
+        """
         super().__init__()
         assert len(input_shape) == 3
         c, h, w = input_shape
@@ -45,7 +53,14 @@ class _SimpleNet(nn.Module):
 
         self.fc1 = nn.Linear(in_features=c * h * w, out_features=10)
 
-    def forward(self, x: torch.Tensor):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Args:
+            x (torch.Tensor): Input tensor
+
+        Returns:
+            (torch.Tensor): Output tensor
+        """
         for conv in [self.conv1, self.conv2]:
             x = conv(x)
             x = self.relu(x)
@@ -57,8 +72,9 @@ class _SimpleNet(nn.Module):
     @staticmethod
     def conv2d_size_out(
         *, size: Tuple[int], kernel_size: Tuple[int], stride: Tuple[int],
-    ):
-        """Computes output size for 2D convolution layer.
+    ) -> Tuple[int, int]:
+        """
+        Computes output size for 2D convolution layer.
         cur_layer_img_w = conv2d_size_out(cur_layer_img_w, kernel_size, stride)
         cur_layer_img_h = conv2d_size_out(cur_layer_img_h, kernel_size, stride)
         to understand the shape for dense layer's input.
@@ -69,7 +85,7 @@ class _SimpleNet(nn.Module):
             stride (Tuple[int]): size of convolution stride.
 
         Returns:
-            int: output size
+            (Tuple[int, int]): output size
         """
         size, kernel_size, stride = map(
             lambda x: torch.tensor(x, dtype=torch.int32),
@@ -81,7 +97,20 @@ class _SimpleNet(nn.Module):
         return h, w
 
 
-def _get_loaders(*, root: str, batch_size: int = 1, num_workers: int = 1):
+def _get_loaders(
+    *, root: str, batch_size: int = 1, num_workers: int = 1
+) -> Dict[str, DataLoader]:
+    """
+    Function to get loaders just for testing.
+
+    Args:
+        root (str): Path to root of dataset.
+        batch_size (int): Batch size.
+        num_workers (int): Num of workers.
+
+    Returns:
+        (Dict[str, DataLoader]): Dict of loaders.
+    """
     data_transform = ToTensor()
 
     trainset = MNIST(
@@ -103,12 +132,25 @@ def _get_loaders(*, root: str, batch_size: int = 1, num_workers: int = 1):
 
 
 class _OnStageEndCheckModelTracedCallback(Callback):
+    """
+    Callback to test traced model at the end of the stage.
+    """
+
     def __init__(self, path: Union[str, Path], inputs: torch.Tensor):
+        """
+        Args:
+            path (Union[str, Path]): Path to traced model.
+            inputs (torch.Tensor): Input samples.
+        """
         super().__init__(CallbackOrder.External)
         self.path: Path = Path(path)
         self.inputs: torch.Tensor = inputs
 
     def on_stage_end(self, state: State):
+        """
+        Args:
+            state (State): Current state.
+        """
         assert self.path.exists(), "Traced model was not found"
 
         traced_model = torch.jit.load(str(self.path))
@@ -147,7 +189,6 @@ def test_tracer_callback():
         additional_string=checkpoint_name,
     )
     tracing_path = Path(logdir) / "trace" / trace_name
-    print(tracing_path, tracing_path.exists(), tracing_path.absolute())
     criterion_callback = CriterionCallback()
     optimizer_callback = OptimizerCallback()
     tracer_callback = TracerCallback(
@@ -185,7 +226,3 @@ def test_tracer_callback():
 
     shutil.rmtree(logdir)
     shutil.rmtree(dataset_root)
-
-
-if __name__ == "__main__":
-    test_tracer_callback()
