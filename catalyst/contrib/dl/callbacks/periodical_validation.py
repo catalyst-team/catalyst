@@ -1,9 +1,9 @@
-from collections import OrderedDict
-from torch.utils.data import DataLoader
 from typing import Mapping
+from collections import OrderedDict
 
+from torch.utils.data import DataLoader
 
-from catalyst.core import Callback, CallbackNode, CallbackOrder, State
+from catalyst.core import Callback, CallbackOrder, State
 
 
 class PeriodicalValidationCallback(Callback):
@@ -19,7 +19,9 @@ class PeriodicalValidationCallback(Callback):
         self.loaders: Mapping[str, DataLoader] = OrderedDict()
         self.valid_loader = None
         for loader, period in kwargs.items():
-            if not isinstance(loader, str) or not isinstance(period, (int, float)):
+            if not isinstance(loader, str) or not isinstance(
+                period, (int, float)
+            ):
                 continue
             self.loader_periods[loader] = period
 

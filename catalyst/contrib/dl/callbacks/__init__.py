@@ -7,6 +7,7 @@ from catalyst.tools import settings
 from .cutmix_callback import CutmixCallback
 from .knn import KNNMetricCallback
 from .optimizer import SaveModelGradsCallback
+from .periodical_validation import PeriodicalValidationCallback
 from .telegram_logger import TelegramLogger
 
 logger = logging.getLogger(__name__)
@@ -65,5 +66,3 @@ except ImportError as ex:
             "run `pip install wandb`."
         )
         raise ex
-
-from .periodical_validation import PeriodicalValidationCallback
