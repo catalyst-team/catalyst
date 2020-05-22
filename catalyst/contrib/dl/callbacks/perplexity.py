@@ -1,5 +1,7 @@
 from torch import nn
 
+from catalyst.core.callbacks import MetricCallback
+
 
 class PerplexityCallback(MetricCallback):
     """
@@ -7,6 +9,7 @@ class PerplexityCallback(MetricCallback):
     especially in Language Modeling task.
     It is 2^cross_entropy.
     """
+
     def __init__(
         self,
         input_key: str = "targets",
@@ -23,15 +26,18 @@ class PerplexityCallback(MetricCallback):
             ignore_index (int): index to ignore, usually pad_index
         """
         self.ignore_index = ignore_index or nn.CrossEntropyLoss().ignore_index
-        self.cross_entropy_loss = nn.CrossEntropyLoss(ignore_index=self.ignore_index)
-        super().__init__( 
+        self.cross_entropy_loss = nn.CrossEntropyLoss(
+            ignore_index=self.ignore_index
+        )
+        super().__init__(
             metric_fn=self.metric_fn,
             input_key=input_key,
             output_key=output_key,
-            prefix=prefix
+            prefix=prefix,
         )
 
     def metric_fn(self, output, input):
+        """Calculate perplexity"""
         cross_entropy = self.cross_entropy_loss(output, input).detach().cpu()
-        perplexity = 2**cross_entropy
+        perplexity = 2 ** cross_entropy
         return perplexity.item()
