@@ -23,7 +23,7 @@ from catalyst.dl.utils import get_trace_name
 
 
 @registry.Model
-class _SimpleNet(nn.Module):
+class _TracedNet(nn.Module):
     """
     Simple model for the testing.
     """
@@ -172,7 +172,7 @@ def test_tracer_callback():
     _, c, h, w = images.shape
     input_shape = (c, h, w)
 
-    model = _SimpleNet(input_shape)
+    model = _TracedNet(input_shape)
     criterion = nn.CrossEntropyLoss()
     optimizer = Adam(model.parameters())
 

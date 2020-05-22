@@ -1032,7 +1032,6 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --logdir=${LOGDIR} > ${EXP_OUTPUT}
 
 cat ${EXP_OUTPUT}
-check_line_counts ${EXP_OUTPUT} "=> Loading" 4
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
