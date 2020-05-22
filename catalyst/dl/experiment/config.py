@@ -160,12 +160,7 @@ class ConfigExperiment(_Experiment):
         return self.stages_config[stage].get("state_params", {})
 
     def _preprocess_model_for_stage(self, stage: str, model: Model):
-        stage_index = self.stages.index(stage)
-        # @TODO: remove to callbacks
-        if stage_index > 0:
-            checkpoint_path = f"{self.logdir}/checkpoints/best.pth"
-            checkpoint = utils.load_checkpoint(checkpoint_path)
-            utils.unpack_checkpoint(checkpoint, model=model)
+        # stage_index = self.stages.index(stage)
         return model
 
     def _postprocess_model_for_stage(self, stage: str, model: Model):
@@ -442,6 +437,26 @@ class ConfigExperiment(_Experiment):
             return ConfigExperiment._get_callback(**wrapper_params)
         return callback
 
+    @staticmethod
+    def _process_callbacks(callbacks: OrderedDict) -> None:
+        """
+        Iterate over each of the callbacks and update
+        approptiate parameters required for success
+        run of config experiment.
+
+        Arguments:
+            callbacks (OrderedDict): finalized order of callbacks.
+        """
+        for callback in callbacks.values():
+            if isinstance(callback, CheckpointCallback):
+                if callback.load_on_stage_start is None:
+                    callback.load_on_stage_start = "best"
+                if (
+                    isinstance(callback.load_on_stage_start, dict)
+                    and "model" not in callback.load_on_stage_start
+                ):
+                    callback.load_on_stage_start["model"] = "best"
+
     def get_callbacks(self, stage: str) -> "OrderedDict[Callback]":
         """Returns the callbacks for a given stage."""
         callbacks_params = self.stages_config[stage].get(
@@ -489,6 +504,8 @@ class ConfigExperiment(_Experiment):
                     break
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
+
+        self._process_callbacks(callbacks)
 
         return callbacks
 

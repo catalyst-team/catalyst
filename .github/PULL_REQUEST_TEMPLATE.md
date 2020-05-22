@@ -37,7 +37,7 @@
 Anyone in the community is free to review the PR once the tests have passed.
 If we didn't discuss your PR in Github issues there's a high chance it will not be merged.
 
-You can use 'Login as guest' to see Teamcity build logs.
+**You can use 'Login as guest' to see Teamcity build logs.**
 
 
 <!-- Thank you for your contribution! -->

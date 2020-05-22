@@ -4,7 +4,7 @@ from catalyst.contrib.nn import optimizers as module
 from catalyst.contrib.nn.optimizers import Lookahead
 
 
-def test_criterion_init():
+def test_optimizer_init():
     """@TODO: Docs. Contribution is welcome."""
     model = nn.Linear(10, 10)
     for name, cls in module.__dict__.items():

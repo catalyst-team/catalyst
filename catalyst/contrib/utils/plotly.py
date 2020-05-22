@@ -35,7 +35,12 @@ def plot_tensorboard_log(
     height: Optional[int] = None,
     width: Optional[int] = None,
 ) -> None:
-    """@TODO: Docs. Contribution is welcome."""
+    """
+    @TODO: Docs. Contribution is welcome.
+
+    Adapted from
+    https://github.com/belskikh/kekas/blob/v0.1.23/kekas/utils.py#L193
+    """
     init_notebook_mode()
     logdir = Path(logdir)
 

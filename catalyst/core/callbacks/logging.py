@@ -44,7 +44,7 @@ class VerboseLogger(Callback):
     def _need_show(self, key: str):
         not_is_never_shown: bool = key not in self.never_show
         is_always_shown: bool = key in self.always_show
-        not_basic = not (key.startswith("_base") or key.startswith("_timers"))
+        not_basic = not (key.startswith("_base") or key.startswith("_timer"))
 
         result = not_is_never_shown and (is_always_shown or not_basic)
 

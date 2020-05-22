@@ -1,5 +1,7 @@
-from typing import Iterator, List, Optional
+from typing import Iterator, List, Optional, Union
+from collections import Counter
 from operator import itemgetter
+from random import choices, sample
 
 import numpy as np
 
@@ -7,6 +9,7 @@ import torch
 from torch.utils.data import DistributedSampler
 from torch.utils.data.sampler import BatchSampler, Sampler
 
+from catalyst.contrib.utils.misc import find_value_ids
 from catalyst.data import DatasetFromSampler
 
 
@@ -16,7 +19,9 @@ class BalanceClassSampler(Sampler):
     Allows you to create stratified sample on unbalanced classes.
     """
 
-    def __init__(self, labels: List[int], mode: str = "downsampling"):
+    def __init__(
+        self, labels: List[int], mode: Union[str, int] = "downsampling"
+    ):
         """
         Args:
             labels (List[int]): list of class label
@@ -74,6 +79,113 @@ class BalanceClassSampler(Sampler):
              length of result sample
         """
         return self.length
+
+
+class BalanceBatchSampler(Sampler):
+    """
+    This kind of sampler can be used for both metric learning and
+    classification task.
+
+    Sampler with the given strategy for the C unique classes dataset:
+    - Selection P of C classes for the 1st batch
+    - Selection K instances for each class for the 1st batch
+    - Selection P of C - P remaining classes for 2nd batch
+    - Selection K instances for each class for the 2nd batch
+    - ...
+    The epoch ends when there are no classes left.
+    So, the batch sise is P * K except the last one.
+
+    Thus, in each epoch, all the classes will be selected once, but this
+    does not mean that all the instances will be selected during the epoch.
+
+    One of the purposes of this sampler is to be used for
+    forming triplets and pos/neg pairs inside the batch.
+    To guarante existance of these pairs in the batch,
+    P and K should be > 1. (1)
+
+    Behavior in corner cases:
+    - If a class does not contain K instances,
+    a choice will be made with repetition.
+    - If C % P == 1 then one of the classes should be dropped
+    otherwise statement (1) will not be met.
+
+    This type of sampling can be found in the classical paper of Person Re-Id:
+    "In Defense of the Triplet Loss for Person Re-Identification",
+    where P equals 32 and K equals 4.
+    """
+
+    def __init__(self, labels: List[int], p: int, k: int):
+        """
+        Args:
+            labels: list of classes labeles for each elem in the dataset
+            p: number of classes in a batch, should be > 1
+            k: number of instances of each class in a batch, should be > 1
+        """
+        super().__init__(self)
+        classes = set(labels)
+
+        assert isinstance(p, int) and isinstance(k, int)
+        assert (1 < p <= len(classes)) and (1 < k)
+        assert all(
+            n > 1 for n in Counter(labels).values()
+        ), "Each class shoud contain at least 2 instances to fit (1)"
+
+        self._labels = tuple(labels)  # to make it immutable
+        self._p = p
+        self._k = k
+
+        self._batch_size = self._p * self._k
+        self._classes = classes
+
+        # to satisfy statement (1)
+        num_classes = len(self._classes)
+        if num_classes % self._p == 1:
+            self._num_epoch_classes = num_classes - 1
+        else:
+            self._num_epoch_classes = num_classes
+
+    @property
+    def batch_size(self) -> int:
+        """
+        Returns: this value should be used in DataLoader as batch size
+        """
+        return self._batch_size
+
+    @property
+    def batches_in_epoch(self) -> int:
+        """
+        Returns: number of batches in an epoch
+        """
+        return int(np.ceil(self._num_epoch_classes / self._p))
+
+    def __len__(self) -> int:
+        """
+        Returns: number of samples in an epoch
+        """
+        return self._num_epoch_classes * self._k
+
+    def __iter__(self) -> Iterator[int]:
+        """
+        Returns: indeces for sampling dataset elems during an epoch
+        """
+        inds = []
+
+        for cls in sample(self._classes, self._num_epoch_classes):
+            all_cls_inds = find_value_ids(self._labels, cls)
+
+            # we've checked in __init__ that this value must be > 1
+            num_samples_exists = len(all_cls_inds)
+
+            if num_samples_exists < self._k:
+                selected_inds = sample(
+                    all_cls_inds, k=num_samples_exists
+                ) + choices(all_cls_inds, k=self._k - num_samples_exists)
+            else:
+                selected_inds = sample(all_cls_inds, k=self._k)
+
+            inds.extend(selected_inds)
+
+        return iter(inds)
 
 
 class MiniEpochSampler(Sampler):
@@ -299,6 +411,7 @@ class DistributedSamplerWrapper(DistributedSampler):
 
 __all__ = [
     "BalanceClassSampler",
+    "BalanceBatchSampler",
     "MiniEpochSampler",
     "DistributedSamplerWrapper",
     "DynamicLenBatchSampler",
