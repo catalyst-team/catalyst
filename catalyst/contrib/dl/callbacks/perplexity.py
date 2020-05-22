@@ -36,8 +36,10 @@ class PerplexityCallback(MetricCallback):
             prefix=prefix,
         )
 
-    def metric_fn(self, output, input):
+    def metric_fn(self, outputs, targets):
         """Calculate perplexity"""
-        cross_entropy = self.cross_entropy_loss(output, input).detach().cpu()
+        cross_entropy = (
+            self.cross_entropy_loss(outputs, targets).detach().cpu()
+        )
         perplexity = 2 ** cross_entropy
         return perplexity.item()
