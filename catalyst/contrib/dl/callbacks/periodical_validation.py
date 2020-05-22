@@ -17,6 +17,7 @@ class DelayedValidationCallback(Callback):
         super().__init__(order=CallbackOrder.Metric)
         self.loader_periods = {}
         self.loaders: Mapping[str, DataLoader] = OrderedDict()
+        self.valid_loader = None
         for loader, period in kwargs.items():
             if not isinstance(loader, str) or not isinstance(period, (int, float)):
                 continue
@@ -30,6 +31,7 @@ class DelayedValidationCallback(Callback):
         """
         for name, loader in state.loaders.items():
             self.loaders[name] = loader
+        self.valid_loader = state.valid_loader
 
     def on_epoch_start(self, state: State) -> None:
         """Set loaders for current epoch.
@@ -39,8 +41,12 @@ class DelayedValidationCallback(Callback):
         """
         epoch_num = state.epoch
         # loaders to use in current epoch
-        new_loaders = OrderedDict()
+        epoch_loaders = OrderedDict()
         for name, loader in self.loaders.items():
             if epoch_num % self.loader_periods.get(name, 1) == 0:
-                new_loaders[name] = loader
-        state.loaders = new_loaders
+                print(f">>> Used {name}")
+                epoch_loaders[name] = loader
+        if self.valid_loader not in epoch_loaders:
+            # take first loader as validation loader
+            state.valid_loader = next(iter(epoch_loaders.keys()))
+        state.loaders = epoch_loaders

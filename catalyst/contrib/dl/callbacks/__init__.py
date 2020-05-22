@@ -66,4 +66,4 @@ except ImportError as ex:
         )
         raise ex
 
-from .delayed_validation import DelayedValidationCallback
+from .periodical_validation import PeriodicalValidationCallback
