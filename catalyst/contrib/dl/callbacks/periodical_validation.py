@@ -6,7 +6,7 @@ from typing import Mapping
 from catalyst.core import Callback, CallbackNode, CallbackOrder, State
 
 
-class DelayedValidationCallback(Callback):
+class PeriodicalValidationCallback(Callback):
     """A callback to run validation with some period."""
 
     def __init__(self, **kwargs):
@@ -44,7 +44,6 @@ class DelayedValidationCallback(Callback):
         epoch_loaders = OrderedDict()
         for name, loader in self.loaders.items():
             if epoch_num % self.loader_periods.get(name, 1) == 0:
-                print(f">>> Used {name}")
                 epoch_loaders[name] = loader
         if self.valid_loader not in epoch_loaders:
             # take first loader as validation loader
