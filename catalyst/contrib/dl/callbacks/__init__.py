@@ -65,3 +65,5 @@ except ImportError as ex:
             "run `pip install wandb`."
         )
         raise ex
+
+from .delayed_validation import DelayedValidationCallback
