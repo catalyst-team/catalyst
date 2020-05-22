@@ -282,8 +282,16 @@ def trace_model_from_state(
     fn = getattr(model, method_name)
     method_argnames = _get_input_argnames(fn=fn, exclude=["self"])
 
-    batch = state.input
-    batch = any2device({name: batch[name] for name in method_argnames}, device)
+    batch = {}
+    for name in method_argnames:
+        # TODO: We don't know input_keys without runner
+        assert name in state.input, (
+            "Input batch should contain the same keys as input argument "
+            "names of `forward` function to be traced correctly"
+        )
+        batch[name] = state.input[name]
+
+    batch = any2device(batch, device)
 
     # Dumping previous state of the model, we will need it to restore
     _device, _is_training, _requires_grad = (
