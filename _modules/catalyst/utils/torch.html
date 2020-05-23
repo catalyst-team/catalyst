@@ -482,21 +482,53 @@
     <span class="k">return</span> <span class="n">model_params</span></div>
 
 
-<div class="viewcode-block" id="set_requires_grad"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.set_requires_grad">[docs]</a><span class="k">def</span> <span class="nf">set_requires_grad</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">requires_grad</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
+<div class="viewcode-block" id="get_requires_grad"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_requires_grad">[docs]</a><span class="k">def</span> <span class="nf">get_requires_grad</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Gets the ``requires_grad`` value for all model parameters.</span>
+
+<span class="sd">    Example::</span>
+
+<span class="sd">        &gt;&gt;&gt; model = SimpleModel()</span>
+<span class="sd">        &gt;&gt;&gt; requires_grad = get_requires_grad(model)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (torch.nn.Module): model</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        requires_grad (Dict[str, bool]): value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">requires_grad</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+        <span class="n">requires_grad</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span>
+    <span class="k">return</span> <span class="n">requires_grad</span></div>
+
+
+<div class="viewcode-block" id="set_requires_grad"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.set_requires_grad">[docs]</a><span class="k">def</span> <span class="nf">set_requires_grad</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">requires_grad</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Sets the ``requires_grad`` value for all model parameters.</span>
 
 <span class="sd">    Example::</span>
 
 <span class="sd">        &gt;&gt;&gt; model = SimpleModel()</span>
 <span class="sd">        &gt;&gt;&gt; set_requires_grad(model, requires_grad=True)</span>
+<span class="sd">        &gt;&gt;&gt; # or</span>
+<span class="sd">        &gt;&gt;&gt; model = SimpleModel()</span>
+<span class="sd">        &gt;&gt;&gt; set_requires_grad(model, requires_grad={&quot;&quot;})</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        model (torch.nn.Module): model</span>
-<span class="sd">        requires_grad (bool): value</span>
+<span class="sd">        requires_grad (Union[bool, Dict[str, bool]]): value</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">requires_grad</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">requires_grad</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
-        <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="n">requires_grad</span></div>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">requires_grad</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">():</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">name</span> <span class="ow">in</span> <span class="n">requires_grad</span>
+            <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Parameter `</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">` does not exist in requires_grad&quot;</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="n">requires_grad</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">requires_grad</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">requires_grad</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+            <span class="n">param</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="n">requires_grad</span></div>
 
 
 <div class="viewcode-block" id="get_network_output"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_network_output">[docs]</a><span class="k">def</span> <span class="nf">get_network_output</span><span class="p">(</span><span class="n">net</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="o">*</span><span class="n">input_shapes_args</span><span class="p">,</span> <span class="o">**</span><span class="n">input_shapes_kwargs</span><span class="p">):</span>
@@ -581,6 +613,7 @@
     <span class="s2">&quot;any2device&quot;</span><span class="p">,</span>
     <span class="s2">&quot;prepare_cudnn&quot;</span><span class="p">,</span>
     <span class="s2">&quot;process_model_params&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_requires_grad&quot;</span><span class="p">,</span>
     <span class="s2">&quot;set_requires_grad&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_network_output&quot;</span><span class="p">,</span>
     <span class="s2">&quot;detach&quot;</span><span class="p">,</span>

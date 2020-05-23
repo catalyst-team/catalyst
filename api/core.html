@@ -708,30 +708,6 @@ for example, <a class="reference internal" href="#catalyst.core.callback.Callbac
 
 </dd></dl>
 
-<dl class="py class">
-<dt id="catalyst.core.experiment._StageBasedExperiment">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.experiment.</code><code class="sig-name descname">_StageBasedExperiment</code><a class="reference internal" href="../_modules/catalyst/core/experiment.html#_StageBasedExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.experiment._StageBasedExperiment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.core.experiment._Experiment" title="catalyst.core.experiment._Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.experiment._Experiment</span></code></a></p>
-<p>Experiment that provides constant
-datasources during training/inference stage.</p>
-<dl class="py method">
-<dt id="catalyst.core.experiment._StageBasedExperiment.get_native_batch">
-<code class="sig-name descname">get_native_batch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">stage</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">loader</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">0</span></em>, <em class="sig-param"><span class="n">data_index</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/experiment.html#_StageBasedExperiment.get_native_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.experiment._StageBasedExperiment.get_native_batch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a batch from experiment loader.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>stage</strong> (<em>str</em>) – stage name</p></li>
-<li><p><strong>loader</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – loader name or its index,
-default is the first loader</p></li>
-<li><p><strong>data_index</strong> (<em>int</em>) – index in dataset from the loader</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
 <span class="target" id="module-catalyst.core.experiment"></span></div>
 <div class="section" id="runner">
 <h3><a class="toc-backref" href="#id4">Runner</a><a class="headerlink" href="#runner" title="Permalink to this headline">¶</a></h3>

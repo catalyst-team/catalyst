@@ -1069,19 +1069,44 @@ if 1.0, learning rates will not be scaled</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt id="catalyst.utils.torch.get_requires_grad">
+<code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">get_requires_grad</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_requires_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_requires_grad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the <code class="docutils literal notranslate"><span class="pre">requires_grad</span></code> value for all model parameters.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">SimpleModel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">requires_grad</span> <span class="o">=</span> <span class="n">get_requires_grad</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>model</strong> (<em>torch.nn.Module</em>) – model</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>value</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>requires_grad (Dict[str, bool])</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="catalyst.utils.torch.set_requires_grad">
-<code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">set_requires_grad</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">requires_grad</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#set_requires_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.set_requires_grad" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">set_requires_grad</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">requires_grad</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>bool<span class="p">, </span>Dict<span class="p">[</span>str<span class="p">, </span>bool<span class="p">]</span><span class="p">]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#set_requires_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.set_requires_grad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the <code class="docutils literal notranslate"><span class="pre">requires_grad</span></code> value for all model parameters.</p>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">SimpleModel</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">set_requires_grad</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># or</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">SimpleModel</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">set_requires_grad</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;&quot;</span><span class="p">})</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<em>torch.nn.Module</em>) – model</p></li>
-<li><p><strong>requires_grad</strong> (<em>bool</em>) – value</p></li>
+<li><p><strong>requires_grad</strong> (<em>Union</em><em>[</em><em>bool</em><em>, </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>bool</em><em>]</em><em>]</em>) – value</p></li>
 </ul>
 </dd>
 </dl>

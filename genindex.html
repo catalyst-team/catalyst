@@ -585,8 +585,6 @@
 </li>
       <li><a href="api/core.html#catalyst.core.runner._Runner">_Runner (class in catalyst.core.runner)</a>
 </li>
-      <li><a href="api/core.html#catalyst.core.experiment._StageBasedExperiment">_StageBasedExperiment (class in catalyst.core.experiment)</a>
-</li>
       <li><a href="api/core.html#catalyst.core.runner._StageBasedRunner">_StageBasedRunner (class in catalyst.core.runner)</a>
 </li>
   </ul></td>
@@ -1914,8 +1912,6 @@
         <li><a href="api/contrib.html#catalyst.contrib.nn.schedulers.onecycle.OneCycleLRWithWarmup.get_momentum">(catalyst.contrib.nn.schedulers.onecycle.OneCycleLRWithWarmup method)</a>
 </li>
       </ul></li>
-      <li><a href="api/core.html#catalyst.core.experiment._StageBasedExperiment.get_native_batch">get_native_batch() (catalyst.core.experiment._StageBasedExperiment method)</a>
-</li>
       <li><a href="api/utils.html#catalyst.utils.torch.get_network_output">get_network_output() (in module catalyst.utils.torch)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.distributed.get_nn_from_ddp_module">get_nn_from_ddp_module() (in module catalyst.utils.distributed)</a>
@@ -1939,6 +1935,8 @@
       <li><a href="api/contrib.html#catalyst.contrib.utils.parallel.get_pool">get_pool() (in module catalyst.contrib.utils.parallel)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.distributed.get_rank">get_rank() (in module catalyst.utils.distributed)</a>
+</li>
+      <li><a href="api/utils.html#catalyst.utils.torch.get_requires_grad">get_requires_grad() (in module catalyst.utils.torch)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.experiment._Experiment.get_scheduler">get_scheduler() (catalyst.core.experiment._Experiment method)</a>
 
@@ -2831,6 +2829,8 @@
 </li>
       <li><a href="api/utils.html#catalyst.utils.config.save_config">save_config() (in module catalyst.utils.config)</a>
 </li>
+      <li><a href="api/dl.html#catalyst.dl.utils.trace.save_traced_model">save_traced_model() (in module catalyst.dl.utils.trace)</a>
+</li>
       <li><a href="api/data.html#catalyst.data.reader.ScalarReader">ScalarReader (class in catalyst.data.reader)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackOrder.Scheduler">Scheduler (catalyst.core.callback.CallbackOrder attribute)</a>
@@ -2875,10 +2875,10 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.utils.pandas.split_dataframe_train_test">split_dataframe_train_test() (in module catalyst.contrib.utils.pandas)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.utils.dataset.split_dataset_train_test">split_dataset_train_test() (in module catalyst.contrib.utils.dataset)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/contrib.html#catalyst.contrib.utils.dataset.split_dataset_train_test">split_dataset_train_test() (in module catalyst.contrib.utils.dataset)</a>
+</li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.modules.se.SqueezeAndExcitation">SqueezeAndExcitation (class in catalyst.contrib.nn.modules.se)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackScope.Stage">Stage (catalyst.core.callback.CallbackScope attribute)</a>
@@ -2965,11 +2965,15 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.utils.parallel.tqdm_parallel_imap">tqdm_parallel_imap() (in module catalyst.contrib.utils.parallel)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/dl.html#catalyst.dl.runner.core.Runner.trace">trace() (catalyst.dl.runner.core.Runner method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/dl.html#catalyst.dl.utils.trace.trace_model">trace_model() (in module catalyst.dl.utils.trace)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.utils.trace.trace_model_from_checkpoint">trace_model_from_checkpoint() (in module catalyst.dl.utils.trace)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.utils.trace.trace_model_from_state">trace_model_from_state() (in module catalyst.dl.utils.trace)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.runner.core.Runner.train">train() (catalyst.dl.runner.core.Runner method)</a>
 </li>

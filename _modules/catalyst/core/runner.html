@@ -278,7 +278,7 @@
 
 <span class="kn">from</span> <span class="nn">.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackScope</span>
 <span class="kn">from</span> <span class="nn">.callbacks</span> <span class="kn">import</span> <span class="n">ExceptionCallback</span>
-<span class="kn">from</span> <span class="nn">.experiment</span> <span class="kn">import</span> <span class="n">_Experiment</span><span class="p">,</span> <span class="n">_StageBasedExperiment</span>
+<span class="kn">from</span> <span class="nn">.experiment</span> <span class="kn">import</span> <span class="n">_Experiment</span>
 <span class="kn">from</span> <span class="nn">.state</span> <span class="kn">import</span> <span class="n">State</span>
 
 
@@ -794,14 +794,14 @@
 <span class="sd">    datasources per stage.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">_experiment_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">_StageBasedExperiment</span>
+    <span class="n">_experiment_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">_Experiment</span>
     <span class="n">_state_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">State</span>
 
     <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Inner method for `experiment` and `state` linting.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">:</span> <span class="n">_StageBasedExperiment</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">:</span> <span class="n">_Experiment</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">:</span> <span class="n">State</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span> <span class="nf">_prepare_for_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>

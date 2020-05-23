@@ -258,7 +258,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.core.experiment</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
@@ -615,41 +615,7 @@
         <span class="k">pass</span></div></div>
 
 
-<div class="viewcode-block" id="_StageBasedExperiment"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment._StageBasedExperiment">[docs]</a><span class="k">class</span> <span class="nc">_StageBasedExperiment</span><span class="p">(</span><span class="n">_Experiment</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Experiment that provides constant</span>
-<span class="sd">    datasources during training/inference stage.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="_StageBasedExperiment.get_native_batch"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment._StageBasedExperiment.get_native_batch">[docs]</a>    <span class="k">def</span> <span class="nf">get_native_batch</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">loader</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">data_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a batch from experiment loader.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            stage (str): stage name</span>
-<span class="sd">            loader (Union[str, int]): loader name or its index,</span>
-<span class="sd">                default is the first loader</span>
-<span class="sd">            data_index (int): index in dataset from the loader</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">loaders</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_loaders</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">_loader</span> <span class="o">=</span> <span class="n">loaders</span><span class="p">[</span><span class="n">loader</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-            <span class="n">_loader</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">loaders</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="n">loader</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Loader parameter must be a string or an integer&quot;</span><span class="p">)</span>
-
-        <span class="n">dataset</span> <span class="o">=</span> <span class="n">_loader</span><span class="o">.</span><span class="n">dataset</span>
-        <span class="n">collate_fn</span> <span class="o">=</span> <span class="n">_loader</span><span class="o">.</span><span class="n">collate_fn</span>
-
-        <span class="n">sample</span> <span class="o">=</span> <span class="n">collate_fn</span><span class="p">([</span><span class="n">dataset</span><span class="p">[</span><span class="n">data_index</span><span class="p">]])</span>
-
-        <span class="k">return</span> <span class="n">sample</span></div></div>
-
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_Experiment&quot;</span><span class="p">,</span> <span class="s2">&quot;_StageBasedExperiment&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_Experiment&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

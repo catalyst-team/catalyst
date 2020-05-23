@@ -265,7 +265,7 @@
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">_StageBasedExperiment</span>
+<span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">_Experiment</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Callback</span><span class="p">,</span>
     <span class="n">CheckpointCallback</span><span class="p">,</span>
@@ -283,7 +283,7 @@
 <span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
 
 
-<div class="viewcode-block" id="Experiment"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.core.Experiment">[docs]</a><span class="k">class</span> <span class="nc">Experiment</span><span class="p">(</span><span class="n">_StageBasedExperiment</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.core.Experiment">[docs]</a><span class="k">class</span> <span class="nc">Experiment</span><span class="p">(</span><span class="n">_Experiment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Super-simple one-staged experiment,</span>
 <span class="sd">    you can use to declare experiment in code.</span>

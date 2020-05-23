@@ -260,7 +260,6 @@
   <h1>Source code for catalyst.dl.runner.core</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.jit</span> <span class="kn">import</span> <span class="n">ScriptModule</span>
@@ -582,7 +581,7 @@
 <span class="sd">            requires_grad (bool): flag to trace with gradients</span>
 <span class="sd">            fp16 (Union[Dict, bool]): If not None, then sets</span>
 <span class="sd">                tracing params to FP16</span>
-<span class="sd">            device (Device): Torch deivice or a string</span>
+<span class="sd">            device (Device): Torch device or a string</span>
 <span class="sd">            predict_params (dict): additional parameters for model forward</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">batch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -612,9 +611,26 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_device</span><span class="p">()</span>
             <span class="n">device</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">device</span>
 
-        <span class="n">result</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">trace_model</span><span class="p">(</span>
+        <span class="c1"># Dumping previous state of the model, we will need it to restore</span>
+        <span class="n">_device</span><span class="p">,</span> <span class="n">_is_training</span><span class="p">,</span> <span class="n">_requires_grad</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">training</span><span class="p">,</span>
+            <span class="n">utils</span><span class="o">.</span><span class="n">get_requires_grad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+        <span class="c1"># function to run prediction on batch</span>
+        <span class="k">def</span> <span class="nf">predict_fn</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">_model</span>
+            <span class="k">return</span> <span class="n">result</span>
+
+        <span class="n">traced_model</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">trace_model</span><span class="p">(</span>
             <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
-            <span class="n">runner</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">predict_fn</span><span class="o">=</span><span class="n">predict_fn</span><span class="p">,</span>
             <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span>
             <span class="n">method_name</span><span class="o">=</span><span class="n">method_name</span><span class="p">,</span>
             <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
@@ -625,22 +641,21 @@
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">filename</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_trace_name</span><span class="p">(</span>
+            <span class="n">utils</span><span class="o">.</span><span class="n">save_traced_model</span><span class="p">(</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">traced_model</span><span class="p">,</span>
+                <span class="n">logdir</span><span class="o">=</span><span class="n">logdir</span><span class="p">,</span>
                 <span class="n">method_name</span><span class="o">=</span><span class="n">method_name</span><span class="p">,</span>
                 <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
                 <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span><span class="p">,</span>
                 <span class="n">opt_level</span><span class="o">=</span><span class="n">opt_level</span><span class="p">,</span>
             <span class="p">)</span>
 
-            <span class="n">logdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">logdir</span><span class="p">)</span>
-            <span class="n">output</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">logdir</span> <span class="o">/</span> <span class="s2">&quot;trace&quot;</span>
-            <span class="n">output</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Restore previous state of the model</span>
+        <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;train&quot;</span> <span class="k">if</span> <span class="n">_is_training</span> <span class="k">else</span> <span class="s2">&quot;eval&quot;</span><span class="p">)()</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">set_requires_grad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">_requires_grad</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">_device</span><span class="p">)</span>
 
-            <span class="n">out_model</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">output</span> <span class="o">/</span> <span class="n">filename</span><span class="p">)</span>
-
-            <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">out_model</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">result</span></div></div>
+        <span class="k">return</span> <span class="n">traced_model</span></div></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Runner&quot;</span><span class="p">]</span>

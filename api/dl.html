@@ -285,7 +285,7 @@
 <dl class="py class">
 <dt id="catalyst.dl.experiment.core.Experiment">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.experiment.core.</code><code class="sig-name descname">Experiment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">datasets</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>Union<span class="p">[</span>Dataset<span class="p">, </span>Dict<span class="p">, </span>Any<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">loaders</span><span class="p">:</span> <span class="n">OrderedDict<span class="p">[</span>str<span class="p">, </span>DataLoader<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">callbacks</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>OrderedDict<span class="p">[</span>str<span class="p">, </span>Callback<span class="p">]</span><span class="p">, </span>List<span class="p">[</span>Callback<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">stage</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'train'</span></em>, <em class="sig-param"><span class="n">criterion</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">optimizer</span><span class="p">:</span> <span class="n">torch.optim.optimizer.Optimizer</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">scheduler</span><span class="p">:</span> <span class="n">torch.optim.lr_scheduler._LRScheduler</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_epochs</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">valid_loader</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'valid'</span></em>, <em class="sig-param"><span class="n">main_metric</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'loss'</span></em>, <em class="sig-param"><span class="n">minimize_metric</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">check_time</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">check_run</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">distributed_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">initial_seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">42</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/core.html#Experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.core.Experiment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.experiment._StageBasedExperiment" title="catalyst.core.experiment._StageBasedExperiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.experiment._StageBasedExperiment</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.experiment._Experiment" title="catalyst.core.experiment._Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.experiment._Experiment</span></code></a></p>
 <p>Super-simple one-staged experiment,
 you can use to declare experiment in code.</p>
 <dl class="py method">
@@ -412,7 +412,7 @@ for distributed and FP16 method</p></li>
 <span class="target" id="module-catalyst.dl.experiment.config"></span><dl class="py class">
 <dt id="catalyst.dl.experiment.config.ConfigExperiment">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.experiment.config.</code><code class="sig-name descname">ConfigExperiment</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span><span class="p">:</span> <span class="n">Dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/config.html#ConfigExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.config.ConfigExperiment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.experiment._StageBasedExperiment" title="catalyst.core.experiment._StageBasedExperiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.experiment._StageBasedExperiment</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.experiment._Experiment" title="catalyst.core.experiment._Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.experiment._Experiment</span></code></a></p>
 <p>Experiment created from a configuration file.</p>
 <dl class="py attribute">
 <dt id="catalyst.dl.experiment.config.ConfigExperiment.STAGE_KEYWORDS">
@@ -679,7 +679,7 @@ will be <code class="docutils literal notranslate"><span class="pre">next(iter(l
 <li><p><strong>requires_grad</strong> (<em>bool</em>) – flag to trace with gradients</p></li>
 <li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets
 tracing params to FP16</p></li>
-<li><p><strong>device</strong> (<em>Device</em>) – Torch deivice or a string</p></li>
+<li><p><strong>device</strong> (<em>Device</em>) – Torch device or a string</p></li>
 <li><p><strong>predict_params</strong> (<em>dict</em>) – additional parameters for model forward</p></li>
 </ul>
 </dd>
@@ -1411,13 +1411,14 @@ will be smaller. (default: <code class="docutils literal notranslate"><span clas
 
 <span class="target" id="module-catalyst.dl.utils.trace"></span><dl class="py function">
 <dt id="catalyst.dl.utils.trace.trace_model">
-<code class="sig-prename descclassname">catalyst.dl.utils.trace.</code><code class="sig-name descname">trace_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">runner</span><span class="p">:</span> <span class="n">Runner</span></em>, <em class="sig-param"><span class="n">batch</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">method_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'forward'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'eval'</span></em>, <em class="sig-param"><span class="n">requires_grad</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">opt_level</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">device</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>torch.device<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'cpu'</span></em>, <em class="sig-param"><span class="n">predict_params</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; torch.jit.ScriptModule<a class="reference internal" href="../_modules/catalyst/dl/utils/trace.html#trace_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.trace.trace_model" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.dl.utils.trace.</code><code class="sig-name descname">trace_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.nn.modules.module.Module</span></em>, <em class="sig-param"><span class="n">predict_fn</span><span class="p">:</span> <span class="n">Callable</span></em>, <em class="sig-param"><span class="n">batch</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">method_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'forward'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'eval'</span></em>, <em class="sig-param"><span class="n">requires_grad</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">opt_level</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">device</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>torch.device<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'cpu'</span></em>, <em class="sig-param"><span class="n">predict_params</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; torch.jit.ScriptModule<a class="reference internal" href="../_modules/catalyst/dl/utils/trace.html#trace_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.trace.trace_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Traces model using runner and batch.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> – Model to trace</p></li>
-<li><p><strong>runner</strong> – Model’s native runner that was used to train model</p></li>
+<li><p><strong>predict_fn</strong> – Function to run prediction with the model provided,
+takes model, inputs parameters</p></li>
 <li><p><strong>batch</strong> – Batch to trace the model</p></li>
 <li><p><strong>method_name</strong> (<em>str</em>) – Model’s method name that will be
 used as entrypoint during tracing</p></li>
@@ -1438,8 +1439,60 @@ used as entrypoint during tracing</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt id="catalyst.dl.utils.trace.trace_model_from_checkpoint">
+<code class="sig-prename descclassname">catalyst.dl.utils.trace.</code><code class="sig-name descname">trace_model_from_checkpoint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">method_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">checkpoint_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">stage</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">loader</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'eval'</span></em>, <em class="sig-param"><span class="n">requires_grad</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">opt_level</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">device</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>torch.device<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'cpu'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils/trace.html#trace_model_from_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.trace.trace_model_from_checkpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Traces model using created experiment and runner.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logdir</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>]</em>) – Path to Catalyst logdir with model</p></li>
+<li><p><strong>checkpoint_name</strong> (<em>str</em>) – Name of model checkpoint to use</p></li>
+<li><p><strong>stage</strong> (<em>str</em>) – experiment’s stage name</p></li>
+<li><p><strong>loader</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – experiment’s loader name or its index</p></li>
+<li><p><strong>method_name</strong> (<em>str</em>) – Model’s method name that will be
+used as entrypoint during tracing</p></li>
+<li><p><strong>mode</strong> (<em>str</em>) – Mode for model to trace (<code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code>)</p></li>
+<li><p><strong>requires_grad</strong> (<em>bool</em>) – Flag to use grads</p></li>
+<li><p><strong>opt_level</strong> (<em>str</em>) – AMP FP16 init level</p></li>
+<li><p><strong>device</strong> (<em>str</em>) – Torch device</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the traced model</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="catalyst.dl.utils.trace.trace_model_from_state">
+<code class="sig-prename descclassname">catalyst.dl.utils.trace.</code><code class="sig-name descname">trace_model_from_state</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">state</span><span class="p">:</span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State">catalyst.core.state.State</a></span></em>, <em class="sig-param"><span class="n">checkpoint_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">method_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'forward'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'eval'</span></em>, <em class="sig-param"><span class="n">requires_grad</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">opt_level</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">device</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>torch.device<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">'cpu'</span></em><span class="sig-paren">)</span> &#x2192; torch.jit.ScriptModule<a class="reference internal" href="../_modules/catalyst/dl/utils/trace.html#trace_model_from_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.trace.trace_model_from_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Traces model using created experiment and runner.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>state</strong> (<a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><em>State</em></a>) – Current runner state.</p></li>
+<li><p><strong>checkpoint_name</strong> (<em>str</em>) – Name of model checkpoint to use, if None
+traces current model from state</p></li>
+<li><p><strong>method_name</strong> (<em>str</em>) – Model’s method name that will be
+used as entrypoint during tracing</p></li>
+<li><p><strong>mode</strong> (<em>str</em>) – Mode for model to trace (<code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code>)</p></li>
+<li><p><strong>requires_grad</strong> (<em>bool</em>) – Flag to use grads</p></li>
+<li><p><strong>opt_level</strong> (<em>str</em>) – AMP FP16 init level</p></li>
+<li><p><strong>device</strong> (<em>str</em>) – Torch device</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Traced model</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>(ScriptModule)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="catalyst.dl.utils.trace.get_trace_name">
-<code class="sig-prename descclassname">catalyst.dl.utils.trace.</code><code class="sig-name descname">get_trace_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">method_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'eval'</span></em>, <em class="sig-param"><span class="n">requires_grad</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">opt_level</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">additional_string</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils/trace.html#get_trace_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.trace.get_trace_name" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.dl.utils.trace.</code><code class="sig-name descname">get_trace_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">method_name</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'eval'</span></em>, <em class="sig-param"><span class="n">requires_grad</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">opt_level</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">additional_string</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/catalyst/dl/utils/trace.html#get_trace_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.trace.get_trace_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a file name for the traced model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1449,6 +1502,35 @@ used as entrypoint during tracing</p></li>
 <li><p><strong>requires_grad</strong> (<em>bool</em>) – flag if model was traced with gradients</p></li>
 <li><p><strong>opt_level</strong> (<em>str</em>) – opt_level if model was traced in FP16</p></li>
 <li><p><strong>additional_string</strong> (<em>str</em>) – any additional information</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Filename for traced model to be saved.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>file_name (str)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="catalyst.dl.utils.trace.save_traced_model">
+<code class="sig-prename descclassname">catalyst.dl.utils.trace.</code><code class="sig-name descname">save_traced_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span><span class="p">:</span> <span class="n">torch.jit.ScriptModule</span></em>, <em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">method_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'forward'</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'eval'</span></em>, <em class="sig-param"><span class="n">requires_grad</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">opt_level</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out_dir</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">out_model</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">checkpoint_name</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils/trace.html#save_traced_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.trace.save_traced_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves traced model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>ScriptModule</em>) – Traced model</p></li>
+<li><p><strong>logdir</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>]</em>) – Path to experiment</p></li>
+<li><p><strong>method_name</strong> (<em>str</em>) – Name of the method was traced</p></li>
+<li><p><strong>mode</strong> (<em>str</em>) – Model’s mode - <cite>train</cite> or <cite>eval</cite></p></li>
+<li><p><strong>requires_grad</strong> (<em>bool</em>) – Whether model was traced with require_grad or not</p></li>
+<li><p><strong>opt_level</strong> (<em>str</em>) – Apex FP16 init level used during tracing</p></li>
+<li><p><strong>out_dir</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>]</em>) – Directory to save model to
+(overrides logdir)</p></li>
+<li><p><strong>out_model</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>]</em>) – Path to save model to
+(overrides logdir &amp; out_dir)</p></li>
+<li><p><strong>checkpoint_name</strong> (<em>str</em>) – Checkpoint name used to restore the model</p></li>
 </ul>
 </dd>
 </dl>

@@ -258,23 +258,61 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.dl.utils.trace</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="p">(</span>  <span class="c1"># isort:skip</span>
+    <span class="n">Any</span><span class="p">,</span>
+    <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">Dict</span><span class="p">,</span>
+    <span class="n">List</span><span class="p">,</span>
+    <span class="n">TYPE_CHECKING</span><span class="p">,</span>
+    <span class="n">Union</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
-<span class="kn">from</span> <span class="nn">torch.jit</span> <span class="kn">import</span> <span class="n">ScriptModule</span>
+<span class="kn">from</span> <span class="nn">torch.jit</span> <span class="kn">import</span> <span class="n">load</span><span class="p">,</span> <span class="n">save</span><span class="p">,</span> <span class="n">ScriptModule</span><span class="p">,</span> <span class="n">trace</span>
 
+<span class="kn">from</span> <span class="nn">catalyst.core.state</span> <span class="kn">import</span> <span class="n">State</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.experiment.config</span> <span class="kn">import</span> <span class="n">ConfigExperiment</span>
 <span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Model</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">any2device</span><span class="p">,</span>
     <span class="n">assert_fp16_available</span><span class="p">,</span>
     <span class="n">get_fn_argsnames</span><span class="p">,</span>
+    <span class="n">get_native_batch_from_loaders</span><span class="p">,</span>
+    <span class="n">get_nn_from_ddp_module</span><span class="p">,</span>
+    <span class="n">get_requires_grad</span><span class="p">,</span>
+    <span class="n">import_experiment_and_runner</span><span class="p">,</span>
+    <span class="n">load_checkpoint</span><span class="p">,</span>
+    <span class="n">load_config</span><span class="p">,</span>
+    <span class="n">pack_checkpoint</span><span class="p">,</span>
     <span class="n">set_requires_grad</span><span class="p">,</span>
+    <span class="n">unpack_checkpoint</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">Runner</span>  <span class="c1"># noqa: F401</span>
+
+
+<span class="k">def</span> <span class="nf">_get_input_argnames</span><span class="p">(</span>
+    <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">exclude</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to get input argument names of function.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fn (Callable[..., Any]): Function to get argument names from</span>
+<span class="sd">        exclude (List[str]): List of string of names to exclude</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (List[str]): List of input argument names</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">argspec</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">argspec</span><span class="o">.</span><span class="n">varargs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">argspec</span><span class="o">.</span><span class="n">varkw</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="p">),</span> <span class="s2">&quot;not supported by PyTorch&quot;</span>
+
+    <span class="k">return</span> <span class="n">get_fn_argsnames</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="n">exclude</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">_ForwardOverrideModel</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -311,20 +349,13 @@
             <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;only KV support implemented&quot;</span>
 
             <span class="n">fn</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">method_name</span><span class="p">)</span>
-            <span class="n">argspec</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">argspec</span><span class="o">.</span><span class="n">varargs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">argspec</span><span class="o">.</span><span class="n">varkw</span> <span class="ow">is</span> <span class="kc">None</span>
-            <span class="p">),</span> <span class="s2">&quot;not supported by PyTorch tracing&quot;</span>
-
-            <span class="n">method_argnames</span> <span class="o">=</span> <span class="n">get_fn_argsnames</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;self&quot;</span><span class="p">])</span>
+            <span class="n">method_argnames</span> <span class="o">=</span> <span class="n">_get_input_argnames</span><span class="p">(</span><span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;self&quot;</span><span class="p">])</span>
             <span class="n">method_input</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">method_argnames</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">tracing_result</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">method_model</span><span class="p">,</span> <span class="n">method_input</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tracing_result</span> <span class="o">=</span> <span class="n">trace</span><span class="p">(</span><span class="n">method_model</span><span class="p">,</span> <span class="n">method_input</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="c1"># for backward compatibility</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">tracing_result</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span>
-                <span class="n">method_model</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tracing_result</span> <span class="o">=</span> <span class="n">trace</span><span class="p">(</span><span class="n">method_model</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">output</span>
@@ -332,7 +363,7 @@
 
 <div class="viewcode-block" id="trace_model"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.trace.trace_model">[docs]</a><span class="k">def</span> <span class="nf">trace_model</span><span class="p">(</span>
     <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
-    <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;Runner&quot;</span><span class="p">,</span>
+    <span class="n">predict_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
     <span class="n">batch</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">method_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;forward&quot;</span><span class="p">,</span>
     <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;eval&quot;</span><span class="p">,</span>
@@ -345,7 +376,8 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        model: Model to trace</span>
-<span class="sd">        runner: Model&#39;s native runner that was used to train model</span>
+<span class="sd">        predict_fn: Function to run prediction with the model provided,</span>
+<span class="sd">            takes model, inputs parameters</span>
 <span class="sd">        batch: Batch to trace the model</span>
 <span class="sd">        method_name (str): Model&#39;s method name that will be</span>
 <span class="sd">            used as entrypoint during tracing</span>
@@ -358,8 +390,8 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        (ScriptModule): Traced model</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">batch</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">runner</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Both batch and runner must be specified.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">batch</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">predict_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Both batch and predict_fn must be specified.&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="s2">&quot;eval&quot;</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown mode &#39;</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&#39;. Must be &#39;eval&#39; or &#39;train&#39;&quot;</span><span class="p">)</span>
@@ -376,23 +408,184 @@
 
         <span class="n">model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">amp</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">opt_level</span><span class="o">=</span><span class="n">opt_level</span><span class="p">)</span>
-        <span class="c1"># TODO: remove `check_trace=False`</span>
-        <span class="c1"># after fixing this bug https://github.com/pytorch/pytorch/issues/23993</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">predict_params</span><span class="p">,</span> <span class="s2">&quot;check_trace&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">}</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="n">predict_params</span>
 
     <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">mode</span><span class="p">)()</span>
     <span class="n">set_requires_grad</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span><span class="p">)</span>
 
-    <span class="n">_runner_model</span><span class="p">,</span> <span class="n">_runner_device</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">runner</span><span class="o">.</span><span class="n">device</span>
+    <span class="n">predict_fn</span><span class="p">(</span><span class="n">tracer</span><span class="p">,</span> <span class="n">batch</span><span class="p">,</span> <span class="o">**</span><span class="n">predict_params</span><span class="p">)</span>
 
-    <span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">runner</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">tracer</span><span class="p">,</span> <span class="n">device</span>
-    <span class="n">runner</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
-    <span class="n">result</span><span class="p">:</span> <span class="n">ScriptModule</span> <span class="o">=</span> <span class="n">tracer</span><span class="o">.</span><span class="n">tracing_result</span>
+    <span class="k">return</span> <span class="n">tracer</span><span class="o">.</span><span class="n">tracing_result</span></div>
 
-    <span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">runner</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">_runner_model</span><span class="p">,</span> <span class="n">_runner_device</span>
-    <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="trace_model_from_checkpoint"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.trace.trace_model_from_checkpoint">[docs]</a><span class="k">def</span> <span class="nf">trace_model_from_checkpoint</span><span class="p">(</span>
+    <span class="n">logdir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">method_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">checkpoint_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">loader</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;eval&quot;</span><span class="p">,</span>
+    <span class="n">requires_grad</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">opt_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Traces model using created experiment and runner.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        logdir (Union[str, Path]): Path to Catalyst logdir with model</span>
+<span class="sd">        checkpoint_name (str): Name of model checkpoint to use</span>
+<span class="sd">        stage (str): experiment&#39;s stage name</span>
+<span class="sd">        loader (Union[str, int]): experiment&#39;s loader name or its index</span>
+<span class="sd">        method_name (str): Model&#39;s method name that will be</span>
+<span class="sd">            used as entrypoint during tracing</span>
+<span class="sd">        mode (str): Mode for model to trace (``train`` or ``eval``)</span>
+<span class="sd">        requires_grad (bool): Flag to use grads</span>
+<span class="sd">        opt_level (str): AMP FP16 init level</span>
+<span class="sd">        device (str): Torch device</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        the traced model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">config_path</span> <span class="o">=</span> <span class="n">logdir</span> <span class="o">/</span> <span class="s2">&quot;configs&quot;</span> <span class="o">/</span> <span class="s2">&quot;_config.json&quot;</span>
+    <span class="n">checkpoint_path</span> <span class="o">=</span> <span class="n">logdir</span> <span class="o">/</span> <span class="s2">&quot;checkpoints&quot;</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">checkpoint_name</span><span class="si">}</span><span class="s2">.pth&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Load config&quot;</span><span class="p">)</span>
+    <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
+    <span class="n">runner_params</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;runner_params&quot;</span><span class="p">,</span> <span class="p">{})</span> <span class="ow">or</span> <span class="p">{}</span>
+
+    <span class="c1"># Get expdir name</span>
+    <span class="n">config_expdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">][</span><span class="s2">&quot;expdir&quot;</span><span class="p">])</span>
+    <span class="c1"># We will use copy of expdir from logs for reproducibility</span>
+    <span class="n">expdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">logdir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;code&quot;</span> <span class="o">/</span> <span class="n">config_expdir</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Import experiment and runner from logdir&quot;</span><span class="p">)</span>
+    <span class="n">ExperimentType</span><span class="p">,</span> <span class="n">RunnerType</span> <span class="o">=</span> <span class="n">import_experiment_and_runner</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
+    <span class="n">experiment</span><span class="p">:</span> <span class="n">ConfigExperiment</span> <span class="o">=</span> <span class="n">ExperimentType</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Load model state from checkpoints/</span><span class="si">{</span><span class="n">checkpoint_name</span><span class="si">}</span><span class="s2">.pth&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">stage</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">stage</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">experiment</span><span class="o">.</span><span class="n">stages</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">experiment</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
+    <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">load_checkpoint</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="p">)</span>
+    <span class="n">unpack_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="n">runner</span><span class="p">:</span> <span class="n">RunnerType</span> <span class="o">=</span> <span class="n">RunnerType</span><span class="p">(</span><span class="o">**</span><span class="n">runner_params</span><span class="p">)</span>
+    <span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">runner</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">model</span><span class="p">,</span> <span class="n">device</span>
+
+    <span class="k">if</span> <span class="n">loader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">loader</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">batch</span> <span class="o">=</span> <span class="n">get_native_batch_from_loaders</span><span class="p">(</span>
+        <span class="n">loaders</span><span class="o">=</span><span class="n">experiment</span><span class="o">.</span><span class="n">get_loaders</span><span class="p">(</span><span class="n">stage</span><span class="p">),</span> <span class="n">loader</span><span class="o">=</span><span class="n">loader</span>
+    <span class="p">)</span>
+
+    <span class="c1"># function to run prediction on batch</span>
+    <span class="k">def</span> <span class="nf">predict_fn</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">_model</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">model</span>
+        <span class="n">runner</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">runner</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">_model</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Tracing&quot;</span><span class="p">)</span>
+    <span class="n">traced_model</span> <span class="o">=</span> <span class="n">trace_model</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+        <span class="n">predict_fn</span><span class="o">=</span><span class="n">predict_fn</span><span class="p">,</span>
+        <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span>
+        <span class="n">method_name</span><span class="o">=</span><span class="n">method_name</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
+        <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span><span class="p">,</span>
+        <span class="n">opt_level</span><span class="o">=</span><span class="n">opt_level</span><span class="p">,</span>
+        <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">traced_model</span></div>
+
+
+<div class="viewcode-block" id="trace_model_from_state"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.trace.trace_model_from_state">[docs]</a><span class="k">def</span> <span class="nf">trace_model_from_state</span><span class="p">(</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">,</span>
+    <span class="n">checkpoint_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">method_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;forward&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;eval&quot;</span><span class="p">,</span>
+    <span class="n">requires_grad</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">opt_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">=</span> <span class="s2">&quot;cpu&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ScriptModule</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Traces model using created experiment and runner.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        state (State): Current runner state.</span>
+<span class="sd">        checkpoint_name (str): Name of model checkpoint to use, if None</span>
+<span class="sd">            traces current model from state</span>
+<span class="sd">        method_name (str): Model&#39;s method name that will be</span>
+<span class="sd">            used as entrypoint during tracing</span>
+<span class="sd">        mode (str): Mode for model to trace (``train`` or ``eval``)</span>
+<span class="sd">        requires_grad (bool): Flag to use grads</span>
+<span class="sd">        opt_level (str): AMP FP16 init level</span>
+<span class="sd">        device (str): Torch device</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        (ScriptModule): Traced model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">logdir</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">logdir</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">get_nn_from_ddp_module</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">checkpoint_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dumped_checkpoint</span> <span class="o">=</span> <span class="n">pack_checkpoint</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+        <span class="n">checkpoint_path</span> <span class="o">=</span> <span class="n">logdir</span> <span class="o">/</span> <span class="s2">&quot;checkpoints&quot;</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">checkpoint_name</span><span class="si">}</span><span class="s2">.pth&quot;</span>
+        <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">load_checkpoint</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="n">checkpoint_path</span><span class="p">)</span>
+        <span class="n">unpack_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="c1"># getting input names of args for method since we don&#39;t have Runner</span>
+    <span class="c1"># and we don&#39;t know input_key to preprocess batch for method call</span>
+    <span class="n">fn</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">method_name</span><span class="p">)</span>
+    <span class="n">method_argnames</span> <span class="o">=</span> <span class="n">_get_input_argnames</span><span class="p">(</span><span class="n">fn</span><span class="o">=</span><span class="n">fn</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;self&quot;</span><span class="p">])</span>
+
+    <span class="n">batch</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">method_argnames</span><span class="p">:</span>
+        <span class="c1"># TODO: We don&#39;t know input_keys without runner</span>
+        <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">input</span><span class="p">,</span> <span class="p">(</span>
+            <span class="s2">&quot;Input batch should contain the same keys as input argument &quot;</span>
+            <span class="s2">&quot;names of `forward` function to be traced correctly&quot;</span>
+        <span class="p">)</span>
+        <span class="n">batch</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+    <span class="n">batch</span> <span class="o">=</span> <span class="n">any2device</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+
+    <span class="c1"># Dumping previous state of the model, we will need it to restore</span>
+    <span class="n">_device</span><span class="p">,</span> <span class="n">_is_training</span><span class="p">,</span> <span class="n">_requires_grad</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">state</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">training</span><span class="p">,</span>
+        <span class="n">get_requires_grad</span><span class="p">(</span><span class="n">model</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="c1"># Function to run prediction on batch</span>
+    <span class="k">def</span> <span class="nf">predict_fn</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="n">inputs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="n">traced_model</span> <span class="o">=</span> <span class="n">trace_model</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+        <span class="n">predict_fn</span><span class="o">=</span><span class="n">predict_fn</span><span class="p">,</span>
+        <span class="n">batch</span><span class="o">=</span><span class="n">batch</span><span class="p">,</span>
+        <span class="n">method_name</span><span class="o">=</span><span class="n">method_name</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
+        <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span><span class="p">,</span>
+        <span class="n">opt_level</span><span class="o">=</span><span class="n">opt_level</span><span class="p">,</span>
+        <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">checkpoint_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">unpack_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="o">=</span><span class="n">dumped_checkpoint</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+
+    <span class="c1"># Restore previous state of the model</span>
+    <span class="nb">getattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;train&quot;</span> <span class="k">if</span> <span class="n">_is_training</span> <span class="k">else</span> <span class="s2">&quot;eval&quot;</span><span class="p">)()</span>
+    <span class="n">set_requires_grad</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">_requires_grad</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">_device</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">traced_model</span></div>
 
 
 <div class="viewcode-block" id="get_trace_name"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.trace.get_trace_name">[docs]</a><span class="k">def</span> <span class="nf">get_trace_name</span><span class="p">(</span>
@@ -401,7 +594,7 @@
     <span class="n">requires_grad</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">opt_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">additional_string</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">):</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Creates a file name for the traced model.</span>
 
 <span class="sd">    Args:</span>
@@ -410,6 +603,9 @@
 <span class="sd">        requires_grad (bool): flag if model was traced with gradients</span>
 <span class="sd">        opt_level (str): opt_level if model was traced in FP16</span>
 <span class="sd">        additional_string (str): any additional information</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        file_name (str): Filename for traced model to be saved.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">file_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;traced&quot;</span>
     <span class="k">if</span> <span class="n">additional_string</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -428,6 +624,59 @@
     <span class="n">file_name</span> <span class="o">+=</span> <span class="s2">&quot;.pth&quot;</span>
 
     <span class="k">return</span> <span class="n">file_name</span></div>
+
+
+<div class="viewcode-block" id="save_traced_model"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.trace.save_traced_model">[docs]</a><span class="k">def</span> <span class="nf">save_traced_model</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">ScriptModule</span><span class="p">,</span>
+    <span class="n">logdir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">method_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;forward&quot;</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;eval&quot;</span><span class="p">,</span>
+    <span class="n">requires_grad</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">opt_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">out_dir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">out_model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">checkpoint_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Saves traced model.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (ScriptModule): Traced model</span>
+<span class="sd">        logdir (Union[str, Path]): Path to experiment</span>
+<span class="sd">        method_name (str): Name of the method was traced</span>
+<span class="sd">        mode (str): Model&#39;s mode - `train` or `eval`</span>
+<span class="sd">        requires_grad (bool): Whether model was traced with require_grad or not</span>
+<span class="sd">        opt_level (str): Apex FP16 init level used during tracing</span>
+<span class="sd">        out_dir (Union[str, Path]): Directory to save model to</span>
+<span class="sd">            (overrides logdir)</span>
+<span class="sd">        out_model (Union[str, Path]): Path to save model to</span>
+<span class="sd">            (overrides logdir &amp; out_dir)</span>
+<span class="sd">        checkpoint_name (str): Checkpoint name used to restore the model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">out_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">get_trace_name</span><span class="p">(</span>
+            <span class="n">method_name</span><span class="o">=</span><span class="n">method_name</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
+            <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span><span class="p">,</span>
+            <span class="n">opt_level</span><span class="o">=</span><span class="n">opt_level</span><span class="p">,</span>
+            <span class="n">additional_string</span><span class="o">=</span><span class="n">checkpoint_name</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">output</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">out_dir</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">logdir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;One of `logdir`, `out_dir` or `out_model` &quot;</span>
+                    <span class="s2">&quot;should be specified&quot;</span>
+                <span class="p">)</span>
+            <span class="n">output</span><span class="p">:</span> <span class="n">Path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">logdir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;trace&quot;</span>
+
+        <span class="n">output</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">out_model</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">output</span> <span class="o">/</span> <span class="n">file_name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">out_model</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">out_model</span><span class="p">)</span>
+
+    <span class="n">save</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">out_model</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="load_traced_model"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.utils.trace.load_traced_model">[docs]</a><span class="k">def</span> <span class="nf">load_traced_model</span><span class="p">(</span>
@@ -451,7 +700,7 @@
     <span class="k">if</span> <span class="n">opt_level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span>
 
-    <span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">load</span><span class="p">(</span><span class="n">model_path</span><span class="p">,</span> <span class="n">map_location</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">opt_level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">assert_fp16_available</span><span class="p">()</span>
@@ -464,7 +713,10 @@
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;trace_model&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;trace_model_from_checkpoint&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;trace_model_from_state&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_trace_name&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;save_traced_model&quot;</span><span class="p">,</span>
     <span class="s2">&quot;load_traced_model&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
