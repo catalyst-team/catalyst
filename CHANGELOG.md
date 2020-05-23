@@ -14,11 +14,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `CheckpointCallback`: new argument `load_on_stage_start` which accepts `str` and `Dict[str, str]` ([#797](https://github.com/
 - LanguageModelingDataset to catalyst\[nlp\] ([#808](https://github.com/catalyst-team/catalyst/pull/808))
 - extra counters for batches, loaders and epochs ([#809](https://github.com/catalyst-team/catalyst/pull/809))
+- `TracerCallback` ([#789](https://github.com/catalyst-team/catalyst/pull/789))
 
 ### Changed
 
 - `CheckpointCallback`: additional logic for argument `load_on_stage_end` - accepts `str` and `Dict[str, str]` ([#797](https://github.com/catalyst-team/catalyst/pull/797))
 - counters names for batches, loaders and epochs ([#809](https://github.com/catalyst-team/catalyst/pull/809))
+- `utils.trace_model`: changed logic - `runner` argument was changed to `predict_fn` ([#789](https://github.com/catalyst-team/catalyst/pull/789))
 
 ### Removed
 
