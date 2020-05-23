@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.tools.meters.apmeter &mdash; Catalyst 20.05.1 documentation</title>
+  <title>catalyst.utils.meters.apmeter &mdash; Catalyst 20.05 documentation</title>
   
 
   
@@ -231,7 +231,7 @@
         
           <li><a href="../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.tools.meters.apmeter</li>
+      <li>catalyst.utils.meters.apmeter</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -257,7 +257,7 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.tools.meters.apmeter</h1><div class="highlight"><pre>
+  <h1>Source code for catalyst.utils.meters.apmeter</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">The APMeter measures the average precision per class.</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -268,7 +268,7 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">meter</span>
 
 
-<div class="viewcode-block" id="APMeter"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.apmeter.APMeter">[docs]</a><span class="k">class</span> <span class="nc">APMeter</span><span class="p">(</span><span class="n">meter</span><span class="o">.</span><span class="n">Meter</span><span class="p">):</span>
+<div class="viewcode-block" id="APMeter"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.apmeter.APMeter">[docs]</a><span class="k">class</span> <span class="nc">APMeter</span><span class="p">(</span><span class="n">meter</span><span class="o">.</span><span class="n">Meter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The APMeter is designed to operate on `NxK` Tensors `output` and</span>
 <span class="sd">    `target`, and optionally a `Nx1` Tensor weight where:</span>
@@ -286,18 +286,18 @@
 <span class="sd">    for each sample.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="APMeter.__init__"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.apmeter.APMeter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="APMeter.__init__"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.apmeter.APMeter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Constructor method for the ``APMeter`` class.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">APMeter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="APMeter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.apmeter.APMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="APMeter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.apmeter.APMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Resets the meter with empty member variables.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scores</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">FloatStorage</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">LongStorage</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">FloatStorage</span><span class="p">())</span></div>
 
-<div class="viewcode-block" id="APMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.apmeter.APMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span>
+<div class="viewcode-block" id="APMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.apmeter.APMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">output</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
         <span class="n">target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
@@ -378,7 +378,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">resize_</span><span class="p">(</span><span class="n">offset</span> <span class="o">+</span> <span class="n">weight</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">narrow</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">weight</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">copy_</span><span class="p">(</span><span class="n">weight</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="APMeter.value"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.apmeter.APMeter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="APMeter.value"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.apmeter.APMeter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the model&quot;s average precision for each class.</span>
 
 <span class="sd">        Return:</span>

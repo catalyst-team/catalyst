@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.tools.meters.movingaveragevaluemeter &mdash; Catalyst 20.05.1 documentation</title>
+  <title>catalyst.utils.meters.confusionmeter &mdash; Catalyst 20.05 documentation</title>
   
 
   
@@ -231,7 +231,7 @@
         
           <li><a href="../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.tools.meters.movingaveragevaluemeter</li>
+      <li>catalyst.utils.meters.confusionmeter</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -257,69 +257,107 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.tools.meters.movingaveragevaluemeter</h1><div class="highlight"><pre>
+  <h1>Source code for catalyst.utils.meters.confusionmeter</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Moving average meter calculates average for moving window of values.</span>
+<span class="sd">Maintains a confusion matrix for a given classification problem.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">meter</span>
 
 
-<div class="viewcode-block" id="MovingAverageValueMeter"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.movingaveragevaluemeter.MovingAverageValueMeter">[docs]</a><span class="k">class</span> <span class="nc">MovingAverageValueMeter</span><span class="p">(</span><span class="n">meter</span><span class="o">.</span><span class="n">Meter</span><span class="p">):</span>
+<div class="viewcode-block" id="ConfusionMeter"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.confusionmeter.ConfusionMeter">[docs]</a><span class="k">class</span> <span class="nc">ConfusionMeter</span><span class="p">(</span><span class="n">meter</span><span class="o">.</span><span class="n">Meter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    MovingAverageValueMeter stores mean and standard deviation</span>
-<span class="sd">    for population of array that is handled like a queue during updates.</span>
-<span class="sd">    Queue(window) is filled with zeros from the start by default.</span>
-<span class="sd">    Meter updates are applied online, one value for each update.</span>
-<span class="sd">    Meter values are moving average and moving standard deviation.</span>
+<span class="sd">    ConfusionMeter constructs a confusion matrix for a multi-class</span>
+<span class="sd">    classification problems. It does not support multi-label, multi-class</span>
+<span class="sd">    problems: for such problems, please use MultiLabelConfusionMeter.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="MovingAverageValueMeter.__init__"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.movingaveragevaluemeter.MovingAverageValueMeter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">windowsize</span><span class="p">):</span>
+<div class="viewcode-block" id="ConfusionMeter.__init__"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.confusionmeter.ConfusionMeter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">normalized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            windowsize (int): size of window of values, which is continuous</span>
-<span class="sd">                and ends on last updated element</span>
+<span class="sd">            k (int): number of classes in the classification problem</span>
+<span class="sd">            normalized (boolean): determines whether or not the confusion</span>
+<span class="sd">                matrix is normalized or not</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">MovingAverageValueMeter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">windowsize</span> <span class="o">=</span> <span class="n">windowsize</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">valuequeue</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">windowsize</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ConfusionMeter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalized</span> <span class="o">=</span> <span class="n">normalized</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="MovingAverageValueMeter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.movingaveragevaluemeter.MovingAverageValueMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Reset sum, number of elements, moving variance and zero out window.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sum</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">var</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">valuequeue</span><span class="o">.</span><span class="n">fill_</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+<div class="viewcode-block" id="ConfusionMeter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.confusionmeter.ConfusionMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Reset confusion matrix, filling it with zeros.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MovingAverageValueMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.movingaveragevaluemeter.MovingAverageValueMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Adds observation sample.</span>
+<div class="viewcode-block" id="ConfusionMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.confusionmeter.ConfusionMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">predicted</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Computes the confusion matrix of ``K x K`` size</span>
+<span class="sd">        where ``K`` is no of classes.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            value (float): scalar</span>
+<span class="sd">            predicted (tensor): Can be an N x K tensor of predicted scores</span>
+<span class="sd">                obtained from the model for N examples and K classes</span>
+<span class="sd">                or an N-tensor of integer values between 0 and K-1</span>
+<span class="sd">            target (tensor): Can be a N-tensor of integer values assumed</span>
+<span class="sd">                to be integer values between 0 and K-1 or N x K tensor, where</span>
+<span class="sd">                targets are assumed to be provided as one-hot vectors</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">queueid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowsize</span>
-        <span class="n">oldvalue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valuequeue</span><span class="p">[</span><span class="n">queueid</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sum</span> <span class="o">+=</span> <span class="n">value</span> <span class="o">-</span> <span class="n">oldvalue</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">var</span> <span class="o">+=</span> <span class="n">value</span> <span class="o">*</span> <span class="n">value</span> <span class="o">-</span> <span class="n">oldvalue</span> <span class="o">*</span> <span class="n">oldvalue</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">valuequeue</span><span class="p">[</span><span class="n">queueid</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span></div>
+        <span class="n">predicted</span> <span class="o">=</span> <span class="n">predicted</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
 
-<div class="viewcode-block" id="MovingAverageValueMeter.value"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.movingaveragevaluemeter.MovingAverageValueMeter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return mean and standard deviation of window.</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">predicted</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">target</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">),</span> <span class="s2">&quot;number of targets and predicted outputs do not match&quot;</span>
 
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">predicted</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">predicted</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span>
+            <span class="p">),</span> <span class="s2">&quot;number of predictions does not match size of confusion matrix&quot;</span>
+            <span class="n">predicted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">predicted</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="p">(</span><span class="n">predicted</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="n">predicted</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+            <span class="p">),</span> <span class="s2">&quot;predicted values are not between 1 and k&quot;</span>
+
+        <span class="n">onehot_target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">onehot_target</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">target</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span>
+            <span class="p">),</span> <span class="s2">&quot;Onehot target does not match size of confusion matrix&quot;</span>
+            <span class="k">assert</span> <span class="p">(</span><span class="n">target</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="n">target</span> <span class="o">&lt;=</span> <span class="mi">1</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="s2">&quot;in one-hot encoding, target values should be 0 or 1&quot;</span>
+            <span class="k">assert</span> <span class="p">(</span>
+                <span class="n">target</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="s2">&quot;multi-label setting is not supported&quot;</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="p">(</span><span class="n">predicted</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="n">predicted</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+            <span class="p">),</span> <span class="s2">&quot;predicted values are not between 0 and k-1&quot;</span>
+
+        <span class="c1"># hack for bincounting 2 arrays together</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">predicted</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">*</span> <span class="n">target</span>
+        <span class="n">bincount_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">),</span> <span class="n">minlength</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">bincount_2d</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">conf</span> <span class="o">=</span> <span class="n">bincount_2d</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">conf</span> <span class="o">+=</span> <span class="n">conf</span></div>
+
+<div class="viewcode-block" id="ConfusionMeter.value"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.confusionmeter.ConfusionMeter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns:</span>
-<span class="sd">            tuple of floats: (window mean, window std)</span>
+<span class="sd">            Confusion matrix of K rows and K columns, where rows corresponds</span>
+<span class="sd">            to ground-truth targets and columns corresponds to predicted</span>
+<span class="sd">            targets.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">n</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowsize</span><span class="p">)</span>
-        <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
-        <span class="n">std</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">max</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">var</span> <span class="o">-</span> <span class="n">n</span> <span class="o">*</span> <span class="n">mean</span> <span class="o">*</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">),</span> <span class="mi">0</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span></div></div>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalized</span><span class="p">:</span>
+            <span class="n">conf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">conf</span> <span class="o">/</span> <span class="n">conf</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span></div></div>
 </pre></div>
 
              </article>

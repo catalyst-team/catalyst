@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.tools.meters.averagevaluemeter &mdash; Catalyst 20.05.1 documentation</title>
+  <title>catalyst.utils.meters.msemeter &mdash; Catalyst 20.05 documentation</title>
   
 
   
@@ -231,7 +231,7 @@
         
           <li><a href="../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.tools.meters.averagevaluemeter</li>
+      <li>catalyst.utils.meters.msemeter</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -257,86 +257,59 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.tools.meters.averagevaluemeter</h1><div class="highlight"><pre>
+  <h1>Source code for catalyst.utils.meters.msemeter</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Average value meter</span>
+<span class="sd">MSE and RMSE meters.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">meter</span>
 
 
-<div class="viewcode-block" id="AverageValueMeter"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.averagevaluemeter.AverageValueMeter">[docs]</a><span class="k">class</span> <span class="nc">AverageValueMeter</span><span class="p">(</span><span class="n">meter</span><span class="o">.</span><span class="n">Meter</span><span class="p">):</span>
+<div class="viewcode-block" id="MSEMeter"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.msemeter.MSEMeter">[docs]</a><span class="k">class</span> <span class="nc">MSEMeter</span><span class="p">(</span><span class="n">meter</span><span class="o">.</span><span class="n">Meter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Average value meter stores mean and standard deviation</span>
-<span class="sd">    for population of input values.</span>
-<span class="sd">    Meter updates are applied online, one value for each update.</span>
-<span class="sd">    Values are not cached, only the last added.</span>
+<span class="sd">    This meter can handle MSE and RMSE.</span>
+<span class="sd">    Root calculation can be toggled(not calculated by default).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="AverageValueMeter.__init__"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.averagevaluemeter.AverageValueMeter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Constructor method for the ``AverageValueMeter`` class.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">AverageValueMeter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+<div class="viewcode-block" id="MSEMeter.__init__"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.msemeter.MSEMeter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            root (bool): Toggle between calculation of</span>
+<span class="sd">                RMSE (True) and MSE (False)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MSEMeter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span></div>
+
+<div class="viewcode-block" id="MSEMeter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.msemeter.MSEMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Reset meter number of elements and squared error sum.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mean_old</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">m_s</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">=</span> <span class="mi">0</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sesum</span> <span class="o">=</span> <span class="mf">0.0</span></div>
 
-<div class="viewcode-block" id="AverageValueMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.averagevaluemeter.AverageValueMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Add a new observation.</span>
-
-<span class="sd">        Updates of mean and std are going online, with</span>
-<span class="sd">        `Welford&#39;s online algorithm</span>
-<span class="sd">        &lt;https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance&gt;`_.</span>
+<div class="viewcode-block" id="MSEMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.msemeter.MSEMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Update squared error stored sum and number of elements.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            value (float): value for update,</span>
-<span class="sd">                can be scalar number or PyTorch tensor</span>
-
-<span class="sd">        .. note::</span>
-<span class="sd">            Because of algorithm design,</span>
-<span class="sd">            you can update meter values with only one value a time.</span>
+<span class="sd">            output (Tensor): Model output tensor or numpy array</span>
+<span class="sd">            target (Tensor): Target tensor or numpy array</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">+=</span> <span class="n">batch_size</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+=</span> <span class="n">output</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sesum</span> <span class="o">+=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">output</span> <span class="o">-</span> <span class="n">target</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span></div>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">+</span> <span class="n">value</span>  <span class="c1"># Force a copy in torch/numpy</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">std</span> <span class="o">=</span> <span class="mf">0.0</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mean_old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">m_s</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_old</span> <span class="o">+</span> <span class="p">(</span>
-                <span class="n">value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_old</span>
-            <span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">m_s</span> <span class="o">+=</span> <span class="p">(</span>
-                <span class="p">(</span><span class="n">value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_old</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">value</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">mean_old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m_s</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">))</span></div>
-
-<div class="viewcode-block" id="AverageValueMeter.value"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.averagevaluemeter.AverageValueMeter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns meter values.</span>
+<div class="viewcode-block" id="MSEMeter.value"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.msemeter.MSEMeter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Calculate MSE and return RMSE or MSE.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            mean (float): Mean that has been updated online.</span>
-<span class="sd">            std (float): Standard deviation that has been updated online.</span>
+<span class="sd">            float: Root of MSE if `self.root` is True else MSE</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">std</span></div>
-
-<div class="viewcode-block" id="AverageValueMeter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.averagevaluemeter.AverageValueMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Resets the meter to default settings.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">mean_old</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">m_s</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">=</span> <span class="mi">0</span></div></div>
+        <span class="n">mse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sesum</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mse</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="k">else</span> <span class="n">mse</span></div></div>
 </pre></div>
 
              </article>

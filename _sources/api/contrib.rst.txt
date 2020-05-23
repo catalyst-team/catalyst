@@ -277,7 +277,7 @@ Tools
 
 Tensorboard
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.tools.tensorboard
+.. automodule:: catalyst.contrib.utils.tools.tensorboard
     :members:
     :undoc-members:
     :show-inheritance:
