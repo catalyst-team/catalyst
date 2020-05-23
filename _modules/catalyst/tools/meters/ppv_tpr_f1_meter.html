@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.meters.ppv_tpr_f1_meter &mdash; Catalyst 20.05 documentation</title>
+  <title>catalyst.tools.meters.ppv_tpr_f1_meter &mdash; Catalyst 20.05.1 documentation</title>
   
 
   
@@ -231,7 +231,7 @@
         
           <li><a href="../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.utils.meters.ppv_tpr_f1_meter</li>
+      <li>catalyst.tools.meters.ppv_tpr_f1_meter</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -257,7 +257,7 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.utils.meters.ppv_tpr_f1_meter</h1><div class="highlight"><pre>
+  <h1>Source code for catalyst.tools.meters.ppv_tpr_f1_meter</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">In this module **precision**, **recall** and **F1 score**</span>
 <span class="sd">calculations are defined in separate functions.</span>
@@ -271,7 +271,7 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">meter</span>
 
 
-<div class="viewcode-block" id="f1score"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.ppv_tpr_f1_meter.f1score">[docs]</a><span class="k">def</span> <span class="nf">f1score</span><span class="p">(</span><span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<div class="viewcode-block" id="f1score"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.ppv_tpr_f1_meter.f1score">[docs]</a><span class="k">def</span> <span class="nf">f1score</span><span class="p">(</span><span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculating F1-score from precision and recall to reduce computation</span>
 <span class="sd">    redundancy.</span>
@@ -288,7 +288,7 @@
     <span class="k">return</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">denominator</span></div>
 
 
-<div class="viewcode-block" id="precision"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.ppv_tpr_f1_meter.precision">[docs]</a><span class="k">def</span> <span class="nf">precision</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="precision"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.ppv_tpr_f1_meter.precision">[docs]</a><span class="k">def</span> <span class="nf">precision</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates precision (a.k.a. positive predictive value) for binary</span>
 <span class="sd">    classification and segmentation.</span>
@@ -306,7 +306,7 @@
     <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">fp</span> <span class="o">/</span> <span class="p">(</span><span class="n">tp</span> <span class="o">+</span> <span class="n">fp</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="recall"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.ppv_tpr_f1_meter.recall">[docs]</a><span class="k">def</span> <span class="nf">recall</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="recall"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.ppv_tpr_f1_meter.recall">[docs]</a><span class="k">def</span> <span class="nf">recall</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculates recall (a.k.a. true positive rate) for binary classification and</span>
 <span class="sd">    segmentation.</span>
@@ -324,7 +324,7 @@
     <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">fn</span> <span class="o">/</span> <span class="p">(</span><span class="n">fn</span> <span class="o">+</span> <span class="n">tp</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="PrecisionRecallF1ScoreMeter"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter">[docs]</a><span class="k">class</span> <span class="nc">PrecisionRecallF1ScoreMeter</span><span class="p">(</span><span class="n">meter</span><span class="o">.</span><span class="n">Meter</span><span class="p">):</span>
+<div class="viewcode-block" id="PrecisionRecallF1ScoreMeter"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter">[docs]</a><span class="k">class</span> <span class="nc">PrecisionRecallF1ScoreMeter</span><span class="p">(</span><span class="n">meter</span><span class="o">.</span><span class="n">Meter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Keeps track of global true positives, false positives, and false negatives</span>
 <span class="sd">    for each epoch and calculates precision, recall, and F1-score based on</span>
@@ -332,7 +332,7 @@
 <span class="sd">    use multiple instances of this class for multi-label cases.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="PrecisionRecallF1ScoreMeter.__init__"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
+<div class="viewcode-block" id="PrecisionRecallF1ScoreMeter.__init__"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor method for the `` PrecisionRecallF1ScoreMeter`` class.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -340,13 +340,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="PrecisionRecallF1ScoreMeter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="PrecisionRecallF1ScoreMeter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Resets true positive, false positive and false negative counts to 0.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tp_fp_fn_counts</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PrecisionRecallF1ScoreMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="PrecisionRecallF1ScoreMeter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Thresholds predictions and calculates the true positives,</span>
 <span class="sd">        false positives, and false negatives in comparison to the target.</span>
@@ -367,7 +367,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">tp_fp_fn_counts</span><span class="p">[</span><span class="s2">&quot;fp&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">fp</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tp_fp_fn_counts</span><span class="p">[</span><span class="s2">&quot;fn&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">fn</span></div>
 
-<div class="viewcode-block" id="PrecisionRecallF1ScoreMeter.value"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PrecisionRecallF1ScoreMeter.value"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates precision/recall/f1 based on the current stored</span>
 <span class="sd">        tp/fp/fn counts.</span>

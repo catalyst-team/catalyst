@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Data &mdash; Catalyst 20.05 documentation</title>
+  <title>Data &mdash; Catalyst 20.05.1 documentation</title>
   
 
   
@@ -839,6 +839,89 @@ and applies all readers and mixins</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>readers</strong> (<em>List</em><em>[</em><a class="reference internal" href="#catalyst.data.reader.ReaderSpec" title="catalyst.data.reader.ReaderSpec"><em>ReaderSpec</em></a><em>]</em>) – list of reader to compose</p></li>
 <li><p><strong>mixins</strong> (<em>list</em>) – list of mixins to use</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="catalyst.data.reader.ImageReader">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.reader.</code><code class="sig-name descname">ImageReader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">output_key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">rootpath</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">grayscale</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/reader.html#ImageReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ImageReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Image reader abstraction. Reads images from a <code class="docutils literal notranslate"><span class="pre">csv</span></code> dataset.</p>
+<dl class="py method">
+<dt id="catalyst.data.reader.ImageReader.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">element</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/reader.html#ImageReader.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ImageReader.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a row from your annotations dict with filename and
+transfer it to an image</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>element</strong> – elem in your dataset</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Image</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.data.reader.ImageReader.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">output_key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">rootpath</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">grayscale</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/reader.html#ImageReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ImageReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_key</strong> (<em>str</em>) – key to use from annotation dict</p></li>
+<li><p><strong>output_key</strong> (<em>str</em>) – key to use to store the result</p></li>
+<li><p><strong>rootpath</strong> (<em>str</em>) – path to images dataset root directory
+(so your can use relative paths in annotations)</p></li>
+<li><p><strong>grayscale</strong> (<em>bool</em>) – flag if you need to work only
+with grayscale images</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="catalyst.data.reader.MaskReader">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.reader.</code><code class="sig-name descname">MaskReader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">output_key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">rootpath</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">clip_range</span><span class="p">:</span> <span class="n">Tuple<span class="p">[</span>Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">]</span><span class="p">, </span>Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">0, 1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/reader.html#MaskReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.MaskReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mask reader abstraction. Reads masks from a <cite>csv</cite> dataset.</p>
+<dl class="py method">
+<dt id="catalyst.data.reader.MaskReader.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">element</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/reader.html#MaskReader.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.MaskReader.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a row from your annotations dict with filename and
+transfer it to a mask</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>element</strong> – elem in your dataset.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Mask</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.data.reader.MaskReader.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">output_key</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">rootpath</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">clip_range</span><span class="p">:</span> <span class="n">Tuple<span class="p">[</span>Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">]</span><span class="p">, </span>Union<span class="p">[</span>int<span class="p">, </span>float<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">0, 1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/reader.html#MaskReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.MaskReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_key</strong> (<em>str</em>) – key to use from annotation dict</p></li>
+<li><p><strong>output_key</strong> (<em>str</em>) – key to use to store the result</p></li>
+<li><p><strong>rootpath</strong> (<em>str</em>) – path to images dataset root directory
+(so your can use relative paths in annotations)</p></li>
+<li><p><strong>clip_range</strong> (<em>Tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) – lower and upper interval edges,
+image values outside the interval are clipped
+to the interval edges</p></li>
 </ul>
 </dd>
 </dl>

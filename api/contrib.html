@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contrib &mdash; Catalyst 20.05 documentation</title>
+  <title>Contrib &mdash; Catalyst 20.05.1 documentation</title>
   
 
   
@@ -303,7 +303,7 @@
 </li>
 <li><p><a class="reference internal" href="#tools" id="id25">Tools</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.tools.tensorboard" id="id26">Tensorboard</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.tools.tensorboard" id="id26">Tensorboard</a></p></li>
 </ul>
 </li>
 </ul>
@@ -3058,30 +3058,30 @@ Normalization can be applied by setting <cite>normalize=True</cite>.</p>
 </div>
 <div class="section" id="tools">
 <h2><a class="toc-backref" href="#id25">Tools</a><a class="headerlink" href="#tools" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="module-catalyst.contrib.utils.tools.tensorboard">
-<span id="tensorboard"></span><h3><a class="toc-backref" href="#id26">Tensorboard</a><a class="headerlink" href="#module-catalyst.contrib.utils.tools.tensorboard" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="module-catalyst.contrib.tools.tensorboard">
+<span id="tensorboard"></span><h3><a class="toc-backref" href="#id26">Tensorboard</a><a class="headerlink" href="#module-catalyst.contrib.tools.tensorboard" title="Permalink to this headline">¶</a></h3>
 <dl class="simple">
 <dt>Tensorboard readers:</dt><dd><ul class="simple">
-<li><p><a class="reference internal" href="#catalyst.contrib.utils.tools.tensorboard.EventsFileReader" title="catalyst.contrib.utils.tools.tensorboard.EventsFileReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventsFileReader</span></code></a></p></li>
-<li><p><a class="reference internal" href="#catalyst.contrib.utils.tools.tensorboard.SummaryReader" title="catalyst.contrib.utils.tools.tensorboard.SummaryReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">SummaryReader</span></code></a></p></li>
+<li><p><a class="reference internal" href="#catalyst.contrib.tools.tensorboard.EventsFileReader" title="catalyst.contrib.tools.tensorboard.EventsFileReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventsFileReader</span></code></a></p></li>
+<li><p><a class="reference internal" href="#catalyst.contrib.tools.tensorboard.SummaryReader" title="catalyst.contrib.tools.tensorboard.SummaryReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">SummaryReader</span></code></a></p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py exception">
-<dt id="catalyst.contrib.utils.tools.tensorboard.EventReadingException">
-<em class="property">exception </em><code class="sig-prename descclassname">catalyst.contrib.utils.tools.tensorboard.</code><code class="sig-name descname">EventReadingException</code><a class="reference internal" href="../_modules/catalyst/contrib/utils/tools/tensorboard.html#EventReadingException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.tools.tensorboard.EventReadingException" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.tools.tensorboard.EventReadingException">
+<em class="property">exception </em><code class="sig-prename descclassname">catalyst.contrib.tools.tensorboard.</code><code class="sig-name descname">EventReadingException</code><a class="reference internal" href="../_modules/catalyst/contrib/tools/tensorboard.html#EventReadingException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.tools.tensorboard.EventReadingException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
 <p>An exception that correspond to an event file reading error.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="catalyst.contrib.utils.tools.tensorboard.EventsFileReader">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.utils.tools.tensorboard.</code><code class="sig-name descname">EventsFileReader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">events_file</span><span class="p">:</span> <span class="n">BinaryIO</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/utils/tools/tensorboard.html#EventsFileReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.tools.tensorboard.EventsFileReader" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.tools.tensorboard.EventsFileReader">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.tools.tensorboard.</code><code class="sig-name descname">EventsFileReader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">events_file</span><span class="p">:</span> <span class="n">BinaryIO</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/tools/tensorboard.html#EventsFileReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.tools.tensorboard.EventsFileReader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Iterable</span></code></p>
 <p>An iterator over a Tensorboard events file.</p>
 <dl class="py method">
-<dt id="catalyst.contrib.utils.tools.tensorboard.EventsFileReader.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">events_file</span><span class="p">:</span> <span class="n">BinaryIO</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/utils/tools/tensorboard.html#EventsFileReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.tools.tensorboard.EventsFileReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.tools.tensorboard.EventsFileReader.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">events_file</span><span class="p">:</span> <span class="n">BinaryIO</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/tools/tensorboard.html#EventsFileReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.tools.tensorboard.EventsFileReader.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize an iterator over an events file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3093,44 +3093,44 @@ Normalization can be applied by setting <cite>normalize=True</cite>.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="catalyst.contrib.utils.tools.tensorboard.SummaryItem">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.utils.tools.tensorboard.</code><code class="sig-name descname">SummaryItem</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tag</span></em>, <em class="sig-param"><span class="n">step</span></em>, <em class="sig-param"><span class="n">wall_time</span></em>, <em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">type</span></em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.contrib.utils.tools.tensorboard.SummaryItem" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.tools.tensorboard.SummaryItem">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.tools.tensorboard.</code><code class="sig-name descname">SummaryItem</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tag</span></em>, <em class="sig-param"><span class="n">step</span></em>, <em class="sig-param"><span class="n">wall_time</span></em>, <em class="sig-param"><span class="n">value</span></em>, <em class="sig-param"><span class="n">type</span></em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.contrib.tools.tensorboard.SummaryItem" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
 <dl class="py method">
-<dt id="catalyst.contrib.utils.tools.tensorboard.SummaryItem.step">
-<em class="property">property </em><code class="sig-name descname">step</code><a class="headerlink" href="#catalyst.contrib.utils.tools.tensorboard.SummaryItem.step" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.tools.tensorboard.SummaryItem.step">
+<em class="property">property </em><code class="sig-name descname">step</code><a class="headerlink" href="#catalyst.contrib.tools.tensorboard.SummaryItem.step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 1</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.contrib.utils.tools.tensorboard.SummaryItem.tag">
-<em class="property">property </em><code class="sig-name descname">tag</code><a class="headerlink" href="#catalyst.contrib.utils.tools.tensorboard.SummaryItem.tag" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.tools.tensorboard.SummaryItem.tag">
+<em class="property">property </em><code class="sig-name descname">tag</code><a class="headerlink" href="#catalyst.contrib.tools.tensorboard.SummaryItem.tag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 0</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.contrib.utils.tools.tensorboard.SummaryItem.type">
-<em class="property">property </em><code class="sig-name descname">type</code><a class="headerlink" href="#catalyst.contrib.utils.tools.tensorboard.SummaryItem.type" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.tools.tensorboard.SummaryItem.type">
+<em class="property">property </em><code class="sig-name descname">type</code><a class="headerlink" href="#catalyst.contrib.tools.tensorboard.SummaryItem.type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 4</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.contrib.utils.tools.tensorboard.SummaryItem.value">
-<em class="property">property </em><code class="sig-name descname">value</code><a class="headerlink" href="#catalyst.contrib.utils.tools.tensorboard.SummaryItem.value" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.tools.tensorboard.SummaryItem.value">
+<em class="property">property </em><code class="sig-name descname">value</code><a class="headerlink" href="#catalyst.contrib.tools.tensorboard.SummaryItem.value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 3</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="catalyst.contrib.utils.tools.tensorboard.SummaryItem.wall_time">
-<em class="property">property </em><code class="sig-name descname">wall_time</code><a class="headerlink" href="#catalyst.contrib.utils.tools.tensorboard.SummaryItem.wall_time" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.tools.tensorboard.SummaryItem.wall_time">
+<em class="property">property </em><code class="sig-name descname">wall_time</code><a class="headerlink" href="#catalyst.contrib.tools.tensorboard.SummaryItem.wall_time" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for field number 2</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt id="catalyst.contrib.utils.tools.tensorboard.SummaryReader">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.utils.tools.tensorboard.</code><code class="sig-name descname">SummaryReader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">tag_filter</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>collections.abc.Iterable<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">types</span><span class="p">:</span> <span class="n">collections.abc.Iterable</span> <span class="o">=</span> <span class="default_value">'scalar'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/utils/tools/tensorboard.html#SummaryReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.tools.tensorboard.SummaryReader" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.tools.tensorboard.SummaryReader">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.tools.tensorboard.</code><code class="sig-name descname">SummaryReader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">tag_filter</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>collections.abc.Iterable<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">types</span><span class="p">:</span> <span class="n">collections.abc.Iterable</span> <span class="o">=</span> <span class="default_value">'scalar'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/tools/tensorboard.html#SummaryReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.tools.tensorboard.SummaryReader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Iterable</span></code></p>
 <p>Iterates over events in all the files in the current logdir.</p>
 <div class="admonition note">
@@ -3138,8 +3138,8 @@ Normalization can be applied by setting <cite>normalize=True</cite>.</p>
 <p>Only scalars are supported at the moment.</p>
 </div>
 <dl class="py method">
-<dt id="catalyst.contrib.utils.tools.tensorboard.SummaryReader.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">tag_filter</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>collections.abc.Iterable<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">types</span><span class="p">:</span> <span class="n">collections.abc.Iterable</span> <span class="o">=</span> <span class="default_value">'scalar'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/utils/tools/tensorboard.html#SummaryReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.tools.tensorboard.SummaryReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.tools.tensorboard.SummaryReader.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">logdir</span><span class="p">:</span> <span class="n">Union<span class="p">[</span>str<span class="p">, </span>pathlib.Path<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">tag_filter</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>collections.abc.Iterable<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">types</span><span class="p">:</span> <span class="n">collections.abc.Iterable</span> <span class="o">=</span> <span class="default_value">'scalar'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/tools/tensorboard.html#SummaryReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.tools.tensorboard.SummaryReader.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initalize new summary reader.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3227,7 +3227,7 @@ Normalization can be applied by setting <cite>normalize=True</cite>.</p>
 </ul>
 </li>
 <li><a class="reference internal" href="#tools">Tools</a><ul>
-<li><a class="reference internal" href="#module-catalyst.contrib.utils.tools.tensorboard">Tensorboard</a></li>
+<li><a class="reference internal" href="#module-catalyst.contrib.tools.tensorboard">Tensorboard</a></li>
 </ul>
 </li>
 </ul>
