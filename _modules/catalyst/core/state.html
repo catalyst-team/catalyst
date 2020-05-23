@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.core.state &mdash; Catalyst 20.05 documentation</title>
+  <title>catalyst.core.state &mdash; Catalyst 20.05.1 documentation</title>
   
 
   
@@ -698,6 +698,21 @@
             <span class="ne">DeprecationWarning</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">loader_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Alias for `state.loader_batch_step`.</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            Deprecated, saved for backward compatibility.</span>
+<span class="sd">            Please use `state.loader_batch_step` instead.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;`loader_step` was deprecated, &quot;</span>
+            <span class="s2">&quot;please use `loader_batch_step` instead&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_batch_step</span>
 
 <div class="viewcode-block" id="State.get_attr"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.state.State.get_attr">[docs]</a>    <span class="k">def</span> <span class="nf">get_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inner_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>

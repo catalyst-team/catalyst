@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.meters.meter &mdash; Catalyst 20.05 documentation</title>
+  <title>catalyst.tools.meters.meter &mdash; Catalyst 20.05.1 documentation</title>
   
 
   
@@ -231,7 +231,7 @@
         
           <li><a href="../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.utils.meters.meter</li>
+      <li>catalyst.tools.meters.meter</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -257,23 +257,23 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.utils.meters.meter</h1><div class="highlight"><pre>
+  <h1>Source code for catalyst.tools.meters.meter</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Meters provide a way to keep track of important statistics in an online manner.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<div class="viewcode-block" id="Meter"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.meter.Meter">[docs]</a><span class="k">class</span> <span class="nc">Meter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Meter"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.meter.Meter">[docs]</a><span class="k">class</span> <span class="nc">Meter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This class is abstract, but provides a standard interface for all meters to</span>
 <span class="sd">    follow.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Meter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.meter.Meter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Meter.reset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.meter.Meter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Resets the meter to default settings.&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Meter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.meter.Meter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="Meter.add"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.meter.Meter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Log a new value to the meter.</span>
 
 <span class="sd">        Args:</span>
@@ -282,7 +282,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Meter.value"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.meters.meter.Meter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Meter.value"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.meter.Meter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get the value of the meter in the current state.&quot;&quot;&quot;</span>
         <span class="k">pass</span></div></div>
 </pre></div>
