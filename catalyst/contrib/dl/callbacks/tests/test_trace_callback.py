@@ -145,6 +145,7 @@ class _OnStageEndCheckModelTracedCallback(Callback):
         super().__init__(CallbackOrder.External)
         self.path: Path = Path(path)
         self.inputs: torch.Tensor = inputs
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
     def on_stage_end(self, state: State):
         """
@@ -154,6 +155,8 @@ class _OnStageEndCheckModelTracedCallback(Callback):
         assert self.path.exists(), "Traced model was not found"
 
         traced_model = torch.jit.load(str(self.path))
+        traced_model = traced_model.to(self.device)
+        self.inputs = self.inputs.to(self.device)
         result = traced_model(self.inputs)
 
         assert result is not None and isinstance(
