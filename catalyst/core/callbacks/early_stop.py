@@ -17,7 +17,7 @@ class CheckRunCallback(Callback):
 
     def on_batch_end(self, state: State):
         """@TODO: Docs. Contribution is welcome."""
-        if state.loader_step >= self.num_batch_steps:
+        if state.loader_batch_step >= self.num_batch_steps:
             state.need_early_stop = True
 
 
