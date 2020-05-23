@@ -4,16 +4,17 @@ from transformers.data.data_collator import DataCollatorForLanguageModeling
 
 from catalyst import dl
 from catalyst.contrib.data.nlp import LanguageModelingDataset
-from catalyst.contrib.dl.callbacks import PerplexityCallback
+from catalyst.contrib.dl.callbacks import PerplexityMetricCallback
 
 
 class HuggingFaceRunner(dl.Runner):
     """Just an example"""
 
     def _handle_batch(self, batch):
-        mlm_labels = batch.get("masked_lm_labels")
+        masked_lm_labels = batch.get("masked_lm_labels")
         lm_labels = batch.get("lm_labels")
-        if mlm_labels is None and lm_labels is None:
+        if masked_lm_labels is None and lm_labels is None:
+            # expecting huggingface style mapping
             raise Exception("batch mast have mlm_labels or lm_labels key")
         output = self.model(**batch)
         vocab_size = output[1].size(2)
@@ -21,8 +22,8 @@ class HuggingFaceRunner(dl.Runner):
         loss = output[0]
         logits = output[1].view(-1, vocab_size)
         self.state.batch_metrics = {"loss": loss}
-        if mlm_labels is not None:
-            self.state.input["targets"] = mlm_labels.view(-1)
+        if masked_lm_labels is not None:
+            self.state.input["targets"] = masked_lm_labels.view(-1)
             self.state.output = {"loss": loss, "logits": logits}
         else:
             self.state.input["targets"] = lm_labels.view(-1)
@@ -51,7 +52,7 @@ def test_is_running():
         loaders={"train": dataloader},
         callbacks={
             "optimizer": dl.OptimizerCallback(),
-            "perplexity": PerplexityCallback(),
+            "perplexity": PerplexityMetricCallback(),
         },
     )
     assert True
