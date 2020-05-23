@@ -19,7 +19,7 @@ from catalyst.core import (
     State,
 )
 from catalyst.dl import SupervisedRunner
-from catalyst.dl.utils import get_trace_name
+from catalyst.dl.utils import get_trace_name, get_device
 
 
 @registry.Model
@@ -145,7 +145,7 @@ class _OnStageEndCheckModelTracedCallback(Callback):
         super().__init__(CallbackOrder.External)
         self.path: Path = Path(path)
         self.inputs: torch.Tensor = inputs
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = get_device()
 
     def on_stage_end(self, state: State):
         """
