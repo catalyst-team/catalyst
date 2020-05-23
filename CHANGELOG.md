@@ -39,6 +39,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `CheckpointCallback`: additional logic for argument `load_on_stage_end` - accepts `str` and `Dict[str, str]` ([#797](https://github.com/catalyst-team/catalyst/pull/797))
 - counters names for batches, loaders and epochs ([#809](https://github.com/catalyst-team/catalyst/pull/809))
 - `utils.trace_model`: changed logic - `runner` argument was changed to `predict_fn` ([#789](https://github.com/catalyst-team/catalyst/pull/789))
+- redesigned `contrib.data` and `contrib.datasets` ([#820](https://github.com/catalyst-team/catalyst/pull/820))
+- `catalyst.utils.meters` moved to `catalyst.tools` ([#820](https://github.com/catalyst-team/catalyst/pull/820))
+- `catalyst.contrib.utils.tools.tensorboard` moved to `catalyst.contrib.tools` ([#820](https://github.com/catalyst-team/catalyst/pull/820))
 
 ### Removed
 
