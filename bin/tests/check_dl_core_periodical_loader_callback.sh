@@ -69,8 +69,6 @@ LOGFILE=${CHECKPOINTS}/_metrics.json
 EXP_OUTPUT=./tests/output.txt
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-  USE_DDP=0 \
-  USE_APEX=0 \
   python3 -c "
 import torch
 from torch.utils.data import DataLoader, TensorDataset
@@ -137,8 +135,6 @@ LOG_MSG='pipeline 01'
 echo ${LOG_MSG}
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-  USE_DDP=0 \
-  USE_APEX=0 \
   python3 -c "
 import torch
 from torch.utils.data import DataLoader, TensorDataset
@@ -205,8 +201,6 @@ LOG_MSG='pipeline 02'
 echo ${LOG_MSG}
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-  USE_DDP=0 \
-  USE_APEX=0 \
   python3 -c "
 import torch
 from torch.utils.data import DataLoader, TensorDataset
