@@ -319,7 +319,7 @@ class MetricManagerCallback(Callback):
         """
         state.batch_metrics = self._process_metrics(state.batch_metrics)
         for key, value in state.batch_metrics.items():
-            self.meters[key].add(value)
+            self.meters[key].add(value, state.batch_size)
 
 
 __all__ = [
