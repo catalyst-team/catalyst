@@ -7,7 +7,7 @@ from catalyst.tools import settings
 from .cutmix_callback import CutmixCallback
 from .knn import KNNMetricCallback
 from .optimizer import SaveModelGradsCallback
-from .periodical_validation import PeriodicalValidationCallback
+from .periodical_validation import PeriodicLoaderRunnerCallback
 from .telegram_logger import TelegramLogger
 
 logger = logging.getLogger(__name__)
