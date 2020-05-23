@@ -17,7 +17,7 @@ def _pack_state(state: State):
         stage_name=state.stage_name,
         epoch=state.epoch,
         loader_name=state.loader_name,
-        loader_step=state.loader_step,
+        loader_step=state.loader_batch_step,
         global_epoch=state.global_epoch,
         checkpoint_data=state.checkpoint_data,
         main_metric=state.main_metric,

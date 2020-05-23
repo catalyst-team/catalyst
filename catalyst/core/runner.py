@@ -18,7 +18,7 @@ from catalyst.tools.typing import (
 
 from .callback import Callback, CallbackScope
 from .callbacks import ExceptionCallback
-from .experiment import _Experiment, _StageBasedExperiment
+from .experiment import _Experiment
 from .state import State
 
 
@@ -229,7 +229,8 @@ class _Runner(ABC):
         if self.state is not None and migrate_from_previous_stage:
             migrating_params.update(
                 {
-                    "global_step": self.state.global_step,
+                    "global_batch_step": self.state.global_batch_step,
+                    "global_sample_step": self.state.global_sample_step,
                     "global_epoch": self.state.global_epoch,
                     "resume": getattr(self.state, "resume", None),
                 }
@@ -367,7 +368,12 @@ class _Runner(ABC):
             batch (Mapping[str, Any]): dictionary with data batches
                 from DataLoader.
         """
-        self.state.global_step += self.state.batch_size
+        if isinstance(batch, dict):
+            self.state.batch_size = next(iter(batch.values())).shape[0]
+        else:
+            self.state.batch_size = len(batch[0])
+        self.state.global_sample_step += self.state.batch_size
+        self.state.loader_sample_step += self.state.batch_size
         batch = self._batch2device(batch, self.device)
         self.state.input = batch
 
@@ -383,18 +389,16 @@ class _Runner(ABC):
         Args:
             loader (DataLoader): dataloader to iterate
         """
-        self.state.batch_size = (
+        self.state.loader_batch_size = (
             loader.batch_sampler.batch_size
             if loader.batch_sampler is not None
             else loader.batch_size
         )
-        self.state.global_step = (
-            self.state.global_step
-            or self.state.global_epoch * len(loader) * self.state.batch_size
-        )
 
+        self.state.loader_sample_step = 0
         for i, batch in enumerate(loader):
-            self.state.loader_step = i + 1
+            self.state.global_batch_step += 1
+            self.state.loader_batch_step = i + 1
             self._run_batch(batch)
             if self.state.need_early_stop:
                 self.state.need_early_stop = False
@@ -530,14 +534,14 @@ class _StageBasedRunner(_Runner):
     datasources per stage.
     """
 
-    _experiment_fn: Callable = _StageBasedExperiment
+    _experiment_fn: Callable = _Experiment
     _state_fn: Callable = State
 
     def _init(self):
         """
         Inner method for `experiment` and `state` linting.
         """
-        self.experiment: _StageBasedExperiment = None
+        self.experiment: _Experiment = None
         self.state: State = None
 
     def _prepare_for_stage(self, stage: str):
