@@ -19,7 +19,7 @@ from catalyst.core import (
     State,
 )
 from catalyst.dl import SupervisedRunner
-from catalyst.dl.utils import get_trace_name, get_device
+from catalyst.dl.utils import get_device, get_trace_name
 
 
 @registry.Model
