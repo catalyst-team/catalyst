@@ -7,7 +7,7 @@ import torch
 import torch.distributed
 
 from catalyst.dl import Callback, CallbackNode, CallbackOrder, State, utils
-from catalyst.utils import meters
+from catalyst.tools import meters
 
 
 class ConfusionMatrixCallback(Callback):

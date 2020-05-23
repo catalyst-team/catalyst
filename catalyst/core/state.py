@@ -439,6 +439,21 @@ class State(FrozenClass):
         )
         return self.is_train_loader
 
+    @property
+    def loader_step(self):
+        """Alias for `state.loader_batch_step`.
+
+        .. warning::
+            Deprecated, saved for backward compatibility.
+            Please use `state.loader_batch_step` instead.
+        """
+        warnings.warn(
+            "`loader_step` was deprecated, "
+            "please use `loader_batch_step` instead",
+            DeprecationWarning,
+        )
+        return self.loader_batch_step
+
     def get_attr(self, key: str, inner_key: str = None) -> Any:
         """
         Alias for python `getattr` method. Useful for Callbacks preparation

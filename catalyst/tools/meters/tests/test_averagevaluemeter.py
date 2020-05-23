@@ -1,10 +1,10 @@
 import torch
 
-from catalyst.utils import meters
+from catalyst.tools import meters
 
 
 def test_averagevaluemeter():
-    """Test for ``catalyst.utils.meters.AverageValueMeter``."""
+    """Test for ``catalyst.tools.meters.AverageValueMeter``."""
     meter = meters.AverageValueMeter()
 
     def batch_generator(length, batch_size=10):

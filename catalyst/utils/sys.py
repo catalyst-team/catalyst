@@ -8,7 +8,7 @@ import subprocess
 import sys
 import warnings
 
-from catalyst.contrib.utils.tools.tensorboard import SummaryWriter
+from catalyst.contrib.tools.tensorboard import SummaryWriter
 
 from .config import save_config
 from .misc import get_utcnow_time

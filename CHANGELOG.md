@@ -8,6 +8,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+-
+
+### Changed
+
+- 
+
+### Removed
+
+- 
+
+### Fixed
+
+- 
+
+
+## [20.05.1] - 2020-05-23
+
+### Added
 
 - Circle loss implementation ([#802](https://github.com/catalyst-team/catalyst/pull/802))
 - BatchBalanceSampler for metric learning and classification ([#806](https://github.com/catalyst-team/catalyst/pull/806))
@@ -30,6 +48,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - device selection fix for [#798](https://github.com/catalyst-team/catalyst/issues/798) ([#815](https://github.com/catalyst-team/catalyst/pull/815))
 - batch size counting fix for [#799](https://github.com/catalyst-team/catalyst/issues/799) and [#755](https://github.com/catalyst-team/catalyst/issues/755) issues ([#809](https://github.com/catalyst-team/catalyst/pull/809))
+
 
 ## [20.05] - 2020-05-07
 
@@ -75,6 +94,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 
 ## [20.04] - 2020-04-06
+
+### Added
+
+-
+
+### Changed
+
+- 
+
+### Removed
+
+- 
+
+### Fixed
+
+- 
+
+
+## [YY.MM.R] - YYYY-MM-DD
 
 ### Added
 
