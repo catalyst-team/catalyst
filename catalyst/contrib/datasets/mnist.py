@@ -6,7 +6,7 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 
-from catalyst.contrib.data.dataset.utils import download_and_extract_archive
+from catalyst.contrib.datasets.utils import download_and_extract_archive
 
 
 class MNIST(Dataset):

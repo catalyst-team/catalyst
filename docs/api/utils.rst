@@ -172,74 +172,74 @@ Meters
 
 The meters from torchnet.meters.
 
-Every meter implements :py:class:`catalyst.utils.meters.meter.Meter` interface.
+Every meter implements :py:class:`catalyst.tools.meters.meter.Meter` interface.
 
 Meter
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.meter
+.. automodule:: catalyst.tools.meters.meter
     :members:
     :undoc-members:
     :show-inheritance:
 
 AP Meter
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.apmeter
+.. automodule:: catalyst.tools.meters.apmeter
     :members:
     :undoc-members:
     :show-inheritance:
 
 AUC Meter
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.aucmeter
+.. automodule:: catalyst.tools.meters.aucmeter
     :members:
     :undoc-members:
     :show-inheritance:
 
 Average Value Meter
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.averagevaluemeter
+.. automodule:: catalyst.tools.meters.averagevaluemeter
     :members:
     :undoc-members:
     :show-inheritance:
 
 Class Error Meter
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.classerrormeter
+.. automodule:: catalyst.tools.meters.classerrormeter
     :members:
     :undoc-members:
     :show-inheritance:
 
 Confusion Meter
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.confusionmeter
+.. automodule:: catalyst.tools.meters.confusionmeter
     :members:
     :undoc-members:
     :show-inheritance:
 
 Map Meter
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.mapmeter
+.. automodule:: catalyst.tools.meters.mapmeter
     :members:
     :undoc-members:
     :show-inheritance:
 
 Moving Average Value Meter
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.movingaveragevaluemeter
+.. automodule:: catalyst.tools.meters.movingaveragevaluemeter
     :members:
     :undoc-members:
     :show-inheritance:
 
 MSE Meter
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.msemeter
+.. automodule:: catalyst.tools.meters.msemeter
     :members:
     :undoc-members:
     :show-inheritance:
 
 Precision-Recall-F1 Meter
 ~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.ppv_tpr_f1_meter
+.. automodule:: catalyst.tools.meters.ppv_tpr_f1_meter
     :members:
     :undoc-members:
     :show-inheritance:
