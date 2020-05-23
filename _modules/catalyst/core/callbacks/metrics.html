@@ -579,7 +579,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">state</span><span class="o">.</span><span class="n">batch_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_metrics</span><span class="p">(</span><span class="n">state</span><span class="o">.</span><span class="n">batch_metrics</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">batch_metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">meters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">value</span><span class="p">)</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span></div></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>

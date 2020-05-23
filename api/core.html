@@ -1235,10 +1235,14 @@ model, criterion, optimizer, schedulers, metrics, loggers, loaders, etc</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">state</span><span class="o">.</span><span class="n">loader_name</span> <span class="o">=</span> <span class="s2">&quot;train_dataset1&quot;</span> <span class="o">/</span> <span class="s2">&quot;valid_data2&quot;</span> <span class="o">/</span> <span class="s2">&quot;infer_golden&quot;</span>
 </pre></div>
 </div>
-<p><strong>state.loader_step</strong> - int, numerical indicator     for batch index in current loader</p>
-<p><strong>state.loader_len</strong> - int, maximum number of batches in current loaders</p>
-<p><strong>state.batch_size</strong> - int, typical Deep Learning batch size parameter</p>
-<p><strong>state.global_step</strong> - int, numerical indicator, counter for all batches,    that passes through our model during training, validation and    inference stages</p>
+<p><strong>state.loader_batch_step</strong> - int, numerical indicator     for batch index in current loader</p>
+<p><strong>state.loader_len</strong> - int, maximum number of batches in current loader</p>
+<p><strong>state.loader_sample_step</strong> - int, numerical indicator     for number of samples passed through our model in current loader</p>
+<p><strong>state.loader_batch_size</strong> - int, batch size parameter in current loader</p>
+<p><strong>state.batch_size</strong> - int, length of the current batch</p>
+<p><strong>state.global_batch_step</strong> - int, numerical indicator, counter for all
+batches, that passes through our model during training, validation and    inference stages</p>
+<p><strong>state.global_sample_step</strong> - int, numerical indicator, counter for all    individual samples, that passes through our model during training,    validation and inference stages</p>
 <p><strong>state.global_epoch</strong> - int, numerical indicator, counter for all epochs,    that have passed during model training, validation and    inference stages</p>
 <p><strong>state.main_metric</strong> - string, containing name of metric of interest     for optimization, validation and checkpointing during training</p>
 <p><strong>state.minimize_metric</strong> - bool, indicator flag</p>

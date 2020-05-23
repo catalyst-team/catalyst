@@ -471,7 +471,7 @@
             <span class="n">metrics_</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">batch_metrics</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_log_metrics</span><span class="p">(</span>
                 <span class="n">metrics</span><span class="o">=</span><span class="n">metrics_</span><span class="p">,</span>
-                <span class="n">step</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">global_step</span><span class="p">,</span>
+                <span class="n">step</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">global_sample_step</span><span class="p">,</span>
                 <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span>
                 <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;/batch&quot;</span><span class="p">,</span>
             <span class="p">)</span></div>

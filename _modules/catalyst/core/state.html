@@ -454,18 +454,27 @@
 
 <span class="sd">        state.loader_name = &quot;train_dataset1&quot; / &quot;valid_data2&quot; / &quot;infer_golden&quot;</span>
 
-<span class="sd">    **state.loader_step** - int, numerical indicator \</span>
+<span class="sd">    **state.loader_batch_step** - int, numerical indicator \</span>
 <span class="sd">    for batch index in current loader</span>
 
-<span class="sd">    **state.loader_len** - int, maximum number of batches in current loaders</span>
+<span class="sd">    **state.loader_len** - int, maximum number of batches in current loader</span>
+
+<span class="sd">    **state.loader_sample_step** - int, numerical indicator \</span>
+<span class="sd">    for number of samples passed through our model in current loader</span>
+
+<span class="sd">    **state.loader_batch_size** - int, batch size parameter in current loader</span>
 
 
-<span class="sd">    **state.batch_size** - int, typical Deep Learning batch size parameter</span>
+<span class="sd">    **state.batch_size** - int, length of the current batch</span>
 
 
-<span class="sd">    **state.global_step** - int, numerical indicator, counter for all batches,\</span>
-<span class="sd">    that passes through our model during training, validation and\</span>
+<span class="sd">    **state.global_batch_step** - int, numerical indicator, counter for all</span>
+<span class="sd">    batches, that passes through our model during training, validation and\</span>
 <span class="sd">    inference stages</span>
+
+<span class="sd">    **state.global_sample_step** - int, numerical indicator, counter for all\</span>
+<span class="sd">    individual samples, that passes through our model during training,\</span>
+<span class="sd">    validation and inference stages</span>
 
 <span class="sd">    **state.global_epoch** - int, numerical indicator, counter for all epochs,\</span>
 <span class="sd">    that have passed during model training, validation and\</span>
@@ -606,12 +615,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">num_epochs</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">loader_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loader_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_batch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_sample_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loader_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_batch_size</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">global_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_sample_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_batch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">global_epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
 
         <span class="c1"># metrics &amp; validation</span>

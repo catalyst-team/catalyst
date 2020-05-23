@@ -277,7 +277,7 @@
 
 <div class="viewcode-block" id="CheckRunCallback.on_batch_end"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.early_stop.CheckRunCallback.on_batch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="n">State</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">loader_step</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_batch_steps</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">loader_batch_step</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_batch_steps</span><span class="p">:</span>
             <span class="n">state</span><span class="o">.</span><span class="n">need_early_stop</span> <span class="o">=</span> <span class="kc">True</span></div></div>
 
 
