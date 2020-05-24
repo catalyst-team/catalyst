@@ -1,2 +1,2 @@
-alchemy>=20.04
+alchemy
 reaction

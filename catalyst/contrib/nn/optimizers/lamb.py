@@ -5,7 +5,7 @@ import torch
 from torch.optim.optimizer import Optimizer
 
 
-def log_lamb_rs(optimizer: Optimizer, event_writer, token_count: int):
+def _log_lamb_rs(optimizer: Optimizer, event_writer, token_count: int):
     """Log a histogram of trust ratio scalars in across layers."""
     results = collections.defaultdict(list)
     for group in optimizer.param_groups:

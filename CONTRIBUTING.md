@@ -1,7 +1,8 @@
 # Contribution guide
 
-## Issues
+## How to strart?
 
+Contributing is quite easy: suggest ideas and make them done.
 We use [GitHub issues](https://github.com/catalyst-team/catalyst/issues) for bug reports and feature requests.
 
 #### Step-by-step guide
@@ -20,6 +21,7 @@ We use [GitHub issues](https://github.com/catalyst-team/catalyst/issues) for bug
 3. If you need more context on a specific issue, please ask, and we will discuss the details.
 
 
+You can also join our [Catalyst slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) to make it easier to discuss.
 Once you finish implementing a feature or bugfix, please send a Pull Request.
 
 If you are not familiar with creating a Pull Request, here are some guides:
@@ -33,6 +35,8 @@ If you are not familiar with creating a Pull Request, here are some guides:
     ```
     brew install bash # for MacOS users, as we need bash version >= 4.0.0
     pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
+    # for easy-to-go development, we suggest to install extra dependencies
+    pip install -r requirements/requirements-ml.txt -r requirements/requirements-cv.txt -r requirements/requirements-nlp.txt
     ```
 2. Break your work into small, single-purpose updates if possible.
 It's much harder to merge in a large change with a lot of disjoint features.
@@ -70,9 +74,18 @@ How to setup Google style documentation style in PyCharm:
 
 
 #### Check that you have written working docs
+
+Make the docs with
 ```bash
-make check-docs
+rm -rf ./builds; REMOVE_BUILDS=0 make check-docs
 ```
+
+Now you can open them into your browser, for example with
+```bash
+vivaldi-stable ./builds/index.html
+```
+
+##### Check that you have written working docs with Docker
 
 The command requires `Sphinx` and some sphinx-specific libraries.
 If you don't want to install them, you may make a `catalyst-dev` container
@@ -84,17 +97,3 @@ docker run \
     catalyst-dev:latest \
     bash -c "make check-docs"
 ```
-
-#### To build docs add environment variable `REMOVE_BUILDS=0`
-```bash
-REMOVE_BUILDS=0 make check-docs
-```
-
-or through docker
-```bash
-docker run \
-    -v `pwd`/:/workspace/ \
-    catalyst-dev:latest \
-    bash -c "REMOVE_BUILDS=0 make check-docs"
-```
-The docs will be stored in `builds/` folder.
