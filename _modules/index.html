@@ -187,7 +187,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../api/core.html">Core</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/dl.html">DL</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/data.html">Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils.html">Tools and Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contrib</a></li>
 </ul>
 
@@ -256,7 +256,25 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>All modules for which code is available</h1>
-<ul><li><a href="catalyst/contrib/data/cv/reader.html">catalyst.contrib.data.cv.reader</a></li>
+<ul><li><a href="catalyst/contrib/data/cv/mixins/blur.html">catalyst.contrib.data.cv.mixins.blur</a></li>
+<li><a href="catalyst/contrib/data/cv/mixins/flare.html">catalyst.contrib.data.cv.mixins.flare</a></li>
+<li><a href="catalyst/contrib/data/cv/mixins/rotate.html">catalyst.contrib.data.cv.mixins.rotate</a></li>
+<li><a href="catalyst/contrib/data/cv/reader.html">catalyst.contrib.data.cv.reader</a></li>
+<li><a href="catalyst/contrib/data/cv/transforms/tensor.html">catalyst.contrib.data.cv.transforms.tensor</a></li>
+<li><a href="catalyst/contrib/data/nlp/dataset/language_modeling.html">catalyst.contrib.data.nlp.dataset.language_modeling</a></li>
+<li><a href="catalyst/contrib/data/nlp/dataset/text_classification.html">catalyst.contrib.data.nlp.dataset.text_classification</a></li>
+<li><a href="catalyst/contrib/data/transforms.html">catalyst.contrib.data.transforms</a></li>
+<li><a href="catalyst/contrib/datasets/mnist.html">catalyst.contrib.datasets.mnist</a></li>
+<li><a href="catalyst/contrib/dl/callbacks/alchemy.html">catalyst.contrib.dl.callbacks.alchemy</a></li>
+<li><a href="catalyst/contrib/dl/callbacks/cutmix_callback.html">catalyst.contrib.dl.callbacks.cutmix_callback</a></li>
+<li><a href="catalyst/contrib/dl/callbacks/inference.html">catalyst.contrib.dl.callbacks.inference</a></li>
+<li><a href="catalyst/contrib/dl/callbacks/knn.html">catalyst.contrib.dl.callbacks.knn</a></li>
+<li><a href="catalyst/contrib/dl/callbacks/neptune.html">catalyst.contrib.dl.callbacks.neptune</a></li>
+<li><a href="catalyst/contrib/dl/callbacks/optimizer.html">catalyst.contrib.dl.callbacks.optimizer</a></li>
+<li><a href="catalyst/contrib/dl/callbacks/telegram_logger.html">catalyst.contrib.dl.callbacks.telegram_logger</a></li>
+<li><a href="catalyst/contrib/dl/callbacks/trace.html">catalyst.contrib.dl.callbacks.trace</a></li>
+<li><a href="catalyst/contrib/dl/callbacks/visdom_logger.html">catalyst.contrib.dl.callbacks.visdom_logger</a></li>
+<li><a href="catalyst/contrib/dl/callbacks/wandb.html">catalyst.contrib.dl.callbacks.wandb</a></li>
 <li><a href="catalyst/contrib/models/cv/segmentation/fpn.html">catalyst.contrib.models.cv.segmentation.fpn</a></li>
 <li><a href="catalyst/contrib/models/cv/segmentation/linknet.html">catalyst.contrib.models.cv.segmentation.linknet</a></li>
 <li><a href="catalyst/contrib/models/cv/segmentation/psp.html">catalyst.contrib.models.cv.segmentation.psp</a></li>
@@ -288,8 +306,11 @@
 <li><a href="catalyst/contrib/tools/tensorboard.html">catalyst.contrib.tools.tensorboard</a></li>
 <li><a href="catalyst/contrib/utils/argparse.html">catalyst.contrib.utils.argparse</a></li>
 <li><a href="catalyst/contrib/utils/confusion_matrix.html">catalyst.contrib.utils.confusion_matrix</a></li>
+<li><a href="catalyst/contrib/utils/cv/image.html">catalyst.contrib.utils.cv.image</a></li>
+<li><a href="catalyst/contrib/utils/cv/tensor.html">catalyst.contrib.utils.cv.tensor</a></li>
 <li><a href="catalyst/contrib/utils/dataset.html">catalyst.contrib.utils.dataset</a></li>
 <li><a href="catalyst/contrib/utils/misc.html">catalyst.contrib.utils.misc</a></li>
+<li><a href="catalyst/contrib/utils/nlp/text.html">catalyst.contrib.utils.nlp.text</a></li>
 <li><a href="catalyst/contrib/utils/pandas.html">catalyst.contrib.utils.pandas</a></li>
 <li><a href="catalyst/contrib/utils/parallel.html">catalyst.contrib.utils.parallel</a></li>
 <li><a href="catalyst/contrib/utils/plotly.html">catalyst.contrib.utils.plotly</a></li>
@@ -310,7 +331,6 @@
 <li><a href="catalyst/core/runner.html">catalyst.core.runner</a></li>
 <li><a href="catalyst/core/state.html">catalyst.core.state</a></li>
 <li><a href="catalyst/core/utils/callbacks.html">catalyst.core.utils.callbacks</a></li>
-<li><a href="catalyst/data/__main__.html">catalyst.data.__main__</a></li>
 <li><a href="catalyst/data/augmentor.html">catalyst.data.augmentor</a></li>
 <li><a href="catalyst/data/collate_fn.html">catalyst.data.collate_fn</a></li>
 <li><a href="catalyst/data/dataset.html">catalyst.data.dataset</a></li>
@@ -348,6 +368,7 @@
 <li><a href="catalyst/tools/registry.html">catalyst.tools.registry</a></li>
 <li><a href="catalyst/tools/time_manager.html">catalyst.tools.time_manager</a></li>
 <li><a href="catalyst/utils/checkpoint.html">catalyst.utils.checkpoint</a></li>
+<li><a href="catalyst/utils/components.html">catalyst.utils.components</a></li>
 <li><a href="catalyst/utils/config.html">catalyst.utils.config</a></li>
 <li><a href="catalyst/utils/distributed.html">catalyst.utils.distributed</a></li>
 <li><a href="catalyst/utils/hash.html">catalyst.utils.hash</a></li>
@@ -412,11 +433,11 @@
 
      
        <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-         <script src="../_static/jquery.js"></script>
-         <script src="../_static/underscore.js"></script>
-         <script src="../_static/doctools.js"></script>
-         <script src="../_static/language_data.js"></script>
-         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+         <script type="text/javascript" src="../_static/jquery.js"></script>
+         <script type="text/javascript" src="../_static/underscore.js"></script>
+         <script type="text/javascript" src="../_static/doctools.js"></script>
+         <script type="text/javascript" src="../_static/language_data.js"></script>
+         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
      
 
   
