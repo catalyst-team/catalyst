@@ -145,6 +145,13 @@ SaveModelGradsCallback
     :undoc-members:
     :show-inheritance:
 
+PeriodicLoaderRunnerCallback
+""""""""""""""""""""""
+.. automodule:: catalyst.contrib.dl.callbacks.periodical_loader
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 TelegramLogger
 """"""""""""""""""""""
 .. automodule:: catalyst.contrib.dl.callbacks.telegram_logger

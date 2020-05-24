@@ -8,20 +8,21 @@ from catalyst.core import Callback, CallbackOrder, State
 
 
 class PeriodicLoaderRunnerCallback(Callback):
-    """A callback to run validation with some period."""
+    """A callback to run validation with some period.
+
+    Example:
+
+        >>> PeriodicLoaderRunnerCallback(
+        >>>     train_additional=2,
+        >>>     valid=3,
+        >>>     valid_additional=5
+        >>> )
+    """
 
     def __init__(self, **kwargs):
         """
         Args:
             kwargs: expected loader names and periods to run loader.
-
-        Example:
-
-            >>> PeriodicLoaderRunnerCallback(
-            >>>     train_additional=2,
-            >>>     valid=3,
-            >>>     valid_additional=5
-            >>> )
         """
         super().__init__(order=CallbackOrder.External)
 
@@ -75,7 +76,7 @@ class PeriodicLoaderRunnerCallback(Callback):
 
     def on_epoch_end(self, state: State) -> None:
         """Store validation metrics and use latest validation score
-        if epoch don't have validation dataloader.
+        when validation loader is not required.
 
         Arguments:
             state (State): training state
