@@ -139,15 +139,16 @@ Features
 - Callbacks – reusable train/inference pipeline parts with easy customization.
 - Training stages support.
 - Deep Learning best practices - SWA, AdamW, Ranger optimizer, OneCycle, and more.
-- Developments best practices - fp16 support, distributed training, slurm.
+- Developments best practices - fp16 support, distributed training, slurm support.
 
 Structure
 ~~~~~~~~~~~~~~~~~~~~~~
-- **contrib** - additional modules contributed by Catalyst users.
 - **core** - framework core with main abstractions - Experiment, Runner, Callback and State.
 - **data** - useful tools and scripts for data processing.
 - **dl** – runner for training and inference, all of the classic ML and CV/NLP/RecSys metrics and a variety of callbacks for training, validation and inference of neural networks.
-- **utils** - typical utils for Deep Learning research.
+- **tools** - extra tools for Deep Learning research, class-based helpers.
+- **utils** - typical utils for Deep Learning research, function-based helpers.
+- **contrib** - additional modules contributed by Catalyst users.
 
 Tests
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -172,7 +173,7 @@ Tutorials
 - Advanced `segmentation tutorial`_
 - Comprehensive `classification pipeline`_
 - Binary and semantic `segmentation pipeline`_
-- `Beyond fashion: Deep Learning with Catalyst (Config API)`_
+- `Beyond fashion - Deep Learning with Catalyst (Config API)`_
 - `Tutorial from Notebook API to Config API (RU)`_
 
 .. _Demo with minimal examples: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb
@@ -180,7 +181,7 @@ Tutorials
 .. _`segmentation tutorial`: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb
 .. _`classification pipeline`: https://github.com/catalyst-team/classification
 .. _`segmentation pipeline`: https://github.com/catalyst-team/segmentation
-.. _`Beyond fashion: Deep Learning with Catalyst (Config API)`: https://evilmartians.com/chronicles/beyond-fashion-deep-learning-with-catalyst
+.. _`Beyond fashion - Deep Learning with Catalyst (Config API)`: https://evilmartians.com/chronicles/beyond-fashion-deep-learning-with-catalyst
 .. _`Tutorial from Notebook API to Config API (RU)`: https://github.com/Bekovmi/Segmentation_tutorial
 
 In the examples_ of the repository, you can find advanced tutorials and Catalyst best practices.

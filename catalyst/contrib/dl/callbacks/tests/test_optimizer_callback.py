@@ -9,7 +9,8 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 
 from catalyst.contrib import registry
-from catalyst.contrib.data.dataset import MNIST, ToTensor
+from catalyst.contrib.data.transforms import ToTensor
+from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.dl.callbacks.optimizer import SaveModelGradsCallback
 from catalyst.core import (
     Callback,

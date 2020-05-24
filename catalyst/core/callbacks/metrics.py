@@ -6,7 +6,7 @@ import logging
 import torch
 
 from catalyst.core import Callback, CallbackNode, CallbackOrder, State, utils
-from catalyst.utils import meters
+from catalyst.tools import meters
 
 logger = logging.getLogger(__name__)
 

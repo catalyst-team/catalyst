@@ -3,11 +3,12 @@ from typing import Iterable, Union
 from tqdm.auto import tqdm
 
 import torch
+from torch.utils.data import Dataset
 import transformers
 from transformers import AutoTokenizer
 
 
-class LanguageModelingDataset(torch.utils.data.Dataset):
+class LanguageModelingDataset(Dataset):
     """
     Dataset for (masked) language model task.
     Can sort sequnces for efficient padding.

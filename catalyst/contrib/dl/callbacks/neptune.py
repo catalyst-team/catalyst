@@ -158,3 +158,6 @@ class NeptuneLogger(Callback):
                 mode=mode,
                 suffix=self.epoch_log_suffix,
             )
+
+
+__all__ = ["NeptuneLogger"]

@@ -19,9 +19,9 @@ class QHAdamW(Optimizer):
         >>> loss_fn(model(input), target).backward()
         >>> optimizer.step()
 
-    Main origins of inspiration:
-        https://github.com/iprally/qhadamw-pytorch/blob/master/qhadamw.py
-        (MIT License)
+    Adapted from:
+    https://github.com/iprally/qhadamw-pytorch/blob/master/qhadamw.py
+    (MIT License)
 
     .. _Decoupled Weight Decay Regularization:
         https://arxiv.org/abs/1711.05101

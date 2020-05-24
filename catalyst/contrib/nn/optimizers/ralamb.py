@@ -8,9 +8,9 @@ from torch.optim.optimizer import Optimizer
 class Ralamb(Optimizer):
     """RAdam optimizer with LARS/LAMB tricks.
 
-    Main origins of inspiration:
-        https://github.com/mgrankin/over9000/blob/master/ralamb.py
-        (Apache-2.0 License)
+    Adapted from:
+    https://github.com/mgrankin/over9000/blob/master/ralamb.py
+    (Apache-2.0 License)
     """
 
     def __init__(

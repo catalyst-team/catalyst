@@ -40,3 +40,6 @@ class FlareMixin:
         dictionary[self.output_key] = sunflare_factor
 
         return dictionary
+
+
+__all__ = ["FlareMixin"]

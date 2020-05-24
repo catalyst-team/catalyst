@@ -53,3 +53,6 @@ class BlurMixin:
         dictionary[self.output_key] = blur_factor
 
         return dictionary
+
+
+__all__ = ["BlurMixin"]

@@ -15,6 +15,7 @@ from .checkpoint import (
     save_checkpoint,
     unpack_checkpoint,
 )
+from .components import process_components
 from .config import load_config, save_config
 from .dict import (
     get_key_str,
@@ -40,7 +41,6 @@ from .distributed import (
     check_apex_available,
     initialize_apex,
     assert_fp16_available,
-    process_components,
     is_wrapped_with_ddp,
     is_torch_distributed_initialized,
     is_slurm_available,
