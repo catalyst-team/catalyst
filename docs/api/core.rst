@@ -22,11 +22,6 @@ Experiment
     :undoc-members:
     :show-inheritance:
 
-.. autoclass:: catalyst.core.experiment._StageBasedExperiment
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 .. automodule:: catalyst.core.experiment
     :members:
     :undoc-members:

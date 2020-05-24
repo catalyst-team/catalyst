@@ -9,6 +9,7 @@ from .knn import KNNMetricCallback
 from .optimizer import SaveModelGradsCallback
 from .perplexity import PerplexityMetricCallback
 from .telegram_logger import TelegramLogger
+from .trace import TracerCallback
 
 logger = logging.getLogger(__name__)
 

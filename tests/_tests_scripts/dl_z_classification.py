@@ -17,7 +17,8 @@ if os.getenv("USE_DDP", "0") != "0":
 import collections
 import torch
 
-from catalyst.contrib.data.dataset import MNIST, ToTensor, Compose, Normalize
+from catalyst.contrib.datasets import MNIST
+from catalyst.contrib.data.transforms import ToTensor, Compose, Normalize
 
 bs = 32
 num_workers = 0

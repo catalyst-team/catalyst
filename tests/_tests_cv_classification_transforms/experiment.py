@@ -1,7 +1,7 @@
 from typing import Tuple
 from collections import OrderedDict
 
-from catalyst.contrib.data.dataset import MNIST as _MNIST
+from catalyst.contrib.datasets import MNIST as _MNIST
 from catalyst.dl.experiment import ConfigExperiment
 
 

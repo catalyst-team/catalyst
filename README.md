@@ -49,7 +49,8 @@ import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.dataset import MNIST, ToTensor
+from catalyst.contrib.data.transforms import ToTensor
+from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
 model = torch.nn.Linear(28 * 28, 10)
@@ -212,7 +213,8 @@ import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.dataset import MNIST, ToTensor
+from catalyst.contrib.data.transforms import ToTensor
+from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
 model = torch.nn.Linear(28 * 28, 10)
@@ -265,7 +267,8 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.dataset import MNIST, ToTensor
+from catalyst.contrib.data.transforms import ToTensor
+from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
 class ClassifyAE(nn.Module):
@@ -338,7 +341,8 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.dataset import MNIST, ToTensor
+from catalyst.contrib.data.transforms import ToTensor
+from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
 LOG_SCALE_MAX = 2
@@ -436,7 +440,8 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.dataset import MNIST, ToTensor
+from catalyst.contrib.data.transforms import ToTensor
+from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
 class ClassifyUnet(nn.Module):
@@ -511,7 +516,8 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.dataset import MNIST, ToTensor
+from catalyst.contrib.data.transforms import ToTensor
+from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.nn.modules import Flatten, GlobalMaxPool2d, Lambda
 
 latent_dim = 128
@@ -668,7 +674,8 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from catalyst import dl, utils
-from catalyst.contrib.data.dataset import MNIST, ToTensor
+from catalyst.contrib.data.transforms import ToTensor
+from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
 class ClassifyAE(nn.Module):
@@ -749,7 +756,6 @@ utils.distributed_cmd_run(train)
 
 
 ### Structure
-- **contrib** - additional modules contributed by Catalyst users.
 - **core** - framework core with main abstractions - 
     Experiment, Runner, Callback and State.
 - **data** - useful tools and scripts for data processing.
@@ -757,7 +763,17 @@ utils.distributed_cmd_run(train)
    all of the classic ML and CV/NLP/RecSys metrics
    and a variety of callbacks for training, validation
    and inference of neural networks.
-- **utils** - typical utils for Deep Learning research.
+- **tools** - extra tools for Deep Learning research, class-based helpers.   
+- **utils** - typical utils for Deep Learning research, function-based helpers.
+- **contrib** - additional modules contributed by Catalyst users.
+    - contrib/data - extra data-tools for CV, NLP and RecSys.
+    - contrib/datasets - typical datasets, such as MNIST, etc.
+    - contrib/dl - extensions for `catalyst.dl`
+    - contrib/models - predefined models for CV, NLP and RecSys.
+    - contrib/nn - extra PyTorch modules.
+    - contrib/scripts - user scripts for common deep learning routine.
+    - contrib/tools - `catalyst.tools` extensions. 
+    - contrib/utils - `catalyst.utils` extensions.
 
 
 ### Tests

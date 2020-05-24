@@ -1,7 +1,7 @@
 import torch
 
-from catalyst.utils import meters
-from catalyst.utils.meters.ppv_tpr_f1_meter import f1score, precision, recall
+from catalyst.tools import meters
+from catalyst.tools.meters.ppv_tpr_f1_meter import f1score, precision, recall
 
 
 def precision_recall_f1(tp, fp, fn):

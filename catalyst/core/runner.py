@@ -18,7 +18,7 @@ from catalyst.tools.typing import (
 
 from .callback import Callback, CallbackScope
 from .callbacks import ExceptionCallback
-from .experiment import _Experiment, _StageBasedExperiment
+from .experiment import _Experiment
 from .state import State
 
 
@@ -534,14 +534,14 @@ class _StageBasedRunner(_Runner):
     datasources per stage.
     """
 
-    _experiment_fn: Callable = _StageBasedExperiment
+    _experiment_fn: Callable = _Experiment
     _state_fn: Callable = State
 
     def _init(self):
         """
         Inner method for `experiment` and `state` linting.
         """
-        self.experiment: _StageBasedExperiment = None
+        self.experiment: _Experiment = None
         self.state: State = None
 
     def _prepare_for_stage(self, stage: str):

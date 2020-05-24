@@ -6,7 +6,8 @@ from torch import nn
 from torch.nn import functional as F
 
 from catalyst import dl, utils
-from catalyst.contrib.data.dataset import MNIST, ToTensor
+from catalyst.contrib.data.transforms import ToTensor
+from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
 
