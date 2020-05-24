@@ -1,6 +1,5 @@
 # flake8: noqa
 import logging
-import os
 
 from catalyst.tools import settings
 

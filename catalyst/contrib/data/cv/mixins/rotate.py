@@ -64,3 +64,6 @@ class RotateMixin:
                 dictionary[key] = one_hot
 
         return dictionary
+
+
+__all__ = ["RotateMixin"]

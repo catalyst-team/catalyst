@@ -141,3 +141,6 @@ class AlchemyLogger(Callback):
                 mode=extra_mode,
                 suffix=self.epoch_log_suffix,
             )
+
+
+__all__ = ["AlchemyLogger"]

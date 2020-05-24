@@ -752,7 +752,7 @@ utils.distributed_cmd_run(train)
 - Callbacks – reusable train/inference pipeline parts with easy customization.
 - Training stages support.
 - Deep Learning best practices - SWA, AdamW, Ranger optimizer, OneCycle, and more.
-- Developments best practices - fp16 support, distributed training, slurm.
+- Developments best practices - fp16 support, distributed training, slurm support.
 
 
 ### Structure
@@ -766,14 +766,6 @@ utils.distributed_cmd_run(train)
 - **tools** - extra tools for Deep Learning research, class-based helpers.   
 - **utils** - typical utils for Deep Learning research, function-based helpers.
 - **contrib** - additional modules contributed by Catalyst users.
-    - contrib/data - extra data-tools for CV, NLP and RecSys.
-    - contrib/datasets - typical datasets, such as MNIST, etc.
-    - contrib/dl - extensions for `catalyst.dl`
-    - contrib/models - predefined models for CV, NLP and RecSys.
-    - contrib/nn - extra PyTorch modules.
-    - contrib/scripts - user scripts for common deep learning routine.
-    - contrib/tools - `catalyst.tools` extensions. 
-    - contrib/utils - `catalyst.utils` extensions.
 
 
 ### Tests

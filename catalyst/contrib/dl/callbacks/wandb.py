@@ -184,3 +184,6 @@ class WandbLogger(Callback):
                 suffix=self.epoch_log_suffix,
                 commit=True,
             )
+
+
+__all__ = ["WandbLogger"]

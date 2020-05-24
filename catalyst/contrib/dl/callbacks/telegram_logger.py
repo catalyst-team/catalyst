@@ -126,3 +126,6 @@ class TelegramLogger(Callback):
                 )
 
                 self._send_text(text)
+
+
+__all__ = ["TelegramLogger"]

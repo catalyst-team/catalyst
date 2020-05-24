@@ -20,8 +20,8 @@ def wing_loss(
     Args:
         @TODO: Docs. Contribution is welcome.
 
-    Main origins of inspiration:
-        https://github.com/BloodAxe/pytorch-toolbelt (MIT License)
+    Adapted from:
+    https://github.com/BloodAxe/pytorch-toolbelt (MIT License)
 
     .. _Wing Loss for Robust Facial Landmark Localisation with Convolutional
         Neural Networks: https://arxiv.org/abs/1711.06753
@@ -56,8 +56,8 @@ class WingLoss(nn.Module):
     Examples:
         @TODO: Docs. Contribution is welcome.
 
-    Main origins of inspiration:
-        https://github.com/BloodAxe/pytorch-toolbelt
+    Adapted from:
+    https://github.com/BloodAxe/pytorch-toolbelt
 
     .. _Wing Loss for Robust Facial Landmark Localisation with Convolutional
         Neural Networks: https://arxiv.org/abs/1711.06753

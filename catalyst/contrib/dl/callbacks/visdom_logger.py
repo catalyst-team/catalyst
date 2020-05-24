@@ -267,3 +267,6 @@ class VisdomLogger(Callback):
                 mode=state.loader_name,
                 suffix=self.epoch_log_suffix,
             )
+
+
+__all__ = ["VisdomLogger"]

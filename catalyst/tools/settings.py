@@ -106,9 +106,10 @@ default_settings = Settings()
 class ConfigFileFinder:
     """Encapsulate the logic for finding and reading config files.
 
-    Main origins of inspiration:
-        - https://gitlab.com/pwoolvett/flake8 (MIT License)
-        - https://github.com/python/mypy (MIT License)
+    Adapted from:
+
+    - https://gitlab.com/pwoolvett/flake8 (MIT License)
+    - https://github.com/python/mypy (MIT License)
     """
 
     def __init__(self, program_name: str) -> None:
@@ -168,8 +169,8 @@ class ConfigFileFinder:
 
         Returns:
             List[str]: List of files that exist that are
-                local project config  files with extra config files
-                appended to that list (which also exist).
+            local project config  files with extra config files
+            appended to that list (which also exist).
         """
 
         def generate_possible_local_files():
@@ -211,9 +212,10 @@ class MergedConfigParser:
     configuration files, handles extra configuration files, and returns
     dictionaries with the parsed values.
 
-    Main origins of inspiration:
-        - https://gitlab.com/pwoolvett/flake8 (MIT License)
-        - https://github.com/python/mypy (MIT License)
+    Adapted from:
+
+    - https://gitlab.com/pwoolvett/flake8 (MIT License)
+    - https://github.com/python/mypy (MIT License)
     """
 
     #: Set of actions that should use the

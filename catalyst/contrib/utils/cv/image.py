@@ -43,12 +43,13 @@ def imread(
     rootpath: Union[str, pathlib.Path] = None,
     **kwargs,
 ) -> np.ndarray:
-    """Reads an image from the specified file.
+    """
+    Reads an image from the specified file.
 
     Args:
         uri (str, pathlib.Path, bytes, file): the resource to load the image
-        from, e.g. a filename, ``pathlib.Path``, http address or file object,
-        see ``imageio.imread`` docs for more info
+          from, e.g. a filename, ``pathlib.Path``, http address or file object,
+          see ``imageio.imread`` docs for more info
         grayscale (bool):
         expand_dims (bool):
         rootpath (Union[str, pathlib.Path]): path to the resource with image
@@ -79,8 +80,30 @@ def imread(
     return img
 
 
-imwrite = imageio.imwrite
-imsave = imageio.imsave
+def imwrite(**kwargs):
+    """
+    ``imwrite(uri, im, format=None, **kwargs)``
+
+    Write an image to the specified file.
+    Alias for ``imageio.imwrite``.
+
+    Args:
+        **kwargs: parameters for ``imageio.imwrite``
+    """
+    return imageio.imwrite(**kwargs)
+
+
+def imsave(**kwargs):
+    """
+    ``imwrite(uri, im, format=None, **kwargs)``
+
+    Write an image to the specified file.
+    Alias for ``imageio.imsave``.
+
+    Args:
+        **kwargs: parameters for ``imageio.imsave``
+    """
+    return imageio.imsave(**kwargs)
 
 
 def mimread(
@@ -90,17 +113,18 @@ def mimread(
     rootpath: Union[str, pathlib.Path] = None,
     **kwargs,
 ) -> np.ndarray:
-    """Reads multiple images from the specified file.
+    """
+    Reads multiple images from the specified file.
 
     Args:
         uri (str, pathlib.Path, bytes, file): the resource to load the image
-        from, e.g. a filename, ``pathlib.Path``, http address or file object,
-        see ``imageio.mimread`` docs for more info
+          from, e.g. a filename, ``pathlib.Path``, http address or file object,
+          see ``imageio.mimread`` docs for more info
         clip_range (Tuple[int, int]): lower and upper interval edges,
-            image values outside the interval are clipped to the interval edges
+          image values outside the interval are clipped to the interval edges
         expand_dims (bool): if True, append channel axis to grayscale images
-        rootpath (Union[str, pathlib.Path]): path to the resource with image
-            (allows to use relative path)
+          rootpath (Union[str, pathlib.Path]): path to the resource with image
+          (allows to use relative path),
 
     Returns:
         np.ndarray: image

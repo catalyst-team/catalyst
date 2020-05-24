@@ -142,3 +142,6 @@ class CutmixCallback(CriterionCallback):
                 * state.input[self.fields[0]].shape[-2]
             )
         )
+
+
+__all__ = ["CutmixCallback"]
