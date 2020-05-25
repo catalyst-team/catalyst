@@ -208,30 +208,34 @@ class _Experiment(ABC):
         pass
 
     def get_experiment_components(
-        self, model: nn.Module, stage: str
-    ) -> Tuple[Criterion, Optimizer, Scheduler]:
+        self, stage: str, model: nn.Module = None,
+    ) -> Tuple[Model, Criterion, Optimizer, Scheduler]:
         """
         Returns the tuple containing criterion, optimizer and scheduler by
         giving model and stage.
 
         Aggregation method, based on,
 
+        - :py:mod:`catalyst.core.experiment._Experiment.get_model`
         - :py:mod:`catalyst.core.experiment._Experiment.get_criterion`
         - :py:mod:`catalyst.core.experiment._Experiment.get_optimizer`
         - :py:mod:`catalyst.core.experiment._Experiment.get_scheduler`
 
         Args:
-            model (Model): model to optimize with stage optimizer
             stage (str): stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
+            model (Model): model to optimize with stage optimizer
 
         Returns:
-            tuple: criterion, optimizer, scheduler for a given stage and model
+            tuple: model, criterion, optimizer, scheduler
+                for a given stage and model
         """
+        if model is None:
+            model = self.get_model(stage)
         criterion = self.get_criterion(stage)
         optimizer = self.get_optimizer(stage, model)
         scheduler = self.get_scheduler(stage, optimizer)
-        return criterion, optimizer, scheduler
+        return model, criterion, optimizer, scheduler
 
     def get_transforms(self, stage: str = None, dataset: str = None):
         """Returns the data transforms for a given stage and dataset.

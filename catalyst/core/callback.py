@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 from enum import IntFlag
 
 if TYPE_CHECKING:
-    from .state import State
+    from .runner import _Runner
 
 
 class CallbackNode(IntFlag):
@@ -137,7 +137,7 @@ class Callback:
         self.order = order
         self.scope = scope
 
-    def on_stage_start(self, state: "State"):
+    def on_stage_start(self, state: "_Runner"):
         """Event handler for stage start.
 
         Args:
@@ -145,7 +145,7 @@ class Callback:
         """
         pass
 
-    def on_stage_end(self, state: "State"):
+    def on_stage_end(self, state: "_Runner"):
         """Event handler for stage end.
 
         Args:
@@ -153,7 +153,7 @@ class Callback:
         """
         pass
 
-    def on_epoch_start(self, state: "State"):
+    def on_epoch_start(self, state: "_Runner"):
         """Event handler for epoch start.
 
         Args:
@@ -161,7 +161,7 @@ class Callback:
         """
         pass
 
-    def on_epoch_end(self, state: "State"):
+    def on_epoch_end(self, state: "_Runner"):
         """Event handler for epoch end.
 
         Args:
@@ -169,7 +169,7 @@ class Callback:
         """
         pass
 
-    def on_loader_start(self, state: "State"):
+    def on_loader_start(self, state: "_Runner"):
         """Event handler for loader start.
 
         Args:
@@ -177,7 +177,7 @@ class Callback:
         """
         pass
 
-    def on_loader_end(self, state: "State"):
+    def on_loader_end(self, state: "_Runner"):
         """Event handler for loader end.
 
         Args:
@@ -185,7 +185,7 @@ class Callback:
         """
         pass
 
-    def on_batch_start(self, state: "State"):
+    def on_batch_start(self, state: "_Runner"):
         """Event handler for batch start.
 
         Args:
@@ -193,7 +193,7 @@ class Callback:
         """
         pass
 
-    def on_batch_end(self, state: "State"):
+    def on_batch_end(self, state: "_Runner"):
         """Event handler for batch end.
 
         Args:
@@ -201,7 +201,7 @@ class Callback:
         """
         pass
 
-    def on_exception(self, state: "State"):
+    def on_exception(self, state: "_Runner"):
         """Event handler for exception case.
 
         Args:

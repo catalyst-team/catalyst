@@ -9,9 +9,9 @@ from catalyst.core import (
     _StageBasedRunner,
     Callback,
     CheckpointCallback,
-    State,
 )
-from catalyst.dl import Experiment, utils
+from catalyst.dl import utils
+from catalyst.dl.experiment.experiment import Experiment
 from catalyst.tools.typing import (
     Criterion,
     Device,
@@ -23,15 +23,13 @@ from catalyst.tools.typing import (
 
 class Runner(_StageBasedRunner):
     """
-    Deep Learning Runner for different supervised, unsupervised, gan, etc runs.
+    Deep Learning Runner for supervised, unsupervised, gan, etc runs.
     """
 
     _experiment_fn: Callable = Experiment
-    _state_fn: Callable = State
 
     def _init(self):
         self.experiment: Experiment = None
-        self.state: State = None
 
     def train(
         self,

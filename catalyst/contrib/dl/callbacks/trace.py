@@ -4,7 +4,7 @@ from pathlib import Path
 import warnings
 
 from catalyst.dl import Callback, CallbackNode, CallbackOrder, State
-from catalyst.dl.utils import save_traced_model, trace_model_from_state
+from catalyst.dl.utils import save_traced_model, trace_model_from_runner
 
 
 class TracerCallback(Callback):
@@ -106,7 +106,7 @@ class TracerCallback(Callback):
         if self.do_once and self.mode == "best":
             checkpoint_name_to_restore = "best"
 
-        traced_model = trace_model_from_state(
+        traced_model = trace_model_from_runner(
             state=state,
             checkpoint_name=checkpoint_name_to_restore,
             method_name=self.method_name,

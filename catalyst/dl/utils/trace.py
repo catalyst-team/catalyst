@@ -12,7 +12,7 @@ from pathlib import Path
 from torch import nn
 from torch.jit import load, save, ScriptModule, trace
 
-from catalyst.core.state import State
+from catalyst.dl.runner.runner import Runner
 from catalyst.dl.experiment.config import ConfigExperiment
 from catalyst.tools.typing import Device, Model
 from catalyst.utils import (
@@ -242,8 +242,8 @@ def trace_model_from_checkpoint(
     return traced_model
 
 
-def trace_model_from_state(
-    state: State,
+def trace_model_from_runner(
+    runner: Runner,
     checkpoint_name: str = None,
     method_name: str = "forward",
     mode: str = "eval",
@@ -255,9 +255,9 @@ def trace_model_from_state(
     Traces model using created experiment and runner.
 
     Args:
-        state (State): Current runner state.
+        runner (Runner): Current runner.
         checkpoint_name (str): Name of model checkpoint to use, if None
-            traces current model from state
+            traces current model from runner
         method_name (str): Model's method name that will be
             used as entrypoint during tracing
         mode (str): Mode for model to trace (``train`` or ``eval``)
@@ -268,8 +268,8 @@ def trace_model_from_state(
     Returns:
         (ScriptModule): Traced model
     """
-    logdir = state.logdir
-    model = get_nn_from_ddp_module(state.model)
+    logdir = runner.logdir
+    model = get_nn_from_ddp_module(runner.model)
 
     if checkpoint_name is not None:
         dumped_checkpoint = pack_checkpoint(model=model)
@@ -285,17 +285,17 @@ def trace_model_from_state(
     batch = {}
     for name in method_argnames:
         # TODO: We don't know input_keys without runner
-        assert name in state.input, (
+        assert name in runner.input, (
             "Input batch should contain the same keys as input argument "
             "names of `forward` function to be traced correctly"
         )
-        batch[name] = state.input[name]
+        batch[name] = runner.input[name]
 
     batch = any2device(batch, device)
 
-    # Dumping previous state of the model, we will need it to restore
+    # Dumping previous runner of the model, we will need it to restore
     _device, _is_training, _requires_grad = (
-        state.device,
+        runner.device,
         model.training,
         get_requires_grad(model),
     )
@@ -320,7 +320,7 @@ def trace_model_from_state(
     if checkpoint_name is not None:
         unpack_checkpoint(checkpoint=dumped_checkpoint, model=model)
 
-    # Restore previous state of the model
+    # Restore previous runner of the model
     getattr(model, "train" if _is_training else "eval")()
     set_requires_grad(model, _requires_grad)
     model.to(_device)
@@ -454,7 +454,7 @@ def load_traced_model(
 __all__ = [
     "trace_model",
     "trace_model_from_checkpoint",
-    "trace_model_from_state",
+    "trace_model_from_runner",
     "get_trace_name",
     "save_traced_model",
     "load_traced_model",

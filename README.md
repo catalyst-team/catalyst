@@ -74,14 +74,14 @@ class CustomRunner(dl.Runner):
 
         loss = F.cross_entropy(y_hat, y)
         accuracy01, accuracy03 = metrics.accuracy(y_hat, y, topk=(1, 3))
-        self.state.batch_metrics.update(
+        self.batch_metrics.update(
             {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
         )
 
-        if self.state.is_train_loader:
+        if self.is_train_loader:
             loss.backward()
-            self.state.optimizer.step()
-            self.state.optimizer.zero_grad()
+            self.optimizer.step()
+            self.optimizer.zero_grad()
 
 runner = CustomRunner()
 # model training
@@ -233,17 +233,17 @@ class CustomRunner(dl.Runner):
 
         loss = F.cross_entropy(y_hat, y)
         accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
-        self.state.batch_metrics = {
+        self.batch_metrics = {
             "loss": loss,
             "accuracy01": accuracy01,
             "accuracy03": accuracy03,
             "accuracy05": accuracy05,
         }
         
-        if self.state.is_train_loader:
+        if self.is_train_loader:
             loss.backward()
-            self.state.optimizer.step()
-            self.state.optimizer.zero_grad()
+            self.optimizer.step()
+            self.optimizer.zero_grad()
 
 runner = CustomRunner()
 runner.train(
@@ -304,7 +304,7 @@ class CustomRunner(dl.Runner):
         loss_ae = F.mse_loss(x_, x)
         loss = loss_clf + loss_ae
         accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
-        self.state.batch_metrics = {
+        self.batch_metrics = {
             "loss_clf": loss_clf,
             "loss_ae": loss_ae,
             "loss": loss,
@@ -313,10 +313,10 @@ class CustomRunner(dl.Runner):
             "accuracy05": accuracy05,
         }
 
-        if self.state.is_train_loader:
+        if self.is_train_loader:
             loss.backward()
-            self.state.optimizer.step()
-            self.state.optimizer.zero_grad()
+            self.optimizer.step()
+            self.optimizer.zero_grad()
 
 runner = CustomRunner()
 runner.train(
@@ -402,7 +402,7 @@ class CustomRunner(dl.Runner):
         loss_logprob = torch.mean(z_logprob) * 0.01
         loss = loss_clf + loss_ae + loss_kld + loss_logprob
         accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
-        self.state.batch_metrics = {
+        self.batch_metrics = {
             "loss_clf": loss_clf,
             "loss_ae": loss_ae,
             "loss_kld": loss_kld,
@@ -413,10 +413,10 @@ class CustomRunner(dl.Runner):
             "accuracy05": accuracy05,
         }
 
-        if self.state.is_train_loader:
+        if self.is_train_loader:
             loss.backward()
-            self.state.optimizer.step()
-            self.state.optimizer.zero_grad()
+            self.optimizer.step()
+            self.optimizer.zero_grad()
 
 runner = CustomRunner()
 runner.train(
@@ -479,7 +479,7 @@ class CustomRunner(dl.Runner):
         loss_iou = 1 - iou
         loss = loss_clf + loss_iou
         accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
-        self.state.batch_metrics = {
+        self.batch_metrics = {
             "loss_clf": loss_clf,
             "loss_iou": loss_iou,
             "loss": loss,
@@ -489,10 +489,10 @@ class CustomRunner(dl.Runner):
             "accuracy05": accuracy05,
         }
         
-        if self.state.is_train_loader:
+        if self.is_train_loader:
             loss.backward()
-            self.state.optimizer.step()
-            self.state.optimizer.zero_grad()
+            self.optimizer.step()
+            self.optimizer.zero_grad()
 
 runner = CustomRunner()
 runner.train(
@@ -590,7 +590,7 @@ class CustomRunner(dl.Runner):
         batch_metrics["loss_generator"] = \
           F.binary_cross_entropy_with_logits(predictions, misleading_labels)
         
-        self.state.batch_metrics.update(**batch_metrics)
+        self.batch_metrics.update(**batch_metrics)
 
 runner = CustomRunner()
 runner.train(
@@ -703,7 +703,7 @@ class CustomRunner(dl.Runner):
         loss_ae = F.mse_loss(x_, x)
         loss = loss_clf + loss_ae
         accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
-        self.state.batch_metrics = {
+        self.batch_metrics = {
             "loss_clf": loss_clf,
             "loss_ae": loss_ae,
             "loss": loss,
@@ -712,10 +712,10 @@ class CustomRunner(dl.Runner):
             "accuracy05": accuracy05,
         }
 
-        if self.state.is_train_loader:
+        if self.is_train_loader:
             loss.backward()
-            self.state.optimizer.step()
-            self.state.optimizer.zero_grad()
+            self.optimizer.step()
+            self.optimizer.zero_grad()
 
 def datasets_fn():
     dataset = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())

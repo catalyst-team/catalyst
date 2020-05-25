@@ -8,7 +8,7 @@ from catalyst.dl import (
     MetricManagerCallback,
     ValidationManagerCallback,
 )
-from catalyst.dl.experiment.core import Experiment
+from catalyst.dl.experiment.experiment import Experiment
 
 
 def _test_callbacks(test_callbacks, exp, stage="train"):

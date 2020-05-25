@@ -10,7 +10,7 @@ from catalyst.dl import (
 )
 from catalyst.tools.typing import Criterion, Optimizer, Scheduler
 
-from .core import Experiment
+from .experiment import Experiment
 
 
 class SupervisedExperiment(Experiment):
