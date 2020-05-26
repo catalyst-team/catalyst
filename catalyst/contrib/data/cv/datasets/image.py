@@ -3,6 +3,8 @@ from collections import OrderedDict
 import math
 from pathlib import Path
 
+from albumentations.core.composition import BaseCompose
+from albumentations.core.transforms_interface import BasicTransform
 import cv2
 import skimage.io
 
@@ -208,7 +210,11 @@ class TiledImageDataset(Dataset):
         tile = self.image[y : y + self.tile_size_h, x : x + self.tile_size_w]
 
         if self.transform is not None:
-            tile = self.transform({"image": tile})["image"]
+            if isinstance(self.transform, (BasicTransform, BaseCompose)):
+                transform = self.transform(image=tile)
+            else:
+                transform = self.transform({"image": tile})
+            tile = transform["image"]
 
         item = OrderedDict(**{self.input_key: tile}, x=x, y=y)
 
