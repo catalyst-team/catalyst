@@ -60,7 +60,8 @@ class _Runner(ABC, FrozenClass):
         self._model = None
         self._prepare_inner_state(device=device, model=model)
         self._init()
-        self._freeze()
+        # @TODO: how to fix?
+        # self._freeze()
 
     def _prepare_inner_state(
         self,

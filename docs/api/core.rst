@@ -51,13 +51,6 @@ Callback
     :undoc-members:
     :show-inheritance:
 
-State
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.state
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Callbacks
 ----------------------
 

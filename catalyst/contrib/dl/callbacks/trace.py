@@ -108,7 +108,7 @@ class TracerCallback(Callback):
             checkpoint_name_to_restore = "best"
 
         traced_model = trace_model_from_runner(
-            state=state,
+            runner=state,
             checkpoint_name=checkpoint_name_to_restore,
             method_name=self.method_name,
             mode=self.trace_mode,

@@ -16,7 +16,7 @@ Experiment
 
 Experiment
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.dl.experiment.core
+.. automodule:: catalyst.dl.experiment.experiment
     :members:
     :undoc-members:
     :show-inheritance:
@@ -45,7 +45,7 @@ Runner
 
 Runner
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.dl.runner.core
+.. automodule:: catalyst.dl.runner.runner
     :members:
     :undoc-members:
     :show-inheritance:

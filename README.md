@@ -757,7 +757,7 @@ utils.distributed_cmd_run(train)
 
 ### Structure
 - **core** - framework core with main abstractions - 
-    Experiment, Runner, Callback and State.
+    Experiment, Runner and Callback.
 - **data** - useful tools and scripts for data processing.
 - **dl** – runner for training and inference,
    all of the classic ML and CV/NLP/RecSys metrics

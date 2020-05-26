@@ -108,7 +108,6 @@ class Callback:
 
             - :py:mod:`catalyst.core.experiment._Experiment`
             - :py:mod:`catalyst.core.runner._Runner`
-            - :py:mod:`catalyst.core.state.State`
             - :py:mod:`catalyst.core.callback.Callback`
 
     Abstraction, please check out the implementations:

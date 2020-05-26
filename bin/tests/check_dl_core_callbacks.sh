@@ -596,7 +596,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python3 -c "
 import torch
 from torch.utils.data import DataLoader, TensorDataset
-from catalyst.dl import SupervisedRunner, State, Callback, CallbackOrder, CheckpointCallback
+from catalyst.dl import SupervisedRunner, CheckpointCallback
 
 # experiment_setup
 logdir = '${LOGDIR}'
@@ -661,7 +661,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python3 -c "
 import torch
 from torch.utils.data import DataLoader, TensorDataset
-from catalyst.dl import SupervisedRunner, State, Callback, CallbackOrder, CheckpointCallback
+from catalyst.dl import SupervisedRunner, CheckpointCallback
 
 # experiment_setup
 logdir = '${LOGDIR}'
@@ -748,7 +748,7 @@ echo ${LOG_MSG}
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} python3 -c "
 import torch
 from torch.utils.data import DataLoader, TensorDataset
-from catalyst.dl import SupervisedRunner, State, Callback, CallbackOrder, CheckpointCallback
+from catalyst.dl import SupervisedRunner, CheckpointCallback
 
 # experiment_setup
 logdir = '${LOGDIR}'
@@ -810,7 +810,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python3 -c "
 import torch
 from torch.utils.data import DataLoader, TensorDataset
-from catalyst.dl import SupervisedRunner, State, Callback, CallbackOrder, CheckpointCallback
+from catalyst.dl import SupervisedRunner, CheckpointCallback
 
 # experiment_setup
 logdir = '${LOGDIR}'

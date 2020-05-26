@@ -143,7 +143,7 @@ Features
 
 Structure
 ~~~~~~~~~~~~~~~~~~~~~~
-- **core** - framework core with main abstractions - Experiment, Runner, Callback and State.
+- **core** - framework core with main abstractions - Experiment, Runner and Callback.
 - **data** - useful tools and scripts for data processing.
 - **dl** – runner for training and inference, all of the classic ML and CV/NLP/RecSys metrics and a variety of callbacks for training, validation and inference of neural networks.
 - **tools** - extra tools for Deep Learning research, class-based helpers.
