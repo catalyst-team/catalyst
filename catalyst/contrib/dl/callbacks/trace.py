@@ -3,7 +3,8 @@ from typing import Union  # isort:skip
 from pathlib import Path
 import warnings
 
-from catalyst.dl import Callback, CallbackNode, CallbackOrder, State
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.runner import _Runner
 from catalyst.dl.utils import save_traced_model, trace_model_from_runner
 
 
@@ -88,7 +89,7 @@ class TracerCallback(Callback):
             out_dir = Path(out_dir)
         self.out_dir = out_dir
 
-    def _trace(self, state: State):
+    def _trace(self, state: _Runner):
         """
         Performing model tracing on epoch end if condition metric is improved.
 
@@ -128,7 +129,7 @@ class TracerCallback(Callback):
             out_dir=self.out_dir,
         )
 
-    def on_epoch_end(self, state: State):
+    def on_epoch_end(self, state: _Runner):
         """
         Performing model tracing on epoch end if condition metric is improved
 
@@ -150,7 +151,7 @@ class TracerCallback(Callback):
             else:
                 self._trace(state)
 
-    def on_stage_end(self, state: State):
+    def on_stage_end(self, state: _Runner):
         """
         Performing model tracing on stage end if `do_once` is True.
 

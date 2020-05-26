@@ -3,7 +3,7 @@ import os
 
 import numpy as np
 
-from catalyst.dl import Callback, CallbackOrder, State
+from catalyst.core import _Runner, Callback, CallbackOrder
 
 
 # @TODO: refactor
@@ -21,7 +21,7 @@ class InferCallback(Callback):
         self.predictions = defaultdict(lambda: [])
         self._keys_from_state = ["out_dir", "out_prefix"]
 
-    def on_stage_start(self, state: State):
+    def on_stage_start(self, state: _Runner):
         """Stage start hook.
 
         Args:
@@ -37,7 +37,7 @@ class InferCallback(Callback):
         if self.out_prefix is not None:
             os.makedirs(os.path.dirname(self.out_prefix), exist_ok=True)
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, state: _Runner):
         """Loader start hook.
 
         Args:
@@ -45,7 +45,7 @@ class InferCallback(Callback):
         """
         self.predictions = defaultdict(lambda: [])
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _Runner):
         """Batch end hook.
 
         Args:
@@ -56,7 +56,7 @@ class InferCallback(Callback):
         for key, value in dct.items():
             self.predictions[key].append(value)
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, state: _Runner):
         """Loader end hook.
 
         Args:

@@ -8,13 +8,13 @@ import time
 from alchemy.logger import Logger
 import visdom
 
-from catalyst.core import (
+from catalyst.core.callback import (
     Callback,
     CallbackNode,
     CallbackOrder,
     CallbackScope,
-    State,
 )
+from catalyst.core.runner import _Runner
 
 
 class Visdom(Logger):
@@ -246,7 +246,7 @@ class VisdomLogger(Callback):
         """@TODO: Docs. Contribution is welcome."""
         self.logger.close()
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _Runner):
         """Translate batch metrics to Visdom."""
         if self.log_on_batch_end:
             mode = state.loader_name
@@ -258,7 +258,7 @@ class VisdomLogger(Callback):
                 suffix=self.batch_log_suffix,
             )
 
-    def on_epoch_end(self, state: State):
+    def on_epoch_end(self, state: _Runner):
         """Translate epoch metrics to Visdom."""
         if self.log_on_epoch_end:
             self._log_metrics(

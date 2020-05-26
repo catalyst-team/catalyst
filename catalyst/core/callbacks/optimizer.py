@@ -2,14 +2,9 @@ from typing import Callable, Dict, List
 import logging
 import warnings
 
-from catalyst.core import (
-    Callback,
-    CallbackNode,
-    CallbackOrder,
-    registry,
-    State,
-    utils,
-)
+from catalyst.core import registry, utils
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.runner import _Runner
 from catalyst.tools.typing import Optimizer
 
 logger = logging.getLogger(__name__)
@@ -83,14 +78,14 @@ class OptimizerCallback(Callback):
                 grad_clip_fn(group["params"])
         optimizer.step()
 
-    def on_stage_start(self, state: State) -> None:
+    def on_stage_start(self, state: _Runner) -> None:
         """Checks that the current stage has correct optimizer."""
         self._optimizer = state.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
         assert self._optimizer is not None
 
-    def on_epoch_start(self, state: State) -> None:
+    def on_epoch_start(self, state: _Runner) -> None:
         """On epoch start event.
 
         Args:
@@ -106,7 +101,7 @@ class OptimizerCallback(Callback):
         else:
             self._optimizer_wd = [0.0] * len(self._optimizer.param_groups)
 
-    def on_epoch_end(self, state: State) -> None:
+    def on_epoch_end(self, state: _Runner) -> None:
         """On epoch end event.
 
         Args:
@@ -133,7 +128,7 @@ class OptimizerCallback(Callback):
             )
             state.epoch_metrics[momentum_name] = momentum
 
-    def on_batch_end(self, state: State) -> None:
+    def on_batch_end(self, state: _Runner) -> None:
         """On batch end event
 
         Args:

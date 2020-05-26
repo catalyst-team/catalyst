@@ -5,11 +5,7 @@ import torch
 from torch.jit import ScriptModule
 from torch.utils.data import DataLoader, Dataset
 
-from catalyst.core import (
-    _StageBasedRunner,
-    Callback,
-    CheckpointCallback,
-)
+from catalyst.core import _StageBasedRunner, Callback, CheckpointCallback
 from catalyst.dl import utils
 from catalyst.dl.experiment.experiment import Experiment
 from catalyst.tools.typing import (

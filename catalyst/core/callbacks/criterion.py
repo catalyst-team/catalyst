@@ -1,6 +1,6 @@
 from typing import Dict, List, Union
 
-from catalyst.core import State
+from catalyst.core.runner import _Runner
 
 from .metrics import _MetricCallback
 
@@ -48,7 +48,7 @@ class CriterionCallback(_MetricCallback):
         """@TODO: Docs. Contribution is welcome."""
         return self._criterion
 
-    def on_stage_start(self, state: State):
+    def on_stage_start(self, state: _Runner):
         """Checks that the current stage has correct criterion."""
         criterion = state.get_attr(
             key="criterion", inner_key=self.criterion_key

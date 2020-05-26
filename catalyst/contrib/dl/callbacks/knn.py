@@ -13,7 +13,8 @@ from sklearn.neighbors import NearestNeighbors
 
 import torch
 
-from catalyst.dl import Callback, CallbackOrder, State
+from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.core.runner import _Runner
 
 
 class KNNMetricCallback(Callback):
@@ -164,7 +165,7 @@ class KNNMetricCallback(Callback):
 
         return result
 
-    def on_batch_end(self, state: State) -> None:
+    def on_batch_end(self, state: _Runner) -> None:
         """Batch end hook.
 
         Args:
@@ -180,7 +181,7 @@ class KNNMetricCallback(Callback):
         self.features.extend(features)
         self.targets.extend(targets)
 
-    def on_loader_end(self, state: State) -> None:
+    def on_loader_end(self, state: _Runner) -> None:
         """Loader end hook.
 
         Args:
@@ -215,7 +216,7 @@ class KNNMetricCallback(Callback):
 
         self._reset_cache()
 
-    def on_epoch_end(self, state: State) -> None:
+    def on_epoch_end(self, state: _Runner) -> None:
         """Epoch end hook.
 
         Args:

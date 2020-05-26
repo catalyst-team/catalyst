@@ -3,13 +3,13 @@ from typing import Dict, List
 from alchemy import Logger
 
 from catalyst import utils
-from catalyst.core import (
+from catalyst.core.callback import (
     Callback,
     CallbackNode,
     CallbackOrder,
     CallbackScope,
-    State,
 )
+from catalyst.core.runner import _Runner
 
 
 class AlchemyLogger(Callback):
@@ -101,7 +101,7 @@ class AlchemyLogger(Callback):
                     name=metric_name, value=metric_value, step=step,
                 )
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _Runner):
         """Translate batch metrics to Alchemy."""
         if self.log_on_batch_end:
             mode = state.loader_name
@@ -113,7 +113,7 @@ class AlchemyLogger(Callback):
                 suffix=self.batch_log_suffix,
             )
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, state: _Runner):
         """Translate loader metrics to Alchemy."""
         if self.log_on_epoch_end:
             mode = state.loader_name
@@ -125,7 +125,7 @@ class AlchemyLogger(Callback):
                 suffix=self.epoch_log_suffix,
             )
 
-    def on_epoch_end(self, state: State):
+    def on_epoch_end(self, state: _Runner):
         """Translate epoch metrics to Alchemy."""
         extra_mode = "_base"
         splitted_epoch_metrics = utils.split_dict_to_subdicts(

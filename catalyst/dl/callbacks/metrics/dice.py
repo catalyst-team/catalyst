@@ -1,6 +1,6 @@
 import numpy as np
 
-from catalyst.core import Callback, CallbackOrder, MetricCallback, State
+from catalyst.core import _Runner, Callback, CallbackOrder, MetricCallback
 from catalyst.dl import utils
 from catalyst.utils import metrics
 
@@ -74,7 +74,7 @@ class MulticlassDiceMetricCallback(Callback):
         """Resets the confusion matrix holding the epoch-wise stats."""
         self.confusion_matrix = None
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _Runner):
         """Records the confusion matrix at the end of each batch.
 
         Args:
@@ -92,7 +92,7 @@ class MulticlassDiceMetricCallback(Callback):
         else:
             self.confusion_matrix += confusion_matrix
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, state: _Runner):
         """@TODO: Docs. Contribution is welcome.
 
         Args:

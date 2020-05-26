@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, Mapping, Tuple, Union, Optional
+from typing import Any, Callable, Dict, Mapping, Optional, Tuple, Union
 from abc import ABC, abstractmethod
 from collections import defaultdict, OrderedDict
 from pathlib import Path
@@ -9,6 +9,8 @@ from torch import nn
 from torch.utils.data import DataLoader, DistributedSampler
 
 from catalyst.core import utils
+from catalyst.core.callback import Callback, CallbackScope
+from catalyst.core.experiment import _Experiment
 from catalyst.tools import settings
 from catalyst.tools.frozen_class import FrozenClass
 from catalyst.tools.typing import (
@@ -16,17 +18,12 @@ from catalyst.tools.typing import (
     Device,
     Model,
     Optimizer,
+    RunnerCriterion,
+    RunnerModel,
+    RunnerOptimizer,
+    RunnerScheduler,
     Scheduler,
 )
-
-from .callback import Callback, CallbackScope
-from .callbacks import ExceptionCallback
-from .experiment import _Experiment
-
-RunnerModel = Union[Model, Dict[str, Model]]
-RunnerCriterion = Union[Criterion, Dict[str, Criterion]]
-RunnerOptimizer = Union[Optimizer, Dict[str, Optimizer]]
-RunnerScheduler = Union[Scheduler, Dict[str, Scheduler]]
 
 
 class _Runner(ABC, FrozenClass):
@@ -59,7 +56,9 @@ class _Runner(ABC, FrozenClass):
             model (StateModel): Torch model object
             device (Device): Torch device
         """
-        self._prepare_inner_state(device=device,  model=model)
+        self._device = None
+        self._model = None
+        self._prepare_inner_state(device=device, model=model)
         self._init()
         self._freeze()
 
@@ -79,6 +78,7 @@ class _Runner(ABC, FrozenClass):
         valid_loader: str = settings.loader_valid_prefix,
         checkpoint_data: Dict = None,
         is_check_run: bool = False,
+        verbose: bool = False,
         **kwargs,
     ):
         # main runner components: model and device to run
@@ -91,7 +91,7 @@ class _Runner(ABC, FrozenClass):
         self.optimizer: RunnerOptimizer = optimizer
         self.scheduler: RunnerScheduler = scheduler
         # and callbacks
-        self.callbacks: Dict[str, "Callback"] = callbacks
+        self.callbacks: Dict[str, "Callback"] = callbacks or {}
 
         # the data
         self.loaders: OrderedDict[str, DataLoader] = None
@@ -133,6 +133,7 @@ class _Runner(ABC, FrozenClass):
         self.global_sample_step: int = 0
         self.global_batch_step: int = 0
         self.global_epoch: int = 1
+        self.verbose: bool = verbose
         self.is_check_run: bool = is_check_run
         self.need_early_stop: bool = False
         self.need_exception_reraise: bool = True
@@ -199,7 +200,8 @@ class _Runner(ABC, FrozenClass):
                 )
 
             model = value
-
+        elif isinstance(value, type(None)):
+            model = None
         else:
             raise TypeError(
                 f"Invalid value type "
@@ -207,7 +209,7 @@ class _Runner(ABC, FrozenClass):
                 f"got '{type(value)}'"
             )
 
-        if self._device is not None:
+        if model is not None and self._device is not None:
             model: Model = utils.maybe_recursive_call(
                 model, "to", device=self._device
             )
@@ -231,6 +233,8 @@ class _Runner(ABC, FrozenClass):
             self._device = value
         elif isinstance(value, str):
             self._device = torch.device(value)
+        elif isinstance(value, type(None)):
+            self._device = None
         else:
             raise TypeError(
                 f"Invalid value type "
@@ -240,53 +244,8 @@ class _Runner(ABC, FrozenClass):
 
         if self._model is not None:
             self._model = utils.maybe_recursive_call(
-                self._model, "to", device=self._device
+                self._model, "to", device=self._device or "cpu"
             )
-
-    @property
-    def batch_in(self):
-        """Alias for `state.input`.
-
-        .. warning::
-            Deprecated, saved for backward compatibility.
-            Please use `state.batch_in` instead.
-        """
-        warnings.warn(
-            "`state.batch_in` was deprecated, "
-            "please use `state.input` instead",
-            DeprecationWarning,
-        )
-        return self.input
-
-    @property
-    def batch_out(self):
-        """Alias for `state.output`.
-
-        .. warning::
-            Deprecated, saved for backward compatibility.
-            Please use `state.batch_out` instead.
-        """
-        warnings.warn(
-            "`state.batch_out` was deprecated, "
-            "please use `state.output` instead",
-            DeprecationWarning,
-        )
-        return self.output
-
-    @property
-    def need_backward_pass(self):
-        """Alias for `state.is_train_loader`.
-
-        .. warning::
-            Deprecated, saved for backward compatibility.
-            Please use `state.is_train_loader` instead.
-        """
-        warnings.warn(
-            "`need_backward_pass` was deprecated, "
-            "please use `is_train_loader` instead",
-            DeprecationWarning,
-        )
-        return self.is_train_loader
 
     @property
     def loader_step(self):
@@ -302,6 +261,20 @@ class _Runner(ABC, FrozenClass):
             DeprecationWarning,
         )
         return self.loader_batch_step
+
+    @property
+    def state(self):
+        """Alias for `self`.
+
+        .. warning::
+            Deprecated, saved for backward compatibility.
+            Please use `self` instead.
+        """
+        warnings.warn(
+            "`runner.state` was deprecated, " "please use `runner` instead",
+            DeprecationWarning,
+        )
+        return self
 
     @staticmethod
     def _get_experiment_components(
@@ -341,13 +314,11 @@ class _Runner(ABC, FrozenClass):
             distributed_params=experiment.distributed_params,
             device=device,
         )
-
         return model, criterion, optimizer, scheduler, device
 
     @staticmethod
     def _get_experiment_callbacks(
-        experiment: _Experiment,
-        stage: str,
+        experiment: _Experiment, stage: str,
     ) -> Dict[str, Callback]:
         """Inner method for `Callbacks` preparation.
 
@@ -436,20 +407,18 @@ class _Runner(ABC, FrozenClass):
         """
         utils.set_global_seed(self.experiment.initial_seed)
         (
-            self.model,
-            self.criterion,
-            self.optimizer,
-            self.scheduler,
-            self.device,
+            model,
+            criterion,
+            optimizer,
+            scheduler,
+            device,
         ) = self._get_experiment_components(
-            experiment=self.experiment,
-            stage=stage,
+            experiment=self.experiment, stage=stage,
         )
 
         utils.set_global_seed(self.experiment.initial_seed)
         callbacks = self._get_experiment_callbacks(
-            experiment=self.experiment,
-            stage=stage
+            experiment=self.experiment, stage=stage
         )
 
         migrating_params = dict(**self.experiment.get_state_params(stage))
@@ -463,6 +432,16 @@ class _Runner(ABC, FrozenClass):
             callbacks = utils.sort_callbacks_by_order(callbacks)
 
         self.callbacks = callbacks
+        self._prepare_inner_state(
+            stage=stage,
+            model=model,
+            device=device,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            callbacks=callbacks,
+            **migrating_params,
+        )
 
     def _prepare_for_epoch(self, stage: str, epoch: int) -> None:
         """
@@ -665,6 +644,7 @@ class _Runner(ABC, FrozenClass):
             for stage in self.experiment.stages:
                 self._run_stage(stage)
         except (Exception, KeyboardInterrupt) as ex:
+            from catalyst.core.callbacks.exception import ExceptionCallback
 
             def _exception_handler_check(callbacks: Union[OrderedDict, Dict]):
                 return callbacks is not None and any(

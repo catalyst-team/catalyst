@@ -5,7 +5,9 @@ import logging
 
 import torch
 
-from catalyst.core import Callback, CallbackNode, CallbackOrder, State, utils
+from catalyst.core import utils
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.runner import _Runner
 from catalyst.tools import meters
 
 logger = logging.getLogger(__name__)
@@ -65,21 +67,21 @@ class _MetricCallback(ABC, Callback):
         """@TODO: Docs. Contribution is welcome."""
         pass
 
-    def _compute_metric_value(self, state: State):
+    def _compute_metric_value(self, state: _Runner):
         output = self._get_output(state.output, self.output_key)
         input = self._get_input(state.input, self.input_key)
 
         metric = self.metric_fn(output, input, **self.metrics_kwargs)
         return metric
 
-    def _compute_metric_key_value(self, state: State):
+    def _compute_metric_key_value(self, state: _Runner):
         output = self._get_output(state.output, self.output_key)
         input = self._get_input(state.input, self.input_key)
 
         metric = self.metric_fn(**output, **input, **self.metrics_kwargs)
         return metric
 
-    def on_batch_end(self, state: State) -> None:
+    def on_batch_end(self, state: _Runner) -> None:
         """Computes the metric and add it to batch metrics."""
         metric = self._compute_metric(state) * self.multiplier
         state.batch_metrics[self.prefix] = metric
@@ -137,7 +139,7 @@ class MultiMetricCallback(MetricCallback):
         )
         self.list_args = list_args
 
-    def on_batch_end(self, state: State) -> None:
+    def on_batch_end(self, state: _Runner) -> None:
         """Batch end hook.
 
         Args:
@@ -234,7 +236,7 @@ class MetricAggregationCallback(Callback):
             result = list(metrics.values())
         return result
 
-    def on_batch_end(self, state: State) -> None:
+    def on_batch_end(self, state: _Runner) -> None:
         """Computes the metric and add it to the metrics.
 
         Args:
@@ -274,7 +276,7 @@ class MetricManagerCallback(Callback):
             output[key] = value
         return output
 
-    def on_epoch_start(self, state: State) -> None:
+    def on_epoch_start(self, state: _Runner) -> None:
         """Epoch start hook.
 
         Args:
@@ -282,7 +284,7 @@ class MetricManagerCallback(Callback):
         """
         state.epoch_metrics = defaultdict(None)
 
-    def on_loader_start(self, state: State) -> None:
+    def on_loader_start(self, state: _Runner) -> None:
         """Loader start hook.
 
         Args:
@@ -291,7 +293,7 @@ class MetricManagerCallback(Callback):
         state.loader_metrics = defaultdict(None)
         self.meters = defaultdict(meters.AverageValueMeter)
 
-    def on_loader_end(self, state: State) -> None:
+    def on_loader_end(self, state: _Runner) -> None:
         """Loader end hook.
 
         Args:
@@ -303,7 +305,7 @@ class MetricManagerCallback(Callback):
         for key, value in state.loader_metrics.items():
             state.epoch_metrics[f"{state.loader_name}_{key}"] = value
 
-    def on_batch_start(self, state: State) -> None:
+    def on_batch_start(self, state: _Runner) -> None:
         """Batch start hook.
 
         Args:
@@ -311,7 +313,7 @@ class MetricManagerCallback(Callback):
         """
         state.batch_metrics = defaultdict(None)
 
-    def on_batch_end(self, state: State) -> None:
+    def on_batch_end(self, state: _Runner) -> None:
         """Batch end hook.
 
         Args:

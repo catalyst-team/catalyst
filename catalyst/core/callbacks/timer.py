@@ -1,4 +1,5 @@
-from catalyst.core import Callback, CallbackNode, CallbackOrder, State
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.runner import _Runner
 from catalyst.tools.time_manager import TimeManager
 
 EPS = 1e-8
@@ -12,7 +13,7 @@ class TimerCallback(Callback):
         super().__init__(order=CallbackOrder.Metric + 1, node=CallbackNode.All)
         self.timer = TimeManager()
 
-    def on_loader_start(self, state: State) -> None:
+    def on_loader_start(self, state: _Runner) -> None:
         """Loader start hook.
 
         Args:
@@ -22,7 +23,7 @@ class TimerCallback(Callback):
         self.timer.start("_timer/batch_time")
         self.timer.start("_timer/data_time")
 
-    def on_loader_end(self, state: State) -> None:
+    def on_loader_end(self, state: _Runner) -> None:
         """Loader end hook.
 
         Args:
@@ -30,7 +31,7 @@ class TimerCallback(Callback):
         """
         self.timer.reset()
 
-    def on_batch_start(self, state: State) -> None:
+    def on_batch_start(self, state: _Runner) -> None:
         """Batch start hook.
 
         Args:
@@ -39,7 +40,7 @@ class TimerCallback(Callback):
         self.timer.stop("_timer/data_time")
         self.timer.start("_timer/model_time")
 
-    def on_batch_end(self, state: State) -> None:
+    def on_batch_end(self, state: _Runner) -> None:
         """Batch end hook.
 
         Args:

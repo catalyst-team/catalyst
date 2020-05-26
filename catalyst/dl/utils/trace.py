@@ -3,7 +3,6 @@ from typing import (  # isort:skip
     Callable,
     Dict,
     List,
-    TYPE_CHECKING,
     Union,
 )
 import inspect
@@ -12,7 +11,7 @@ from pathlib import Path
 from torch import nn
 from torch.jit import load, save, ScriptModule, trace
 
-from catalyst.dl.runner.runner import Runner
+from catalyst.core.runner import _Runner
 from catalyst.dl.experiment.config import ConfigExperiment
 from catalyst.tools.typing import Device, Model
 from catalyst.utils import (
@@ -29,9 +28,6 @@ from catalyst.utils import (
     set_requires_grad,
     unpack_checkpoint,
 )
-
-if TYPE_CHECKING:
-    from catalyst.dl import Runner  # noqa: F401
 
 
 def _get_input_argnames(
@@ -243,7 +239,7 @@ def trace_model_from_checkpoint(
 
 
 def trace_model_from_runner(
-    runner: Runner,
+    runner: _Runner,
     checkpoint_name: str = None,
     method_name: str = "forward",
     mode: str = "eval",

@@ -12,13 +12,9 @@ from catalyst.contrib import registry
 from catalyst.contrib.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.dl.callbacks.optimizer import SaveModelGradsCallback
-from catalyst.core import (
-    Callback,
-    CallbackOrder,
-    CriterionCallback,
-    OptimizerCallback,
-    State,
-)
+from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.core.callbacks import CriterionCallback, OptimizerCallback
+from catalyst.core.runner import _Runner
 from catalyst.dl import SupervisedRunner
 
 
@@ -107,7 +103,7 @@ class _OnBatchEndCheckGradsCallback(Callback):
         super().__init__(CallbackOrder.External)
         self.prefix = prefix
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _Runner):
         if not state.is_train_loader:
             return
 

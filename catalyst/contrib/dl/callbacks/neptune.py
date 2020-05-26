@@ -2,13 +2,13 @@ from typing import Dict, List
 
 import neptune
 
-from catalyst.core import (
+from catalyst.core.callback import (
     Callback,
     CallbackNode,
     CallbackOrder,
     CallbackScope,
-    State,
 )
+from catalyst.core.runner import _Runner
 
 
 class NeptuneLogger(Callback):
@@ -135,7 +135,7 @@ class NeptuneLogger(Callback):
                 metric_value = metrics[name]
                 self.experiment.log_metric(metric_name, y=metric_value, x=step)
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _Runner):
         """Log batch metrics to Neptune."""
         if self.log_on_batch_end:
             mode = state.loader_name
@@ -147,7 +147,7 @@ class NeptuneLogger(Callback):
                 suffix=self.batch_log_suffix,
             )
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, state: _Runner):
         """Translate epoch metrics to Neptune."""
         if self.log_on_epoch_end:
             mode = state.loader_name

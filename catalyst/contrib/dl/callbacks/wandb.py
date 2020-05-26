@@ -3,13 +3,13 @@ from typing import Dict, List
 import wandb
 
 from catalyst import utils
-from catalyst.core import (
+from catalyst.core.callback import (
     Callback,
     CallbackNode,
     CallbackOrder,
     CallbackScope,
-    State,
 )
+from catalyst.core.runner import _Runner
 
 
 class WandbLogger(Callback):
@@ -133,15 +133,15 @@ class WandbLogger(Callback):
         }
         wandb.log(metrics, step=step, commit=commit)
 
-    def on_stage_start(self, state: State):
+    def on_stage_start(self, state: _Runner):
         """Initialize Weights & Biases."""
         wandb.init(**self.logging_params, reinit=True, dir=str(state.logdir))
 
-    def on_stage_end(self, state: State):
+    def on_stage_end(self, state: _Runner):
         """Finish logging to Weights & Biases."""
         wandb.join()
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _Runner):
         """Translate batch metrics to Weights & Biases."""
         if self.log_on_batch_end:
             mode = state.loader_name
@@ -154,7 +154,7 @@ class WandbLogger(Callback):
                 commit=True,
             )
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, state: _Runner):
         """Translate loader metrics to Weights & Biases."""
         if self.log_on_epoch_end:
             mode = state.loader_name
@@ -167,7 +167,7 @@ class WandbLogger(Callback):
                 commit=False,
             )
 
-    def on_epoch_end(self, state: State):
+    def on_epoch_end(self, state: _Runner):
         """Translate epoch metrics to Weights & Biases."""
         extra_mode = "_base"
         splitted_epoch_metrics = utils.split_dict_to_subdicts(

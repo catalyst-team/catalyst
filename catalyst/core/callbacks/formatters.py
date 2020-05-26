@@ -2,7 +2,8 @@ from typing import Dict
 from abc import ABC, abstractmethod
 import logging
 
-from catalyst.core import State, utils
+from catalyst.core import utils
+from catalyst.core.runner import _Runner
 
 
 class MetricsFormatter(ABC, logging.Formatter):
@@ -17,7 +18,7 @@ class MetricsFormatter(ABC, logging.Formatter):
         super().__init__(f"{message_prefix}{{message}}", style="{")
 
     @abstractmethod
-    def _format_message(self, state: State):
+    def _format_message(self, state: _Runner):
         pass
 
     def format(self, record: logging.LogRecord):
@@ -59,7 +60,7 @@ class TxtMetricsFormatter(MetricsFormatter):
 
         return metrics_formatted
 
-    def _format_message(self, state: State):
+    def _format_message(self, state: _Runner):
         message = [""]
         mode_metrics = utils.split_dict_to_subdicts(
             dct=state.epoch_metrics,

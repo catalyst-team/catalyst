@@ -3,7 +3,7 @@ from collections import defaultdict
 
 import numpy as np
 
-from catalyst.core import Callback, CallbackOrder, State
+from catalyst.core import _Runner, Callback, CallbackOrder
 from catalyst.dl.utils import get_activation_fn
 
 
@@ -57,7 +57,7 @@ class MeterMetricsCallback(Callback):
         for meter in self.meters:
             meter.reset()
 
-    def on_loader_start(self, state):
+    def on_loader_start(self, state: _Runner):
         """Loader start hook.
 
         Args:
@@ -65,7 +65,7 @@ class MeterMetricsCallback(Callback):
         """
         self._reset_stats()
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _Runner):
         """Batch end hook. Computes batch metrics.
 
         Args:
@@ -78,7 +78,7 @@ class MeterMetricsCallback(Callback):
         for i in range(self.num_classes):
             self.meters[i].add(probabilities[:, i], targets[:, i])
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, state: _Runner):
         """Loader end hook. Computes loader metrics.
 
         Args:

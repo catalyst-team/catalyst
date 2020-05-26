@@ -3,7 +3,8 @@ from typing import Dict
 from torch.nn import DataParallel
 from torch.nn.parallel import DistributedDataParallel
 
-from catalyst.core import Callback, CallbackNode, CallbackOrder, State
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.runner import _Runner
 from catalyst.tools.typing import Model
 
 
@@ -64,7 +65,7 @@ class SaveModelGradsCallback(Callback):
 
         return grad_norm
 
-    def on_batch_end(self, state: State) -> None:
+    def on_batch_end(self, state: _Runner) -> None:
         """On batch end event
 
         Args:

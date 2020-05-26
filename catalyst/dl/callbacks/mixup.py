@@ -4,7 +4,8 @@ import numpy as np
 
 import torch
 
-from catalyst.dl import CriterionCallback, State
+from catalyst.core import _Runner
+from catalyst.dl import CriterionCallback
 
 
 class MixupCallback(CriterionCallback):
@@ -58,7 +59,7 @@ class MixupCallback(CriterionCallback):
         self.index = None
         self.is_needed = True
 
-    def _compute_loss_value(self, state: State, criterion):
+    def _compute_loss_value(self, state: _Runner, criterion):
         if not self.is_needed:
             return super()._compute_loss_value(state, criterion)
 
@@ -71,7 +72,7 @@ class MixupCallback(CriterionCallback):
         )
         return loss
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, state: _Runner):
         """Loader start hook.
 
         Args:
@@ -79,7 +80,7 @@ class MixupCallback(CriterionCallback):
         """
         self.is_needed = not self.on_train_only or state.is_train_loader
 
-    def on_batch_start(self, state: State):
+    def on_batch_start(self, state: _Runner):
         """Batch start hook.
 
         Args:

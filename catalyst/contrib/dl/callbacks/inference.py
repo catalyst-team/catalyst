@@ -7,7 +7,9 @@ from skimage.color import label2rgb
 import torch
 import torch.nn.functional as F
 
-from catalyst.dl import Callback, CallbackOrder, State, utils
+from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.core.runner import _Runner
+from catalyst.dl import utils
 
 
 class InferMaskCallback(Callback):
@@ -46,7 +48,7 @@ class InferMaskCallback(Callback):
         self.counter = 0
         self._keys_from_state = ["out_dir", "out_prefix"]
 
-    def on_stage_start(self, state: State):
+    def on_stage_start(self, state: _Runner):
         """Stage start hook.
 
         Args:
@@ -64,7 +66,7 @@ class InferMaskCallback(Callback):
             self.out_prefix = str(self.out_dir) + "/" + str(self.out_prefix)
         os.makedirs(os.path.dirname(self.out_prefix), exist_ok=True)
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, state: _Runner):
         """Loader start hook.
 
         Args:
@@ -73,7 +75,7 @@ class InferMaskCallback(Callback):
         lm = state.loader_name
         os.makedirs(f"{self.out_prefix}/{lm}/", exist_ok=True)
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _Runner):
         """Batch end hook.
 
         Args:

@@ -1,4 +1,5 @@
-from catalyst.core import Callback, CallbackNode, CallbackOrder, State
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.runner import _Runner
 
 
 class CheckRunCallback(Callback):
@@ -10,12 +11,12 @@ class CheckRunCallback(Callback):
         self.num_batch_steps = num_batch_steps
         self.num_epoch_steps = num_epoch_steps
 
-    def on_epoch_end(self, state: State):
+    def on_epoch_end(self, state: _Runner):
         """@TODO: Docs. Contribution is welcome."""
         if state.epoch >= self.num_epoch_steps:
             state.need_early_stop = True
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _Runner):
         """@TODO: Docs. Contribution is welcome."""
         if state.loader_batch_step >= self.num_batch_steps:
             state.need_early_stop = True
@@ -44,7 +45,7 @@ class EarlyStoppingCallback(Callback):
         else:
             self.is_better = lambda score, best: score >= (best + min_delta)
 
-    def on_epoch_end(self, state: State) -> None:
+    def on_epoch_end(self, state: _Runner) -> None:
         """@TODO: Docs. Contribution is welcome."""
         if state.stage_name.startswith("infer"):
             return

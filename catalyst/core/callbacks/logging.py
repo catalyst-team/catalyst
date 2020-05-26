@@ -6,7 +6,9 @@ import sys
 from tqdm import tqdm
 
 from catalyst.contrib.tools.tensorboard import SummaryWriter
-from catalyst.core import Callback, CallbackNode, CallbackOrder, State, utils
+from catalyst.core import utils
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.runner import _Runner
 
 from . import formatters
 
@@ -50,7 +52,7 @@ class VerboseLogger(Callback):
 
         return result
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, state: _Runner):
         """Init tqdm progress bar."""
         self.step = 0
         self.tqdm = tqdm(
@@ -62,7 +64,7 @@ class VerboseLogger(Callback):
             file=sys.stdout,
         )
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, state: _Runner):
         """Cleanup and close tqdm progress bar."""
         # self.tqdm.visible = False
         # self.tqdm.leave = True
@@ -72,7 +74,7 @@ class VerboseLogger(Callback):
         self.tqdm = None
         self.step = 0
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _Runner):
         """Update tqdm progress bar at the end of each batch."""
         self.tqdm.set_postfix(
             **{
@@ -83,7 +85,7 @@ class VerboseLogger(Callback):
         )
         self.tqdm.update()
 
-    def on_exception(self, state: State):
+    def on_exception(self, state: _Runner):
         """Called if an Exception was raised."""
         exception = state.exception
         if not utils.is_exception(exception):
@@ -127,19 +129,19 @@ class ConsoleLogger(Callback):
         # logger.addHandler(jh)
         return logger
 
-    def on_stage_start(self, state: State):
+    def on_stage_start(self, state: _Runner):
         """Prepare ``state.logdir`` for the current stage."""
         if state.logdir:
             state.logdir.mkdir(parents=True, exist_ok=True)
         self.logger = self._get_logger(state.logdir)
 
-    def on_stage_end(self, state: State):
+    def on_stage_end(self, state: _Runner):
         """Called at the end of each stage."""
         for handler in self.logger.handlers:
             handler.close()
         self.logger.handlers = []
 
-    def on_epoch_end(self, state: State):
+    def on_epoch_end(self, state: _Runner):
         """
         Translate ``state.metric_manager`` to console and text file
         at the end of an epoch.
@@ -187,7 +189,7 @@ class TensorboardLogger(Callback):
                     f"{name}{suffix}", metrics[name], step
                 )
 
-    def on_stage_start(self, state: State):
+    def on_stage_start(self, state: _Runner):
         """@TODO: Docs. Contribution is welcome."""
         assert state.logdir is not None
 
@@ -195,13 +197,13 @@ class TensorboardLogger(Callback):
         log_dir = os.path.join(state.logdir, f"{extra_mode}_log")
         self.loggers[extra_mode] = SummaryWriter(log_dir)
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, state: _Runner):
         """Prepare tensorboard writers for the current stage."""
         if state.loader_name not in self.loggers:
             log_dir = os.path.join(state.logdir, f"{state.loader_name}_log")
             self.loggers[state.loader_name] = SummaryWriter(log_dir)
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, state: _Runner):
         """Translate batch metrics to tensorboard."""
         if state.logdir is None:
             return
@@ -216,7 +218,7 @@ class TensorboardLogger(Callback):
                 suffix="/batch",
             )
 
-    def on_epoch_end(self, state: "State"):
+    def on_epoch_end(self, state: _Runner):
         """Translate epoch metrics to tensorboard."""
         if state.logdir is None:
             return
@@ -240,7 +242,7 @@ class TensorboardLogger(Callback):
         for logger in self.loggers.values():
             logger.flush()
 
-    def on_stage_end(self, state: State):
+    def on_stage_end(self, state: _Runner):
         """Close opened tensorboard writers."""
         if state.logdir is None:
             return

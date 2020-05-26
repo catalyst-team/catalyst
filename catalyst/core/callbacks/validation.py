@@ -1,6 +1,7 @@
 from collections import defaultdict
 
-from catalyst.core import Callback, CallbackNode, CallbackOrder, State
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.runner import _Runner
 
 
 class ValidationManagerCallback(Callback):
@@ -12,7 +13,7 @@ class ValidationManagerCallback(Callback):
             order=CallbackOrder.Validation, node=CallbackNode.All,
         )
 
-    def on_epoch_start(self, state: State) -> None:
+    def on_epoch_start(self, state: _Runner) -> None:
         """Epoch start hook.
 
         Args:
@@ -21,7 +22,7 @@ class ValidationManagerCallback(Callback):
         state.valid_metrics = defaultdict(None)
         state.is_best_valid = False
 
-    def on_epoch_end(self, state: State) -> None:
+    def on_epoch_end(self, state: _Runner) -> None:
         """Epoch end hook.
 
         Args:

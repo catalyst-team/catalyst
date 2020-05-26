@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 from enum import IntFlag
 
 if TYPE_CHECKING:
-    from .runner import _Runner
+    from catalyst.core.runner import _Runner
 
 
 class CallbackNode(IntFlag):
@@ -141,7 +141,7 @@ class Callback:
         """Event handler for stage start.
 
         Args:
-            state ("State"): State instance.
+            state ("_Runner"): State instance.
         """
         pass
 
@@ -149,7 +149,7 @@ class Callback:
         """Event handler for stage end.
 
         Args:
-            state ("State"): State instance.
+            state ("_Runner"): State instance.
         """
         pass
 
@@ -157,7 +157,7 @@ class Callback:
         """Event handler for epoch start.
 
         Args:
-            state ("State"): State instance.
+            state ("_Runner"): State instance.
         """
         pass
 
@@ -165,7 +165,7 @@ class Callback:
         """Event handler for epoch end.
 
         Args:
-            state ("State"): State instance.
+            state ("_Runner"): State instance.
         """
         pass
 
@@ -173,7 +173,7 @@ class Callback:
         """Event handler for loader start.
 
         Args:
-            state ("State"): State instance.
+            state ("_Runner"): State instance.
         """
         pass
 
@@ -181,7 +181,7 @@ class Callback:
         """Event handler for loader end.
 
         Args:
-            state ("State"): State instance.
+            state ("_Runner"): State instance.
         """
         pass
 
@@ -189,7 +189,7 @@ class Callback:
         """Event handler for batch start.
 
         Args:
-            state ("State"): State instance.
+            state ("_Runner"): State instance.
         """
         pass
 
@@ -197,7 +197,7 @@ class Callback:
         """Event handler for batch end.
 
         Args:
-            state ("State"): State instance.
+            state ("_Runner"): State instance.
         """
         pass
 
@@ -205,7 +205,7 @@ class Callback:
         """Event handler for exception case.
 
         Args:
-            state ("State"): State instance.
+            state ("_Runner"): State instance.
         """
         pass
 

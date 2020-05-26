@@ -5,9 +5,8 @@ from collections import OrderedDict
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
+from catalyst.core.callback import Callback
 from catalyst.tools.typing import Criterion, Model, Optimizer, Scheduler
-
-from .callback import Callback
 
 
 class _Experiment(ABC):
@@ -22,7 +21,6 @@ class _Experiment(ABC):
 
             - :py:mod:`catalyst.core.experiment._Experiment`
             - :py:mod:`catalyst.core.runner._Runner`
-            - :py:mod:`catalyst.core.state.State`
             - :py:mod:`catalyst.core.callback.Callback`
 
     Abstraction, please check out the implementations:
