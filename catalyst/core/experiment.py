@@ -37,7 +37,7 @@ class _Experiment(ABC):
         Experiment's initial seed, used to setup `global seed`
         at the beginning of each stage.
         Additionally, Catalyst Runner setups
-        `experiment.initial_seed + state.global_epoch + 1`
+        `experiment.initial_seed + runner.global_epoch + 1`
         as `global seed` each epoch.
         Used for experiment reproducibility.
 
@@ -102,7 +102,7 @@ class _Experiment(ABC):
         """Returns State parameters for a given stage.
 
         To learn more about State, please follow
-        :py:mod:`catalyst.core.state.State`
+        :py:mod:`catalyst.core.runner.State`
         documentation.
 
         Example::
@@ -246,7 +246,7 @@ class _Experiment(ABC):
 
         .. note::
             For datasets/loaders nameing please follow
-            :py:mod:`catalyst.core.state.State` documentation.
+            :py:mod:`catalyst.core.runner.State` documentation.
 
         Returns:
             Data transformations to use for specified dataset.
@@ -351,7 +351,7 @@ class _Experiment(ABC):
 
                 - :py:mod:`catalyst.core.experiment._Experiment`
                 - :py:mod:`catalyst.core.runner._Runner`
-                - :py:mod:`catalyst.core.state.State`
+                - :py:mod:`catalyst.core.runner.State`
                 - :py:mod:`catalyst.core.callback.Callback`
         """
         pass

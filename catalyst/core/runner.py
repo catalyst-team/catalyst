@@ -2,7 +2,6 @@ from typing import Any, Callable, Dict, Mapping, Optional, Tuple, Union
 from abc import ABC, abstractmethod
 from collections import defaultdict, OrderedDict
 from pathlib import Path
-import warnings
 
 import torch
 from torch import nn
@@ -25,8 +24,10 @@ from catalyst.tools.typing import (
     Scheduler,
 )
 
+from .legacy import _RunnerLegacy
 
-class _Runner(ABC, FrozenClass):
+
+class _Runner(ABC, _RunnerLegacy, FrozenClass):
     """
     An abstraction that knows how to run an experiment.
     It contains all the logic of **how** to run the experiment,
@@ -44,6 +45,300 @@ class _Runner(ABC, FrozenClass):
         - :py:mod:`catalyst.dl.runner.runner.Runner`
         - :py:mod:`catalyst.dl.runner.supervised.SupervisedRunner`
 
+    Runner also contains full information about experiment runner.
+
+
+    Runner section
+
+
+    **runner.model** - an instance of torch.nn.Module class, \
+    (should implement ``forward`` method); \
+    for example,
+    ::
+
+        runner.model = torch.nn.Linear(10, 10)
+
+    **runner.device** - an instance of torch.device (CPU, GPU, TPU); \
+    for example,
+    ::
+
+        runner.device = torch.device("cpu")
+
+
+    Experiment section
+
+
+    **runner.criterion** - an instance of torch.nn.Module class\
+    or torch.nn.modules.loss._Loss (should implement ``forward`` method); \
+    for example,
+    ::
+
+        runner.criterion = torch.nn.CrossEntropyLoss()
+
+    **runner.optimizer** - an instance of torch.optim.optimizer.Optimizer\
+    (should implement ``step`` method); \
+    for example,
+    ::
+
+        runner.optimizer = torch.optim.Adam()
+
+    **runner.scheduler** -
+    an instance of torch.optim.lr_scheduler._LRScheduler\
+    (should implement ``step`` method); \
+    for example,
+    ::
+
+        runner.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau()
+
+    **runner.callbacks** -
+    ordered dictionary with Catalyst.Callback instances;\
+    for example,
+    ::
+
+        runner.callbacks = {
+            "accuracy": AccuracyCallback(),
+            "criterion": CriterionCallback(),
+            "optim": OptimizerCallback(),
+            "saver": CheckpointCallback()
+        }
+
+
+    Dataflow section
+
+
+    **runner.loaders** - ordered dictionary with torch.DataLoaders; \
+    for example,
+    ::
+
+        runner.loaders = {
+            "train": MnistTrainLoader(),
+            "valid": MnistValidLoader()
+        }
+
+    .. note::
+        - "*train*" prefix is used for training loaders - \
+          metrics computations, backward pass, optimization
+        - "*valid*" prefix is used for validation loaders - \
+          metrics computations only
+        - "*infer*" prefix is used for inference loaders - \
+          dataset prediction
+
+    **runner.input** - dictionary, \
+    containing batch of data from currents DataLoader; \
+    for example,
+    ::
+
+        runner.input = {
+            "images": np.ndarray(batch_size, c, h, w),
+            "targets": np.ndarray(batch_size, 1),
+        }
+
+    **runner.output** - dictionary, \
+    containing model output for current batch; \
+    for example,
+    ::
+
+        runner.output = {"logits": torch.Tensor(batch_size, num_classes)}
+
+
+    Metrics section
+
+
+    **runner.batch_metrics** - dictionary, flatten storage for batch metrics; \
+    for example,
+    ::
+
+        runner.batch_metrics = {"loss": ..., "accuracy": ..., "iou": ...}
+
+    **runner.loader_metrics** - dictionary with aggregated batch statistics \
+    for loader (mean over all batches) and global loader metrics, like AUC; \
+    for example,
+    ::
+
+        runner.loader_metrics = {"loss": ..., "accuracy": ..., "auc": ...}
+
+    **runner.epoch_metrics** - dictionary with summarized metrics \
+    for different loaders and global epoch metrics, like lr, momentum; \
+    for example,
+    ::
+
+        runner.epoch_metrics = {
+            "train_loss": ..., "train_auc": ..., "valid_loss": ...,
+            "lr": ..., "momentum": ...,
+        }
+
+
+    Validation metrics section
+
+
+    **runner.main_metric** - string, containing name of metric of interest \
+    for optimization, validation and checkpointing during training
+
+    **runner.minimize_metric** - bool, indicator flag
+
+        - ``True`` if we need to minimize metric during training,\
+          like `Cross Entropy loss`
+        - ``False`` if we need to maximize metric during training, \
+          like `Accuracy` or `Intersection over Union`
+
+
+    Validation section
+
+
+    **runner.valid_loader** - string, name of validation loader \
+    for metric selection, validation and model checkpoining
+
+    **runner.valid_metrics** - dictionary with validation metrics\
+    for currect epoch; \
+    for example,
+    ::
+
+        runner.valid_metrics = {"loss": ..., "accuracy": ..., "auc": ...}
+
+    .. note::
+        subdictionary of epoch_metrics
+
+    **runner.is_best_valid** - bool, indicator flag
+
+        - ``True`` if this training epoch is best over all epochs
+        - ``False`` if not
+
+    **runner.best_valid_metrics** - dictionary with best validation metrics \
+    during whole training process
+
+
+    Distributed section
+
+
+    **runner.distributed_rank** - distributed rank of current worker
+
+    **runner.is_distributed_master** - bool, indicator flag
+
+        - ``True`` if is master node (runner.distributed_rank == 0)
+        - ``False`` if is worker node (runner.distributed_rank != 0)
+
+    **runner.is_distributed_worker** - bool, indicator flag
+
+        - ``True`` if is worker node (runner.distributed_rank > 0)
+        - ``False`` if is master node (runner.distributed_rank <= 0)
+
+
+    Experiment info section
+
+
+    **runner.global_sample_step** - int, numerical indicator, counter for all\
+    individual samples, that passes through our model during training,\
+    validation and inference stages
+
+    **runner.global_batch_step** - int, numerical indicator, counter for all
+    batches, that passes through our model during training, validation and\
+    inference stages
+
+    **runner.global_epoch** - int, numerical indicator,
+    counter for all epochs,\
+    that have passed during model training, validation and\
+    inference stages
+
+    **runner.verbose** - bool, indicator flag
+
+    **runner.is_check_run** - bool, indicator flag
+
+        - ``True`` if you want to check you pipeline and \
+          run only 2 batches per loader and 2 epochs per stage
+        - ``False`` (default) if you want to just the pipeline
+
+    **runner.need_early_stop** - bool, indicator flag \
+    used for EarlyStopping and CheckRun Callbacks
+
+        - ``True`` if we need to stop the training
+        - ``False`` (default) otherwise
+
+    **runner.need_exception_reraise** - bool, indicator flag
+
+        - ``True`` (default) if you want to show exception \
+          during pipeline and stop the training process
+        - ``False`` otherwise
+
+
+    Stage info section
+
+
+    **runner.stage_name** - string, current stage name,\
+    for example,
+    ::
+
+        runner.stage_name = "pretraining" / "training" / "finetuning" / etc
+
+    **runner.num_epochs** - int, maximum number of epochs, \
+    required for this stage
+
+    **runner.is_infer_stage** - bool, indicator flag
+
+        - ``True`` for inference stages
+        - ``False`` otherwise
+
+
+    Epoch info section
+
+
+    **runner.epoch** - int, numerical indicator for current stage epoch
+
+
+    Loader info section
+
+
+    **runner.loader_sample_step** - int, numerical indicator \
+    for number of samples passed through our model in current loader
+
+    **runner.loader_batch_step** - int, numerical indicator \
+    for batch index in current loader
+
+
+    **runner.loader_name** - string, current loader name\
+    for example,
+    ::
+
+        runner.loader_name = "train_dataset1" / "valid_data2" / "infer_golden"
+
+    **runner.loader_len** - int, maximum number of batches in current loader
+
+    **runner.loader_batch_size** - int, batch size parameter in current loader
+
+    **runner.is_train_loader** - bool, indicator flag
+
+        - ``True`` for training loaders
+        - ``False`` otherwise
+
+    **runner.is_valid_loader** - bool, indicator flag
+
+        - ``True`` for validation loaders
+        - ``False`` otherwise
+
+    **runner.is_infer_loader** - bool, indicator flag
+
+        - ``True`` for inference loaders
+        - ``False`` otherwise
+
+
+    Batch info section
+
+
+    **runner.batch_size** - int, length of the current batch
+
+    Logging section
+
+
+    **runner.logdir** - string, path to logging directory to save\
+    all logs, metrics, checkpoints and artifacts
+
+    **runner.checkpoint_data** - dictionary\
+    with all extra data for experiment tracking
+
+    Extra section
+
+
+    **runner.exception** - python Exception instance to raise (or not ;) )
+
     """
 
     _experiment_fn: Callable = _Experiment
@@ -56,8 +351,8 @@ class _Runner(ABC, FrozenClass):
             model (StateModel): Torch model object
             device (Device): Torch device
         """
-        self._device = None
         self._model = None
+        self._device = None
         self._prepare_inner_state(device=device, model=model)
         self._init()
         # @TODO: how to fix?
@@ -117,14 +412,15 @@ class _Runner(ABC, FrozenClass):
         # }
         self.epoch_metrics: Dict = defaultdict(None)
 
+        # metrics & validation
+        self.main_metric: str = main_metric
+        self.minimize_metric: bool = minimize_metric
+
         # validation
         self.valid_loader: str = valid_loader
         self.valid_metrics: Dict = defaultdict(None)
         self.is_best_valid: bool = False
         self.best_valid_metrics: Dict = defaultdict(None)
-        # metrics & validation
-        self.main_metric: str = main_metric
-        self.minimize_metric: bool = minimize_metric
 
         # distributed info
         self.distributed_rank: int = utils.get_rank()
@@ -139,16 +435,17 @@ class _Runner(ABC, FrozenClass):
         self.need_early_stop: bool = False
         self.need_exception_reraise: bool = True
         # stage info
-        self.stage_name: str = stage
-        self.epoch: int = 1
         self.num_epochs: int = num_epochs
+        self.stage_name: str = stage
         self.is_infer_stage: bool = self.stage_name.startswith(
             settings.stage_infer_prefix
         )
+        # epoch info
+        self.epoch: int = 1
         # loader info
-        self.loader_name: str = None
-        self.loader_batch_step: int = 0
         self.loader_sample_step: int = 0
+        self.loader_batch_step: int = 0
+        self.loader_name: str = None
         self.loader_len: int = 0
         self.loader_batch_size = 0
         self.is_train_loader: bool = False
@@ -162,7 +459,7 @@ class _Runner(ABC, FrozenClass):
         # extra checkpoint data for saving in checkpoint files
         self.checkpoint_data: Dict = checkpoint_data or {}
 
-        # other
+        # extra
         self.exception: Optional[Exception] = None
 
         # kwargs
@@ -247,35 +544,6 @@ class _Runner(ABC, FrozenClass):
             self._model = utils.maybe_recursive_call(
                 self._model, "to", device=self._device or "cpu"
             )
-
-    @property
-    def loader_step(self):
-        """Alias for `state.loader_batch_step`.
-
-        .. warning::
-            Deprecated, saved for backward compatibility.
-            Please use `state.loader_batch_step` instead.
-        """
-        warnings.warn(
-            "`loader_step` was deprecated, "
-            "please use `loader_batch_step` instead",
-            DeprecationWarning,
-        )
-        return self.loader_batch_step
-
-    @property
-    def state(self):
-        """Alias for `self`.
-
-        .. warning::
-            Deprecated, saved for backward compatibility.
-            Please use `self` instead.
-        """
-        warnings.warn(
-            "`runner.state` was deprecated, " "please use `runner` instead",
-            DeprecationWarning,
-        )
-        return self
 
     @staticmethod
     def _get_experiment_components(

@@ -59,28 +59,28 @@ class MixupCallback(CriterionCallback):
         self.index = None
         self.is_needed = True
 
-    def _compute_loss_value(self, state: _Runner, criterion):
+    def _compute_loss_value(self, runner: _Runner, criterion):
         if not self.is_needed:
-            return super()._compute_loss_value(state, criterion)
+            return super()._compute_loss_value(runner, criterion)
 
-        pred = state.output[self.output_key]
-        y_a = state.input[self.input_key]
-        y_b = state.input[self.input_key][self.index]
+        pred = runner.output[self.output_key]
+        y_a = runner.input[self.input_key]
+        y_b = runner.input[self.input_key][self.index]
 
         loss = self.lam * criterion(pred, y_a) + (1 - self.lam) * criterion(
             pred, y_b
         )
         return loss
 
-    def on_loader_start(self, state: _Runner):
+    def on_loader_start(self, runner: _Runner):
         """Loader start hook.
 
         Args:
             state (State): current state
         """
-        self.is_needed = not self.on_train_only or state.is_train_loader
+        self.is_needed = not self.on_train_only or runner.is_train_loader
 
-    def on_batch_start(self, state: _Runner):
+    def on_batch_start(self, runner: _Runner):
         """Batch start hook.
 
         Args:
@@ -94,13 +94,13 @@ class MixupCallback(CriterionCallback):
         else:
             self.lam = 1
 
-        self.index = torch.randperm(state.input[self.fields[0]].shape[0])
-        self.index.to(state.device)
+        self.index = torch.randperm(runner.input[self.fields[0]].shape[0])
+        self.index.to(runner.device)
 
         for f in self.fields:
-            state.input[f] = (
-                self.lam * state.input[f]
-                + (1 - self.lam) * state.input[f][self.index]
+            runner.input[f] = (
+                self.lam * runner.input[f]
+                + (1 - self.lam) * runner.input[f][self.index]
             )
 
 

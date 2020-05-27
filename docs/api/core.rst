@@ -151,3 +151,14 @@ Utils
     :members:
     :undoc-members:
     :show-inheritance:
+
+
+Legacy
+----------------------
+
+Runner
+~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.core.legacy._RunnerLegacy
+    :members:
+    :undoc-members:
+    :show-inheritance:

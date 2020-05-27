@@ -285,9 +285,9 @@ class ConfigExperiment(_Experiment):
             device = utils.get_device()
             for param in model_params:
                 param = param["params"][0]
-                state = optimizer.state[param]
-                for key, value in state.items():
-                    state[key] = utils.any2device(value, device)
+                optimizer_state = optimizer.state[param]
+                for key, value in optimizer_state.items():
+                    optimizer_state[key] = utils.any2device(value, device)
 
             # update optimizer params
             for key, value in params.items():

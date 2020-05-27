@@ -63,27 +63,27 @@ class LRFinder(LRUpdater):
         self.find_iter += 1
         return res
 
-    def on_loader_start(self, state: _Runner):
+    def on_loader_start(self, runner: _Runner):
         """@TODO: Docs. Contribution is welcome.
 
         Args:
             state (State): current state
         """
-        if state.is_train_loader:
+        if runner.is_train_loader:
             lr_ = self.final_lr / self.init_lr
-            self.num_steps = self.num_steps or state.loader_len
+            self.num_steps = self.num_steps or runner.loader_len
             self.multiplier = lr_ ** (1 / self.num_steps)
             self.lr_step = (self.final_lr - self.init_lr) / self.num_steps
 
-        super().on_loader_start(state=state)
+        super().on_loader_start(runner=runner)
 
-    def on_batch_end(self, state: _Runner):
+    def on_batch_end(self, runner: _Runner):
         """@TODO: Docs. Contribution is welcome.
 
         Args:
             state (State): current state
         """
-        super().on_batch_end(state=state)
+        super().on_batch_end(runner=runner)
         if self.find_iter > self.num_steps:
             raise NotImplementedError("End of LRFinder")
 

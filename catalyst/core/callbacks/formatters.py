@@ -18,7 +18,7 @@ class MetricsFormatter(ABC, logging.Formatter):
         super().__init__(f"{message_prefix}{{message}}", style="{")
 
     @abstractmethod
-    def _format_message(self, state: _Runner):
+    def _format_message(self, runner: _Runner):
         pass
 
     def format(self, record: logging.LogRecord):
@@ -60,18 +60,18 @@ class TxtMetricsFormatter(MetricsFormatter):
 
         return metrics_formatted
 
-    def _format_message(self, state: _Runner):
+    def _format_message(self, runner: _Runner):
         message = [""]
         mode_metrics = utils.split_dict_to_subdicts(
-            dct=state.epoch_metrics,
-            prefixes=list(state.loaders.keys()),
+            dct=runner.epoch_metrics,
+            prefixes=list(runner.loaders.keys()),
             extra_key="_base",
         )
         metrics = self._format_metrics(mode_metrics)
         for key, value in metrics.items():
             message.append(
-                f"{state.epoch}/{state.num_epochs} "
-                f"* Epoch {state.global_epoch} ({key}): {value}"
+                f"{runner.epoch}/{runner.num_epochs} "
+                f"* Epoch {runner.global_epoch} ({key}): {value}"
             )
         message = "\n".join(message)
         return message

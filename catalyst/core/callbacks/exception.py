@@ -12,11 +12,11 @@ class ExceptionCallback(Callback):
             order=CallbackOrder.External + 1, node=CallbackNode.All
         )
 
-    def on_exception(self, state: _Runner):
+    def on_exception(self, runner: _Runner):
         """@TODO: Docs. Contribution is welcome."""
-        exception = state.exception
+        exception = runner.exception
         if not utils.is_exception(exception):
             return
 
-        if state.need_exception_reraise:
+        if runner.need_exception_reraise:
             raise exception

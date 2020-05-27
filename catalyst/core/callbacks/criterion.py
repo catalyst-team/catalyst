@@ -28,7 +28,7 @@ class CriterionCallback(_MetricCallback):
                 If '__all__', the whole output will be passed to the criterion
                 If None, empty dict will be passed to the criterion.
             prefix (str): prefix for metrics and output key for loss
-                in ``state.batch_metrics`` dictionary
+                in ``runner.batch_metrics`` dictionary
             criterion_key (str): A key to take a criterion in case
                 there are several of them and they are in a dictionary format.
             multiplier (float): scale factor for the output loss.
@@ -48,9 +48,9 @@ class CriterionCallback(_MetricCallback):
         """@TODO: Docs. Contribution is welcome."""
         return self._criterion
 
-    def on_stage_start(self, state: _Runner):
+    def on_stage_start(self, runner: _Runner):
         """Checks that the current stage has correct criterion."""
-        criterion = state.get_attr(
+        criterion = runner.get_attr(
             key="criterion", inner_key=self.criterion_key
         )
         assert criterion is not None

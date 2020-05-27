@@ -144,10 +144,10 @@ class _OnStageEndCheckModelTracedCallback(Callback):
         self.inputs: torch.Tensor = inputs
         self.device = get_device()
 
-    def on_stage_end(self, state: _Runner):
+    def on_stage_end(self, runner: _Runner):
         """
         Args:
-            state (State): Current state.
+            state (State): Current runner.
         """
         assert self.path.exists(), "Traced model was not found"
 

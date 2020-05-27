@@ -74,14 +74,14 @@ class MulticlassDiceMetricCallback(Callback):
         """Resets the confusion matrix holding the epoch-wise stats."""
         self.confusion_matrix = None
 
-    def on_batch_end(self, state: _Runner):
+    def on_batch_end(self, runner: _Runner):
         """Records the confusion matrix at the end of each batch.
 
         Args:
             state (State): current state
         """
-        outputs = state.output[self.output_key]
-        targets = state.input[self.input_key]
+        outputs = runner.output[self.output_key]
+        targets = runner.input[self.input_key]
 
         confusion_matrix = utils.calculate_confusion_matrix_from_tensors(
             outputs, targets
@@ -92,7 +92,7 @@ class MulticlassDiceMetricCallback(Callback):
         else:
             self.confusion_matrix += confusion_matrix
 
-    def on_loader_end(self, state: _Runner):
+    def on_loader_end(self, runner: _Runner):
         """@TODO: Docs. Contribution is welcome.
 
         Args:
@@ -112,15 +112,15 @@ class MulticlassDiceMetricCallback(Callback):
                 self.class_names[i] if self.class_names is not None else str(i)
             )
 
-            state.loader_metrics[f"{self.prefix}_{postfix}"] = dice
+            runner.loader_metrics[f"{self.prefix}_{postfix}"] = dice
 
         # For supporting averaging of only classes specified in `class_names`
         values_to_avg = [
             value
-            for key, value in state.loader_metrics.items()
+            for key, value in runner.loader_metrics.items()
             if key.startswith(f"{self.prefix}_")
         ]
-        state.loader_metrics[f"{self.prefix}_mean"] = np.mean(values_to_avg)
+        runner.loader_metrics[f"{self.prefix}_mean"] = np.mean(values_to_avg)
 
         self._reset_stats()
 

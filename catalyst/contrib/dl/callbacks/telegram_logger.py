@@ -11,7 +11,7 @@ from catalyst.tools import settings
 
 class TelegramLogger(Callback):
     """
-    Logger callback, translates ``state.metric_manager`` to telegram channel.
+    Logger callback, translates ``runner.metric_manager`` to telegram channel.
     """
 
     def __init__(
@@ -69,26 +69,26 @@ class TelegramLogger(Callback):
         except Exception as e:
             logging.getLogger(__name__).warning(f"telegram.send.error:{e}")
 
-    def on_stage_start(self, state: _Runner):
+    def on_stage_start(self, runner: _Runner):
         """Notify about starting a new stage."""
         if self.log_on_stage_start:
-            text = f"{state.stage_name} stage was started"
+            text = f"{runner.stage_name} stage was started"
 
             self._send_text(text)
 
-    def on_loader_start(self, state: _Runner):
+    def on_loader_start(self, runner: _Runner):
         """Notify about starting running the new loader."""
         if self.log_on_loader_start:
             text = (
-                f"{state.loader_name} {state.global_epoch} epoch has started"
+                f"{runner.loader_name} {runner.global_epoch} epoch has started"
             )
 
             self._send_text(text)
 
-    def on_loader_end(self, state: _Runner):
-        """Translate ``state.metric_manager`` to telegram channel."""
+    def on_loader_end(self, runner: _Runner):
+        """Translate ``runner.metric_manager`` to telegram channel."""
         if self.log_on_loader_end:
-            metrics = state.loader_metrics
+            metrics = runner.loader_metrics
 
             if self.metrics_to_log is None:
                 metrics_to_log = sorted(metrics.keys())
@@ -96,7 +96,8 @@ class TelegramLogger(Callback):
                 metrics_to_log = self.metrics_to_log
 
             rows: List[str] = [
-                f"{state.loader_name} {state.global_epoch} epoch was finished:"
+                f"{runner.loader_name} {runner.global_epoch}"
+                f" epoch was finished:"
             ]
 
             for name in metrics_to_log:
@@ -107,17 +108,17 @@ class TelegramLogger(Callback):
 
             self._send_text(text)
 
-    def on_stage_end(self, state: _Runner):
+    def on_stage_end(self, runner: _Runner):
         """Notify about finishing a stage."""
         if self.log_on_stage_end:
-            text = f"{state.stage_name} stage was finished"
+            text = f"{runner.stage_name} stage was finished"
 
             self._send_text(text)
 
-    def on_exception(self, state: _Runner):
+    def on_exception(self, runner: _Runner):
         """Notify about raised ``Exception``."""
         if self.log_on_exception:
-            exception = state.exception
+            exception = runner.exception
             if utils.is_exception(exception) and not isinstance(
                 exception, KeyboardInterrupt
             ):
