@@ -8,7 +8,12 @@ from catalyst.core import Callback, CallbackOrder, State
 
 
 class PeriodicLoaderRunnerCallback(Callback):
-    """A callback to run validation with some period.
+    """Callback for runing loaders with specified period.
+    To disable loader use ``0`` as period.
+
+    .. note::
+        ``'train'`` is a required loader and will
+        be ignored from passed loaders.
 
     Example:
 
@@ -22,7 +27,12 @@ class PeriodicLoaderRunnerCallback(Callback):
     def __init__(self, **kwargs):
         """
         Args:
-            kwargs: expected loader names and periods to run loader.
+            kwargs: loader names and their run periods.
+
+                .. warning::
+                    Loder will be ignored if a period
+                    value is not a number or loader
+                    name is not presented in a list of loaders.
         """
         super().__init__(order=CallbackOrder.External)
 
@@ -39,7 +49,7 @@ class PeriodicLoaderRunnerCallback(Callback):
                 continue
             if loader in required_callbacks:
                 continue
-            self.loader_periods[loader] = period
+            self.loader_periods[loader] = int(period)
 
     def on_stage_start(self, state: State) -> None:
         """Collect information about loaders.

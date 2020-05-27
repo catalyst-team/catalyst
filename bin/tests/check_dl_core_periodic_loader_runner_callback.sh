@@ -470,6 +470,221 @@ check_checkpoints "${CHECKPOINTS}/best" 1
 check_checkpoints "${CHECKPOINTS}/last" 1
 check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
 check_checkpoints "${CHECKPOINTS}/stage2\.[[:digit:]]" 1
-check_num_files ${CHECKPOINTS} 9   # 2x2 checkpoints + metrics.json
+check_num_files ${CHECKPOINTS} 9   # 4x2 checkpoints + metrics.json
+
+rm -rf ${LOGDIR} ${EXP_OUTPUT}
+
+# ###############################  pipeline 07  ################################
+# setup: test for ignoring 'train' loader
+
+LOG_MSG='pipeline 07'
+echo ${LOG_MSG}
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python3 -c "
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst.dl import (
+    SupervisedRunner, State, Callback, CallbackOrder,
+    PeriodicLoaderRunnerCallback,
+)
+
+# experiment_setup
+logdir = '${LOGDIR}'
+
+# data
+num_samples, num_features = int(1e4), int(1e1)
+X = torch.rand(num_samples, num_features)
+y = torch.randint(0, 5, size=[num_samples])
+dataset = TensorDataset(X, y)
+loader = DataLoader(dataset, batch_size=32, num_workers=1)
+loaders = {
+    'train': loader,
+    'train_additional': loader,
+    'valid': loader,
+    'valid_additional': loader,
+}
+
+# model, criterion, optimizer, scheduler
+model = torch.nn.Linear(num_features, 5)
+criterion = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters())
+runner = SupervisedRunner()
+
+# first stage
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    loaders=loaders,
+    logdir=logdir,
+    num_epochs=10,
+    verbose=False,
+    callbacks=[
+        PeriodicLoaderRunnerCallback(
+            train=2,
+            train_additional=2,
+            valid=3,
+            valid_additional=0
+        )
+    ]
+)
+" > ${EXP_OUTPUT}
+
+cat ${EXP_OUTPUT}
+check_line_counts ${EXP_OUTPUT} "(train):" 10
+check_line_counts ${EXP_OUTPUT} "(train_additional):" 5
+check_line_counts ${EXP_OUTPUT} "(valid):" 3
+check_line_counts ${EXP_OUTPUT} "(valid_additional):" 0
+check_line_counts ${EXP_OUTPUT} ".*/train\.9\.pth" 1
+
+check_file_existence ${LOGFILE}
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/train\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
+
+rm -rf ${LOGDIR} ${EXP_OUTPUT}
+
+################################  pipeline 08  ################################
+# setup: test for ignoring 'train' loader
+
+LOG_MSG='pipeline 08'
+echo ${LOG_MSG}
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config4.yml \
+  --logdir=${LOGDIR} > ${EXP_OUTPUT}
+
+cat ${EXP_OUTPUT}
+check_line_counts ${EXP_OUTPUT} "(train):" 10
+check_line_counts ${EXP_OUTPUT} "(train_additional):" 5
+check_line_counts ${EXP_OUTPUT} "(valid):" 3
+check_line_counts ${EXP_OUTPUT} "(valid_additional):" 0
+check_line_counts ${EXP_OUTPUT} ".*/stage1\.6\.pth" 1
+
+check_file_existence ${LOGFILE}
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
+
+rm -rf ${LOGDIR} ${EXP_OUTPUT}
+
+# ###############################  pipeline 09  ################################
+# setup: test for ignoring some random loaders
+
+LOG_MSG='pipeline 09'
+echo ${LOG_MSG}
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python3 -c "
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst.dl import (
+    SupervisedRunner, State, Callback, CallbackOrder,
+    PeriodicLoaderRunnerCallback,
+)
+
+# experiment_setup
+logdir = '${LOGDIR}'
+
+# data
+num_samples, num_features = int(1e4), int(1e1)
+X = torch.rand(num_samples, num_features)
+y = torch.randint(0, 5, size=[num_samples])
+dataset = TensorDataset(X, y)
+loader = DataLoader(dataset, batch_size=32, num_workers=1)
+loaders = {
+    'train': loader,
+    'train_additional': loader,
+    'valid': loader,
+    'valid_additional': loader,
+}
+
+# model, criterion, optimizer, scheduler
+model = torch.nn.Linear(num_features, 5)
+criterion = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters())
+runner = SupervisedRunner()
+
+# first stage
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    loaders=loaders,
+    logdir=logdir,
+    num_epochs=10,
+    verbose=False,
+    callbacks=[
+        PeriodicLoaderRunnerCallback(
+            train_additional=2,
+            train_not_exists=2,
+            valid=3,
+            valid_additional=0,
+            valid_not_exist=1,
+        )
+    ]
+)
+" > ${EXP_OUTPUT}
+
+cat ${EXP_OUTPUT}
+check_line_counts ${EXP_OUTPUT} "(train):" 10
+check_line_counts ${EXP_OUTPUT} "(train_additional):" 5
+check_line_counts ${EXP_OUTPUT} "(train_not_exists):" 0
+check_line_counts ${EXP_OUTPUT} "(valid):" 3
+check_line_counts ${EXP_OUTPUT} "(valid_additional):" 0
+check_line_counts ${EXP_OUTPUT} "(valid_not_exist):" 0
+check_line_counts ${EXP_OUTPUT} ".*/train\.9\.pth" 1
+
+check_file_existence ${LOGFILE}
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/train\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
+
+rm -rf ${LOGDIR} ${EXP_OUTPUT}
+
+################################  pipeline 10  ################################
+# setup: test for ignoring some random loaders
+
+LOG_MSG='pipeline 10'
+echo ${LOG_MSG}
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config5.yml \
+  --logdir=${LOGDIR} > ${EXP_OUTPUT}
+
+cat ${EXP_OUTPUT}
+check_line_counts ${EXP_OUTPUT} "(train):" 10
+check_line_counts ${EXP_OUTPUT} "(train_additional):" 5
+check_line_counts ${EXP_OUTPUT} "(train_not_exists):" 0
+check_line_counts ${EXP_OUTPUT} "(valid):" 3
+check_line_counts ${EXP_OUTPUT} "(valid_additional):" 0
+check_line_counts ${EXP_OUTPUT} "(valid_not_exist):" 0
+check_line_counts ${EXP_OUTPUT} ".*/stage1\.6\.pth" 1
+
+check_file_existence ${LOGFILE}
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR} ${EXP_OUTPUT}
