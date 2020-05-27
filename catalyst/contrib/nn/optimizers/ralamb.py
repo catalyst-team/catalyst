@@ -44,7 +44,7 @@ class Ralamb(Optimizer):
         super(Ralamb, self).__init__(params, defaults)
 
     def __setstate__(self, state):
-        """Sets runner."""
+        """Sets state."""
         super(Ralamb, self).__setstate__(state)
 
     def step(self, closure: Optional[Callable] = None):

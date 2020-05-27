@@ -20,7 +20,7 @@ stages:
     weight_decay: 0.0001
 
   stage1:
-    state_params:
+    stage_params:
       num_epochs: 100
 
     callbacks_params:

@@ -19,7 +19,7 @@ class ValidationManagerCallback(Callback):
         """Epoch start hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         runner.valid_metrics = defaultdict(None)
         runner.is_best_valid = False
@@ -28,7 +28,7 @@ class ValidationManagerCallback(Callback):
         """Epoch end hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         if runner.stage_name.startswith("infer"):
             return

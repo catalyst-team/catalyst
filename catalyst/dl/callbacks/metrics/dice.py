@@ -78,7 +78,7 @@ class MulticlassDiceMetricCallback(Callback):
         """Records the confusion matrix at the end of each batch.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         outputs = runner.output[self.output_key]
         targets = runner.input[self.input_key]
@@ -96,7 +96,7 @@ class MulticlassDiceMetricCallback(Callback):
         """@TODO: Docs. Contribution is welcome.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         tp_fp_fn_dict = utils.calculate_tp_fp_fn(self.confusion_matrix)
 

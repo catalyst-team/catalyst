@@ -44,7 +44,7 @@ class Runner(_StageBasedRunner):
         main_metric: str = "loss",
         minimize_metric: bool = True,
         verbose: bool = False,
-        state_kwargs: Dict = None,
+        stage_kwargs: Dict = None,
         checkpoint_data: Dict = None,
         fp16: Union[Dict, bool] = None,
         distributed: bool = False,
@@ -52,6 +52,7 @@ class Runner(_StageBasedRunner):
         timeit: bool = False,
         load_best_on_end: bool = False,
         initial_seed: int = 42,
+        state_kwargs: Dict = None,
     ) -> None:
         """
         Starts the train stage of the model.
@@ -84,7 +85,7 @@ class Runner(_StageBasedRunner):
                 the ``main_metric`` should be minimized.
             verbose (bool): if `True`, it displays the status of the training
                 to the console.
-            state_kwargs (dict): additional state params for ``State``
+            stage_kwargs (dict): additional params for stage
             checkpoint_data (dict): additional data to save in checkpoint,
                 for example: ``class_names``, ``date_of_training``, etc
             fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
@@ -102,6 +103,8 @@ class Runner(_StageBasedRunner):
                 according to validation metrics. Requires specified ``logdir``.
             initial_seed (int): experiment's initial seed value
         """
+        assert state_kwargs is None or stage_kwargs is None
+
         if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
 
@@ -141,7 +144,7 @@ class Runner(_StageBasedRunner):
             verbose=verbose,
             check_time=timeit,
             check_run=check,
-            state_kwargs=state_kwargs,
+            stage_kwargs=stage_kwargs or state_kwargs,
             checkpoint_data=checkpoint_data,
             distributed_params=fp16,
             initial_seed=initial_seed,
@@ -159,11 +162,12 @@ class Runner(_StageBasedRunner):
         logdir: str = None,
         resume: str = None,
         verbose: bool = False,
-        state_kwargs: Dict = None,
+        stage_kwargs: Dict = None,
         fp16: Union[Dict, bool] = None,
         check: bool = False,
         timeit: bool = False,
         initial_seed: int = 42,
+        state_kwargs: Dict = None,
     ) -> None:
         """
         Starts the inference stage of the model.
@@ -183,7 +187,7 @@ class Runner(_StageBasedRunner):
             logdir (str): path to output directory
             verbose (bool): if `True`, it displays the status of the training
                 to the console.
-            state_kwargs (dict): additional state params for ``State``
+            stage_kwargs (dict): additional stage params
             checkpoint_data (dict): additional data to save in checkpoint,
                 for example: ``class_names``, ``date_of_training``, etc
             fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
@@ -195,6 +199,8 @@ class Runner(_StageBasedRunner):
                 of training process and displays it to the console.
             initial_seed (int): experiment's initial seed value
         """
+        assert state_kwargs is None or stage_kwargs is None
+
         if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
 
@@ -218,7 +224,7 @@ class Runner(_StageBasedRunner):
             verbose=verbose,
             check_time=timeit,
             check_run=check,
-            state_kwargs=state_kwargs,
+            stage_kwargs=stage_kwargs or state_kwargs,
             distributed_params=fp16,
             initial_seed=initial_seed,
         )

@@ -67,7 +67,7 @@ class LRFinder(LRUpdater):
         """@TODO: Docs. Contribution is welcome.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         if runner.is_train_loader:
             lr_ = self.final_lr / self.init_lr
@@ -81,7 +81,7 @@ class LRFinder(LRUpdater):
         """@TODO: Docs. Contribution is welcome.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         super().on_batch_end(runner=runner)
         if self.find_iter > self.num_steps:

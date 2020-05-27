@@ -98,7 +98,7 @@ class _Experiment(ABC):
         pass
 
     @abstractmethod
-    def get_state_params(self, stage: str) -> Mapping[str, Any]:
+    def get_stage_params(self, stage: str) -> Mapping[str, Any]:
         """Returns State parameters for a given stage.
 
         To learn more about State, please follow
@@ -107,14 +107,16 @@ class _Experiment(ABC):
 
         Example::
 
-            >>> experiment.get_state_params(stage="training")
+            >>> experiment.get_stage_params(stage="training")
             {
                 "logdir": "./logs/training",
                 "num_epochs": 42,
                 "valid_loader": "valid",
                 "main_metric": "loss",
                 "minimize_metric": True,
-                "checkpoint_data": {"comment": "we are going to make it!"}
+                "checkpoint_data": {
+                    "comment": "break the cycle - use the Catalyst"
+                }
             }
 
         Args:

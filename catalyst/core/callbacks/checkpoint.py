@@ -8,7 +8,7 @@ from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import _Runner
 
 
-def _pack_state(runner: _Runner):
+def _pack_runner_state(runner: _Runner):
     checkpoint = utils.pack_checkpoint(
         model=runner.model,
         criterion=runner.criterion,
@@ -200,7 +200,7 @@ class BaseCheckpointCallback(Callback):
             return
 
         try:
-            checkpoint = _pack_state(runner)
+            checkpoint = _pack_runner_state(runner)
             suffix = self.get_checkpoint_suffix(checkpoint)
             suffix = f"{suffix}.exception_{exception.__class__.__name__}"
             utils.save_checkpoint(
@@ -573,7 +573,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             return
 
         if self.save_n_best > 0:
-            checkpoint = _pack_state(runner)
+            checkpoint = _pack_runner_state(runner)
             self.process_checkpoint(
                 logdir=runner.logdir,
                 checkpoint=checkpoint,
@@ -598,7 +598,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         log_message = "Top best models:\n"
         # store latest state
         if self.save_n_best == 0:
-            checkpoint = _pack_state(runner)
+            checkpoint = _pack_runner_state(runner)
             _, filepath = self._save_checkpoint(
                 logdir=runner.logdir,
                 checkpoint=checkpoint,
@@ -770,7 +770,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         """
         self._iteration_counter += 1
         if self._iteration_counter % self.period == 0:
-            checkpoint = _pack_state(runner)
+            checkpoint = _pack_runner_state(runner)
             self.process_checkpoint(
                 logdir=runner.logdir,
                 checkpoint=checkpoint,

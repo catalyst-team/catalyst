@@ -23,5 +23,5 @@ class Meter(object):
         pass
 
     def value(self):
-        """Get the value of the meter in the current runner."""
+        """Get the value of the meter in the current state."""
         pass

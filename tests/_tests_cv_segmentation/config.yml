@@ -21,7 +21,7 @@ stages:
     mask_path: ./_tests_cv_segmentation/data/segmentation_data/train_masks
     valid_size: 0.2
 
-  state_params:
+  stage_params:
     main_metric: iou
     minimize_metric: False
 
@@ -46,7 +46,7 @@ stages:
     no_bias_weight_decay: True
 
   stage1:
-    state_params:
+    stage_params:
       num_epochs: 3
 
     callbacks_params:

@@ -143,7 +143,7 @@ class MultiMetricCallback(MetricCallback):
         """Batch end hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         metrics_ = self._compute_metric(runner)
 
@@ -240,7 +240,7 @@ class MetricAggregationCallback(Callback):
         """Computes the metric and add it to the metrics.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         metrics = self._preprocess(runner.batch_metrics)
         metric = self.aggregation_fn(metrics)
@@ -280,7 +280,7 @@ class MetricManagerCallback(Callback):
         """Epoch start hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         runner.epoch_metrics = defaultdict(None)
 
@@ -288,7 +288,7 @@ class MetricManagerCallback(Callback):
         """Loader start hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         runner.loader_metrics = defaultdict(None)
         self.meters = defaultdict(meters.AverageValueMeter)
@@ -297,7 +297,7 @@ class MetricManagerCallback(Callback):
         """Loader end hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         for key, value in self.meters.items():
             value = value.mean
@@ -309,7 +309,7 @@ class MetricManagerCallback(Callback):
         """Batch start hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         runner.batch_metrics = defaultdict(None)
 
@@ -317,7 +317,7 @@ class MetricManagerCallback(Callback):
         """Batch end hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         runner.batch_metrics = self._process_metrics(runner.batch_metrics)
         for key, value in runner.batch_metrics.items():

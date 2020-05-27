@@ -69,7 +69,7 @@ class SaveModelGradsCallback(Callback):
         """On batch end event
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         if not runner.is_train_loader:
             return

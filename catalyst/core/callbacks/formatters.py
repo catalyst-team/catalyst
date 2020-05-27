@@ -24,9 +24,9 @@ class MetricsFormatter(ABC, logging.Formatter):
     def format(self, record: logging.LogRecord):
         """Format message string."""
         # noinspection PyUnresolvedReferences
-        state = record.state
+        runner = record.runner
 
-        record.msg = self._format_message(state)
+        record.msg = self._format_message(runner)
 
         return super().format(record)
 

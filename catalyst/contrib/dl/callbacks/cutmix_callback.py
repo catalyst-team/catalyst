@@ -59,7 +59,7 @@ class CutmixCallback(CriterionCallback):
         from ``CriterionCallback``, otherwise computes loss value.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
             criterion: that is used to compute loss
         """
         if not self.is_needed:
@@ -105,7 +105,7 @@ class CutmixCallback(CriterionCallback):
         """Checks if it is needed for the loader.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         self.is_needed = not self.on_train_only or runner.is_train_loader
 
@@ -113,7 +113,7 @@ class CutmixCallback(CriterionCallback):
         """Mixes data according to Cutmix algorithm.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         if not self.is_needed:
             return

@@ -89,7 +89,7 @@ class OptimizerCallback(Callback):
         """On epoch start event.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         if self.decouple_weight_decay:
             self._optimizer_wd = [
@@ -105,7 +105,7 @@ class OptimizerCallback(Callback):
         """On epoch end event.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         if self.decouple_weight_decay:
             for i, wd in enumerate(self._optimizer_wd):
@@ -132,7 +132,7 @@ class OptimizerCallback(Callback):
         """On batch end event
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         if not runner.is_train_loader:
             return

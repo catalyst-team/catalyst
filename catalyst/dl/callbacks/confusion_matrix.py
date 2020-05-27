@@ -94,7 +94,7 @@ class ConfusionMatrixCallback(Callback):
         """Loader start hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         self._reset_stats()
 
@@ -102,7 +102,7 @@ class ConfusionMatrixCallback(Callback):
         """Batch end hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         self._add_to_stats(
             runner.output[self.output_key].detach(),
@@ -113,7 +113,7 @@ class ConfusionMatrixCallback(Callback):
         """Loader end hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         class_names = self.class_names or [
             str(i) for i in range(self.num_classes)

@@ -17,7 +17,7 @@ class TimerCallback(Callback):
         """Loader start hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         self.timer.reset()
         self.timer.start("_timer/batch_time")
@@ -27,7 +27,7 @@ class TimerCallback(Callback):
         """Loader end hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         self.timer.reset()
 
@@ -35,7 +35,7 @@ class TimerCallback(Callback):
         """Batch start hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         self.timer.stop("_timer/data_time")
         self.timer.start("_timer/model_time")
@@ -44,7 +44,7 @@ class TimerCallback(Callback):
         """Batch end hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         self.timer.stop("_timer/model_time")
         self.timer.stop("_timer/batch_time")

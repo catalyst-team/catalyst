@@ -355,8 +355,6 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
         self._device = None
         self._prepare_inner_state(device=device, model=model)
         self._init()
-        # @TODO: how to fix?
-        # self._freeze()
 
     def _prepare_inner_state(
         self,
@@ -455,6 +453,7 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
         self.batch_size: int = 0
 
         # logging
+        self.expdir: Path = None
         self.logdir: Path = Path(logdir) if logdir is not None else None
         # extra checkpoint data for saving in checkpoint files
         self.checkpoint_data: Dict = checkpoint_data or {}
@@ -690,7 +689,7 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
             experiment=self.experiment, stage=stage
         )
 
-        migrating_params = dict(**self.experiment.get_state_params(stage))
+        migrating_params = dict(**self.experiment.get_stage_params(stage))
         migrate_from_previous_stage = migrating_params.get(
             "migrate_from_previous_stage", True
         )
@@ -880,6 +879,7 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
 
         """
         self._prepare_for_stage(stage)
+        self._freeze()
 
         self._run_event("on_stage_start")
         while self.epoch < self.num_epochs + 1:
@@ -897,6 +897,7 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
             self.global_epoch += 1
             self.epoch += 1
         self._run_event("on_stage_end")
+        self._unfreeze()
 
     def run_experiment(self, experiment: _Experiment = None) -> "_Runner":
         """
@@ -926,6 +927,8 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
                 self._run_event("on_exception")
             else:
                 raise ex
+        finally:
+            self._unfreeze()
 
         return self
 

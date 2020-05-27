@@ -42,7 +42,7 @@ class SchedulerCallback(Callback):
         """@TODO: Docs. Contribution is welcome.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         lr, momentum = self._scheduler_step(scheduler=self._scheduler)
 
@@ -61,7 +61,7 @@ class SchedulerCallback(Callback):
         """@TODO: Docs. Contribution is welcome.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         reduced_metric = runner.valid_metrics[self.reduced_metric]
         lr, momentum = self._scheduler_step(
@@ -83,7 +83,7 @@ class SchedulerCallback(Callback):
         """Stage start hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         self.reduced_metric = self.reduced_metric or runner.main_metric
 
@@ -110,7 +110,7 @@ class SchedulerCallback(Callback):
         """Loader start hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         if (
             runner.is_train_loader
@@ -125,7 +125,7 @@ class SchedulerCallback(Callback):
         """Batch end hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         if runner.is_train_loader and self.mode == "batch":
             self.step_batch(runner=runner)
@@ -134,7 +134,7 @@ class SchedulerCallback(Callback):
         """Epoch end hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         if self.mode == "epoch":
             self.step_epoch(runner=runner)
@@ -192,7 +192,7 @@ class LRUpdater(Callback):
         """@TODO: Docs. Contribution is welcome.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         lr, momentum = self._update_optimizer(optimizer=self._optimizer)
 
@@ -207,7 +207,7 @@ class LRUpdater(Callback):
         """Stage start hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         optimizer = runner.get_attr(
             key="optimizer", inner_key=self.optimizer_key
@@ -220,7 +220,7 @@ class LRUpdater(Callback):
         """Loader start hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         if runner.is_train_loader:
             self.update_optimizer(runner=runner)
@@ -229,7 +229,7 @@ class LRUpdater(Callback):
         """Batch end hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         if runner.is_train_loader:
             self.update_optimizer(runner=runner)
