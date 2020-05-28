@@ -8,7 +8,7 @@ from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import _Runner
 
 
-def _pack_runner_state(runner: _Runner):
+def _pack_runner(runner: _Runner):
     checkpoint = utils.pack_checkpoint(
         model=runner.model,
         criterion=runner.criterion,
@@ -37,7 +37,7 @@ def _load_checkpoint(
 
     Arguments:
         filename (str): path to checkpoint
-        state (State): training state
+        runner (_Runner): current runner
         load_full (bool): if true (default) then will be performed
             loading states for criterion, optimizer and scheduler.
             File should contain keys required for
@@ -143,7 +143,7 @@ def _load_states_from_file_map(
     from files specified in ``load_map``.
 
     Arguments:
-        state (State): training state
+        runner (_Runner): current runner
         load_map (Dict[str, str]): dict with mappings to load.
             Expected keys - ``'model'``, ``'criterion'``
             ``'optimizer'``, ``'scheduler'``, other keys will be
@@ -200,7 +200,7 @@ class BaseCheckpointCallback(Callback):
             return
 
         try:
-            checkpoint = _pack_runner_state(runner)
+            checkpoint = _pack_runner(runner)
             suffix = self.get_checkpoint_suffix(checkpoint)
             suffix = f"{suffix}.exception_{exception.__class__.__name__}"
             utils.save_checkpoint(
@@ -483,7 +483,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         self.save_metric(logdir, metrics)
 
     @staticmethod
-    def _load_state(
+    def _load_runner(
         runner: _Runner,
         mapping: Union[str, Dict[str, str]],
         load_full: bool = False,
@@ -492,7 +492,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         Selects a loading method based on type of mapping.
 
         Args:
-            state (State): training state
+            runner (_Runner): current runner
             mapping (str or dict): mapping to use for loading
             load_full (bool): load a full model, used only
                 when mapping type is string
@@ -521,7 +521,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         then will be performed loading checkpoint.
 
         Args:
-            state (State): training state
+            runner (_Runner): current runner
         """
         for key in self._keys_from_state:
             value = getattr(runner, key, None)
@@ -532,7 +532,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             self.resume = str(self.resume_dir) + "/" + str(self.resume)
 
         if self.resume is not None:
-            self._load_state(runner, mapping=self.resume, load_full=True)
+            self._load_runner(runner, mapping=self.resume, load_full=True)
             self.resume = None
         else:
             _exists_checkpoint = False
@@ -553,7 +553,7 @@ class CheckpointCallback(BaseCheckpointCallback):
                 )
 
             if self.load_on_stage_start is not None and _exists_checkpoint:
-                self._load_state(
+                self._load_runner(
                     runner,
                     mapping=self.load_on_stage_start,
                     load_full=_load_full,
@@ -564,7 +564,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         Collect and save checkpoint after epoch.
 
         Args:
-            state (State): training state
+            runner (_Runner): current runner
         """
         if (
             runner.stage_name.startswith("infer")
@@ -573,7 +573,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             return
 
         if self.save_n_best > 0:
-            checkpoint = _pack_runner_state(runner)
+            checkpoint = _pack_runner(runner)
             self.process_checkpoint(
                 logdir=runner.logdir,
                 checkpoint=checkpoint,
@@ -588,7 +588,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         load model specified in ``load_on_stage_end``.
 
         Args:
-            state (State): training state
+            runner (_Runner): current runner
         """
         if (
             runner.stage_name.startswith("infer")
@@ -598,7 +598,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         log_message = "Top best models:\n"
         # store latest state
         if self.save_n_best == 0:
-            checkpoint = _pack_runner_state(runner)
+            checkpoint = _pack_runner(runner)
             _, filepath = self._save_checkpoint(
                 logdir=runner.logdir,
                 checkpoint=checkpoint,
@@ -633,7 +633,7 @@ class CheckpointCallback(BaseCheckpointCallback):
                 if isinstance(self.load_on_stage_end, str)
                 else False
             )
-            self._load_state(
+            self._load_runner(
                 runner, mapping=self.load_on_stage_end, load_full=_load_full,
             )
         elif isinstance(self.load_on_stage_end, dict) and self.save_n_best > 0:
@@ -642,7 +642,7 @@ class CheckpointCallback(BaseCheckpointCallback):
                 for k, v in self.load_on_stage_end.items()
                 if v not in _not_required_load_states
             }
-            self._load_state(runner, mapping=to_load)
+            self._load_runner(runner, mapping=to_load)
 
 
 class IterationCheckpointCallback(BaseCheckpointCallback):
@@ -756,7 +756,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         Reset iterations counter.
 
         Args:
-            state (State): training state
+            runner (_Runner): current runner
         """
         if self.stage_restart:
             self._iteration_counter = 0
@@ -766,11 +766,11 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         Save checkpoint based on batches count.
 
         Args:
-            state (State): training state
+            runner (_Runner): current runner
         """
         self._iteration_counter += 1
         if self._iteration_counter % self.period == 0:
-            checkpoint = _pack_runner_state(runner)
+            checkpoint = _pack_runner(runner)
             self.process_checkpoint(
                 logdir=runner.logdir,
                 checkpoint=checkpoint,
@@ -782,7 +782,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         Load model specified in ``load_on_stage_end``.
 
         Args:
-            state (State): training state
+            runner (_Runner): current runner
         """
         if self.load_on_stage_end in ["best", "best_full"]:
             resume = (

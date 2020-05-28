@@ -94,7 +94,7 @@ class TracerCallback(Callback):
         Performing model tracing on epoch end if condition metric is improved.
 
         Args:
-            state (State): Current state
+            runner (_Runner): Current runner
         """
         if self.opt_level is not None:
             device = "cuda"
@@ -134,7 +134,7 @@ class TracerCallback(Callback):
         Performing model tracing on epoch end if condition metric is improved
 
         Args:
-            state (State): Current state
+            runner (_Runner): Current runner
         """
         if not self.do_once:
             if self.mode == "best":
@@ -156,7 +156,7 @@ class TracerCallback(Callback):
         Performing model tracing on stage end if `do_once` is True.
 
         Args:
-            state (State): Current state
+            runner (_Runner): Current runner
         """
         if self.do_once:
             self._trace(runner)

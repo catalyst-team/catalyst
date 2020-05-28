@@ -13,7 +13,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Changed
 
 - docs structure were updated during ([#822](https://github.com/catalyst-team/catalyst/pull/822))
-- `utils.process_components` moved from `utils.distributed` to `utils.components` ([#822](https://github.com/catalyst-team/catalyst/pull/822)) 
+- `utils.process_components` moved from `utils.distributed` to `utils.components` ([#822](https://github.com/catalyst-team/catalyst/pull/822))
+- `catalyst.core.state.State` merged to `catalyst.core.runner._Runner` ([#823](https://github.com/catalyst-team/catalyst/pull/823)) (backward compatibility included)
+    - `catalyst.core.callback.Callback` now works directly with `catalyst.core.runner._Runner`
+    - `state_kwargs` renamed to `stage_kwargs`
 
 ### Removed
 

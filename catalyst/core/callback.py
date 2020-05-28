@@ -136,75 +136,75 @@ class Callback:
         self.order = order
         self.scope = scope
 
-    def on_stage_start(self, state: "_Runner"):
+    def on_stage_start(self, runner: "_Runner"):
         """Event handler for stage start.
 
         Args:
-            state ("_Runner"): State instance.
+            runner ("_Runner"): _Runner instance.
         """
         pass
 
-    def on_stage_end(self, state: "_Runner"):
+    def on_stage_end(self, runner: "_Runner"):
         """Event handler for stage end.
 
         Args:
-            state ("_Runner"): State instance.
+            runner ("_Runner"): _Runner instance.
         """
         pass
 
-    def on_epoch_start(self, state: "_Runner"):
+    def on_epoch_start(self, runner: "_Runner"):
         """Event handler for epoch start.
 
         Args:
-            state ("_Runner"): State instance.
+            runner ("_Runner"): _Runner instance.
         """
         pass
 
-    def on_epoch_end(self, state: "_Runner"):
+    def on_epoch_end(self, runner: "_Runner"):
         """Event handler for epoch end.
 
         Args:
-            state ("_Runner"): State instance.
+            runner ("_Runner"): _Runner instance.
         """
         pass
 
-    def on_loader_start(self, state: "_Runner"):
+    def on_loader_start(self, runner: "_Runner"):
         """Event handler for loader start.
 
         Args:
-            state ("_Runner"): State instance.
+            runner ("_Runner"): _Runner instance.
         """
         pass
 
-    def on_loader_end(self, state: "_Runner"):
+    def on_loader_end(self, runner: "_Runner"):
         """Event handler for loader end.
 
         Args:
-            state ("_Runner"): State instance.
+            runner ("_Runner"): _Runner instance.
         """
         pass
 
-    def on_batch_start(self, state: "_Runner"):
+    def on_batch_start(self, runner: "_Runner"):
         """Event handler for batch start.
 
         Args:
-            state ("_Runner"): State instance.
+            runner ("_Runner"): _Runner instance.
         """
         pass
 
-    def on_batch_end(self, state: "_Runner"):
+    def on_batch_end(self, runner: "_Runner"):
         """Event handler for batch end.
 
         Args:
-            state ("_Runner"): State instance.
+            runner ("_Runner"): _Runner instance.
         """
         pass
 
-    def on_exception(self, state: "_Runner"):
+    def on_exception(self, runner: "_Runner"):
         """Event handler for exception case.
 
         Args:
-            state ("_Runner"): State instance.
+            runner ("_Runner"): _Runner instance.
         """
         pass
 
