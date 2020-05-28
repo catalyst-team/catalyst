@@ -116,7 +116,7 @@ runner.train(
 cat ${EXP_OUTPUT}
 check_line_counts ${EXP_OUTPUT} "(train):" 10
 check_line_counts ${EXP_OUTPUT} "(valid):" 3
-check_line_counts ${EXP_OUTPUT} ".*/train\.9\.pth" 1
+check_line_counts ${EXP_OUTPUT} ".*/train\.[[:digit:]]\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -182,7 +182,7 @@ runner.train(
 cat ${EXP_OUTPUT}
 check_line_counts ${EXP_OUTPUT} "(train):" 5
 check_line_counts ${EXP_OUTPUT} "(valid):" 0
-check_line_counts ${EXP_OUTPUT} ".*/train\.5\.pth" 1
+check_line_counts ${EXP_OUTPUT} ".*/train\.[[:digit:]]\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -256,7 +256,7 @@ check_line_counts ${EXP_OUTPUT} "(train):" 10
 check_line_counts ${EXP_OUTPUT} "(train_additional):" 5
 check_line_counts ${EXP_OUTPUT} "(valid):" 3
 check_line_counts ${EXP_OUTPUT} "(valid_additional):" 0
-check_line_counts ${EXP_OUTPUT} ".*/train\.9\.pth" 1
+check_line_counts ${EXP_OUTPUT} ".*/train\.[[:digit:]]\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -347,7 +347,7 @@ check_line_counts ${EXP_OUTPUT} "(train):" 15
 check_line_counts ${EXP_OUTPUT} "(train_additional):" 7
 check_line_counts ${EXP_OUTPUT} "(valid):" 4
 check_line_counts ${EXP_OUTPUT} "(valid_additional):" 0
-check_line_counts ${EXP_OUTPUT} ".*/train\.9\.pth" 1
+check_line_counts ${EXP_OUTPUT} ".*/train\.[[:digit:]]\.pth" 2
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -374,7 +374,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 cat ${EXP_OUTPUT}
 check_line_counts ${EXP_OUTPUT} "(train):" 5
 check_line_counts ${EXP_OUTPUT} "(valid):" 2
-check_line_counts ${EXP_OUTPUT} ".*/stage1\.4\.pth" 1
+check_line_counts ${EXP_OUTPUT} ".*/stage1\.[[:digit:]]\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -401,7 +401,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 cat ${EXP_OUTPUT}
 check_line_counts ${EXP_OUTPUT} "(train):" 5
 check_line_counts ${EXP_OUTPUT} "(valid):" 0
-check_line_counts ${EXP_OUTPUT} ".*/stage1\.5\.pth" 1
+check_line_counts ${EXP_OUTPUT} ".*/stage1\.[[:digit:]]\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -430,7 +430,7 @@ check_line_counts ${EXP_OUTPUT} "(train):" 10
 check_line_counts ${EXP_OUTPUT} "(train_additional):" 5
 check_line_counts ${EXP_OUTPUT} "(valid):" 3
 check_line_counts ${EXP_OUTPUT} "(valid_additional):" 0
-check_line_counts ${EXP_OUTPUT} ".*/stage1\.6\.pth" 1
+check_line_counts ${EXP_OUTPUT} ".*/stage1\.[[:digit:]]\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -459,8 +459,8 @@ check_line_counts ${EXP_OUTPUT} "(train):" 15
 check_line_counts ${EXP_OUTPUT} "(train_additional):" 5
 check_line_counts ${EXP_OUTPUT} "(valid):" 6
 check_line_counts ${EXP_OUTPUT} "(valid_additional):" 0
-check_line_counts ${EXP_OUTPUT} ".*/stage1\.3\.pth" 1
-check_line_counts ${EXP_OUTPUT} ".*/stage2\.4\.pth" 1
+check_line_counts ${EXP_OUTPUT} ".*/stage1\.[[:digit:]]\.pth" 1
+check_line_counts ${EXP_OUTPUT} ".*/stage2\.[[:digit:]]\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -536,7 +536,7 @@ check_line_counts ${EXP_OUTPUT} "(train):" 10
 check_line_counts ${EXP_OUTPUT} "(train_additional):" 5
 check_line_counts ${EXP_OUTPUT} "(valid):" 3
 check_line_counts ${EXP_OUTPUT} "(valid_additional):" 0
-check_line_counts ${EXP_OUTPUT} ".*/train\.9\.pth" 1
+check_line_counts ${EXP_OUTPUT} ".*/train\.[[:digit:]]\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -566,7 +566,7 @@ check_line_counts ${EXP_OUTPUT} "(train):" 10
 check_line_counts ${EXP_OUTPUT} "(train_additional):" 5
 check_line_counts ${EXP_OUTPUT} "(valid):" 3
 check_line_counts ${EXP_OUTPUT} "(valid_additional):" 0
-check_line_counts ${EXP_OUTPUT} ".*/stage1\.6\.pth" 1
+check_line_counts ${EXP_OUTPUT} ".*/stage1\.[[:digit:]]\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -644,7 +644,7 @@ check_line_counts ${EXP_OUTPUT} "(train_not_exists):" 0
 check_line_counts ${EXP_OUTPUT} "(valid):" 3
 check_line_counts ${EXP_OUTPUT} "(valid_additional):" 0
 check_line_counts ${EXP_OUTPUT} "(valid_not_exist):" 0
-check_line_counts ${EXP_OUTPUT} ".*/train\.9\.pth" 1
+check_line_counts ${EXP_OUTPUT} ".*/train\.[[:digit:]]\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -676,7 +676,7 @@ check_line_counts ${EXP_OUTPUT} "(train_not_exists):" 0
 check_line_counts ${EXP_OUTPUT} "(valid):" 3
 check_line_counts ${EXP_OUTPUT} "(valid_additional):" 0
 check_line_counts ${EXP_OUTPUT} "(valid_not_exist):" 0
-check_line_counts ${EXP_OUTPUT} ".*/stage1\.6\.pth" 1
+check_line_counts ${EXP_OUTPUT} ".*/stage1\.[[:digit:]]\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
