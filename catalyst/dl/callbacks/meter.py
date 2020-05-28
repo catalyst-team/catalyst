@@ -3,14 +3,14 @@ from collections import defaultdict
 
 import numpy as np
 
-from catalyst.core import Callback, CallbackOrder, State
+from catalyst.core import _Runner, Callback, CallbackOrder
 from catalyst.dl.utils import get_activation_fn
 
 
 class MeterMetricsCallback(Callback):
     """
     A callback that tracks metrics through meters and prints metrics for
-    each class on `state.on_loader_end`.
+    each class on `runner.on_loader_end`.
 
     .. note::
         This callback works for both single metric and multi-metric meters.
@@ -57,35 +57,35 @@ class MeterMetricsCallback(Callback):
         for meter in self.meters:
             meter.reset()
 
-    def on_loader_start(self, state):
+    def on_loader_start(self, runner: _Runner):
         """Loader start hook.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         self._reset_stats()
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, runner: _Runner):
         """Batch end hook. Computes batch metrics.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
-        logits = state.output[self.output_key].detach().float()
-        targets = state.input[self.input_key].detach().float()
+        logits = runner.output[self.output_key].detach().float()
+        targets = runner.input[self.input_key].detach().float()
         probabilities = self.activation_fn(logits)
 
         for i in range(self.num_classes):
             self.meters[i].add(probabilities[:, i], targets[:, i])
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, runner: _Runner):
         """Loader end hook. Computes loader metrics.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         metrics_tracker = defaultdict(list)
-        loader_values = state.loader_metrics
+        loader_values = runner.loader_metrics
         # Computing metrics for each class
         for i, meter in enumerate(self.meters):
             metrics = meter.value()

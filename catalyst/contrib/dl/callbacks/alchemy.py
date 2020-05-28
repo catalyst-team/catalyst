@@ -3,17 +3,17 @@ from typing import Dict, List
 from alchemy import Logger
 
 from catalyst import utils
-from catalyst.core import (
+from catalyst.core.callback import (
     Callback,
     CallbackNode,
     CallbackOrder,
     CallbackScope,
-    State,
 )
+from catalyst.core.runner import _Runner
 
 
 class AlchemyLogger(Callback):
-    """Logger callback, translates ``state.*_metrics`` to Alchemy.
+    """Logger callback, translates ``runner.*_metrics`` to Alchemy.
     Read about Alchemy here https://alchemy.host
 
     Example:
@@ -101,43 +101,43 @@ class AlchemyLogger(Callback):
                     name=metric_name, value=metric_value, step=step,
                 )
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, runner: _Runner):
         """Translate batch metrics to Alchemy."""
         if self.log_on_batch_end:
-            mode = state.loader_name
-            metrics_ = state.batch_metrics
+            mode = runner.loader_name
+            metrics_ = runner.batch_metrics
             self._log_metrics(
                 metrics=metrics_,
-                step=state.global_sample_step,
+                step=runner.global_sample_step,
                 mode=mode,
                 suffix=self.batch_log_suffix,
             )
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, runner: _Runner):
         """Translate loader metrics to Alchemy."""
         if self.log_on_epoch_end:
-            mode = state.loader_name
-            metrics_ = state.loader_metrics
+            mode = runner.loader_name
+            metrics_ = runner.loader_metrics
             self._log_metrics(
                 metrics=metrics_,
-                step=state.global_epoch,
+                step=runner.global_epoch,
                 mode=mode,
                 suffix=self.epoch_log_suffix,
             )
 
-    def on_epoch_end(self, state: State):
+    def on_epoch_end(self, runner: _Runner):
         """Translate epoch metrics to Alchemy."""
         extra_mode = "_base"
         splitted_epoch_metrics = utils.split_dict_to_subdicts(
-            dct=state.epoch_metrics,
-            prefixes=list(state.loaders.keys()),
+            dct=runner.epoch_metrics,
+            prefixes=list(runner.loaders.keys()),
             extra_key=extra_mode,
         )
 
         if self.log_on_epoch_end:
             self._log_metrics(
                 metrics=splitted_epoch_metrics[extra_mode],
-                step=state.global_epoch,
+                step=runner.global_epoch,
                 mode=extra_mode,
                 suffix=self.epoch_log_suffix,
             )

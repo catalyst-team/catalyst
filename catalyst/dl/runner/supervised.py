@@ -3,10 +3,9 @@ import logging
 
 import torch
 
-from catalyst.dl import State, SupervisedExperiment
+from catalyst.dl.experiment.supervised import SupervisedExperiment
+from catalyst.dl.runner.runner import Runner
 from catalyst.tools.typing import Device, Model
-
-from .core import Runner
 
 logger = logging.getLogger(__name__)
 
@@ -64,7 +63,6 @@ class SupervisedRunner(Runner):
 
     def _init(self):
         self.experiment: SupervisedExperiment = None
-        self.state: State = None
 
     def _batch2device(self, batch: Mapping[str, Any], device: Device):
         if isinstance(batch, (tuple, list)):
@@ -121,7 +119,7 @@ class SupervisedRunner(Runner):
             batch (Mapping[str, Any]): dictionary with data batches
                 from DataLoader.
         """
-        self.state.output = self.forward(batch)
+        self.output = self.forward(batch)
 
     @torch.no_grad()
     def predict_batch(

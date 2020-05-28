@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 from enum import IntFlag
 
 if TYPE_CHECKING:
-    from .state import State
+    from catalyst.core.runner import _Runner
 
 
 class CallbackNode(IntFlag):
@@ -108,7 +108,6 @@ class Callback:
 
             - :py:mod:`catalyst.core.experiment._Experiment`
             - :py:mod:`catalyst.core.runner._Runner`
-            - :py:mod:`catalyst.core.state.State`
             - :py:mod:`catalyst.core.callback.Callback`
 
     Abstraction, please check out the implementations:
@@ -137,75 +136,75 @@ class Callback:
         self.order = order
         self.scope = scope
 
-    def on_stage_start(self, state: "State"):
+    def on_stage_start(self, runner: "_Runner"):
         """Event handler for stage start.
 
         Args:
-            state ("State"): State instance.
+            runner ("_Runner"): _Runner instance.
         """
         pass
 
-    def on_stage_end(self, state: "State"):
+    def on_stage_end(self, runner: "_Runner"):
         """Event handler for stage end.
 
         Args:
-            state ("State"): State instance.
+            runner ("_Runner"): _Runner instance.
         """
         pass
 
-    def on_epoch_start(self, state: "State"):
+    def on_epoch_start(self, runner: "_Runner"):
         """Event handler for epoch start.
 
         Args:
-            state ("State"): State instance.
+            runner ("_Runner"): _Runner instance.
         """
         pass
 
-    def on_epoch_end(self, state: "State"):
+    def on_epoch_end(self, runner: "_Runner"):
         """Event handler for epoch end.
 
         Args:
-            state ("State"): State instance.
+            runner ("_Runner"): _Runner instance.
         """
         pass
 
-    def on_loader_start(self, state: "State"):
+    def on_loader_start(self, runner: "_Runner"):
         """Event handler for loader start.
 
         Args:
-            state ("State"): State instance.
+            runner ("_Runner"): _Runner instance.
         """
         pass
 
-    def on_loader_end(self, state: "State"):
+    def on_loader_end(self, runner: "_Runner"):
         """Event handler for loader end.
 
         Args:
-            state ("State"): State instance.
+            runner ("_Runner"): _Runner instance.
         """
         pass
 
-    def on_batch_start(self, state: "State"):
+    def on_batch_start(self, runner: "_Runner"):
         """Event handler for batch start.
 
         Args:
-            state ("State"): State instance.
+            runner ("_Runner"): _Runner instance.
         """
         pass
 
-    def on_batch_end(self, state: "State"):
+    def on_batch_end(self, runner: "_Runner"):
         """Event handler for batch end.
 
         Args:
-            state ("State"): State instance.
+            runner ("_Runner"): _Runner instance.
         """
         pass
 
-    def on_exception(self, state: "State"):
+    def on_exception(self, runner: "_Runner"):
         """Event handler for exception case.
 
         Args:
-            state ("State"): State instance.
+            runner ("_Runner"): _Runner instance.
         """
         pass
 

@@ -1,4 +1,4 @@
 # flake8: noqa
 
-from .core import Runner
+from .runner import Runner
 from .supervised import SupervisedRunner

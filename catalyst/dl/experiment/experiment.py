@@ -47,7 +47,7 @@ class Experiment(_Experiment):
         verbose: bool = False,
         check_time: bool = False,
         check_run: bool = False,
-        state_kwargs: Dict = None,
+        stage_kwargs: Dict = None,
         checkpoint_data: Dict = None,
         distributed_params: Dict = None,
         initial_seed: int = 42,
@@ -85,7 +85,7 @@ class Experiment(_Experiment):
                 of training process and displays it to the console.
             check_run (bool): if True, we run only 3 batches per loader
                 and 3 epochs per stage to check pipeline correctness
-            state_kwargs (dict): additional state params to ``State``
+            stage_kwargs (dict): additional stage params
             checkpoint_data (dict): additional data to save in checkpoint,
                 for example: ``class_names``, ``date_of_training``, etc
             distributed_params (dict): dictionary with the parameters
@@ -119,7 +119,7 @@ class Experiment(_Experiment):
         self._verbose = verbose
         self._check_time = check_time
         self._check_run = check_run
-        self._state_kwargs = state_kwargs or {}
+        self._stage_kwargs = stage_kwargs or {}
         self._checkpoint_data = checkpoint_data or {}
         self._distributed_params = distributed_params or {}
 
@@ -169,7 +169,7 @@ class Experiment(_Experiment):
             )
         return loaders, valid_loader
 
-    def get_state_params(self, stage: str) -> Mapping[str, Any]:
+    def get_stage_params(self, stage: str) -> Mapping[str, Any]:
         """Returns the state parameters for a given stage."""
         default_params = {
             "logdir": self.logdir,
@@ -180,8 +180,8 @@ class Experiment(_Experiment):
             "minimize_metric": self._minimize_metric,
             "checkpoint_data": self._checkpoint_data,
         }
-        state_params = {**default_params, **self._state_kwargs}
-        return state_params
+        stage_params = {**default_params, **self._stage_kwargs}
+        return stage_params
 
     def get_model(self, stage: str) -> Model:
         """Returns the model for a given stage."""

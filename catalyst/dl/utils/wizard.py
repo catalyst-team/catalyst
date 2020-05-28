@@ -219,14 +219,14 @@ class Wizard:
         self.__res(opts, is_yaml=True)
         stage[f"{param}_params"] = opts
 
-    def _state_params_step(self, stage):
+    def _stage_params_step(self, stage):
         """
         Step #5.b
 
-        ``state_params`` of Experiment.
+        ``stage_params`` of Experiment.
         """
-        self.__sep(f"state_params")
-        if self._skip_override_stages_common("state_params"):
+        self.__sep(f"stage_params")
+        if self._skip_override_stages_common("stage_params"):
             return
         opts = OrderedDict()
         opts["num_epochs"] = int(
@@ -244,7 +244,7 @@ class Wizard:
         )
         opts["minimize_metric"] = minimize
         self.__res(opts["minimize_metric"])
-        stage["state_params"] = opts
+        stage["stage_params"] = opts
 
     def _data_params_step(self, stage):
         """
@@ -276,7 +276,7 @@ class Wizard:
         method to gather all we need to know about the stage and its settings
         """
         self._data_params_step(stage)
-        self._state_params_step(stage)
+        self._stage_params_step(stage)
         self._basic_params_step("criterion", stage)
         self._basic_params_step("optimizer", stage)
         self._basic_params_step("scheduler", stage, optional=True)

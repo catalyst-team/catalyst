@@ -1,7 +1,6 @@
 from collections import OrderedDict
 
 import torch
-from torch import nn
 import torchvision
 
 from catalyst import utils
@@ -31,16 +30,24 @@ class CIFAR10(torchvision.datasets.CIFAR10):
 class Experiment(ConfigExperiment):
     """``ConfigExperiment`` with CIFAR10 dataset."""
 
-    def _postprocess_model_for_stage(self, stage: str, model: nn.Module):
-        model_ = model
+    def get_model(self, stage: str):
+        """
+        Model specification for currect stage
+        Args:
+            stage: current stage name
+
+        Returns:
+            model
+        """
+        model = super().get_model(stage=stage)
         if isinstance(model, torch.nn.DataParallel):
-            model_ = model_.module
+            model = model.module
 
         if stage == "stage2":
             for key in ["conv1", "pool", "conv2"]:
-                layer = getattr(model_, key)
+                layer = getattr(model, key)
                 utils.set_requires_grad(layer, requires_grad=False)
-        return model_
+        return model
 
     def get_datasets(self, stage: str, **kwargs):
         """Provides train/validation subsets from CIFAR10 dataset.

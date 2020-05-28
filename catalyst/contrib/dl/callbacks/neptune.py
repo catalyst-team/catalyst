@@ -2,17 +2,17 @@ from typing import Dict, List
 
 import neptune
 
-from catalyst.core import (
+from catalyst.core.callback import (
     Callback,
     CallbackNode,
     CallbackOrder,
     CallbackScope,
-    State,
 )
+from catalyst.core.runner import _Runner
 
 
 class NeptuneLogger(Callback):
-    """Logger callback, translates ``state.*_metrics`` to Neptune.
+    """Logger callback, translates ``runner.*_metrics`` to Neptune.
     Read about Neptune here https://neptune.ai
 
     Example:
@@ -135,26 +135,26 @@ class NeptuneLogger(Callback):
                 metric_value = metrics[name]
                 self.experiment.log_metric(metric_name, y=metric_value, x=step)
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, runner: _Runner):
         """Log batch metrics to Neptune."""
         if self.log_on_batch_end:
-            mode = state.loader_name
-            metrics_ = state.batch_metrics
+            mode = runner.loader_name
+            metrics_ = runner.batch_metrics
             self._log_metrics(
                 metrics=metrics_,
-                step=state.global_sample_step,
+                step=runner.global_sample_step,
                 mode=mode,
                 suffix=self.batch_log_suffix,
             )
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, runner: _Runner):
         """Translate epoch metrics to Neptune."""
         if self.log_on_epoch_end:
-            mode = state.loader_name
-            metrics_ = state.loader_metrics
+            mode = runner.loader_name
+            metrics_ = runner.loader_metrics
             self._log_metrics(
                 metrics=metrics_,
-                step=state.global_epoch,
+                step=runner.global_epoch,
                 mode=mode,
                 suffix=self.epoch_log_suffix,
             )

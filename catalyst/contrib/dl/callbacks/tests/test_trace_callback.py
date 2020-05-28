@@ -12,13 +12,9 @@ from catalyst.contrib import registry
 from catalyst.contrib.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.dl.callbacks.trace import TracerCallback
-from catalyst.core import (
-    Callback,
-    CallbackOrder,
-    CriterionCallback,
-    OptimizerCallback,
-    State,
-)
+from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.core.callbacks import CriterionCallback, OptimizerCallback
+from catalyst.core.runner import _Runner
 from catalyst.dl import SupervisedRunner
 from catalyst.dl.utils import get_device, get_trace_name
 
@@ -148,10 +144,10 @@ class _OnStageEndCheckModelTracedCallback(Callback):
         self.inputs: torch.Tensor = inputs
         self.device = get_device()
 
-    def on_stage_end(self, state: State):
+    def on_stage_end(self, runner: _Runner):
         """
         Args:
-            state (State): Current state.
+            state (State): Current runner.
         """
         assert self.path.exists(), "Traced model was not found"
 

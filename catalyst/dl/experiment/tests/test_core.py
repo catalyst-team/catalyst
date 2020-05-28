@@ -8,7 +8,7 @@ from catalyst.dl import (
     MetricManagerCallback,
     ValidationManagerCallback,
 )
-from catalyst.dl.experiment.core import Experiment
+from catalyst.dl.experiment.experiment import Experiment
 
 
 def _test_callbacks(test_callbacks, exp, stage="train"):
@@ -51,7 +51,7 @@ def test_defaults():
     assert exp.logdir is None
     assert exp.stages == ["train"]
     assert exp.distributed_params == {}
-    assert exp.get_state_params("") == {
+    assert exp.get_stage_params("") == {
         "logdir": None,
         "num_epochs": 1,
         "valid_loader": "train",
