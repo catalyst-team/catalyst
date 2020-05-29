@@ -45,7 +45,7 @@ def test_is_running():
     dataloader = torch.utils.data.DataLoader(dataset, collate_fn=collate_fn)
     optimizer = torch.optim.Adam(model.parameters(), lr=5e-5)
 
-    runner = HuggingFaceRunner(check=True)
+    runner = HuggingFaceRunner()
     runner.train(
         model=model,
         optimizer=optimizer,
@@ -54,5 +54,6 @@ def test_is_running():
             "optimizer": dl.OptimizerCallback(),
             "perplexity": PerplexityMetricCallback(),
         },
+        check=True
     )
     assert True
