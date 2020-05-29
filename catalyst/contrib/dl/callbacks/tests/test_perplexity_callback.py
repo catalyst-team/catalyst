@@ -54,6 +54,6 @@ def test_is_running():
             "optimizer": dl.OptimizerCallback(),
             "perplexity": PerplexityMetricCallback(),
         },
-        check=True
+        check=True,
     )
     assert True
