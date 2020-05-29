@@ -45,7 +45,7 @@ def test_is_running():
     dataloader = torch.utils.data.DataLoader(dataset, collate_fn=collate_fn)
     optimizer = torch.optim.Adam(model.parameters(), lr=5e-5)
 
-    runner = HuggingFaceRunner()
+    runner = HuggingFaceRunner(check=True)
     runner.train(
         model=model,
         optimizer=optimizer,
