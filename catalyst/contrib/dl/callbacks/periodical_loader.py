@@ -64,7 +64,8 @@ class PeriodicLoaderRunnerCallback(Callback):
             zero_loaders_epochs = list(
                 filter(
                     lambda n: all(
-                        (p == 0 or n % p != 0) for p in self.loader_periods.values()
+                        (p == 0 or n % p != 0)
+                        for p in self.loader_periods.values()
                     ),
                     range(1, state.num_epochs + 1),
                 )
