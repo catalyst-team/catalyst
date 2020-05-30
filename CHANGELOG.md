@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- `PerplexityMetricCallback` ([#819](https://github.com/catalyst-team/catalyst/pull/819))
 - `PeriodicLoaderRunnerCallback` ([#818](https://github.com/catalyst-team/catalyst/pull/818))
 
 ### Changed
@@ -32,8 +33,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - BatchBalanceSampler for metric learning and classification ([#806](https://github.com/catalyst-team/catalyst/pull/806))
 - `CheckpointCallback`: new argument `load_on_stage_start` which accepts `str` and `Dict[str, str]` ([#797](https://github.com/catalyst-team/catalyst/pull/797))
 - LanguageModelingDataset to catalyst\[nlp\] ([#808](https://github.com/catalyst-team/catalyst/pull/808))
-- extra counters for batches, loaders and epochs ([#809](https://github.com/catalyst-team/catalyst/pull/809))
+- Extra counters for batches, loaders and epochs ([#809](https://github.com/catalyst-team/catalyst/pull/809))
 - `TracerCallback` ([#789](https://github.com/catalyst-team/catalyst/pull/789))
+
+
 
 ### Changed
 

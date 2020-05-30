@@ -7,6 +7,7 @@ from .cutmix_callback import CutmixCallback
 from .knn import KNNMetricCallback
 from .optimizer import SaveModelGradsCallback
 from .periodical_loader import PeriodicLoaderRunnerCallback
+from .perplexity import PerplexityMetricCallback
 from .telegram_logger import TelegramLogger
 from .trace import TracerCallback
 
