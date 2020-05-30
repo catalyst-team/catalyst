@@ -1,11 +1,14 @@
-from typing import Iterator, List, Optional, Union
+from typing import Iterator, List, Optional, Tuple, Union
+from abc import ABC, abstractmethod
 from collections import Counter
+from enum import Enum
 from operator import itemgetter
 from random import choices, sample
 
 import numpy as np
 
 import torch
+from torch import Tensor
 from torch.utils.data import DistributedSampler
 from torch.utils.data.sampler import BatchSampler, Sampler
 
@@ -189,6 +192,80 @@ class BalanceBatchSampler(Sampler):
             inds.extend(selected_inds)
 
         return iter(inds)
+
+
+# order in the triplets: (anchor, positive, negative)
+TTriplets = Tuple[Tensor, Tensor, Tensor]
+TTripletsIds = Tuple[List[int], List[int], List[int]]
+
+
+class InBatchTripletsSampler(ABC):
+    def sample(self, features: Tensor, labels: List[int]) -> TTriplets:
+        """
+        Args:
+            features: has the shape of [batch_size, feature_size]
+            labels: labels of the samples in the batch
+
+        Returns:
+            the batch of triplets in the order below:
+            (anchor, positive, negative)
+        """
+        self._check_batch_labels(labels)
+        ids_anchor, ids_pos, ids_neg = self._sample(features, labels)
+        self._check_selected_triplets(ids_anchor, ids_positive, ids_negative)
+
+        return features[ids_anchor], features[ids_pos], features[ids_neg]
+
+    @staticmethod
+    def _check_batch_labels(labels: List[int]) -> None:
+        """
+
+        Args:
+            labels: labels of the samples in the batch
+
+        Returns: None
+        """
+        assert all(n > 1 for n in Counter(labels).values())
+
+    @staticmethod
+    def _check_selected_triplets(
+        ids_anchor: List[int],
+        ids_positive: List[int],
+        ids_negative: List[int],
+        labels: List[int],
+    ) -> None:
+        """
+
+        Args:
+            ids_anchor: anchor indeces of selected triplets
+            ids_positive: positive indeces of selected triplets
+            ids_negative: negative indeces of selected triplets
+            labels: labels of the samples in the batch
+
+        Returns: None
+        """
+        assert len(ids_anchor) == len(ids_positive) == len(ids_negative)
+
+        for (i_a, i_p, i_n) in zip(ids_anchor, ids_positive, ids_negative):
+            assert len({i_a, i_p, i_n}) == 3
+            assert labels[i_a] == labels[i_p]
+            assert labels[i_a] != labels[i_n]
+
+    @abstractmethod
+    def _sample(self, features: Tensor, labels: List[int]) -> TTripletsIds:
+        """
+        This method includes the logic of sampling/selecting triplets
+        inside the batch. It can be based on information about
+        the distance between the features, or the
+        choice can be made randomly.
+
+        Args:
+            features: has the shape of [batch_size, feature_size]
+            labels: labels of the samples in the batch
+
+        Returns: indeces of the batch samples for the forming triplets.
+        """
+        raise NotImplementedError
 
 
 class MiniEpochSampler(Sampler):
