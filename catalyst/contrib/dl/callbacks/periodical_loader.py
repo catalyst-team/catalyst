@@ -11,10 +11,6 @@ class PeriodicLoaderRunnerCallback(Callback):
     """Callback for runing loaders with specified period.
     To disable loader use ``0`` as period.
 
-    .. note::
-        ``'train'`` is a required loader and will
-        be ignored from passed loaders.
-
     Example:
 
         >>> PeriodicLoaderRunnerCallback(
@@ -28,11 +24,6 @@ class PeriodicLoaderRunnerCallback(Callback):
         """
         Args:
             kwargs: loader names and their run periods.
-
-                .. warning::
-                    Loder will be ignored if a period
-                    value is not a number or loader
-                    name is not presented in a list of loaders.
         """
         super().__init__(order=CallbackOrder.External)
 
@@ -40,15 +31,17 @@ class PeriodicLoaderRunnerCallback(Callback):
         self.valid_metrics: Mapping[str, float] = None
         self.loaders: Mapping[str, DataLoader] = OrderedDict()
 
-        required_callbacks = {"train"}
         self.loader_periods = {}
         for loader, period in kwargs.items():
-            if not isinstance(loader, str) or not isinstance(
-                period, (int, float)
-            ):
-                continue
-            if loader in required_callbacks:
-                continue
+            if not isinstance(loader, str):
+                raise TypeError(
+                    "Expected loader type is string " f"but got {type(loader)}"
+                )
+            if not isinstance(period, (int, float)):
+                raise TypeError(
+                    "Expected loader period type is int/float "
+                    f"but got {type(period)}"
+                )
             self.loader_periods[loader] = int(period)
 
     def on_stage_start(self, state: State) -> None:
@@ -62,9 +55,33 @@ class PeriodicLoaderRunnerCallback(Callback):
             self.loaders[name] = loader
         # stage validation loader
         self.valid_loader = copy.copy(state.valid_loader)
+        is_loaders_match = all(
+            loader in state.loaders for loader in self.loader_periods.keys()
+        )
+        is_same_loaders_number = len(self.loader_periods) == len(state.loaders)
+        if is_same_loaders_number and is_loaders_match:
+            # find potential epoch with zero loaders
+            zero_loaders_epochs = list(
+                filter(
+                    lambda n: all(
+                        (p == 0 or n % p != 0) for p in self.loader_periods.values()
+                    ),
+                    range(1, state.num_epochs + 1),
+                )
+            )
+            if len(zero_loaders_epochs) > 0:
+                epoch_with_err = zero_loaders_epochs[0]
+                raise ValueError(
+                    f"There will be no loaders in epoch {epoch_with_err}!"
+                )
 
     def on_epoch_start(self, state: State) -> None:
         """Set loaders for current epoch.
+        If validation is not required then first loader
+        from epoch loaders will be used
+        as validation loader but validation metrics will
+        be populated from latest epoch where validation
+        was required.
 
         Arguments:
             state (State): training state
@@ -77,10 +94,13 @@ class PeriodicLoaderRunnerCallback(Callback):
             # ignore loaders where period - 0
             if period > 0 and epoch_num % period == 0:
                 epoch_loaders[name] = loader
+        if len(epoch_loaders) == 0:
+            raise ValueError(f"There is no loaders in epoch {epoch_num}!")
+        first_loader = next(iter(epoch_loaders.keys()))
         state.valid_loader = (
             self.valid_loader
             if self.valid_loader in epoch_loaders
-            else "train"
+            else first_loader
         )
         state.loaders = epoch_loaders
 
