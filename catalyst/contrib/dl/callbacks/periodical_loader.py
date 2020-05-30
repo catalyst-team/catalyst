@@ -33,10 +33,6 @@ class PeriodicLoaderRunnerCallback(Callback):
 
         self.loader_periods = {}
         for loader, period in kwargs.items():
-            if not isinstance(loader, str):
-                raise TypeError(
-                    "Expected loader type is string " f"but got {type(loader)}"
-                )
             if not isinstance(period, (int, float)):
                 raise TypeError(
                     "Expected loader period type is int/float "
@@ -78,11 +74,12 @@ class PeriodicLoaderRunnerCallback(Callback):
 
     def on_epoch_start(self, state: State) -> None:
         """Set loaders for current epoch.
-        If validation is not required then first loader
-        from epoch loaders will be used
-        as validation loader but validation metrics will
-        be populated from latest epoch where validation
-        was required.
+        If validation is not required then the first loader
+        from loaders used in current epoch will be used
+        as validation loader.
+        Metrics from the latest epoch with true
+        validation loader will be used
+        in the epochs where this loader is missing.
 
         Arguments:
             state (State): training state
