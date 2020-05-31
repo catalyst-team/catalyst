@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader
 from catalyst.core import Callback, CallbackOrder, State
 
 
-class PeriodicLoaderRunnerCallback(Callback):
+class PeriodicLoaderCallback(Callback):
     """Callback for runing loaders with specified period.
     To disable loader use ``0`` as period.
 
@@ -118,4 +118,4 @@ class PeriodicLoaderRunnerCallback(Callback):
             state.valid_metrics = self.valid_metrics
 
 
-__all__ = ["PeriodicLoaderRunnerCallback"]
+__all__ = ["PeriodicLoaderCallback"]

@@ -145,9 +145,9 @@ SaveModelGradsCallback
     :undoc-members:
     :show-inheritance:
 
-PeriodicLoaderRunnerCallback
-""""""""""""""""""""""
-.. automodule:: catalyst.contrib.dl.callbacks.periodical_loader
+PeriodicLoaderCallback
+""""""""""""""""""""""""""""""""""
+.. automodule:: catalyst.contrib.dl.callbacks.periodic_loader
     :members:
     :undoc-members:
     :show-inheritance:
