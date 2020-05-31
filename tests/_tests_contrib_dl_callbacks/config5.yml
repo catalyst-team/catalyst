@@ -54,7 +54,7 @@ stages:
         callback: SchedulerCallback
         reduced_metric: *reduced_metric
       loaders:
-        callback: PeriodicLoaderRunnerCallback
+        callback: PeriodicLoaderCallback
         train_additional: 2
         train_not_exists: 2
         valid: 3

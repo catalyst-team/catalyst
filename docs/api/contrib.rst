@@ -146,7 +146,7 @@ SaveModelGradsCallback
     :show-inheritance:
 
 PeriodicLoaderCallback
-""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""
 .. automodule:: catalyst.contrib.dl.callbacks.periodic_loader
     :members:
     :undoc-members:

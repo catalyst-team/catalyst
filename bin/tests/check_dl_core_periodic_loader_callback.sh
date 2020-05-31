@@ -74,7 +74,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import (
     SupervisedRunner, State, Callback, CallbackOrder,
-    PeriodicLoaderRunnerCallback,
+    PeriodicLoaderCallback,
 )
 
 # experiment_setup
@@ -108,7 +108,7 @@ runner.train(
     num_epochs=num_epochs,
     verbose=False,
     callbacks=[
-        PeriodicLoaderRunnerCallback(valid=3)
+        PeriodicLoaderCallback(valid=3)
     ]
 )
 " > ${EXP_OUTPUT}
@@ -140,7 +140,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import (
     SupervisedRunner, State, Callback, CallbackOrder,
-    PeriodicLoaderRunnerCallback,
+    PeriodicLoaderCallback,
 )
 
 # experiment_setup
@@ -174,7 +174,7 @@ runner.train(
     num_epochs=num_epochs,
     verbose=False,
     callbacks=[
-        PeriodicLoaderRunnerCallback(valid=0)
+        PeriodicLoaderCallback(valid=0)
     ]
 )
 " > ${EXP_OUTPUT}
@@ -206,7 +206,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import (
     SupervisedRunner, State, Callback, CallbackOrder,
-    PeriodicLoaderRunnerCallback,
+    PeriodicLoaderCallback,
 )
 
 # experiment_setup
@@ -242,7 +242,7 @@ runner.train(
     num_epochs=num_epochs,
     verbose=False,
     callbacks=[
-        PeriodicLoaderRunnerCallback(
+        PeriodicLoaderCallback(
             train_additional=2,
             valid=3,
             valid_additional=0
@@ -280,7 +280,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import (
     SupervisedRunner, State, Callback, CallbackOrder,
-    PeriodicLoaderRunnerCallback,
+    PeriodicLoaderCallback,
 )
 
 # experiment_setup
@@ -315,7 +315,7 @@ runner.train(
     num_epochs=5,
     verbose=False,
     callbacks=[
-        PeriodicLoaderRunnerCallback(
+        PeriodicLoaderCallback(
             train_additional=2,
             valid=3,
             valid_additional=0
@@ -333,7 +333,7 @@ runner.train(
     num_epochs=10,
     verbose=False,
     callbacks=[
-        PeriodicLoaderRunnerCallback(
+        PeriodicLoaderCallback(
             train_additional=2,
             valid=3,
             valid_additional=0
@@ -486,7 +486,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import (
     SupervisedRunner, State, Callback, CallbackOrder,
-    PeriodicLoaderRunnerCallback,
+    PeriodicLoaderCallback,
 )
 
 # experiment_setup
@@ -521,7 +521,7 @@ try:
         num_epochs=10,
         verbose=False,
         callbacks=[
-            PeriodicLoaderRunnerCallback(
+            PeriodicLoaderCallback(
                 train=2,
                 train_additional=2,
                 valid=3,
@@ -578,7 +578,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import (
     SupervisedRunner, State, Callback, CallbackOrder,
-    PeriodicLoaderRunnerCallback,
+    PeriodicLoaderCallback,
 )
 
 # experiment_setup
@@ -613,7 +613,7 @@ runner.train(
     num_epochs=10,
     verbose=False,
     callbacks=[
-        PeriodicLoaderRunnerCallback(
+        PeriodicLoaderCallback(
             train_additional=2,
             train_not_exists=2,
             valid=3,
@@ -688,7 +688,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import (
     SupervisedRunner, State, Callback, CallbackOrder,
-    PeriodicLoaderRunnerCallback,
+    PeriodicLoaderCallback,
 )
 
 # experiment_setup
@@ -723,7 +723,7 @@ try:
         num_epochs=10,
         verbose=False,
         callbacks=[
-            PeriodicLoaderRunnerCallback(
+            PeriodicLoaderCallback(
                 train_additional=[],
                 train_not_exists=2,
                 valid=3,
