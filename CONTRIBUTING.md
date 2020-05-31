@@ -69,7 +69,7 @@ pytest .
 
 Create a new bash file in `bin/tests` with tests for your new feature.
 If file name starts with `check_dl_core`, `check_dl_cv` or `check_dl_nlp` then your new tests will be executed
-atomaticaly on pull request othervise you need to update `bin/tests/check_dl_all.sh`.
+automaticaly on pull request, otherwise you need to update `bin/tests/check_dl_all.sh`.
 
 
 ##### Testing Notebook API
