@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        docker: ['', 'fp16', '-dev', 'dev-fp16']
+        docker: ['', '-fp16', '-dev', '-dev-fp16']
 
     steps:
       - uses: actions/checkout@v2
