@@ -12,6 +12,7 @@ on:
 
 jobs:
   build:
+    name: codestyle
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false

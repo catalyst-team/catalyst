@@ -6,10 +6,10 @@ on:
       - develop
       - master
 
-jobs:
 
+jobs:
   flake8-linter:
-    name: reviewdog
+    name: flake8-reviewdog
     runs-on: ubuntu-latest
 
     steps:
