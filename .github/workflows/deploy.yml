@@ -6,27 +6,27 @@ on:
 
 jobs:
 
-  build-pypi:
-    runs-on: ubuntu-latest
+  # build-pypi:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v2
+  #   steps:
+  #     - uses: actions/checkout@v2
 
-      - name: set up Python 3.6
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.6
+  #     - name: set up Python 3.6
+  #       uses: actions/setup-python@v1
+  #       with:
+  #         python-version: 3.6
 
-      - name: Generating distribution archives
-        run: |
-          pip install --upgrade setuptools wheel
-          python setup.py sdist bdist_wheel --universal
+  #     - name: Generating distribution archives
+  #       run: |
+  #         pip install --upgrade setuptools wheel
+  #         python setup.py sdist bdist_wheel --universal
 
-      - name: Publish a Python distribution to PyPI
-        uses: pypa/gh-action-pypi-publish@master
-        with:
-          user: __token__
-          password: ${{ secrets.PYPI_PASSWORD }}
+  #     - name: Publish a Python distribution to PyPI
+  #       uses: pypa/gh-action-pypi-publish@master
+  #       with:
+  #         user: __token__
+  #         password: ${{ secrets.PYPI_PASSWORD }}
 
   build-docker:
     runs-on: ubuntu-latest
