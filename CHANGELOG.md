@@ -22,7 +22,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
-- 
+- added missed dashes in docker perfixes ([#828](https://github.com/catalyst-team/catalyst/issues/828))
 
 
 ## [20.05.1] - 2020-05-23
