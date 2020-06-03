@@ -12,6 +12,7 @@ on:
 
 jobs:
   build:
+    name: dl-cpu-cv
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false

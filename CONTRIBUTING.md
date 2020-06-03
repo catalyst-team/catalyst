@@ -46,6 +46,7 @@ It's much harder to merge in a large change with a lot of disjoint features.
 6. Check the [codestyle](#codestyle)
 7. Make sure that your code [passes the unit tests](#unit-tests)
 
+
 #### Codestyle
 
 Do not forget to check the codestyle for your PR with
@@ -63,6 +64,39 @@ Do not forget to check that your code passes the unit tests
 ```bash
 pytest .
 ```
+
+##### Adding new tests
+
+Create a new bash file in `bin/tests` with tests for your new feature.
+If file name starts with `check_dl_core`, `check_dl_cv` or `check_dl_nlp` then your new tests will be executed
+automaticaly on pull request, otherwise you need to update `bin/tests/check_dl_all.sh`.
+
+
+##### Testing Notebook API
+
+The easiest way to test Notebook API is to test expected behaviour directly in python.
+It can be done in different ways and one of them is to execute python script with `-c`:
+
+```bash
+python -c "assert True != False"
+```
+
+If your feature affects output files - please check that directory with logs contains all required files.
+
+##### Testing Config API
+
+Create a folder with tests in `tests` directory and define there minimal required files - `__init__.py`,
+`experiment.py`, `models.py` and config files (like `configN.yml`) with test configuration. Your folder name
+should represent the part of API you are testing - for example, if I want to test dl part I will call a new
+test folder like `_tests_dl_my_awesome_new_feature`.
+
+As was mentioned previously, if your feature affects output files - please add tests for required files in
+directory with logs.
+
+If your feature affects some metrics - you need to check that everything works as expected during
+epochs and/or stages. You can do this with `<logdir>/checkpoints/_metrics.json` file (load this file
+in python and check values or something similar) or `<logdir>/log.txt`.
+
 
 ## Documentation
 
@@ -84,6 +118,8 @@ Now you can open them into your browser, for example with
 ```bash
 vivaldi-stable ./builds/index.html
 ```
+
+If you have some issues with building docs - please make sure that you installed required pip packages.
 
 ##### Check that you have written working docs with Docker
 
