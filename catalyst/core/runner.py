@@ -348,13 +348,13 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
     ):
         """
         Args:
-            model (StateModel): Torch model object
+            model (RunnerModel): Torch model object
             device (Device): Torch device
         """
-        self._model = None
-        self._device = None
-        self._prepare_inner_state(device=device, model=model)
+        self.device: Device = device
+        self.model: RunnerModel = model
         self._init()
+        self._freeze()
 
     def _prepare_inner_state(
         self,
@@ -375,6 +375,8 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
         verbose: bool = False,
         **kwargs,
     ):
+        self._unfreeze()
+
         # main runner components: model and device to run
         self.device: Device = device
         self.model: RunnerModel = model
@@ -464,6 +466,8 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
         # kwargs
         for key, value in kwargs.items():
             setattr(self, key, value)
+
+        self._freeze()
 
     def _init(self) -> None:
         """
@@ -879,7 +883,6 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
 
         """
         self._prepare_for_stage(stage)
-        self._freeze()
 
         self._run_event("on_stage_start")
         while self.epoch < self.num_epochs + 1:
@@ -897,7 +900,6 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
             self.global_epoch += 1
             self.epoch += 1
         self._run_event("on_stage_end")
-        self._unfreeze()
 
     def run_experiment(self, experiment: _Experiment = None) -> "_Runner":
         """
@@ -927,8 +929,6 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
                 self._run_event("on_exception")
             else:
                 raise ex
-        finally:
-            self._unfreeze()
 
         return self
 
