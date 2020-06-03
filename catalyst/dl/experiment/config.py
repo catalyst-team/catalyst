@@ -109,6 +109,7 @@ class ConfigExperiment(_Experiment):
         for stage in stages_config:
             if (
                 stage in self.STAGE_KEYWORDS
+                or stage == "state_params"
                 or stages_config.get(stage) is None
             ):
                 continue
@@ -117,6 +118,7 @@ class ConfigExperiment(_Experiment):
                 if key == "stage_params":
                     # backward compatibility
                     stages_config_out[stage][key] = utils.merge_dicts(
+                        deepcopy(stages_defaults.get("state_params", {})),
                         deepcopy(stages_defaults.get(key, {})),
                         deepcopy(stages_config[stage].get("state_params", {})),
                         deepcopy(stages_config[stage].get(key, {})),

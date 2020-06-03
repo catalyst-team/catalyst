@@ -105,7 +105,7 @@ Callbacks
 
 AlchemyLogger
 """""""""""""
-.. automodule:: catalyst.contrib.dl.callbacks.alchemy
+.. automodule:: catalyst.contrib.dl.callbacks.alchemy_logger
     :members:
     :undoc-members:
     :show-inheritance:
@@ -117,37 +117,44 @@ CutmixCallback
     :undoc-members:
     :show-inheritance:
 
-InferMaskCallback
-"""""""""""""""""
-.. automodule:: catalyst.contrib.dl.callbacks.inference
+GradNormLogger
+""""""""""""""""""""""
+.. automodule:: catalyst.contrib.dl.callbacks.gradnorm_logger
     :members:
     :undoc-members:
     :show-inheritance:
 
 KNNMetricCallback
 """""""""""""""""
-.. automodule:: catalyst.contrib.dl.callbacks.knn
+.. automodule:: catalyst.contrib.dl.callbacks.knn_metric
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+InferMaskCallback
+"""""""""""""""""
+.. automodule:: catalyst.contrib.dl.callbacks.mask_inference
     :members:
     :undoc-members:
     :show-inheritance:
 
 NeptuneLogger
 """""""""""""
-.. automodule:: catalyst.contrib.dl.callbacks.neptune
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-SaveModelGradsCallback
-""""""""""""""""""""""
-.. automodule:: catalyst.contrib.dl.callbacks.optimizer
+.. automodule:: catalyst.contrib.dl.callbacks.neptune_logger
     :members:
     :undoc-members:
     :show-inheritance:
 
 PeriodicLoaderCallback
 """"""""""""""""""""""
-.. automodule:: catalyst.contrib.dl.callbacks.periodic_loader
+.. automodule:: catalyst.contrib.dl.callbacks.periodic_loader_callback
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+PerplexityMetricCallback
+""""""""""""""""""""""""
+.. automodule:: catalyst.contrib.dl.callbacks.perplexity_metric
     :members:
     :undoc-members:
     :show-inheritance:
@@ -161,7 +168,7 @@ TelegramLogger
 
 TracerCallback
 """"""""""""""""""""""
-.. automodule:: catalyst.contrib.dl.callbacks.trace
+.. automodule:: catalyst.contrib.dl.callbacks.tracer_callback
     :members:
     :undoc-members:
     :show-inheritance:
@@ -175,7 +182,7 @@ VisdomLogger
 
 WandbLogger
 """"""""""""""""""""""
-.. automodule:: catalyst.contrib.dl.callbacks.wandb
+.. automodule:: catalyst.contrib.dl.callbacks.wandb_logger
     :members:
     :undoc-members:
     :show-inheritance:

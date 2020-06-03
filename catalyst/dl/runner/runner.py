@@ -24,7 +24,7 @@ class Runner(_StageBasedRunner):
 
     _experiment_fn: Callable = Experiment
 
-    def _init(self):
+    def _init(self, **kwargs):
         self.experiment: Experiment = None
 
     def train(

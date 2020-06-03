@@ -8,7 +8,7 @@ from catalyst.core.runner import _Runner
 from catalyst.tools.typing import Model
 
 
-class SaveModelGradsCallback(Callback):
+class GradNormLogger(Callback):
     """Callback for logging model gradients."""
 
     def __init__(
@@ -90,4 +90,4 @@ class SaveModelGradsCallback(Callback):
             self._accumulation_counter = 0
 
 
-__all__ = ["SaveModelGradsCallback"]
+__all__ = ["GradNormLogger"]

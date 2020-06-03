@@ -344,16 +344,18 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
     _experiment_fn: Callable = _Experiment
 
     def __init__(
-        self, model: RunnerModel = None, device: Device = None,
+        self, model: RunnerModel = None, device: Device = None, **kwargs,
     ):
         """
         Args:
             model (RunnerModel): Torch model object
             device (Device): Torch device
         """
+        self._device = None
+        self._model = None
         self.device: Device = device
         self.model: RunnerModel = model
-        self._init()
+        self._init(**kwargs)
         self._freeze()
 
     def _prepare_inner_state(
@@ -469,10 +471,10 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
 
         self._freeze()
 
-    def _init(self) -> None:
+    def _init(self, **kwargs) -> None:
         """
         Inner method for children's classes
-        to specify types for Runners' Experiment and State.
+        to specify type for Runners' Experiment.
         """
         self.experiment: _Experiment = None
 
@@ -616,7 +618,7 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
         and cases with multi-criterion, multi-optimizer setup.
         For example, when you would like to train multi-task classification.
 
-        Used to get a named attribute from a `State` by `key` keyword;
+        Used to get a named attribute from a `_Runner` by `key` keyword;
         for example\
         ::
 
@@ -670,8 +672,8 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
 
         Sets `Experiment` initial seed.
         Prepares experiment components with `self._get_experiment_components`.
-        Prepares callbacks with `self._get_callbacks`.
-        Prepares `State` with `self._get_state`.
+        Prepares callbacks with `self._get_experiment_callbacks`.
+        Prepares inner state with `self._prepare_inner_state`
 
         Args:
             stage (str): stage name of interest,
@@ -697,13 +699,16 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
         migrate_from_previous_stage = migrating_params.get(
             "migrate_from_previous_stage", True
         )
-        if migrate_from_previous_stage and self.callbacks is not None:
+        if (
+            migrate_from_previous_stage
+            and getattr(self, "callbacks", None) is not None
+        ):
             for key, value in self.callbacks.items():
                 if value.scope == CallbackScope.Experiment:
                     callbacks[key] = value
-            callbacks = utils.sort_callbacks_by_order(callbacks)
 
-        self.callbacks = callbacks
+        callbacks = utils.sort_callbacks_by_order(callbacks)
+
         self._prepare_inner_state(
             stage=stage,
             model=model,
@@ -924,7 +929,7 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
                     for x in callbacks.values()
                 )
 
-            if _exception_handler_check(self.callbacks):
+            if _exception_handler_check(getattr(self, "callbacks", None)):
                 self.exception = ex
                 self._run_event("on_exception")
             else:
@@ -945,8 +950,8 @@ class _StageBasedRunner(_Runner):
 
         Sets `Experiment` initial seed.
         Prepares experiment components with `self._get_experiment_components`.
-        Prepares callbacks with `self._get_callbacks`.
-        Prepares `State` with `self._get_state`.
+        Prepares callbacks with `self._get_experiment_callbacks`.
+        Prepares inner state with `self._prepare_inner_state`
         Additionally sets `Experiment` datasources for specified stage.
 
         Args:

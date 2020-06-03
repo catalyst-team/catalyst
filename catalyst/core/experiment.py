@@ -99,11 +99,7 @@ class _Experiment(ABC):
 
     @abstractmethod
     def get_stage_params(self, stage: str) -> Mapping[str, Any]:
-        """Returns State parameters for a given stage.
-
-        To learn more about State, please follow
-        :py:mod:`catalyst.core.runner.State`
-        documentation.
+        """Returns extra stage parameters for a given stage.
 
         Example::
 
@@ -124,7 +120,7 @@ class _Experiment(ABC):
                 like "pretrain" / "train" / "finetune" / etc
 
         Returns:
-            dict: State parameters for a given stage.
+            dict: parameters for a given stage.
         """
         pass
 
@@ -248,7 +244,7 @@ class _Experiment(ABC):
 
         .. note::
             For datasets/loaders nameing please follow
-            :py:mod:`catalyst.core.runner.State` documentation.
+            :py:mod:`catalyst.core.runner` documentation.
 
         Returns:
             Data transformations to use for specified dataset.
@@ -353,7 +349,6 @@ class _Experiment(ABC):
 
                 - :py:mod:`catalyst.core.experiment._Experiment`
                 - :py:mod:`catalyst.core.runner._Runner`
-                - :py:mod:`catalyst.core.runner.State`
                 - :py:mod:`catalyst.core.callback.Callback`
         """
         pass

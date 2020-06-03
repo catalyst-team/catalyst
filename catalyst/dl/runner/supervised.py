@@ -5,7 +5,7 @@ import torch
 
 from catalyst.dl.experiment.supervised import SupervisedExperiment
 from catalyst.dl.runner.runner import Runner
-from catalyst.tools.typing import Device, Model
+from catalyst.tools.typing import Device, RunnerModel
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ class SupervisedRunner(Runner):
 
     def __init__(
         self,
-        model: Model = None,
+        model: RunnerModel = None,
         device: Device = None,
         input_key: Any = "features",
         output_key: Any = "logits",
@@ -25,14 +25,36 @@ class SupervisedRunner(Runner):
     ):
         """
         Args:
-            model (Module): Torch model object
+            model (RunnerModel): Torch model object
             device (Device): Torch device
             input_key (Any): Key in batch dict mapping for model input
             output_key (Any): Key in output dict model output
                 will be stored under
             input_target_key (str): Key in batch dict mapping for target
         """
-        super().__init__(model=model, device=device)
+        super().__init__(
+            model=model,
+            device=device,
+            input_key=input_key,
+            output_key=output_key,
+            input_target_key=input_target_key,
+        )
+
+    def _init(
+        self,
+        input_key: Any = "features",
+        output_key: Any = "logits",
+        input_target_key: str = "targets",
+    ):
+        """
+        Args:
+            input_key (Any): Key in batch dict mapping for model input
+            output_key (Any): Key in output dict model output
+                will be stored under
+            input_target_key (str): Key in batch dict mapping for target
+        """
+        self.experiment: SupervisedExperiment = None
+
         self.input_key = input_key
         self.output_key = output_key
         self.target_key = input_target_key
@@ -60,9 +82,6 @@ class SupervisedRunner(Runner):
             self._process_output = self._process_output_none
         else:
             raise NotImplementedError()
-
-    def _init(self):
-        self.experiment: SupervisedExperiment = None
 
     def _batch2device(self, batch: Mapping[str, Any], device: Device):
         if isinstance(batch, (tuple, list)):
