@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.runner.core &mdash; Catalyst 20.05.1 documentation</title>
+  <title>catalyst.dl.runner.runner &mdash; Catalyst 20.06 documentation</title>
   
 
   
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  20.05
+                  20.06
                 </div>
               
             
@@ -231,7 +231,7 @@
         
           <li><a href="../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.dl.runner.core</li>
+      <li>catalyst.dl.runner.runner</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -257,7 +257,7 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.dl.runner.core</h1><div class="highlight"><pre>
+  <h1>Source code for catalyst.dl.runner.runner</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
@@ -265,13 +265,9 @@
 <span class="kn">from</span> <span class="nn">torch.jit</span> <span class="kn">import</span> <span class="n">ScriptModule</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">_StageBasedRunner</span><span class="p">,</span>
-    <span class="n">Callback</span><span class="p">,</span>
-    <span class="n">CheckpointCallback</span><span class="p">,</span>
-    <span class="n">State</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">Experiment</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">,</span> <span class="n">IStageBasedRunner</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.experiment.experiment</span> <span class="kn">import</span> <span class="n">Experiment</span>
 <span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Criterion</span><span class="p">,</span>
     <span class="n">Device</span><span class="p">,</span>
@@ -281,19 +277,17 @@
 <span class="p">)</span>
 
 
-<div class="viewcode-block" id="Runner"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.core.Runner">[docs]</a><span class="k">class</span> <span class="nc">Runner</span><span class="p">(</span><span class="n">_StageBasedRunner</span><span class="p">):</span>
+<div class="viewcode-block" id="Runner"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.runner.Runner">[docs]</a><span class="k">class</span> <span class="nc">Runner</span><span class="p">(</span><span class="n">IStageBasedRunner</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Deep Learning Runner for different supervised, unsupervised, gan, etc runs.</span>
+<span class="sd">    Deep Learning Runner for supervised, unsupervised, gan, etc runs.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_experiment_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">Experiment</span>
-    <span class="n">_state_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">State</span>
 
-    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">:</span> <span class="n">Experiment</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">:</span> <span class="n">State</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="Runner.train"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.core.Runner.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span>
+<div class="viewcode-block" id="Runner.train"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.runner.Runner.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
@@ -310,7 +304,7 @@
         <span class="n">main_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
         <span class="n">minimize_metric</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">stage_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fp16</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">distributed</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -318,6 +312,7 @@
         <span class="n">timeit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">load_best_on_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">initial_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+        <span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Starts the train stage of the model.</span>
@@ -350,7 +345,7 @@
 <span class="sd">                the ``main_metric`` should be minimized.</span>
 <span class="sd">            verbose (bool): if `True`, it displays the status of the training</span>
 <span class="sd">                to the console.</span>
-<span class="sd">            state_kwargs (dict): additional state params for ``State``</span>
+<span class="sd">            stage_kwargs (dict): additional params for stage</span>
 <span class="sd">            checkpoint_data (dict): additional data to save in checkpoint,</span>
 <span class="sd">                for example: ``class_names``, ``date_of_training``, etc</span>
 <span class="sd">            fp16 (Union[Dict, bool]): If not None, then sets training to FP16.</span>
@@ -368,6 +363,8 @@
 <span class="sd">                according to validation metrics. Requires specified ``logdir``.</span>
 <span class="sd">            initial_seed (int): experiment&#39;s initial seed value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">state_kwargs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">stage_kwargs</span> <span class="ow">is</span> <span class="kc">None</span>
+
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp16</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fp16</span><span class="p">:</span>
             <span class="n">fp16</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;opt_level&quot;</span><span class="p">:</span> <span class="s2">&quot;O1&quot;</span><span class="p">}</span>
 
@@ -407,7 +404,7 @@
             <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
             <span class="n">check_time</span><span class="o">=</span><span class="n">timeit</span><span class="p">,</span>
             <span class="n">check_run</span><span class="o">=</span><span class="n">check</span><span class="p">,</span>
-            <span class="n">state_kwargs</span><span class="o">=</span><span class="n">state_kwargs</span><span class="p">,</span>
+            <span class="n">stage_kwargs</span><span class="o">=</span><span class="n">stage_kwargs</span> <span class="ow">or</span> <span class="n">state_kwargs</span><span class="p">,</span>
             <span class="n">checkpoint_data</span><span class="o">=</span><span class="n">checkpoint_data</span><span class="p">,</span>
             <span class="n">distributed_params</span><span class="o">=</span><span class="n">fp16</span><span class="p">,</span>
             <span class="n">initial_seed</span><span class="o">=</span><span class="n">initial_seed</span><span class="p">,</span>
@@ -415,7 +412,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span> <span class="o">=</span> <span class="n">experiment</span>
         <span class="n">utils</span><span class="o">.</span><span class="n">distributed_cmd_run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_experiment</span><span class="p">,</span> <span class="n">distributed</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Runner.infer"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.core.Runner.infer">[docs]</a>    <span class="k">def</span> <span class="nf">infer</span><span class="p">(</span>
+<div class="viewcode-block" id="Runner.infer"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.runner.Runner.infer">[docs]</a>    <span class="k">def</span> <span class="nf">infer</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
@@ -425,11 +422,12 @@
         <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">resume</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">stage_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fp16</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">timeit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">initial_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+        <span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Starts the inference stage of the model.</span>
@@ -449,7 +447,7 @@
 <span class="sd">            logdir (str): path to output directory</span>
 <span class="sd">            verbose (bool): if `True`, it displays the status of the training</span>
 <span class="sd">                to the console.</span>
-<span class="sd">            state_kwargs (dict): additional state params for ``State``</span>
+<span class="sd">            stage_kwargs (dict): additional stage params</span>
 <span class="sd">            checkpoint_data (dict): additional data to save in checkpoint,</span>
 <span class="sd">                for example: ``class_names``, ``date_of_training``, etc</span>
 <span class="sd">            fp16 (Union[Dict, bool]): If not None, then sets training to FP16.</span>
@@ -461,6 +459,8 @@
 <span class="sd">                of training process and displays it to the console.</span>
 <span class="sd">            initial_seed (int): experiment&#39;s initial seed value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">state_kwargs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">stage_kwargs</span> <span class="ow">is</span> <span class="kc">None</span>
+
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp16</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fp16</span><span class="p">:</span>
             <span class="n">fp16</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;opt_level&quot;</span><span class="p">:</span> <span class="s2">&quot;O1&quot;</span><span class="p">}</span>
 
@@ -484,13 +484,13 @@
             <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
             <span class="n">check_time</span><span class="o">=</span><span class="n">timeit</span><span class="p">,</span>
             <span class="n">check_run</span><span class="o">=</span><span class="n">check</span><span class="p">,</span>
-            <span class="n">state_kwargs</span><span class="o">=</span><span class="n">state_kwargs</span><span class="p">,</span>
+            <span class="n">stage_kwargs</span><span class="o">=</span><span class="n">stage_kwargs</span> <span class="ow">or</span> <span class="n">state_kwargs</span><span class="p">,</span>
             <span class="n">distributed_params</span><span class="o">=</span><span class="n">fp16</span><span class="p">,</span>
             <span class="n">initial_seed</span><span class="o">=</span><span class="n">initial_seed</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">run_experiment</span><span class="p">(</span><span class="n">experiment</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Runner.predict_batch"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.core.Runner.predict_batch">[docs]</a>    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+<div class="viewcode-block" id="Runner.predict_batch"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.runner.Runner.predict_batch">[docs]</a>    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">predict_batch</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -509,7 +509,7 @@
             <span class="s2">&quot;Please implement `runner.predict_batch` method&quot;</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Runner.predict_loader"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.core.Runner.predict_loader">[docs]</a>    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+<div class="viewcode-block" id="Runner.predict_loader"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.runner.Runner.predict_loader">[docs]</a>    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">predict_loader</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -552,7 +552,7 @@
         <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">loader</span><span class="p">:</span>
             <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Runner.trace"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.core.Runner.trace">[docs]</a>    <span class="k">def</span> <span class="nf">trace</span><span class="p">(</span>
+<div class="viewcode-block" id="Runner.trace"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.runner.Runner.trace">[docs]</a>    <span class="k">def</span> <span class="nf">trace</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

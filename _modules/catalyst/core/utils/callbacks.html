@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.core.utils.callbacks &mdash; Catalyst 20.05.1 documentation</title>
+  <title>catalyst.core.utils.callbacks &mdash; Catalyst 20.06 documentation</title>
   
 
   
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  20.05
+                  20.06
                 </div>
               
             
@@ -258,7 +258,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.core.utils.callbacks</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">CallbackNode</span>
@@ -266,7 +266,7 @@
 
 
 <div class="viewcode-block" id="sort_callbacks_by_order"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.utils.callbacks.sort_callbacks_by_order">[docs]</a><span class="k">def</span> <span class="nf">sort_callbacks_by_order</span><span class="p">(</span>
-    <span class="n">callbacks</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">]</span>
+    <span class="n">callbacks</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Creates an sequence of callbacks and sort them.</span>
 
@@ -278,7 +278,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">callbacks</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callbacks</span><span class="p">,</span> <span class="p">(</span><span class="n">Dict</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">)):</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callbacks</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">)):</span>
         <span class="n">output</span> <span class="o">=</span> <span class="p">[(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
         <span class="n">output</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">order</span><span class="p">)</span>
         <span class="n">output</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>

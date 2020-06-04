@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.experiment.core &mdash; Catalyst 20.05.1 documentation</title>
+  <title>catalyst.dl.experiment.experiment &mdash; Catalyst 20.06 documentation</title>
   
 
   
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  20.05
+                  20.06
                 </div>
               
             
@@ -231,7 +231,7 @@
         
           <li><a href="../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.dl.experiment.core</li>
+      <li>catalyst.dl.experiment.experiment</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -257,7 +257,7 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.dl.experiment.core</h1><div class="highlight"><pre>
+  <h1>Source code for catalyst.dl.experiment.experiment</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
@@ -265,7 +265,7 @@
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">_Experiment</span>
+<span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">IExperiment</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Callback</span><span class="p">,</span>
     <span class="n">CheckpointCallback</span><span class="p">,</span>
@@ -283,13 +283,13 @@
 <span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
 
 
-<div class="viewcode-block" id="Experiment"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.core.Experiment">[docs]</a><span class="k">class</span> <span class="nc">Experiment</span><span class="p">(</span><span class="n">_Experiment</span><span class="p">):</span>
+<div class="viewcode-block" id="Experiment"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.experiment.Experiment">[docs]</a><span class="k">class</span> <span class="nc">Experiment</span><span class="p">(</span><span class="n">IExperiment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Super-simple one-staged experiment,</span>
 <span class="sd">    you can use to declare experiment in code.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Experiment.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.core.Experiment.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="Experiment.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.experiment.Experiment.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
         <span class="n">datasets</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, Union[Dataset, Dict, Any]]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -307,7 +307,7 @@
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">check_time</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">check_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">state_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">stage_kwargs</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">distributed_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">initial_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
@@ -345,7 +345,7 @@
 <span class="sd">                of training process and displays it to the console.</span>
 <span class="sd">            check_run (bool): if True, we run only 3 batches per loader</span>
 <span class="sd">                and 3 epochs per stage to check pipeline correctness</span>
-<span class="sd">            state_kwargs (dict): additional state params to ``State``</span>
+<span class="sd">            stage_kwargs (dict): additional stage params</span>
 <span class="sd">            checkpoint_data (dict): additional data to save in checkpoint,</span>
 <span class="sd">                for example: ``class_names``, ``date_of_training``, etc</span>
 <span class="sd">            distributed_params (dict): dictionary with the parameters</span>
@@ -379,7 +379,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="n">verbose</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_time</span> <span class="o">=</span> <span class="n">check_time</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_run</span> <span class="o">=</span> <span class="n">check_run</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_state_kwargs</span> <span class="o">=</span> <span class="n">state_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stage_kwargs</span> <span class="o">=</span> <span class="n">stage_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_data</span> <span class="o">=</span> <span class="n">checkpoint_data</span> <span class="ow">or</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_distributed_params</span> <span class="o">=</span> <span class="n">distributed_params</span> <span class="ow">or</span> <span class="p">{}</span></div>
 
@@ -403,7 +403,7 @@
         <span class="sd">&quot;&quot;&quot;Dict with the parameters for distributed and FP16 method.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distributed_params</span>
 
-<div class="viewcode-block" id="Experiment.process_loaders"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.core.Experiment.process_loaders">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="Experiment.process_loaders"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.experiment.Experiment.process_loaders">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">process_loaders</span><span class="p">(</span>
         <span class="n">loaders</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">,</span>
         <span class="n">datasets</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
@@ -429,7 +429,7 @@
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">loaders</span><span class="p">,</span> <span class="n">valid_loader</span></div>
 
-<div class="viewcode-block" id="Experiment.get_state_params"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.core.Experiment.get_state_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_state_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<div class="viewcode-block" id="Experiment.get_stage_params"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.experiment.Experiment.get_stage_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_stage_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Returns the state parameters for a given stage.&quot;&quot;&quot;</span>
         <span class="n">default_params</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;logdir&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span>
@@ -440,32 +440,32 @@
             <span class="s2">&quot;minimize_metric&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimize_metric</span><span class="p">,</span>
             <span class="s2">&quot;checkpoint_data&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkpoint_data</span><span class="p">,</span>
         <span class="p">}</span>
-        <span class="n">state_params</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">default_params</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_kwargs</span><span class="p">}</span>
-        <span class="k">return</span> <span class="n">state_params</span></div>
+        <span class="n">stage_params</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">default_params</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_stage_kwargs</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">stage_params</span></div>
 
-<div class="viewcode-block" id="Experiment.get_model"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.core.Experiment.get_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
+<div class="viewcode-block" id="Experiment.get_model"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.experiment.Experiment.get_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the model for a given stage.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span></div>
 
-<div class="viewcode-block" id="Experiment.get_criterion"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.core.Experiment.get_criterion">[docs]</a>    <span class="k">def</span> <span class="nf">get_criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Criterion</span><span class="p">:</span>
+<div class="viewcode-block" id="Experiment.get_criterion"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.experiment.Experiment.get_criterion">[docs]</a>    <span class="k">def</span> <span class="nf">get_criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Criterion</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the criterion for a given stage.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span></div>
 
-<div class="viewcode-block" id="Experiment.get_optimizer"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.core.Experiment.get_optimizer">[docs]</a>    <span class="k">def</span> <span class="nf">get_optimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optimizer</span><span class="p">:</span>
+<div class="viewcode-block" id="Experiment.get_optimizer"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.experiment.Experiment.get_optimizer">[docs]</a>    <span class="k">def</span> <span class="nf">get_optimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optimizer</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the optimizer for a given stage.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span></div>
 
-<div class="viewcode-block" id="Experiment.get_scheduler"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.core.Experiment.get_scheduler">[docs]</a>    <span class="k">def</span> <span class="nf">get_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Scheduler</span><span class="p">:</span>
+<div class="viewcode-block" id="Experiment.get_scheduler"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.experiment.Experiment.get_scheduler">[docs]</a>    <span class="k">def</span> <span class="nf">get_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Scheduler</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the scheduler for a given stage.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span></div>
 
-<div class="viewcode-block" id="Experiment.get_loaders"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.core.Experiment.get_loaders">[docs]</a>    <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span>
+<div class="viewcode-block" id="Experiment.get_loaders"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.experiment.Experiment.get_loaders">[docs]</a>    <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the loaders for a given stage.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span></div>
 
-<div class="viewcode-block" id="Experiment.get_callbacks"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.core.Experiment.get_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Callback]&quot;</span><span class="p">:</span>
+<div class="viewcode-block" id="Experiment.get_callbacks"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.experiment.Experiment.get_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Callback]&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the callbacks for a given stage.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

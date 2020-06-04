@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.runner.supervised &mdash; Catalyst 20.05.1 documentation</title>
+  <title>catalyst.dl.runner.supervised &mdash; Catalyst 20.06 documentation</title>
   
 
   
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  20.05
+                  20.06
                 </div>
               
             
@@ -263,10 +263,9 @@
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">State</span><span class="p">,</span> <span class="n">SupervisedExperiment</span>
-<span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Model</span>
-
-<span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">Runner</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.experiment.supervised</span> <span class="kn">import</span> <span class="n">SupervisedExperiment</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.runner.runner</span> <span class="kn">import</span> <span class="n">Runner</span>
+<span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">RunnerModel</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -278,7 +277,7 @@
 
 <div class="viewcode-block" id="SupervisedRunner.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.supervised.SupervisedRunner.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;features&quot;</span><span class="p">,</span>
         <span class="n">output_key</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;logits&quot;</span><span class="p">,</span>
@@ -286,14 +285,36 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            model (Module): Torch model object</span>
+<span class="sd">            model (RunnerModel): Torch model object</span>
 <span class="sd">            device (Device): Torch device</span>
 <span class="sd">            input_key (Any): Key in batch dict mapping for model input</span>
 <span class="sd">            output_key (Any): Key in output dict model output</span>
 <span class="sd">                will be stored under</span>
 <span class="sd">            input_target_key (str): Key in batch dict mapping for target</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+            <span class="n">input_key</span><span class="o">=</span><span class="n">input_key</span><span class="p">,</span>
+            <span class="n">output_key</span><span class="o">=</span><span class="n">output_key</span><span class="p">,</span>
+            <span class="n">input_target_key</span><span class="o">=</span><span class="n">input_target_key</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_key</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;features&quot;</span><span class="p">,</span>
+        <span class="n">output_key</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;logits&quot;</span><span class="p">,</span>
+        <span class="n">input_target_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;targets&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            input_key (Any): Key in batch dict mapping for model input</span>
+<span class="sd">            output_key (Any): Key in output dict model output</span>
+<span class="sd">                will be stored under</span>
+<span class="sd">            input_target_key (str): Key in batch dict mapping for target</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">:</span> <span class="n">SupervisedExperiment</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span> <span class="o">=</span> <span class="n">input_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span> <span class="o">=</span> <span class="n">output_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">target_key</span> <span class="o">=</span> <span class="n">input_target_key</span>
@@ -320,11 +341,7 @@
             <span class="c1"># when model returns dict</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_process_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_output_none</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
-
-    <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">:</span> <span class="n">SupervisedExperiment</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="p">:</span> <span class="n">State</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_batch2device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">device</span><span class="p">:</span> <span class="n">Device</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
@@ -381,7 +398,7 @@
 <span class="sd">            batch (Mapping[str, Any]): dictionary with data batches</span>
 <span class="sd">                from DataLoader.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
 
 <div class="viewcode-block" id="SupervisedRunner.predict_batch"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.supervised.SupervisedRunner.predict_batch">[docs]</a>    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">predict_batch</span><span class="p">(</span>

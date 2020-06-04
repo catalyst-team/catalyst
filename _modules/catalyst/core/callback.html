@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.core.callback &mdash; Catalyst 20.05.1 documentation</title>
+  <title>catalyst.core.callback &mdash; Catalyst 20.06 documentation</title>
   
 
   
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  20.05
+                  20.06
                 </div>
               
             
@@ -262,7 +262,7 @@
 <span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">IntFlag</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.state</span> <span class="kn">import</span> <span class="n">State</span>
+    <span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>
 
 
 <div class="viewcode-block" id="CallbackNode"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.CallbackNode">[docs]</a><span class="k">class</span> <span class="nc">CallbackNode</span><span class="p">(</span><span class="n">IntFlag</span><span class="p">):</span>
@@ -366,9 +366,8 @@
 <span class="sd">    .. note::</span>
 <span class="sd">        To learn more about Catalyst Core concepts, please check out</span>
 
-<span class="sd">            - :py:mod:`catalyst.core.experiment._Experiment`</span>
-<span class="sd">            - :py:mod:`catalyst.core.runner._Runner`</span>
-<span class="sd">            - :py:mod:`catalyst.core.state.State`</span>
+<span class="sd">            - :py:mod:`catalyst.core.experiment.IExperiment`</span>
+<span class="sd">            - :py:mod:`catalyst.core.runner.IRunner`</span>
 <span class="sd">            - :py:mod:`catalyst.core.callback.Callback`</span>
 
 <span class="sd">    Abstraction, please check out the implementations:</span>
@@ -397,75 +396,75 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">order</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="n">scope</span></div>
 
-<div class="viewcode-block" id="Callback.on_stage_start"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback.on_stage_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;State&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Callback.on_stage_start"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback.on_stage_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler for stage start.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            state (&quot;State&quot;): State instance.</span>
+<span class="sd">            runner (&quot;IRunner&quot;): IRunner instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Callback.on_stage_end"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback.on_stage_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;State&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Callback.on_stage_end"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback.on_stage_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler for stage end.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            state (&quot;State&quot;): State instance.</span>
+<span class="sd">            runner (&quot;IRunner&quot;): IRunner instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Callback.on_epoch_start"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback.on_epoch_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;State&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Callback.on_epoch_start"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback.on_epoch_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler for epoch start.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            state (&quot;State&quot;): State instance.</span>
+<span class="sd">            runner (&quot;IRunner&quot;): IRunner instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Callback.on_epoch_end"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback.on_epoch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;State&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Callback.on_epoch_end"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback.on_epoch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler for epoch end.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            state (&quot;State&quot;): State instance.</span>
+<span class="sd">            runner (&quot;IRunner&quot;): IRunner instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Callback.on_loader_start"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback.on_loader_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;State&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Callback.on_loader_start"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback.on_loader_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler for loader start.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            state (&quot;State&quot;): State instance.</span>
+<span class="sd">            runner (&quot;IRunner&quot;): IRunner instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Callback.on_loader_end"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback.on_loader_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;State&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Callback.on_loader_end"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback.on_loader_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler for loader end.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            state (&quot;State&quot;): State instance.</span>
+<span class="sd">            runner (&quot;IRunner&quot;): IRunner instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Callback.on_batch_start"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback.on_batch_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;State&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Callback.on_batch_start"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback.on_batch_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler for batch start.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            state (&quot;State&quot;): State instance.</span>
+<span class="sd">            runner (&quot;IRunner&quot;): IRunner instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Callback.on_batch_end"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback.on_batch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;State&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Callback.on_batch_end"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback.on_batch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler for batch end.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            state (&quot;State&quot;): State instance.</span>
+<span class="sd">            runner (&quot;IRunner&quot;): IRunner instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="Callback.on_exception"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback.on_exception">[docs]</a>    <span class="k">def</span> <span class="nf">on_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="s2">&quot;State&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="Callback.on_exception"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.Callback.on_exception">[docs]</a>    <span class="k">def</span> <span class="nf">on_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler for exception case.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            state (&quot;State&quot;): State instance.</span>
+<span class="sd">            runner (&quot;IRunner&quot;): IRunner instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div></div>
 

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.core.experiment &mdash; Catalyst 20.05.1 documentation</title>
+  <title>catalyst.core.experiment &mdash; Catalyst 20.06 documentation</title>
   
 
   
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  20.05
+                  20.06
                 </div>
               
             
@@ -265,12 +265,11 @@
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>
 
+<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span>
 <span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
 
-<span class="kn">from</span> <span class="nn">.callback</span> <span class="kn">import</span> <span class="n">Callback</span>
 
-
-<div class="viewcode-block" id="_Experiment"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment._Experiment">[docs]</a><span class="k">class</span> <span class="nc">_Experiment</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="IExperiment"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment.IExperiment">[docs]</a><span class="k">class</span> <span class="nc">IExperiment</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An abstraction that contains information about the experiment –</span>
 <span class="sd">    a model, a criterion, an optimizer, a scheduler, and their hyperparameters.</span>
@@ -280,9 +279,8 @@
 <span class="sd">    .. note::</span>
 <span class="sd">        To learn more about Catalyst Core concepts, please check out</span>
 
-<span class="sd">            - :py:mod:`catalyst.core.experiment._Experiment`</span>
-<span class="sd">            - :py:mod:`catalyst.core.runner._Runner`</span>
-<span class="sd">            - :py:mod:`catalyst.core.state.State`</span>
+<span class="sd">            - :py:mod:`catalyst.core.experiment.IExperiment`</span>
+<span class="sd">            - :py:mod:`catalyst.core.runner.IRunner`</span>
 <span class="sd">            - :py:mod:`catalyst.core.callback.Callback`</span>
 
 <span class="sd">    Abstraction, please check out the implementations:</span>
@@ -299,7 +297,7 @@
 <span class="sd">        Experiment&#39;s initial seed, used to setup `global seed`</span>
 <span class="sd">        at the beginning of each stage.</span>
 <span class="sd">        Additionally, Catalyst Runner setups</span>
-<span class="sd">        `experiment.initial_seed + state.global_epoch + 1`</span>
+<span class="sd">        `experiment.initial_seed + runner.global_epoch + 1`</span>
 <span class="sd">        as `global seed` each epoch.</span>
 <span class="sd">        Used for experiment reproducibility.</span>
 
@@ -359,24 +357,22 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
-<div class="viewcode-block" id="_Experiment.get_state_params"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment._Experiment.get_state_params">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">get_state_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Returns State parameters for a given stage.</span>
-
-<span class="sd">        To learn more about State, please follow</span>
-<span class="sd">        :py:mod:`catalyst.core.state.State`</span>
-<span class="sd">        documentation.</span>
+<div class="viewcode-block" id="IExperiment.get_stage_params"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment.IExperiment.get_stage_params">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_stage_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Returns extra stage parameters for a given stage.</span>
 
 <span class="sd">        Example::</span>
 
-<span class="sd">            &gt;&gt;&gt; experiment.get_state_params(stage=&quot;training&quot;)</span>
+<span class="sd">            &gt;&gt;&gt; experiment.get_stage_params(stage=&quot;training&quot;)</span>
 <span class="sd">            {</span>
 <span class="sd">                &quot;logdir&quot;: &quot;./logs/training&quot;,</span>
 <span class="sd">                &quot;num_epochs&quot;: 42,</span>
 <span class="sd">                &quot;valid_loader&quot;: &quot;valid&quot;,</span>
 <span class="sd">                &quot;main_metric&quot;: &quot;loss&quot;,</span>
 <span class="sd">                &quot;minimize_metric&quot;: True,</span>
-<span class="sd">                &quot;checkpoint_data&quot;: {&quot;comment&quot;: &quot;we are going to make it!&quot;}</span>
+<span class="sd">                &quot;checkpoint_data&quot;: {</span>
+<span class="sd">                    &quot;comment&quot;: &quot;break the cycle - use the Catalyst&quot;</span>
+<span class="sd">                }</span>
 <span class="sd">            }</span>
 
 <span class="sd">        Args:</span>
@@ -384,11 +380,11 @@
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            dict: State parameters for a given stage.</span>
+<span class="sd">            dict: parameters for a given stage.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="_Experiment.get_model"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment._Experiment.get_model">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="IExperiment.get_model"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment.IExperiment.get_model">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the model for a given stage.</span>
 
@@ -411,7 +407,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="_Experiment.get_criterion"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment._Experiment.get_criterion">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="IExperiment.get_criterion"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment.IExperiment.get_criterion">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Criterion</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the criterion for a given stage.</span>
 
@@ -430,7 +426,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="_Experiment.get_optimizer"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment._Experiment.get_optimizer">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="IExperiment.get_optimizer"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment.IExperiment.get_optimizer">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_optimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optimizer</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the optimizer for a given stage and model.</span>
 
@@ -449,7 +445,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="_Experiment.get_scheduler"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment._Experiment.get_scheduler">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="IExperiment.get_scheduler"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment.IExperiment.get_scheduler">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Scheduler</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the scheduler for a given stage and optimizer.</span>
 
@@ -467,33 +463,37 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="_Experiment.get_experiment_components"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment._Experiment.get_experiment_components">[docs]</a>    <span class="k">def</span> <span class="nf">get_experiment_components</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Criterion</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span><span class="p">]:</span>
+<div class="viewcode-block" id="IExperiment.get_experiment_components"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment.IExperiment.get_experiment_components">[docs]</a>    <span class="k">def</span> <span class="nf">get_experiment_components</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Model</span><span class="p">,</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the tuple containing criterion, optimizer and scheduler by</span>
 <span class="sd">        giving model and stage.</span>
 
 <span class="sd">        Aggregation method, based on,</span>
 
-<span class="sd">        - :py:mod:`catalyst.core.experiment._Experiment.get_criterion`</span>
-<span class="sd">        - :py:mod:`catalyst.core.experiment._Experiment.get_optimizer`</span>
-<span class="sd">        - :py:mod:`catalyst.core.experiment._Experiment.get_scheduler`</span>
+<span class="sd">        - :py:mod:`catalyst.core.experiment.IExperiment.get_model`</span>
+<span class="sd">        - :py:mod:`catalyst.core.experiment.IExperiment.get_criterion`</span>
+<span class="sd">        - :py:mod:`catalyst.core.experiment.IExperiment.get_optimizer`</span>
+<span class="sd">        - :py:mod:`catalyst.core.experiment.IExperiment.get_scheduler`</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model (Model): model to optimize with stage optimizer</span>
 <span class="sd">            stage (str): stage name of interest,</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
+<span class="sd">            model (Model): model to optimize with stage optimizer</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            tuple: criterion, optimizer, scheduler for a given stage and model</span>
+<span class="sd">            tuple: model, criterion, optimizer, scheduler</span>
+<span class="sd">                for a given stage and model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
         <span class="n">criterion</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_criterion</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
         <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_optimizer</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
         <span class="n">scheduler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_scheduler</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span></div>
+        <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span></div>
 
-<div class="viewcode-block" id="_Experiment.get_transforms"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment._Experiment.get_transforms">[docs]</a>    <span class="k">def</span> <span class="nf">get_transforms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="IExperiment.get_transforms"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment.IExperiment.get_transforms">[docs]</a>    <span class="k">def</span> <span class="nf">get_transforms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the data transforms for a given stage and dataset.</span>
 
 <span class="sd">        Args:</span>
@@ -504,7 +504,7 @@
 
 <span class="sd">        .. note::</span>
 <span class="sd">            For datasets/loaders nameing please follow</span>
-<span class="sd">            :py:mod:`catalyst.core.state.State` documentation.</span>
+<span class="sd">            :py:mod:`catalyst.core.runner` documentation.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Data transformations to use for specified dataset.</span>
@@ -512,7 +512,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="_Experiment.get_datasets"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment._Experiment.get_datasets">[docs]</a>    <span class="k">def</span> <span class="nf">get_datasets</span><span class="p">(</span>
+<div class="viewcode-block" id="IExperiment.get_datasets"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment.IExperiment.get_datasets">[docs]</a>    <span class="k">def</span> <span class="nf">get_datasets</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Dataset]&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the datasets for a given stage and epoch.</span>
@@ -556,7 +556,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="_Experiment.get_loaders"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment._Experiment.get_loaders">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="IExperiment.get_loaders"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment.IExperiment.get_loaders">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">:</span>
@@ -564,7 +564,7 @@
 
 <span class="sd">        .. note::</span>
 <span class="sd">            Wrapper for</span>
-<span class="sd">            :py:mod:`catalyst.core.experiment._Experiment.get_datasets`.</span>
+<span class="sd">            :py:mod:`catalyst.core.experiment.IExperiment.get_datasets`.</span>
 <span class="sd">            For most of your experiments you need to rewrite `get_datasets`</span>
 <span class="sd">            method only.</span>
 
@@ -582,7 +582,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="_Experiment.get_callbacks"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment._Experiment.get_callbacks">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="IExperiment.get_callbacks"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment.IExperiment.get_callbacks">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Callback]&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns callbacks for a given stage.</span>
 
@@ -607,15 +607,14 @@
 <span class="sd">        .. note::</span>
 <span class="sd">            To learn more about Catalyst Core concepts, please check out</span>
 
-<span class="sd">                - :py:mod:`catalyst.core.experiment._Experiment`</span>
-<span class="sd">                - :py:mod:`catalyst.core.runner._Runner`</span>
-<span class="sd">                - :py:mod:`catalyst.core.state.State`</span>
+<span class="sd">                - :py:mod:`catalyst.core.experiment.IExperiment`</span>
+<span class="sd">                - :py:mod:`catalyst.core.runner.IRunner`</span>
 <span class="sd">                - :py:mod:`catalyst.core.callback.Callback`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;_Experiment&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;IExperiment&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>torch.optim.lr_scheduler &mdash; Catalyst 20.05.1 documentation</title>
+  <title>torch.optim.lr_scheduler &mdash; Catalyst 20.06 documentation</title>
   
 
   
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  20.05
+                  20.06
                 </div>
               
             
@@ -279,6 +279,7 @@
     <span class="s2">&quot;https://github.com/pytorch/pytorch/issues/new/choose.&quot;</span>
 <span class="p">)</span>
 
+<span class="n">SAVE_STATE_WARNING</span> <span class="o">=</span> <span class="s2">&quot;Please also save or load the state of the optimzer when saving or loading the scheduler.&quot;</span>
 
 <span class="k">class</span> <span class="nc">_LRScheduler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
@@ -393,14 +394,13 @@
 
             <span class="k">def</span> <span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">type</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">o</span><span class="o">.</span><span class="n">_get_lr_called_within_step</span> <span class="o">=</span> <span class="kc">False</span>
-                <span class="k">return</span> <span class="bp">self</span>
 
         <span class="k">with</span> <span class="n">_enable_get_lr_call</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">epoch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_lr</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">EPOCH_DEPRECATION_WARNING</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">EPOCH_DEPRECATION_WARNING</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span> <span class="o">=</span> <span class="n">epoch</span>
                 <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_get_closed_form_lr&quot;</span><span class="p">):</span>
                     <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_closed_form_lr</span><span class="p">()</span>
@@ -456,6 +456,8 @@
 <span class="sd">        The learning rate lambda functions will only be saved if they are callable objects</span>
 <span class="sd">        and not if they are functions or lambdas.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">SAVE_STATE_WARNING</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
         <span class="n">state_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;optimizer&#39;</span><span class="p">,</span> <span class="s1">&#39;lr_lambdas&#39;</span><span class="p">)}</span>
         <span class="n">state_dict</span><span class="p">[</span><span class="s1">&#39;lr_lambdas&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lr_lambdas</span><span class="p">)</span>
 
@@ -472,8 +474,13 @@
 <span class="sd">            state_dict (dict): scheduler state. Should be an object returned</span>
 <span class="sd">                from a call to :meth:`state_dict`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">SAVE_STATE_WARNING</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
         <span class="n">lr_lambdas</span> <span class="o">=</span> <span class="n">state_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;lr_lambdas&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span>
+        <span class="c1"># Restore state_dict keys in order to prevent side effects</span>
+        <span class="c1"># https://github.com/pytorch/pytorch/issues/32756</span>
+        <span class="n">state_dict</span><span class="p">[</span><span class="s1">&#39;lr_lambdas&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr_lambdas</span>
 
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">fn</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lr_lambdas</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -500,9 +507,8 @@
 <span class="sd">        last_epoch (int): The index of last epoch. Default: -1.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; # Assuming optimizer has two groups.</span>
 <span class="sd">        &gt;&gt;&gt; lmbda = lambda epoch: 0.95</span>
-<span class="sd">        &gt;&gt;&gt; scheduler = LambdaLR(optimizer, lr_lambda=lmbda)</span>
+<span class="sd">        &gt;&gt;&gt; scheduler = MultiplicativeLR(optimizer, lr_lambda=lmbda)</span>
 <span class="sd">        &gt;&gt;&gt; for epoch in range(100):</span>
 <span class="sd">        &gt;&gt;&gt;     train(...)</span>
 <span class="sd">        &gt;&gt;&gt;     validate(...)</span>
@@ -548,6 +554,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lr_lambdas</span> <span class="o">=</span> <span class="n">state_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;lr_lambdas&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state_dict</span><span class="p">)</span>
+        <span class="c1"># Restore state_dict keys in order to prevent side effects</span>
+        <span class="c1"># https://github.com/pytorch/pytorch/issues/32756</span>
+        <span class="n">state_dict</span><span class="p">[</span><span class="s1">&#39;lr_lambdas&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr_lambdas</span>
 
         <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">fn</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lr_lambdas</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -556,13 +565,13 @@
     <span class="k">def</span> <span class="nf">get_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_lr_called_within_step</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;To get the last learning rate computed by the scheduler, &quot;</span>
-                          <span class="s2">&quot;please use `get_last_lr()`.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+                          <span class="s2">&quot;please use `get_last_lr()`.&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">group</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">lmbda</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span><span class="p">)</span>
                     <span class="k">for</span> <span class="n">lmbda</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lr_lambdas</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">)]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="n">base_lr</span> <span class="k">for</span> <span class="n">base_lr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_lrs</span><span class="p">]</span>
+            <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_lrs</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">StepLR</span><span class="p">(</span><span class="n">_LRScheduler</span><span class="p">):</span>
@@ -599,7 +608,7 @@
     <span class="k">def</span> <span class="nf">get_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_lr_called_within_step</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;To get the last learning rate computed by the scheduler, &quot;</span>
-                          <span class="s2">&quot;please use `get_last_lr()`.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+                          <span class="s2">&quot;please use `get_last_lr()`.&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_size</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">group</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">]</span>
@@ -644,7 +653,7 @@
     <span class="k">def</span> <span class="nf">get_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_lr_called_within_step</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;To get the last learning rate computed by the scheduler, &quot;</span>
-                          <span class="s2">&quot;please use `get_last_lr()`.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+                          <span class="s2">&quot;please use `get_last_lr()`.&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">milestones</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[</span><span class="n">group</span><span class="p">[</span><span class="s1">&#39;lr&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">]</span>
@@ -652,7 +661,8 @@
                 <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="nf">_get_closed_form_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">base_lr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">**</span> <span class="n">bisect_right</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">milestones</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span><span class="p">)</span>
+        <span class="n">milestones</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">milestones</span><span class="o">.</span><span class="n">elements</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">base_lr</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">**</span> <span class="n">bisect_right</span><span class="p">(</span><span class="n">milestones</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">base_lr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_lrs</span><span class="p">]</span>
 
 
@@ -673,7 +683,7 @@
     <span class="k">def</span> <span class="nf">get_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_lr_called_within_step</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;To get the last learning rate computed by the scheduler, &quot;</span>
-                          <span class="s2">&quot;please use `get_last_lr()`.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+                          <span class="s2">&quot;please use `get_last_lr()`.&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_lrs</span>
@@ -691,12 +701,14 @@
 <span class="sd">    :math:`T_{cur}` is the number of epochs since the last restart in SGDR:</span>
 
 <span class="sd">    .. math::</span>
-<span class="sd">        \eta_t = \eta_{min} + \frac{1}{2}(\eta_{max} - \eta_{min})\left(1 +</span>
-<span class="sd">        \cos\left(\frac{T_{cur}}{T_{max}}\pi\right)\right)</span>
-<span class="sd">        T_{cur} \neq (2k+1)T_{max};\\</span>
-<span class="sd">        \eta_{t+1} = \eta_{t} + (\eta_{max} - \eta_{min})\frac{1 -</span>
-<span class="sd">        \cos(\frac{1}{T_{max}}\pi)}{2},</span>
-<span class="sd">        T_{cur} = (2k+1)T_{max}.\\</span>
+<span class="sd">        \begin{aligned}</span>
+<span class="sd">            \eta_t &amp; = \eta_{min} + \frac{1}{2}(\eta_{max} - \eta_{min})\left(1</span>
+<span class="sd">            + \cos\left(\frac{T_{cur}}{T_{max}}\pi\right)\right),</span>
+<span class="sd">            &amp; T_{cur} \neq (2k+1)T_{max}; \\</span>
+<span class="sd">            \eta_{t+1} &amp; = \eta_{t} + \frac{1}{2}(\eta_{max} - \eta_{min})</span>
+<span class="sd">            \left(1 - \cos\left(\frac{1}{T_{max}}\pi\right)\right),</span>
+<span class="sd">            &amp; T_{cur} = (2k+1)T_{max}.</span>
+<span class="sd">        \end{aligned}</span>
 
 <span class="sd">    When last_epoch=-1, sets initial lr as lr. Notice that because the schedule</span>
 <span class="sd">    is defined recursively, the learning rate can be simultaneously modified</span>
@@ -729,7 +741,7 @@
     <span class="k">def</span> <span class="nf">get_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_lr_called_within_step</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;To get the last learning rate computed by the scheduler, &quot;</span>
-                          <span class="s2">&quot;please use `get_last_lr()`.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+                          <span class="s2">&quot;please use `get_last_lr()`.&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_lrs</span>
@@ -848,7 +860,7 @@
         <span class="k">if</span> <span class="n">epoch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">epoch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">EPOCH_DEPRECATION_WARNING</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">EPOCH_DEPRECATION_WARNING</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span> <span class="o">=</span> <span class="n">epoch</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_better</span><span class="p">(</span><span class="n">current</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">best</span><span class="p">):</span>
@@ -1110,7 +1122,7 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_lr_called_within_step</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;To get the last learning rate computed by the scheduler, &quot;</span>
-                          <span class="s2">&quot;please use `get_last_lr()`.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+                          <span class="s2">&quot;please use `get_last_lr()`.&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
 
         <span class="n">cycle</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_size</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_size</span> <span class="o">-</span> <span class="n">cycle</span>
@@ -1187,7 +1199,7 @@
     <span class="k">def</span> <span class="nf">get_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_lr_called_within_step</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;To get the last learning rate computed by the scheduler, &quot;</span>
-                          <span class="s2">&quot;please use `get_last_lr()`.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+                          <span class="s2">&quot;please use `get_last_lr()`.&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">eta_min</span> <span class="o">+</span> <span class="p">(</span><span class="n">base_lr</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">eta_min</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_cur</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">T_i</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span>
                 <span class="k">for</span> <span class="n">base_lr</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_lrs</span><span class="p">]</span>
@@ -1201,12 +1213,12 @@
 <span class="sd">            &gt;&gt;&gt; for epoch in range(20):</span>
 <span class="sd">            &gt;&gt;&gt;     for i, sample in enumerate(dataloader):</span>
 <span class="sd">            &gt;&gt;&gt;         inputs, labels = sample[&#39;inputs&#39;], sample[&#39;labels&#39;]</span>
-<span class="sd">            &gt;&gt;&gt;         scheduler.step(epoch + i / iters)</span>
 <span class="sd">            &gt;&gt;&gt;         optimizer.zero_grad()</span>
 <span class="sd">            &gt;&gt;&gt;         outputs = net(inputs)</span>
 <span class="sd">            &gt;&gt;&gt;         loss = criterion(outputs, labels)</span>
 <span class="sd">            &gt;&gt;&gt;         loss.backward()</span>
 <span class="sd">            &gt;&gt;&gt;         optimizer.step()</span>
+<span class="sd">            &gt;&gt;&gt;         scheduler.step(epoch + i / iters)</span>
 
 <span class="sd">        This function can be called in an interleaved way.</span>
 
@@ -1293,7 +1305,7 @@
 <span class="sd">        max_lr (float or list): Upper learning rate boundaries in the cycle</span>
 <span class="sd">            for each parameter group.</span>
 <span class="sd">        total_steps (int): The total number of steps in the cycle. Note that</span>
-<span class="sd">            if a value is provided here, then it must be inferred by providing</span>
+<span class="sd">            if a value is not provided here, then it must be inferred by providing</span>
 <span class="sd">            a value for epochs and steps_per_epoch.</span>
 <span class="sd">            Default: None</span>
 <span class="sd">        epochs (int): The number of epochs to train for. This is used along</span>
@@ -1451,7 +1463,7 @@
     <span class="k">def</span> <span class="nf">get_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_lr_called_within_step</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;To get the last learning rate computed by the scheduler, &quot;</span>
-                          <span class="s2">&quot;please use `get_last_lr()`.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">)</span>
+                          <span class="s2">&quot;please use `get_last_lr()`.&quot;</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
 
         <span class="n">lrs</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">step_num</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_epoch</span>

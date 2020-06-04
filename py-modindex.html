@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Python Module Index &mdash; Catalyst 20.05.1 documentation</title>
+  <title>Python Module Index &mdash; Catalyst 20.06 documentation</title>
   
 
   
@@ -150,7 +150,7 @@
               
               
                 <div class="version">
-                  20.05
+                  20.06
                 </div>
               
             
@@ -338,7 +338,7 @@
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="api/contrib.html#module-catalyst.contrib.dl.callbacks.alchemy"><code class="xref">catalyst.contrib.dl.callbacks.alchemy</code></a></td><td>
+       <a href="api/contrib.html#module-catalyst.contrib.dl.callbacks.alchemy_logger"><code class="xref">catalyst.contrib.dl.callbacks.alchemy_logger</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -348,27 +348,32 @@
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="api/contrib.html#module-catalyst.contrib.dl.callbacks.inference"><code class="xref">catalyst.contrib.dl.callbacks.inference</code></a></td><td>
+       <a href="api/contrib.html#module-catalyst.contrib.dl.callbacks.gradnorm_logger"><code class="xref">catalyst.contrib.dl.callbacks.gradnorm_logger</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="api/contrib.html#module-catalyst.contrib.dl.callbacks.knn"><code class="xref">catalyst.contrib.dl.callbacks.knn</code></a></td><td>
+       <a href="api/contrib.html#module-catalyst.contrib.dl.callbacks.knn_metric"><code class="xref">catalyst.contrib.dl.callbacks.knn_metric</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="api/contrib.html#module-catalyst.contrib.dl.callbacks.neptune"><code class="xref">catalyst.contrib.dl.callbacks.neptune</code></a></td><td>
+       <a href="api/contrib.html#module-catalyst.contrib.dl.callbacks.mask_inference"><code class="xref">catalyst.contrib.dl.callbacks.mask_inference</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="api/contrib.html#module-catalyst.contrib.dl.callbacks.optimizer"><code class="xref">catalyst.contrib.dl.callbacks.optimizer</code></a></td><td>
+       <a href="api/contrib.html#module-catalyst.contrib.dl.callbacks.neptune_logger"><code class="xref">catalyst.contrib.dl.callbacks.neptune_logger</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="api/contrib.html#module-catalyst.contrib.dl.callbacks.periodic_loader"><code class="xref">catalyst.contrib.dl.callbacks.periodic_loader</code></a></td><td>
+       <a href="api/contrib.html#module-catalyst.contrib.dl.callbacks.periodic_loader_callback"><code class="xref">catalyst.contrib.dl.callbacks.periodic_loader_callback</code></a></td><td>
+       <em></em></td></tr>
+     <tr class="cg-1">
+       <td></td>
+       <td>&#160;&#160;&#160;
+       <a href="api/contrib.html#module-catalyst.contrib.dl.callbacks.perplexity_metric"><code class="xref">catalyst.contrib.dl.callbacks.perplexity_metric</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -378,7 +383,7 @@
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="api/contrib.html#module-catalyst.contrib.dl.callbacks.trace"><code class="xref">catalyst.contrib.dl.callbacks.trace</code></a></td><td>
+       <a href="api/contrib.html#module-catalyst.contrib.dl.callbacks.tracer_callback"><code class="xref">catalyst.contrib.dl.callbacks.tracer_callback</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -388,7 +393,7 @@
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="api/contrib.html#module-catalyst.contrib.dl.callbacks.wandb"><code class="xref">catalyst.contrib.dl.callbacks.wandb</code></a></td><td>
+       <a href="api/contrib.html#module-catalyst.contrib.dl.callbacks.wandb_logger"><code class="xref">catalyst.contrib.dl.callbacks.wandb_logger</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -683,11 +688,6 @@
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="api/core.html#module-catalyst.core.state"><code class="xref">catalyst.core.state</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
        <a href="api/core.html#module-catalyst.core.utils"><code class="xref">catalyst.core.utils</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
@@ -798,7 +798,7 @@
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="api/dl.html#module-catalyst.dl.experiment.core"><code class="xref">catalyst.dl.experiment.core</code></a></td><td>
+       <a href="api/dl.html#module-catalyst.dl.experiment.experiment"><code class="xref">catalyst.dl.experiment.experiment</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>
@@ -818,7 +818,7 @@
      <tr class="cg-1">
        <td></td>
        <td>&#160;&#160;&#160;
-       <a href="api/dl.html#module-catalyst.dl.runner.core"><code class="xref">catalyst.dl.runner.core</code></a></td><td>
+       <a href="api/dl.html#module-catalyst.dl.runner.runner"><code class="xref">catalyst.dl.runner.runner</code></a></td><td>
        <em></em></td></tr>
      <tr class="cg-1">
        <td></td>

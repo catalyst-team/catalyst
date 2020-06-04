@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.experiment.supervised &mdash; Catalyst 20.05.1 documentation</title>
+  <title>catalyst.dl.experiment.supervised &mdash; Catalyst 20.06 documentation</title>
   
 
   
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  20.05
+                  20.06
                 </div>
               
             
@@ -270,7 +270,7 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
 
-<span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">Experiment</span>
+<span class="kn">from</span> <span class="nn">.experiment</span> <span class="kn">import</span> <span class="n">Experiment</span>
 
 
 <div class="viewcode-block" id="SupervisedExperiment"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.supervised.SupervisedExperiment">[docs]</a><span class="k">class</span> <span class="nc">SupervisedExperiment</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
@@ -293,9 +293,9 @@
 <span class="sd">            your model/criterion/optimizer/metrics.</span>
 <span class="sd">        ConsoleLogger:</span>
 <span class="sd">            standard Catalyst logger,</span>
-<span class="sd">            translates ``state.*_metrics`` to console and text file</span>
+<span class="sd">            translates ``runner.*_metrics`` to console and text file</span>
 <span class="sd">        TensorboardLogger:</span>
-<span class="sd">            will write ``state.*_metrics`` to tensorboard</span>
+<span class="sd">            will write ``runner.*_metrics`` to tensorboard</span>
 <span class="sd">        RaiseExceptionCallback:</span>
 <span class="sd">            will raise exception if needed</span>
 <span class="sd">    &quot;&quot;&quot;</span>

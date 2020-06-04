@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Data &mdash; Catalyst 20.05.1 documentation</title>
+  <title>Data &mdash; Catalyst 20.06 documentation</title>
   
 
   
@@ -149,7 +149,7 @@
               
               
                 <div class="version">
-                  20.05
+                  20.06
                 </div>
               
             
@@ -605,7 +605,7 @@ transfer it to data, needed by your network
 
 <dl class="class">
 <dt id="catalyst.data.dataset.PathsDataset">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.dataset.</code><code class="sig-name descname">PathsDataset</code><span class="sig-paren">(</span><em class="sig-param">filenames: List[Union[str, pathlib.Path]], open_fn: Callable[dict, dict], label_fn: Callable[Union[str, pathlib.Path], Any], **list_dataset_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#PathsDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.PathsDataset" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.dataset.</code><code class="sig-name descname">PathsDataset</code><span class="sig-paren">(</span><em class="sig-param">filenames: List[Union[str, pathlib.Path]], open_fn: Callable[[dict], dict], label_fn: Callable[[Union[str, pathlib.Path]], Any], **list_dataset_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#PathsDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.PathsDataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.data.dataset.ListDataset" title="catalyst.data.dataset.ListDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.data.dataset.ListDataset</span></code></a></p>
 <p>Dataset that derives features and targets from samples filesystem paths.</p>
 <p class="rubric">Examples</p>
@@ -619,7 +619,7 @@ transfer it to data, needed by your network
 </div>
 <dl class="method">
 <dt id="catalyst.data.dataset.PathsDataset.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">filenames: List[Union[str, pathlib.Path]], open_fn: Callable[dict, dict], label_fn: Callable[Union[str, pathlib.Path], Any], **list_dataset_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#PathsDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.PathsDataset.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">filenames: List[Union[str, pathlib.Path]], open_fn: Callable[[dict], dict], label_fn: Callable[[Union[str, pathlib.Path]], Any], **list_dataset_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#PathsDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.PathsDataset.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

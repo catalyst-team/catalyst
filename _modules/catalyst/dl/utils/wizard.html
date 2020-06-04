@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.utils.wizard &mdash; Catalyst 20.05.1 documentation</title>
+  <title>catalyst.dl.utils.wizard &mdash; Catalyst 20.06 documentation</title>
   
 
   
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  20.05
+                  20.06
                 </div>
               
             
@@ -479,14 +479,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__res</span><span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="n">is_yaml</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">stage</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">_params&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">opts</span>
 
-    <span class="k">def</span> <span class="nf">_state_params_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_stage_params_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Step #5.b</span>
 
-<span class="sd">        ``state_params`` of Experiment.</span>
+<span class="sd">        ``stage_params`` of Experiment.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__sep</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;state_params&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skip_override_stages_common</span><span class="p">(</span><span class="s2">&quot;state_params&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__sep</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;stage_params&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skip_override_stages_common</span><span class="p">(</span><span class="s2">&quot;stage_params&quot;</span><span class="p">):</span>
             <span class="k">return</span>
         <span class="n">opts</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="n">opts</span><span class="p">[</span><span class="s2">&quot;num_epochs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
@@ -504,7 +504,7 @@
         <span class="p">)</span>
         <span class="n">opts</span><span class="p">[</span><span class="s2">&quot;minimize_metric&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">minimize</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__res</span><span class="p">(</span><span class="n">opts</span><span class="p">[</span><span class="s2">&quot;minimize_metric&quot;</span><span class="p">])</span>
-        <span class="n">stage</span><span class="p">[</span><span class="s2">&quot;state_params&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">opts</span>
+        <span class="n">stage</span><span class="p">[</span><span class="s2">&quot;stage_params&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">opts</span>
 
     <span class="k">def</span> <span class="nf">_data_params_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -536,7 +536,7 @@
 <span class="sd">        method to gather all we need to know about the stage and its settings</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_params_step</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_state_params_step</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stage_params_step</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_basic_params_step</span><span class="p">(</span><span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="n">stage</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_basic_params_step</span><span class="p">(</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="n">stage</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_basic_params_step</span><span class="p">(</span><span class="s2">&quot;scheduler&quot;</span><span class="p">,</span> <span class="n">stage</span><span class="p">,</span> <span class="n">optional</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>

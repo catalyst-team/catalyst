@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Tools and Utilities &mdash; Catalyst 20.05.1 documentation</title>
+  <title>Tools and Utilities &mdash; Catalyst 20.06 documentation</title>
   
 
   
@@ -149,7 +149,7 @@
               
               
                 <div class="version">
-                  20.05
+                  20.06
                 </div>
               
             
@@ -324,14 +324,14 @@
 <div class="section" id="module-catalyst.tools.frozen_class">
 <span id="frozen-class"></span><h3><a class="toc-backref" href="#id2">Frozen Class</a><a class="headerlink" href="#module-catalyst.tools.frozen_class" title="Permalink to this headline">¶</a></h3>
 <p>Frozen class.
-Example of usage can be found in <a class="reference internal" href="core.html#catalyst.core.state.State" title="catalyst.core.state.State"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.state.State</span></code></a>.</p>
+Example of usage can be found in <a class="reference internal" href="core.html#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.runner.IRunner</span></code></a>.</p>
 <dl class="class">
 <dt id="catalyst.tools.frozen_class.FrozenClass">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.frozen_class.</code><code class="sig-name descname">FrozenClass</code><a class="reference internal" href="../_modules/catalyst/tools/frozen_class.html#FrozenClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.frozen_class.FrozenClass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class which prohibit <code class="docutils literal notranslate"><span class="pre">__setattr__</span></code> on existing attributes.</p>
 <p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">State</span><span class="p">(</span><span class="n">FrozenClass</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">IRunner</span><span class="p">(</span><span class="n">FrozenClass</span><span class="p">):</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -343,12 +343,12 @@ Example of usage can be found in <a class="reference internal" href="core.html#c
 .. todo:: Representative docstring for this module</p>
 <dl class="class">
 <dt id="catalyst.tools.registry.Registry">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.registry.</code><code class="sig-name descname">Registry</code><span class="sig-paren">(</span><em class="sig-param">default_name_key: str, default_meta_factory: Callable[[Union[Type, Callable[..., Any]], Tuple, Mapping], Any] = &lt;function _default_meta_factory&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.registry.</code><code class="sig-name descname">Registry</code><span class="sig-paren">(</span><em class="sig-param">default_name_key: str, default_meta_factory: Callable[[Union[Type, Callable[[...], Any]], Tuple, Mapping], Any] = &lt;function _default_meta_factory&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableMapping</span></code></p>
 <p>Universal class allowing to add and access various factories by name.</p>
 <dl class="method">
 <dt id="catalyst.tools.registry.Registry.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">default_name_key: str, default_meta_factory: Callable[[Union[Type, Callable[..., Any]], Tuple, Mapping], Any] = &lt;function _default_meta_factory&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">default_name_key: str, default_meta_factory: Callable[[Union[Type, Callable[[...], Any]], Tuple, Mapping], Any] = &lt;function _default_meta_factory&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -363,7 +363,7 @@ that calls factory. Optional. Default just calls factory.</p></li>
 
 <dl class="method">
 <dt id="catalyst.tools.registry.Registry.add">
-<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.add" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -414,7 +414,7 @@ as aliases.</p></li>
 
 <dl class="method">
 <dt id="catalyst.tools.registry.Registry.get">
-<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">name: str</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any], None]<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">name: str</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any], None]<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves factory, without creating any objects with it
 or raises error.</p>
 <dl class="field-list simple">
@@ -451,7 +451,7 @@ If not provided, default is used.</p></li>
 
 <dl class="method">
 <dt id="catalyst.tools.registry.Registry.get_if_str">
-<code class="sig-name descname">get_if_str</code><span class="sig-paren">(</span><em class="sig-param">obj: Union[str, Type, Callable[..., Any]]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get_if_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get_if_str" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_if_str</code><span class="sig-paren">(</span><em class="sig-param">obj: Union[str, Type, Callable[[...], Any]]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get_if_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get_if_str" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns object from the registry if <code class="docutils literal notranslate"><span class="pre">obj</span></code> type is string.</p>
 </dd></dl>
 
@@ -478,7 +478,7 @@ If not provided, default is used</p></li>
 
 <dl class="method">
 <dt id="catalyst.tools.registry.Registry.late_add">
-<code class="sig-name descname">late_add</code><span class="sig-paren">(</span><em class="sig-param">cb: Callable[Registry, None]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.late_add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.late_add" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">late_add</code><span class="sig-paren">(</span><em class="sig-param">cb: Callable[[Registry], None]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.late_add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.late_add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows to prevent cycle imports by delaying some imports till next
 registry query.</p>
 <dl class="field-list simple">
@@ -654,6 +654,11 @@ from a call to <a class="reference internal" href="#catalyst.tools.typing.Optimi
 returns the loss. Optional for most optimizers.</p>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Unless otherwise specified, this function should not modify the
+<code class="docutils literal notranslate"><span class="pre">.grad</span></code> field of the parameters.</p>
+</div>
 </dd></dl>
 
 <dl class="method">
@@ -1590,7 +1595,7 @@ otherwise <code class="docutils literal notranslate"><span class="pre">-1</span>
 <span id="initialization"></span><h3><a class="toc-backref" href="#id23">Initialization</a><a class="headerlink" href="#module-catalyst.utils.initialization" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.utils.initialization.get_optimal_inner_init">
-<code class="sig-prename descclassname">catalyst.utils.initialization.</code><code class="sig-name descname">get_optimal_inner_init</code><span class="sig-paren">(</span><em class="sig-param">nonlinearity: torch.nn.modules.module.Module</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; Callable[torch.nn.modules.module.Module, None]<a class="reference internal" href="../_modules/catalyst/utils/initialization.html#get_optimal_inner_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.get_optimal_inner_init" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.initialization.</code><code class="sig-name descname">get_optimal_inner_init</code><span class="sig-paren">(</span><em class="sig-param">nonlinearity: torch.nn.modules.module.Module</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; Callable[[torch.nn.modules.module.Module], None]<a class="reference internal" href="../_modules/catalyst/utils/initialization.html#get_optimal_inner_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.get_optimal_inner_init" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create initializer for inner layers
 based on their activation function (nonlinearity).</p>
 <dl class="field-list simple">
@@ -1642,7 +1647,7 @@ decimal chars are not enough (metric value lower than 1e-4).</p>
 
 <dl class="function">
 <dt id="catalyst.utils.misc.get_fn_default_params">
-<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">get_fn_default_params</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[..., Any], exclude: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#get_fn_default_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.get_fn_default_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">get_fn_default_params</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[[...], Any], exclude: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#get_fn_default_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.get_fn_default_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return default parameters of Callable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1662,7 +1667,7 @@ decimal chars are not enough (metric value lower than 1e-4).</p>
 
 <dl class="function">
 <dt id="catalyst.utils.misc.get_fn_argsnames">
-<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">get_fn_argsnames</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[..., Any], exclude: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#get_fn_argsnames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.get_fn_argsnames" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">get_fn_argsnames</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[[...], Any], exclude: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#get_fn_argsnames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.get_fn_argsnames" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return parameter names of Callable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1722,7 +1727,7 @@ decimal chars are not enough (metric value lower than 1e-4).</p>
 
 <dl class="function">
 <dt id="catalyst.utils.misc.fn_ends_with_pass">
-<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">fn_ends_with_pass</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[..., Any]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#fn_ends_with_pass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.fn_ends_with_pass" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">fn_ends_with_pass</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[[...], Any]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#fn_ends_with_pass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.fn_ends_with_pass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check that function end with pass statement
 (probably does nothing in any way).
 Mainly used to filter callbacks with empty on_{event} methods.</p>

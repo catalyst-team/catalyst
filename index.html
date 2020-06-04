@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Catalyst &mdash; Catalyst 20.05.1 documentation</title>
+  <title>Catalyst &mdash; Catalyst 20.06 documentation</title>
   
 
   
@@ -148,7 +148,7 @@
               
               
                 <div class="version">
-                  20.05
+                  20.06
                 </div>
               
             
@@ -312,14 +312,14 @@ rather than write another regular train loop.</p>
 
         <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
         <span class="n">accuracy01</span><span class="p">,</span> <span class="n">accuracy03</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">batch_metrics</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_metrics</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="n">loss</span><span class="p">,</span> <span class="s2">&quot;accuracy01&quot;</span><span class="p">:</span> <span class="n">accuracy01</span><span class="p">,</span> <span class="s2">&quot;accuracy03&quot;</span><span class="p">:</span> <span class="n">accuracy03</span><span class="p">}</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">:</span>
             <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
 
 <span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span>
 <span class="c1"># model training</span>
@@ -385,7 +385,7 @@ pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 <div class="section" id="structure">
 <h3>Structure<a class="headerlink" href="#structure" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
-<li><p><strong>core</strong> - framework core with main abstractions - Experiment, Runner, Callback and State.</p></li>
+<li><p><strong>core</strong> - framework core with main abstractions - Experiment, Runner and Callback.</p></li>
 <li><p><strong>data</strong> - useful tools and scripts for data processing.</p></li>
 <li><p><strong>dl</strong> – runner for training and inference, all of the classic ML and CV/NLP/RecSys metrics and a variety of callbacks for training, validation and inference of neural networks.</p></li>
 <li><p><strong>tools</strong> - extra tools for Deep Learning research, class-based helpers.</p></li>
@@ -474,7 +474,6 @@ please first open an issue and discuss the feature with us.</p>
 <li class="toctree-l3"><a class="reference internal" href="api/core.html#experiment">Experiment</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/core.html#runner">Runner</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/core.html#module-catalyst.core.callback">Callback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/core.html#module-catalyst.core.state">State</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/core.html#callbacks">Callbacks</a><ul>
@@ -492,6 +491,10 @@ please first open an issue and discuss the feature with us.</p>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/core.html#module-catalyst.core.registry">Registry</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/core.html#module-catalyst.core.utils">Utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#legacy">Legacy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/core.html#id4">Runner</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/dl.html">DL</a><ul>
@@ -608,17 +611,18 @@ please first open an issue and discuss the feature with us.</p>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/contrib.html#dl">DL</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks">Callbacks</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.alchemy">AlchemyLogger</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.alchemy_logger">AlchemyLogger</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.cutmix_callback">CutmixCallback</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.inference">InferMaskCallback</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.knn">KNNMetricCallback</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.neptune">NeptuneLogger</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.optimizer">SaveModelGradsCallback</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.periodic_loader">PeriodicLoaderCallback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.gradnorm_logger">GradNormLogger</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.knn_metric">KNNMetricCallback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.mask_inference">InferMaskCallback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.neptune_logger">NeptuneLogger</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.periodic_loader_callback">PeriodicLoaderCallback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.perplexity_metric">PerplexityMetricCallback</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.telegram_logger">TelegramLogger</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.trace">TracerCallback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.tracer_callback">TracerCallback</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.visdom_logger">VisdomLogger</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.wandb">WandbLogger</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.wandb_logger">WandbLogger</a></li>
 </ul>
 </li>
 </ul>

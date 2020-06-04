@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.experiment.config &mdash; Catalyst 20.05.1 documentation</title>
+  <title>catalyst.dl.experiment.config &mdash; Catalyst 20.06 documentation</title>
   
 
   
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  20.05
+                  20.06
                 </div>
               
             
@@ -266,7 +266,7 @@
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>  <span class="c1"># noqa F401</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">_Experiment</span>
+<span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">IExperiment</span>
 <span class="kn">from</span> <span class="nn">catalyst.data</span> <span class="kn">import</span> <span class="n">Augmentor</span><span class="p">,</span> <span class="n">AugmentorCompose</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Callback</span><span class="p">,</span>
@@ -295,7 +295,7 @@
 <span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
 
 
-<div class="viewcode-block" id="ConfigExperiment"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment">[docs]</a><span class="k">class</span> <span class="nc">ConfigExperiment</span><span class="p">(</span><span class="n">_Experiment</span><span class="p">):</span>
+<div class="viewcode-block" id="ConfigExperiment"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment">[docs]</a><span class="k">class</span> <span class="nc">ConfigExperiment</span><span class="p">(</span><span class="n">IExperiment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Experiment created from a configuration file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -306,7 +306,7 @@
         <span class="s2">&quot;scheduler_params&quot;</span><span class="p">,</span>
         <span class="s2">&quot;data_params&quot;</span><span class="p">,</span>
         <span class="s2">&quot;transform_params&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;state_params&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;stage_params&quot;</span><span class="p">,</span>
         <span class="s2">&quot;callbacks_params&quot;</span><span class="p">,</span>
     <span class="p">]</span>
 
@@ -328,8 +328,11 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__prepare_logdir</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s2">&quot;stages&quot;</span><span class="p">][</span><span class="s2">&quot;state_params&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge_dicts</span><span class="p">(</span>
-            <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s2">&quot;stages&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_params&quot;</span><span class="p">,</span> <span class="p">{})),</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s2">&quot;stages&quot;</span><span class="p">][</span><span class="s2">&quot;stage_params&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge_dicts</span><span class="p">(</span>
+            <span class="n">deepcopy</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s2">&quot;stages&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="p">),</span>  <span class="c1"># saved for backward compatibility</span>
+            <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s2">&quot;stages&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stage_params&quot;</span><span class="p">,</span> <span class="p">{})),</span>
             <span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})),</span>
             <span class="p">{</span><span class="s2">&quot;logdir&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">},</span>
         <span class="p">)</span>
@@ -355,19 +358,36 @@
         <span class="n">stages_defaults</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">stages_config_out</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">STAGE_KEYWORDS</span><span class="p">:</span>
-            <span class="n">stages_defaults</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{}))</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;stage_params&quot;</span><span class="p">:</span>
+                <span class="c1"># backward compatibility</span>
+                <span class="n">stages_defaults</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge_dicts</span><span class="p">(</span>
+                    <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_params&quot;</span><span class="p">,</span> <span class="p">{})),</span>
+                    <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})),</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">stages_defaults</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{}))</span>
         <span class="k">for</span> <span class="n">stage</span> <span class="ow">in</span> <span class="n">stages_config</span><span class="p">:</span>
             <span class="k">if</span> <span class="p">(</span>
                 <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">STAGE_KEYWORDS</span>
+                <span class="ow">or</span> <span class="n">stage</span> <span class="o">==</span> <span class="s2">&quot;state_params&quot;</span>
                 <span class="ow">or</span> <span class="n">stages_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
             <span class="p">):</span>
                 <span class="k">continue</span>
             <span class="n">stages_config_out</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">STAGE_KEYWORDS</span><span class="p">:</span>
-                <span class="n">stages_config_out</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge_dicts</span><span class="p">(</span>
-                    <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})),</span>
-                    <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})),</span>
-                <span class="p">)</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;stage_params&quot;</span><span class="p">:</span>
+                    <span class="c1"># backward compatibility</span>
+                    <span class="n">stages_config_out</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge_dicts</span><span class="p">(</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_params&quot;</span><span class="p">,</span> <span class="p">{})),</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})),</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_params&quot;</span><span class="p">,</span> <span class="p">{})),</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})),</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">stages_config_out</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge_dicts</span><span class="p">(</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})),</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})),</span>
+                    <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">stages_config_out</span>
 
@@ -391,23 +411,6 @@
     <span class="k">def</span> <span class="nf">stages</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Experiment&#39;s stage names.&quot;&quot;&quot;</span>
         <span class="n">stages_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-
-        <span class="c1"># @TODO: return the feature</span>
-        <span class="c1"># # Change start `stages_keys` if resume data were founded</span>
-        <span class="c1"># state_params = self.get_state_params(stages_keys[0])</span>
-        <span class="c1"># resume, resume_dir = [</span>
-        <span class="c1">#     state_params.get(key, None) for key in [&quot;resume&quot;, &quot;resume_dir&quot;]</span>
-        <span class="c1"># ]</span>
-        <span class="c1">#</span>
-        <span class="c1"># if resume_dir is not None:</span>
-        <span class="c1">#     resume = resume_dir / str(resume)</span>
-        <span class="c1">#</span>
-        <span class="c1"># if resume is not None and Path(resume).is_file():</span>
-        <span class="c1">#     checkpoint = utils.load_checkpoint(resume)</span>
-        <span class="c1">#     start_stage = checkpoint[&quot;stage&quot;]</span>
-        <span class="c1">#     start_idx = stages_keys.index(start_stage)</span>
-        <span class="c1">#     stages_keys = stages_keys[start_idx:]</span>
-
         <span class="k">return</span> <span class="n">stages_keys</span>
 
     <span class="nd">@property</span>
@@ -415,16 +418,9 @@
         <span class="sd">&quot;&quot;&quot;Dict with the parameters for distributed and FP16 methond.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;distributed_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
 
-<div class="viewcode-block" id="ConfigExperiment.get_state_params"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_state_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_state_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<div class="viewcode-block" id="ConfigExperiment.get_stage_params"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_stage_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_stage_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Returns the state parameters for a given stage.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_params&quot;</span><span class="p">,</span> <span class="p">{})</span></div>
-
-    <span class="k">def</span> <span class="nf">_preprocess_model_for_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">):</span>
-        <span class="c1"># stage_index = self.stages.index(stage)</span>
-        <span class="k">return</span> <span class="n">model</span>
-
-    <span class="k">def</span> <span class="nf">_postprocess_model_for_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">model</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stage_params&quot;</span><span class="p">,</span> <span class="p">{})</span></div>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_model</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">):</span>
@@ -443,9 +439,6 @@
         <span class="sd">&quot;&quot;&quot;Returns the model for a given stage.&quot;&quot;&quot;</span>
         <span class="n">model_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s2">&quot;model_params&quot;</span><span class="p">]</span>
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_model</span><span class="p">(</span><span class="o">**</span><span class="n">model_params</span><span class="p">)</span>
-
-        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_preprocess_model_for_stage</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_postprocess_model_for_stage</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">model</span></div>
 
     <span class="nd">@staticmethod</span>
@@ -545,9 +538,9 @@
             <span class="n">device</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_device</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model_params</span><span class="p">:</span>
                 <span class="n">param</span> <span class="o">=</span> <span class="n">param</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">state</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
-                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">state</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="n">state</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">any2device</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+                <span class="n">optimizer_state</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">optimizer_state</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">optimizer_state</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">any2device</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
 
             <span class="c1"># update optimizer params</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>

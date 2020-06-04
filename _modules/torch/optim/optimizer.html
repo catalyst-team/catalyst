@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>torch.optim.optimizer &mdash; Catalyst 20.05.1 documentation</title>
+  <title>torch.optim.optimizer &mdash; Catalyst 20.06 documentation</title>
   
 
   
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  20.05
+                  20.06
                 </div>
               
             
@@ -430,6 +430,10 @@
 <span class="sd">        Arguments:</span>
 <span class="sd">            closure (callable): A closure that reevaluates the model and</span>
 <span class="sd">                returns the loss. Optional for most optimizers.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Unless otherwise specified, this function should not modify the</span>
+<span class="sd">            ``.grad`` field of the parameters.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 

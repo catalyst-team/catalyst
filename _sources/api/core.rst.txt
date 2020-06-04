@@ -17,7 +17,7 @@ Core
 
 Experiment
 ~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.core.experiment._Experiment
+.. autoclass:: catalyst.core.experiment.IExperiment
     :members:
     :undoc-members:
     :show-inheritance:
@@ -29,12 +29,12 @@ Experiment
 
 Runner
 ~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.core.runner._Runner
+.. autoclass:: catalyst.core.runner.IRunner
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. autoclass:: catalyst.core.runner._StageBasedRunner
+.. autoclass:: catalyst.core.runner.IStageBasedRunner
     :members:
     :undoc-members:
     :show-inheritance:
@@ -47,13 +47,6 @@ Runner
 Callback
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.core.callback
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-State
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.state
     :members:
     :undoc-members:
     :show-inheritance:
@@ -155,6 +148,17 @@ Utils
     :show-inheritance:
 
 .. automodule:: catalyst.core.utils.callbacks
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Legacy
+----------------------
+
+Runner
+~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.core.legacy.IRunnerLegacy
     :members:
     :undoc-members:
     :show-inheritance:
