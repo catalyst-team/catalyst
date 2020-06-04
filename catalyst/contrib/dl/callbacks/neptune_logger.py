@@ -8,7 +8,7 @@ from catalyst.core.callback import (
     CallbackOrder,
     CallbackScope,
 )
-from catalyst.core.runner import _Runner
+from catalyst.core.runner import IRunner
 
 
 class NeptuneLogger(Callback):
@@ -135,7 +135,7 @@ class NeptuneLogger(Callback):
                 metric_value = metrics[name]
                 self.experiment.log_metric(metric_name, y=metric_value, x=step)
 
-    def on_batch_end(self, runner: _Runner):
+    def on_batch_end(self, runner: IRunner):
         """Log batch metrics to Neptune."""
         if self.log_on_batch_end:
             mode = runner.loader_name
@@ -147,7 +147,7 @@ class NeptuneLogger(Callback):
                 suffix=self.batch_log_suffix,
             )
 
-    def on_loader_end(self, runner: _Runner):
+    def on_loader_end(self, runner: IRunner):
         """Translate epoch metrics to Neptune."""
         if self.log_on_epoch_end:
             mode = runner.loader_name

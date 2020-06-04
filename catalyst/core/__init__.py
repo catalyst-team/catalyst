@@ -6,8 +6,8 @@
 # experiment
 # runner
 
-from .experiment import _Experiment
-from .runner import _Runner, _StageBasedRunner
+from .experiment import IExperiment
+from .runner import IRunner, IStageBasedRunner
 from .callback import Callback, CallbackOrder, CallbackNode, CallbackScope
 from .callbacks import *
 from .state import State

@@ -5,7 +5,7 @@ import torch
 from catalyst.contrib.nn.schedulers import BatchScheduler, OneCycleLRWithWarmup
 from catalyst.core import utils
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.runner import _Runner
+from catalyst.core.runner import IRunner
 
 
 class SchedulerCallback(Callback):
@@ -38,11 +38,11 @@ class SchedulerCallback(Callback):
 
         return lr, momentum
 
-    def step_batch(self, runner: _Runner) -> None:
+    def step_batch(self, runner: IRunner) -> None:
         """@TODO: Docs. Contribution is welcome.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         lr, momentum = self._scheduler_step(scheduler=self._scheduler)
 
@@ -57,11 +57,11 @@ class SchedulerCallback(Callback):
             if momentum is not None:
                 runner.batch_metrics["momentum"] = momentum
 
-    def step_epoch(self, runner: _Runner) -> None:
+    def step_epoch(self, runner: IRunner) -> None:
         """@TODO: Docs. Contribution is welcome.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         reduced_metric = runner.valid_metrics[self.reduced_metric]
         lr, momentum = self._scheduler_step(
@@ -79,11 +79,11 @@ class SchedulerCallback(Callback):
             if momentum is not None:
                 runner.epoch_metrics["momentum"] = momentum
 
-    def on_stage_start(self, runner: _Runner) -> None:
+    def on_stage_start(self, runner: IRunner) -> None:
         """Stage start hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         self.reduced_metric = self.reduced_metric or runner.main_metric
 
@@ -106,11 +106,11 @@ class SchedulerCallback(Callback):
             scheduler.reset()
         assert self.mode is not None
 
-    def on_loader_start(self, runner: _Runner) -> None:
+    def on_loader_start(self, runner: IRunner) -> None:
         """Loader start hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         if (
             runner.is_train_loader
@@ -121,20 +121,20 @@ class SchedulerCallback(Callback):
                 loader_len=runner.loader_len, current_step=runner.epoch
             )
 
-    def on_batch_end(self, runner: _Runner) -> None:
+    def on_batch_end(self, runner: IRunner) -> None:
         """Batch end hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         if runner.is_train_loader and self.mode == "batch":
             self.step_batch(runner=runner)
 
-    def on_epoch_end(self, runner: _Runner) -> None:
+    def on_epoch_end(self, runner: IRunner) -> None:
         """Epoch end hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         if self.mode == "epoch":
             self.step_epoch(runner=runner)
@@ -188,11 +188,11 @@ class LRUpdater(Callback):
 
         return new_lr, new_momentum
 
-    def update_optimizer(self, runner: _Runner) -> None:
+    def update_optimizer(self, runner: IRunner) -> None:
         """@TODO: Docs. Contribution is welcome.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         lr, momentum = self._update_optimizer(optimizer=self._optimizer)
 
@@ -203,11 +203,11 @@ class LRUpdater(Callback):
             runner.batch_metrics["lr"] = lr
             runner.batch_metrics["momentum"] = momentum
 
-    def on_stage_start(self, runner: _Runner) -> None:
+    def on_stage_start(self, runner: IRunner) -> None:
         """Stage start hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         optimizer = runner.get_attr(
             key="optimizer", inner_key=self.optimizer_key
@@ -216,20 +216,20 @@ class LRUpdater(Callback):
         self._optimizer = optimizer
         self.init_lr = optimizer.defaults["lr"]
 
-    def on_loader_start(self, runner: _Runner) -> None:
+    def on_loader_start(self, runner: IRunner) -> None:
         """Loader start hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         if runner.is_train_loader:
             self.update_optimizer(runner=runner)
 
-    def on_batch_end(self, runner: _Runner) -> None:
+    def on_batch_end(self, runner: IRunner) -> None:
         """Batch end hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         if runner.is_train_loader:
             self.update_optimizer(runner=runner)

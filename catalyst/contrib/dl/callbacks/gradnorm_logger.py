@@ -4,7 +4,7 @@ from torch.nn import DataParallel
 from torch.nn.parallel import DistributedDataParallel
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.runner import _Runner
+from catalyst.core.runner import IRunner
 from catalyst.tools.typing import Model
 
 
@@ -65,11 +65,11 @@ class GradNormLogger(Callback):
 
         return grad_norm
 
-    def on_batch_end(self, runner: _Runner) -> None:
+    def on_batch_end(self, runner: IRunner) -> None:
         """On batch end event
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         if not runner.is_train_loader:
             return

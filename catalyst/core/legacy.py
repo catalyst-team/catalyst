@@ -1,11 +1,11 @@
 import warnings
 
 
-class _RunnerLegacy:
+class IRunnerLegacy:
     """
-    Special class to encapsulate all `catalyst.core.runner._Runner`
+    Special class to encapsulate all `catalyst.core.runner.IRunner`
     and `catalyst.core.runner.State` legacy into one place.
-    Used to make `catalyst.core.runner._Runner` cleaner
+    Used to make `catalyst.core.runner.IRunner` cleaner
     and easier to understand.
 
     Saved for backward compatibility. Should be removed someday.

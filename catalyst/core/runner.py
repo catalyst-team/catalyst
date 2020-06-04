@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader, DistributedSampler
 
 from catalyst.core import utils
 from catalyst.core.callback import Callback, CallbackScope
-from catalyst.core.experiment import _Experiment
+from catalyst.core.experiment import IExperiment
 from catalyst.tools import settings
 from catalyst.tools.frozen_class import FrozenClass
 from catalyst.tools.typing import (
@@ -24,10 +24,10 @@ from catalyst.tools.typing import (
     Scheduler,
 )
 
-from .legacy import _RunnerLegacy
+from .legacy import IRunnerLegacy
 
 
-class _Runner(ABC, _RunnerLegacy, FrozenClass):
+class IRunner(ABC, IRunnerLegacy, FrozenClass):
     """
     An abstraction that knows how to run an experiment.
     It contains all the logic of **how** to run the experiment,
@@ -36,8 +36,8 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
     .. note::
         To learn more about Catalyst Core concepts, please check out
 
-            - :py:mod:`catalyst.core.experiment._Experiment`
-            - :py:mod:`catalyst.core.runner._Runner`
+            - :py:mod:`catalyst.core.experiment.IExperiment`
+            - :py:mod:`catalyst.core.runner.IRunner`
             - :py:mod:`catalyst.core.callback.Callback`
 
     Abstraction, please check out the implementations:
@@ -341,7 +341,7 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
 
     """
 
-    _experiment_fn: Callable = _Experiment
+    _experiment_fn: Callable = IExperiment
 
     def __init__(
         self, model: RunnerModel = None, device: Device = None, **kwargs,
@@ -384,7 +384,7 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
         self.model: RunnerModel = model
 
         # extra experiment components,
-        # use `catalyst.core._Experiment` to setup them
+        # use `catalyst.core.IExperiment` to setup them
         self.criterion: RunnerCriterion = criterion
         self.optimizer: RunnerOptimizer = optimizer
         self.scheduler: RunnerScheduler = scheduler
@@ -476,7 +476,7 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
         Inner method for children's classes
         to specify type for Runners' Experiment.
         """
-        self.experiment: _Experiment = None
+        self.experiment: IExperiment = None
 
     @property
     def model(self) -> Model:
@@ -552,7 +552,7 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
 
     @staticmethod
     def _get_experiment_components(
-        experiment: _Experiment, stage: str = None, device: Device = None,
+        experiment: IExperiment, stage: str = None, device: Device = None,
     ) -> Tuple[Model, Criterion, Optimizer, Scheduler, Device]:
         """
         Inner method for `Experiment` components preparation.
@@ -592,7 +592,7 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
 
     @staticmethod
     def _get_experiment_callbacks(
-        experiment: _Experiment, stage: str,
+        experiment: IExperiment, stage: str,
     ) -> Dict[str, Callback]:
         """Inner method for `Callbacks` preparation.
 
@@ -618,7 +618,7 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
         and cases with multi-criterion, multi-optimizer setup.
         For example, when you would like to train multi-task classification.
 
-        Used to get a named attribute from a `_Runner` by `key` keyword;
+        Used to get a named attribute from a `IRunner` by `key` keyword;
         for example\
         ::
 
@@ -906,12 +906,12 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
             self.epoch += 1
         self._run_event("on_stage_end")
 
-    def run_experiment(self, experiment: _Experiment = None) -> "_Runner":
+    def run_experiment(self, experiment: IExperiment = None) -> "IRunner":
         """
         Starts the experiment.
 
         Args:
-            experiment (_Experiment): Experiment instance to use for Runner.
+            experiment (IExperiment): Experiment instance to use for Runner.
 
         """
         self.experiment = experiment or self.experiment
@@ -938,7 +938,7 @@ class _Runner(ABC, _RunnerLegacy, FrozenClass):
         return self
 
 
-class _StageBasedRunner(_Runner):
+class IStageBasedRunner(IRunner):
     """
     Runner abstraction that suppose to have constant
     datasources per stage.
@@ -966,4 +966,4 @@ class _StageBasedRunner(_Runner):
         self.loaders = loaders
 
 
-__all__ = ["_Runner", "_StageBasedRunner"]
+__all__ = ["IRunner", "IStageBasedRunner"]

@@ -3,7 +3,7 @@ from collections import defaultdict
 
 import numpy as np
 
-from catalyst.core import _Runner, Callback, CallbackOrder
+from catalyst.core import Callback, CallbackOrder, IRunner
 from catalyst.dl.utils import get_activation_fn
 
 
@@ -57,19 +57,19 @@ class MeterMetricsCallback(Callback):
         for meter in self.meters:
             meter.reset()
 
-    def on_loader_start(self, runner: _Runner):
+    def on_loader_start(self, runner: IRunner):
         """Loader start hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         self._reset_stats()
 
-    def on_batch_end(self, runner: _Runner):
+    def on_batch_end(self, runner: IRunner):
         """Batch end hook. Computes batch metrics.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         logits = runner.output[self.output_key].detach().float()
         targets = runner.input[self.input_key].detach().float()
@@ -78,11 +78,11 @@ class MeterMetricsCallback(Callback):
         for i in range(self.num_classes):
             self.meters[i].add(probabilities[:, i], targets[:, i])
 
-    def on_loader_end(self, runner: _Runner):
+    def on_loader_end(self, runner: IRunner):
         """Loader end hook. Computes loader metrics.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         metrics_tracker = defaultdict(list)
         loader_values = runner.loader_metrics

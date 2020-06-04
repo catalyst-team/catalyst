@@ -11,7 +11,7 @@ from pathlib import Path
 from torch import nn
 from torch.jit import load, save, ScriptModule, trace
 
-from catalyst.core.runner import _Runner
+from catalyst.core.runner import IRunner
 from catalyst.dl.experiment.config import ConfigExperiment
 from catalyst.tools.typing import Device, Model
 from catalyst.utils import (
@@ -239,7 +239,7 @@ def trace_model_from_checkpoint(
 
 
 def trace_model_from_runner(
-    runner: _Runner,
+    runner: IRunner,
     checkpoint_name: str = None,
     method_name: str = "forward",
     mode: str = "eval",

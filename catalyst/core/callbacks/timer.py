@@ -1,5 +1,5 @@
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.runner import _Runner
+from catalyst.core.runner import IRunner
 from catalyst.tools.time_manager import TimeManager
 
 EPS = 1e-8
@@ -13,38 +13,38 @@ class TimerCallback(Callback):
         super().__init__(order=CallbackOrder.Metric + 1, node=CallbackNode.All)
         self.timer = TimeManager()
 
-    def on_loader_start(self, runner: _Runner) -> None:
+    def on_loader_start(self, runner: IRunner) -> None:
         """Loader start hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         self.timer.reset()
         self.timer.start("_timer/batch_time")
         self.timer.start("_timer/data_time")
 
-    def on_loader_end(self, runner: _Runner) -> None:
+    def on_loader_end(self, runner: IRunner) -> None:
         """Loader end hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         self.timer.reset()
 
-    def on_batch_start(self, runner: _Runner) -> None:
+    def on_batch_start(self, runner: IRunner) -> None:
         """Batch start hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         self.timer.stop("_timer/data_time")
         self.timer.start("_timer/model_time")
 
-    def on_batch_end(self, runner: _Runner) -> None:
+    def on_batch_end(self, runner: IRunner) -> None:
         """Batch end hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         self.timer.stop("_timer/model_time")
         self.timer.stop("_timer/batch_time")
