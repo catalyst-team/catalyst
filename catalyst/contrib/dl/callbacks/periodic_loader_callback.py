@@ -4,7 +4,8 @@ import copy
 
 from torch.utils.data import DataLoader
 
-from catalyst.core import Callback, CallbackOrder, State
+from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.core.runner import IRunner
 
 
 class PeriodicLoaderCallback(Callback):
@@ -40,21 +41,23 @@ class PeriodicLoaderCallback(Callback):
                 )
             self.loader_periods[loader] = int(period)
 
-    def on_stage_start(self, state: State) -> None:
+    def on_stage_start(self, runner: IRunner) -> None:
         """Collect information about loaders.
 
         Arguments:
-            state (State): training state
+            runner (IRunner): current runner
         """
         # store pointers to data loader objects
-        for name, loader in state.loaders.items():
+        for name, loader in runner.loaders.items():
             self.loaders[name] = loader
         # stage validation loader
-        self.valid_loader = copy.copy(state.valid_loader)
+        self.valid_loader = copy.copy(runner.valid_loader)
         is_loaders_match = all(
-            loader in state.loaders for loader in self.loader_periods.keys()
+            loader in runner.loaders for loader in self.loader_periods.keys()
         )
-        is_same_loaders_number = len(self.loader_periods) == len(state.loaders)
+        is_same_loaders_number = len(self.loader_periods) == len(
+            runner.loaders
+        )
         if is_same_loaders_number and is_loaders_match:
             # find potential epoch with zero loaders
             zero_loaders_epochs = list(
@@ -63,7 +66,7 @@ class PeriodicLoaderCallback(Callback):
                         (p == 0 or n % p != 0)
                         for p in self.loader_periods.values()
                     ),
-                    range(1, state.num_epochs + 1),
+                    range(1, runner.num_epochs + 1),
                 )
             )
             if len(zero_loaders_epochs) > 0:
@@ -72,7 +75,7 @@ class PeriodicLoaderCallback(Callback):
                     f"There will be no loaders in epoch {epoch_with_err}!"
                 )
 
-    def on_epoch_start(self, state: State) -> None:
+    def on_epoch_start(self, runner: IRunner) -> None:
         """Set loaders for current epoch.
         If validation is not required then the first loader
         from loaders used in current epoch will be used
@@ -82,9 +85,9 @@ class PeriodicLoaderCallback(Callback):
         in the epochs where this loader is missing.
 
         Arguments:
-            state (State): training state
+            runner (IRunner): current runner
         """
-        epoch_num = state.epoch
+        epoch_num = runner.epoch
         # loaders to use in current epoch
         epoch_loaders = OrderedDict()
         for name, loader in self.loaders.items():
@@ -95,27 +98,27 @@ class PeriodicLoaderCallback(Callback):
         if len(epoch_loaders) == 0:
             raise ValueError(f"There is no loaders in epoch {epoch_num}!")
         first_loader = next(iter(epoch_loaders.keys()))
-        state.valid_loader = (
+        runner.valid_loader = (
             self.valid_loader
             if self.valid_loader in epoch_loaders
             else first_loader
         )
-        state.loaders = epoch_loaders
+        runner.loaders = epoch_loaders
 
-    def on_epoch_end(self, state: State) -> None:
+    def on_epoch_end(self, runner: IRunner) -> None:
         """Store validation metrics and use latest validation score
         when validation loader is not required.
 
         Arguments:
-            state (State): training state
+            runner (IRunner): current runner
         """
-        if self.valid_loader in state.loaders:
+        if self.valid_loader in runner.loaders:
             self.valid_metrics = {
-                state.main_metric: state.valid_metrics[state.main_metric]
+                runner.main_metric: runner.valid_metrics[runner.main_metric]
             }
         elif self.valid_metrics is not None:
             # use previous score on validation
-            state.valid_metrics = self.valid_metrics
+            runner.valid_metrics = self.valid_metrics
 
 
 __all__ = ["PeriodicLoaderCallback"]

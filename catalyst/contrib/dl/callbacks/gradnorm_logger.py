@@ -3,11 +3,12 @@ from typing import Dict
 from torch.nn import DataParallel
 from torch.nn.parallel import DistributedDataParallel
 
-from catalyst.core import Callback, CallbackNode, CallbackOrder, State
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.runner import IRunner
 from catalyst.tools.typing import Model
 
 
-class SaveModelGradsCallback(Callback):
+class GradNormLogger(Callback):
     """Callback for logging model gradients."""
 
     def __init__(
@@ -64,13 +65,13 @@ class SaveModelGradsCallback(Callback):
 
         return grad_norm
 
-    def on_batch_end(self, state: State) -> None:
+    def on_batch_end(self, runner: IRunner) -> None:
         """On batch end event
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
-        if not state.is_train_loader:
+        if not runner.is_train_loader:
             return
 
         self._accumulation_counter += 1
@@ -80,13 +81,13 @@ class SaveModelGradsCallback(Callback):
 
         if need_gradient_step:
             grad_norm = self.grad_norm(
-                model=state.model,
+                model=runner.model,
                 prefix=self.grad_norm_prefix,
                 norm_type=self.norm_type,
             )
 
-            state.batch_metrics.update(**grad_norm)
+            runner.batch_metrics.update(**grad_norm)
             self._accumulation_counter = 0
 
 
-__all__ = ["SaveModelGradsCallback"]
+__all__ = ["GradNormLogger"]

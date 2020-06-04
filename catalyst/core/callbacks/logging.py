@@ -6,7 +6,9 @@ import sys
 from tqdm import tqdm
 
 from catalyst.contrib.tools.tensorboard import SummaryWriter
-from catalyst.core import Callback, CallbackNode, CallbackOrder, State, utils
+from catalyst.core import utils
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.runner import IRunner
 
 from . import formatters
 
@@ -50,19 +52,19 @@ class VerboseLogger(Callback):
 
         return result
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, runner: IRunner):
         """Init tqdm progress bar."""
         self.step = 0
         self.tqdm = tqdm(
-            total=state.loader_len,
-            desc=f"{state.epoch}/{state.num_epochs}"
-            f" * Epoch ({state.loader_name})",
+            total=runner.loader_len,
+            desc=f"{runner.epoch}/{runner.num_epochs}"
+            f" * Epoch ({runner.loader_name})",
             leave=True,
             ncols=0,
             file=sys.stdout,
         )
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, runner: IRunner):
         """Cleanup and close tqdm progress bar."""
         # self.tqdm.visible = False
         # self.tqdm.leave = True
@@ -72,31 +74,31 @@ class VerboseLogger(Callback):
         self.tqdm = None
         self.step = 0
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, runner: IRunner):
         """Update tqdm progress bar at the end of each batch."""
         self.tqdm.set_postfix(
             **{
                 k: "{:3.3f}".format(v) if v > 1e-3 else "{:1.3e}".format(v)
-                for k, v in sorted(state.batch_metrics.items())
+                for k, v in sorted(runner.batch_metrics.items())
                 if self._need_show(k)
             }
         )
         self.tqdm.update()
 
-    def on_exception(self, state: State):
+    def on_exception(self, runner: IRunner):
         """Called if an Exception was raised."""
-        exception = state.exception
+        exception = runner.exception
         if not utils.is_exception(exception):
             return
 
         if isinstance(exception, KeyboardInterrupt):
             self.tqdm.write("Early exiting")
-            state.need_exception_reraise = False
+            runner.need_exception_reraise = False
 
 
 class ConsoleLogger(Callback):
     """Logger callback,
-    translates ``state.*_metrics`` to console and text file.
+    translates ``runner.*_metrics`` to console and text file.
     """
 
     def __init__(self):
@@ -127,28 +129,28 @@ class ConsoleLogger(Callback):
         # logger.addHandler(jh)
         return logger
 
-    def on_stage_start(self, state: State):
-        """Prepare ``state.logdir`` for the current stage."""
-        if state.logdir:
-            state.logdir.mkdir(parents=True, exist_ok=True)
-        self.logger = self._get_logger(state.logdir)
+    def on_stage_start(self, runner: IRunner):
+        """Prepare ``runner.logdir`` for the current stage."""
+        if runner.logdir:
+            runner.logdir.mkdir(parents=True, exist_ok=True)
+        self.logger = self._get_logger(runner.logdir)
 
-    def on_stage_end(self, state: State):
+    def on_stage_end(self, runner: IRunner):
         """Called at the end of each stage."""
         for handler in self.logger.handlers:
             handler.close()
         self.logger.handlers = []
 
-    def on_epoch_end(self, state: State):
+    def on_epoch_end(self, runner: IRunner):
         """
-        Translate ``state.metric_manager`` to console and text file
+        Translate ``runner.metric_manager`` to console and text file
         at the end of an epoch.
         """
-        self.logger.info("", extra={"state": state})
+        self.logger.info("", extra={"runner": runner})
 
 
 class TensorboardLogger(Callback):
-    """Logger callback, translates ``state.metric_manager`` to tensorboard."""
+    """Logger callback, translates ``runner.metric_manager`` to tensorboard."""
 
     def __init__(
         self,
@@ -187,44 +189,44 @@ class TensorboardLogger(Callback):
                     f"{name}{suffix}", metrics[name], step
                 )
 
-    def on_stage_start(self, state: State):
+    def on_stage_start(self, runner: IRunner):
         """@TODO: Docs. Contribution is welcome."""
-        assert state.logdir is not None
+        assert runner.logdir is not None
 
         extra_mode = "_base"
-        log_dir = os.path.join(state.logdir, f"{extra_mode}_log")
+        log_dir = os.path.join(runner.logdir, f"{extra_mode}_log")
         self.loggers[extra_mode] = SummaryWriter(log_dir)
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, runner: IRunner):
         """Prepare tensorboard writers for the current stage."""
-        if state.loader_name not in self.loggers:
-            log_dir = os.path.join(state.logdir, f"{state.loader_name}_log")
-            self.loggers[state.loader_name] = SummaryWriter(log_dir)
+        if runner.loader_name not in self.loggers:
+            log_dir = os.path.join(runner.logdir, f"{runner.loader_name}_log")
+            self.loggers[runner.loader_name] = SummaryWriter(log_dir)
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, runner: IRunner):
         """Translate batch metrics to tensorboard."""
-        if state.logdir is None:
+        if runner.logdir is None:
             return
 
         if self.log_on_batch_end:
-            mode = state.loader_name
-            metrics_ = state.batch_metrics
+            mode = runner.loader_name
+            metrics_ = runner.batch_metrics
             self._log_metrics(
                 metrics=metrics_,
-                step=state.global_sample_step,
+                step=runner.global_sample_step,
                 mode=mode,
                 suffix="/batch",
             )
 
-    def on_epoch_end(self, state: "State"):
+    def on_epoch_end(self, runner: IRunner):
         """Translate epoch metrics to tensorboard."""
-        if state.logdir is None:
+        if runner.logdir is None:
             return
 
         if self.log_on_epoch_end:
             per_mode_metrics = utils.split_dict_to_subdicts(
-                dct=state.epoch_metrics,
-                prefixes=list(state.loaders.keys()),
+                dct=runner.epoch_metrics,
+                prefixes=list(runner.loaders.keys()),
                 extra_key="_base",
             )
 
@@ -232,7 +234,7 @@ class TensorboardLogger(Callback):
                 # suffix = "" if mode == "_base" else "/epoch"
                 self._log_metrics(
                     metrics=metrics,
-                    step=state.global_epoch,
+                    step=runner.global_epoch,
                     mode=mode,
                     suffix="/epoch",
                 )
@@ -240,9 +242,9 @@ class TensorboardLogger(Callback):
         for logger in self.loggers.values():
             logger.flush()
 
-    def on_stage_end(self, state: State):
+    def on_stage_end(self, runner: IRunner):
         """Close opened tensorboard writers."""
-        if state.logdir is None:
+        if runner.logdir is None:
             return
 
         for logger in self.loggers.values():

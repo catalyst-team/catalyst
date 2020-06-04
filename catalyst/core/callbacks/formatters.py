@@ -2,7 +2,8 @@ from typing import Dict
 from abc import ABC, abstractmethod
 import logging
 
-from catalyst.core import State, utils
+from catalyst.core import utils
+from catalyst.core.runner import IRunner
 
 
 class MetricsFormatter(ABC, logging.Formatter):
@@ -17,15 +18,15 @@ class MetricsFormatter(ABC, logging.Formatter):
         super().__init__(f"{message_prefix}{{message}}", style="{")
 
     @abstractmethod
-    def _format_message(self, state: State):
+    def _format_message(self, runner: IRunner):
         pass
 
     def format(self, record: logging.LogRecord):
         """Format message string."""
         # noinspection PyUnresolvedReferences
-        state = record.state
+        runner = record.runner
 
-        record.msg = self._format_message(state)
+        record.msg = self._format_message(runner)
 
         return super().format(record)
 
@@ -59,18 +60,18 @@ class TxtMetricsFormatter(MetricsFormatter):
 
         return metrics_formatted
 
-    def _format_message(self, state: State):
+    def _format_message(self, runner: IRunner):
         message = [""]
         mode_metrics = utils.split_dict_to_subdicts(
-            dct=state.epoch_metrics,
-            prefixes=list(state.loaders.keys()),
+            dct=runner.epoch_metrics,
+            prefixes=list(runner.loaders.keys()),
             extra_key="_base",
         )
         metrics = self._format_metrics(mode_metrics)
         for key, value in metrics.items():
             message.append(
-                f"{state.epoch}/{state.num_epochs} "
-                f"* Epoch {state.global_epoch} ({key}): {value}"
+                f"{runner.epoch}/{runner.num_epochs} "
+                f"* Epoch {runner.global_epoch} ({key}): {value}"
             )
         message = "\n".join(message)
         return message

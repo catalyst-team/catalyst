@@ -64,14 +64,14 @@ Getting started
 
             loss = F.cross_entropy(y_hat, y)
             accuracy01, accuracy03 = metrics.accuracy(y_hat, y, topk=(1, 3))
-            self.state.batch_metrics.update(
+            self.batch_metrics.update(
                 {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
             )
 
-            if self.state.is_train_loader:
+            if self.is_train_loader:
                 loss.backward()
-                self.state.optimizer.step()
-                self.state.optimizer.zero_grad()
+                self.optimizer.step()
+                self.optimizer.zero_grad()
 
     runner = CustomRunner()
     # model training
@@ -143,7 +143,7 @@ Features
 
 Structure
 ~~~~~~~~~~~~~~~~~~~~~~
-- **core** - framework core with main abstractions - Experiment, Runner, Callback and State.
+- **core** - framework core with main abstractions - Experiment, Runner and Callback.
 - **data** - useful tools and scripts for data processing.
 - **dl** – runner for training and inference, all of the classic ML and CV/NLP/RecSys metrics and a variety of callbacks for training, validation and inference of neural networks.
 - **tools** - extra tools for Deep Learning research, class-based helpers.

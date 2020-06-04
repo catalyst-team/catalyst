@@ -1,4 +1,5 @@
-from catalyst.core import Callback, CallbackNode, CallbackOrder, State
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.runner import IRunner
 
 
 class CheckRunCallback(Callback):
@@ -10,15 +11,15 @@ class CheckRunCallback(Callback):
         self.num_batch_steps = num_batch_steps
         self.num_epoch_steps = num_epoch_steps
 
-    def on_epoch_end(self, state: State):
+    def on_epoch_end(self, runner: IRunner):
         """@TODO: Docs. Contribution is welcome."""
-        if state.epoch >= self.num_epoch_steps:
-            state.need_early_stop = True
+        if runner.epoch >= self.num_epoch_steps:
+            runner.need_early_stop = True
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, runner: IRunner):
         """@TODO: Docs. Contribution is welcome."""
-        if state.loader_batch_step >= self.num_batch_steps:
-            state.need_early_stop = True
+        if runner.loader_batch_step >= self.num_batch_steps:
+            runner.need_early_stop = True
 
 
 class EarlyStoppingCallback(Callback):
@@ -44,12 +45,12 @@ class EarlyStoppingCallback(Callback):
         else:
             self.is_better = lambda score, best: score >= (best + min_delta)
 
-    def on_epoch_end(self, state: State) -> None:
+    def on_epoch_end(self, runner: IRunner) -> None:
         """@TODO: Docs. Contribution is welcome."""
-        if state.stage_name.startswith("infer"):
+        if runner.stage_name.startswith("infer"):
             return
 
-        score = state.valid_metrics[self.metric]
+        score = runner.valid_metrics[self.metric]
         if self.best_score is None:
             self.best_score = score
         if self.is_better(score, self.best_score):
@@ -59,5 +60,5 @@ class EarlyStoppingCallback(Callback):
             self.num_bad_epochs += 1
 
         if self.num_bad_epochs >= self.patience:
-            print(f"Early stop at {state.epoch} epoch")
-            state.need_early_stop = True
+            print(f"Early stop at {runner.epoch} epoch")
+            runner.need_early_stop = True

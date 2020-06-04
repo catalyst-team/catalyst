@@ -3,8 +3,9 @@ from typing import Union  # isort:skip
 from pathlib import Path
 import warnings
 
-from catalyst.dl import Callback, CallbackNode, CallbackOrder, State
-from catalyst.dl.utils import save_traced_model, trace_model_from_state
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.runner import IRunner
+from catalyst.dl.utils import save_traced_model, trace_model_from_runner
 
 
 class TracerCallback(Callback):
@@ -88,12 +89,12 @@ class TracerCallback(Callback):
             out_dir = Path(out_dir)
         self.out_dir = out_dir
 
-    def _trace(self, state: State):
+    def _trace(self, runner: IRunner):
         """
         Performing model tracing on epoch end if condition metric is improved.
 
         Args:
-            state (State): Current state
+            runner (IRunner): Current runner
         """
         if self.opt_level is not None:
             device = "cuda"
@@ -106,8 +107,8 @@ class TracerCallback(Callback):
         if self.do_once and self.mode == "best":
             checkpoint_name_to_restore = "best"
 
-        traced_model = trace_model_from_state(
-            state=state,
+        traced_model = trace_model_from_runner(
+            runner=runner,
             checkpoint_name=checkpoint_name_to_restore,
             method_name=self.method_name,
             mode=self.trace_mode,
@@ -118,7 +119,7 @@ class TracerCallback(Callback):
 
         save_traced_model(
             model=traced_model,
-            logdir=state.logdir,
+            logdir=runner.logdir,
             checkpoint_name=self.mode,
             method_name=self.method_name,
             mode=self.trace_mode,
@@ -128,16 +129,16 @@ class TracerCallback(Callback):
             out_dir=self.out_dir,
         )
 
-    def on_epoch_end(self, state: State):
+    def on_epoch_end(self, runner: IRunner):
         """
         Performing model tracing on epoch end if condition metric is improved
 
         Args:
-            state (State): Current state
+            runner (IRunner): Current runner
         """
         if not self.do_once:
             if self.mode == "best":
-                score = state.valid_metrics[self.metric]
+                score = runner.valid_metrics[self.metric]
 
                 if self.best_score is None:
                     self.best_score = score
@@ -146,19 +147,19 @@ class TracerCallback(Callback):
                 #  will never work very first epoch
                 if self.is_better(score, self.best_score):
                     self.best_score = score
-                    self._trace(state)
+                    self._trace(runner)
             else:
-                self._trace(state)
+                self._trace(runner)
 
-    def on_stage_end(self, state: State):
+    def on_stage_end(self, runner: IRunner):
         """
         Performing model tracing on stage end if `do_once` is True.
 
         Args:
-            state (State): Current state
+            runner (IRunner): Current runner
         """
         if self.do_once:
-            self._trace(state)
+            self._trace(runner)
 
 
 __all__ = ["TracerCallback"]

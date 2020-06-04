@@ -11,14 +11,10 @@ from torch.utils.data import DataLoader
 from catalyst.contrib import registry
 from catalyst.contrib.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.dl.callbacks.optimizer import SaveModelGradsCallback
-from catalyst.core import (
-    Callback,
-    CallbackOrder,
-    CriterionCallback,
-    OptimizerCallback,
-    State,
-)
+from catalyst.contrib.dl.callbacks.gradnorm_logger import GradNormLogger
+from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.core.callbacks import CriterionCallback, OptimizerCallback
+from catalyst.core.runner import IRunner
 from catalyst.dl import SupervisedRunner
 
 
@@ -107,19 +103,19 @@ class _OnBatchEndCheckGradsCallback(Callback):
         super().__init__(CallbackOrder.External)
         self.prefix = prefix
 
-    def on_batch_end(self, state: State):
-        if not state.is_train_loader:
+    def on_batch_end(self, runner: IRunner):
+        if not runner.is_train_loader:
             return
 
         for layer in ["conv1", "conv2", "fc1"]:
             for weights in ["weight", "bias"]:
                 tag = f"{self.prefix}/{layer}/{weights}"
-                assert tag in state.batch_metrics
-                assert isinstance(state.batch_metrics[tag], Number)
+                assert tag in runner.batch_metrics
+                assert isinstance(runner.batch_metrics[tag], Number)
 
         tag = f"{self.prefix}/total"
-        assert tag in state.batch_metrics
-        assert isinstance(state.batch_metrics[tag], Number)
+        assert tag in runner.batch_metrics
+        assert isinstance(runner.batch_metrics[tag], Number)
 
 
 def test_save_model_grads():
@@ -139,7 +135,7 @@ def test_save_model_grads():
 
     criterion_callback = CriterionCallback()
     optimizer_callback = OptimizerCallback()
-    save_model_grads_callback = SaveModelGradsCallback()
+    save_model_grads_callback = GradNormLogger()
     prefix = save_model_grads_callback.grad_norm_prefix
     test_callback = _OnBatchEndCheckGradsCallback(prefix)
 

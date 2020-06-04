@@ -13,11 +13,12 @@ from sklearn.neighbors import NearestNeighbors
 
 import torch
 
-from catalyst.dl import Callback, CallbackOrder, State
+from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.core.runner import IRunner
 
 
 class KNNMetricCallback(Callback):
-    """A callback that returns single metric on ``state.on_loader_end``."""
+    """A callback that returns single metric on ``runner.on_loader_end``."""
 
     def __init__(
         self,
@@ -164,27 +165,27 @@ class KNNMetricCallback(Callback):
 
         return result
 
-    def on_batch_end(self, state: State) -> None:
+    def on_batch_end(self, runner: IRunner) -> None:
         """Batch end hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
-        features: torch.Tensor = state.output[
+        features: torch.Tensor = runner.output[
             self.features_key
         ].cpu().detach().numpy()
-        targets: torch.Tensor = state.input[
+        targets: torch.Tensor = runner.input[
             self.targets_key
         ].cpu().detach().numpy()
 
         self.features.extend(features)
         self.targets.extend(targets)
 
-    def on_loader_end(self, state: State) -> None:
+    def on_loader_end(self, runner: IRunner) -> None:
         """Loader end hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
         self.features = np.stack(self.features)
         self.targets = np.stack(self.targets)
@@ -197,11 +198,11 @@ class KNNMetricCallback(Callback):
             "labels": self.targets,
         }
 
-        self.sets[state.loader_name] = s
+        self.sets[runner.loader_name] = s
 
         y_true, y_pred = self._knn(s)
 
-        loader_values = state.loader_metrics
+        loader_values = runner.loader_metrics
         if self.num_classes == 2:
             loader_values[self.prefix] = self.metric_fn(
                 y_true, y_pred, average="binary"
@@ -215,11 +216,11 @@ class KNNMetricCallback(Callback):
 
         self._reset_cache()
 
-    def on_epoch_end(self, state: State) -> None:
+    def on_epoch_end(self, runner: IRunner) -> None:
         """Epoch end hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
         if self.cv_loader_names is not None:
             for k, vs in self.cv_loader_names.items():
@@ -244,7 +245,7 @@ class KNNMetricCallback(Callback):
 
                     y_true, y_pred = self._knn(self.sets[k], self.sets[v])
 
-                    loader_values = state.epoch_metrics[f"{k}_{v}_cv"]
+                    loader_values = runner.epoch_metrics[f"{k}_{v}_cv"]
 
                     if self.num_classes == 2:
                         loader_values[f"{self.prefix}"] = self.metric_fn(

@@ -5,12 +5,11 @@ from collections import OrderedDict
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
+from catalyst.core.callback import Callback
 from catalyst.tools.typing import Criterion, Model, Optimizer, Scheduler
 
-from .callback import Callback
 
-
-class _Experiment(ABC):
+class IExperiment(ABC):
     """
     An abstraction that contains information about the experiment –
     a model, a criterion, an optimizer, a scheduler, and their hyperparameters.
@@ -20,9 +19,8 @@ class _Experiment(ABC):
     .. note::
         To learn more about Catalyst Core concepts, please check out
 
-            - :py:mod:`catalyst.core.experiment._Experiment`
-            - :py:mod:`catalyst.core.runner._Runner`
-            - :py:mod:`catalyst.core.state.State`
+            - :py:mod:`catalyst.core.experiment.IExperiment`
+            - :py:mod:`catalyst.core.runner.IRunner`
             - :py:mod:`catalyst.core.callback.Callback`
 
     Abstraction, please check out the implementations:
@@ -39,7 +37,7 @@ class _Experiment(ABC):
         Experiment's initial seed, used to setup `global seed`
         at the beginning of each stage.
         Additionally, Catalyst Runner setups
-        `experiment.initial_seed + state.global_epoch + 1`
+        `experiment.initial_seed + runner.global_epoch + 1`
         as `global seed` each epoch.
         Used for experiment reproducibility.
 
@@ -100,23 +98,21 @@ class _Experiment(ABC):
         pass
 
     @abstractmethod
-    def get_state_params(self, stage: str) -> Mapping[str, Any]:
-        """Returns State parameters for a given stage.
-
-        To learn more about State, please follow
-        :py:mod:`catalyst.core.state.State`
-        documentation.
+    def get_stage_params(self, stage: str) -> Mapping[str, Any]:
+        """Returns extra stage parameters for a given stage.
 
         Example::
 
-            >>> experiment.get_state_params(stage="training")
+            >>> experiment.get_stage_params(stage="training")
             {
                 "logdir": "./logs/training",
                 "num_epochs": 42,
                 "valid_loader": "valid",
                 "main_metric": "loss",
                 "minimize_metric": True,
-                "checkpoint_data": {"comment": "we are going to make it!"}
+                "checkpoint_data": {
+                    "comment": "break the cycle - use the Catalyst"
+                }
             }
 
         Args:
@@ -124,7 +120,7 @@ class _Experiment(ABC):
                 like "pretrain" / "train" / "finetune" / etc
 
         Returns:
-            dict: State parameters for a given stage.
+            dict: parameters for a given stage.
         """
         pass
 
@@ -208,30 +204,34 @@ class _Experiment(ABC):
         pass
 
     def get_experiment_components(
-        self, model: nn.Module, stage: str
-    ) -> Tuple[Criterion, Optimizer, Scheduler]:
+        self, stage: str, model: nn.Module = None,
+    ) -> Tuple[Model, Criterion, Optimizer, Scheduler]:
         """
         Returns the tuple containing criterion, optimizer and scheduler by
         giving model and stage.
 
         Aggregation method, based on,
 
-        - :py:mod:`catalyst.core.experiment._Experiment.get_criterion`
-        - :py:mod:`catalyst.core.experiment._Experiment.get_optimizer`
-        - :py:mod:`catalyst.core.experiment._Experiment.get_scheduler`
+        - :py:mod:`catalyst.core.experiment.IExperiment.get_model`
+        - :py:mod:`catalyst.core.experiment.IExperiment.get_criterion`
+        - :py:mod:`catalyst.core.experiment.IExperiment.get_optimizer`
+        - :py:mod:`catalyst.core.experiment.IExperiment.get_scheduler`
 
         Args:
-            model (Model): model to optimize with stage optimizer
             stage (str): stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
+            model (Model): model to optimize with stage optimizer
 
         Returns:
-            tuple: criterion, optimizer, scheduler for a given stage and model
+            tuple: model, criterion, optimizer, scheduler
+                for a given stage and model
         """
+        if model is None:
+            model = self.get_model(stage)
         criterion = self.get_criterion(stage)
         optimizer = self.get_optimizer(stage, model)
         scheduler = self.get_scheduler(stage, optimizer)
-        return criterion, optimizer, scheduler
+        return model, criterion, optimizer, scheduler
 
     def get_transforms(self, stage: str = None, dataset: str = None):
         """Returns the data transforms for a given stage and dataset.
@@ -244,7 +244,7 @@ class _Experiment(ABC):
 
         .. note::
             For datasets/loaders nameing please follow
-            :py:mod:`catalyst.core.state.State` documentation.
+            :py:mod:`catalyst.core.runner` documentation.
 
         Returns:
             Data transformations to use for specified dataset.
@@ -304,7 +304,7 @@ class _Experiment(ABC):
 
         .. note::
             Wrapper for
-            :py:mod:`catalyst.core.experiment._Experiment.get_datasets`.
+            :py:mod:`catalyst.core.experiment.IExperiment.get_datasets`.
             For most of your experiments you need to rewrite `get_datasets`
             method only.
 
@@ -347,12 +347,11 @@ class _Experiment(ABC):
         .. note::
             To learn more about Catalyst Core concepts, please check out
 
-                - :py:mod:`catalyst.core.experiment._Experiment`
-                - :py:mod:`catalyst.core.runner._Runner`
-                - :py:mod:`catalyst.core.state.State`
+                - :py:mod:`catalyst.core.experiment.IExperiment`
+                - :py:mod:`catalyst.core.runner.IRunner`
                 - :py:mod:`catalyst.core.callback.Callback`
         """
         pass
 
 
-__all__ = ["_Experiment"]
+__all__ = ["IExperiment"]

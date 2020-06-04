@@ -11,6 +11,6 @@ from .trace import (
     save_traced_model,
     trace_model,
     trace_model_from_checkpoint,
-    trace_model_from_state,
+    trace_model_from_runner,
 )
 from .wizard import run_wizard, Wizard

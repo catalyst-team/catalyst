@@ -73,8 +73,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import (
-    SupervisedRunner, State, Callback, CallbackOrder,
-    PeriodicLoaderCallback,
+    SupervisedRunner, Callback, CallbackOrder, PeriodicLoaderCallback,
 )
 
 # experiment_setup
@@ -139,8 +138,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import (
-    SupervisedRunner, State, Callback, CallbackOrder,
-    PeriodicLoaderCallback,
+    SupervisedRunner, Callback, CallbackOrder, PeriodicLoaderCallback,
 )
 
 # experiment_setup
@@ -205,8 +203,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import (
-    SupervisedRunner, State, Callback, CallbackOrder,
-    PeriodicLoaderCallback,
+    SupervisedRunner, Callback, CallbackOrder, PeriodicLoaderCallback,
 )
 
 # experiment_setup
@@ -279,8 +276,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import (
-    SupervisedRunner, State, Callback, CallbackOrder,
-    PeriodicLoaderCallback,
+    SupervisedRunner, Callback, CallbackOrder, PeriodicLoaderCallback,
 )
 
 # experiment_setup
@@ -485,8 +481,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import (
-    SupervisedRunner, State, Callback, CallbackOrder,
-    PeriodicLoaderCallback,
+    SupervisedRunner, Callback, CallbackOrder, PeriodicLoaderCallback,
 )
 
 # experiment_setup
@@ -577,8 +572,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import (
-    SupervisedRunner, State, Callback, CallbackOrder,
-    PeriodicLoaderCallback,
+    SupervisedRunner, Callback, CallbackOrder, PeriodicLoaderCallback,
 )
 
 # experiment_setup
@@ -687,8 +681,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import (
-    SupervisedRunner, State, Callback, CallbackOrder,
-    PeriodicLoaderCallback,
+    SupervisedRunner, Callback, CallbackOrder, PeriodicLoaderCallback,
 )
 
 # experiment_setup

@@ -7,7 +7,9 @@ from skimage.color import label2rgb
 import torch
 import torch.nn.functional as F
 
-from catalyst.dl import Callback, CallbackOrder, State, utils
+from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.core.runner import IRunner
+from catalyst.dl import utils
 
 
 class InferMaskCallback(Callback):
@@ -44,16 +46,16 @@ class InferMaskCallback(Callback):
         self.output_key = output_key
         self.name_key = name_key
         self.counter = 0
-        self._keys_from_state = ["out_dir", "out_prefix"]
+        self._keys_from_runner = ["out_dir", "out_prefix"]
 
-    def on_stage_start(self, state: State):
+    def on_stage_start(self, runner: IRunner):
         """Stage start hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
-        for key in self._keys_from_state:
-            value = getattr(state, key, None)
+        for key in self._keys_from_runner:
+            value = getattr(runner, key, None)
             if value is not None:
                 setattr(self, key, value)
         # assert self.out_prefix is not None
@@ -64,28 +66,28 @@ class InferMaskCallback(Callback):
             self.out_prefix = str(self.out_dir) + "/" + str(self.out_prefix)
         os.makedirs(os.path.dirname(self.out_prefix), exist_ok=True)
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, runner: IRunner):
         """Loader start hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
-        lm = state.loader_name
+        lm = runner.loader_name
         os.makedirs(f"{self.out_prefix}/{lm}/", exist_ok=True)
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, runner: IRunner):
         """Batch end hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
-        lm = state.loader_name
-        names = state.input.get(self.name_key, [])
+        lm = runner.loader_name
+        names = runner.input.get(self.name_key, [])
 
-        features = state.input[self.input_key].detach().cpu()
+        features = runner.input[self.input_key].detach().cpu()
         images = utils.tensor_to_ndimage(features)
 
-        logits = state.output[self.output_key]
+        logits = runner.output[self.output_key]
         logits = (
             torch.unsqueeze_(logits, dim=1)
             if len(logits.shape) < 4

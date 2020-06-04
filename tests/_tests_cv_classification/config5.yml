@@ -11,7 +11,7 @@ stages:
     batch_size: 64
     num_workers: 0
 
-  state_params:
+  stage_params:
     main_metric: &reduced_metric accuracy01
     minimize_metric: False
 
@@ -40,7 +40,7 @@ stages:
 
   stage1:
 
-    state_params:
+    stage_params:
       num_epochs: 100
 
     optimizer_params:
@@ -54,7 +54,7 @@ stages:
       no_bias_weight_decay: True
 
   stage2:
-    state_params:
+    stage_params:
       num_epochs: 100
 
     optimizer_params:

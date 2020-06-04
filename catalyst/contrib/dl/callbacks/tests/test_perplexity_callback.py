@@ -21,13 +21,13 @@ class HuggingFaceRunner(dl.Runner):
 
         loss = output[0]
         logits = output[1].view(-1, vocab_size)
-        self.state.batch_metrics = {"loss": loss}
+        self.batch_metrics = {"loss": loss}
         if masked_lm_labels is not None:
-            self.state.input["targets"] = masked_lm_labels.view(-1)
-            self.state.output = {"loss": loss, "logits": logits}
+            self.input["targets"] = masked_lm_labels.view(-1)
+            self.output = {"loss": loss, "logits": logits}
         else:
-            self.state.input["targets"] = lm_labels.view(-1)
-            self.state.output = {"loss": loss, "logits": logits}
+            self.input["targets"] = lm_labels.view(-1)
+            self.output = {"loss": loss, "logits": logits}
 
 
 texts = [
