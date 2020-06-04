@@ -9,7 +9,6 @@ from torch import nn
 
 from catalyst import utils
 from catalyst.contrib.nn.modules import Normalize
-
 from .sequential import SequentialNet
 
 

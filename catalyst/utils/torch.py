@@ -11,7 +11,6 @@ import torch.backends
 from torch.backends import cudnn
 
 from catalyst.tools.typing import Device, Model, Optimizer
-
 from .dict import merge_dicts
 
 

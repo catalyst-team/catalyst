@@ -9,7 +9,6 @@ from catalyst.dl import (
     SchedulerCallback,
 )
 from catalyst.tools.typing import Criterion, Optimizer, Scheduler
-
 from .experiment import Experiment
 
 

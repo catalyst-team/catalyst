@@ -9,7 +9,6 @@ from catalyst.contrib.tools.tensorboard import SummaryWriter
 from catalyst.core import utils
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
-
 from . import formatters
 
 

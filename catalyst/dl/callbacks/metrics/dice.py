@@ -3,7 +3,6 @@ import numpy as np
 from catalyst.core import Callback, CallbackOrder, IRunner, MetricCallback
 from catalyst.dl import utils
 from catalyst.utils import metrics
-
 from .functional import calculate_dice
 
 

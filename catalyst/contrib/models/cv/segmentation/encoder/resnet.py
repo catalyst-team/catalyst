@@ -7,7 +7,6 @@ from torch import nn
 import torchvision
 
 from catalyst import utils
-
 from .core import _take, EncoderSpec
 
 RESNET_PARAMS = {

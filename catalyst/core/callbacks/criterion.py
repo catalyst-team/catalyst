@@ -1,7 +1,6 @@
 from typing import Dict, List, Union
 
 from catalyst.core.runner import IRunner
-
 from .metrics import _MetricCallback
 
 

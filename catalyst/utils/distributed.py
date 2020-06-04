@@ -13,7 +13,6 @@ from torch import nn
 import torch.distributed
 
 from catalyst import __version__
-
 from .misc import get_fn_default_params
 from .torch import get_available_gpus
 

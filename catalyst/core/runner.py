@@ -23,7 +23,6 @@ from catalyst.tools.typing import (
     RunnerScheduler,
     Scheduler,
 )
-
 from .legacy import IRunnerLegacy
 
 
