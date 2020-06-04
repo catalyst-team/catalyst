@@ -11,7 +11,7 @@ stages:
     batch_size: 64  # CHANGE ME
     num_workers: 1  # CHANGE ME
 
-  state_params:
+  stage_params:
     num_epochs: 2  # CHANGE ME
     main_metric: &reduced_metric loss  # loss for scheduler and checkpoint saver
     minimize_metric: True  # Change if you change `main_metric`

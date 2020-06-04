@@ -17,7 +17,7 @@ stages:
         num_workers: 1
         drop_last: True
 
-  state_params:
+  stage_params:
     main_metric: &reduced_metric accuracy01
     minimize_metric: False
 
@@ -30,7 +30,7 @@ stages:
     weight_decay: 0.0001
 
   stage1:
-    state_params:
+    stage_params:
       num_epochs: &num_epochs 100
 
     scheduler_params:

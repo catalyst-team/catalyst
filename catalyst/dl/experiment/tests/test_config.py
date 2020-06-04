@@ -94,7 +94,7 @@ def test_defaults():
     assert exp.logdir == "./logdir"
     assert exp.stages == ["train"]
     assert exp.distributed_params == {}
-    assert exp.get_state_params("train") == {
+    assert exp.get_stage_params("train") == {
         "logdir": "./logdir",
     }
     assert isinstance(exp.get_model("train"), SomeModel)
@@ -126,7 +126,7 @@ def test_defaults_criterion_optimizer_scheduler():
     assert exp.logdir == "./logdir"
     assert exp.stages == ["train"]
     assert exp.distributed_params == {}
-    assert exp.get_state_params("train") == {
+    assert exp.get_stage_params("train") == {
         "logdir": "./logdir",
     }
     assert isinstance(exp.get_model("train"), SomeModel)

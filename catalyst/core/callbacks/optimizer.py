@@ -2,14 +2,9 @@ from typing import Callable, Dict, List
 import logging
 import warnings
 
-from catalyst.core import (
-    Callback,
-    CallbackNode,
-    CallbackOrder,
-    registry,
-    State,
-    utils,
-)
+from catalyst.core import registry, utils
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.runner import _Runner
 from catalyst.tools.typing import Optimizer
 
 logger = logging.getLogger(__name__)
@@ -29,7 +24,7 @@ class OptimizerCallback(Callback):
     ):
         """
         Args:
-            loss_key (str): key to get loss from ``state.batch_metrics``
+            loss_key (str): key to get loss from ``runner.batch_metrics``
             optimizer_key (str): A key to take a optimizer in case
                 there are several of them and they are in a dictionary format.
             accumulation_steps (int): number of steps before
@@ -83,18 +78,18 @@ class OptimizerCallback(Callback):
                 grad_clip_fn(group["params"])
         optimizer.step()
 
-    def on_stage_start(self, state: State) -> None:
+    def on_stage_start(self, runner: _Runner) -> None:
         """Checks that the current stage has correct optimizer."""
-        self._optimizer = state.get_attr(
+        self._optimizer = runner.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
         assert self._optimizer is not None
 
-    def on_epoch_start(self, state: State) -> None:
+    def on_epoch_start(self, runner: _Runner) -> None:
         """On epoch start event.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         if self.decouple_weight_decay:
             self._optimizer_wd = [
@@ -106,11 +101,11 @@ class OptimizerCallback(Callback):
         else:
             self._optimizer_wd = [0.0] * len(self._optimizer.param_groups)
 
-    def on_epoch_end(self, state: State) -> None:
+    def on_epoch_end(self, runner: _Runner) -> None:
         """On epoch end event.
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
         if self.decouple_weight_decay:
             for i, wd in enumerate(self._optimizer_wd):
@@ -122,7 +117,7 @@ class OptimizerCallback(Callback):
             if self.optimizer_key is not None
             else "lr"
         )
-        state.epoch_metrics[lr_name] = lr
+        runner.epoch_metrics[lr_name] = lr
 
         momentum = utils.get_optimizer_momentum(self._optimizer)
         if momentum is not None:
@@ -131,18 +126,18 @@ class OptimizerCallback(Callback):
                 if self.optimizer_key is not None
                 else "momentum"
             )
-            state.epoch_metrics[momentum_name] = momentum
+            runner.epoch_metrics[momentum_name] = momentum
 
-    def on_batch_end(self, state: State) -> None:
+    def on_batch_end(self, runner: _Runner) -> None:
         """On batch end event
 
         Args:
-            state (State): current state
+            runner (_Runner): current runner
         """
-        if not state.is_train_loader:
+        if not runner.is_train_loader:
             return
 
-        loss = state.batch_metrics[self.metric_key]
+        loss = runner.batch_metrics[self.metric_key]
 
         self._accumulation_counter += 1
         need_gradient_step = (

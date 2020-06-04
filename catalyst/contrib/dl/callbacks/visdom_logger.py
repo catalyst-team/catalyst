@@ -8,17 +8,17 @@ import time
 from alchemy.logger import Logger
 import visdom
 
-from catalyst.core import (
+from catalyst.core.callback import (
     Callback,
     CallbackNode,
     CallbackOrder,
     CallbackScope,
-    State,
 )
+from catalyst.core.runner import _Runner
 
 
 class Visdom(Logger):
-    """Logger, translates ``state.*_metrics`` to Visdom.
+    """Logger, translates ``runner.*_metrics`` to Visdom.
     Read about Visdom here https://github.com/facebookresearch/visdom
 
     Example:
@@ -149,7 +149,7 @@ class Visdom(Logger):
 
 
 class VisdomLogger(Callback):
-    """Logger callback, translates ``state.*_metrics`` to Visdom.
+    """Logger callback, translates ``runner.*_metrics`` to Visdom.
     Read about Visdom here https://github.com/facebookresearch/visdom
 
     Example:
@@ -246,25 +246,25 @@ class VisdomLogger(Callback):
         """@TODO: Docs. Contribution is welcome."""
         self.logger.close()
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, runner: _Runner):
         """Translate batch metrics to Visdom."""
         if self.log_on_batch_end:
-            mode = state.loader_name
-            metrics_ = state.batch_metrics
+            mode = runner.loader_name
+            metrics_ = runner.batch_metrics
             self._log_metrics(
                 metrics=metrics_,
-                step=state.global_sample_step,
+                step=runner.global_sample_step,
                 mode=mode,
                 suffix=self.batch_log_suffix,
             )
 
-    def on_epoch_end(self, state: State):
+    def on_epoch_end(self, runner: _Runner):
         """Translate epoch metrics to Visdom."""
         if self.log_on_epoch_end:
             self._log_metrics(
-                metrics=state.epoch_metrics,
-                step=state.global_epoch,
-                mode=state.loader_name,
+                metrics=runner.epoch_metrics,
+                step=runner.global_epoch,
+                mode=runner.loader_name,
                 suffix=self.epoch_log_suffix,
             )
 

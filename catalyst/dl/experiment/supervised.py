@@ -10,7 +10,7 @@ from catalyst.dl import (
 )
 from catalyst.tools.typing import Criterion, Optimizer, Scheduler
 
-from .core import Experiment
+from .experiment import Experiment
 
 
 class SupervisedExperiment(Experiment):
@@ -33,9 +33,9 @@ class SupervisedExperiment(Experiment):
             your model/criterion/optimizer/metrics.
         ConsoleLogger:
             standard Catalyst logger,
-            translates ``state.*_metrics`` to console and text file
+            translates ``runner.*_metrics`` to console and text file
         TensorboardLogger:
-            will write ``state.*_metrics`` to tensorboard
+            will write ``runner.*_metrics`` to tensorboard
         RaiseExceptionCallback:
             will raise exception if needed
     """

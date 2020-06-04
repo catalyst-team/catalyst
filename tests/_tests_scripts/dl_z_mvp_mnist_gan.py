@@ -59,7 +59,7 @@ class CustomRunner(dl.Runner):
             predictions, misleading_labels
         )
 
-        self.state.batch_metrics.update(**batch_metrics)
+        self.batch_metrics.update(**batch_metrics)
 
 
 def main():

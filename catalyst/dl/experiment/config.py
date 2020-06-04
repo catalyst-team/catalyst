@@ -46,7 +46,7 @@ class ConfigExperiment(_Experiment):
         "scheduler_params",
         "data_params",
         "transform_params",
-        "state_params",
+        "stage_params",
         "callbacks_params",
     ]
 
@@ -68,8 +68,11 @@ class ConfigExperiment(_Experiment):
         )
         self.__prepare_logdir()
 
-        self._config["stages"]["state_params"] = utils.merge_dicts(
-            deepcopy(self._config["stages"].get("state_params", {})),
+        self._config["stages"]["stage_params"] = utils.merge_dicts(
+            deepcopy(
+                self._config["stages"].get("state_params", {})
+            ),  # saved for backward compatibility
+            deepcopy(self._config["stages"].get("stage_params", {})),
             deepcopy(self._config.get("args", {})),
             {"logdir": self._logdir},
         )
@@ -95,19 +98,36 @@ class ConfigExperiment(_Experiment):
         stages_defaults = {}
         stages_config_out = OrderedDict()
         for key in self.STAGE_KEYWORDS:
-            stages_defaults[key] = deepcopy(stages_config.get(key, {}))
+            if key == "stage_params":
+                # backward compatibility
+                stages_defaults[key] = utils.merge_dicts(
+                    deepcopy(stages_config.get("state_params", {})),
+                    deepcopy(stages_config.get(key, {})),
+                )
+            else:
+                stages_defaults[key] = deepcopy(stages_config.get(key, {}))
         for stage in stages_config:
             if (
                 stage in self.STAGE_KEYWORDS
+                or stage == "state_params"
                 or stages_config.get(stage) is None
             ):
                 continue
             stages_config_out[stage] = {}
             for key in self.STAGE_KEYWORDS:
-                stages_config_out[stage][key] = utils.merge_dicts(
-                    deepcopy(stages_defaults.get(key, {})),
-                    deepcopy(stages_config[stage].get(key, {})),
-                )
+                if key == "stage_params":
+                    # backward compatibility
+                    stages_config_out[stage][key] = utils.merge_dicts(
+                        deepcopy(stages_defaults.get("state_params", {})),
+                        deepcopy(stages_defaults.get(key, {})),
+                        deepcopy(stages_config[stage].get("state_params", {})),
+                        deepcopy(stages_config[stage].get(key, {})),
+                    )
+                else:
+                    stages_config_out[stage][key] = utils.merge_dicts(
+                        deepcopy(stages_defaults.get(key, {})),
+                        deepcopy(stages_config[stage].get(key, {})),
+                    )
 
         return stages_config_out
 
@@ -131,23 +151,6 @@ class ConfigExperiment(_Experiment):
     def stages(self) -> List[str]:
         """Experiment's stage names."""
         stages_keys = list(self.stages_config.keys())
-
-        # @TODO: return the feature
-        # # Change start `stages_keys` if resume data were founded
-        # state_params = self.get_state_params(stages_keys[0])
-        # resume, resume_dir = [
-        #     state_params.get(key, None) for key in ["resume", "resume_dir"]
-        # ]
-        #
-        # if resume_dir is not None:
-        #     resume = resume_dir / str(resume)
-        #
-        # if resume is not None and Path(resume).is_file():
-        #     checkpoint = utils.load_checkpoint(resume)
-        #     start_stage = checkpoint["stage"]
-        #     start_idx = stages_keys.index(start_stage)
-        #     stages_keys = stages_keys[start_idx:]
-
         return stages_keys
 
     @property
@@ -155,16 +158,9 @@ class ConfigExperiment(_Experiment):
         """Dict with the parameters for distributed and FP16 methond."""
         return self._config.get("distributed_params", {})
 
-    def get_state_params(self, stage: str) -> Mapping[str, Any]:
+    def get_stage_params(self, stage: str) -> Mapping[str, Any]:
         """Returns the state parameters for a given stage."""
-        return self.stages_config[stage].get("state_params", {})
-
-    def _preprocess_model_for_stage(self, stage: str, model: Model):
-        # stage_index = self.stages.index(stage)
-        return model
-
-    def _postprocess_model_for_stage(self, stage: str, model: Model):
-        return model
+        return self.stages_config[stage].get("stage_params", {})
 
     @staticmethod
     def _get_model(**params):
@@ -183,9 +179,6 @@ class ConfigExperiment(_Experiment):
         """Returns the model for a given stage."""
         model_params = self._config["model_params"]
         model = self._get_model(**model_params)
-
-        model = self._preprocess_model_for_stage(stage, model)
-        model = self._postprocess_model_for_stage(stage, model)
         return model
 
     @staticmethod
@@ -285,9 +278,9 @@ class ConfigExperiment(_Experiment):
             device = utils.get_device()
             for param in model_params:
                 param = param["params"][0]
-                state = optimizer.state[param]
-                for key, value in state.items():
-                    state[key] = utils.any2device(value, device)
+                optimizer_state = optimizer.state[param]
+                for key, value in optimizer_state.items():
+                    optimizer_state[key] = utils.any2device(value, device)
 
             # update optimizer params
             for key, value in params.items():

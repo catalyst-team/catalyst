@@ -1,4 +1,4 @@
-from typing import Dict, Union
+from typing import Dict, List, Union
 from collections import OrderedDict
 
 from catalyst.core.callback import CallbackNode
@@ -6,7 +6,7 @@ from catalyst.core.utils import get_rank
 
 
 def sort_callbacks_by_order(
-    callbacks: Union[list, OrderedDict]
+    callbacks: Union[List, Dict, OrderedDict]
 ) -> OrderedDict:
     """Creates an sequence of callbacks and sort them.
 
@@ -18,7 +18,7 @@ def sort_callbacks_by_order(
     """
     if callbacks is None:
         output = OrderedDict()
-    elif isinstance(callbacks, (Dict, OrderedDict)):
+    elif isinstance(callbacks, (dict, OrderedDict)):
         output = [(k, v) for k, v in callbacks.items()]
         output = sorted(output, key=lambda x: x[1].order)
         output = OrderedDict(output)
