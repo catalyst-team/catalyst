@@ -5,7 +5,7 @@ import torch
 from torch.jit import ScriptModule
 from torch.utils.data import DataLoader, Dataset
 
-from catalyst.core import _StageBasedRunner, Callback, CheckpointCallback
+from catalyst.core import Callback, CheckpointCallback, IStageBasedRunner
 from catalyst.dl import utils
 from catalyst.dl.experiment.experiment import Experiment
 from catalyst.tools.typing import (
@@ -17,7 +17,7 @@ from catalyst.tools.typing import (
 )
 
 
-class Runner(_StageBasedRunner):
+class Runner(IStageBasedRunner):
     """
     Deep Learning Runner for supervised, unsupervised, gan, etc runs.
     """

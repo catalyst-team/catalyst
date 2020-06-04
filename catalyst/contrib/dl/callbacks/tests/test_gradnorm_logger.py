@@ -14,7 +14,7 @@ from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.dl.callbacks.gradnorm_logger import GradNormLogger
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.callbacks import CriterionCallback, OptimizerCallback
-from catalyst.core.runner import _Runner
+from catalyst.core.runner import IRunner
 from catalyst.dl import SupervisedRunner
 
 
@@ -103,7 +103,7 @@ class _OnBatchEndCheckGradsCallback(Callback):
         super().__init__(CallbackOrder.External)
         self.prefix = prefix
 
-    def on_batch_end(self, runner: _Runner):
+    def on_batch_end(self, runner: IRunner):
         if not runner.is_train_loader:
             return
 

@@ -5,7 +5,7 @@ import warnings
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from catalyst.core import _Experiment
+from catalyst.core import IExperiment
 from catalyst.dl import (
     Callback,
     CheckpointCallback,
@@ -23,7 +23,7 @@ from catalyst.tools import settings
 from catalyst.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
-class Experiment(_Experiment):
+class Experiment(IExperiment):
     """
     Super-simple one-staged experiment,
     you can use to declare experiment in code.

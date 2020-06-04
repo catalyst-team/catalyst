@@ -8,7 +8,7 @@ import torch
 import torch.nn.functional as F
 
 from catalyst.core.callback import Callback, CallbackOrder
-from catalyst.core.runner import _Runner
+from catalyst.core.runner import IRunner
 from catalyst.dl import utils
 
 
@@ -48,11 +48,11 @@ class InferMaskCallback(Callback):
         self.counter = 0
         self._keys_from_runner = ["out_dir", "out_prefix"]
 
-    def on_stage_start(self, runner: _Runner):
+    def on_stage_start(self, runner: IRunner):
         """Stage start hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         for key in self._keys_from_runner:
             value = getattr(runner, key, None)
@@ -66,20 +66,20 @@ class InferMaskCallback(Callback):
             self.out_prefix = str(self.out_dir) + "/" + str(self.out_prefix)
         os.makedirs(os.path.dirname(self.out_prefix), exist_ok=True)
 
-    def on_loader_start(self, runner: _Runner):
+    def on_loader_start(self, runner: IRunner):
         """Loader start hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         lm = runner.loader_name
         os.makedirs(f"{self.out_prefix}/{lm}/", exist_ok=True)
 
-    def on_batch_end(self, runner: _Runner):
+    def on_batch_end(self, runner: IRunner):
         """Batch end hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         lm = runner.loader_name
         names = runner.input.get(self.name_key, [])

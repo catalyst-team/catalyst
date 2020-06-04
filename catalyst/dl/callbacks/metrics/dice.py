@@ -1,6 +1,6 @@
 import numpy as np
 
-from catalyst.core import _Runner, Callback, CallbackOrder, MetricCallback
+from catalyst.core import Callback, CallbackOrder, IRunner, MetricCallback
 from catalyst.dl import utils
 from catalyst.utils import metrics
 
@@ -74,11 +74,11 @@ class MulticlassDiceMetricCallback(Callback):
         """Resets the confusion matrix holding the epoch-wise stats."""
         self.confusion_matrix = None
 
-    def on_batch_end(self, runner: _Runner):
+    def on_batch_end(self, runner: IRunner):
         """Records the confusion matrix at the end of each batch.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         outputs = runner.output[self.output_key]
         targets = runner.input[self.input_key]
@@ -92,11 +92,11 @@ class MulticlassDiceMetricCallback(Callback):
         else:
             self.confusion_matrix += confusion_matrix
 
-    def on_loader_end(self, runner: _Runner):
+    def on_loader_end(self, runner: IRunner):
         """@TODO: Docs. Contribution is welcome.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         tp_fp_fn_dict = utils.calculate_tp_fp_fn(self.confusion_matrix)
 

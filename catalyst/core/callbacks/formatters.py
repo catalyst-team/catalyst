@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 import logging
 
 from catalyst.core import utils
-from catalyst.core.runner import _Runner
+from catalyst.core.runner import IRunner
 
 
 class MetricsFormatter(ABC, logging.Formatter):
@@ -18,7 +18,7 @@ class MetricsFormatter(ABC, logging.Formatter):
         super().__init__(f"{message_prefix}{{message}}", style="{")
 
     @abstractmethod
-    def _format_message(self, runner: _Runner):
+    def _format_message(self, runner: IRunner):
         pass
 
     def format(self, record: logging.LogRecord):
@@ -60,7 +60,7 @@ class TxtMetricsFormatter(MetricsFormatter):
 
         return metrics_formatted
 
-    def _format_message(self, runner: _Runner):
+    def _format_message(self, runner: IRunner):
         message = [""]
         mode_metrics = utils.split_dict_to_subdicts(
             dct=runner.epoch_metrics,

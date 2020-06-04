@@ -14,7 +14,7 @@ from sklearn.neighbors import NearestNeighbors
 import torch
 
 from catalyst.core.callback import Callback, CallbackOrder
-from catalyst.core.runner import _Runner
+from catalyst.core.runner import IRunner
 
 
 class KNNMetricCallback(Callback):
@@ -165,11 +165,11 @@ class KNNMetricCallback(Callback):
 
         return result
 
-    def on_batch_end(self, runner: _Runner) -> None:
+    def on_batch_end(self, runner: IRunner) -> None:
         """Batch end hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         features: torch.Tensor = runner.output[
             self.features_key
@@ -181,11 +181,11 @@ class KNNMetricCallback(Callback):
         self.features.extend(features)
         self.targets.extend(targets)
 
-    def on_loader_end(self, runner: _Runner) -> None:
+    def on_loader_end(self, runner: IRunner) -> None:
         """Loader end hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         self.features = np.stack(self.features)
         self.targets = np.stack(self.targets)
@@ -216,11 +216,11 @@ class KNNMetricCallback(Callback):
 
         self._reset_cache()
 
-    def on_epoch_end(self, runner: _Runner) -> None:
+    def on_epoch_end(self, runner: IRunner) -> None:
         """Epoch end hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         if self.cv_loader_names is not None:
             for k, vs in self.cv_loader_names.items():

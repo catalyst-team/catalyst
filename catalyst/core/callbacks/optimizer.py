@@ -4,7 +4,7 @@ import warnings
 
 from catalyst.core import registry, utils
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.runner import _Runner
+from catalyst.core.runner import IRunner
 from catalyst.tools.typing import Optimizer
 
 logger = logging.getLogger(__name__)
@@ -78,18 +78,18 @@ class OptimizerCallback(Callback):
                 grad_clip_fn(group["params"])
         optimizer.step()
 
-    def on_stage_start(self, runner: _Runner) -> None:
+    def on_stage_start(self, runner: IRunner) -> None:
         """Checks that the current stage has correct optimizer."""
         self._optimizer = runner.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
         assert self._optimizer is not None
 
-    def on_epoch_start(self, runner: _Runner) -> None:
+    def on_epoch_start(self, runner: IRunner) -> None:
         """On epoch start event.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         if self.decouple_weight_decay:
             self._optimizer_wd = [
@@ -101,11 +101,11 @@ class OptimizerCallback(Callback):
         else:
             self._optimizer_wd = [0.0] * len(self._optimizer.param_groups)
 
-    def on_epoch_end(self, runner: _Runner) -> None:
+    def on_epoch_end(self, runner: IRunner) -> None:
         """On epoch end event.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         if self.decouple_weight_decay:
             for i, wd in enumerate(self._optimizer_wd):
@@ -128,11 +128,11 @@ class OptimizerCallback(Callback):
             )
             runner.epoch_metrics[momentum_name] = momentum
 
-    def on_batch_end(self, runner: _Runner) -> None:
+    def on_batch_end(self, runner: IRunner) -> None:
         """On batch end event
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         if not runner.is_train_loader:
             return

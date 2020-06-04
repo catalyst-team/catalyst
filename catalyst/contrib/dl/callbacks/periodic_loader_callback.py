@@ -5,7 +5,7 @@ import copy
 from torch.utils.data import DataLoader
 
 from catalyst.core.callback import Callback, CallbackOrder
-from catalyst.core.runner import _Runner
+from catalyst.core.runner import IRunner
 
 
 class PeriodicLoaderCallback(Callback):
@@ -41,11 +41,11 @@ class PeriodicLoaderCallback(Callback):
                 )
             self.loader_periods[loader] = int(period)
 
-    def on_stage_start(self, runner: _Runner) -> None:
+    def on_stage_start(self, runner: IRunner) -> None:
         """Collect information about loaders.
 
         Arguments:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         # store pointers to data loader objects
         for name, loader in runner.loaders.items():
@@ -75,7 +75,7 @@ class PeriodicLoaderCallback(Callback):
                     f"There will be no loaders in epoch {epoch_with_err}!"
                 )
 
-    def on_epoch_start(self, runner: _Runner) -> None:
+    def on_epoch_start(self, runner: IRunner) -> None:
         """Set loaders for current epoch.
         If validation is not required then the first loader
         from loaders used in current epoch will be used
@@ -85,7 +85,7 @@ class PeriodicLoaderCallback(Callback):
         in the epochs where this loader is missing.
 
         Arguments:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         epoch_num = runner.epoch
         # loaders to use in current epoch
@@ -105,12 +105,12 @@ class PeriodicLoaderCallback(Callback):
         )
         runner.loaders = epoch_loaders
 
-    def on_epoch_end(self, runner: _Runner) -> None:
+    def on_epoch_end(self, runner: IRunner) -> None:
         """Store validation metrics and use latest validation score
         when validation loader is not required.
 
         Arguments:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         if self.valid_loader in runner.loaders:
             self.valid_metrics = {

@@ -1,6 +1,6 @@
 """
 Frozen class.
-Example of usage can be found in :py:class:`catalyst.core.runner._Runner`.
+Example of usage can be found in :py:class:`catalyst.core.runner.IRunner`.
 """
 
 
@@ -8,7 +8,7 @@ class FrozenClass:
     """Class which prohibit ``__setattr__`` on existing attributes.
 
     Examples:
-        >>> class _Runner(FrozenClass):
+        >>> class IRunner(FrozenClass):
     """
 
     __is_frozen = False

@@ -14,7 +14,7 @@ from catalyst.core.callback import (
     CallbackOrder,
     CallbackScope,
 )
-from catalyst.core.runner import _Runner
+from catalyst.core.runner import IRunner
 
 
 class Visdom(Logger):
@@ -246,7 +246,7 @@ class VisdomLogger(Callback):
         """@TODO: Docs. Contribution is welcome."""
         self.logger.close()
 
-    def on_batch_end(self, runner: _Runner):
+    def on_batch_end(self, runner: IRunner):
         """Translate batch metrics to Visdom."""
         if self.log_on_batch_end:
             mode = runner.loader_name
@@ -258,7 +258,7 @@ class VisdomLogger(Callback):
                 suffix=self.batch_log_suffix,
             )
 
-    def on_epoch_end(self, runner: _Runner):
+    def on_epoch_end(self, runner: IRunner):
         """Translate epoch metrics to Visdom."""
         if self.log_on_epoch_end:
             self._log_metrics(

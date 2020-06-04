@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 from enum import IntFlag
 
 if TYPE_CHECKING:
-    from catalyst.core.runner import _Runner
+    from catalyst.core.runner import IRunner
 
 
 class CallbackNode(IntFlag):
@@ -106,8 +106,8 @@ class Callback:
     .. note::
         To learn more about Catalyst Core concepts, please check out
 
-            - :py:mod:`catalyst.core.experiment._Experiment`
-            - :py:mod:`catalyst.core.runner._Runner`
+            - :py:mod:`catalyst.core.experiment.IExperiment`
+            - :py:mod:`catalyst.core.runner.IRunner`
             - :py:mod:`catalyst.core.callback.Callback`
 
     Abstraction, please check out the implementations:
@@ -136,75 +136,75 @@ class Callback:
         self.order = order
         self.scope = scope
 
-    def on_stage_start(self, runner: "_Runner"):
+    def on_stage_start(self, runner: "IRunner"):
         """Event handler for stage start.
 
         Args:
-            runner ("_Runner"): _Runner instance.
+            runner ("IRunner"): IRunner instance.
         """
         pass
 
-    def on_stage_end(self, runner: "_Runner"):
+    def on_stage_end(self, runner: "IRunner"):
         """Event handler for stage end.
 
         Args:
-            runner ("_Runner"): _Runner instance.
+            runner ("IRunner"): IRunner instance.
         """
         pass
 
-    def on_epoch_start(self, runner: "_Runner"):
+    def on_epoch_start(self, runner: "IRunner"):
         """Event handler for epoch start.
 
         Args:
-            runner ("_Runner"): _Runner instance.
+            runner ("IRunner"): IRunner instance.
         """
         pass
 
-    def on_epoch_end(self, runner: "_Runner"):
+    def on_epoch_end(self, runner: "IRunner"):
         """Event handler for epoch end.
 
         Args:
-            runner ("_Runner"): _Runner instance.
+            runner ("IRunner"): IRunner instance.
         """
         pass
 
-    def on_loader_start(self, runner: "_Runner"):
+    def on_loader_start(self, runner: "IRunner"):
         """Event handler for loader start.
 
         Args:
-            runner ("_Runner"): _Runner instance.
+            runner ("IRunner"): IRunner instance.
         """
         pass
 
-    def on_loader_end(self, runner: "_Runner"):
+    def on_loader_end(self, runner: "IRunner"):
         """Event handler for loader end.
 
         Args:
-            runner ("_Runner"): _Runner instance.
+            runner ("IRunner"): IRunner instance.
         """
         pass
 
-    def on_batch_start(self, runner: "_Runner"):
+    def on_batch_start(self, runner: "IRunner"):
         """Event handler for batch start.
 
         Args:
-            runner ("_Runner"): _Runner instance.
+            runner ("IRunner"): IRunner instance.
         """
         pass
 
-    def on_batch_end(self, runner: "_Runner"):
+    def on_batch_end(self, runner: "IRunner"):
         """Event handler for batch end.
 
         Args:
-            runner ("_Runner"): _Runner instance.
+            runner ("IRunner"): IRunner instance.
         """
         pass
 
-    def on_exception(self, runner: "_Runner"):
+    def on_exception(self, runner: "IRunner"):
         """Event handler for exception case.
 
         Args:
-            runner ("_Runner"): _Runner instance.
+            runner ("IRunner"): IRunner instance.
         """
         pass
 

@@ -1,7 +1,7 @@
 from collections import defaultdict
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.runner import _Runner
+from catalyst.core.runner import IRunner
 
 
 class ValidationManagerCallback(Callback):
@@ -15,20 +15,20 @@ class ValidationManagerCallback(Callback):
             order=CallbackOrder.Validation, node=CallbackNode.All,
         )
 
-    def on_epoch_start(self, runner: _Runner) -> None:
+    def on_epoch_start(self, runner: IRunner) -> None:
         """Epoch start hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         runner.valid_metrics = defaultdict(None)
         runner.is_best_valid = False
 
-    def on_epoch_end(self, runner: _Runner) -> None:
+    def on_epoch_end(self, runner: IRunner) -> None:
         """Epoch end hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         if runner.stage_name.startswith("infer"):
             return
