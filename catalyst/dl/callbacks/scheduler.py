@@ -1,6 +1,6 @@
 from typing import Optional
 
-from catalyst.core import _Runner
+from catalyst.core import IRunner
 from catalyst.core.callbacks import LRUpdater
 
 
@@ -63,11 +63,11 @@ class LRFinder(LRUpdater):
         self.find_iter += 1
         return res
 
-    def on_loader_start(self, runner: _Runner):
+    def on_loader_start(self, runner: IRunner):
         """@TODO: Docs. Contribution is welcome.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         if runner.is_train_loader:
             lr_ = self.final_lr / self.init_lr
@@ -77,11 +77,11 @@ class LRFinder(LRUpdater):
 
         super().on_loader_start(runner=runner)
 
-    def on_batch_end(self, runner: _Runner):
+    def on_batch_end(self, runner: IRunner):
         """@TODO: Docs. Contribution is welcome.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         super().on_batch_end(runner=runner)
         if self.find_iter > self.num_steps:

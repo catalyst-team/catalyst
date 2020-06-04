@@ -1,6 +1,6 @@
 from catalyst.core import utils
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.runner import _Runner
+from catalyst.core.runner import IRunner
 
 
 class ExceptionCallback(Callback):
@@ -12,7 +12,7 @@ class ExceptionCallback(Callback):
             order=CallbackOrder.External + 1, node=CallbackNode.All
         )
 
-    def on_exception(self, runner: _Runner):
+    def on_exception(self, runner: IRunner):
         """@TODO: Docs. Contribution is welcome."""
         exception = runner.exception
         if not utils.is_exception(exception):

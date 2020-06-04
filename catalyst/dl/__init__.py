@@ -3,6 +3,6 @@
 
 from catalyst.core import *
 
-from .callbacks import *
-from .experiment import *
-from .runner import *
+from catalyst.dl.callbacks import *
+from catalyst.dl.experiment import *
+from catalyst.dl.runner import *

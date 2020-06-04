@@ -9,7 +9,7 @@ from catalyst.core.callback import (
     CallbackOrder,
     CallbackScope,
 )
-from catalyst.core.runner import _Runner
+from catalyst.core.runner import IRunner
 
 
 class AlchemyLogger(Callback):
@@ -101,7 +101,7 @@ class AlchemyLogger(Callback):
                     name=metric_name, value=metric_value, step=step,
                 )
 
-    def on_batch_end(self, runner: _Runner):
+    def on_batch_end(self, runner: IRunner):
         """Translate batch metrics to Alchemy."""
         if self.log_on_batch_end:
             mode = runner.loader_name
@@ -113,7 +113,7 @@ class AlchemyLogger(Callback):
                 suffix=self.batch_log_suffix,
             )
 
-    def on_loader_end(self, runner: _Runner):
+    def on_loader_end(self, runner: IRunner):
         """Translate loader metrics to Alchemy."""
         if self.log_on_epoch_end:
             mode = runner.loader_name
@@ -125,7 +125,7 @@ class AlchemyLogger(Callback):
                 suffix=self.epoch_log_suffix,
             )
 
-    def on_epoch_end(self, runner: _Runner):
+    def on_epoch_end(self, runner: IRunner):
         """Translate epoch metrics to Alchemy."""
         extra_mode = "_base"
         splitted_epoch_metrics = utils.split_dict_to_subdicts(

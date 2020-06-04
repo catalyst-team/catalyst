@@ -6,7 +6,7 @@ from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 import torch
 import torch.distributed
 
-from catalyst.core import _Runner, Callback, CallbackNode, CallbackOrder
+from catalyst.core import Callback, CallbackNode, CallbackOrder, IRunner
 from catalyst.dl import utils
 from catalyst.tools import meters
 
@@ -90,30 +90,30 @@ class ConfusionMatrixCallback(Callback):
         fig = utils.render_figure_to_tensor(fig)
         logger.add_image(f"{self.prefix}/epoch", fig, global_step=epoch)
 
-    def on_loader_start(self, runner: _Runner):
+    def on_loader_start(self, runner: IRunner):
         """Loader start hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         self._reset_stats()
 
-    def on_batch_end(self, runner: _Runner):
+    def on_batch_end(self, runner: IRunner):
         """Batch end hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         self._add_to_stats(
             runner.output[self.output_key].detach(),
             runner.input[self.input_key].detach(),
         )
 
-    def on_loader_end(self, runner: _Runner):
+    def on_loader_end(self, runner: IRunner):
         """Loader end hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         class_names = self.class_names or [
             str(i) for i in range(self.num_classes)

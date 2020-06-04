@@ -5,7 +5,7 @@ import numpy as np
 import torch
 
 from catalyst.core.callbacks import CriterionCallback
-from catalyst.core.runner import _Runner
+from catalyst.core.runner import IRunner
 
 
 class CutmixCallback(CriterionCallback):
@@ -52,14 +52,14 @@ class CutmixCallback(CriterionCallback):
         self.index = None
         self.is_needed = True
 
-    def _compute_loss(self, runner: _Runner, criterion):
+    def _compute_loss(self, runner: IRunner, criterion):
         """Computes loss.
 
         If self.is_needed is ``False`` then calls ``_compute_loss``
         from ``CriterionCallback``, otherwise computes loss value.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
             criterion: that is used to compute loss
         """
         if not self.is_needed:
@@ -101,19 +101,19 @@ class CutmixCallback(CriterionCallback):
 
         return bbx1, bby1, bbx2, bby2
 
-    def on_loader_start(self, runner: _Runner) -> None:
+    def on_loader_start(self, runner: IRunner) -> None:
         """Checks if it is needed for the loader.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         self.is_needed = not self.on_train_only or runner.is_train_loader
 
-    def on_batch_start(self, runner: _Runner) -> None:
+    def on_batch_start(self, runner: IRunner) -> None:
         """Mixes data according to Cutmix algorithm.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         if not self.is_needed:
             return

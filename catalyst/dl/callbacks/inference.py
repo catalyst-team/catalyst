@@ -3,7 +3,7 @@ import os
 
 import numpy as np
 
-from catalyst.core import _Runner, Callback, CallbackOrder
+from catalyst.core import Callback, CallbackOrder, IRunner
 
 
 # @TODO: refactor
@@ -21,11 +21,11 @@ class InferCallback(Callback):
         self.predictions = defaultdict(lambda: [])
         self._keys_from_runner = ["out_dir", "out_prefix"]
 
-    def on_stage_start(self, runner: _Runner):
+    def on_stage_start(self, runner: IRunner):
         """Stage start hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         for key in self._keys_from_runner:
             value = getattr(runner, key, None)
@@ -37,30 +37,30 @@ class InferCallback(Callback):
         if self.out_prefix is not None:
             os.makedirs(os.path.dirname(self.out_prefix), exist_ok=True)
 
-    def on_loader_start(self, runner: _Runner):
+    def on_loader_start(self, runner: IRunner):
         """Loader start hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         self.predictions = defaultdict(lambda: [])
 
-    def on_batch_end(self, runner: _Runner):
+    def on_batch_end(self, runner: IRunner):
         """Batch end hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         dct = runner.output
         dct = {key: value.detach().cpu().numpy() for key, value in dct.items()}
         for key, value in dct.items():
             self.predictions[key].append(value)
 
-    def on_loader_end(self, runner: _Runner):
+    def on_loader_end(self, runner: IRunner):
         """Loader end hook.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         self.predictions = {
             key: np.concatenate(value, axis=0)

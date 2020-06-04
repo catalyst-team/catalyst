@@ -6,8 +6,13 @@
 # experiment
 # runner
 
-from .experiment import _Experiment
-from .runner import _Runner, _StageBasedRunner
-from .callback import Callback, CallbackOrder, CallbackNode, CallbackScope
-from .callbacks import *
-from .state import State
+from catalyst.core.experiment import IExperiment
+from catalyst.core.runner import IRunner, IStageBasedRunner
+from catalyst.core.callback import (
+    Callback,
+    CallbackOrder,
+    CallbackNode,
+    CallbackScope,
+)
+from catalyst.core.callbacks import *
+from catalyst.core.state import State

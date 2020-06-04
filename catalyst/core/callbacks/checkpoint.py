@@ -5,10 +5,10 @@ from pathlib import Path
 
 from catalyst.core import utils
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.runner import _Runner
+from catalyst.core.runner import IRunner
 
 
-def _pack_runner(runner: _Runner):
+def _pack_runner(runner: IRunner):
     checkpoint = utils.pack_checkpoint(
         model=runner.model,
         criterion=runner.criterion,
@@ -30,14 +30,14 @@ def _pack_runner(runner: _Runner):
 
 
 def _load_checkpoint(
-    *, filename, runner: _Runner, load_full: bool = True
+    *, filename, runner: IRunner, load_full: bool = True
 ) -> None:
     """
     Load checkpoint from a file.
 
     Arguments:
         filename (str): path to checkpoint
-        runner (_Runner): current runner
+        runner (IRunner): current runner
         load_full (bool): if true (default) then will be performed
             loading states for criterion, optimizer and scheduler.
             File should contain keys required for
@@ -136,14 +136,14 @@ def _required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]:
 
 
 def _load_states_from_file_map(
-    *, runner: _Runner, load_map: Dict[str, str]
+    *, runner: IRunner, load_map: Dict[str, str]
 ) -> None:
     """
     Load state of a model, criterion, optimizer, scheduler
     from files specified in ``load_map``.
 
     Arguments:
-        runner (_Runner): current runner
+        runner (IRunner): current runner
         load_map (Dict[str, str]): dict with mappings to load.
             Expected keys - ``'model'``, ``'criterion'``
             ``'optimizer'``, ``'scheduler'``, other keys will be
@@ -194,7 +194,7 @@ class BaseCheckpointCallback(Callback):
             metrics, f"{logdir}/checkpoints/{self.metrics_filename}"
         )
 
-    def on_exception(self, runner: _Runner):
+    def on_exception(self, runner: IRunner):
         exception = runner.exception
         if not utils.is_exception(exception):
             return
@@ -484,7 +484,7 @@ class CheckpointCallback(BaseCheckpointCallback):
 
     @staticmethod
     def _load_runner(
-        runner: _Runner,
+        runner: IRunner,
         mapping: Union[str, Dict[str, str]],
         load_full: bool = False,
     ) -> None:
@@ -492,7 +492,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         Selects a loading method based on type of mapping.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
             mapping (str or dict): mapping to use for loading
             load_full (bool): load a full model, used only
                 when mapping type is string
@@ -511,7 +511,7 @@ class CheckpointCallback(BaseCheckpointCallback):
                 runner=runner, load_map=mapping,
             )
 
-    def on_stage_start(self, runner: _Runner) -> None:
+    def on_stage_start(self, runner: IRunner) -> None:
         """
         Setup model for stage.
 
@@ -521,7 +521,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         then will be performed loading checkpoint.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         for key in self._keys_from_state:
             value = getattr(runner, key, None)
@@ -559,12 +559,12 @@ class CheckpointCallback(BaseCheckpointCallback):
                     load_full=_load_full,
                 )
 
-    def on_epoch_end(self, runner: _Runner) -> None:
+    def on_epoch_end(self, runner: IRunner) -> None:
         """
         Collect and save checkpoint after epoch.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         if (
             runner.stage_name.startswith("infer")
@@ -582,13 +582,13 @@ class CheckpointCallback(BaseCheckpointCallback):
                 minimize_metric=runner.minimize_metric,
             )
 
-    def on_stage_end(self, runner: _Runner) -> None:
+    def on_stage_end(self, runner: IRunner) -> None:
         """
         Show information about best checkpoints during the stage and
         load model specified in ``load_on_stage_end``.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         if (
             runner.stage_name.startswith("infer")
@@ -751,22 +751,22 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         self.save_metric(logdir, metrics)
         print(f"\nSaved checkpoint at {filepath}")
 
-    def on_stage_start(self, runner: _Runner):
+    def on_stage_start(self, runner: IRunner):
         """
         Reset iterations counter.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         if self.stage_restart:
             self._iteration_counter = 0
 
-    def on_batch_end(self, runner: _Runner):
+    def on_batch_end(self, runner: IRunner):
         """
         Save checkpoint based on batches count.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         self._iteration_counter += 1
         if self._iteration_counter % self.period == 0:
@@ -777,12 +777,12 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
                 batch_metrics=runner.batch_metrics,
             )
 
-    def on_stage_end(self, runner: _Runner):
+    def on_stage_end(self, runner: IRunner):
         """
         Load model specified in ``load_on_stage_end``.
 
         Args:
-            runner (_Runner): current runner
+            runner (IRunner): current runner
         """
         if self.load_on_stage_end in ["best", "best_full"]:
             resume = (

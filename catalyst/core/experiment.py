@@ -9,7 +9,7 @@ from catalyst.core.callback import Callback
 from catalyst.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
-class _Experiment(ABC):
+class IExperiment(ABC):
     """
     An abstraction that contains information about the experiment –
     a model, a criterion, an optimizer, a scheduler, and their hyperparameters.
@@ -19,8 +19,8 @@ class _Experiment(ABC):
     .. note::
         To learn more about Catalyst Core concepts, please check out
 
-            - :py:mod:`catalyst.core.experiment._Experiment`
-            - :py:mod:`catalyst.core.runner._Runner`
+            - :py:mod:`catalyst.core.experiment.IExperiment`
+            - :py:mod:`catalyst.core.runner.IRunner`
             - :py:mod:`catalyst.core.callback.Callback`
 
     Abstraction, please check out the implementations:
@@ -212,10 +212,10 @@ class _Experiment(ABC):
 
         Aggregation method, based on,
 
-        - :py:mod:`catalyst.core.experiment._Experiment.get_model`
-        - :py:mod:`catalyst.core.experiment._Experiment.get_criterion`
-        - :py:mod:`catalyst.core.experiment._Experiment.get_optimizer`
-        - :py:mod:`catalyst.core.experiment._Experiment.get_scheduler`
+        - :py:mod:`catalyst.core.experiment.IExperiment.get_model`
+        - :py:mod:`catalyst.core.experiment.IExperiment.get_criterion`
+        - :py:mod:`catalyst.core.experiment.IExperiment.get_optimizer`
+        - :py:mod:`catalyst.core.experiment.IExperiment.get_scheduler`
 
         Args:
             stage (str): stage name of interest,
@@ -304,7 +304,7 @@ class _Experiment(ABC):
 
         .. note::
             Wrapper for
-            :py:mod:`catalyst.core.experiment._Experiment.get_datasets`.
+            :py:mod:`catalyst.core.experiment.IExperiment.get_datasets`.
             For most of your experiments you need to rewrite `get_datasets`
             method only.
 
@@ -347,11 +347,11 @@ class _Experiment(ABC):
         .. note::
             To learn more about Catalyst Core concepts, please check out
 
-                - :py:mod:`catalyst.core.experiment._Experiment`
-                - :py:mod:`catalyst.core.runner._Runner`
+                - :py:mod:`catalyst.core.experiment.IExperiment`
+                - :py:mod:`catalyst.core.runner.IRunner`
                 - :py:mod:`catalyst.core.callback.Callback`
         """
         pass
 
 
-__all__ = ["_Experiment"]
+__all__ = ["IExperiment"]
