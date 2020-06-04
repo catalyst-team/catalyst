@@ -1,32 +1,27 @@
-from typing import Dict, Tuple, Union
+from typing import Union
 from collections import OrderedDict
-import copy
 import os
 import random
 import socket
 import subprocess
 import warnings
 
+import deprecation
+
 import torch
 from torch import nn
 import torch.distributed
 
-from catalyst.utils.tools.typing import (
-    Criterion,
-    Device,
-    Model,
-    Optimizer,
-    Scheduler,
-)
+from catalyst import __version__
 
-from .misc import get_fn_default_params, maybe_recursive_call
-from .torch import get_available_gpus, get_device
+from .misc import get_fn_default_params
+from .torch import get_available_gpus
 
 warnings.simplefilter("once")
 warnings.filterwarnings("once")
 
 
-def is_wrapped_with_ddp(model: nn.Module) -> bool:
+def check_ddp_wrapped(model: nn.Module) -> bool:
     """
     Checks whether model is wrapped with DataParallel/DistributedDataParallel.
     """
@@ -44,6 +39,62 @@ def is_wrapped_with_ddp(model: nn.Module) -> bool:
     return isinstance(model, parallel_wrappers)
 
 
+def check_apex_available() -> bool:
+    """Checks if apex is available."""
+    env_apex = os.getenv("USE_APEX", "1") == "1"
+    try:
+        import apex  # noqa: F401
+        from apex import amp  # noqa: F401
+
+        return True and env_apex
+    except ImportError:
+        return False and env_apex
+
+
+def check_torch_distributed_initialized() -> bool:
+    """Checks if torch.distributed is available and initialized."""
+    return (
+        torch.distributed.is_available() and torch.distributed.is_initialized()
+    )
+
+
+def check_slurm_available():
+    """Checks if slurm is available."""
+    return "SLURM_JOB_NUM_NODES" in os.environ and "SLURM_NODEID" in os.environ
+
+
+def assert_fp16_available() -> None:
+    """Asserts for installed and available Apex FP16."""
+    assert (
+        torch.backends.cudnn.enabled
+    ), "fp16 mode requires cudnn backend to be enabled."
+
+    assert check_apex_available(), (
+        "NVidia Apex package must be installed. "
+        "See https://github.com/NVIDIA/apex."
+    )
+
+
+def initialize_apex(model, optimizer=None, **distributed_params):
+    """@TODO: Docs. Contribution is welcome."""
+    import apex
+
+    amp_params = get_fn_default_params(
+        apex.amp.initialize, ["models", "optimizers"]
+    )
+    amp_params["opt_level"] = "O0"
+    for dp in distributed_params:
+        if dp in amp_params:
+            amp_params[dp] = distributed_params[dp]
+
+    amp_result = apex.amp.initialize(model, optimizer, **amp_params)
+    if optimizer is not None:
+        model, optimizer = amp_result
+    else:
+        model = amp_result
+    return model, optimizer
+
+
 def get_nn_from_ddp_module(model: nn.Module) -> nn.Module:
     """
     Return a real model from a torch.nn.DataParallel,
@@ -56,40 +107,9 @@ def get_nn_from_ddp_module(model: nn.Module) -> nn.Module:
     Returns:
         A model
     """
-    if is_wrapped_with_ddp(model):
+    if check_ddp_wrapped(model):
         model = model.module
     return model
-
-
-def is_torch_distributed_initialized() -> bool:
-    """Checks if torch.distributed is available and initialized."""
-    return (
-        torch.distributed.is_available() and torch.distributed.is_initialized()
-    )
-
-
-def is_apex_available() -> bool:
-    """Checks if apex is available."""
-    env_apex = os.getenv("USE_APEX", "1") == "1"
-    try:
-        import apex  # noqa: F401
-        from apex import amp  # noqa: F401
-
-        return True and env_apex
-    except ImportError:
-        return False and env_apex
-
-
-def assert_fp16_available() -> None:
-    """Asserts for installed and available Apex FP16."""
-    assert (
-        torch.backends.cudnn.enabled
-    ), "fp16 mode requires cudnn backend to be enabled."
-
-    assert is_apex_available(), (
-        "NVidia Apex package must be installed. "
-        "See https://github.com/NVIDIA/apex."
-    )
 
 
 def get_rank() -> int:
@@ -100,7 +120,7 @@ def get_rank() -> int:
         (int): ``rank`` if torch.distributed is initialized,
         otherwise ``-1``
     """
-    if is_torch_distributed_initialized():
+    if check_torch_distributed_initialized():
         return torch.distributed.get_rank()
     else:
         return -1
@@ -108,7 +128,7 @@ def get_rank() -> int:
 
 def get_distributed_mean(value: Union[float, torch.Tensor]):
     """Computes distributed mean among all nodes."""
-    if is_torch_distributed_initialized():
+    if check_torch_distributed_initialized():
         value = torch.tensor(
             value,
             dtype=torch.float,
@@ -118,11 +138,6 @@ def get_distributed_mean(value: Union[float, torch.Tensor]):
         torch.distributed.all_reduce(value)
         value = float(value.item() / torch.distributed.get_world_size())
     return value
-
-
-def is_slurm_available():
-    """Checks if slurm is available."""
-    return "SLURM_JOB_NUM_NODES" in os.environ and "SLURM_NODEID" in os.environ
 
 
 def get_slurm_params():
@@ -143,7 +158,7 @@ def get_distributed_params():
     master_port = str(random.randint(5 * 10 ** 4, 6 * 10 ** 4))
     master_addr = "127.0.0.1"
     cur_node, num_nodes = 0, 1
-    if is_slurm_available():
+    if check_slurm_available():
         cur_node, num_nodes, master_addr, master_port = get_slurm_params()
 
     os.environ["MASTER_ADDR"] = os.getenv("MASTER_ADDR", master_addr)
@@ -185,127 +200,67 @@ def get_distributed_env(
     return env
 
 
-def initialize_apex(model, optimizer=None, **distributed_params):
-    """@TODO: Docs. Contribution is welcome."""
-    import apex
-
-    amp_params = get_fn_default_params(
-        apex.amp.initialize, ["models", "optimizers"]
-    )
-    amp_params["opt_level"] = "O0"
-    for dp in distributed_params:
-        if dp in amp_params:
-            amp_params[dp] = distributed_params[dp]
-
-    amp_result = apex.amp.initialize(model, optimizer, **amp_params)
-    if optimizer is not None:
-        model, optimizer = amp_result
-    else:
-        model = amp_result
-    return model, optimizer
-
-
-def process_components(
-    model: Model,
-    criterion: Criterion = None,
-    optimizer: Optimizer = None,
-    scheduler: Scheduler = None,
-    distributed_params: Dict = None,
-    device: Device = None,
-) -> Tuple[Model, Criterion, Optimizer, Scheduler, Device]:
+@deprecation.deprecated(
+    deprecated_in="20.05",
+    removed_in="20.06",
+    current_version=__version__,
+    details="Use check_ddp_wrapped instead.",
+)
+def is_wrapped_with_ddp(model: nn.Module) -> bool:
     """
-    Returns the processed model, criterion, optimizer, scheduler and device.
-
-    Args:
-        model (Model): torch model
-        criterion (Criterion): criterion function
-        optimizer (Optimizer): optimizer
-        scheduler (Scheduler): scheduler
-        distributed_params (dict, optional): dict with the parameters
-            for distributed and FP16 method
-        device (Device, optional): device
+    Checks whether model is wrapped with DataParallel/DistributedDataParallel.
     """
-    distributed_params = distributed_params or {}
-    distributed_params = copy.deepcopy(distributed_params)
-    distributed_params.update(get_distributed_params())
-    if device is None:
-        device = get_device()
+    return check_ddp_wrapped(model)
 
-    use_apex = distributed_params.pop("apex", True) and is_apex_available()
 
-    model: Model = maybe_recursive_call(model, "to", device=device)
+@deprecation.deprecated(
+    deprecated_in="20.05",
+    removed_in="20.06",
+    current_version=__version__,
+    details="Use check_torch_distributed_initialized instead.",
+)
+def is_torch_distributed_initialized() -> bool:
+    """Checks if torch.distributed is available and initialized."""
+    return check_torch_distributed_initialized()
 
-    if is_wrapped_with_ddp(model):
-        pass
-    # distributed data parallel run (ddp) (with apex support)
-    elif get_rank() >= 0:
-        assert isinstance(
-            model, nn.Module
-        ), "Distributed training is not available for KV model"
 
-        local_rank = distributed_params.pop("local_rank", 0) or 0
-        device = f"cuda:{local_rank}"
-        model = maybe_recursive_call(model, "to", device=device)
+@deprecation.deprecated(
+    deprecated_in="20.05",
+    removed_in="20.06",
+    current_version=__version__,
+    details="Use check_slurm_available instead.",
+)
+def is_slurm_available() -> bool:
+    """Checks if slurm is available."""
+    return check_slurm_available()
 
-        syncbn = distributed_params.pop("syncbn", False)
 
-        if use_apex:
-            import apex
-
-            model, optimizer = initialize_apex(
-                model, optimizer, **distributed_params
-            )
-            model = apex.parallel.DistributedDataParallel(model)
-
-            if syncbn:
-                model = apex.parallel.convert_syncbn_model(model)
-        else:
-            model = nn.parallel.DistributedDataParallel(
-                model, device_ids=[local_rank], output_device=local_rank
-            )
-    # data parallel run (dp) (with apex support)
-    else:
-        # apex issue https://github.com/deepset-ai/FARM/issues/210
-        can_use_apex = (use_apex and torch.cuda.device_count() == 1) or (
-            use_apex
-            and torch.cuda.device_count() > 1
-            and distributed_params.get("opt_level", "O0") == "O1"
-        )
-
-        if can_use_apex:
-            assert isinstance(
-                model, nn.Module
-            ), "Apex training is not available for KV model"
-
-            model, optimizer = initialize_apex(
-                model, optimizer, **distributed_params
-            )
-
-        if torch.cuda.device_count() > 1:
-            if isinstance(model, nn.Module):
-                model = nn.DataParallel(model)
-            elif isinstance(model, dict):
-                model = {k: nn.DataParallel(v) for k, v in model.items()}
-            else:
-                raise NotImplementedError()
-
-    model: Model = maybe_recursive_call(model, "to", device=device)
-
-    return model, criterion, optimizer, scheduler, device
+@deprecation.deprecated(
+    deprecated_in="20.05",
+    removed_in="20.06",
+    current_version=__version__,
+    details="Use check_apex_available instead.",
+)
+def is_apex_available() -> bool:
+    """Checks if apex is available."""
+    return check_apex_available()
 
 
 __all__ = [
+    "check_ddp_wrapped",
+    "check_apex_available",
+    "check_torch_distributed_initialized",
+    "check_slurm_available",
+    "assert_fp16_available",
+    "initialize_apex",
+    "get_nn_from_ddp_module",
     "get_rank",
     "get_distributed_mean",
-    "is_apex_available",
-    "assert_fp16_available",
-    "is_slurm_available",
-    "is_torch_distributed_initialized",
-    "initialize_apex",
-    "is_wrapped_with_ddp",
     "get_distributed_env",
     "get_distributed_params",
-    "get_nn_from_ddp_module",
     "get_slurm_params",
-    "process_components",
+    "is_wrapped_with_ddp",
+    "is_torch_distributed_initialized",
+    "is_slurm_available",
+    "is_apex_available",
 ]

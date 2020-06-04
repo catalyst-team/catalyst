@@ -148,7 +148,7 @@ class WandbLogger(Callback):
             metrics_ = state.batch_metrics
             self._log_metrics(
                 metrics=metrics_,
-                step=state.global_step,
+                step=state.global_sample_step,
                 mode=mode,
                 suffix=self.batch_log_suffix,
                 commit=True,
@@ -184,3 +184,6 @@ class WandbLogger(Callback):
                 suffix=self.epoch_log_suffix,
                 commit=True,
             )
+
+
+__all__ = ["WandbLogger"]

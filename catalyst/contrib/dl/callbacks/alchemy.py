@@ -108,7 +108,7 @@ class AlchemyLogger(Callback):
             metrics_ = state.batch_metrics
             self._log_metrics(
                 metrics=metrics_,
-                step=state.global_step,
+                step=state.global_sample_step,
                 mode=mode,
                 suffix=self.batch_log_suffix,
             )
@@ -141,3 +141,6 @@ class AlchemyLogger(Callback):
                 mode=extra_mode,
                 suffix=self.epoch_log_suffix,
             )
+
+
+__all__ = ["AlchemyLogger"]

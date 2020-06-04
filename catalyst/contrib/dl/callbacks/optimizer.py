@@ -4,7 +4,7 @@ from torch.nn import DataParallel
 from torch.nn.parallel import DistributedDataParallel
 
 from catalyst.core import Callback, CallbackNode, CallbackOrder, State
-from catalyst.utils.tools.typing import Model
+from catalyst.tools.typing import Model
 
 
 class SaveModelGradsCallback(Callback):
@@ -87,3 +87,6 @@ class SaveModelGradsCallback(Callback):
 
             state.batch_metrics.update(**grad_norm)
             self._accumulation_counter = 0
+
+
+__all__ = ["SaveModelGradsCallback"]

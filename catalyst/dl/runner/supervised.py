@@ -4,7 +4,7 @@ import logging
 import torch
 
 from catalyst.dl import State, SupervisedExperiment
-from catalyst.utils.tools.typing import Device, Model
+from catalyst.tools.typing import Device, Model
 
 from .core import Runner
 
@@ -121,7 +121,7 @@ class SupervisedRunner(Runner):
             batch (Mapping[str, Any]): dictionary with data batches
                 from DataLoader.
         """
-        self.state.batch_out = self.forward(batch)
+        self.state.output = self.forward(batch)
 
     @torch.no_grad()
     def predict_batch(

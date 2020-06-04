@@ -1,7 +1,7 @@
 from typing import List
 
 from catalyst.dl.callbacks import MeterMetricsCallback
-from catalyst.utils import meters
+from catalyst.tools import meters
 
 
 class AUCCallback(MeterMetricsCallback):

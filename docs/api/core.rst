@@ -34,6 +34,11 @@ Runner
     :undoc-members:
     :show-inheritance:
 
+.. autoclass:: catalyst.core.runner._StageBasedRunner
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 .. automodule:: catalyst.core.runner
     :members:
     :undoc-members:

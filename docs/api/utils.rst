@@ -1,4 +1,4 @@
-Utilities
+Tools and Utilities
 ================================================
 
 .. toctree::
@@ -6,6 +6,121 @@ Utilities
 
 .. contents::
    :local:
+
+
+Tools
+----------------------
+
+.. automodule:: catalyst.tools
+    :members:
+    :show-inheritance:
+
+Frozen Class
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.tools.frozen_class
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Registry
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.tools.registry
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Time Manager
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.tools.time_manager
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Typing
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.tools.typing
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Meters
+------------------------
+
+The meters from torchnet.meters.
+
+Every meter implements :py:class:`catalyst.tools.meters.meter.Meter` interface.
+
+Meter
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.tools.meters.meter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+AP Meter
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.tools.meters.apmeter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+AUC Meter
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.tools.meters.aucmeter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Average Value Meter
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.tools.meters.averagevaluemeter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Class Error Meter
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.tools.meters.classerrormeter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Confusion Meter
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.tools.meters.confusionmeter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Map Meter
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.tools.meters.mapmeter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Moving Average Value Meter
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.tools.meters.movingaveragevaluemeter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+MSE Meter
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.tools.meters.msemeter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Precision-Recall-F1 Meter
+~~~~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.tools.meters.ppv_tpr_f1_meter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Utils
 ----------------------
@@ -17,6 +132,13 @@ Utils
 Checkpoint
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.checkpoint
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Components
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.components
     :members:
     :undoc-members:
     :show-inheritance:
@@ -98,36 +220,6 @@ Torch
     :undoc-members:
     :show-inheritance:
 
-Tools
-------------------------
-
-Frozen Class
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.tools.frozen_class
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Registry
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.tools.registry
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Time Manager
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.tools.time_manager
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Typing
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.tools.typing
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 Metrics
 ------------------------
@@ -163,83 +255,6 @@ Focal
 IoU
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.metrics.iou
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Meters
-------------------------
-
-The meters from torchnet.meters.
-
-Every meter implements :py:class:`catalyst.utils.meters.meter.Meter` interface.
-
-Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.meter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-AP Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.apmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-AUC Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.aucmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Average Value Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.averagevaluemeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Class Error Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.classerrormeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Confusion Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.confusionmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Map Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.mapmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Moving Average Value Meter
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.movingaveragevaluemeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-MSE Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.msemeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Precision-Recall-F1 Meter
-~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.meters.ppv_tpr_f1_meter
     :members:
     :undoc-members:
     :show-inheritance:

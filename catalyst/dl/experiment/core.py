@@ -5,7 +5,7 @@ import warnings
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from catalyst.core import StageBasedExperiment
+from catalyst.core import _Experiment
 from catalyst.dl import (
     Callback,
     CheckpointCallback,
@@ -19,11 +19,11 @@ from catalyst.dl import (
     ValidationManagerCallback,
     VerboseLogger,
 )
-from catalyst.utils.tools.settings import STAGE_INFER_PREFIX
-from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
+from catalyst.tools import settings
+from catalyst.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
-class Experiment(StageBasedExperiment):
+class Experiment(_Experiment):
     """
     Super-simple one-staged experiment,
     you can use to declare experiment in code.
@@ -156,7 +156,7 @@ class Experiment(StageBasedExperiment):
             loaders = utils.get_loaders_from_params(
                 initial_seed=initial_seed, **datasets,
             )
-        if not stage.startswith(STAGE_INFER_PREFIX):  # train stage
+        if not stage.startswith(settings.stage_infer_prefix):  # train stage
             if len(loaders) == 1:
                 valid_loader = list(loaders.keys())[0]
                 warnings.warn(

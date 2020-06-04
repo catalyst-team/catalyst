@@ -1,6 +1,6 @@
 # Framework must-haves
 numpy>=1.16.4
-torch>=1.0.0
+torch>=1.1.0
 tqdm>=4.33.0
 PyYAML
 
@@ -17,15 +17,8 @@ tensorboardX
 crc32c>=1.7
 plotly>=4.1.0
 
-# cv -> catalyst[cv]
-torchvision>=0.2.1
-Pillow
-imageio
-opencv-python
-scikit-image>=0.14.2
-
 # Used in scripts  -> contrib (?)
 matplotlib
 pandas>=0.22
 scikit-learn>=0.20
-GitPython>=2.1.11
+GitPython>=3.1.1

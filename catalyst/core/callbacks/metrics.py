@@ -6,7 +6,7 @@ import logging
 import torch
 
 from catalyst.core import Callback, CallbackNode, CallbackOrder, State, utils
-from catalyst.utils import meters
+from catalyst.tools import meters
 
 logger = logging.getLogger(__name__)
 
@@ -66,15 +66,15 @@ class _MetricCallback(ABC, Callback):
         pass
 
     def _compute_metric_value(self, state: State):
-        output = self._get_output(state.batch_out, self.output_key)
-        input = self._get_input(state.batch_in, self.input_key)
+        output = self._get_output(state.output, self.output_key)
+        input = self._get_input(state.input, self.input_key)
 
         metric = self.metric_fn(output, input, **self.metrics_kwargs)
         return metric
 
     def _compute_metric_key_value(self, state: State):
-        output = self._get_output(state.batch_out, self.output_key)
-        input = self._get_input(state.batch_in, self.input_key)
+        output = self._get_output(state.output, self.output_key)
+        input = self._get_input(state.input, self.input_key)
 
         metric = self.metric_fn(**output, **input, **self.metrics_kwargs)
         return metric
@@ -183,14 +183,14 @@ class MetricAggregationCallback(Callback):
         if mode in ("sum", "mean"):
             if metrics is not None and not isinstance(metrics, list):
                 raise ValueError(
-                    "For `sum` or `mean` mode the loss_keys must be "
+                    "For `sum` or `mean` mode the metrics must be "
                     "None or list or str (not dict)"
                 )
         elif mode in ("weighted_sum", "weighted_mean"):
             if metrics is None or not isinstance(metrics, dict):
                 raise ValueError(
                     "For `weighted_sum` or `weighted_mean` mode "
-                    "the loss_keys must be specified "
+                    "the metrics must be specified "
                     "and must be a dict"
                 )
         else:
@@ -319,7 +319,7 @@ class MetricManagerCallback(Callback):
         """
         state.batch_metrics = self._process_metrics(state.batch_metrics)
         for key, value in state.batch_metrics.items():
-            self.meters[key].add(value)
+            self.meters[key].add(value, state.batch_size)
 
 
 __all__ = [

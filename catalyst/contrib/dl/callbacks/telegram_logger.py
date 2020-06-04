@@ -1,11 +1,11 @@
 from typing import List
 import logging
-import os
 from urllib.parse import quote_plus
 from urllib.request import Request, urlopen
 
 from catalyst import utils
 from catalyst.core import Callback, CallbackNode, CallbackOrder, State
+from catalyst.tools import settings
 
 
 class TelegramLogger(Callback):
@@ -39,10 +39,8 @@ class TelegramLogger(Callback):
         """
         super().__init__(order=CallbackOrder.Logging, node=CallbackNode.Master)
         # @TODO: replace this logic with global catalyst config at ~/.catalyst
-        self._token = token or os.environ.get("CATALYST_TELEGRAM_TOKEN", None)
-        self._chat_id = chat_id or os.environ.get(
-            "CATALYST_TELEGRAM_CHAT_ID", None
-        )
+        self._token = token or settings.telegram_logger_token
+        self._chat_id = chat_id or settings.telegram_logger_chat_id
         assert self._token is not None and self._chat_id is not None
         self._base_url = (
             f"https://api.telegram.org/bot{self._token}/sendMessage"
@@ -128,3 +126,6 @@ class TelegramLogger(Callback):
                 )
 
                 self._send_text(text)
+
+
+__all__ = ["TelegramLogger"]

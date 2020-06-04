@@ -1,4 +1,4 @@
-from typing import Any, Iterable, Optional
+from typing import Any, Iterable, List, Optional
 from itertools import tee
 
 
@@ -56,4 +56,16 @@ def args_are_not_none(*args: Optional[Any]) -> bool:
     return True
 
 
-__all__ = ["args_are_not_none", "make_tuple", "pairwise"]
+def find_value_ids(it: Iterable[Any], value: Any) -> List[int]:
+    """
+    Args:
+        it: list of any
+        value: query element
+
+    Returns: indices of the all elements equal x0
+    """
+    inds = [i for i, el in enumerate(it) if el == value]
+    return inds
+
+
+__all__ = ["args_are_not_none", "make_tuple", "pairwise", "find_value_ids"]

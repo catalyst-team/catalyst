@@ -7,6 +7,8 @@ set -eo pipefail -v
 ################################  pipeline 00  ################################
 rm -rf ./tests/logs
 
+(set -e; for f in tests/_tests_scripts/cv_*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
+
 
 ################################  pipeline 01  ################################
 echo 'pipeline 01'

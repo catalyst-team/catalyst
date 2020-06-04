@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 
-from catalyst.utils import outer_init
+from catalyst.utils.initialization import outer_init
 
 
 class TemporalLastPooling(nn.Module):
@@ -129,7 +129,7 @@ class TemporalDropLastWrapper(nn.Module):
         return x_out
 
 
-def get_pooling(key, in_features, **params):
+def _get_pooling(key, in_features, **params):
     """@TODO: Docs. Contribution is welcome."""
     key_ = key.split("_", 1)[0]
 
@@ -184,10 +184,10 @@ class LamaPooling(nn.Module):
         groups = {}
         for key in self.groups:
             if isinstance(key, str):
-                groups[key] = get_pooling(key, self.in_features)
+                groups[key] = _get_pooling(key, self.in_features)
             elif isinstance(key, dict):
                 key_ = key.pop("key")
-                groups[key_] = get_pooling(key_, in_features, **key)
+                groups[key_] = _get_pooling(key_, in_features, **key)
             else:
                 raise NotImplementedError()
 

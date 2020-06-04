@@ -1,11 +1,11 @@
-from typing import Any, Dict, Iterable, Mapping, Tuple, Union
+from typing import Any, Dict, Iterable, Mapping, Tuple
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from catalyst.utils.tools.typing import Criterion, Model, Optimizer, Scheduler
+from catalyst.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 from .callback import Callback
 
@@ -121,7 +121,7 @@ class _Experiment(ABC):
 
         Args:
             stage (str): stage name of interest
-                like "pretraining" / "training" / "finetuning" / etc
+                like "pretrain" / "train" / "finetune" / etc
 
         Returns:
             dict: State parameters for a given stage.
@@ -144,7 +144,7 @@ class _Experiment(ABC):
 
         Args:
             stage (str): stage name of interest
-                like "pretraining" / "training" / "finetuning" / etc
+                like "pretrain" / "train" / "finetune" / etc
 
         Returns:
             Model: model for a given stage.
@@ -163,7 +163,7 @@ class _Experiment(ABC):
 
         Args:
             stage (str): stage name of interest
-                like "pretraining" / "training" / "finetuning" / etc
+                like "pretrain" / "train" / "finetune" / etc
 
         Returns:
             Criterion: criterion for a given stage.
@@ -181,7 +181,7 @@ class _Experiment(ABC):
 
         Args:
             stage (str): stage name of interest
-                like "pretraining" / "training" / "finetuning" / etc
+                like "pretrain" / "train" / "finetune" / etc
             model (Model): model to optimize with stage optimizer
 
         Returns:
@@ -199,7 +199,7 @@ class _Experiment(ABC):
 
         Args:
             stage (str): stage name of interest
-                like "pretraining" / "training" / "finetuning" / etc
+                like "pretrain" / "train" / "finetune" / etc
             optimizer (Optimizer): optimizer to schedule with stage scheduler
 
         Returns:
@@ -223,7 +223,7 @@ class _Experiment(ABC):
         Args:
             model (Model): model to optimize with stage optimizer
             stage (str): stage name of interest,
-                like "pretraining" / "training" / "finetuning" / etc
+                like "pretrain" / "train" / "finetune" / etc
 
         Returns:
             tuple: criterion, optimizer, scheduler for a given stage and model
@@ -238,7 +238,7 @@ class _Experiment(ABC):
 
         Args:
             stage (str): stage name of interest,
-                like "pretraining" / "training" / "finetuning" / etc
+                like "pretrain" / "train" / "finetune" / etc
             dataset (str): dataset name of interest,
                 like "train" / "valid" / "infer"
 
@@ -266,7 +266,7 @@ class _Experiment(ABC):
 
         Args:
             stage (str): stage name of interest,
-                like "pretraining" / "training" / "finetuning" / etc
+                like "pretrain" / "train" / "finetune" / etc
             epoch (int): epoch index
             **kwargs (dict): additional parameters to use during
                 dataset creation
@@ -310,7 +310,7 @@ class _Experiment(ABC):
 
         Args:
             stage (str): stage name of interest,
-                like "pretraining" / "training" / "finetuning" / etc
+                like "pretrain" / "train" / "finetune" / etc
             epoch (int): epoch index
             **kwargs (dict): additional parameters to use during
                 dataset creation
@@ -338,7 +338,7 @@ class _Experiment(ABC):
 
         Args:
             stage (str): stage name of interest
-                like "pretraining" / "training" / "finetuning" / etc
+                like "pretrain" / "train" / "finetune" / etc
 
         Returns:
             OrderedDict[str, Callback]: Ordered dictionary
@@ -355,38 +355,4 @@ class _Experiment(ABC):
         pass
 
 
-class StageBasedExperiment(_Experiment):
-    """
-    Experiment that provides constant
-    datasources during training/inference stage.
-    """
-
-    def get_native_batch(
-        self, stage: str, loader: Union[str, int] = 0, data_index: int = 0
-    ):
-        """
-        Returns a batch from experiment loader.
-
-        Args:
-            stage (str): stage name
-            loader (Union[str, int]): loader name or its index,
-                default is the first loader
-            data_index (int): index in dataset from the loader
-        """
-        loaders = self.get_loaders(stage)
-        if isinstance(loader, str):
-            _loader = loaders[loader]
-        elif isinstance(loader, int):
-            _loader = list(loaders.values())[loader]
-        else:
-            raise TypeError("Loader parameter must be a string or an integer")
-
-        dataset = _loader.dataset
-        collate_fn = _loader.collate_fn
-
-        sample = collate_fn([dataset[data_index]])
-
-        return sample
-
-
-__all__ = ["_Experiment", "StageBasedExperiment"]
+__all__ = ["_Experiment"]

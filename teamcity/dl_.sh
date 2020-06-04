@@ -7,12 +7,12 @@ set -eo pipefail -v
 ###################################  PYTHON  ##################################
 
 pip install -r requirements/requirements.txt
-
 pip install -r requirements/requirements-cv.txt
-
 pip install -r requirements/requirements-nlp.txt
+pip install -r tests/requirements.txt
 
-pip install alchemy
+# @TODO: fix server issue
+pip install torch==1.4.0 torchvision==0.5.0
 
 
 ###################################  ENV  #####################################

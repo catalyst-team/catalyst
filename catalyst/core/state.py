@@ -6,13 +6,9 @@ import warnings
 from torch.utils.data import DataLoader
 
 from catalyst.core import utils
-from catalyst.utils.tools.frozen_class import FrozenClass
-from catalyst.utils.tools.settings import (
-    LOADER_VALID_PREFIX,
-    STAGE_INFER_PREFIX,
-    STATE_MAIN_METRIC,
-)
-from catalyst.utils.tools.typing import (
+from catalyst.tools import settings
+from catalyst.tools.frozen_class import FrozenClass
+from catalyst.tools.typing import (
     Criterion,
     Device,
     Model,
@@ -107,22 +103,22 @@ class State(FrozenClass):
         }
 
 
-    **state.batch_in** - dictionary, \
+    **state.input** - dictionary, \
     containing batch of data from currents DataLoader; \
     for example,
     ::
 
-        state.batch_in = {
+        state.input = {
             "images": np.ndarray(batch_size, c, h, w),
             "targets": np.ndarray(batch_size, 1),
         }
 
-    **state.batch_out** - dictionary, \
+    **state.output** - dictionary, \
     containing model output for current batch; \
     for example,
     ::
 
-        state.batch_out = {"logits": torch.Tensor(batch_size, num_classes)}
+        state.output = {"logits": torch.Tensor(batch_size, num_classes)}
 
     **state.batch_metrics** - dictionary, flatten storage for batch metrics; \
     for example,
@@ -198,18 +194,27 @@ class State(FrozenClass):
 
         state.loader_name = "train_dataset1" / "valid_data2" / "infer_golden"
 
-    **state.loader_step** - int, numerical indicator \
+    **state.loader_batch_step** - int, numerical indicator \
     for batch index in current loader
 
-    **state.loader_len** - int, maximum number of batches in current loaders
+    **state.loader_len** - int, maximum number of batches in current loader
+
+    **state.loader_sample_step** - int, numerical indicator \
+    for number of samples passed through our model in current loader
+
+    **state.loader_batch_size** - int, batch size parameter in current loader
 
 
-    **state.batch_size** - int, typical Deep Learning batch size parameter
+    **state.batch_size** - int, length of the current batch
 
 
-    **state.global_step** - int, numerical indicator, counter for all batches,\
-    that passes through our model during training, validation and\
+    **state.global_batch_step** - int, numerical indicator, counter for all
+    batches, that passes through our model during training, validation and\
     inference stages
+
+    **state.global_sample_step** - int, numerical indicator, counter for all\
+    individual samples, that passes through our model during training,\
+    validation and inference stages
 
     **state.global_epoch** - int, numerical indicator, counter for all epochs,\
     that have passed during model training, validation and\
@@ -288,11 +293,11 @@ class State(FrozenClass):
         scheduler: StateScheduler = None,
         callbacks: Dict[str, "Callback"] = None,
         logdir: str = None,
-        stage: str = STAGE_INFER_PREFIX,
+        stage: str = settings.stage_infer_prefix,  # @TODO: wtf?
         num_epochs: int = 1,
-        main_metric: str = STATE_MAIN_METRIC,
+        main_metric: str = "loss",
         minimize_metric: bool = True,
-        valid_loader: str = LOADER_VALID_PREFIX,
+        valid_loader: str = settings.loader_valid_prefix,
         checkpoint_data: Dict = None,
         is_check_run: bool = False,
         **kwargs,
@@ -314,9 +319,11 @@ class State(FrozenClass):
         # extra components - Catalyst callbacks
         self.callbacks: Dict[str, "Callback"] = callbacks
 
-        # dataflow - model input, model output, metrics
-        self.batch_in = None
-        self.batch_out = None
+        # dataflow - model input, model output
+        self.input = None
+        self.output = None
+
+        # metrics flow - batch, loader, epoch metrics
         # let's use flatten storage for batch metrics
         # batch_metrics = {'loss': ..., 'accuracy': ..., 'iou': ...}
         self.batch_metrics = defaultdict(None)
@@ -348,12 +355,15 @@ class State(FrozenClass):
         self.num_epochs: int = num_epochs
 
         self.loader_name: str = None
-        self.loader_step: int = 0
+        self.loader_batch_step: int = 0
+        self.loader_sample_step: int = 0
         self.loader_len: int = 0
+        self.loader_batch_size = 0
 
         self.batch_size: int = 0
 
-        self.global_step: int = 0
+        self.global_sample_step: int = 0
+        self.global_batch_step: int = 0
         self.global_epoch: int = 1
 
         # metrics & validation
@@ -372,7 +382,7 @@ class State(FrozenClass):
         self.is_valid_loader: bool = False
         self.is_infer_loader: bool = False
         self.is_infer_stage: bool = self.stage_name.startswith(
-            STAGE_INFER_PREFIX
+            settings.stage_infer_prefix
         )
         self.need_early_stop: bool = False
         self.need_exception_reraise: bool = True
@@ -385,32 +395,34 @@ class State(FrozenClass):
         self._freeze()
 
     @property
-    def input(self):
-        """Alias for `state.batch_in`.
+    def batch_in(self):
+        """Alias for `state.input`.
 
         .. warning::
             Deprecated, saved for backward compatibility.
             Please use `state.batch_in` instead.
         """
         warnings.warn(
-            "`input` was deprecated, " "please use `batch_in` instead",
+            "`state.batch_in` was deprecated, "
+            "please use `state.input` instead",
             DeprecationWarning,
         )
-        return self.batch_in
+        return self.input
 
     @property
-    def output(self):
-        """Alias for `state.batch_out`.
+    def batch_out(self):
+        """Alias for `state.output`.
 
         .. warning::
             Deprecated, saved for backward compatibility.
             Please use `state.batch_out` instead.
         """
         warnings.warn(
-            "`output` was deprecated, " "please use `batch_out` instead",
+            "`state.batch_out` was deprecated, "
+            "please use `state.output` instead",
             DeprecationWarning,
         )
-        return self.batch_out
+        return self.output
 
     @property
     def need_backward_pass(self):
@@ -426,6 +438,21 @@ class State(FrozenClass):
             DeprecationWarning,
         )
         return self.is_train_loader
+
+    @property
+    def loader_step(self):
+        """Alias for `state.loader_batch_step`.
+
+        .. warning::
+            Deprecated, saved for backward compatibility.
+            Please use `state.loader_batch_step` instead.
+        """
+        warnings.warn(
+            "`loader_step` was deprecated, "
+            "please use `loader_batch_step` instead",
+            DeprecationWarning,
+        )
+        return self.loader_batch_step
 
     def get_attr(self, key: str, inner_key: str = None) -> Any:
         """

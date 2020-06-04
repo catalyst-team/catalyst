@@ -10,7 +10,7 @@ from tqdm import tqdm
 import torch
 from transformers import BertConfig, BertModel, BertTokenizer
 
-from catalyst.contrib.utils.text import process_bert_output, tokenize_text
+from catalyst.contrib.utils import process_bert_output, tokenize_text
 from catalyst.data import LambdaReader
 from catalyst.dl import utils
 
@@ -172,7 +172,7 @@ def main(args, _=None):
                 else None
             )
 
-            if utils.is_wrapped_with_ddp(model):
+            if utils.check_ddp_wrapped(model):
                 # using several gpu
                 hidden_size = model.module.config.hidden_size
                 hidden_states = model.module.config.output_hidden_states

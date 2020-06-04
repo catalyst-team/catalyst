@@ -13,8 +13,8 @@ class RAdam(Optimizer):
 
     @TODO: Docs (add `Example`). Contribution is welcome
 
-    Main origins of inspiration:
-        https://github.com/LiyuanLucasLiu/RAdam (Apache-2.0 License)
+    Adapted from:
+    https://github.com/LiyuanLucasLiu/RAdam (Apache-2.0 License)
 
     .. _On the Variance of the Adaptive Learning Rate and Beyond:
         https://arxiv.org/abs/1908.03265

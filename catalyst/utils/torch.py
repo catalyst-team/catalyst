@@ -10,7 +10,7 @@ from torch import nn
 import torch.backends
 from torch.backends import cudnn
 
-from catalyst.utils.tools.typing import Device, Model, Optimizer
+from catalyst.tools.typing import Device, Model, Optimizer
 
 from .dict import merge_dicts
 
@@ -222,21 +222,53 @@ def process_model_params(
     return model_params
 
 
-def set_requires_grad(model: Model, requires_grad: bool):
+def get_requires_grad(model: Model):
+    """Gets the ``requires_grad`` value for all model parameters.
+
+    Example::
+
+        >>> model = SimpleModel()
+        >>> requires_grad = get_requires_grad(model)
+
+    Args:
+        model (torch.nn.Module): model
+
+    Returns:
+        requires_grad (Dict[str, bool]): value
+    """
+    requires_grad = {}
+    for name, param in model.named_parameters():
+        requires_grad[name] = param.requires_grad
+    return requires_grad
+
+
+def set_requires_grad(
+    model: Model, requires_grad: Union[bool, Dict[str, bool]]
+):
     """Sets the ``requires_grad`` value for all model parameters.
 
     Example::
 
         >>> model = SimpleModel()
         >>> set_requires_grad(model, requires_grad=True)
+        >>> # or
+        >>> model = SimpleModel()
+        >>> set_requires_grad(model, requires_grad={""})
 
     Args:
         model (torch.nn.Module): model
-        requires_grad (bool): value
+        requires_grad (Union[bool, Dict[str, bool]]): value
     """
-    requires_grad = bool(requires_grad)
-    for param in model.parameters():
-        param.requires_grad = requires_grad
+    if isinstance(requires_grad, dict):
+        for name, param in model.named_parameters():
+            assert (
+                name in requires_grad
+            ), f"Parameter `{name}` does not exist in requires_grad"
+            param.requires_grad = requires_grad[name]
+    else:
+        requires_grad = bool(requires_grad)
+        for param in model.parameters():
+            param.requires_grad = requires_grad
 
 
 def get_network_output(net: Model, *input_shapes_args, **input_shapes_kwargs):
@@ -278,6 +310,39 @@ def get_network_output(net: Model, *input_shapes_args, **input_shapes_kwargs):
     return output_t
 
 
+def detach(tensor: torch.Tensor) -> np.ndarray:
+    """Detach a pytorch tensor from graph and
+    convert it to numpy array
+
+    Args:
+        tensor: PyTorch tensor
+
+    Returns:
+        numpy ndarray
+    """
+    return tensor.cpu().detach().numpy()
+
+
+def trim_tensors(tensors):
+    """
+    Trim padding off of a batch of tensors to the smallest possible length.
+    Should be used with `catalyst.data.DynamicLenBatchSampler`.
+
+    Adapted from "Dynamic minibatch trimming to improve BERT training speed"
+    https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779
+
+    Args:
+        tensors ([torch.tensor]): list of tensors to trim.
+
+    Returns:
+        ([torch.tensor]): list of trimmed tensors.
+    """
+    max_len = torch.max(torch.sum((tensors[0] != 0), 1))
+    if max_len > 2:
+        tensors = [tsr[:, :max_len] for tsr in tensors]
+    return tensors
+
+
 __all__ = [
     "get_optimizable_params",
     "get_optimizer_momentum",
@@ -288,6 +353,9 @@ __all__ = [
     "any2device",
     "prepare_cudnn",
     "process_model_params",
+    "get_requires_grad",
     "set_requires_grad",
     "get_network_output",
+    "detach",
+    "trim_tensors",
 ]

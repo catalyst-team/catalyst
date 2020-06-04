@@ -1,14 +1,18 @@
 from typing import Any, Callable, Dict, Generator, List, Mapping, Union
 from collections import OrderedDict
-from pathlib import Path
 
 import torch
 from torch.jit import ScriptModule
 from torch.utils.data import DataLoader, Dataset
 
-from catalyst.core import Callback, CheckpointCallback, StageBasedRunner, State
+from catalyst.core import (
+    _StageBasedRunner,
+    Callback,
+    CheckpointCallback,
+    State,
+)
 from catalyst.dl import Experiment, utils
-from catalyst.utils.tools.typing import (
+from catalyst.tools.typing import (
     Criterion,
     Device,
     Model,
@@ -17,7 +21,7 @@ from catalyst.utils.tools.typing import (
 )
 
 
-class Runner(StageBasedRunner):
+class Runner(_StageBasedRunner):
     """
     Deep Learning Runner for different supervised, unsupervised, gan, etc runs.
     """
@@ -317,7 +321,7 @@ class Runner(StageBasedRunner):
             requires_grad (bool): flag to trace with gradients
             fp16 (Union[Dict, bool]): If not None, then sets
                 tracing params to FP16
-            device (Device): Torch deivice or a string
+            device (Device): Torch device or a string
             predict_params (dict): additional parameters for model forward
         """
         if batch is None:
@@ -347,9 +351,26 @@ class Runner(StageBasedRunner):
                 self.device = utils.get_device()
             device = self.device
 
-        result = utils.trace_model(
+        # Dumping previous state of the model, we will need it to restore
+        _device, _is_training, _requires_grad = (
+            self.device,
+            self.model.training,
+            utils.get_requires_grad(self.model),
+        )
+
+        self.model.to(device)
+
+        # function to run prediction on batch
+        def predict_fn(model, inputs, **kwargs):
+            _model = self.model
+            self.model = model
+            result = self.predict_batch(inputs, **kwargs)
+            self.model = _model
+            return result
+
+        traced_model = utils.trace_model(
             model=self.model,
-            runner=self,
+            predict_fn=predict_fn,
             batch=batch,
             method_name=method_name,
             mode=mode,
@@ -360,22 +381,21 @@ class Runner(StageBasedRunner):
         )
 
         if logdir is not None:
-            filename = utils.get_trace_name(
+            utils.save_traced_model(
+                model=traced_model,
+                logdir=logdir,
                 method_name=method_name,
                 mode=mode,
                 requires_grad=requires_grad,
                 opt_level=opt_level,
             )
 
-            logdir = Path(logdir)
-            output: Path = logdir / "trace"
-            output.mkdir(exist_ok=True, parents=True)
+        # Restore previous state of the model
+        getattr(self.model, "train" if _is_training else "eval")()
+        utils.set_requires_grad(self.model, _requires_grad)
+        self.model.to(_device)
 
-            out_model = str(output / filename)
-
-            torch.jit.save(result, out_model)
-
-        return result
+        return traced_model
 
 
 __all__ = ["Runner"]

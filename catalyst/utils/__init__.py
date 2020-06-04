@@ -15,6 +15,7 @@ from .checkpoint import (
     save_checkpoint,
     unpack_checkpoint,
 )
+from .components import process_components
 from .config import load_config, save_config
 from .dict import (
     get_key_str,
@@ -34,16 +35,23 @@ from .distributed import (
     get_distributed_env,
     get_rank,
     get_distributed_mean,
+    check_ddp_wrapped,
+    check_torch_distributed_initialized,
+    check_slurm_available,
+    check_apex_available,
+    initialize_apex,
+    assert_fp16_available,
     is_wrapped_with_ddp,
     is_torch_distributed_initialized,
     is_slurm_available,
     is_apex_available,
-    initialize_apex,
-    assert_fp16_available,
-    process_components,
 )
 from .hash import get_hash, get_short_hash
 from .initialization import get_optimal_inner_init, outer_init
+from .loader import (
+    get_native_batch_from_loader,
+    get_native_batch_from_loaders,
+)
 from .misc import (
     copy_directory,
     format_metric,
@@ -82,6 +90,9 @@ from .torch import (
     prepare_cudnn,
     process_model_params,
     set_optimizer_momentum,
+    get_requires_grad,
     set_requires_grad,
     get_network_output,
+    detach,
+    trim_tensors,
 )

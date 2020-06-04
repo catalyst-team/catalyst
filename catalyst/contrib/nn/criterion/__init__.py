@@ -6,6 +6,7 @@ from .ce import (
     NaiveCrossEntropyLoss,
     SymmetricCrossEntropyLoss,
 )
+from .circle import CircleLoss
 from .contrastive import (
     ContrastiveDistanceLoss,
     ContrastiveEmbeddingLoss,
