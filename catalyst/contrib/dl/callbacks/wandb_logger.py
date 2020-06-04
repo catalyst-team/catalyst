@@ -136,6 +136,7 @@ class WandbLogger(Callback):
     def on_stage_start(self, runner: IRunner):
         """Initialize Weights & Biases."""
         wandb.init(**self.logging_params, reinit=True, dir=str(runner.logdir))
+        wandb.watch(runner.model)
 
     def on_stage_end(self, runner: IRunner):
         """Finish logging to Weights & Biases."""
@@ -177,13 +178,22 @@ class WandbLogger(Callback):
         )
 
         if self.log_on_epoch_end:
-            self._log_metrics(
-                metrics=splitted_epoch_metrics[extra_mode],
-                step=runner.global_epoch,
-                mode=extra_mode,
-                suffix=self.epoch_log_suffix,
-                commit=True,
-            )
+            try:
+                self._log_metrics(
+                    metrics=splitted_epoch_metrics[extra_mode],
+                    step=runner.global_epoch,
+                    mode=extra_mode,
+                    suffix=self.epoch_log_suffix,
+                    commit=True,
+                )
+            except KeyError:
+                self._log_metrics(
+                    metrics=splitted_epoch_metrics,
+                    step=runner.global_epoch,
+                    mode=extra_mode,
+                    suffix=self.epoch_log_suffix,
+                    commit=True,
+                )
 
 
 __all__ = ["WandbLogger"]
