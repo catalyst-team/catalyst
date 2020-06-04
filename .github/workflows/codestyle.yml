@@ -17,12 +17,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
-    - uses: wemake-services/wemake-python-styleguide@master
-      with:
-        reporter: 'github-pr-review'
-      env:
-        GITHUB_TOKEN: ${{ secrets.github_token }}
+      - uses: actions/checkout@v2
+
+      - name: set up Python 3.7
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.7
+
+      - name: install dependencies
+        run: |
+          pip install -r ./requirements/requirements-dev.txt
+          mkdir -p $HOME/bin && curl -sfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh| sh -s -- -b $HOME/bin
+          echo ::add-path::$HOME/bin
+      - name: Run reviewdog
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # https://github.com/catalyst-team/codestyle/blob/master/bin/catalyst-check-codestyle#L78
+          catalyst-codestyle-flake8 | reviewdog -f=pep8 -reporter=github-pr-review
 
   build:
     name: codestyle
