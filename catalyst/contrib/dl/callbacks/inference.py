@@ -1,4 +1,4 @@
-from typing import List, Tuple, Union
+from collections import namedtuple
 import os
 from pathlib import Path
 
@@ -9,9 +9,11 @@ from skimage.color import label2rgb
 import torch
 import torch.nn.functional as F
 
+from catalyst.contrib.data.cv.datasets.image import Edges, Shape
 from catalyst.core import Callback, CallbackOrder, State
 from catalyst.dl import utils
-from catalyst.contrib.data.cv.datasets import get_image_margins
+
+Allocated = namedtuple("Allocated", ["storage", "norm_mask", "weights"])
 
 
 def pyramid_weights(height: int, width: int) -> torch.Tensor:
@@ -63,11 +65,8 @@ class TiledInferenceCallback(Callback):
 
     def __init__(
         self,
+        *,
         save_dir: str,
-        image_size: Union[int, Tuple[int], List[int]],
-        num_classes: int,
-        tile_size: Union[int, Tuple[int], List[int]],
-        tile_step: Union[int, Tuple[int], List[int]],
         threshold: float = 0.5,
         output_key: str = "logits",
         mask_key: str = "mask",
@@ -76,10 +75,6 @@ class TiledInferenceCallback(Callback):
         """
         Args:
             save_dir: directory where resulting objects are stored.
-            image_size: size of large input image.
-            num_classes: number of channels in output mask.
-            tile_size: tile size.
-            tile_step: tile step.
             threshold: threshold for masking
             output_key: key in batch output for obtaining neural net
                 prediction.
@@ -90,132 +85,126 @@ class TiledInferenceCallback(Callback):
         """
         super().__init__(CallbackOrder.External)
 
-        assert num_classes >= 1, (
-            f"Number of classes must be greater or equal to 1, "
-            f"got {num_classes}."
-        )
-
         self.save_dir = Path(save_dir)
-
-        if isinstance(image_size, (tuple, list)):
-            size_ndim = len(image_size)
-            error_msg = (
-                f"Image size must be 2-dimensional, "
-                f"got {size_ndim} dimensions."
-            )
-            assert size_ndim == 2, error_msg
-            self.image_h, self.image_w = image_size
-        else:
-            self.image_h, self.image_w = image_size, image_size
-
-        if isinstance(tile_size, (tuple, list)):
-            tile_size_ndim = len(tile_size)
-            error_msg = (
-                f"Tile size must be 2-dimensional, "
-                f"got {tile_size_ndim} dimensions."
-            )
-            assert tile_size_ndim == 2, error_msg
-            self.tile_size_h, self.tile_size_w = tile_size
-        else:
-            self.tile_size_h, self.tile_size_w = tile_size, tile_size
-
-        if isinstance(tile_step, (tuple, list)):
-            tile_step_ndim = len(tile_step)
-            error_msg = (
-                f"Tile step must be 2-dimensional, "
-                f"got {tile_step_ndim} dimensions."
-            )
-            assert tile_step_ndim == 2, error_msg
-            self.tile_step_h, self.tile_step_w = tile_step
-        else:
-            self.tile_step_h, self.tile_step_w = tile_step, tile_step
-
-        margins = get_image_margins(
-            self.image_h,
-            self.image_w,
-            self.tile_size_h,
-            self.tile_size_w,
-            self.tile_step_h,
-            self.tile_step_w,
-        )
-
-        self.margin_bottom = margins["margin_bottom"]
-        self.margin_top = margins["margin_top"]
-        self.margin_left = margins["margin_left"]
-        self.margin_right = margins["margin_right"]
-
-        self.num_classes = num_classes
         self.output_key = output_key
         self.mask_key = mask_key
         self.class_first = class_first
-
-        storage_h = self.image_h + self.margin_top + self.margin_bottom
-        storage_w = self.image_w + self.margin_left + self.margin_right
-
-        self.storage = torch.zeros((num_classes, storage_h, storage_w))
-        self.norm_mask = torch.zeros((1, storage_h, storage_w))
-        self.weights = pyramid_weights(self.tile_size_h, self.tile_size_w)
-
         self.threshold = threshold
+
+        self.image_idx = []
+        self.allocated = {}
+        self.margins = {}
+
+    def on_stage_start(self, state: State):
+        """
+        On stage start hook.
+        """
+        self.save_dir.mkdir(parents=True, exist_ok=True)
+
+    def on_loader_start(self, state: State):
+        """
+        On loader start initialization.
+        """
+        self.image_idx = []
+        self.allocated = {}
+        self.margins = {}
 
     def on_batch_end(self, state: State):
         """
         On batch end update of resulting tensor.
         """
-        self.storage = self.storage.to(state.device)
-        self.norm_mask = self.norm_mask.to(state.device)
-        self.weights = self.weights.to(state.device)
+        output = state.output[self.output_key]
 
-        output = state.batch_out[self.output_key]
-
-        for predictions, x_min, y_min in zip(
-            output, state.batch_in["x"], state.batch_in["y"],
+        for (
+            predictions,
+            idx,
+            x_min,
+            y_min,
+            storage_size,
+            margins,
+            tile_size,
+        ) in zip(
+            output,
+            state.input["id"],
+            state.input["x"],
+            state.input["y"],
+            state.input["storage_size"],
+            state.input["margins"],
+            state.input["tile_size"],
         ):
-            x_max = x_min + self.tile_size_w
-            y_max = y_min + self.tile_size_h
+            num_classes, *_ = predictions.shape
+            storage_size = Shape(*storage_size)
+            margins = Edges(*margins)
+            tile_size = Shape(*tile_size)
+
+            if idx not in self.allocated:
+                self.image_idx.append(idx)
+
+                storage = torch.zeros(
+                    (num_classes, storage_size.height, storage_size.width)
+                )
+                norm_mask = torch.zeros(
+                    (1, storage_size.height, storage_size.width)
+                )
+                weights = pyramid_weights(tile_size.height, tile_size.width)
+                self.allocated[idx] = Allocated(
+                    storage=storage, norm_mask=norm_mask, weights=weights,
+                )
+
+                self.margins[idx] = margins
+
+            x_max = x_min + tile_size.width
+            y_max = y_min + tile_size.height
             crop_slice = (
                 slice(None),
                 slice(y_min, y_max),
                 slice(x_min, x_max),
             )
-            self.storage[crop_slice] += predictions * self.weights
-            self.norm_mask[crop_slice] += self.weights
 
-    def on_epoch_end(self, state: State):
+            storage = self.allocated[idx].storage.to(state.device)
+            norm_mask = self.allocated[idx].norm_mask.to(state.device)
+            weights = self.allocated[idx].weights.to(state.device)
+
+            storage[crop_slice] += predictions * weights
+            norm_mask[crop_slice] += weights
+
+    def on_loader_end(self, state: State):
         """
-        On epoch end post-processing of resulting tensor, then saving it.
+        On loader end post-processing of resulting tensor, then saving it.
         """
-        eps = torch.finfo(self.norm_mask.dtype).eps
-        self.norm_mask = torch.clamp_min(self.norm_mask, eps)
-        logits = self.storage / self.norm_mask
-        _, h, w = logits.shape
-        crop_slice = (
-            slice(None),
-            slice(self.margin_top, h - self.margin_bottom),
-            slice(self.margin_left, w - self.margin_right),
-        )
-        logits = logits[crop_slice]
+        for idx in self.image_idx:
+            allocated = self.allocated[idx]
+            margins = self.margins[idx]
+            eps = torch.finfo(allocated.norm_mask.dtype).eps
+            allocated.norm_mask = torch.clamp_min(allocated.norm_mask, eps)
+            logits = allocated.storage / allocated.norm_mask
+            num_classes, h, w = logits.shape
+            crop_slice = (
+                slice(None),
+                slice(margins.top, h - margins.bottom),
+                slice(margins.left, w - margins.right),
+            )
+            logits = logits[crop_slice]
 
-        if self.num_classes == 1:
-            probs = torch.sigmoid(logits)
-        else:
-            probs = F.softmax(logits, dim=0)
+            if num_classes == 1:
+                probs = torch.sigmoid(logits)
+            else:
+                probs = F.softmax(logits, dim=0)
 
-        mask = torch.zeros_like(probs[0], dtype=torch.int32)
+            masks = torch.zeros_like(probs[0], dtype=torch.int32)
 
-        for i, channel in enumerate(probs):
-            mask[channel >= self.threshold] = i + 1
+            for i, channel in enumerate(probs):
+                masks[channel >= self.threshold] = i + 1
 
-        if not self.class_first:
-            probs = probs.permute(1, 2, 0)
-            mask = mask.permute(1, 2, 0)
+            if not self.class_first:
+                probs = probs.permute(1, 2, 0)
+                masks = masks.permute(1, 2, 0)
 
-        probs = probs.cpu().numpy()
-        mask = mask.cpu().numpy()
+            probs = probs.detach().cpu().numpy()
+            masks = masks.detach().cpu().numpy()
 
-        self.save_dir.mkdir(parents=True, exist_ok=True)
-        np.save(self.save_dir / f"probs.npy", probs)
-        np.save(self.save_dir / f"mask.npy", mask)
+            np.save(self.save_dir / f"probs.npy", probs)
+            np.save(self.save_dir / f"masks.npy", masks)
 
 
 class InferMaskCallback(Callback):
@@ -331,4 +320,4 @@ class InferMaskCallback(Callback):
             imageio.imwrite(filename, image)
 
 
-__all__ = ["InferMaskCallback"]
+__all__ = ["pyramid_weights", "TiledInferenceCallback", "InferMaskCallback"]
