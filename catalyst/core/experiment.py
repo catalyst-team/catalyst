@@ -66,7 +66,6 @@ class IExperiment(ABC):
         """
         Returns hyper-parameters
         """
-        pass
 
     @property
     @abstractmethod
