@@ -62,6 +62,14 @@ class IExperiment(ABC):
 
     @property
     @abstractmethod
+    def hparams(self):
+        """
+        Returns hyper-parameters
+        """
+        pass
+
+    @property
+    @abstractmethod
     def stages(self) -> Iterable[str]:
         """Experiment's stage names.
 

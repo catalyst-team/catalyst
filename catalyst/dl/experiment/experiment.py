@@ -143,6 +143,30 @@ class Experiment(IExperiment):
         """Dict with the parameters for distributed and FP16 method."""
         return self._distributed_params
 
+    @property
+    def hparams(self):
+        """Returns hyper parameters"""
+        hparams = OrderedDict()
+        if self._optimizer is not None:
+            optimizer = self._optimizer
+            hparams["optimizer"] = optimizer.__repr__().split()[0]
+            params_dict = optimizer.state_dict()["param_groups"][0]
+            for k, v in params_dict.items():
+                if k != "params":
+                    hparams[k] = v
+        loaders = self.get_loaders("train")
+        num_train_loaders = 0
+        for k, v in loaders.items():
+            if "train" in k:
+                num_train_loaders += 1
+        if num_train_loaders == 1:
+            hparams["batch_size"] = loaders["train"].batch_size
+        else:
+            for k, v in loaders.items():
+                if "train" in k:
+                    hparams[f"{k}_batch_size"] = v.batch_size
+        return hparams
+
     @staticmethod
     def process_loaders(
         loaders: "OrderedDict[str, DataLoader]",

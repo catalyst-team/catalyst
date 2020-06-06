@@ -80,6 +80,11 @@ class ConfigExperiment(IExperiment):
             self._config["stages"]
         )
 
+    @property
+    def hparams(self):
+        """Returns hyper params"""
+        return self._config
+
     def __prepare_logdir(self):
         EXCLUDE_TAG = "none"
 
