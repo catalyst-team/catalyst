@@ -62,7 +62,7 @@ class IExperiment(ABC):
 
     @property
     @abstractmethod
-    def hparams(self):
+    def hparams(self) -> OrderedDict:
         """
         Returns hyper-parameters
         """

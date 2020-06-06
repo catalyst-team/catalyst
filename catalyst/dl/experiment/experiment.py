@@ -144,7 +144,7 @@ class Experiment(IExperiment):
         return self._distributed_params
 
     @property
-    def hparams(self):
+    def hparams(self) -> OrderedDict:
         """Returns hyper parameters"""
         hparams = OrderedDict()
         if self._optimizer is not None:
@@ -156,7 +156,7 @@ class Experiment(IExperiment):
                     hparams[k] = v
         loaders = self.get_loaders("train")
         num_train_loaders = 0
-        for k, v in loaders.items():
+        for k in loaders.keys():
             if "train" in k:
                 num_train_loaders += 1
         if num_train_loaders == 1:
