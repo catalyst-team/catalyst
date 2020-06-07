@@ -155,16 +155,9 @@ class Experiment(IExperiment):
                 if k != "params":
                     hparams[k] = v
         loaders = self.get_loaders("train")
-        num_train_loaders = 0
-        for k in loaders.keys():
-            if "train" in k:
-                num_train_loaders += 1
-        if num_train_loaders == 1:
-            hparams["batch_size"] = loaders["train"].batch_size
-        else:
-            for k, v in loaders.items():
-                if "train" in k:
-                    hparams[f"{k}_batch_size"] = v.batch_size
+        for k, v in loaders.items():
+            if k.startswith("train"):
+                hparams[f"{k}_batch_size"] = v.batch_size
         return hparams
 
     @staticmethod

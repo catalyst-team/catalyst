@@ -81,9 +81,9 @@ class ConfigExperiment(IExperiment):
         )
 
     @property
-    def hparams(self):
+    def hparams(self) -> OrderedDict:
         """Returns hyper params"""
-        return self._config
+        return OrderedDict(self._config)
 
     def __prepare_logdir(self):
         EXCLUDE_TAG = "none"
