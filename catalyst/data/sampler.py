@@ -2,9 +2,9 @@ from typing import Iterator, List, Optional, Tuple, Union
 from abc import ABC, abstractmethod
 from collections import Counter
 from enum import Enum
+from itertools import combinations, product
 from operator import itemgetter
 from random import choices, sample
-from itertools import combinations, product
 
 import numpy as np
 
@@ -211,14 +211,13 @@ class InBatchTripletsSampler(ABC):
             the batch of triplets in the order below:
             (anchor, positive, negative)
         """
-        self._check_batch_labels(labels)
+        self._check_input_labels(labels)
         ids_anchor, ids_pos, ids_neg = self._sample(features, labels)
-        self._check_selected_triplets(ids_anchor, ids_pos, ids_neg)
 
         return features[ids_anchor], features[ids_pos], features[ids_neg]
 
     @staticmethod
-    def _check_batch_labels(labels: List[int]) -> None:
+    def _check_input_labels(labels: List[int]) -> None:
         """
         To form triplets we need to be sure that all the classes
         presented in the batch have at least 2 instances.
@@ -234,30 +233,6 @@ class InBatchTripletsSampler(ABC):
         labels_counter = Counter(labels)
         assert all(n > 1 for n in labels_counter.values())
         assert len(labels_counter) > 1
-
-    @staticmethod
-    def _check_selected_triplets(
-        ids_anchor: List[int],
-        ids_pos: List[int],
-        ids_neg: List[int],
-        labels: List[int],
-    ) -> None:
-        """
-
-        Args:
-            ids_anchor: anchor indeces of selected triplets
-            ids_pos: positive indeces of selected triplets
-            ids_neg: negative indeces of selected triplets
-            labels: labels of the samples in the batch
-
-        Returns: None
-        """
-        assert len(ids_anchor) == len(ids_pos) == len(ids_neg)
-
-        for (i_a, i_p, i_n) in zip(ids_anchor, ids_pos, ids_neg):
-            assert len({i_a, i_p, i_n}) == 3
-            assert labels[i_a] == labels[i_p]
-            assert labels[i_a] != labels[i_n]
 
     @abstractmethod
     def _sample(self, features: Tensor, labels: List[int]) -> TTripletsIds:
@@ -277,9 +252,8 @@ class InBatchTripletsSampler(ABC):
 
 
 class AllTripletsSampler(InBatchTripletsSampler):
-    def __init__(self, max_output_triplets: int = float('inf')):
+    def __init__(self, max_output_triplets: int = float("inf")):
         """
-
         Args:
             max_output_triplets: With the strategy of choosing all triplets,
                 their number in the batch can be very large,
@@ -289,6 +263,13 @@ class AllTripletsSampler(InBatchTripletsSampler):
         self._max_out_triplets = max_output_triplets
 
     def _sample(self, labels: List[int], *_) -> TTripletsIds:
+        """
+        Args:
+            labels: list of classes labels
+            *_: note, that we ignore features argument
+
+        Returns: indeces of triplets
+        """
         num_labels = len(labels)
 
         triplets = []

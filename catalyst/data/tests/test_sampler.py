@@ -1,12 +1,12 @@
+from typing import List, Tuple
 from collections import Counter
 from operator import itemgetter
 from random import randint, shuffle
-from typing import List, Tuple
 
 import pytest
 from scipy.special import binom
 
-from catalyst.data.sampler import BalanceBatchSampler, AllTripletsSampler
+from catalyst.data.sampler import AllTripletsSampler, BalanceBatchSampler
 
 TLabelsPK = List[Tuple[List[int], int, int]]
 
@@ -20,7 +20,6 @@ def generate_labels_pk(num: int) -> TLabelsPK:
         num: number of generated samples
 
     Returns: samples in the folowing order: (labels, p, k)
-
     """
     labels_pk = []
 
@@ -37,6 +36,9 @@ def generate_labels_pk(num: int) -> TLabelsPK:
 
 @pytest.fixture()
 def input_for_inbatch_sampler() -> List[int]:
+    """
+    Returns: list of valid classes labels
+    """
     labels_pk = generate_labels_pk(num=100)
     labels, _, _ = zip(*labels_pk)
     return labels
@@ -72,7 +74,7 @@ def input_for_balance_batch_sampler() -> TLabelsPK:
 
 
 def check_balance_batch_sampler_epoch(
-        labels: List[int], p: int, k: int
+    labels: List[int], p: int, k: int
 ) -> None:
     """
     Args:
@@ -116,7 +118,7 @@ def check_balance_batch_sampler_epoch(
     num_classes_in_data = len(set(labels))
     num_classes_in_epoch = len(set(sampled_classes))
     assert (num_classes_in_data == num_classes_in_epoch) or (
-            num_classes_in_data == num_classes_in_epoch + 1
+        num_classes_in_data == num_classes_in_epoch + 1
     )
 
     assert max(sampled_ids) <= len(labels) - 1
@@ -133,11 +135,21 @@ def test_balance_batch_sampler(input_for_balance_batch_sampler) -> None:
         check_balance_batch_sampler_epoch(labels, p, k)
 
 
-def check_all_triplets_number(labels: List[int],
-                              num_selected_tri: int,
-                              max_tri: int
-                              ) -> None:
-    counts = (Counter(labels).values())
+def check_all_triplets_number(
+    labels: List[int], num_selected_tri: int, max_tri: int
+) -> None:
+    """
+    Checks that the selection strategy for all triplets
+    returns the correct number of triplets.
+
+    Args:
+        labels: list of classes labels
+        num_selected_tri: number of selected triplets
+        max_tri: limit on the number of selected triplets
+
+    Returns: None
+    """
+    counts = Counter(labels).values()
 
     n_all_tri = 0
     for count in counts:
@@ -148,16 +160,52 @@ def check_all_triplets_number(labels: List[int],
     assert n_all_tri == num_selected_tri or max_tri == num_selected_tri
 
 
+def check_triplets_consistency(
+    ids_anchor: List[int],
+    ids_pos: List[int],
+    ids_neg: List[int],
+    labels: List[int],
+) -> None:
+    """
+    Args:
+        ids_anchor: anchor indeces of selected triplets
+        ids_pos: positive indeces of selected triplets
+        ids_neg: negative indeces of selected triplets
+        labels: labels of the samples in the batch
+
+    Returns: None
+    """
+    assert len(ids_anchor) == len(ids_pos) == len(ids_neg)
+
+    for (i_a, i_p, i_n) in zip(ids_anchor, ids_pos, ids_neg):
+        assert len({i_a, i_p, i_n}) == 3
+        assert labels[i_a] == labels[i_p]
+        assert labels[i_a] != labels[i_n]
+
+    n_unq_tri = len(set(list(zip(ids_anchor, ids_pos, ids_neg))))
+    assert len(ids_anchor) == n_unq_tri
+
+
 def test_all_triplets_sampler(input_for_inbatch_sampler) -> None:
+    """
+    Args:
+        input_for_inbatch_sampler: list of valid labels
+
+    Returns: None
+    """
     max_tri = 512
     sampler = AllTripletsSampler(max_output_triplets=max_tri)
 
     for labels in input_for_inbatch_sampler:
         ids_a, ids_p, ids_n = sampler._sample(labels=labels)
 
-        check_all_triplets_number(labels=labels, max_tri=max_tri,
-                                  num_selected_tri=len(ids_a),
-                                  )
+        check_all_triplets_number(
+            labels=labels, max_tri=max_tri, num_selected_tri=len(ids_a),
+        )
+
+        check_triplets_consistency(
+            ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels
+        )
 
 
 test_all_triplets_sampler(input_for_inbatch_sampler())
