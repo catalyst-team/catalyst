@@ -1,7 +1,7 @@
-from typing import List, Tuple
 from collections import Counter
 from operator import itemgetter
 from random import randint, shuffle
+from typing import List, Tuple
 
 import pytest
 from scipy.special import binom
