@@ -182,7 +182,7 @@ def check_triplets_consistency(
         assert labels[i_a] == labels[i_p]
         assert labels[i_a] != labels[i_n]
 
-    n_unq_tri = len(set(list(zip(ids_anchor, ids_pos, ids_neg))))
+    n_unq_tri = len(set(zip(ids_anchor, ids_pos, ids_neg)))
     assert len(ids_anchor) == n_unq_tri
 
 

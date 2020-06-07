@@ -4,6 +4,7 @@ from collections import Counter
 from itertools import combinations, product
 from operator import itemgetter
 from random import choices, sample
+from math import inf
 
 import numpy as np
 
@@ -265,7 +266,7 @@ class AllTripletsSampler(InBatchTripletsSampler):
 
     """
 
-    def __init__(self, max_output_triplets: int = float("inf")):
+    def __init__(self, max_output_triplets: int = inf):
         """
         Args:
             max_output_triplets: With the strategy of choosing all triplets,
