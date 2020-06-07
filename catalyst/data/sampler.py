@@ -1,7 +1,6 @@
 from typing import Iterator, List, Optional, Tuple, Union
 from abc import ABC, abstractmethod
 from collections import Counter
-from enum import Enum
 from itertools import combinations, product
 from operator import itemgetter
 from random import choices, sample
@@ -201,6 +200,15 @@ TTripletsIds = Tuple[List[int], List[int], List[int]]
 
 
 class InBatchTripletsSampler(ABC):
+    """
+    Base class for triplet samplers.
+    We expect that the child instance of this class
+    will be used to forming triplets inside the batches sampled via
+    >>> BalanceBatchSampler
+
+    But you are not limited to using it in any other way.
+    """
+
     def sample(self, features: Tensor, labels: List[int]) -> TTriplets:
         """
         Args:
@@ -252,6 +260,11 @@ class InBatchTripletsSampler(ABC):
 
 
 class AllTripletsSampler(InBatchTripletsSampler):
+    """
+    This sampler selects all the possible triplets for the given labels
+
+    """
+
     def __init__(self, max_output_triplets: int = float("inf")):
         """
         Args:
@@ -512,6 +525,7 @@ class DistributedSamplerWrapper(DistributedSampler):
 __all__ = [
     "BalanceClassSampler",
     "BalanceBatchSampler",
+    "InBatchTripletsSampler",
     "AllTripletsSampler",
     "MiniEpochSampler",
     "DistributedSamplerWrapper",
