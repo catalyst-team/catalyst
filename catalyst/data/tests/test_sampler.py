@@ -1,15 +1,49 @@
-from typing import List, Tuple
 from collections import Counter
 from operator import itemgetter
 from random import randint, shuffle
+from typing import List, Tuple
 
 import pytest
+from scipy.special import binom
 
-from catalyst.data.sampler import BalanceBatchSampler
+from catalyst.data.sampler import BalanceBatchSampler, AllTripletsSampler
+
+TLabelsPK = List[Tuple[List[int], int, int]]
+
+
+def generate_labels_pk(num: int) -> TLabelsPK:
+    """
+    This function generates same valid inputs for samplers.
+    It generates k instances for p classes.
+
+    Args:
+        num: number of generated samples
+
+    Returns: samples in the folowing order: (labels, p, k)
+
+    """
+    labels_pk = []
+
+    for _ in range(num):
+        p, k = randint(2, 12), randint(2, 12)
+        labels_ = [[label] * randint(2, 12) for label in range(p)]
+        labels = [el for sublist in labels_ for el in sublist]
+
+        shuffle(labels)
+        labels_pk.append((labels, p, k))
+
+    return labels_pk
 
 
 @pytest.fixture()
-def input_balance_batch_sampler() -> List[Tuple[List[int], int, int]]:
+def input_for_inbatch_sampler() -> List[int]:
+    labels_pk = generate_labels_pk(num=100)
+    labels, _, _ = zip(*labels_pk)
+    return labels
+
+
+@pytest.fixture()
+def input_for_balance_batch_sampler() -> TLabelsPK:
     """
     Returns: test data for sampler in the following order: (labels, p, k)
     """
@@ -30,21 +64,15 @@ def input_balance_batch_sampler() -> List[Tuple[List[int], int, int]]:
         ([0, 1, 2, 2, 1, 0, 1, 0, 2, 0, 1, 2], 3, 2),
     ]
 
-    num_random_cases = 0
     # (alekseysh) It was checked once with N = 100_000 before doing the PR
-    for _ in range(num_random_cases):
-        # code below generates same valid inputs for sampler
-        p, k = randint(2, 12), randint(2, 12)
-        labels_ = [[label] * randint(2, 12) for label in range(p + 1)]
-        labels = [el for sublist in labels_ for el in sublist]
-        shuffle(labels)
-        input_cases.append((labels, p, k))
+    num_random_cases = 0
+    input_cases.extend((generate_pk_labels(num_random_cases)))
 
     return input_cases
 
 
-def single_check_balance_batch_sampler(
-    labels: List[int], p: int, k: int
+def check_balance_batch_sampler_epoch(
+        labels: List[int], p: int, k: int
 ) -> None:
     """
     Args:
@@ -88,18 +116,48 @@ def single_check_balance_batch_sampler(
     num_classes_in_data = len(set(labels))
     num_classes_in_epoch = len(set(sampled_classes))
     assert (num_classes_in_data == num_classes_in_epoch) or (
-        num_classes_in_data == num_classes_in_epoch + 1
+            num_classes_in_data == num_classes_in_epoch + 1
     )
 
     assert max(sampled_ids) <= len(labels) - 1
 
 
-def test_balance_batch_sampler(input_balance_batch_sampler) -> None:
+def test_balance_batch_sampler(input_for_balance_batch_sampler) -> None:
     """
     Args:
         input_balance_batch_sampler: pytest fixture
 
     Returns: None
     """
-    for labels, p, k in input_balance_batch_sampler:
-        single_check_balance_batch_sampler(labels, p, k)
+    for labels, p, k in input_for_balance_batch_sampler:
+        check_balance_batch_sampler_epoch(labels, p, k)
+
+
+def check_all_triplets_number(labels: List[int],
+                              num_selected_tri: int,
+                              max_tri: int
+                              ) -> None:
+    counts = (Counter(labels).values())
+
+    n_all_tri = 0
+    for count in counts:
+        n_pos = binom(count, 2)
+        n_neg = len(labels) - count
+        n_all_tri += n_pos * n_neg
+
+    assert n_all_tri == num_selected_tri or max_tri == num_selected_tri
+
+
+def test_all_triplets_sampler(input_for_inbatch_sampler) -> None:
+    max_tri = 512
+    sampler = AllTripletsSampler(max_output_triplets=max_tri)
+
+    for labels in input_for_inbatch_sampler:
+        ids_a, ids_p, ids_n = sampler._sample(labels=labels)
+
+        check_all_triplets_number(labels=labels, max_tri=max_tri,
+                                  num_selected_tri=len(ids_a),
+                                  )
+
+
+test_all_triplets_sampler(input_for_inbatch_sampler())

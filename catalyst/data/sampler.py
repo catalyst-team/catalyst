@@ -4,6 +4,7 @@ from collections import Counter
 from enum import Enum
 from operator import itemgetter
 from random import choices, sample
+from itertools import combinations, product
 
 import numpy as np
 
@@ -212,41 +213,48 @@ class InBatchTripletsSampler(ABC):
         """
         self._check_batch_labels(labels)
         ids_anchor, ids_pos, ids_neg = self._sample(features, labels)
-        self._check_selected_triplets(ids_anchor, ids_positive, ids_negative)
+        self._check_selected_triplets(ids_anchor, ids_pos, ids_neg)
 
         return features[ids_anchor], features[ids_pos], features[ids_neg]
 
     @staticmethod
     def _check_batch_labels(labels: List[int]) -> None:
         """
+        To form triplets we need to be sure that all the classes
+        presented in the batch have at least 2 instances.
+        To create batches that satisfy this statement,
+        you can use the following sampler:
+        >>> BalanceBatchSampler
 
         Args:
             labels: labels of the samples in the batch
 
         Returns: None
         """
-        assert all(n > 1 for n in Counter(labels).values())
+        labels_counter = Counter(labels)
+        assert all(n > 1 for n in labels_counter.values())
+        assert len(labels_counter) > 1
 
     @staticmethod
     def _check_selected_triplets(
         ids_anchor: List[int],
-        ids_positive: List[int],
-        ids_negative: List[int],
+        ids_pos: List[int],
+        ids_neg: List[int],
         labels: List[int],
     ) -> None:
         """
 
         Args:
             ids_anchor: anchor indeces of selected triplets
-            ids_positive: positive indeces of selected triplets
-            ids_negative: negative indeces of selected triplets
+            ids_pos: positive indeces of selected triplets
+            ids_neg: negative indeces of selected triplets
             labels: labels of the samples in the batch
 
         Returns: None
         """
-        assert len(ids_anchor) == len(ids_positive) == len(ids_negative)
+        assert len(ids_anchor) == len(ids_pos) == len(ids_neg)
 
-        for (i_a, i_p, i_n) in zip(ids_anchor, ids_positive, ids_negative):
+        for (i_a, i_p, i_n) in zip(ids_anchor, ids_pos, ids_neg):
             assert len({i_a, i_p, i_n}) == 3
             assert labels[i_a] == labels[i_p]
             assert labels[i_a] != labels[i_n]
@@ -266,6 +274,37 @@ class InBatchTripletsSampler(ABC):
         Returns: indeces of the batch samples for the forming triplets.
         """
         raise NotImplementedError
+
+
+class AllTripletsSampler(InBatchTripletsSampler):
+    def __init__(self, max_output_triplets: int = float('inf')):
+        """
+
+        Args:
+            max_output_triplets: With the strategy of choosing all triplets,
+                their number in the batch can be very large,
+                because of it we will sample only random part of them,
+                determined by this parameter.
+        """
+        self._max_out_triplets = max_output_triplets
+
+    def _sample(self, labels: List[int], *_) -> TTripletsIds:
+        num_labels = len(labels)
+
+        triplets = []
+        for label in set(labels):
+            ids_pos = set(find_value_ids(labels, label))
+            ids_neg = set(range(num_labels)) - ids_pos
+
+            pos_pairs = list(combinations(ids_pos, r=2))
+
+            tri = [(a, p, n) for (a, p), n in product(pos_pairs, ids_neg)]
+            triplets.extend(tri)
+
+        triplets = sample(triplets, min(len(triplets), self._max_out_triplets))
+        ids_anchor, ids_pos, ids_neg = zip(*triplets)
+
+        return ids_anchor, ids_pos, ids_neg
 
 
 class MiniEpochSampler(Sampler):
@@ -492,6 +531,7 @@ class DistributedSamplerWrapper(DistributedSampler):
 __all__ = [
     "BalanceClassSampler",
     "BalanceBatchSampler",
+    "AllTripletsSampler",
     "MiniEpochSampler",
     "DistributedSamplerWrapper",
     "DynamicLenBatchSampler",
