@@ -2,9 +2,9 @@ from typing import Iterator, List, Optional, Tuple, Union
 from abc import ABC, abstractmethod
 from collections import Counter
 from itertools import combinations, product
+from math import inf
 from operator import itemgetter
 from random import choices, sample
-from math import inf
 
 import numpy as np
 
