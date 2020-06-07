@@ -1,10 +1,10 @@
+from typing import Iterator, List, Optional, Tuple, Union
 from abc import ABC, abstractmethod
 from collections import Counter
 from enum import Enum
 from itertools import combinations, product
 from operator import itemgetter
 from random import choices, sample
-from typing import Iterator, List, Optional, Tuple, Union
 
 import numpy as np
 

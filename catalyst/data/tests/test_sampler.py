@@ -1,7 +1,7 @@
+from typing import List, Tuple
 from collections import Counter
 from operator import itemgetter
 from random import randint, shuffle
-from typing import List, Tuple
 
 import pytest
 from scipy.special import binom
@@ -11,7 +11,7 @@ from catalyst.data.sampler import AllTripletsSampler, BalanceBatchSampler
 TLabelsPK = List[Tuple[List[int], int, int]]
 
 
-def generate_labels_pk(num: int) -> TLabelsPK:
+def generate_valid_labels(num: int) -> TLabelsPK:
     """
     This function generates same valid inputs for samplers.
     It generates k instances for p classes.
@@ -39,7 +39,7 @@ def input_for_inbatch_sampler() -> List[int]:
     """
     Returns: list of valid classes labels
     """
-    labels_pk = generate_labels_pk(num=100)
+    labels_pk = generate_valid_labels(num=100)
     labels, _, _ = zip(*labels_pk)
     return labels
 
@@ -68,7 +68,7 @@ def input_for_balance_batch_sampler() -> TLabelsPK:
 
     # (alekseysh) It was checked once with N = 100_000 before doing the PR
     num_random_cases = 0
-    input_cases.extend((generate_pk_labels(num_random_cases)))
+    input_cases.extend((generate_valid_labels(num_random_cases)))
 
     return input_cases
 
@@ -206,6 +206,3 @@ def test_all_triplets_sampler(input_for_inbatch_sampler) -> None:
         check_triplets_consistency(
             ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels
         )
-
-
-test_all_triplets_sampler(input_for_inbatch_sampler())
