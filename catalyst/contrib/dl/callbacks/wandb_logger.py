@@ -63,6 +63,7 @@ class WandbLogger(Callback):
         metric_names: List[str] = None,
         log_on_batch_end: bool = False,
         log_on_epoch_end: bool = True,
+        log: str = "gradients",
         **logging_params,
     ):
         """
@@ -71,6 +72,7 @@ class WandbLogger(Callback):
                 if None - logs everything
             log_on_batch_end (bool): logs per-batch metrics if set True
             log_on_epoch_end (bool): logs per-epoch metrics if set True
+            log (str): wandb.watch parameter. Can be "all", "gradients" or "parameters"
             **logging_params: any parameters of function `wandb.init`
                 except `reinit` which is automatically set to `True`
                 and `dir` which is set to `<logdir>`
@@ -83,6 +85,7 @@ class WandbLogger(Callback):
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
+        self.log = log
 
         if not (self.log_on_batch_end or self.log_on_epoch_end):
             raise ValueError("You have to log something!")
@@ -136,7 +139,9 @@ class WandbLogger(Callback):
     def on_stage_start(self, runner: IRunner):
         """Initialize Weights & Biases."""
         wandb.init(**self.logging_params, reinit=True, dir=str(runner.logdir))
-        wandb.watch(runner.model)
+        wandb.watch(
+            models=runner.model, criterion=runner.criterion, log=self.log
+        )
 
     def on_stage_end(self, runner: IRunner):
         """Finish logging to Weights & Biases."""
@@ -178,7 +183,7 @@ class WandbLogger(Callback):
         )
 
         if self.log_on_epoch_end:
-            try:
+            if extra_mode in splitted_epoch_metrics.keys():
                 self._log_metrics(
                     metrics=splitted_epoch_metrics[extra_mode],
                     step=runner.global_epoch,
@@ -186,7 +191,7 @@ class WandbLogger(Callback):
                     suffix=self.epoch_log_suffix,
                     commit=True,
                 )
-            except KeyError:
+            else:
                 self._log_metrics(
                     metrics=splitted_epoch_metrics,
                     step=runner.global_epoch,
