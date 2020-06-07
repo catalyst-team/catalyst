@@ -72,7 +72,8 @@ class WandbLogger(Callback):
                 if None - logs everything
             log_on_batch_end (bool): logs per-batch metrics if set True
             log_on_epoch_end (bool): logs per-epoch metrics if set True
-            log (str): wandb.watch parameter. Can be "all", "gradients" or "parameters"
+            log (str): wandb.watch parameter. Can be "all", "gradients"
+                or "parameters"
             **logging_params: any parameters of function `wandb.init`
                 except `reinit` which is automatically set to `True`
                 and `dir` which is set to `<logdir>`
