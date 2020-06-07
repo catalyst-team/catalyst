@@ -7,7 +7,8 @@ from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
 from catalyst import dl
-from catalyst.contrib.data.dataset import MNIST, ToTensor
+from catalyst.contrib.data.transforms import ToTensor
+from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
 
@@ -42,7 +43,7 @@ class CustomRunner(dl.Runner):
             y_hat, y, topk=(1, 3, 5)
         )
 
-        self.state.batch_metrics = {
+        self.batch_metrics = {
             "loss_clf": loss_clf,
             "loss_iou": loss_iou,
             "loss": loss,
@@ -52,10 +53,10 @@ class CustomRunner(dl.Runner):
             "accuracy05": accuracy05,
         }
 
-        if self.state.is_train_loader:
+        if self.is_train_loader:
             loss.backward()
-            self.state.optimizer.step()
-            self.state.optimizer.zero_grad()
+            self.optimizer.step()
+            self.optimizer.zero_grad()
 
 
 def main():

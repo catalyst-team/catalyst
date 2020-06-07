@@ -6,7 +6,8 @@ from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
 from catalyst import dl
-from catalyst.contrib.data.dataset import MNIST, ToTensor
+from catalyst.contrib.data.transforms import ToTensor
+from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
 model = torch.nn.Linear(28 * 28, 10)
@@ -32,14 +33,14 @@ class CustomRunner(dl.Runner):
 
         loss = F.cross_entropy(y_hat, y)
         accuracy01, accuracy03 = metrics.accuracy(y_hat, y, topk=(1, 3))
-        self.state.batch_metrics.update(
+        self.batch_metrics.update(
             {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
         )
 
-        if self.state.is_train_loader:
+        if self.is_train_loader:
             loss.backward()
-            self.state.optimizer.step()
-            self.state.optimizer.zero_grad()
+            self.optimizer.step()
+            self.optimizer.zero_grad()
 
 
 def main():

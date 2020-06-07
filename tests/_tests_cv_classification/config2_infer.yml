@@ -10,7 +10,7 @@ stages:
     batch_size: 64
     num_workers: 0
 
-  state_params:
+  stage_params:
     num_epochs: 1
 
   infer:

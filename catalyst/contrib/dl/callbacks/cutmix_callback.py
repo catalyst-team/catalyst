@@ -4,7 +4,8 @@ import numpy as np
 
 import torch
 
-from catalyst.dl import CriterionCallback, State
+from catalyst.core.callbacks import CriterionCallback
+from catalyst.core.runner import IRunner
 
 
 class CutmixCallback(CriterionCallback):
@@ -51,22 +52,22 @@ class CutmixCallback(CriterionCallback):
         self.index = None
         self.is_needed = True
 
-    def _compute_loss(self, state: State, criterion):
+    def _compute_loss(self, runner: IRunner, criterion):
         """Computes loss.
 
         If self.is_needed is ``False`` then calls ``_compute_loss``
         from ``CriterionCallback``, otherwise computes loss value.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
             criterion: that is used to compute loss
         """
         if not self.is_needed:
-            return super()._compute_loss_value(state, criterion)
+            return super()._compute_loss_value(runner, criterion)
 
-        pred = state.output[self.output_key]
-        y_a = state.input[self.input_key]
-        y_b = state.input[self.input_key][self.index]
+        pred = runner.output[self.output_key]
+        y_a = runner.input[self.input_key]
+        y_b = runner.input[self.input_key][self.index]
         loss = self.lam * criterion(pred, y_a) + (1 - self.lam) * criterion(
             pred, y_b
         )
@@ -100,19 +101,19 @@ class CutmixCallback(CriterionCallback):
 
         return bbx1, bby1, bbx2, bby2
 
-    def on_loader_start(self, state: State) -> None:
+    def on_loader_start(self, runner: IRunner) -> None:
         """Checks if it is needed for the loader.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
-        self.is_needed = not self.on_train_only or state.is_train_loader
+        self.is_needed = not self.on_train_only or runner.is_train_loader
 
-    def on_batch_start(self, state: State) -> None:
+    def on_batch_start(self, runner: IRunner) -> None:
         """Mixes data according to Cutmix algorithm.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
         if not self.is_needed:
             return
@@ -122,15 +123,15 @@ class CutmixCallback(CriterionCallback):
         else:
             self.lam = 1
 
-        self.index = torch.randperm(state.input[self.fields[0]].shape[0])
-        self.index.to(state.device)
+        self.index = torch.randperm(runner.input[self.fields[0]].shape[0])
+        self.index.to(runner.device)
 
         bbx1, bby1, bbx2, bby2 = self._rand_bbox(
-            state.input[self.fields[0]].shape, self.lam
+            runner.input[self.fields[0]].shape, self.lam
         )
 
         for f in self.fields:
-            state.input[f][:, :, bbx1:bbx2, bby1:bby2] = state.input[f][
+            runner.input[f][:, :, bbx1:bbx2, bby1:bby2] = runner.input[f][
                 self.index, :, bbx1:bbx2, bby1:bby2
             ]
 
@@ -138,7 +139,10 @@ class CutmixCallback(CriterionCallback):
             (bbx2 - bbx1)
             * (bby2 - bby1)
             / (
-                state.input[self.fields[0]].shape[-1]
-                * state.input[self.fields[0]].shape[-2]
+                runner.input[self.fields[0]].shape[-1]
+                * runner.input[self.fields[0]].shape[-2]
             )
         )
+
+
+__all__ = ["CutmixCallback"]

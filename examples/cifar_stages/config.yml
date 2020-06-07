@@ -33,7 +33,7 @@ stages:
       - transform: A.Normalize
       - transform: catalyst.ToTensor
 
-  state_params:
+  stage_params:
     num_epochs: 3
     main_metric: &reduced_metric accuracy01
     minimize_metric: False
@@ -79,7 +79,7 @@ stages:
 
   # tune
   stage2:
-    state_params:
+    stage_params:
       num_epochs: 3
 
     optimizer_params:

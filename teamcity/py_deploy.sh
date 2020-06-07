@@ -1,9 +1,13 @@
 #!/bin/bash
 set -e -o xtrace
 
-pip install -r requirements/requirements.txt
-pip install -r requirements/requirements-cv.txt
-pip install -r requirements/requirements-nlp.txt
+pip install \
+    -r ./requirements/requirements.txt \
+    -r ./requirements/requirements-dev.txt \
+    -r ./requirements/requirements-ml.txt \
+    -r ./requirements/requirements-cv.txt \
+    -r ./requirements/requirements-nlp.txt \
+    -r ./requirements/requirements-contrib.txt
 pip install -r docs/requirements.txt
 
 # @TODO: fix server issue
@@ -23,7 +27,9 @@ if [ $GIT_BRANCH == 'refs/heads/master' ]; then
   git clone --single-branch --branch gh-pages https://GH_TOKEN:$GH_TOKEN@github.com/catalyst-team/catalyst.git
 
   cd catalyst
-  rm -rf *
+  # Remove master docs, do not touch the past versions 
+  rm -f *
+  rm -rf .doctrees _modules _sources _static api info
   cp -a $TEMP/builds/* .
 
   git config --global user.email "teamcity@catalyst.github"

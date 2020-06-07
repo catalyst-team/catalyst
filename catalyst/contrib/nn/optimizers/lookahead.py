@@ -11,8 +11,8 @@ class Lookahead(Optimizer):
     It has been proposed in `Lookahead Optimizer: k steps forward,
     1 step back`_.
 
-    Main origins of inspiration:
-        https://github.com/alphadl/lookahead.pytorch (MIT License)
+    Adapted from:
+    https://github.com/alphadl/lookahead.pytorch (MIT License)
 
     .. _`Lookahead Optimizer\: k steps forward, 1 step back`:
         https://arxiv.org/abs/1907.08610
