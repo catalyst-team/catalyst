@@ -66,7 +66,7 @@ class LanguageModelingDataset(Dataset):
         if not lazy:
             pbar = tqdm(texts, desc="tokenizing texts")
             self.encoded = [
-                self.tokenizer.encode(text, max_len=max_seq_length)
+                self.tokenizer.encode(text, max_length=max_seq_length)
                 for text in pbar
             ]
             if sort:
@@ -87,7 +87,7 @@ class LanguageModelingDataset(Dataset):
 
     def _getitem_lazy(self, idx) -> torch.Tensor:
         encoded = self.tokenizer.encode(
-            self.texts[idx], max_len=self.max_seq_length
+            self.texts[idx], max_length=self.max_seq_length
         )
         return torch.tensor(encoded)
 
