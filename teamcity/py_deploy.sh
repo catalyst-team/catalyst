@@ -27,7 +27,9 @@ if [ $GIT_BRANCH == 'refs/heads/master' ]; then
   git clone --single-branch --branch gh-pages https://GH_TOKEN:$GH_TOKEN@github.com/catalyst-team/catalyst.git
 
   cd catalyst
-  rm -rf *
+  # Remove master docs, do not touch the past versions 
+  rm -f *
+  rm -rf .doctrees _modules _sources _static api info
   cp -a $TEMP/builds/* .
 
   git config --global user.email "teamcity@catalyst.github"

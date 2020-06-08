@@ -22,7 +22,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - `LanguageModelingDataset` ([#841](https://github.com/catalyst-team/catalyst/pull/841))
 
-
 ## [20.06] - 2020-06-04
 
 ### Added
