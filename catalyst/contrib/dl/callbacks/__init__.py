@@ -5,6 +5,7 @@ from catalyst.tools import settings
 
 from .cutmix_callback import CutmixCallback
 from .gradnorm_logger import GradNormLogger
+from .ignore_metric_callback import IgnoreMetricCallback
 from .knn_metric import KNNMetricCallback
 from .periodic_loader_callback import PeriodicLoaderCallback
 from .perplexity_metric import PerplexityMetricCallback
