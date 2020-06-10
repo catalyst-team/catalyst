@@ -1,0 +1,416 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>catalyst.utils.config &#8212; Catalyst 19.11.5 documentation</title>
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for catalyst.utils.config</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>  <span class="c1"># isort:skip</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">logging</span> <span class="k">import</span> <span class="n">getLogger</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">platform</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">import</span> <span class="nn">safitty</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="k">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.tensorboard</span> <span class="k">import</span> <span class="n">SummaryWriter</span>
+
+<span class="n">LOG</span> <span class="o">=</span> <span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="load_ordered_yaml"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.config.load_ordered_yaml">[docs]</a><span class="k">def</span> <span class="nf">load_ordered_yaml</span><span class="p">(</span>
+    <span class="n">stream</span><span class="p">,</span> <span class="n">Loader</span><span class="o">=</span><span class="n">yaml</span><span class="o">.</span><span class="n">Loader</span><span class="p">,</span> <span class="n">object_pairs_hook</span><span class="o">=</span><span class="n">OrderedDict</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads `yaml` config into OrderedDict</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        stream: opened file with yaml</span>
+<span class="sd">        Loader: base class for yaml Loader</span>
+<span class="sd">        object_pairs_hook: type of mapping</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: configuration</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">class</span> <span class="nc">OrderedLoader</span><span class="p">(</span><span class="n">Loader</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">construct_mapping</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="n">loader</span><span class="o">.</span><span class="n">flatten_mapping</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">object_pairs_hook</span><span class="p">(</span><span class="n">loader</span><span class="o">.</span><span class="n">construct_pairs</span><span class="p">(</span><span class="n">node</span><span class="p">))</span>
+
+    <span class="n">OrderedLoader</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span>
+        <span class="n">yaml</span><span class="o">.</span><span class="n">resolver</span><span class="o">.</span><span class="n">BaseResolver</span><span class="o">.</span><span class="n">DEFAULT_MAPPING_TAG</span><span class="p">,</span> <span class="n">construct_mapping</span>
+    <span class="p">)</span>
+    <span class="n">OrderedLoader</span><span class="o">.</span><span class="n">add_implicit_resolver</span><span class="p">(</span>
+        <span class="s2">&quot;tag:yaml.org,2002:float&quot;</span><span class="p">,</span>
+        <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+            <span class="sa">u</span><span class="sd">&quot;&quot;&quot;^(?:</span>
+<span class="sd">            [-+]?(?:[0-9][0-9_]*)\\.[0-9_]*(?:[eE][-+]?[0-9]+)?</span>
+<span class="sd">            |[-+]?(?:[0-9][0-9_]*)(?:[eE][-+]?[0-9]+)</span>
+<span class="sd">            |\\.[0-9_]+(?:[eE][-+][0-9]+)?</span>
+<span class="sd">            |[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\\.[0-9_]*</span>
+<span class="sd">            |[-+]?\\.(?:inf|Inf|INF)</span>
+<span class="sd">            |\\.(?:nan|NaN|NAN))$&quot;&quot;&quot;</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">X</span>
+        <span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;-+0123456789.&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">stream</span><span class="p">,</span> <span class="n">OrderedLoader</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_decode_dict</span><span class="p">(</span><span class="n">dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decode bytes values in the dictionary to UTF-8</span>
+<span class="sd">    Args:</span>
+<span class="sd">        dictionary: a dict</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: decoded dict</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="nb">bytes</span> <span class="k">else</span> <span class="n">v</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dictionary</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<div class="viewcode-block" id="get_environment_vars"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.config.get_environment_vars">[docs]</a><span class="k">def</span> <span class="nf">get_environment_vars</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a dictionary with environment variables</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: environment variables</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;python_version&quot;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
+        <span class="s2">&quot;conda_environment&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CONDA_DEFAULT_ENV&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;creation_time&quot;</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_utcnow_time</span><span class="p">(),</span>
+        <span class="s2">&quot;sysname&quot;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">uname</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="s2">&quot;nodename&quot;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">uname</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="s2">&quot;release&quot;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">uname</span><span class="p">()[</span><span class="mi">2</span><span class="p">],</span>
+        <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">uname</span><span class="p">()[</span><span class="mi">3</span><span class="p">],</span>
+        <span class="s2">&quot;architecture&quot;</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">uname</span><span class="p">()[</span><span class="mi">4</span><span class="p">],</span>
+        <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;USER&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;PWD&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+    <span class="p">}</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">devnull</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">git_branch</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
+                <span class="s2">&quot;git rev-parse --abbrev-ref HEAD&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span>
+                <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">stderr</span><span class="o">=</span><span class="n">devnull</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
+            <span class="n">git_local_commit</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
+                <span class="s2">&quot;git rev-parse HEAD&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">stderr</span><span class="o">=</span><span class="n">devnull</span>
+            <span class="p">)</span>
+            <span class="n">git_origin_commit</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
+                <span class="n">f</span><span class="s2">&quot;git rev-parse origin/</span><span class="si">{git_branch}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span>
+                <span class="n">shell</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">stderr</span><span class="o">=</span><span class="n">devnull</span>
+            <span class="p">)</span>
+
+            <span class="n">git</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+                <span class="n">branch</span><span class="o">=</span><span class="n">git_branch</span><span class="p">,</span>
+                <span class="n">local_commit</span><span class="o">=</span><span class="n">git_local_commit</span><span class="p">,</span>
+                <span class="n">origin_commit</span><span class="o">=</span><span class="n">git_origin_commit</span>
+            <span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">&quot;git&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_decode_dict</span><span class="p">(</span><span class="n">git</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">):</span>
+            <span class="k">pass</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_decode_dict</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<span class="k">def</span> <span class="nf">list_pip_packages</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">devnull</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
+                <span class="s2">&quot;pip freeze&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">stderr</span><span class="o">=</span><span class="n">devnull</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Failed to list packages&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">list_conda_packages</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">conda_meta_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;conda-meta&quot;</span>
+    <span class="k">if</span> <span class="n">conda_meta_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="c1"># We are currently in conda venv</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">devnull</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
+                    <span class="s2">&quot;conda list --export&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span> <span class="n">stderr</span><span class="o">=</span><span class="n">devnull</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="s2">&quot;Running from conda env, but failed to list conda packages&quot;</span>
+                <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<div class="viewcode-block" id="dump_environment"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.config.dump_environment">[docs]</a><span class="k">def</span> <span class="nf">dump_environment</span><span class="p">(</span>
+    <span class="n">experiment_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
+    <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">configs_path</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Saves config, environment variables and package list in JSON into logdir</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        experiment_config (dict): experiment config</span>
+<span class="sd">        logdir (str): path to logdir</span>
+<span class="sd">        configs_path: path(s) to config</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">configs_path</span> <span class="o">=</span> <span class="n">configs_path</span> <span class="ow">or</span> <span class="p">[]</span>
+    <span class="n">configs_path</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">configs_path</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="p">]</span>
+    <span class="n">config_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">logdir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;configs&quot;</span>
+    <span class="n">config_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">environment</span> <span class="o">=</span> <span class="n">get_environment_vars</span><span class="p">()</span>
+
+    <span class="n">safitty</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">experiment_config</span><span class="p">,</span> <span class="n">config_dir</span> <span class="o">/</span> <span class="s2">&quot;_config.json&quot;</span><span class="p">)</span>
+    <span class="n">safitty</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">environment</span><span class="p">,</span> <span class="n">config_dir</span> <span class="o">/</span> <span class="s2">&quot;_environment.json&quot;</span><span class="p">)</span>
+
+    <span class="n">pip_pkg</span> <span class="o">=</span> <span class="n">list_pip_packages</span><span class="p">()</span>
+    <span class="p">(</span><span class="n">config_dir</span> <span class="o">/</span> <span class="s2">&quot;pip-packages.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">pip_pkg</span><span class="p">)</span>
+    <span class="n">conda_pkg</span> <span class="o">=</span> <span class="n">list_conda_packages</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">conda_pkg</span><span class="p">:</span>
+        <span class="p">(</span><span class="n">config_dir</span> <span class="o">/</span> <span class="s2">&quot;conda-packages.txt&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">conda_pkg</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">configs_path</span><span class="p">:</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">outpath</span> <span class="o">=</span> <span class="n">config_dir</span> <span class="o">/</span> <span class="n">name</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">outpath</span><span class="p">)</span>
+
+    <span class="n">config_str</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">experiment_config</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">config_str</span> <span class="o">=</span> <span class="n">config_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">environment_str</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">environment</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">environment_str</span> <span class="o">=</span> <span class="n">environment_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">pip_pkg</span> <span class="o">=</span> <span class="n">pip_pkg</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">conda_pkg</span> <span class="o">=</span> <span class="n">conda_pkg</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="n">config_dir</span><span class="p">)</span> <span class="k">as</span> <span class="n">writer</span><span class="p">:</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="s2">&quot;_config&quot;</span><span class="p">,</span> <span class="n">config_str</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="s2">&quot;_environment&quot;</span><span class="p">,</span> <span class="n">environment_str</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="s2">&quot;pip-packages&quot;</span><span class="p">,</span> <span class="n">pip_pkg</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">conda_pkg</span><span class="p">:</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">add_text</span><span class="p">(</span><span class="s2">&quot;conda-packages&quot;</span><span class="p">,</span> <span class="n">conda_pkg</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="parse_config_args"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.config.parse_config_args">[docs]</a><span class="k">def</span> <span class="nf">parse_config_args</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">unknown_args</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">unknown_args</span><span class="p">:</span>
+        <span class="n">arg_name</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="n">arg</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+        <span class="n">arg_name</span> <span class="o">=</span> <span class="n">arg_name</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+
+        <span class="n">value_content</span><span class="p">,</span> <span class="n">value_type</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;/&quot;</span> <span class="ow">in</span> <span class="n">arg_name</span><span class="p">:</span>
+            <span class="n">arg_names</span> <span class="o">=</span> <span class="n">arg_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">value_type</span> <span class="o">==</span> <span class="s2">&quot;str&quot;</span><span class="p">:</span>
+                <span class="n">arg_value</span> <span class="o">=</span> <span class="n">value_content</span>
+
+                <span class="k">if</span> <span class="n">arg_value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+                    <span class="n">arg_value</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">arg_value</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">value_type</span><span class="p">,</span> <span class="n">value_content</span><span class="p">))</span>
+
+            <span class="n">config_</span> <span class="o">=</span> <span class="n">config</span>
+            <span class="k">for</span> <span class="n">arg_name</span> <span class="ow">in</span> <span class="n">arg_names</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">arg_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">config_</span><span class="p">:</span>
+                    <span class="n">config_</span><span class="p">[</span><span class="n">arg_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+                <span class="n">config_</span> <span class="o">=</span> <span class="n">config_</span><span class="p">[</span><span class="n">arg_name</span><span class="p">]</span>
+
+            <span class="n">config_</span><span class="p">[</span><span class="n">arg_names</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">arg_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">value_type</span> <span class="o">==</span> <span class="s2">&quot;str&quot;</span><span class="p">:</span>
+                <span class="n">arg_value</span> <span class="o">=</span> <span class="n">value_content</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">arg_value</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">(</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">value_type</span><span class="p">,</span> <span class="n">value_content</span><span class="p">))</span>
+            <span class="n">args</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">arg_name</span><span class="p">,</span> <span class="n">arg_value</span><span class="p">)</span>
+
+    <span class="n">args_exists_</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">args_exists_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">config</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">args</span><span class="o">.</span><span class="n">_get_kwargs</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;logdir&quot;</span><span class="p">,</span> <span class="s2">&quot;baselogdir&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">config</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">return</span> <span class="n">config</span><span class="p">,</span> <span class="n">args</span></div>
+
+
+<div class="viewcode-block" id="parse_args_uargs"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.config.parse_args_uargs">[docs]</a><span class="k">def</span> <span class="nf">parse_args_uargs</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">unknown_args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function for parsing configuration files</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        args: recognized arguments</span>
+<span class="sd">        unknown_args: unrecognized arguments</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: updated arguments, dict with config</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args_</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="c1"># load params</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">config_path</span> <span class="ow">in</span> <span class="n">args_</span><span class="o">.</span><span class="n">configs</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fin</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">config_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;json&quot;</span><span class="p">):</span>
+                <span class="n">config_</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fin</span><span class="p">,</span> <span class="n">object_pairs_hook</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">config_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;yml&quot;</span><span class="p">):</span>
+                <span class="n">config_</span> <span class="o">=</span> <span class="n">load_ordered_yaml</span><span class="p">(</span><span class="n">fin</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Unknown file format&quot;</span><span class="p">)</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge_dicts</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">config_</span><span class="p">)</span>
+
+    <span class="n">config</span><span class="p">,</span> <span class="n">args_</span> <span class="o">=</span> <span class="n">parse_config_args</span><span class="p">(</span>
+        <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args_</span><span class="p">,</span> <span class="n">unknown_args</span><span class="o">=</span><span class="n">unknown_args</span>
+    <span class="p">)</span>
+
+    <span class="c1"># hack with argparse in config</span>
+    <span class="n">config_args</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">config_args</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">config_args</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">arg_value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">args_</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">arg_value</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> \
+                    <span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;logdir&quot;</span><span class="p">,</span> <span class="s2">&quot;baselogdir&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">arg_value</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
+                <span class="n">arg_value</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">args_</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">arg_value</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">args_</span><span class="p">,</span> <span class="n">config</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;load_ordered_yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;get_environment_vars&quot;</span><span class="p">,</span> <span class="s2">&quot;dump_environment&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;parse_config_args&quot;</span><span class="p">,</span> <span class="s2">&quot;parse_args_uargs&quot;</span>
+<span class="p">]</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">Catalyst</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<p class="caption"><span class="caption-text">Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../info/contributing.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../info/license.html">Apache License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/rl.html">RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utils</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, Scitator.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

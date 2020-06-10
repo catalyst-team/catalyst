@@ -1,0 +1,653 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Apache License &mdash; Catalyst 20.03.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Core" href="../api/core.html" />
+    <link rel="prev" title="Contribution" href="contributing.html" /> 
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
+  <script src="../_static/js/googleanalytics.min.js"></script>
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://github.com/catalyst-team/catalyst" aria-label="Catalyst"></a>
+
+      <div class="main-menu">
+        <ul>
+
+          <li>
+            <div class="ecosystem-dropdown">
+              <a id="dropdownMenuButtonEcosystem" data-toggle="ecosystem-dropdown">
+                Catalyst.Ecosystem
+              </a>
+              <div class="ecosystem-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://alchemy.host">
+                  <span class=dropdown-title>Catalyst.Alchemy</span>
+                  <p>Experiments monitoring and sharing</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">
+                  <span class=dropdown-title>Catalyst.Reaction</span>
+                  <p>Convenient DL models serving</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/mlcomp">
+                  <span class=dropdown-title>Catalyst.MLcomp</span>
+                  <p>Supervise and orchestrate your experiments</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <div class="projects-dropdown">
+              <a id="dropdownMenuButtonProjects" data-toggle="projects-dropdown">
+                Catalyst.Projects
+              </a>
+              <div class="projects-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">
+                  <span class=dropdown-title>Catalyst.Neuro</span>
+                  <p>Catalyst.Team and TReNDS collaborative project</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">
+                  <span class=dropdown-title>Catalyst.Classification</span>
+                  <p>Image classification pipelines with transfer learning</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">
+                  <span class=dropdown-title>Catalyst.Segmentation</span>
+                  <p>Image segmentation pipelines with transfer learning</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">
+                  <span class=dropdown-title>Catalyst.GAN</span>
+                  <p>GAN pipelines</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Github</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+
+  </div>
+</div>
+
+
+<body class="catalyst-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="catalyst-left-menu" id="catalyst-left-menu">
+      <div class="catalyst-side-scroll">
+        <div class="catalyst-menu catalyst-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="catalyst-left-menu-search">
+            
+
+            
+              
+              
+                <div class="version">
+                  20.03
+                </div>
+              
+            
+
+            
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+            
+          </div>
+
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribution</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Apache License</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/rl.html">RL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <div class="catalyst-container">
+      <div class="catalyst-page-level-bar" id="catalyst-page-level-bar">
+        <div class="catalyst-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="catalyst-breadcrumbs">
+    
+      <li>
+        <a href="../index.html">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+      <li>Apache License</li>
+    
+    
+      <li class="catalyst-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/info/license.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="catalyst-shortcuts-wrapper" id="catalyst-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="catalyst-content-wrap" class="catalyst-content-wrap">
+        <div class="catalyst-content-left">
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
+              
+  <div class="section" id="apache-license">
+<h1>Apache License<a class="headerlink" href="#apache-license" title="Permalink to this headline">¶</a></h1>
+<dl class="field-list simple">
+<dt class="field-odd">Version</dt>
+<dd class="field-odd"><p>2.0</p>
+</dd>
+<dt class="field-even">Date</dt>
+<dd class="field-even"><p>January 2004</p>
+</dd>
+<dt class="field-odd">URL</dt>
+<dd class="field-odd"><p><a class="reference external" href="http://www.apache.org/licenses/">http://www.apache.org/licenses/</a></p>
+</dd>
+</dl>
+<div class="section" id="terms-and-conditions-for-use-reproduction-and-distribution">
+<h2>TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION<a class="headerlink" href="#terms-and-conditions-for-use-reproduction-and-distribution" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="definitions">
+<h3>1. Definitions.<a class="headerlink" href="#definitions" title="Permalink to this headline">¶</a></h3>
+<p><strong>“License”</strong> shall mean the terms and conditions for use, reproduction, and
+distribution as defined by Sections 1 through 9 of this document.</p>
+<p><strong>“Licensor”</strong> shall mean the copyright owner or entity authorized by the
+copyright owner that is granting the License.</p>
+<p><strong>“Legal Entity”</strong> shall mean the union of the acting entity and all other
+entities that control, are controlled by, or are under common control with that
+entity.  For the purposes of this definition, “control” means <em>(i)</em> the power,
+direct or indirect, to cause the direction or management of such entity,
+whether by contract or otherwise, or <em>(ii)</em> ownership of fifty percent (50%) or
+more of the outstanding shares, or <em>(iii)</em> beneficial ownership of such entity.</p>
+<p><strong>“You”</strong> (or <strong>“Your”</strong>) shall mean an individual or Legal Entity exercising
+permissions granted by this License.</p>
+<p><strong>“Source”</strong> form shall mean the preferred form for making modifications,
+including but not limited to software source code, documentation source, and
+configuration files.</p>
+<p><strong>“Object”</strong> form shall mean any form resulting from mechanical transformation
+or translation of a Source form, including but not limited to compiled object
+code, generated documentation, and conversions to other media types.</p>
+<p><strong>“Work”</strong> shall mean the work of authorship, whether in Source or Object form,
+made available under the License, as indicated by a copyright notice that is
+included in or attached to the work (an example is provided in the Appendix
+below).</p>
+<p><strong>“Derivative Works”</strong> shall mean any work, whether in Source or Object form,
+that is based on (or derived from) the Work and for which the editorial
+revisions, annotations, elaborations, or other modifications represent, as a
+whole, an original work of authorship. For the purposes of this License,
+Derivative Works shall not include works that remain separable from, or merely
+link (or bind by name) to the interfaces of, the Work and Derivative Works
+thereof.</p>
+<p><strong>“Contribution”</strong> shall mean any work of authorship, including the original
+version of the Work and any modifications or additions to that Work or
+Derivative Works thereof, that is intentionally submitted to Licensor for
+inclusion in the Work by the copyright owner or by an individual or Legal
+Entity authorized to submit on behalf of the copyright owner. For the purposes
+of this definition, “submitted” means any form of electronic, verbal, or
+written communication sent to the Licensor or its representatives, including
+but not limited to communication on electronic mailing lists, source code
+control systems, and issue tracking systems that are managed by, or on behalf
+of, the Licensor for the purpose of discussing and improving the Work, but
+excluding communication that is conspicuously marked or otherwise designated in
+writing by the copyright owner as “Not a Contribution.”</p>
+<p><strong>“Contributor”</strong> shall mean Licensor and any individual or Legal Entity on
+behalf of whom a Contribution has been received by Licensor and subsequently
+incorporated within the Work.</p>
+</div>
+<div class="section" id="grant-of-copyright-license">
+<h3>2. Grant of Copyright License.<a class="headerlink" href="#grant-of-copyright-license" title="Permalink to this headline">¶</a></h3>
+<p>Subject to the terms and conditions of this License, each Contributor hereby
+grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free,
+irrevocable copyright license to reproduce, prepare Derivative Works of,
+publicly display, publicly perform, sublicense, and distribute the Work and
+such Derivative Works in Source or Object form.</p>
+</div>
+<div class="section" id="grant-of-patent-license">
+<h3>3. Grant of Patent License.<a class="headerlink" href="#grant-of-patent-license" title="Permalink to this headline">¶</a></h3>
+<p>Subject to the terms and conditions of this License, each Contributor hereby
+grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free,
+irrevocable (except as stated in this section) patent license to make, have
+made, use, offer to sell, sell, import, and otherwise transfer the Work, where
+such license applies only to those patent claims licensable by such Contributor
+that are necessarily infringed by their Contribution(s) alone or by combination
+of their Contribution(s) with the Work to which such Contribution(s) was
+submitted. If You institute patent litigation against any entity (including a
+cross-claim or counterclaim in a lawsuit) alleging that the Work or a
+Contribution incorporated within the Work constitutes direct or contributory
+patent infringement, then any patent licenses granted to You under this License
+for that Work shall terminate as of the date such litigation is filed.</p>
+</div>
+<div class="section" id="redistribution">
+<h3>4. Redistribution.<a class="headerlink" href="#redistribution" title="Permalink to this headline">¶</a></h3>
+<p>You may reproduce and distribute copies of the Work or Derivative Works thereof
+in any medium, with or without modifications, and in Source or Object form,
+provided that You meet the following conditions:</p>
+<ul class="simple">
+<li><p>You must give any other recipients of the Work or Derivative Works a copy of
+this License; and</p></li>
+<li><p>You must cause any modified files to carry prominent notices stating that You
+changed the files; and</p></li>
+<li><p>You must retain, in the Source form of any Derivative Works that You
+distribute, all copyright, patent, trademark, and attribution notices from
+the Source form of the Work, excluding those notices that do not pertain to
+any part of the Derivative Works; and</p></li>
+<li><p>If the Work includes a <code class="docutils literal notranslate"><span class="pre">&quot;NOTICE&quot;</span></code> text file as part of its distribution,
+then any Derivative Works that You distribute must include a readable copy of
+the attribution notices contained within such <code class="docutils literal notranslate"><span class="pre">NOTICE</span></code> file, excluding
+those notices that do not pertain to any part of the Derivative Works, in at
+least one of the following places: within a <code class="docutils literal notranslate"><span class="pre">NOTICE</span></code> text file distributed
+as part of the Derivative Works; within the Source form or documentation, if
+provided along with the Derivative Works; or, within a display generated by
+the Derivative Works, if and wherever such third-party notices normally
+appear. The contents of the <code class="docutils literal notranslate"><span class="pre">NOTICE</span></code> file are for informational purposes
+only and do not modify the License. You may add Your own attribution notices
+within Derivative Works that You distribute, alongside or as an addendum to
+the <code class="docutils literal notranslate"><span class="pre">NOTICE</span></code> text from the Work, provided that such additional attribution
+notices cannot be construed as modifying the License. You may add Your own
+copyright statement to Your modifications and may provide additional or
+different license terms and conditions for use, reproduction, or distribution
+of Your modifications, or for any such Derivative Works as a whole, provided
+Your use, reproduction, and distribution of the Work otherwise complies with
+the conditions stated in this License.</p></li>
+</ul>
+</div>
+<div class="section" id="submission-of-contributions">
+<h3>5. Submission of Contributions.<a class="headerlink" href="#submission-of-contributions" title="Permalink to this headline">¶</a></h3>
+<p>Unless You explicitly state otherwise, any Contribution intentionally submitted
+for inclusion in the Work by You to the Licensor shall be under the terms and
+conditions of this License, without any additional terms or conditions.
+Notwithstanding the above, nothing herein shall supersede or modify the terms
+of any separate license agreement you may have executed with Licensor regarding
+such Contributions.</p>
+</div>
+<div class="section" id="trademarks">
+<h3>6. Trademarks.<a class="headerlink" href="#trademarks" title="Permalink to this headline">¶</a></h3>
+<p>This License does not grant permission to use the trade names, trademarks,
+service marks, or product names of the Licensor, except as required for
+reasonable and customary use in describing the origin of the Work and
+reproducing the content of the <code class="docutils literal notranslate"><span class="pre">NOTICE</span></code> file.</p>
+</div>
+<div class="section" id="disclaimer-of-warranty">
+<h3>7. Disclaimer of Warranty.<a class="headerlink" href="#disclaimer-of-warranty" title="Permalink to this headline">¶</a></h3>
+<p>Unless required by applicable law or agreed to in writing, Licensor provides
+the Work (and each Contributor provides its Contributions) on an <strong>“AS IS”
+BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND</strong>, either express or
+implied, including, without limitation, any warranties or conditions of
+<strong>TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A PARTICULAR
+PURPOSE</strong>. You are solely responsible for determining the appropriateness of
+using or redistributing the Work and assume any risks associated with Your
+exercise of permissions under this License.</p>
+</div>
+<div class="section" id="limitation-of-liability">
+<h3>8. Limitation of Liability.<a class="headerlink" href="#limitation-of-liability" title="Permalink to this headline">¶</a></h3>
+<p>In no event and under no legal theory, whether in tort (including negligence),
+contract, or otherwise, unless required by applicable law (such as deliberate
+and grossly negligent acts) or agreed to in writing, shall any Contributor be
+liable to You for damages, including any direct, indirect, special, incidental,
+or consequential damages of any character arising as a result of this License
+or out of the use or inability to use the Work (including but not limited to
+damages for loss of goodwill, work stoppage, computer failure or malfunction,
+or any and all other commercial damages or losses), even if such Contributor
+has been advised of the possibility of such damages.</p>
+</div>
+<div class="section" id="accepting-warranty-or-additional-liability">
+<h3>9. Accepting Warranty or Additional Liability.<a class="headerlink" href="#accepting-warranty-or-additional-liability" title="Permalink to this headline">¶</a></h3>
+<p>While redistributing the Work or Derivative Works thereof, You may choose to
+offer, and charge a fee for, acceptance of support, warranty, indemnity, or
+other liability obligations and/or rights consistent with this License.
+However, in accepting such obligations, You may act only on Your own behalf and
+on Your sole responsibility, not on behalf of any other Contributor, and only
+if You agree to indemnify, defend, and hold each Contributor harmless for any
+liability incurred by, or claims asserted against, such Contributor by reason
+of your accepting any such warranty or additional liability.</p>
+<p><strong>END OF TERMS AND CONDITIONS</strong></p>
+</div>
+<div class="section" id="appendix-how-to-apply-the-apache-license-to-your-work">
+<h3>APPENDIX: How to apply the Apache License to your work<a class="headerlink" href="#appendix-how-to-apply-the-apache-license-to-your-work" title="Permalink to this headline">¶</a></h3>
+<p>To apply the Apache License to your work, attach the following boilerplate
+notice, with the fields enclosed by brackets “[]” replaced with your own
+identifying information. (Don’t include the brackets!) The text should be
+enclosed in the appropriate comment syntax for the file format. We also
+recommend that a file or class name and description of purpose be included on
+the same “printed page” as the copyright notice for easier identification within
+third-party archives.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Copyright</span> <span class="p">[</span><span class="n">yyyy</span><span class="p">]</span> <span class="p">[</span><span class="n">name</span> <span class="n">of</span> <span class="n">copyright</span> <span class="n">owner</span><span class="p">]</span>
+
+<span class="n">Licensed</span> <span class="n">under</span> <span class="n">the</span> <span class="n">Apache</span> <span class="n">License</span><span class="p">,</span> <span class="n">Version</span> <span class="mf">2.0</span> <span class="p">(</span><span class="n">the</span> <span class="s2">&quot;License&quot;</span><span class="p">);</span>
+<span class="n">you</span> <span class="n">may</span> <span class="ow">not</span> <span class="n">use</span> <span class="n">this</span> <span class="n">file</span> <span class="k">except</span> <span class="ow">in</span> <span class="n">compliance</span> <span class="k">with</span> <span class="n">the</span> <span class="n">License</span><span class="o">.</span>
+<span class="n">You</span> <span class="n">may</span> <span class="n">obtain</span> <span class="n">a</span> <span class="n">copy</span> <span class="n">of</span> <span class="n">the</span> <span class="n">License</span> <span class="n">at</span>
+
+    <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">apache</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">licenses</span><span class="o">/</span><span class="n">LICENSE</span><span class="o">-</span><span class="mf">2.0</span>
+
+<span class="n">Unless</span> <span class="n">required</span> <span class="n">by</span> <span class="n">applicable</span> <span class="n">law</span> <span class="ow">or</span> <span class="n">agreed</span> <span class="n">to</span> <span class="ow">in</span> <span class="n">writing</span><span class="p">,</span> <span class="n">software</span>
+<span class="n">distributed</span> <span class="n">under</span> <span class="n">the</span> <span class="n">License</span> <span class="ow">is</span> <span class="n">distributed</span> <span class="n">on</span> <span class="n">an</span> <span class="s2">&quot;AS IS&quot;</span> <span class="n">BASIS</span><span class="p">,</span>
+<span class="n">WITHOUT</span> <span class="n">WARRANTIES</span> <span class="n">OR</span> <span class="n">CONDITIONS</span> <span class="n">OF</span> <span class="n">ANY</span> <span class="n">KIND</span><span class="p">,</span> <span class="n">either</span> <span class="n">express</span> <span class="ow">or</span> <span class="n">implied</span><span class="o">.</span>
+<span class="n">See</span> <span class="n">the</span> <span class="n">License</span> <span class="k">for</span> <span class="n">the</span> <span class="n">specific</span> <span class="n">language</span> <span class="n">governing</span> <span class="n">permissions</span> <span class="ow">and</span>
+<span class="n">limitations</span> <span class="n">under</span> <span class="n">the</span> <span class="n">License</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+             </article>
+             
+            </div>
+            <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../api/core.html" class="btn btn-neutral float-right" title="Core" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+      
+      
+        <a href="contributing.html" class="btn btn-neutral" title="Contribution" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+      
+    </div>
+  
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Scitator.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="catalyst-content-right" id="catalyst-content-right">
+          <div class="catalyst-right-menu" id="catalyst-right-menu">
+            <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
+              <ul>
+<li><a class="reference internal" href="#">Apache License</a><ul>
+<li><a class="reference internal" href="#terms-and-conditions-for-use-reproduction-and-distribution">TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION</a><ul>
+<li><a class="reference internal" href="#definitions">1. Definitions.</a></li>
+<li><a class="reference internal" href="#grant-of-copyright-license">2. Grant of Copyright License.</a></li>
+<li><a class="reference internal" href="#grant-of-patent-license">3. Grant of Patent License.</a></li>
+<li><a class="reference internal" href="#redistribution">4. Redistribution.</a></li>
+<li><a class="reference internal" href="#submission-of-contributions">5. Submission of Contributions.</a></li>
+<li><a class="reference internal" href="#trademarks">6. Trademarks.</a></li>
+<li><a class="reference internal" href="#disclaimer-of-warranty">7. Disclaimer of Warranty.</a></li>
+<li><a class="reference internal" href="#limitation-of-liability">8. Limitation of Liability.</a></li>
+<li><a class="reference internal" href="#accepting-warranty-or-additional-liability">9. Accepting Warranty or Additional Liability.</a></li>
+<li><a class="reference internal" href="#appendix-how-to-apply-the-apache-license-to-your-work">APPENDIX: How to apply the Apache License to your work</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+         <script type="text/javascript" src="../_static/jquery.js"></script>
+         <script type="text/javascript" src="../_static/underscore.js"></script>
+         <script type="text/javascript" src="../_static/doctools.js"></script>
+         <script type="text/javascript" src="../_static/language_data.js"></script>
+         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+  <!-- Begin Footer -->
+
+  <footer class="site-footer" id="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://github.com/catalyst-team/catalyst" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Ecosystem</a></li>
+            <li><a class="nav-dropdown-item" href="https://alchemy.host">Catalyst.Alchemy</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">Catayst.Reaction</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/mlcomp">Catalyst.MLcomp</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Projects</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">Catalyst.Neuro</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">Catayst.Classification</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">Catalyst.Segmentation</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">Catalyst.GAN</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team/catalyst">Support us</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/issues" target="_blank">Github Issues</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+            <li><a href="https://www.patreon.com/catalyst_team" target="_blank">Patreon</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col follow-us-col">
+          <div class="footer-social-icons">
+            <a href="https://t.me/catalyst_team" target="_blank" class="telegram"></a>
+            <a href="https://twitter.com/catalyst_core" target="_blank" class="twitter"></a>
+            <a href="https://ods.ai/en/" target="_blank" class="ods"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://github.com/catalyst-team/catalyst" aria-label="Catalyst"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      catalystAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.catalyst-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>

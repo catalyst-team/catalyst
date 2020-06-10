@@ -1,0 +1,627 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Catalyst &mdash; Catalyst 20.03.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="_static/pygments.css" type="text/css" /> -->
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="info/examples.html" /> 
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
+  <script src="_static/js/googleanalytics.min.js"></script>
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://github.com/catalyst-team/catalyst" aria-label="Catalyst"></a>
+
+      <div class="main-menu">
+        <ul>
+
+          <li>
+            <div class="ecosystem-dropdown">
+              <a id="dropdownMenuButtonEcosystem" data-toggle="ecosystem-dropdown">
+                Catalyst.Ecosystem
+              </a>
+              <div class="ecosystem-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://alchemy.host">
+                  <span class=dropdown-title>Catalyst.Alchemy</span>
+                  <p>Experiments monitoring and sharing</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">
+                  <span class=dropdown-title>Catalyst.Reaction</span>
+                  <p>Convenient DL models serving</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/mlcomp">
+                  <span class=dropdown-title>Catalyst.MLcomp</span>
+                  <p>Supervise and orchestrate your experiments</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <div class="projects-dropdown">
+              <a id="dropdownMenuButtonProjects" data-toggle="projects-dropdown">
+                Catalyst.Projects
+              </a>
+              <div class="projects-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">
+                  <span class=dropdown-title>Catalyst.Neuro</span>
+                  <p>Catalyst.Team and TReNDS collaborative project</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">
+                  <span class=dropdown-title>Catalyst.Classification</span>
+                  <p>Image classification pipelines with transfer learning</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">
+                  <span class=dropdown-title>Catalyst.Segmentation</span>
+                  <p>Image segmentation pipelines with transfer learning</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">
+                  <span class=dropdown-title>Catalyst.GAN</span>
+                  <p>GAN pipelines</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Github</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+
+  </div>
+</div>
+
+
+<body class="catalyst-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="catalyst-left-menu" id="catalyst-left-menu">
+      <div class="catalyst-side-scroll">
+        <div class="catalyst-menu catalyst-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="catalyst-left-menu-search">
+            
+
+            
+              
+              
+                <div class="version">
+                  20.03
+                </div>
+              
+            
+
+            
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+            
+          </div>
+
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Overview</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="info/contributing.html">Contribution</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/utils.html">Utils</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <div class="catalyst-container">
+      <div class="catalyst-page-level-bar" id="catalyst-page-level-bar">
+        <div class="catalyst-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="catalyst-breadcrumbs">
+    
+      <li>
+        <a href="#">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+      <li>Catalyst</li>
+    
+    
+      <li class="catalyst-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/index.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="catalyst-shortcuts-wrapper" id="catalyst-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="catalyst-content-wrap" class="catalyst-content-wrap">
+        <div class="catalyst-content-left">
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
+              
+  <div class="section" id="catalyst">
+<h1>Catalyst<a class="headerlink" href="#catalyst" title="Permalink to this headline">¶</a></h1>
+<a class="reference external image-reference" href="https://github.com/catalyst-team/catalyst"><img alt="Catalyst logo" src="https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png" /></a>
+<p>PyTorch framework for DL research and development.
+It was developed with a focus on reproducibility,
+fast experimentation and code/ideas reusing.
+Being able to research/develop something new,
+rather than write another regular train loop.</p>
+<p>Break the cycle - use the <a class="reference external" href="https://github.com/catalyst-team/catalyst">Catalyst</a>!</p>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Common installation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install -U catalyst
+</pre></div>
+</div>
+<p>More specific with additional requirements:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install catalyst<span class="o">[</span>ml<span class="o">]</span>         <span class="c1"># installs DL+ML based catalyst</span>
+pip install catalyst<span class="o">[</span>cv<span class="o">]</span>         <span class="c1"># installs DL+CV based catalyst</span>
+pip install catalyst<span class="o">[</span>nlp<span class="o">]</span>        <span class="c1"># installs DL+NLP based catalyst</span>
+pip install catalyst<span class="o">[</span>ecosystem<span class="o">]</span>  <span class="c1"># installs Catalyst.Ecosystem for DL R&amp;D</span>
+pip install catalyst<span class="o">[</span>contrib<span class="o">]</span>    <span class="c1"># installs DL+contrib based catalyst</span>
+pip install catalyst<span class="o">[</span>all<span class="o">]</span>        <span class="c1"># installs everything. Very convenient to deploy on a new server</span>
+</pre></div>
+</div>
+<p>Catalyst is compatible with: Python 3.6+. PyTorch 1.0.0+.</p>
+</div>
+<div class="section" id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">SupervisedRunner</span>
+
+<span class="c1"># experiment setup</span>
+<span class="n">logdir</span> <span class="o">=</span> <span class="s2">&quot;./logdir&quot;</span>
+<span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">42</span>
+
+<span class="c1"># data</span>
+<span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">}</span>
+
+<span class="c1"># model, criterion, optimizer</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">Net</span><span class="p">()</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+<span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">ReduceLROnPlateau</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
+
+<span class="c1"># model runner</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
+
+<span class="c1"># model training</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
+    <span class="n">logdir</span><span class="o">=</span><span class="n">logdir</span><span class="p">,</span>
+    <span class="n">num_epochs</span><span class="o">=</span><span class="n">num_epochs</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>For Catalyst.RL introduction, please follow <a class="reference external" href="https://github.com/catalyst-team/catalyst-rl">Catalyst.RL repo</a>.</p>
+</div>
+<div class="section" id="docs-and-examples">
+<h2>Docs and examples<a class="headerlink" href="#docs-and-examples" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li><p>Detailed <a class="reference external" href="https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb">classification tutorial</a></p></li>
+<li><p>Advanced <a class="reference external" href="https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb">segmentation tutorial</a></p></li>
+<li><p>Comprehensive <a class="reference external" href="https://github.com/catalyst-team/classification">classification pipeline</a></p></li>
+<li><p>Binary and semantic <a class="reference external" href="https://github.com/catalyst-team/segmentation">segmentation pipeline</a></p></li>
+</ol>
+<p>In the <a class="reference external" href="https://github.com/catalyst-team/catalyst/tree/master/examples">examples</a> of the repository, you can find advanced tutorials and Catalyst best practices.</p>
+<div class="section" id="infos">
+<h3>Infos<a class="headerlink" href="#infos" title="Permalink to this headline">¶</a></h3>
+<p>To learn more about Catalyst internals and to be aware of the most important features, you can read <a class="reference external" href="https://github.com/catalyst-team/catalyst-info">Catalyst-info</a>, our blog where we regularly write facts about the framework.</p>
+<p>We also supervise the <a class="reference external" href="https://github.com/catalyst-team/awesome-catalyst-list">Awesome Catalyst list</a> – Catalyst-powered projects, tutorials and talks.
+Feel free to make a PR with your project to the list. And don’t forget to check out current list, there are many interesting projects.</p>
+</div>
+<div class="section" id="releases">
+<h3>Releases<a class="headerlink" href="#releases" title="Permalink to this headline">¶</a></h3>
+<p>We deploy a major release once a month with a name like <code class="docutils literal notranslate"><span class="pre">YY.MM</span></code>.
+And micro-releases with framework improvements during a month in the format <code class="docutils literal notranslate"><span class="pre">YY.MM.#</span></code>.</p>
+<p>You can view the changelog on the <a class="reference external" href="https://github.com/catalyst-team/catalyst/releases">GitHub Releases</a> page.</p>
+</div>
+</div>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>Catalyst helps you write compact
+but full-featured DL pipelines in a few lines of code.
+You get a training loop with metrics, early-stopping, model checkpointing
+and other features without the boilerplate.</p>
+<div class="section" id="features">
+<h3>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>Universal train/inference loop.</p></li>
+<li><p>Configuration files for model/data hyperparameters.</p></li>
+<li><p>Reproducibility – all source code and environment variables will be saved.</p></li>
+<li><p>Callbacks – reusable train/inference pipeline parts.</p></li>
+<li><p>Training stages support.</p></li>
+<li><p>Easy customization.</p></li>
+<li><p>PyTorch best practices (SWA, AdamW, Ranger optimizer, OneCycle, and more).</p></li>
+<li><p>Developments best practices - fp16 support, distributed training, slurm</p></li>
+</ul>
+</div>
+<div class="section" id="structure">
+<h3>Structure<a class="headerlink" href="#structure" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><strong>core</strong> - framework core with main abstractions - Experiment, Runner, State, Callback.</p></li>
+<li><dl class="simple">
+<dt><strong>DL</strong> – runner for training and inference,</dt><dd><p>all of the classic ML and CV/NLP metrics
+and a variety of callbacks for training, validation
+and inference of neural networks.</p>
+</dd>
+</dl>
+</li>
+<li><p><strong>contrib</strong> - additional modules contributed by Catalyst users.</p></li>
+<li><p><strong>data</strong> - useful tools and scripts for data processing.</p></li>
+</ul>
+</div>
+<div class="section" id="docker">
+<h3>Docker<a class="headerlink" href="#docker" title="Permalink to this headline">¶</a></h3>
+<p>Catalyst has its own <a class="reference external" href="https://hub.docker.com/r/catalystteam/catalyst/tags">DockerHub page</a>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">catalystteam/catalyst:{CATALYST_VERSION}</span></code> – simple image with Catalyst</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">catalystteam/catalyst:{CATALYST_VERSION}-fp16</span></code> – Catalyst with FP16</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">catalystteam/catalyst:{CATALYST_VERSION}-dev</span></code> – Catalyst for development with all the requirements</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">catalystteam/catalyst:{CATALYST_VERSION}-dev-fp16</span></code> – Catalyst for development with FP16</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="contribution-guide">
+<h2>Contribution guide<a class="headerlink" href="#contribution-guide" title="Permalink to this headline">¶</a></h2>
+<p>We appreciate all contributions.
+If you are planning to contribute back bug-fixes,
+please do so without any further discussion.
+If you plan to contribute new features, utility functions or extensions,
+please first open an issue and discuss the feature with us.</p>
+<p>Please see the <a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">contribution guide</a> for more information.</p>
+<p>By participating in this project, you agree to abide by its <a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CODE_OF_CONDUCT.md">Code of Conduct</a>.</p>
+</div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p>This project is licensed under the Apache License, Version 2.0 see the <a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/LICENSE">LICENSE</a> file for details</p>
+</div>
+<div class="section" id="citation">
+<h2>Citation<a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h2>
+<p>Please use this bibtex if you want to cite this repository in your publications:</p>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@misc</span><span class="p">{</span><span class="nl">catalyst</span><span class="p">,</span>
+    <span class="na">author</span> <span class="p">=</span> <span class="s">{Kolesnikov, Sergey}</span><span class="p">,</span>
+    <span class="na">title</span> <span class="p">=</span> <span class="s">{Accelerated DL R&amp;D}</span><span class="p">,</span>
+    <span class="na">year</span> <span class="p">=</span> <span class="s">{2018}</span><span class="p">,</span>
+    <span class="na">publisher</span> <span class="p">=</span> <span class="s">{GitHub}</span><span class="p">,</span>
+    <span class="na">journal</span> <span class="p">=</span> <span class="s">{GitHub repository}</span><span class="p">,</span>
+    <span class="na">howpublished</span> <span class="p">=</span> <span class="s">{\url{https://github.com/catalyst-team/catalyst}}</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+
+
+             </article>
+             
+            </div>
+            <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="info/examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <img src="_static/images/chevron-right-orange.svg" class="next-page"></a>
+      
+      
+    </div>
+  
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Scitator.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="catalyst-content-right" id="catalyst-content-right">
+          <div class="catalyst-right-menu" id="catalyst-right-menu">
+            <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
+              <ul>
+<li><a class="reference internal" href="#">Catalyst</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#getting-started">Getting started</a></li>
+<li><a class="reference internal" href="#docs-and-examples">Docs and examples</a><ul>
+<li><a class="reference internal" href="#infos">Infos</a></li>
+<li><a class="reference internal" href="#releases">Releases</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#overview">Overview</a><ul>
+<li><a class="reference internal" href="#features">Features</a></li>
+<li><a class="reference internal" href="#structure">Structure</a></li>
+<li><a class="reference internal" href="#docker">Docker</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#contribution-guide">Contribution guide</a></li>
+<li><a class="reference internal" href="#license">License</a></li>
+<li><a class="reference internal" href="#citation">Citation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a><ul>
+</ul>
+</li>
+</ul>
+
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+         <script type="text/javascript" src="_static/jquery.js"></script>
+         <script type="text/javascript" src="_static/underscore.js"></script>
+         <script type="text/javascript" src="_static/doctools.js"></script>
+         <script type="text/javascript" src="_static/language_data.js"></script>
+         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+     
+
+  
+
+  <script type="text/javascript" src="_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+  <!-- Begin Footer -->
+
+  <footer class="site-footer" id="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://github.com/catalyst-team/catalyst" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Ecosystem</a></li>
+            <li><a class="nav-dropdown-item" href="https://alchemy.host">Catalyst.Alchemy</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">Catayst.Reaction</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/mlcomp">Catalyst.MLcomp</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Projects</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">Catalyst.Neuro</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">Catayst.Classification</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">Catalyst.Segmentation</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">Catalyst.GAN</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team/catalyst">Support us</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/issues" target="_blank">Github Issues</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+            <li><a href="https://www.patreon.com/catalyst_team" target="_blank">Patreon</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col follow-us-col">
+          <div class="footer-social-icons">
+            <a href="https://t.me/catalyst_team" target="_blank" class="telegram"></a>
+            <a href="https://twitter.com/catalyst_core" target="_blank" class="twitter"></a>
+            <a href="https://ods.ai/en/" target="_blank" class="ods"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://github.com/catalyst-team/catalyst" aria-label="Catalyst"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      catalystAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.catalyst-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
