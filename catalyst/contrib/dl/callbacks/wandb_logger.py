@@ -185,16 +185,9 @@ class WandbLogger(Callback):
 
         if self.log_on_epoch_end:
             if extra_mode in splitted_epoch_metrics.keys():
+                # if we are using OptimizerCallback
                 self._log_metrics(
                     metrics=splitted_epoch_metrics[extra_mode],
-                    step=runner.global_epoch,
-                    mode=extra_mode,
-                    suffix=self.epoch_log_suffix,
-                    commit=True,
-                )
-            else:
-                self._log_metrics(
-                    metrics=splitted_epoch_metrics,
                     step=runner.global_epoch,
                     mode=extra_mode,
                     suffix=self.epoch_log_suffix,
