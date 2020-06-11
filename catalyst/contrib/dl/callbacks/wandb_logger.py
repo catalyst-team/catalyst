@@ -63,7 +63,7 @@ class WandbLogger(Callback):
         metric_names: List[str] = None,
         log_on_batch_end: bool = False,
         log_on_epoch_end: bool = True,
-        log: str = "gradients",
+        log: str = None,
         **logging_params,
     ):
         """
