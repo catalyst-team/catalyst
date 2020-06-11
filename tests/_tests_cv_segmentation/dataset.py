@@ -17,6 +17,8 @@ class SegmentationDataset(Dataset):
         self, images: List[Path], masks: List[Path] = None, transforms=None
     ) -> None:
         """
+        Segmentation dataset.
+
         Args:
             images (List[Path]): list of paths to the images
             masks (List[Path]): list of paths to the masks

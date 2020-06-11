@@ -24,25 +24,24 @@ class Experiment(ConfigExperiment):
         """
         @TODO: Docs. Contribution is welcome
         """
-        _images = np.array(sorted(Path(image_path).glob("*.jpg")))
-        _masks = np.array(sorted(Path(mask_path).glob("*.gif")))
-
-        _indices = np.arange(len(_images))
+        images = np.array(sorted(Path(image_path).glob("*.jpg")))
+        masks = np.array(sorted(Path(mask_path).glob("*.gif")))
+        indices = np.arange(len(images))
 
         train_indices, valid_indices = train_test_split(
-            _indices,
+            indices,
             test_size=valid_size,
             random_state=self.initial_seed,
             shuffle=True,
         )
 
         datasets = OrderedDict()
-        for mode, indices in zip(
+        for mode, split_indices in zip(
             ["train", "valid"], [train_indices, valid_indices]
         ):
             datasets[mode] = SegmentationDataset(
-                images=_images[indices].tolist(),
-                masks=_masks[indices].tolist(),
+                images=images[split_indices].tolist(),
+                masks=masks[split_indices].tolist(),
                 transforms=self.get_transforms(stage=stage, dataset=mode),
             )
 
