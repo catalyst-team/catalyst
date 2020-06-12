@@ -154,7 +154,7 @@ class Experiment(IExperiment):
             for k, v in params_dict.items():
                 if k != "params":
                     hparams[k] = v
-        loaders = self.get_loaders("train")
+        loaders = self.get_loaders(self._stage)
         for k, v in loaders.items():
             if k.startswith("train"):
                 hparams[f"{k}_batch_size"] = v.batch_size
