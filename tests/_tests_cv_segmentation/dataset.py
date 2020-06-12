@@ -22,7 +22,7 @@ class SegmentationDataset(Dataset):
         Args:
             images (List[Path]): list of paths to the images
             masks (List[Path]): list of paths to the masks
-                (names must be the same as in images)
+            (names must be the same as in images)
             transforms (optional): dict transforms
         """
         self.images = images
