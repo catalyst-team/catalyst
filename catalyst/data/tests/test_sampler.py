@@ -32,13 +32,13 @@ def input_balance_batch_sampler() -> List[Tuple[List[int], int, int]]:
 
     num_random_cases = 0
     # (alekseysh) It was checked once with N = 100_000 before doing the PR
-    for _ in range(num_random_cases):
+    for _ in range(num_random_cases):  # noqa: WPS122
         # code below generates same valid inputs for sampler
         p, k = randint(2, 12), randint(2, 12)
-        labels_ = [[label] * randint(2, 12) for label in range(p + 1)]
-        labels = [el for sublist in labels_ for el in sublist]
-        shuffle(labels)
-        input_cases.append((labels, p, k))
+        labels_matrix = [[label] * randint(2, 12) for label in range(p + 1)]
+        labels_flatten = [el for sublist in labels_matrix for el in sublist]
+        shuffle(labels_flatten)
+        input_cases.append((labels_flatten, p, k))
 
     return input_cases
 
@@ -72,7 +72,7 @@ def single_check_balance_batch_sampler(
         sampled_classes.extend(list(labels_counter.keys()))
 
         # batch-level invariants
-        assert 4 <= len(set(batch_ids))
+        assert len(set(batch_ids)) >= 4
 
         is_last_batch = i == sampler.batches_in_epoch - 1
         if is_last_batch:
@@ -94,12 +94,12 @@ def single_check_balance_batch_sampler(
     assert max(sampled_ids) <= len(labels) - 1
 
 
-def test_balance_batch_sampler(input_balance_batch_sampler) -> None:
+def test_balance_batch_sampler(input_balance_batch_sampler_fixture) -> None:
     """
     Args:
-        input_balance_batch_sampler: pytest fixture
+        input_balance_batch_sampler_fixture: pytest fixture
 
     Returns: None
     """
-    for labels, p, k in input_balance_batch_sampler:
+    for labels, p, k in input_balance_batch_sampler_fixture:
         single_check_balance_batch_sampler(labels, p, k)

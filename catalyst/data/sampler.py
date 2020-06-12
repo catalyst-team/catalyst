@@ -64,9 +64,9 @@ class BalanceClassSampler(Sampler):
         """
         indices = []
         for key in sorted(self.lbl2idx):
-            replace_ = self.samples_per_class > len(self.lbl2idx[key])
+            replace_flag = self.samples_per_class > len(self.lbl2idx[key])
             indices += np.random.choice(
-                self.lbl2idx[key], self.samples_per_class, replace=replace_
+                self.lbl2idx[key], self.samples_per_class, replace=replace_flag
             ).tolist()
         assert len(indices) == self.length
         np.random.shuffle(indices)
@@ -170,8 +170,8 @@ class BalanceBatchSampler(Sampler):
         """
         inds = []
 
-        for cls in sample(self._classes, self._num_epoch_classes):
-            all_cls_inds = find_value_ids(self._labels, cls)
+        for cls_id in sample(self._classes, self._num_epoch_classes):
+            all_cls_inds = find_value_ids(self._labels, cls_id)
 
             # we've checked in __init__ that this value must be > 1
             num_samples_exists = len(all_cls_inds)
@@ -194,8 +194,7 @@ class MiniEpochSampler(Sampler):
 
     Example:
         >>> MiniEpochSampler(len(dataset), mini_epoch_len=100)
-        >>> MiniEpochSampler(len(dataset), mini_epoch_len=100,
-        >>>     drop_last=True)
+        >>> MiniEpochSampler(len(dataset), mini_epoch_len=100, drop_last=True)
         >>> MiniEpochSampler(len(dataset), mini_epoch_len=100,
         >>>     shuffle="per_epoch")
     """
@@ -211,14 +210,14 @@ class MiniEpochSampler(Sampler):
         Args:
             data_len (int): Size of the dataset
             mini_epoch_len (int): Num samples from the dataset used in one
-                mini epoch.
+              mini epoch.
             drop_last (bool): If ``True``, sampler will drop the last batches
-                if its size would be less than ``batches_per_epoch``
+              if its size would be less than ``batches_per_epoch``
             shuffle (str): one of  ``"always"``, ``"real_epoch"``, or `None``.
-                The sampler will shuffle indices
-                > "per_mini_epoch" - every mini epoch (every ``__iter__`` call)
-                > "per_epoch" -- every real epoch
-                > None -- don't shuffle
+              The sampler will shuffle indices
+              > "per_mini_epoch" - every mini epoch (every ``__iter__`` call)
+              > "per_epoch" -- every real epoch
+              > None -- don't shuffle
         """
         super().__init__(None)
 
@@ -242,8 +241,8 @@ class MiniEpochSampler(Sampler):
 
         if not (shuffle is None or shuffle in ["per_mini_epoch", "per_epoch"]):
             raise ValueError(
-                f"Shuffle must be one of ['per_mini_epoch', 'per_epoch']. "
-                f"Got {shuffle}"
+                "Shuffle must be one of ['per_mini_epoch', 'per_epoch']. "
+                + f"Got {shuffle}"
             )
         self.shuffle_type = shuffle
 
@@ -342,10 +341,10 @@ class DynamicLenBatchSampler(BatchSampler):
                 buckets[count_zeros] = []
 
         batch = []
-        leftover = [idx for bucket in buckets for idx in bucket]
+        leftover = [idx2 for bucket in buckets for idx2 in bucket]
 
-        for idx in leftover:
-            batch.append(idx)
+        for idx3 in leftover:
+            batch.append(idx3)
             if len(batch) == self.batch_size:
                 yielded += 1
                 yield batch
@@ -357,7 +356,7 @@ class DynamicLenBatchSampler(BatchSampler):
 
         assert len(self) == yielded, (
             "produced an inccorect number of batches. "
-            "expected %i, but yielded %i" % (len(self), yielded)
+            + "expected %i, but yielded %i" % (len(self), yielded)
         )
 
 
@@ -367,7 +366,7 @@ class DistributedSamplerWrapper(DistributedSampler):
     Allows you to use any sampler in distributed mode.
 
     It is especially useful in conjunction with
-    :class:`torch.nn.parallel.DistributedDataParallel`. In such case, each
+    `torch.nn.parallel.DistributedDataParallel`. In such case, each
     process can pass a DistributedSamplerWrapper instance as a DataLoader
     sampler, and load a subset of subsampled data of the original dataset
     that is exclusive to it.
@@ -384,14 +383,15 @@ class DistributedSamplerWrapper(DistributedSampler):
         shuffle: bool = True,
     ):
         """
+
         Args:
             sampler: Sampler used for subsampling
             num_replicas (int, optional): Number of processes participating in
-                distributed training
+              distributed training
             rank (int, optional): Rank of the current process
-                within ``num_replicas``
+              within ``num_replicas``
             shuffle (bool, optional): If true (default),
-                sampler will shuffle the indices
+              sampler will shuffle the indices
         """
         super(DistributedSamplerWrapper, self).__init__(
             DatasetFromSampler(sampler),
