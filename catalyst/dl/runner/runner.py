@@ -284,7 +284,13 @@ class Runner(IStageBasedRunner):
             checkpoint = utils.load_checkpoint(resume)
             utils.unpack_checkpoint(checkpoint, model=self.model)
 
-        self.model, _, _, _, self.device = utils.process_components(
+        (  # noqa: WPS122
+            self.model,
+            _,
+            _,
+            _,
+            self.device,
+        ) = utils.process_components(
             model=self.model, distributed_params=fp16, device=self.device,
         )
 
@@ -352,7 +358,7 @@ class Runner(IStageBasedRunner):
             device = self.device
 
         # Dumping previous state of the model, we will need it to restore
-        _device, _is_training, _requires_grad = (
+        device_dump, is_training_dump, requires_grad_dump = (
             self.device,
             self.model.training,
             utils.get_requires_grad(self.model),
@@ -361,11 +367,11 @@ class Runner(IStageBasedRunner):
         self.model.to(device)
 
         # function to run prediction on batch
-        def predict_fn(model, inputs, **kwargs):
-            _model = self.model
+        def predict_fn(model, inputs, **kwargs):  # noqa: WPS442
+            model_dump = self.model
             self.model = model
             result = self.predict_batch(inputs, **kwargs)
-            self.model = _model
+            self.model = model_dump
             return result
 
         traced_model = utils.trace_model(
@@ -391,9 +397,9 @@ class Runner(IStageBasedRunner):
             )
 
         # Restore previous state of the model
-        getattr(self.model, "train" if _is_training else "eval")()
-        utils.set_requires_grad(self.model, _requires_grad)
-        self.model.to(_device)
+        getattr(self.model, "train" if is_training_dump else "eval")()
+        utils.set_requires_grad(self.model, requires_grad_dump)
+        self.model.to(device_dump)
 
         return traced_model
 

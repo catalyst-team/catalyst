@@ -70,9 +70,9 @@ class LRFinder(LRUpdater):
             runner (IRunner): current runner
         """
         if runner.is_train_loader:
-            lr_ = self.final_lr / self.init_lr
+            lr_step = self.final_lr / self.init_lr
             self.num_steps = self.num_steps or runner.loader_len
-            self.multiplier = lr_ ** (1 / self.num_steps)
+            self.multiplier = lr_step ** (1 / self.num_steps)
             self.lr_step = (self.final_lr - self.init_lr) / self.num_steps
 
         super().on_loader_start(runner=runner)

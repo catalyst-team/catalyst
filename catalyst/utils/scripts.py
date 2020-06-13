@@ -81,12 +81,12 @@ def import_experiment_and_runner(expdir: pathlib.Path):
     if not isinstance(expdir, pathlib.Path):
         expdir = pathlib.Path(expdir)
     m = import_module(expdir)
-    Runner = m.Runner
+    runner_fn = m.Runner
     if hasattr(m, "Experiment"):
-        Experiment = m.Experiment
+        experiment_fn = m.Experiment
     else:
-        Experiment = None
-    return Experiment, Runner
+        experiment_fn = None
+    return experiment_fn, runner_fn
 
 
 def dump_base_experiment_code(src: pathlib.Path, dst: pathlib.Path):

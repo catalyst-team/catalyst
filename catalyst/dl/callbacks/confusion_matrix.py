@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 
 import torch
-import torch.distributed
+import torch.distributed  # noqa: WPS301
 
 from catalyst.core import Callback, CallbackNode, CallbackOrder, IRunner
 from catalyst.dl import utils

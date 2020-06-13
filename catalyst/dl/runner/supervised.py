@@ -95,7 +95,7 @@ class SupervisedRunner(Runner):
         return output
 
     def _process_input_list(self, batch: Mapping[str, Any], **kwargs):
-        input = {key: batch[key] for key in self.input_key}
+        input = {key: batch[key] for key in self.input_key}  # noqa: WPS125
         output = self.model(**input, **kwargs)
         return output
 

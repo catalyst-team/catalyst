@@ -97,7 +97,7 @@ class Experiment(IExperiment):
         ), "Please specify the data sources"
 
         self._model = model
-        self._loaders, self._valid_loader = self.process_loaders(
+        self._loaders, self._valid_loader = self._get_loaders(
             loaders=loaders,
             datasets=datasets,
             stage=stage,
@@ -144,7 +144,7 @@ class Experiment(IExperiment):
         return self._distributed_params
 
     @staticmethod
-    def process_loaders(
+    def _get_loaders(
         loaders: "OrderedDict[str, DataLoader]",
         datasets: Dict,
         stage: str,
