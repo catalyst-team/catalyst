@@ -28,20 +28,20 @@ class UnetHead(HeadSpec):
         self.interpolation_mode = interpolation_mode
         self.align_corners = align_corners
 
-        in_channels_ = in_channels[-1]
+        in_channels_last = in_channels[-1]
         additional_layers = [
-            EncoderUpsampleBlock(in_channels_, in_channels_)
+            EncoderUpsampleBlock(in_channels_last, in_channels_last)
         ] * num_upsample_blocks
         if dropout > 0:
             additional_layers.append(nn.Dropout2d(p=dropout, inplace=True))
         self.head = nn.Sequential(
-            *additional_layers, nn.Conv2d(in_channels_, out_channels, 1)
+            *additional_layers, nn.Conv2d(in_channels_last, out_channels, 1)
         )
 
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
         """Forward call."""
-        x_ = x[-1]
-        x = self.head(x_)
+        x_last = x[-1]
+        x = self.head(x_last)
         if self.upsample_scale > 1:
             x = F.interpolate(
                 x,

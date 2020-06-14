@@ -42,7 +42,7 @@ class UnetBridge(BridgeSpec):
 
     def forward(self, x: List[torch.Tensor]) -> List[torch.Tensor]:
         """Forward call."""
-        x_: torch.Tensor = x[-1]
-        x_: torch.Tensor = self.block(x_)
-        output = x + [x_]
+        x_last: torch.Tensor = x[-1]
+        x_last: torch.Tensor = self.block(x_last)
+        output = x + [x_last]
         return output

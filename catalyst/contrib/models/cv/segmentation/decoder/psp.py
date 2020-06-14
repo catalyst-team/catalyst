@@ -4,7 +4,7 @@ from functools import partial
 import torch
 
 from ..abn import ABN
-from ..blocks.core import _get_block
+from ..blocks.core import _get_block  # noqa: WPS450
 from ..blocks.psp import PSPBlock
 from .core import DecoderSpec
 

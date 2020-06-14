@@ -7,9 +7,9 @@ from torch import nn
 import torchvision
 
 from catalyst import utils
-from .core import _take, EncoderSpec
+from .core import _take, EncoderSpec  # noqa: WPS450
 
-RESNET_PARAMS = {
+RESNET_PARAMS = {  # noqa: WPS407
     "resnet18": {
         "channels": [64, 64, 128, 256, 512],
         "strides": [2, 4, 8, 16, 32],

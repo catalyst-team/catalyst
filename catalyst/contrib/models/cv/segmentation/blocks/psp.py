@@ -6,7 +6,7 @@ from torch import nn
 from torch.nn import functional as F
 
 from ..abn import ABN
-from .core import _get_block
+from .core import _get_block  # noqa: WPS450
 
 
 class PyramidBlock(nn.Module):

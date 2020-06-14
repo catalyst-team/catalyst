@@ -3,7 +3,9 @@ from torch import nn
 from torch.nn import functional as F
 
 from ..abn import ABN
-from .core import _get_block, _upsample, DecoderBlock, EncoderBlock
+from .core import _get_block  # noqa: WPS450
+from .core import _upsample  # noqa: WPS450
+from .core import DecoderBlock, EncoderBlock
 
 
 class EncoderDownsampleBlock(EncoderBlock):

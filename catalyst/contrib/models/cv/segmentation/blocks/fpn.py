@@ -114,7 +114,7 @@ class SegmentationBlock(nn.Module):
         ]
 
         if num_upsamples > 1:
-            for _ in range(1, num_upsamples):
+            for _ in range(1, num_upsamples):  # noqa: WPS122
                 blocks.append(
                     Conv3x3GNReLU(out_channels, out_channels, upsample=True)
                 )

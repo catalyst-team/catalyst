@@ -4,7 +4,7 @@ import torch
 from torch import nn
 
 from ..blocks.unet import EncoderDownsampleBlock
-from .core import _take, EncoderSpec
+from .core import _take, EncoderSpec  # noqa: WPS450
 
 
 class UnetEncoder(EncoderSpec):

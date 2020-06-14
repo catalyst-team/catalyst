@@ -32,7 +32,7 @@ class FPNHead(HeadSpec):
         self.align_corners = align_corners
 
         segmentation_blocks = []
-        for i, in_channels_ in enumerate(in_channels):
+        for i, in_channels_i in enumerate(in_channels):
             if in_strides is not None:
                 i = (
                     np.log2(in_strides[i])
@@ -41,7 +41,7 @@ class FPNHead(HeadSpec):
                 )
             segmentation_blocks.append(
                 SegmentationBlock(
-                    in_channels=in_channels_,
+                    in_channels=in_channels_i,
                     out_channels=hid_channel,
                     num_upsamples=int(i),
                 )
