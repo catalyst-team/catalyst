@@ -106,7 +106,9 @@ def extract_archive(from_path, to_path=None, remove_finished=False):
     elif from_path.endswith(".gz"):
         root, _ = os.path.splitext(os.path.basename(from_path))
         to_path = os.path.join(to_path, root)
-        with open(to_path, "wb") as out_f, gzip.GzipFile(from_path) as zip_f:
+        with open(to_path, "wb") as out_f, gzip.GzipFile(  # noqa: WPS316
+            from_path
+        ) as zip_f:
             out_f.write(zip_f.read())
     elif from_path.endswith(".zip"):
         with zipfile.ZipFile(from_path, "r") as z:

@@ -1,7 +1,7 @@
 from typing import List, Optional
 from abc import ABC
 
-from torch.optim.lr_scheduler import _LRScheduler
+from torch.optim.lr_scheduler import _LRScheduler  # noqa: WPS450
 
 from catalyst.utils.torch import set_optimizer_momentum
 

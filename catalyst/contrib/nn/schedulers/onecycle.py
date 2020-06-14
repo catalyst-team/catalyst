@@ -198,7 +198,7 @@ class OneCycleLRWithWarmup(BatchScheduler):
         )
         self.last_epoch = 0
 
-    def recalculate(self, loader_len: int, current_step: int,) -> None:
+    def recalculate(self, loader_len: int, current_step: int) -> None:
         """Recalculates total num_steps for ``batch`` mode.
 
         Args:

@@ -157,9 +157,9 @@ class TripletLoss(nn.Module):
         # Combine biggest d(a, p) and smallest d(a, n) into final triplet loss
         tl = hardest_positive_dist - hardest_negative_dist + margin
         tl[tl < 0] = 0
-        triplet_loss = tl.mean()
+        loss = tl.mean()
 
-        return triplet_loss
+        return loss
 
     def forward(self, embeddings, targets):
         """Forward propagation method for the triplet loss.
@@ -187,7 +187,7 @@ class TripletLossV2(nn.Module):
 
     def forward(self, embeddings, targets):
         """@TODO: Docs. Contribution is welcome."""
-        return triplet_loss(embeddings, targets, margin=self.margin,)
+        return triplet_loss(embeddings, targets, margin=self.margin)
 
 
 class TripletPairwiseEmbeddingLoss(nn.Module):

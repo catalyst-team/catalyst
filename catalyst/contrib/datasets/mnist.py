@@ -71,7 +71,7 @@ class MNIST(Dataset):
             target_transform (callable, optional): A function/transform
                 that takes in the target and transforms it.
         """
-        if isinstance(root, torch._six.string_classes):
+        if isinstance(root, torch._six.string_classes):  # noqa: WPS437
             root = os.path.expanduser(root)
         self.root = root
         self.train = train  # training set or test set
@@ -210,7 +210,7 @@ def open_maybe_compressed_file(path):
     Decompression occurs when argument `path` is a string
     and ends with '.gz' or '.xz'.
     """
-    if not isinstance(path, torch._six.string_classes):
+    if not isinstance(path, torch._six.string_classes):  # noqa: WPS437
         return path
     if path.endswith(".gz"):
         import gzip
@@ -241,7 +241,7 @@ def read_sn3_pascalvincent_tensor(path, strict=True):
     with open_maybe_compressed_file(path) as f:
         data = f.read()
     # parse
-    magic = get_int(data[0:4])
+    magic = get_int(data[0:4])  # noqa: WPS349
     nd = magic % 256
     ty = magic // 256
     assert nd >= 1 and nd <= 3
