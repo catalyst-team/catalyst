@@ -73,10 +73,10 @@ def test_config1():
 
     hydra = Hydra.get_from_params(**config1)
 
-    config1_ = copy.deepcopy(config1)
-    _pop_normalization(config1_)
-    encoder_params = config1_["encoder_params"]
-    heads_params = config1_["heads_params"]
+    config1_copy = copy.deepcopy(config1)
+    _pop_normalization(config1_copy)
+    encoder_params = config1_copy["encoder_params"]
+    heads_params = config1_copy["heads_params"]
     heads_params["head1"]["hiddens"].insert(0, 16)
     heads_params["_head2"]["_hidden"]["hiddens"].insert(0, 16)
     heads_params["_head2"]["head2_1"]["hiddens"].insert(0, 16)
@@ -301,9 +301,9 @@ def test_config2():
 
     hydra = Hydra.get_from_params(**config2)
 
-    config2_ = copy.deepcopy(config2)
-    _pop_normalization(config2_)
-    heads_params = config2_["heads_params"]
+    config2_copy = copy.deepcopy(config2)
+    _pop_normalization(config2_copy)
+    heads_params = config2_copy["heads_params"]
     heads_params["head1"]["hiddens"].insert(0, 16)
     heads_params["_head2"]["_hidden"]["hiddens"].insert(0, 16)
     heads_params["_head2"]["head2_1"]["hiddens"].insert(0, 16)
@@ -438,10 +438,10 @@ def test_config3():
 
     hydra = Hydra.get_from_params(**config3)
 
-    config3_ = copy.deepcopy(config3)
-    _pop_normalization(config3_)
-    encoder_params = config3_["encoder_params"]
-    heads_params = config3_["heads_params"]
+    config3_copy = copy.deepcopy(config3)
+    _pop_normalization(config3_copy)
+    encoder_params = config3_copy["encoder_params"]
+    heads_params = config3_copy["heads_params"]
     heads_params["head1"]["hiddens"].insert(0, 16)
     heads_params["_head2"]["_hidden"]["hiddens"].insert(0, 16)
     heads_params["_head2"]["head2_1"]["hiddens"].insert(0, 16)
@@ -640,9 +640,9 @@ def test_config4():
     config4["in_features"] = 16
     hydra = Hydra.get_from_params(**config4)
 
-    config4_ = copy.deepcopy(config4)
-    _pop_normalization(config4_)
-    heads_params = config4_["heads_params"]
+    config4_copy = copy.deepcopy(config4)
+    _pop_normalization(config4_copy)
+    heads_params = config4_copy["heads_params"]
     heads_params["head1"]["hiddens"].insert(0, 16)
     heads_params["_head2"]["_hidden"]["hiddens"].insert(0, 16)
     heads_params["_head2"]["head2_1"]["hiddens"].insert(0, 16)

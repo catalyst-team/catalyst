@@ -17,6 +17,36 @@ def _process_additional_params(params, layers):
     return params
 
 
+def _layer_fn(layer_fn, f_in, f_out, **kwargs):
+    layer_fn = MODULES.get_if_str(layer_fn)
+    layer_fn = layer_fn(f_in, f_out, **kwargs)
+    return layer_fn
+
+
+def _normalization_fn(normalization_fn, f_in, f_out, **kwargs):
+    normalization_fn = MODULES.get_if_str(normalization_fn)
+    normalization_fn = (
+        normalization_fn(f_out, **kwargs)
+        if normalization_fn is not None
+        else None
+    )
+    return normalization_fn
+
+
+def _dropout_fn(dropout_fn, f_in, f_out, **kwargs):
+    dropout_fn = MODULES.get_if_str(dropout_fn)
+    dropout_fn = dropout_fn(**kwargs) if dropout_fn is not None else None
+    return dropout_fn
+
+
+def _activation_fn(activation_fn, f_in, f_out, **kwargs):
+    activation_fn = MODULES.get_if_str(activation_fn)
+    activation_fn = (
+        activation_fn(**kwargs) if activation_fn is not None else None
+    )
+    return activation_fn
+
+
 class ResidualWrapper(nn.Module):
     """@TODO: Docs. Contribution is welcome."""
 
@@ -62,34 +92,6 @@ class SequentialNet(nn.Module):
 
         layer_order = layer_order or ["layer", "norm", "drop", "act"]
 
-        def _layer_fn(layer_fn, f_in, f_out, **kwargs):
-            layer_fn = MODULES.get_if_str(layer_fn)
-            layer_fn = layer_fn(f_in, f_out, **kwargs)
-            return layer_fn
-
-        def _normalization_fn(normalization_fn, f_in, f_out, **kwargs):
-            normalization_fn = MODULES.get_if_str(normalization_fn)
-            normalization_fn = (
-                normalization_fn(f_out, **kwargs)
-                if normalization_fn is not None
-                else None
-            )
-            return normalization_fn
-
-        def _dropout_fn(dropout_fn, f_in, f_out, **kwargs):
-            dropout_fn = MODULES.get_if_str(dropout_fn)
-            dropout_fn = (
-                dropout_fn(**kwargs) if dropout_fn is not None else None
-            )
-            return dropout_fn
-
-        def _activation_fn(activation_fn, f_in, f_out, **kwargs):
-            activation_fn = MODULES.get_if_str(activation_fn)
-            activation_fn = (
-                activation_fn(**kwargs) if activation_fn is not None else None
-            )
-            return activation_fn
-
         name2fn = {
             "layer": _layer_fn,
             "norm": _normalization_fn,
@@ -120,11 +122,10 @@ class SequentialNet(nn.Module):
                 if sub_block is not None:
                     block.append((f"{key}", sub_block))
 
-            block_ = OrderedDict(block)
-            block = torch.nn.Sequential(block_)
+            block = torch.nn.Sequential(OrderedDict(block))
 
-            if block_.get("act", None) is not None:
-                activation = block_["act"]
+            if block.get("act", None) is not None:
+                activation = block["act"]
                 activation_init = utils.get_optimal_inner_init(
                     nonlinearity=activation
                 )

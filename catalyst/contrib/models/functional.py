@@ -2,7 +2,8 @@ from typing import List, Union
 
 from torch import nn
 
-from .sequential import _process_additional_params, SequentialNet
+from .sequential import _process_additional_params  # noqa: WPS450
+from .sequential import SequentialNet
 
 
 def get_convolution_net(
