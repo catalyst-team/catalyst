@@ -5,7 +5,7 @@ from tqdm.auto import tqdm
 import torch
 from torch.utils.data import Dataset
 import transformers
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, PreTrainedTokenizer
 
 
 class LanguageModelingDataset(Dataset):
@@ -17,9 +17,7 @@ class LanguageModelingDataset(Dataset):
     def __init__(
         self,
         texts: Iterable[str],
-        tokenizer: Union[
-            str, transformers.tokenization_utils.PreTrainedTokenizer
-        ],
+        tokenizer: Union[str, PreTrainedTokenizer],
         max_seq_length: int = None,
         sort: bool = True,
         lazy: bool = False,

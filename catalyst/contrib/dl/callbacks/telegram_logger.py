@@ -65,7 +65,7 @@ class TelegramLogger(Callback):
             )
 
             request = Request(url)
-            urlopen(request)
+            urlopen(request)  # noqa: S310
         except Exception as e:
             logging.getLogger(__name__).warning(f"telegram.send.error:{e}")
 

@@ -8,21 +8,21 @@ texts = [
 labels = ["negative", "positive"]
 
 
-def test_should_have_cls_id_as_first_token_for_input_ids():
+def test_cls_id_as_first_token_for_input_ids():
     """@TODO: Docs. Contribution is welcome."""
     dataset = TextClassificationDataset(texts, labels)
     features = dataset[0]["features"]
     assert features[0] == dataset.cls_vid
 
 
-def test_input_ids_should_be_padded():
+def test_input_ids_are_padded():
     """@TODO: Docs. Contribution is welcome."""
     dataset = TextClassificationDataset(texts, labels)
     features = dataset[0]["features"]
     assert features.size(0) == 512
 
 
-def test_mask_sum_should_be_eq_to_seq_len():
+def test_mask_sum_eq_to_seq_len():
     """@TODO: Docs. Contribution is welcome."""
     dataset = TextClassificationDataset(texts, labels)
     mask = dataset[0]["attention_mask"]

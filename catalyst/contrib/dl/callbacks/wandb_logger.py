@@ -145,9 +145,9 @@ class WandbLogger(Callback):
         """Translate batch metrics to Weights & Biases."""
         if self.log_on_batch_end:
             mode = runner.loader_name
-            metrics_ = runner.batch_metrics
+            metrics = runner.batch_metrics
             self._log_metrics(
-                metrics=metrics_,
+                metrics=metrics,
                 step=runner.global_sample_step,
                 mode=mode,
                 suffix=self.batch_log_suffix,
@@ -158,9 +158,9 @@ class WandbLogger(Callback):
         """Translate loader metrics to Weights & Biases."""
         if self.log_on_epoch_end:
             mode = runner.loader_name
-            metrics_ = runner.loader_metrics
+            metrics = runner.loader_metrics
             self._log_metrics(
-                metrics=metrics_,
+                metrics=metrics,
                 step=runner.global_epoch,
                 mode=mode,
                 suffix=self.epoch_log_suffix,

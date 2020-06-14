@@ -35,7 +35,7 @@ class GradNormLogger(Callback):
         self._accumulation_counter: int = 0
 
     @staticmethod
-    def grad_norm(*, model: Model, prefix: str, norm_type: int,) -> Dict:
+    def grad_norm(*, model: Model, prefix: str, norm_type: int) -> Dict:
         """Computes gradient norms for a given model.
 
         Args:

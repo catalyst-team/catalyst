@@ -4,7 +4,7 @@ from pathlib import Path
 import shutil
 
 import torch
-import torch.nn as nn
+from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
