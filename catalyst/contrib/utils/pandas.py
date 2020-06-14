@@ -130,7 +130,7 @@ def split_dataframe_on_stratified_folds(
     Args:
         dataframe: a dataset
         class_column: which column to use for split
-        random_state: seed for random shuffle
+        random_state (int): seed for random shuffle
         n_folds: number of result folds
 
     Returns:
@@ -526,9 +526,8 @@ def balance_classes(
     Args:
         dataframe: a dataset
         class_column: which column to use for split
-        random_state: seed for random shuffle
-        how: strategy to sample
-            must be one on ["downsampling", "upsampling"]
+        random_state (int): seed for random shuffle
+        how: strategy to sample, must be one on ["downsampling", "upsampling"]
 
     Returns:
         pd.DataFrame: new dataframe with balanced ``class_column``

@@ -84,7 +84,7 @@ def render_figure_to_tensor(figure):
 
     figure.canvas.draw()
 
-    image = np.array(figure.canvas.renderer._renderer)
+    image = np.array(figure.canvas.renderer._renderer)  # noqa: WPS437
     plt.close(figure)
     del figure
 

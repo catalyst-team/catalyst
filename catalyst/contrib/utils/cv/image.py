@@ -17,10 +17,10 @@ if settings.use_libjpeg_turbo:
         import jpeg4py as jpeg
 
         # check libjpeg-turbo availability through image reading
-        img = np.zeros((1, 1, 3), dtype=np.uint8)
+        _test_img = np.zeros((1, 1, 3), dtype=np.uint8)
         with tempfile.NamedTemporaryFile(suffix=".jpg") as fp:
-            imageio.imwrite(fp.name, img)
-            img = jpeg.JPEG(fp.name).decode()
+            imageio.imwrite(fp.name, _test_img)
+            _test_img = jpeg.JPEG(fp.name).decode()
 
     except ImportError as ex:
         logger.warning(
@@ -71,6 +71,7 @@ def imread(
     else:
         # @TODO: add tiff support, currently – jpg and png
         img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB", **kwargs)
+
     if grayscale:
         img = rgb2gray(img)
 
