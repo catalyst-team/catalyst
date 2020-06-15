@@ -41,19 +41,21 @@ def iou(
     # ! fix backward compatibility
     if classes is not None:
         # if classes are specified we reduce across all dims except channels
-        _sum = partial(torch.sum, dim=[0, 2, 3])
+        sum_strategy = partial(torch.sum, dim=[0, 2, 3])
     else:
-        _sum = torch.sum
+        sum_strategy = torch.sum
 
-    intersection = _sum(targets * outputs)
-    union = _sum(targets) + _sum(outputs)
+    intersection = sum_strategy(targets * outputs)
+    union = sum_strategy(targets) + sum_strategy(outputs)
     # this looks a bit awkward but `eps * (union == 0)` term
     # makes sure that if I and U are both 0, than IoU == 1
     # and if U != 0 and I == 0 the eps term in numerator is zeroed out
     # i.e. (0 + eps) / (U - 0 + eps) doesn't happen
-    iou = (intersection + eps * (union == 0)) / (union - intersection + eps)
+    output_iou = (intersection + eps * (union == 0)) / (
+        union - intersection + eps
+    )
 
-    return iou
+    return output_iou
 
 
 jaccard = iou

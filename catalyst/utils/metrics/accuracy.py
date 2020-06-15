@@ -57,7 +57,7 @@ def accuracy(
     if len(outputs.shape) == 1 or outputs.shape[1] == 1:
         pred = outputs.t()
     else:
-        _, pred = outputs.topk(max_k, 1, True, True)
+        _, pred = outputs.topk(max_k, 1, True, True)  # noqa: WPS425
         pred = pred.t()
     correct = pred.eq(targets.long().view(1, -1).expand_as(pred))
 
@@ -114,7 +114,7 @@ def mean_average_accuracy(outputs, targets, topk=(1,)):
         double: The mean average accuracy at k over the input lists
     """
     max_k = max(topk)
-    _, pred = outputs.topk(max_k, 1, True, True)
+    _, pred = outputs.topk(max_k, 1, True, True)  # noqa: WPS425
 
     targets = targets.data.cpu().numpy().tolist()
     actual_list = []

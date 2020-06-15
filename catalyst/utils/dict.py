@@ -30,7 +30,7 @@ def get_key_list(
     Returns:
         sub-dict
     """
-    result = {key_: dictionary[key_] for key_ in key}
+    result = {name: dictionary[name] for name in key}
     return result
 
 

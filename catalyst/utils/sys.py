@@ -98,9 +98,9 @@ def list_pip_packages() -> str:
             )
         except Exception:
             warnings.warn(
-                f"Failed to freeze pip packages. "
+                "Failed to freeze pip packages. "
                 # f"Pip Output: ```{e.output}```."
-                f"Continue experiment without pip packages dumping."
+                "Continue experiment without pip packages dumping."
             )
             pass
         # except FileNotFoundError:
@@ -131,10 +131,10 @@ def list_conda_packages() -> str:
                 )
             except Exception:
                 warnings.warn(
-                    f"Running from conda env, "
-                    f"but failed to list conda packages. "
+                    "Running from conda env, "
+                    "but failed to list conda packages. "
                     # f"Conda Output: ```{e.output}```."
-                    f"Continue experiment without conda packages dumping."
+                    "Continue experiment without conda packages dumping."
                 )
                 pass
             # except FileNotFoundError:

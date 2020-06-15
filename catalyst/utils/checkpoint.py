@@ -19,9 +19,9 @@ def pack_checkpoint(
     if isinstance(model, OrderedDict):
         raise NotImplementedError()
     else:
-        model_ = get_nn_from_ddp_module(model)
+        model_module = get_nn_from_ddp_module(model)
         checkpoint["model_state_dict"] = maybe_recursive_call(
-            model_, "state_dict"
+            model_module, "state_dict"
         )
 
     for dict2save, name2save in zip(
@@ -34,10 +34,10 @@ def pack_checkpoint(
         if isinstance(dict2save, dict):
             for key, value in dict2save.items():
                 if value is not None:
-                    name2save_ = name2save + "_" + str(key)
+                    state_dict2save = name2save + "_" + str(key)
                     # checkpoint[name2save_] = value
-                    name2save_ = name2save_ + "_state_dict"
-                    checkpoint[name2save_] = value.state_dict()
+                    state_dict2save = state_dict2save + "_state_dict"
+                    checkpoint[state_dict2save] = value.state_dict()
         else:
             # checkpoint[name2save] = dict2save
             name2save = name2save + "_state_dict"
@@ -68,8 +68,8 @@ def unpack_checkpoint(
         if isinstance(dict2load, dict):
             for key, value in dict2load.items():
                 if value is not None:
-                    name2load_ = f"{name2load}_{key}_state_dict"
-                    value.load_state_dict(checkpoint[name2load_])
+                    state_dict2load = f"{name2load}_{key}_state_dict"
+                    value.load_state_dict(checkpoint[state_dict2load])
         else:
             name2load = f"{name2load}_state_dict"
             dict2load.load_state_dict(checkpoint[name2load])

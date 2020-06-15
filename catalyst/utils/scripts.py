@@ -48,7 +48,7 @@ def dump_code(expdir, logdir):
     @TODO: Docs. Contribution is welcome
     """
     expdir = expdir[:-1] if expdir.endswith("/") else expdir
-    new_src_dir = f"code"
+    new_src_dir = "code"
 
     # @TODO: hardcoded
     old_pro_dir = os.path.dirname(os.path.abspath(__file__)) + "/../"
@@ -56,8 +56,8 @@ def dump_code(expdir, logdir):
     _tricky_dir_copy(old_pro_dir, new_pro_dir)
 
     old_expdir = os.path.abspath(expdir)
-    expdir_ = os.path.basename(old_expdir)
-    new_expdir = os.path.join(logdir, new_src_dir, expdir_)
+    new_expdir = os.path.basename(old_expdir)
+    new_expdir = os.path.join(logdir, new_src_dir, new_expdir)
     _tricky_dir_copy(old_expdir, new_expdir)
 
 
@@ -94,8 +94,8 @@ def dump_base_experiment_code(src: pathlib.Path, dst: pathlib.Path):
     @TODO: Docs. Contribution is welcome
     """
     utcnow = get_utcnow_time()
-    dst_ = dst.joinpath("code")
-    dst = dst.joinpath(f"code-{utcnow}") if dst_.exists() else dst_
+    dst = dst.joinpath("code")
+    dst = dst.joinpath(f"code-{utcnow}") if dst.exists() else dst
     os.makedirs(dst, exist_ok=True)
     dump_python_files(src, dst)
 

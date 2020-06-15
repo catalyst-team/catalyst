@@ -30,14 +30,14 @@ def get_native_batch_from_loaders(
         batch_index (int): Index of batch to take from dataset of the loader
     """
     if isinstance(loader, str):
-        _loader = loaders[loader]
+        loader_instance = loaders[loader]
     elif isinstance(loader, int):
-        _loader = list(loaders.values())[loader]
+        loader_instance = list(loaders.values())[loader]
     else:
         raise TypeError("Loader parameter must be a string or an integer")
 
     return get_native_batch_from_loader(
-        loader=_loader, batch_index=batch_index
+        loader=loader_instance, batch_index=batch_index
     )
 
 

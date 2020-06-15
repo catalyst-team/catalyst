@@ -203,10 +203,10 @@ def process_model_params(
     model_params = []
     for name, parameters in params:
         options = {}
-        for pattern, options_ in layerwise_params.items():
+        for pattern, pattern_options in layerwise_params.items():
             if re.match(pattern, name) is not None:
                 # all new LR rules write on top of the old ones
-                options = merge_dicts(options, options_)
+                options = merge_dicts(options, pattern_options)
 
         # no bias decay from https://arxiv.org/abs/1812.01187
         if no_bias_weight_decay and name.endswith("bias"):
@@ -290,8 +290,8 @@ def get_network_output(net: Model, *input_shapes_args, **input_shapes_kwargs):
     ) -> Union[torch.Tensor, Dict[str, torch.Tensor]]:
         if isinstance(input_shape, dict):
             input_t = {
-                key: torch.Tensor(torch.randn((1,) + input_shape_))
-                for key, input_shape_ in input_shape.items()
+                key: torch.Tensor(torch.randn((1,) + key_input_shape))
+                for key, key_input_shape in input_shape.items()
             }
         else:
             input_t = torch.Tensor(torch.randn((1,) + input_shape))

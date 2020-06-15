@@ -2,7 +2,7 @@ from typing import Callable
 
 from torch import nn
 
-ACTIVATIONS = {
+ACTIVATIONS = {  # noqa: WPS407
     None: "sigmoid",
     nn.Sigmoid: "sigmoid",
     nn.Tanh: "tanh",

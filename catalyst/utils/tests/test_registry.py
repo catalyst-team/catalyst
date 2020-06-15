@@ -11,7 +11,7 @@ def test_add_function():
 
     r.add(foo)
 
-    assert "foo" in r._factories
+    assert "foo" in r._factories  # noqa: WPS437
 
 
 def test_add_function_name_override():
@@ -20,7 +20,7 @@ def test_add_function_name_override():
 
     r.add(foo, name="bar")
 
-    assert "bar" in r._factories
+    assert "bar" in r._factories  # noqa: WPS437
 
 
 def test_add_lambda_fail():
@@ -37,7 +37,7 @@ def test_add_lambda_override():
 
     r.add(lambda x: x, name="bar")
 
-    assert "bar" in r._factories
+    assert "bar" in r._factories  # noqa: WPS437
 
 
 def test_fail_multiple_with_name():
@@ -103,19 +103,19 @@ def test_from_config():
 def test_meta_factory():
     """@TODO: Docs. Contribution is welcome."""  # noqa: D202
 
-    def meta_1(fn, args, kwargs):
+    def meta_factory1(fn, args, kwargs):
         return fn
 
-    def meta_2(fn, args, kwargs):
+    def meta_factory2(fn, args, kwargs):
         return 1
 
-    r = Registry("obj", meta_1)
+    r = Registry("obj", meta_factory1)
     r.add(foo)
 
     res = r.get_from_params(**{"obj": "foo"})
     assert res == foo
 
-    res = r.get_from_params(**{"obj": "foo"}, meta_factory=meta_2)
+    res = r.get_from_params(**{"obj": "foo"}, meta_factory=meta_factory2)
     assert res == 1
 
 
