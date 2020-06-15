@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from .core import DecoderBlock
+from catalyst.contrib.models.cv.segmentation.blocks.core import DecoderBlock
 
 
 class DecoderFPNBlock(DecoderBlock):

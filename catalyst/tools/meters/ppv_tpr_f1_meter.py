@@ -8,7 +8,7 @@ from collections import defaultdict
 
 import torch
 
-from . import meter
+from catalyst.tools.meters import meter
 
 
 def f1score(precision_value, recall_value, eps=1e-5):

@@ -125,7 +125,7 @@ def get_loaders_from_params(
         datasets = dict(**data_params)
 
     loaders = OrderedDict()
-    for name, datasource in datasets.items():
+    for name, datasource in datasets.items():  # noqa: WPS426
         assert isinstance(
             datasource, (Dataset, dict)
         ), f"{datasource} should be Dataset or Dict. Got: {datasource}"

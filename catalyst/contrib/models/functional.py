@@ -2,8 +2,10 @@ from typing import List, Union
 
 from torch import nn
 
-from .sequential import _process_additional_params  # noqa: WPS450
-from .sequential import SequentialNet
+from catalyst.contrib.models.sequential import (  # noqa: WPS450
+    _process_additional_params,
+    SequentialNet,
+)
 
 
 def get_convolution_net(

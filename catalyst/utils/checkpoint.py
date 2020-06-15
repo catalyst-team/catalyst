@@ -6,8 +6,8 @@ import shutil
 
 import torch
 
-from .distributed import get_nn_from_ddp_module
-from .misc import maybe_recursive_call
+from catalyst.utils.distributed import get_nn_from_ddp_module
+from catalyst.utils.misc import maybe_recursive_call
 
 
 def pack_checkpoint(

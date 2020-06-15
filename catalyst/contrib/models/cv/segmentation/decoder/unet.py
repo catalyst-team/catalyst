@@ -3,9 +3,11 @@ from typing import List
 import torch
 from torch import nn
 
-from ..blocks.core import DecoderBlock
-from ..blocks.unet import DecoderConcatBlock
-from .core import DecoderSpec
+from catalyst.contrib.models.cv.segmentation.blocks.core import DecoderBlock
+from catalyst.contrib.models.cv.segmentation.blocks.unet import (
+    DecoderConcatBlock,
+)
+from catalyst.contrib.models.cv.segmentation.decoder.core import DecoderSpec
 
 
 class UNetDecoder(DecoderSpec):

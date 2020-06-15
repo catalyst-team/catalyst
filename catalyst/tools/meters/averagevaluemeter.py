@@ -3,7 +3,7 @@ Average value meter
 """
 import numpy as np
 
-from . import meter
+from catalyst.tools.meters import meter
 
 
 class AverageValueMeter(meter.Meter):

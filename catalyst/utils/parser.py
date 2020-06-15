@@ -1,8 +1,8 @@
 import copy
 from pathlib import Path
 
-from .config import load_config
-from .dict import merge_dicts
+from catalyst.utils.config import load_config
+from catalyst.utils.dict import merge_dicts
 
 
 def parse_config_args(*, config, args, unknown_args):

@@ -4,8 +4,8 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from ..blocks import EncoderUpsampleBlock
-from .core import HeadSpec
+from catalyst.contrib.models.cv.segmentation.blocks import EncoderUpsampleBlock
+from catalyst.contrib.models.cv.segmentation.head.core import HeadSpec
 
 
 class UnetHead(HeadSpec):

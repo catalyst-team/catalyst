@@ -1,7 +1,7 @@
 from typing import Dict, List, Union
 
+from catalyst.core.callbacks.metrics import IMetricCallback
 from catalyst.core.runner import IRunner
-from .metrics import IMetricCallback
 
 
 class CriterionCallback(IMetricCallback):

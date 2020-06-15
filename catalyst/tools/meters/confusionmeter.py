@@ -5,7 +5,7 @@ import numpy as np
 
 import torch
 
-from . import meter
+from catalyst.tools.meters import meter
 
 
 class ConfusionMeter(meter.Meter):

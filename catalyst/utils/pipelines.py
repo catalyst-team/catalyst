@@ -3,7 +3,7 @@ import shutil
 
 from git import Repo as repo  # noqa: N813
 
-from .misc import copy_directory
+from catalyst.utils.misc import copy_directory
 
 URLS = {  # noqa: WPS407
     "classification": "https://github.com/catalyst-team/classification/",

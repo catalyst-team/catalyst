@@ -20,7 +20,7 @@ def gen_bar_updater():
     return bar_update
 
 
-def calculate_md5(fpath, chunk_size=1024 * 1024):
+def calculate_md5(fpath, chunk_size=1024 * 1024):  # noqa: WPS404
     """@TODO: Docs. Contribution is welcome."""
     md5 = hashlib.md5()
     with open(fpath, "rb") as f:

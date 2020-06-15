@@ -4,7 +4,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from ..abn import ABN
+from catalyst.contrib.models.cv.segmentation.abn import ABN
 
 
 def _get_block(

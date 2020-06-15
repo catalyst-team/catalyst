@@ -59,8 +59,7 @@ class GradNormLogger(Callback):
             grad_norm[metrics_tag] = param_norm
 
         total_norm = total_norm ** (1.0 / norm_type)
-        tag = "total"
-        metrics_tag = f"{prefix}/{tag}"
+        metrics_tag = f"{prefix}/total"
         grad_norm[metrics_tag] = total_norm
 
         return grad_norm

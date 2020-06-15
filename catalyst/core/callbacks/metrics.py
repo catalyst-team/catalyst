@@ -69,16 +69,16 @@ class IMetricCallback(ABC, Callback):
 
     def _compute_metric_value(self, runner: IRunner):
         output = self._get_output(runner.output, self.output_key)
-        input = self._get_input(runner.input, self.input_key)
+        input_ = self._get_input(runner.input, self.input_key)
 
-        metric = self.metric_fn(output, input, **self.metrics_kwargs)
+        metric = self.metric_fn(output, input_, **self.metrics_kwargs)
         return metric
 
     def _compute_metric_key_value(self, runner: IRunner):
         output = self._get_output(runner.output, self.output_key)
-        input = self._get_input(runner.input, self.input_key)
+        input_ = self._get_input(runner.input, self.input_key)
 
-        metric = self.metric_fn(**output, **input, **self.metrics_kwargs)
+        metric = self.metric_fn(**output, **input_, **self.metrics_kwargs)
         return metric
 
     def on_batch_end(self, runner: IRunner) -> None:

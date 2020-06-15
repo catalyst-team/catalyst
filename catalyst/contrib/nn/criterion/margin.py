@@ -3,7 +3,7 @@ from typing import List, Union
 import torch
 from torch import nn
 
-from .functional import margin_loss
+from catalyst.contrib.nn.criterion.functional import margin_loss
 
 
 class MarginLoss(nn.Module):

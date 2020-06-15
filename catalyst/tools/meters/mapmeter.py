@@ -5,7 +5,7 @@ from typing import Optional
 
 import torch
 
-from . import APMeter, meter
+from catalyst.tools.meters import APMeter, meter
 
 
 class mAPMeter(meter.Meter):  # noqa: N801

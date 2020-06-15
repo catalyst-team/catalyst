@@ -13,8 +13,8 @@ from torch import nn
 import torch.distributed
 
 from catalyst import __version__
-from .misc import get_fn_default_params
-from .torch import get_available_gpus
+from catalyst.utils.misc import get_fn_default_params
+from catalyst.utils.torch import get_available_gpus
 
 warnings.simplefilter("once")
 warnings.filterwarnings("once")

@@ -3,9 +3,11 @@ from pathlib import Path
 
 import numpy as np
 from sklearn.model_selection import train_test_split
+from tests._tests_cv_segmentation.dataset import (  # noqa: WPS436
+    SegmentationDataset,
+)
 
 from catalyst.dl import ConfigExperiment
-from .dataset import SegmentationDataset
 
 
 class Experiment(ConfigExperiment):

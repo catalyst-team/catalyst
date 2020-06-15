@@ -3,8 +3,8 @@ from typing import List
 import torch
 from torch import nn
 
-from ..blocks.fpn import DecoderFPNBlock
-from .core import DecoderSpec
+from catalyst.contrib.models.cv.segmentation.blocks.fpn import DecoderFPNBlock
+from catalyst.contrib.models.cv.segmentation.decoder.core import DecoderSpec
 
 
 class FPNDecoder(DecoderSpec):

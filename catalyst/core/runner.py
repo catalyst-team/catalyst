@@ -10,6 +10,7 @@ from torch.utils.data import DataLoader, DistributedSampler
 from catalyst.core import utils
 from catalyst.core.callback import Callback, CallbackScope
 from catalyst.core.experiment import IExperiment
+from catalyst.core.legacy import IRunnerLegacy
 from catalyst.tools import settings
 from catalyst.tools.frozen_class import FrozenClass
 from catalyst.tools.typing import (
@@ -23,7 +24,6 @@ from catalyst.tools.typing import (
     RunnerScheduler,
     Scheduler,
 )
-from .legacy import IRunnerLegacy
 
 
 class IRunner(ABC, IRunnerLegacy, FrozenClass):

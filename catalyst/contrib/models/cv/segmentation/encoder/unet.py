@@ -3,8 +3,13 @@ from typing import List
 import torch
 from torch import nn
 
-from ..blocks.unet import EncoderDownsampleBlock
-from .core import _take, EncoderSpec  # noqa: WPS450
+from catalyst.contrib.models.cv.segmentation.blocks.unet import (
+    EncoderDownsampleBlock,
+)
+from catalyst.contrib.models.cv.segmentation.encoder.core import (  # nqqa: WPS450, E501
+    _take,
+    EncoderSpec,
+)
 
 
 class UnetEncoder(EncoderSpec):

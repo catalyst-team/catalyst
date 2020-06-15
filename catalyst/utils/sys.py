@@ -9,8 +9,8 @@ import sys
 import warnings
 
 from catalyst.contrib.tools.tensorboard import SummaryWriter
-from .config import save_config
-from .misc import get_utcnow_time
+from catalyst.utils.config import save_config
+from catalyst.utils.misc import get_utcnow_time
 
 
 def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:

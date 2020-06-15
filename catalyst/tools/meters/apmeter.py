@@ -5,7 +5,7 @@ import math
 
 import torch
 
-from . import meter
+from catalyst.tools.meters import meter
 
 
 class APMeter(meter.Meter):
@@ -140,7 +140,7 @@ class APMeter(meter.Meter):
             # sort scores
             scores = self.scores[:, k]
             targets = self.targets[:, k]
-            _, sortind = torch.sort(scores, 0, True)
+            _, sortind = torch.sort(scores, dim=0, descending=True)
             truth = targets[sortind]
             if self.weights.numel() > 0:
                 weight = self.weights[sortind]

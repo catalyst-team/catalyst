@@ -1,7 +1,7 @@
 import torch
 from torch import nn
 
-from .functional import triplet_loss
+from catalyst.contrib.nn.criterion.functional import triplet_loss
 
 
 class TripletLoss(nn.Module):

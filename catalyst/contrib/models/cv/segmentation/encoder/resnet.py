@@ -7,7 +7,10 @@ from torch import nn
 import torchvision
 
 from catalyst import utils
-from .core import _take, EncoderSpec  # noqa: WPS450
+from catalyst.contrib.models.cv.segmentation.encoder.core import (  # noqa: WPS450, E501
+    _take,
+    EncoderSpec,
+)
 
 RESNET_PARAMS = {  # noqa: WPS407
     "resnet18": {

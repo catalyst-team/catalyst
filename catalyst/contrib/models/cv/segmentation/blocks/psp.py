@@ -5,8 +5,10 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from ..abn import ABN
-from .core import _get_block  # noqa: WPS450
+from catalyst.contrib.models.cv.segmentation.abn import ABN
+from catalyst.contrib.models.cv.segmentation.blocks.core import (  # noqa: WPS450, E501
+    _get_block,
+)
 
 
 class PyramidBlock(nn.Module):
