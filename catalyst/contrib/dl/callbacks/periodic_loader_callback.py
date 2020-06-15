@@ -26,7 +26,7 @@ class PeriodicLoaderCallback(Callback):
         Args:
             kwargs: loader names and their run periods.
         """
-        super().__init__(order=CallbackOrder.External)
+        super().__init__(order=CallbackOrder.external)
 
         self.valid_loader: str = None
         self.valid_metrics: Mapping[str, float] = None

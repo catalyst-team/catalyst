@@ -38,7 +38,7 @@ class TelegramLogger(Callback):
             log_on_stage_end (bool): send notification on stage end
             log_on_exception (bool): send notification on exception
         """
-        super().__init__(order=CallbackOrder.Logging, node=CallbackNode.Master)
+        super().__init__(order=CallbackOrder.logging, node=CallbackNode.master)
         # @TODO: replace this logic with global catalyst config at ~/.catalyst
         self._token = token or settings.telegram_logger_token
         self._chat_id = chat_id or settings.telegram_logger_chat_id

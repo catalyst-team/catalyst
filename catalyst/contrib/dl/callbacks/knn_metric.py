@@ -48,7 +48,7 @@ class KNNMetricCallback(Callback):
             knn_metric: look sklearn.neighbors.NearestNeighbors parameter.
             num_neighbors: number of neighbors, default is 5.
         """
-        super().__init__(CallbackOrder.Metric)
+        super().__init__(CallbackOrder.metric)
 
         assert num_classes > 1, "`num_classes` should be more than 1"
 

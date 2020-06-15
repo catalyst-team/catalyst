@@ -15,7 +15,7 @@ class InferCallback(Callback):
         Args:
             @TODO: Docs. Contribution is welcome
         """
-        super().__init__(CallbackOrder.Internal)
+        super().__init__(CallbackOrder.internal)
         self.out_dir = out_dir
         self.out_prefix = out_prefix
         self.predictions = defaultdict(lambda: [])

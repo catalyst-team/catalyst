@@ -192,9 +192,9 @@ class VisdomLogger(Callback):
             log_on_epoch_end (bool): logs per-epoch metrics if set True
         """
         super().__init__(
-            order=CallbackOrder.Logging,
-            node=CallbackNode.Master,
-            scope=CallbackScope.Experiment,
+            order=CallbackOrder.logging,
+            node=CallbackNode.master,
+            scope=CallbackScope.experiment,
         )
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end

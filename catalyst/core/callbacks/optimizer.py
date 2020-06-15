@@ -33,7 +33,7 @@ class OptimizerCallback(Callback):
             decouple_weight_decay (bool): If True - decouple weight decay
                 regularization.
         """
-        super().__init__(order=CallbackOrder.Optimizer, node=CallbackNode.All)
+        super().__init__(order=CallbackOrder.optimizer, node=CallbackNode.all)
         assert metric_key is None or loss_key is None
         if loss_key is not None:
             warnings.warn(

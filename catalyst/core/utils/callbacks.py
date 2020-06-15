@@ -54,13 +54,13 @@ def filter_callbacks_by_node(
     if rank == 0:  # master node
         # remove worker-only callbacks on master node
         for k in list(
-            filter(lambda c: output[c].node == CallbackNode.Worker, output,)
+            filter(lambda c: output[c].node == CallbackNode.worker, output)
         ):
             del output[k]
     elif rank > 0:  # worker node
         # remove master-only callbacks on worker nodes
         for k in list(
-            filter(lambda c: output[c].node == CallbackNode.Master, output,)
+            filter(lambda c: output[c].node == CallbackNode.master, output)
         ):
             del output[k]
     return output

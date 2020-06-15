@@ -100,7 +100,7 @@ def _get_loaders(*, root: str, batch_size: int = 1, num_workers: int = 1):
 
 class _OnBatchEndCheckGradsCallback(Callback):
     def __init__(self, prefix: str):
-        super().__init__(CallbackOrder.External)
+        super().__init__(CallbackOrder.external)
         self.prefix = prefix
 
     def on_batch_end(self, runner: IRunner):

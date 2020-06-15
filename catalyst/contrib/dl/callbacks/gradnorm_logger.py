@@ -25,7 +25,7 @@ class GradNormLogger(Callback):
                 Should be the same as in `OptimizerCallback`.
         """
         super().__init__(
-            order=CallbackOrder.Optimizer + 1, node=CallbackNode.All
+            order=CallbackOrder.optimizer + 1, node=CallbackNode.all
         )
 
         self.grad_norm_prefix = "_grad_norm"

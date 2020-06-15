@@ -703,7 +703,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
             and getattr(self, "callbacks", None) is not None
         ):
             for key, value in self.callbacks.items():
-                if value.scope == CallbackScope.Experiment:
+                if value.scope == CallbackScope.experiment:
                     callbacks[key] = value
 
         callbacks = utils.sort_callbacks_by_order(callbacks)

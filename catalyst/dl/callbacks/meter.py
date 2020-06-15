@@ -43,7 +43,7 @@ class MeterMetricsCallback(Callback):
             activation (str): An torch.nn activation applied to the logits.
                 Must be one of ['none', 'Sigmoid', 'Softmax2d']
         """
-        super().__init__(CallbackOrder.Metric)
+        super().__init__(CallbackOrder.metric)
         self.metric_names = metric_names
         self.meters = meter_list
         self.input_key = input_key

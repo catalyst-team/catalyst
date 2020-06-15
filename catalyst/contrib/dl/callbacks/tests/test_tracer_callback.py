@@ -139,7 +139,7 @@ class _OnStageEndCheckModelTracedCallback(Callback):
             path (Union[str, Path]): Path to traced model.
             inputs (torch.Tensor): Input samples.
         """
-        super().__init__(CallbackOrder.External)
+        super().__init__(CallbackOrder.external)
         self.path: Path = Path(path)
         self.inputs: torch.Tensor = inputs
         self.device = get_device()
