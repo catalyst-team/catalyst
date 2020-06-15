@@ -171,7 +171,7 @@ class Registry(collections.MutableMapping):
             prefix = [prefix]
         elif isinstance(prefix, list):
             if any((not isinstance(p, str)) for p in prefix):
-                raise TypeError(f"All prefix in list must be strings.")
+                raise TypeError("All prefix in list must be strings.")
         else:
             raise TypeError(
                 f"Prefix must be a list or a string, got {type(prefix)}."

@@ -93,7 +93,7 @@ class AUCMeter(meter.Meter):
                 tpr[i] = tpr[i - 1]
                 fpr[i] = fpr[i - 1] + 1
 
-        tpr /= self.targets.sum() * 1.0
+        tpr /= self.targets.sum() * 1.0  # noqa: WPS345
         fpr /= (self.targets - 1.0).sum() * -1.0
 
         # calculating area under curve using trapezoidal rule

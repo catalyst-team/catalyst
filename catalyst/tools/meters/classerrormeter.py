@@ -65,4 +65,4 @@ class ClassErrorMeter(meter.Meter):
             else:
                 return float(self.sum[k]) / self.n * 100.0
         else:
-            return [self.value(k_) for k_ in self.topk]
+            return [self.value(topk) for topk in self.topk]

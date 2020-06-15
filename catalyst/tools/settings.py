@@ -220,7 +220,7 @@ class MergedConfigParser:
 
     #: Set of actions that should use the
     #: :meth:`~configparser.RawConfigParser.getbool` method.
-    GETBOOL_ACTIONS = {"store_true", "store_false"}
+    GETBOOL_ACTIONS = {"store_true", "store_false"}  # noqa: WPS115
 
     def __init__(self, config_finder: ConfigFileFinder):
         """Initialize the MergedConfigParser instance.

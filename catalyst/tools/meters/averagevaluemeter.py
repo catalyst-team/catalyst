@@ -45,7 +45,8 @@ class AverageValueMeter(meter.Meter):
         self.n_samples += batch_size
 
         if self.n == 1:
-            self.mean = 0.0 + value  # Force a copy in torch/numpy
+            # Force a copy in torch/numpy
+            self.mean = 0.0 + value  # noqa: WPS345
             self.std = 0.0
             self.mean_old = self.mean
             self.m_s = 0.0

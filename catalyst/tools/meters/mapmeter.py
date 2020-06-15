@@ -8,7 +8,7 @@ import torch
 from . import APMeter, meter
 
 
-class mAPMeter(meter.Meter):
+class mAPMeter(meter.Meter):  # noqa: N801
     """
     This meter is a wrapper for
     :py:class:`catalyst.tools.meters.apmeter.APMeter`.
