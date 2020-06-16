@@ -12,14 +12,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
-- 
+-
 
 ### Removed
 
-- 
+-
 
 ### Fixed
 
+- .dependabot/config.yml contained invalid details ([#781](https://github.com/catalyst-team/catalyst/issues/781))
 - `LanguageModelingDataset` ([#841](https://github.com/catalyst-team/catalyst/pull/841))
 
 ## [20.06] - 2020-06-04
@@ -40,7 +41,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 
-- 
+-
 
 ### Fixed
 
@@ -71,7 +72,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 
-- 
+-
 
 ### Fixed
 
@@ -130,15 +131,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
-- 
+-
 
 ### Removed
 
-- 
+-
 
 ### Fixed
 
-- 
+-
 
 
 ## [YY.MM.R] - YYYY-MM-DD
@@ -149,12 +150,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
-- 
+-
 
 ### Removed
 
-- 
+-
 
 ### Fixed
 
-- 
+-
