@@ -1,19 +1,28 @@
-from typing import List, Tuple
 from collections import Counter
 from operator import itemgetter
 from random import randint, shuffle
+from typing import List, Tuple
 
+import numpy as np
 import pytest
+import torch
+from scipy.spatial.distance import squareform
 from scipy.special import binom
+from torch import Tensor, tensor
 
-from catalyst.data.sampler import AllTripletsSampler, BalanceBatchSampler
+from catalyst.contrib.utils.misc import find_value_ids
+from catalyst.data.sampler import (
+    AllTripletsSampler,
+    BalanceBatchSampler,
+    HardTrripletsSampler
+)
 
 TLabelsPK = List[Tuple[List[int], int, int]]
 
 
 def generate_valid_labels(num: int) -> TLabelsPK:
     """
-    This function generates same valid inputs for samplers.
+    This function generates some valid inputs for samplers.
     It generates k instances for p classes.
 
     Args:
@@ -35,13 +44,32 @@ def generate_valid_labels(num: int) -> TLabelsPK:
 
 
 @pytest.fixture()
-def input_for_inbatch_sampler() -> List[int]:
+def input_for_inbatch_sampler() -> List[Tuple[Tensor, List[int]]]:
     """
-    Returns: list of valid classes labels
+    Returns: list of features and valid labels
     """
-    labels_pk = generate_valid_labels(num=100)
+    size = 1000
+    features_dim = 10
+
+    labels_pk = generate_valid_labels(num=size)
     labels, _, _ = zip(*labels_pk)
-    return labels
+    features = [torch.rand(size=(size, features_dim)) for _ in range(size)]
+    return list(zip(features, labels))
+
+
+@pytest.fixture()
+def input_distmat_for_inbatch_sampler() -> List[Tuple[Tensor, List[int]]]:
+    size = 1000
+
+    labels_pk = generate_valid_labels(num=size)
+    labels_list, _, _ = zip(*labels_pk)
+
+    dist_mats = []
+    for labels in labels_list:
+        n = len(labels)
+        dist_mats.append(tensor(squareform(torch.rand(int(n * (n - 1) / 2)))))
+
+    return list(zip(dist_mats, labels_list))
 
 
 @pytest.fixture()
@@ -74,7 +102,7 @@ def input_for_balance_batch_sampler() -> TLabelsPK:
 
 
 def check_balance_batch_sampler_epoch(
-    labels: List[int], p: int, k: int
+        labels: List[int], p: int, k: int
 ) -> None:
     """
     Args:
@@ -118,7 +146,7 @@ def check_balance_batch_sampler_epoch(
     num_classes_in_data = len(set(labels))
     num_classes_in_epoch = len(set(sampled_classes))
     assert (num_classes_in_data == num_classes_in_epoch) or (
-        num_classes_in_data == num_classes_in_epoch + 1
+            num_classes_in_data == num_classes_in_epoch + 1
     )
 
     assert max(sampled_ids) <= len(labels) - 1
@@ -136,7 +164,7 @@ def test_balance_batch_sampler(input_for_balance_batch_sampler) -> None:
 
 
 def check_all_triplets_number(
-    labels: List[int], num_selected_tri: int, max_tri: int
+        labels: List[int], num_selected_tri: int, max_tri: int
 ) -> None:
     """
     Checks that the selection strategy for all triplets
@@ -161,10 +189,10 @@ def check_all_triplets_number(
 
 
 def check_triplets_consistency(
-    ids_anchor: List[int],
-    ids_pos: List[int],
-    ids_neg: List[int],
-    labels: List[int],
+        ids_anchor: List[int],
+        ids_pos: List[int],
+        ids_neg: List[int],
+        labels: List[int],
 ) -> None:
     """
     Args:
@@ -175,28 +203,31 @@ def check_triplets_consistency(
 
     Returns: None
     """
-    assert len(ids_anchor) == len(ids_pos) == len(ids_neg)
+    num_sampled_tri = len(ids_anchor)
+
+    assert num_sampled_tri == len(ids_pos) == len(ids_neg)
 
     for (i_a, i_p, i_n) in zip(ids_anchor, ids_pos, ids_neg):
         assert len({i_a, i_p, i_n}) == 3
         assert labels[i_a] == labels[i_p]
         assert labels[i_a] != labels[i_n]
 
-    n_unq_tri = len(set(zip(ids_anchor, ids_pos, ids_neg)))
-    assert len(ids_anchor) == n_unq_tri
+    unq_tri = set(zip(ids_anchor, ids_pos, ids_neg))
+
+    assert num_sampled_tri == len(unq_tri)
 
 
 def test_all_triplets_sampler(input_for_inbatch_sampler) -> None:
     """
     Args:
-        input_for_inbatch_sampler: list of valid labels
+        input_for_inbatch_sampler: features and valid labels
 
     Returns: None
     """
     max_tri = 512
     sampler = AllTripletsSampler(max_output_triplets=max_tri)
 
-    for labels in input_for_inbatch_sampler:
+    for _, labels in input_for_inbatch_sampler:
         ids_a, ids_p, ids_n = sampler._sample(labels=labels)
 
         check_all_triplets_number(
@@ -206,3 +237,101 @@ def test_all_triplets_sampler(input_for_inbatch_sampler) -> None:
         check_triplets_consistency(
             ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels
         )
+
+
+def test_hard_triplets_sampler_rand(input_for_inbatch_sampler) -> None:
+    """
+    Args:
+        input_for_inbatch_sampler: features and valid labels
+
+    Returns: None
+    """
+    sampler = HardTrripletsSampler(need_norm=True)
+
+    for features, labels in input_for_inbatch_sampler:
+        ids_a, ids_p, ids_n = sampler._sample(features=features, labels=labels)
+
+        check_triplets_consistency(
+            ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels
+        )
+
+        assert len(ids_a) == len(labels)
+
+
+def check_hard(ids_a: List[int],
+               ids_p: List[int],
+               ids_n: List[int],
+               labels: List[int],
+               distmat: Tensor
+               ) -> None:
+    """
+
+    Args:
+        ids_a:
+        ids_p:
+        ids_n:
+        labels:
+        distmat:
+
+    Returns:
+    """
+    ids_all = set(range(len(labels)))
+
+    for i_a, i_p, i_n in zip(ids_a, ids_p, ids_n):
+        ids_label = set(find_value_ids(it=labels, value=labels[i_a]))
+
+        ids_pos_cur = np.array(list(ids_label - {i_a}), int)
+        ids_neg_cur = np.array(list(ids_all - ids_label), int)
+
+        assert torch.isclose(distmat[i_a, ids_pos_cur].max(),
+                             distmat[i_a, i_p])
+
+        assert torch.isclose(distmat[i_a, ids_neg_cur].min(),
+                             distmat[i_a, i_n])
+
+
+def test_hard_triplets_sampler_rand2(input_distmat_for_inbatch_sampler) -> None:
+    """
+    Args:
+        input_distmat_for_inbatch_sampler: todo
+
+    Returns:
+    """
+    sampler = HardTrripletsSampler(need_norm=True)
+
+    for distmat, labels in input_distmat_for_inbatch_sampler:
+        ids_a, ids_p, ids_n = \
+            sampler._sample_from_distmat(distmat=distmat, labels=labels)
+
+        check_hard(ids_a=ids_a, ids_p=ids_p, ids_n=ids_n,
+                   labels=labels, distmat=distmat)
+
+        check_triplets_consistency(ids_a, ids_p, ids_n, labels)
+
+        assert len(labels) == len(ids_a)
+
+
+def test_hard_triplets_sampler_manual() -> None:
+    """
+    Small manual example
+
+    Returns: None
+    """
+    labels = [0, 0, 1, 1]
+
+    dist_mat = torch.tensor(
+        [[0.0, 0.3, 0.2, 0.4],
+         [0.3, 0.0, 0.4, 0.8],
+         [0.2, 0.4, 0.0, 0.5],
+         [0.4, 0.8, 0.5, 0.0]]
+    )
+
+    target = {(0, 1, 2), (1, 0, 2), (2, 3, 0), (3, 2, 0)}
+
+    sampler = HardTrripletsSampler(need_norm=True)
+    ids_a, ids_p, ids_n = sampler._sample_from_distmat(distmat=dist_mat, labels=labels)
+
+    check_triplets_consistency(ids_a, ids_p, ids_n, labels)
+
+    assert len(labels) == len(ids_a)
+    assert set(zip(ids_a, ids_p, ids_n)) == target

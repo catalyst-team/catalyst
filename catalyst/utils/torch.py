@@ -7,6 +7,7 @@ import numpy as np
 
 import torch
 from torch import nn
+from torch import Tensor
 import torch.backends
 from torch.backends import cudnn
 
@@ -343,6 +344,18 @@ def trim_tensors(tensors):
     return tensors
 
 
+def normalize(samples: Tensor) -> Tensor:
+    """
+    Args:
+        samples: tensor with shape of [n_samples, features_dim]
+    Returns:
+        normalized tensor with the same shape
+    """
+    norms = torch.norm(samples, p=2, dim=1).unsqueeze(1)
+    samples = samples / (norms + torch.finfo(torch.float32).eps)
+    return samples
+
+
 __all__ = [
     "get_optimizable_params",
     "get_optimizer_momentum",
@@ -358,4 +371,5 @@ __all__ = [
     "get_network_output",
     "detach",
     "trim_tensors",
+    "normalize"
 ]
