@@ -74,7 +74,7 @@ class SupervisedExperiment(Experiment):
 
         for callback_name, callback_fn in default_callbacks:
             is_already_present = any(
-                isinstance(x, callback_fn) for x in callbacks.values()
+                self._is_same_types(x, callback_fn) for x in callbacks.values()
             )
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()

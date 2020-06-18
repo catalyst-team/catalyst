@@ -15,3 +15,4 @@ from .optimizer import OptimizerCallback
 from .scheduler import LRUpdater, SchedulerCallback
 from .timer import TimerCallback
 from .validation import ValidationManagerCallback
+from .wrapper import WrapperCallback

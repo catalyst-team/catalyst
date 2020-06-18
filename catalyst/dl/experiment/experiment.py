@@ -18,6 +18,7 @@ from catalyst.dl import (
     utils,
     ValidationManagerCallback,
     VerboseLogger,
+    WrapperCallback,
 )
 from catalyst.tools import settings
 from catalyst.tools.typing import Criterion, Model, Optimizer, Scheduler
@@ -205,6 +206,23 @@ class Experiment(IExperiment):
         """Returns the loaders for a given stage."""
         return self._loaders
 
+    @staticmethod
+    def _is_same_types(first: Callback, second: Callback) -> bool:
+        """Check if first callback is the same type as second callback
+
+        Args:
+            first (Callback): callback to check
+            second (Callback): callback onject to compare with
+
+        Returns:
+            bool: true if first object has the same type as second
+        """
+        if isinstance(first, WrapperCallback):
+            return Experiment._is_same_types(first.callback, second)
+        if isinstance(second, WrapperCallback):
+            return Experiment._is_same_types(first, second.callback)
+        return isinstance(first, second)
+
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """
         Returns the callbacks for a given stage.
@@ -232,7 +250,8 @@ class Experiment(IExperiment):
 
         for callback_name, callback_fn in default_callbacks:
             is_already_present = any(
-                isinstance(x, callback_fn) for x in callbacks.values()
+                Experiment._is_same_types(x, callback_fn)
+                for x in callbacks.values()
             )
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
