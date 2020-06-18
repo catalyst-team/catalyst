@@ -116,6 +116,7 @@ traced_model = runner.trace(loader=loaders["valid"])
   * [Tests](#tests)
 - [Catalyst](#catalyst)
   * [Tutorials](#tutorials)
+  * [Docs](#docs)
   * [Guides](#guides)
   * [Projects](#projects)
   * [Tools and pipelines](#tools-and-pipelines)
@@ -793,10 +794,13 @@ best practices for the automated parts.
 - [Beyond fashion: Deep Learning with Catalyst (Config API)](https://evilmartians.com/chronicles/beyond-fashion-deep-learning-with-catalyst)
 - [Tutorial from Notebook API to Config API (RU)](https://github.com/Bekovmi/Segmentation_tutorial)
 
-API documentation and an overview of the library can be found here
-[![Docs](https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v)](https://catalyst-team.github.io/catalyst/index.html). <br/>
-In the **[examples folder](examples)**
-of the repository, you can find advanced tutorials and Catalyst best practices.
+
+### Docs
+
+- [master](https://catalyst-team.github.io/catalyst/)
+- [20.06](https://catalyst-team.github.io/catalyst/v20.06/index.html)
+- [20.05](https://catalyst-team.github.io/catalyst/v20.05/index.html), [20.05.1](https://catalyst-team.github.io/catalyst/v20.05.1/index.html)
+- [20.04](https://catalyst-team.github.io/catalyst/v20.04/index.html), [20.04.1](https://catalyst-team.github.io/catalyst/v20.04.1/index.html), [20.04.2](https://catalyst-team.github.io/catalyst/v20.04.2/index.html)
 
 
 ### Guides
