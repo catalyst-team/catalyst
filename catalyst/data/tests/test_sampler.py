@@ -1,20 +1,21 @@
+from typing import List, Tuple
 from collections import Counter
 from operator import itemgetter
 from random import randint, shuffle
-from typing import List, Tuple
 
 import numpy as np
 import pytest
-import torch
 from scipy.spatial.distance import squareform
 from scipy.special import binom
+
+import torch
 from torch import Tensor, tensor
 
 from catalyst.contrib.utils.misc import find_value_ids
 from catalyst.data.sampler import (
     AllTripletsSampler,
     BalanceBatchSampler,
-    HardTrripletsSampler
+    HardTrripletsSampler,
 )
 
 TLabelsPK = List[Tuple[List[int], int, int]]
@@ -59,6 +60,9 @@ def input_for_inbatch_sampler() -> List[Tuple[Tensor, List[int]]]:
 
 @pytest.fixture()
 def input_distmat_for_inbatch_sampler() -> List[Tuple[Tensor, List[int]]]:
+    """
+    Returns: todo
+    """
     size = 1000
 
     labels_pk = generate_valid_labels(num=size)
@@ -102,7 +106,7 @@ def input_for_balance_batch_sampler() -> TLabelsPK:
 
 
 def check_balance_batch_sampler_epoch(
-        labels: List[int], p: int, k: int
+    labels: List[int], p: int, k: int
 ) -> None:
     """
     Args:
@@ -146,7 +150,7 @@ def check_balance_batch_sampler_epoch(
     num_classes_in_data = len(set(labels))
     num_classes_in_epoch = len(set(sampled_classes))
     assert (num_classes_in_data == num_classes_in_epoch) or (
-            num_classes_in_data == num_classes_in_epoch + 1
+        num_classes_in_data == num_classes_in_epoch + 1
     )
 
     assert max(sampled_ids) <= len(labels) - 1
@@ -164,7 +168,7 @@ def test_balance_batch_sampler(input_for_balance_batch_sampler) -> None:
 
 
 def check_all_triplets_number(
-        labels: List[int], num_selected_tri: int, max_tri: int
+    labels: List[int], num_selected_tri: int, max_tri: int
 ) -> None:
     """
     Checks that the selection strategy for all triplets
@@ -189,10 +193,10 @@ def check_all_triplets_number(
 
 
 def check_triplets_consistency(
-        ids_anchor: List[int],
-        ids_pos: List[int],
-        ids_neg: List[int],
-        labels: List[int],
+    ids_anchor: List[int],
+    ids_pos: List[int],
+    ids_neg: List[int],
+    labels: List[int],
 ) -> None:
     """
     Args:
@@ -258,16 +262,16 @@ def test_hard_triplets_sampler_rand(input_for_inbatch_sampler) -> None:
         assert len(ids_a) == len(labels)
 
 
-def check_hard(ids_a: List[int],
-               ids_p: List[int],
-               ids_n: List[int],
-               labels: List[int],
-               distmat: Tensor
-               ) -> None:
+def check_hard(
+    ids_a: List[int],
+    ids_p: List[int],
+    ids_n: List[int],
+    labels: List[int],
+    distmat: Tensor,
+) -> None:
     """
-
     Args:
-        ids_a:
+        ids_a: todo
         ids_p:
         ids_n:
         labels:
@@ -283,14 +287,18 @@ def check_hard(ids_a: List[int],
         ids_pos_cur = np.array(list(ids_label - {i_a}), int)
         ids_neg_cur = np.array(list(ids_all - ids_label), int)
 
-        assert torch.isclose(distmat[i_a, ids_pos_cur].max(),
-                             distmat[i_a, i_p])
+        assert torch.isclose(
+            distmat[i_a, ids_pos_cur].max(), distmat[i_a, i_p]
+        )
 
-        assert torch.isclose(distmat[i_a, ids_neg_cur].min(),
-                             distmat[i_a, i_n])
+        assert torch.isclose(
+            distmat[i_a, ids_neg_cur].min(), distmat[i_a, i_n]
+        )
 
 
-def test_hard_triplets_sampler_rand2(input_distmat_for_inbatch_sampler) -> None:
+def test_hard_triplets_sampler_rand2(
+    input_distmat_for_inbatch_sampler,
+) -> None:
     """
     Args:
         input_distmat_for_inbatch_sampler: todo
@@ -300,11 +308,17 @@ def test_hard_triplets_sampler_rand2(input_distmat_for_inbatch_sampler) -> None:
     sampler = HardTrripletsSampler(need_norm=True)
 
     for distmat, labels in input_distmat_for_inbatch_sampler:
-        ids_a, ids_p, ids_n = \
-            sampler._sample_from_distmat(distmat=distmat, labels=labels)
+        ids_a, ids_p, ids_n = sampler._sample_from_distmat(
+            distmat=distmat, labels=labels
+        )
 
-        check_hard(ids_a=ids_a, ids_p=ids_p, ids_n=ids_n,
-                   labels=labels, distmat=distmat)
+        check_hard(
+            ids_a=ids_a,
+            ids_p=ids_p,
+            ids_n=ids_n,
+            labels=labels,
+            distmat=distmat,
+        )
 
         check_triplets_consistency(ids_a, ids_p, ids_n, labels)
 
@@ -320,16 +334,20 @@ def test_hard_triplets_sampler_manual() -> None:
     labels = [0, 0, 1, 1]
 
     dist_mat = torch.tensor(
-        [[0.0, 0.3, 0.2, 0.4],
-         [0.3, 0.0, 0.4, 0.8],
-         [0.2, 0.4, 0.0, 0.5],
-         [0.4, 0.8, 0.5, 0.0]]
+        [
+            [0.0, 0.3, 0.2, 0.4],
+            [0.3, 0.0, 0.4, 0.8],
+            [0.2, 0.4, 0.0, 0.5],
+            [0.4, 0.8, 0.5, 0.0],
+        ]
     )
 
     target = {(0, 1, 2), (1, 0, 2), (2, 3, 0), (3, 2, 0)}
 
     sampler = HardTrripletsSampler(need_norm=True)
-    ids_a, ids_p, ids_n = sampler._sample_from_distmat(distmat=dist_mat, labels=labels)
+    ids_a, ids_p, ids_n = sampler._sample_from_distmat(
+        distmat=dist_mat, labels=labels
+    )
 
     check_triplets_consistency(ids_a, ids_p, ids_n, labels)
 

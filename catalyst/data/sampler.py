@@ -223,8 +223,9 @@ class InBatchTripletsSampler(ABC):
         """
         self._check_input_labels(labels=labels)
 
-        ids_anchor, ids_pos, ids_neg = \
-            self._sample(features=features, labels=labels)
+        ids_anchor, ids_pos, ids_neg = self._sample(
+            features=features, labels=labels
+        )
 
         return features[ids_anchor], features[ids_pos], features[ids_neg]
 
@@ -307,7 +308,7 @@ class AllTripletsSampler(InBatchTripletsSampler):
 
 class HardTrripletsSampler(InBatchTripletsSampler):
     """
-    This sampler selects the hardest triplets based on distances between features:
+    This sampler selects hardest triplets based on distances between features:
     the hardest positive sample has the maximal distance to anchor sample,
     the hardest negative sample has the minimal distance to anchor sample.
 
@@ -348,9 +349,9 @@ class HardTrripletsSampler(InBatchTripletsSampler):
         distmat: Tensor, labels: List[int]
     ) -> TTripletsIds:
         """
-        This method samples the hardest triplets based on the given distances matrix.
-        It chooses each sample in the batch as an anchor and then finds the harderst
-        positive and negative pair.
+        This method samples the hardest triplets based on the given
+        distances matrix. It chooses each sample in the batch as an
+        anchor and then finds the harderst positive and negative pair.
 
         Args:
             distmat: matrix of distances between features
