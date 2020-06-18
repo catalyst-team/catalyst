@@ -61,7 +61,7 @@ def input_for_inbatch_sampler() -> List[Tuple[Tensor, List[int]]]:
 @pytest.fixture()
 def input_distmat_for_inbatch_sampler() -> List[Tuple[Tensor, List[int]]]:
     """
-    Returns: todo
+    Returns: list of distance matrices and valid labels
     """
     size = 1000
 
@@ -200,9 +200,9 @@ def check_triplets_consistency(
 ) -> None:
     """
     Args:
-        ids_anchor: anchor indeces of selected triplets
-        ids_pos: positive indeces of selected triplets
-        ids_neg: negative indeces of selected triplets
+        ids_anchor: anchor indexes of selected triplets
+        ids_pos: positive indexes of selected triplets
+        ids_neg: negative indexes of selected triplets
         labels: labels of the samples in the batch
 
     Returns: None
@@ -263,25 +263,25 @@ def test_hard_triplets_sampler_rand(input_for_inbatch_sampler) -> None:
 
 
 def check_hard(
-    ids_a: List[int],
-    ids_p: List[int],
-    ids_n: List[int],
+    ids_anchor: List[int],
+    ids_pos: List[int],
+    ids_neg: List[int],
     labels: List[int],
     distmat: Tensor,
 ) -> None:
     """
     Args:
-        ids_a: todo
-        ids_p:
-        ids_n:
-        labels:
-        distmat:
+        ids_anchor: anchor indexes of selected triplets
+        ids_pos: positive indexes of selected triplets
+        ids_neg: negative indexes of selected triplets
+        labels: labels of the samples in the batch
+        distmat: distances between features
 
-    Returns:
+    Returns: None
     """
     ids_all = set(range(len(labels)))
 
-    for i_a, i_p, i_n in zip(ids_a, ids_p, ids_n):
+    for i_a, i_p, i_n in zip(ids_anchor, ids_pos, ids_neg):
         ids_label = set(find_value_ids(it=labels, value=labels[i_a]))
 
         ids_pos_cur = np.array(list(ids_label - {i_a}), int)
@@ -301,9 +301,10 @@ def test_hard_triplets_sampler_rand2(
 ) -> None:
     """
     Args:
-        input_distmat_for_inbatch_sampler: todo
+        input_distmat_for_inbatch_sampler:
+            list of distance matrices and valid labels
 
-    Returns:
+    Returns: None
     """
     sampler = HardTrripletsSampler(need_norm=True)
 
@@ -313,9 +314,9 @@ def test_hard_triplets_sampler_rand2(
         )
 
         check_hard(
-            ids_a=ids_a,
-            ids_p=ids_p,
-            ids_n=ids_n,
+            ids_anchor=ids_a,
+            ids_pos=ids_p,
+            ids_neg=ids_n,
             labels=labels,
             distmat=distmat,
         )

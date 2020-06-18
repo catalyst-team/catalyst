@@ -370,5 +370,5 @@ __all__ = [
     "get_network_output",
     "detach",
     "trim_tensors",
-    "normalize"
+    "normalize",
 ]
