@@ -1,4 +1,5 @@
-from catalyst.dl import Callback, WrapperCallback
+from catalyst.core.callback import Callback
+from catalyst.dl.callbacks import WrapperCallback
 
 
 def get_original_callback(callback: Callback) -> Callback:
