@@ -23,7 +23,6 @@ from catalyst.dl import (
     utils,
     ValidationManagerCallback,
     VerboseLogger,
-    WrapperCallback,
 )
 from catalyst.dl.registry import (
     CALLBACKS,
@@ -33,6 +32,7 @@ from catalyst.dl.registry import (
     SCHEDULERS,
     TRANSFORMS,
 )
+from catalyst.dl.utils.callbacks import check_isinstance
 from catalyst.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
@@ -432,23 +432,6 @@ class ConfigExperiment(IExperiment):
         return callback
 
     @staticmethod
-    def _is_same_types(first: Callback, second: Callback) -> bool:
-        """Check if first callback is the same type as second callback
-
-        Args:
-            first (Callback): callback to check
-            second (Callback): callback onject to compare with
-
-        Returns:
-            bool: true if first object has the same type as second
-        """
-        if isinstance(first, WrapperCallback):
-            return ConfigExperiment._is_same_types(first.callback, second)
-        if isinstance(second, WrapperCallback):
-            return ConfigExperiment._is_same_types(first, second.callback)
-        return isinstance(first, second)
-
-    @staticmethod
     def _process_callbacks(callbacks: OrderedDict) -> None:
         """
         Iterate over each of the callbacks and update
@@ -510,7 +493,7 @@ class ConfigExperiment(IExperiment):
         for callback_name, callback_fn in default_callbacks:
             is_already_present = False
             for x in callbacks.values():
-                if ConfigExperiment._is_same_types(x, callback_fn):
+                if check_isinstance(x, callback_fn):
                     is_already_present = True
                     break
             if not is_already_present:

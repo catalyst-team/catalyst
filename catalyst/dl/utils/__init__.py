@@ -4,6 +4,7 @@ from catalyst.contrib.utils import *
 from catalyst.core.utils import *
 from catalyst.utils import *
 
+from .callbacks import check_isinstance, get_original_callback
 from .torch import get_loader
 from .trace import (
     get_trace_name,

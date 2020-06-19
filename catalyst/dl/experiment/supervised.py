@@ -8,6 +8,7 @@ from catalyst.dl import (
     OptimizerCallback,
     SchedulerCallback,
 )
+from catalyst.dl.utils.callbacks import check_isinstance
 from catalyst.tools.typing import Criterion, Optimizer, Scheduler
 
 from .experiment import Experiment
@@ -74,7 +75,7 @@ class SupervisedExperiment(Experiment):
 
         for callback_name, callback_fn in default_callbacks:
             is_already_present = any(
-                self._is_same_types(x, callback_fn) for x in callbacks.values()
+                check_isinstance(x, callback_fn) for x in callbacks.values()
             )
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
