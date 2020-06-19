@@ -1,21 +1,16 @@
-from typing import Iterator, List, Optional, Tuple, Union
-from abc import ABC, abstractmethod
+from typing import Iterator, List, Optional, Union
 from collections import Counter
-from itertools import combinations, product
-from math import inf
 from operator import itemgetter
 from random import choices, sample
 
 import numpy as np
 
 import torch
-from torch import Tensor
 from torch.utils.data import DistributedSampler
 from torch.utils.data.sampler import BatchSampler, Sampler
 
 from catalyst.contrib.utils.misc import find_value_ids
 from catalyst.data import DatasetFromSampler
-from catalyst.utils.torch import normalize
 
 
 class BalanceClassSampler(Sampler):
@@ -194,191 +189,6 @@ class BalanceBatchSampler(Sampler):
             inds.extend(selected_inds)
 
         return iter(inds)
-
-
-# order in the triplets: (anchor, positive, negative)
-TTriplets = Tuple[Tensor, Tensor, Tensor]
-TTripletsIds = Tuple[List[int], List[int], List[int]]
-
-
-class InBatchTripletsSampler(ABC):
-    """
-    Base class for triplet samplers.
-    We expect that the child instance of this class
-    will be used to forming triplets inside the batches sampled via
-    >>> BalanceBatchSampler
-
-    But you are not limited to using it in any other way.
-    """
-
-    def sample(self, features: Tensor, labels: List[int]) -> TTriplets:
-        """
-        Args:
-            features: has the shape of [batch_size, feature_size]
-            labels: labels of the samples in the batch
-
-        Returns:
-            the batch of triplets in the order below:
-            (anchor, positive, negative)
-        """
-        self._check_input_labels(labels=labels)
-
-        ids_anchor, ids_pos, ids_neg = self._sample(
-            features=features, labels=labels
-        )
-
-        return features[ids_anchor], features[ids_pos], features[ids_neg]
-
-    @staticmethod
-    def _check_input_labels(labels: List[int]) -> None:
-        """
-        To form triplets we need to be sure that all the classes
-        presented in the batch have at least 2 instances.
-        To create batches that satisfy this statement,
-        you can use the following sampler:
-        >>> BalanceBatchSampler
-
-        Args:
-            labels: labels of the samples in the batch
-
-        Returns: None
-        """
-        labels_counter = Counter(labels)
-        assert all(n > 1 for n in labels_counter.values())
-        assert len(labels_counter) > 1
-
-    @abstractmethod
-    def _sample(self, features: Tensor, labels: List[int]) -> TTripletsIds:
-        """
-        This method includes the logic of sampling/selecting triplets
-        inside the batch. It can be based on information about
-        the distance between the features, or the
-        choice can be made randomly.
-
-        Args:
-            features: has the shape of [batch_size, feature_size]
-            labels: labels of the samples in the batch
-
-        Returns: indeces of the batch samples for the forming triplets.
-        """
-        raise NotImplementedError
-
-
-class AllTripletsSampler(InBatchTripletsSampler):
-    """
-    This sampler selects all the possible triplets for the given labels
-
-    """
-
-    def __init__(self, max_output_triplets: int = inf):
-        """
-        Args:
-            max_output_triplets: With the strategy of choosing all triplets,
-                their number in the batch can be very large,
-                because of it we will sample only random part of them,
-                determined by this parameter.
-        """
-        self._max_out_triplets = max_output_triplets
-
-    def _sample(self, *_, labels: List[int]) -> TTripletsIds:
-        """
-        Args:
-            labels: list of classes labels
-            *_: note, that we ignore features argument
-
-        Returns: indeces of triplets
-        """
-        num_labels = len(labels)
-
-        triplets = []
-        for label in set(labels):
-            ids_pos = set(find_value_ids(labels, label))
-            ids_neg = set(range(num_labels)) - ids_pos
-
-            pos_pairs = list(combinations(ids_pos, r=2))
-
-            tri = [(a, p, n) for (a, p), n in product(pos_pairs, ids_neg)]
-            triplets.extend(tri)
-
-        triplets = sample(triplets, min(len(triplets), self._max_out_triplets))
-        ids_anchor, ids_pos, ids_neg = zip(*triplets)
-
-        return ids_anchor, ids_pos, ids_neg
-
-
-class HardTrripletsSampler(InBatchTripletsSampler):
-    """
-    This sampler selects hardest triplets based on distances between features:
-    the hardest positive sample has the maximal distance to anchor sample,
-    the hardest negative sample has the minimal distance to anchor sample.
-
-    """
-
-    def __init__(self, need_norm: bool = False):
-        """
-        Args:
-            need_norm: set True if features normalisation needed
-        """
-        self._need_norm = need_norm
-
-    def _sample(self, features: Tensor, labels: List[int]) -> TTripletsIds:
-        """
-        This method samples the hardest triplets inside the batch.
-
-        Args:
-            features: has the shape of [batch_size, feature_size]
-            labels: labels of the samples in the batch
-
-        Returns:
-            the batch of the triplets in the order below:
-            (anchor, positive, negative)
-        """
-        if self._need_norm:
-            features = normalize(samples=features)
-
-        dist_mat = torch.cdist(x1=features, x2=features, p=2)
-
-        ids_anchor, ids_pos, ids_neg = self._sample_from_distmat(
-            distmat=dist_mat, labels=labels
-        )
-
-        return ids_anchor, ids_pos, ids_neg
-
-    @staticmethod
-    def _sample_from_distmat(
-        distmat: Tensor, labels: List[int]
-    ) -> TTripletsIds:
-        """
-        This method samples the hardest triplets based on the given
-        distances matrix. It chooses each sample in the batch as an
-        anchor and then finds the harderst positive and negative pair.
-
-        Args:
-            distmat: matrix of distances between features
-            labels: labels of the samples in the batch
-
-        Returns:
-            the batch of triplets in the order below:
-            (anchor, positive, negative)
-        """
-        ids_all = set(range(len(labels)))
-
-        ids_anchor, ids_pos, ids_neg = [], [], []
-
-        for i_anch, label in enumerate(labels):
-            ids_label = set(find_value_ids(it=labels, value=label))
-
-            ids_pos_cur = np.array(list(ids_label - {i_anch}), int)
-            ids_neg_cur = np.array(list(ids_all - ids_label), int)
-
-            i_pos = ids_pos_cur[distmat[i_anch, ids_pos_cur].argmax()]
-            i_neg = ids_neg_cur[distmat[i_anch, ids_neg_cur].argmin()]
-
-            ids_anchor.append(i_anch)
-            ids_pos.append(i_pos)
-            ids_neg.append(i_neg)
-
-        return ids_anchor, ids_pos, ids_neg
 
 
 class MiniEpochSampler(Sampler):
@@ -605,9 +415,6 @@ class DistributedSamplerWrapper(DistributedSampler):
 __all__ = [
     "BalanceClassSampler",
     "BalanceBatchSampler",
-    "InBatchTripletsSampler",
-    "AllTripletsSampler",
-    "HardTrripletsSampler",
     "MiniEpochSampler",
     "DistributedSamplerWrapper",
     "DynamicLenBatchSampler",
