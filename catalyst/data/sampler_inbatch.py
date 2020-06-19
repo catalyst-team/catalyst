@@ -11,7 +11,6 @@ import torch
 from torch import Tensor
 
 from catalyst.contrib.utils.misc import find_value_ids
-from catalyst.data.sampler import BalanceBatchSampler
 from catalyst.utils.torch import normalize
 
 # order in the triplets: (anchor, positive, negative)
@@ -27,7 +26,7 @@ class InBatchTripletsSampler(ABC):
     The batches must contain at least 2 samples for
     each class and at least 2 different classes,
     such behaviour can be garantee via using
-    >>> BalanceBatchSampler
+    catalyst.data.sampler.BalanceBatchSampler
 
     But you are not limited to using it in any other way.
     """
