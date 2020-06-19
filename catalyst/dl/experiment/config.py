@@ -32,7 +32,7 @@ from catalyst.dl.registry import (
     SCHEDULERS,
     TRANSFORMS,
 )
-from catalyst.dl.utils.callbacks import check_isinstance
+from catalyst.dl.utils import check_isinstance
 from catalyst.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 

@@ -1,15 +1,11 @@
-from typing import Any, Callable, Mapping, Sequence, Union
+from typing import Callable, Mapping, Sequence, Union
 from collections import OrderedDict
 
 from catalyst.core.callback import Callback
 from catalyst.core.runner import IRunner
-from catalyst.dl import registry
 
 LOADERS = Sequence[str]
 LOADERS_WITH_EPOCHS = Mapping[str, Union[int, Sequence[int]]]
-LOADERS_LAMBDA = Callable[
-    [int, str], bool
-]  # lambda epoch, loader: return True
 
 
 class WrapperCallback(Callback):
@@ -35,7 +31,7 @@ class WrapperCallback(Callback):
 
     def __init__(
         self,
-        base_callback: Union[Callback, Mapping[str, Any]],
+        base_callback: Callback,
         loaders: Union[LOADERS, LOADERS_WITH_EPOCHS] = None,
         ignore_foo: Callable[[int, str], bool] = None,
     ):
@@ -46,10 +42,7 @@ class WrapperCallback(Callback):
             loaders: loaders to change base callback behaviour
             ignore_foo: function to use instead of loaders
         """
-        if isinstance(base_callback, Callback):
-            callback = base_callback
-        else:
-            callback = registry.CALLBACKS.get_from_params(**base_callback)
+        callback = base_callback
 
         super().__init__(
             order=callback.order, node=callback.node, scope=callback.scope

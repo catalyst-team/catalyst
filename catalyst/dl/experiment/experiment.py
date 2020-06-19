@@ -19,7 +19,7 @@ from catalyst.dl import (
     ValidationManagerCallback,
     VerboseLogger,
 )
-from catalyst.dl.utils.callbacks import check_isinstance
+from catalyst.dl.utils import check_isinstance
 from catalyst.tools import settings
 from catalyst.tools.typing import Criterion, Model, Optimizer, Scheduler
 

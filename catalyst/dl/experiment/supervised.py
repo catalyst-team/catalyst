@@ -8,7 +8,7 @@ from catalyst.dl import (
     OptimizerCallback,
     SchedulerCallback,
 )
-from catalyst.dl.utils.callbacks import check_isinstance
+from catalyst.dl.utils import check_isinstance
 from catalyst.tools.typing import Criterion, Optimizer, Scheduler
 
 from .experiment import Experiment
