@@ -30,6 +30,30 @@ def euclidean_distance(
     return torch.relu(dist)
 
 
+def _cmc_score_count(
+        distances: torch.Tensor,
+        conformity_matrix: torch.Tensor,
+        topk: int = 1,
+)-> float:
+    """
+    More convenient to write tests with distance_matrix
+    Args:
+        distances: distance matrix shape of (n_embeddings_x, n_embeddings_y)
+        conformity_matrix: binary matrix with 1 on same label pos and 0 otherwise
+        topk: number of top examples for cumulative score counting
+
+    Returns:
+        cmc score
+    """
+    position_matrix = torch.argsort(distances, dim=1)
+    position_matrix[~conformity_matrix] = (
+            topk + 1
+    )  # value large enough not to be counted
+    closest = position_matrix.argmin(dim=1)
+    k_mask = (closest < topk).type(torch.float)
+    return k_mask.mean().item()
+
+
 def cmc_score(
     gallery_embeddings: torch.Tensor,
     query_embeddings: torch.Tensor,
@@ -39,22 +63,19 @@ def cmc_score(
     """
 
     Args:
-        gallery_embeddings:
-        query_embeddings:
-        conformity_matrix:
-        topk:
+        gallery_embeddings: tensor shape of (n_embeddings, embedding_dim)
+            embeddings of the objects in gallery
+        query_embeddings: tensor shape of (n_embeddings, embedding_dim)
+            embeddings of the objects in querry
+        conformity_matrix: binary matrix with 1 on same label pos
+            and 0 otherwise
+        topk: number of top examples for cumulative score counting
 
     Returns:
-
+        cmc score
     """
-    distances = euclidean_distance(gallery_embeddings, query_embeddings)
-    position_matrix = torch.argsort(distances, dim=1)
-    position_matrix[~conformity_matrix] = (
-        topk + 1
-    )  # value large enough not to be counted
-    closest = position_matrix.argmin(dim=1)
-    k_mask = (closest < topk).type(torch.float)
-    return k_mask.mean().item()
+    distances = torch.cdist(gallery_embeddings, query_embeddings)
+    return _cmc_score_count(distances, conformity_matrix, topk)
 
 
 class CMCScoreCallback(Callback):
