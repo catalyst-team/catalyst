@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - `log` parameter to `WandbLogger` ([#836](https://github.com/catalyst-team/catalyst/pull/836))
+- hparams experiment property ([#839](https://github.com/catalyst-team/catalyst/pull/839))
+- add docs build on push to master branch ([#844](https://github.com/catalyst-team/catalyst/pull/844))
 
 ### Changed
 
@@ -20,6 +22,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- `.dependabot/config.yml` contained invalid details ([#781](https://github.com/catalyst-team/catalyst/issues/781))
 - `LanguageModelingDataset` ([#841](https://github.com/catalyst-team/catalyst/pull/841))
 
 ## [20.06] - 2020-06-04
@@ -126,7 +129,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--
+- 
 
 ### Changed
 
@@ -145,7 +148,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--
+- 
 
 ### Changed
 
