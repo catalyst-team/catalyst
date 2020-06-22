@@ -31,10 +31,8 @@ def euclidean_distance(
 
 
 def _cmc_score_count(
-        distances: torch.Tensor,
-        conformity_matrix: torch.Tensor,
-        topk: int = 1,
-)-> float:
+    distances: torch.Tensor, conformity_matrix: torch.Tensor, topk: int = 1,
+) -> float:
     """
     More convenient to write tests with distance_matrix
     Args:
@@ -46,10 +44,12 @@ def _cmc_score_count(
         cmc score
     """
     position_matrix = torch.argsort(distances, dim=1)
+    conformity_matrix = conformity_matrix.type(torch.bool)
     position_matrix[~conformity_matrix] = (
-            topk + 1
+        topk + 1
     )  # value large enough not to be counted
-    closest = position_matrix.argmin(dim=1)
+
+    closest = position_matrix.min(dim=1)[0]
     k_mask = (closest < topk).type(torch.float)
     return k_mask.mean().item()
 
