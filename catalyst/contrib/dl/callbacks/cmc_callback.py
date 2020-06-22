@@ -30,18 +30,18 @@ def _cmc_score_count(
 
 
 def cmc_score(
-    gallery_embeddings: torch.Tensor,
     query_embeddings: torch.Tensor,
+    gallery_embeddings: torch.Tensor,
     conformity_matrix: torch.Tensor,
     topk: int = 1,
 ) -> float:
     """
 
     Args:
-        gallery_embeddings: tensor shape of (n_embeddings, embedding_dim)
-            embeddings of the objects in gallery
         query_embeddings: tensor shape of (n_embeddings, embedding_dim)
             embeddings of the objects in querry
+        gallery_embeddings: tensor shape of (n_embeddings, embedding_dim)
+            embeddings of the objects in gallery
         conformity_matrix: binary matrix with 1 on same label pos
             and 0 otherwise
         topk: number of top examples for cumulative score counting
@@ -49,7 +49,7 @@ def cmc_score(
     Returns:
         cmc score
     """
-    distances = torch.cdist(gallery_embeddings, query_embeddings)
+    distances = torch.cdist(query_embeddings, gallery_embeddings)
     return _cmc_score_count(distances, conformity_matrix, topk)
 
 
