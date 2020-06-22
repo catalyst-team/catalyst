@@ -5,31 +5,6 @@ import torch
 from catalyst.dl import Callback
 
 
-def euclidean_distance(
-    x: torch.Tensor, y: Optional[torch.Tensor] = None
-) -> torch.Tensor:
-    """
-    Computes euclidean distance between embeddings
-    Args:
-        x: matrix with shape of (n_objects, emb_dim)
-        y: matrix with shape of (n_objects, emb_dim)
-
-    Returns: matrix shape of (n_objects, n_objects)
-
-    """
-
-    x_norm = (x ** 2).sum(1).view(-1, 1)
-    if y is not None:
-        y_t = torch.transpose(y, 0, 1)
-        y_norm = (y ** 2).sum(1).view(1, -1)
-    else:
-        y_t = torch.transpose(x, 0, 1)
-        y_norm = x_norm.view(1, -1)
-    # ||x - y||^2 = ||x||^2 - 2<x,y> + ||y||^2
-    dist = x_norm + y_norm - 2.0 * torch.mm(x, y_t)
-    return torch.relu(dist)
-
-
 def _cmc_score_count(
     distances: torch.Tensor, conformity_matrix: torch.Tensor, topk: int = 1,
 ) -> float:
