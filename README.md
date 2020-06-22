@@ -116,6 +116,7 @@ traced_model = runner.trace(loader=loaders["valid"])
   * [Tests](#tests)
 - [Catalyst](#catalyst)
   * [Tutorials](#tutorials)
+  * [Docs](#docs)
   * [Guides](#guides)
   * [Projects](#projects)
   * [Tools and pipelines](#tools-and-pipelines)
@@ -793,10 +794,13 @@ best practices for the automated parts.
 - [Beyond fashion: Deep Learning with Catalyst (Config API)](https://evilmartians.com/chronicles/beyond-fashion-deep-learning-with-catalyst)
 - [Tutorial from Notebook API to Config API (RU)](https://github.com/Bekovmi/Segmentation_tutorial)
 
-API documentation and an overview of the library can be found here
-[![Docs](https://img.shields.io/badge/dynamic/json.svg?label=docs&url=https%3A%2F%2Fpypi.org%2Fpypi%2Fcatalyst%2Fjson&query=%24.info.version&colorB=brightgreen&prefix=v)](https://catalyst-team.github.io/catalyst/index.html). <br/>
-In the **[examples folder](examples)**
-of the repository, you can find advanced tutorials and Catalyst best practices.
+
+### Docs
+
+- [master](https://catalyst-team.github.io/catalyst/)
+- [20.06](https://catalyst-team.github.io/catalyst/v20.06/index.html)
+- [20.05](https://catalyst-team.github.io/catalyst/v20.05/index.html), [20.05.1](https://catalyst-team.github.io/catalyst/v20.05.1/index.html)
+- [20.04](https://catalyst-team.github.io/catalyst/v20.04/index.html), [20.04.1](https://catalyst-team.github.io/catalyst/v20.04.1/index.html), [20.04.2](https://catalyst-team.github.io/catalyst/v20.04.2/index.html)
 
 
 ### Guides
@@ -897,13 +901,13 @@ a lot of people have influenced it in a lot of different ways.
 - [Eugene Kachan](https://www.linkedin.com/in/yauheni-kachan/) ([bagxi](https://github.com/bagxi)) - Config API improvements and CV pipelines
 - [Artem Zolkin](https://www.linkedin.com/in/artem-zolkin-b5155571/) ([arquestro](https://github.com/Arquestro)) - best ever documentation
 - [David Kuryakin](https://www.linkedin.com/in/dkuryakin/) ([dkuryakin](https://github.com/dkuryakin)) - Reaction design
-- [Evgeny Semyonov](https://www.linkedin.com/in/ewan-semyonov/) ([lightforever](https://github.com/lightforever)) - MLComp creator
 
 #### Catalyst.Contributors
+- [Evgeny Semyonov](https://www.linkedin.com/in/ewan-semyonov/) ([lightforever](https://github.com/lightforever)) - MLComp creator
 - [Andrey Zharkov](https://www.linkedin.com/in/andrey-zharkov-8554a1153/) ([asmekal](https://github.com/asmekal)) - Catalyst.GAN initiative
 - [Aleksey Grinchuk](https://www.facebook.com/grinchuk.alexey) ([alexgrinch](https://github.com/AlexGrinch)) and [Valentin Khrulkov](https://www.linkedin.com/in/vkhrulkov/) ([khrulkovv](https://github.com/KhrulkovV)) - many RL collaborations
 - [Alex Gaziev](https://www.linkedin.com/in/alexgaziev/) ([gazay](https://github.com/gazay)) - a bunch of Config API improvements and our Config API wizard support
-- [Eugene Khvedchenya](https://www.linkedin.com/in/cvtalks/) ([bloodaxe](https://github.com/BloodAxe)) - Pytorch-toolbelt library creation
+- [Eugene Khvedchenya](https://www.linkedin.com/in/cvtalks/) ([bloodaxe](https://github.com/BloodAxe)) - Pytorch-toolbelt library maintainer
 - [Yury Kashnitsky](https://www.linkedin.com/in/kashnitskiy/) ([yorko](https://github.com/Yorko)) - Catalyst.NLP initiative
 
 #### Catalyst.Friends
