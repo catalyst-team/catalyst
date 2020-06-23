@@ -4,9 +4,6 @@ from collections import OrderedDict
 from catalyst.core.callback import Callback
 from catalyst.core.runner import IRunner
 
-LOADERS = Sequence[str]
-LOADERS_WITH_EPOCHS = Mapping[str, Union[int, Sequence[int]]]
-
 
 class WrapperCallback(Callback):
     """
@@ -32,7 +29,9 @@ class WrapperCallback(Callback):
     def __init__(
         self,
         base_callback: Callback,
-        loaders: Union[LOADERS, LOADERS_WITH_EPOCHS] = None,
+        loaders: Union[
+            str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]
+        ] = None,
         ignore_foo: Callable[[int, str], bool] = None,
     ):
         """``loaders`` and ``ignore_foo`` are interchangeable arguments.
@@ -59,6 +58,7 @@ class WrapperCallback(Callback):
                 loaders = [loaders]
             # sequence of loaders
             if isinstance(loaders, (list, tuple)):
+                loaders = sorted(set(loaders))  # ignore duplicates
                 self.ignore_foo = lambda epoch, loader: loader in loaders
             # loader: ignore epoch or epochs
             elif isinstance(loaders, (dict, OrderedDict)):
@@ -66,12 +66,39 @@ class WrapperCallback(Callback):
                 for loader, epochs in loaders.items():
                     if isinstance(epochs, (int, float)):
                         ignore_list[loader] = [int(epochs)]
+                    elif isinstance(epochs, (list, tuple)):
+                        ignore_list[loader] = []
+                        for num in sorted(set(epochs)):
+                            try:
+                                to_add = int(num)
+                                ignore_list[loader].append(to_add)
+                            except (ValueError, TypeError):
+                                raise ValueError(
+                                    "'ignore_list' should be a dict where "
+                                    "keys is a int/float/List[int]/Tuple[int]!"
+                                )
                     else:
-                        ignore_list[loader] = [int(num) for num in epochs]
+                        raise ValueError(
+                            "'ignore_list' should be a dict where "
+                            "keys is a int/float/List[int]/Tuple[int]!"
+                        )
                 self.ignore_foo = lambda epoch, loader: epoch in (
                     ignore_list.get(loader) or {}
                 )
+            else:
+                raise ValueError(
+                    "'loaders' type should be one of - str, "
+                    "Sequence[str], Mapping[str, int] or "
+                    "Mapping[str, Sequence[int]]!"
+                )
         elif ignore_foo is not None:
+            if not callable(ignore_foo):
+                raise ValueError("'ignore_foo' should be a callable!")
+            if ignore_foo.__code__.co_argcount != 2:
+                raise ValueError(
+                    "Ignore function should have two arguments - "
+                    "'epoch' and 'loader'!"
+                )
             self.ignore_foo = ignore_foo
 
     def on_loader_start(self, runner: IRunner) -> None:
@@ -87,9 +114,8 @@ class WrapperCallback(Callback):
         if self.ignore_foo is not None:
             self._is_active = not self.ignore_foo(epoch, loader)
 
-        # print(f"({loader} {epoch})>> {self._is_active}")
-
-        self.callback.on_loader_start(runner)
+        if self._is_active:
+            self.callback.on_loader_start(runner)
 
     def on_loader_end(self, runner: IRunner) -> None:
         """
@@ -98,7 +124,8 @@ class WrapperCallback(Callback):
         Args:
             runner (IRunner): current runner
         """
-        self.callback.on_loader_end(runner)
+        if self._is_active:
+            self.callback.on_loader_end(runner)
         self._is_active = True
 
     def on_stage_start(self, runner: IRunner) -> None:
