@@ -102,6 +102,9 @@ class Registry(collections.MutableMapping):
 
         Returns:
             (Factory): First factory passed
+
+        Raises:
+            RegistryException: if factory with provided name is already present
         """
         if len(factories) > 0 and name is not None:
             raise RegistryException(
@@ -155,6 +158,9 @@ class Registry(collections.MutableMapping):
             prefix (Union[str, List[str]]): prefix string for all the module's
                 factories. If prefix is a list, all values will be treated
                 as aliases.
+
+        Raises:
+            TypeError: if prefix is not a list or a string
         """
         factories = {
             k: v
@@ -194,6 +200,9 @@ class Registry(collections.MutableMapping):
 
         Returns:
             Factory: factory by name
+
+        Raises:
+            RegistryException: if no factory with provided name was registered
         """
         self._do_late_add()
 
@@ -231,6 +240,9 @@ class Registry(collections.MutableMapping):
 
         Returns:
             created instance
+
+        Raises:
+            RegistryException: if could not create object instance
         """
         meta_factory = meta_factory or self.meta_factory
         f = self.get(name)

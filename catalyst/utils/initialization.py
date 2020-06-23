@@ -67,9 +67,6 @@ def outer_init(layer: nn.Module) -> None:
 
     Args:
         layer: torch nn.Module instance
-
-    Returns:
-        None
     """
     if isinstance(layer, (nn.Linear, nn.Conv1d, nn.Conv2d)):
         v = 3e-3

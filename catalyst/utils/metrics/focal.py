@@ -97,7 +97,7 @@ def reduced_focal_loss(
             Default: "mean"
 
     Returns:
-        computed loss
+        torch.Tensor: computed loss
     """
     targets = targets.type(outputs.type())
 

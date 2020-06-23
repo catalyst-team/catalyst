@@ -926,7 +926,9 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
             self, `IRunner` instance after the experiment
 
         Raises:
-            Exception, KeyboardInterrupt: if during pipeline exception,
+            Exception: if during pipeline exception,
+                no handler we found into callbacks
+            KeyboardInterrupt: if during pipeline exception,
                 no handler we found into callbacks
         """
         self.experiment = experiment or self.experiment
