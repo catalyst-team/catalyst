@@ -116,8 +116,7 @@ def get_rank() -> int:
     Returns the rank of the current worker.
 
     Returns:
-        (int): ``rank`` if torch.distributed is initialized,
-        otherwise ``-1``
+        int: ``rank`` if torch.distributed is initialized, otherwise ``-1``
     """
     if check_torch_distributed_initialized():
         return torch.distributed.get_rank()

@@ -56,7 +56,7 @@ class _TracedNet(nn.Module):
             x (torch.Tensor): Input tensor
 
         Returns:
-            (torch.Tensor): Output tensor
+            torch.Tensor: Output tensor
         """
         for conv in [self.conv1, self.conv2]:
             x = conv(x)
@@ -82,7 +82,7 @@ class _TracedNet(nn.Module):
             stride (Tuple[int]): size of convolution stride.
 
         Returns:
-            (Tuple[int, int]): output size
+            Tuple[int, int]: output size
         """
         size, kernel_size, stride = map(
             lambda x: torch.tensor(x, dtype=torch.int32),
@@ -106,7 +106,7 @@ def _get_loaders(
         num_workers (int): Num of workers.
 
     Returns:
-        (Dict[str, DataLoader]): Dict of loaders.
+        Dict[str, DataLoader]: Dict of loaders.
     """
     data_transform = ToTensor()
 

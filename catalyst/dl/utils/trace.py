@@ -40,7 +40,7 @@ def _get_input_argnames(
         exclude (List[str]): List of string of names to exclude
 
     Returns:
-        (List[str]): List of input argument names
+        List[str]: List of input argument names
     """
     argspec = inspect.getfullargspec(fn)
     assert (
@@ -123,7 +123,7 @@ def trace_model(
         predict_params (dict): additional parameters for model forward
 
     Returns:
-        (jit.ScriptModule): Traced model
+        jit.ScriptModule: Traced model
 
     Raises:
         ValueError: if both batch and predict_fn must be specified or
@@ -265,7 +265,7 @@ def trace_model_from_runner(
         device (str): Torch device
 
     Returns:
-        (ScriptModule): Traced model
+        ScriptModule: Traced model
     """
     logdir = runner.logdir
     model = get_nn_from_ddp_module(runner.model)
@@ -344,7 +344,7 @@ def get_trace_name(
         additional_string (str): any additional information
 
     Returns:
-        file_name (str): Filename for traced model to be saved.
+        str: Filename for traced model to be saved.
     """
     file_name = "traced"
     if additional_string is not None:
@@ -435,7 +435,7 @@ def load_traced_model(
         opt_level (str): Apex FP16 init level, optional
 
     Returns:
-        (ScriptModule): Traced model
+        ScriptModule: Traced model
     """
     # jit.load dont work with pathlib.Path
     model_path = str(model_path)

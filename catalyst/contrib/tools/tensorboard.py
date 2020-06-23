@@ -193,7 +193,7 @@ class SummaryReader(Iterable):
             events: An iterable with events objects.
 
         Returns:
-            (SummaryItem): decoded event
+            Optional[SummaryItem]: decoded event
         """
         for event in events:
             if not event.HasField("summary"):

@@ -95,7 +95,7 @@ def average_accuracy(outputs, targets, k=10):
         k (int, optional): The maximum number of predicted elements
 
     Returns:
-        double: The average accuracy at k over the input lists
+        float: The average accuracy at k over the input lists
     """
     if len(outputs) > k:
         outputs = outputs[:k]
@@ -126,7 +126,7 @@ def mean_average_accuracy(outputs, targets, topk=(1,)):
         topk (int, optional): The maximum number of predicted elements
 
     Returns:
-        double: The mean average accuracy at k over the input lists
+        float: The mean average accuracy at k over the input lists
     """
     max_k = max(topk)
     _, pred = outputs.topk(max_k, 1, True, True)  # noqa: WPS425

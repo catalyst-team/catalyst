@@ -118,7 +118,7 @@ class APMeter(meter.Meter):
             self.weights.resize_(offset + weight.size(0))
             self.weights.narrow(0, offset, weight.size(0)).copy_(weight)
 
-    def value(self):
+    def value(self) -> torch.Tensor:
         """Returns the model"s average precision for each class.
 
         Returns:

@@ -24,7 +24,7 @@ def dice(
             Must be one of ["none", "Sigmoid", "Softmax2d"]
 
     Returns:
-        double:  Dice score
+        float:  Dice score
     """
     activation_fn = get_activation_fn(activation)
     outputs = activation_fn(outputs)

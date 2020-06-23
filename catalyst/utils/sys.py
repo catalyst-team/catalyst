@@ -5,6 +5,7 @@ from pathlib import Path
 import platform
 import shutil
 import subprocess
+from subprocess import CalledProcessError
 import sys
 import warnings
 
@@ -21,7 +22,7 @@ def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:
         dictionary: a dict
 
     Returns:
-        dict: decoded dict
+        Dict: decoded dict
     """
     result = {
         k: v.decode("UTF-8") if type(v) == bytes else v
@@ -35,7 +36,7 @@ def get_environment_vars() -> Dict[str, Any]:
     Creates a dictionary with environment variables.
 
     Returns:
-        dict: environment variables
+        Dict: environment variables
     """
     result = {
         "python_version": sys.version,
@@ -76,7 +77,7 @@ def get_environment_vars() -> Dict[str, Any]:
                 "origin_commit": git_origin_commit,
             }
             result["git"] = _decode_dict(git)
-        except (subprocess.CalledProcessError, FileNotFoundError):
+        except (CalledProcessError, FileNotFoundError):
             pass
 
     result = _decode_dict(result)
@@ -88,7 +89,7 @@ def list_pip_packages() -> str:
     Lists pip installed packages.
 
     Returns:
-        string with pip installed packages
+        str: string with pip installed packages
     """
     result = ""
     # TODO: Docs. Contribution is welcome
@@ -120,7 +121,7 @@ def list_conda_packages() -> str:
     Lists conda installed packages.
 
     Returns:
-        list with cinda installed packages
+        str: list with conda installed packages
     """
     result = ""
     conda_meta_path = Path(sys.prefix) / "conda-meta"

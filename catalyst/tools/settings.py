@@ -163,6 +163,25 @@ class ConfigFileFinder:
 
         return config, found_files
 
+    def generate_possible_local_files(self):
+        """Find and generate all local config files.
+
+        Yields:
+            str: Path to config file.
+        """
+        parent = tail = os.getcwd()
+        found_config_files = False
+        while tail and not found_config_files:
+            for project_filename in self.project_filenames:
+                filename = os.path.abspath(
+                    os.path.join(parent, project_filename)
+                )
+                if os.path.exists(filename):
+                    yield filename
+                    found_config_files = True
+                    self.local_directory = parent
+            (parent, tail) = os.path.split(parent)
+
     def local_config_files(self) -> List[str]:  # noqa: D202
         """
         Find all local config files which actually exist.
@@ -172,23 +191,7 @@ class ConfigFileFinder:
             local project config  files with extra config files
             appended to that list (which also exist).
         """
-
-        def generate_possible_local_files():
-            """Find and generate all local config files."""
-            parent = tail = os.getcwd()
-            found_config_files = False
-            while tail and not found_config_files:
-                for project_filename in self.project_filenames:
-                    filename = os.path.abspath(
-                        os.path.join(parent, project_filename)
-                    )
-                    if os.path.exists(filename):
-                        yield filename
-                        found_config_files = True
-                        self.local_directory = parent
-                (parent, tail) = os.path.split(parent)
-
-        return list(generate_possible_local_files())
+        return list(self.generate_possible_local_files())
 
     def local_configs(self):
         """Parse all local config files into one config object."""

@@ -61,7 +61,7 @@ def load_config(
         encoding (str): encoding to read the config
 
     Returns:
-        (Union[Dict, List]): config
+        Union[Dict, List]: config
 
     Raises:
         Exception: if path ``path`` doesn't exists

@@ -101,7 +101,7 @@ class Registry(collections.MutableMapping):
             named_factories: Factory and their names as kwargs
 
         Returns:
-            (Factory): First factory passed
+            Factory: First factory passed
 
         Raises:
             RegistryException: if factory with provided name is already present

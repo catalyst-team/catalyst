@@ -250,7 +250,9 @@ class IExperiment(ABC):
         return model, criterion, optimizer, scheduler
 
     def get_transforms(self, stage: str = None, dataset: str = None):
-        """Returns the data transforms for a given stage and dataset.  # noqa: DAR401, W505
+        """Returns the data transforms for a given stage and dataset.
+
+        # noqa: DAR401, W505
 
         Args:
             stage (str): stage name of interest,

@@ -65,8 +65,8 @@ class AverageValueMeter(meter.Meter):
         """Returns meter values.
 
         Returns:
-            mean (float): Mean that has been updated online.
-            std (float): Standard deviation that has been updated online.
+            Tuple[float, float]: tuple of mean and std
+            that have been updated online.
         """
         return self.mean, self.std
 

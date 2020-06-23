@@ -15,7 +15,7 @@ def to_tensor(pic: np.ndarray) -> torch.Tensor:
         pic (PIL Image or numpy.ndarray): Image to be converted to tensor.
 
     Returns:
-        Tensor: Converted image.
+        torch.Tensor: Converted image.
 
     Raises:
         TypeError: if `pic` is not np.ndarray
@@ -52,7 +52,7 @@ def normalize(tensor: torch.Tensor, mean, std, inplace=False):
         inplace(bool,optional): Bool to make this operation inplace.
 
     Returns:
-        Tensor: Normalized Tensor image.
+        torch.Tensor: Normalized Tensor image.
 
     Raises:
         TypeError: if `tensor` is not torch.Tensor
@@ -113,7 +113,7 @@ class ToTensor(object):
             pic (PIL Image or numpy.ndarray): Image to be converted to tensor.
 
         Returns:
-            Tensor: Converted image.
+            torch.Tensor: Converted image.
         """
         return to_tensor(pic)
 
@@ -152,7 +152,7 @@ class Normalize(object):
             tensor (Tensor): Tensor image of size (C, H, W) to be normalized.
 
         Returns:
-            Tensor: Normalized Tensor image.
+            torch.Tensor: Normalized Tensor image.
         """
         return normalize(tensor, self.mean, self.std, self.inplace)
 

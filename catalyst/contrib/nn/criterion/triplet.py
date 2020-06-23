@@ -69,7 +69,7 @@ class TripletLoss(nn.Module):
             labels: tf.int32 `Tensor` with shape [batch_size]
 
         Returns:
-            mask: tf.bool `Tensor` with shape [batch_size, batch_size]
+            torch.Tensor: mask with shape [batch_size, batch_size]
         """
         indices_equal = torch.eye(labels.size(0)).bool()
 
@@ -94,7 +94,7 @@ class TripletLoss(nn.Module):
             labels: tf.int32 `Tensor` with shape [batch_size]
 
         Returns:
-            mask: tf.bool `Tensor` with shape [batch_size, batch_size]
+            torch.Tensor: mask with shape [batch_size, batch_size]
         """
         # Check if labels[i] != labels[k]
         # Uses broadcasting where the 1st argument
@@ -118,7 +118,7 @@ class TripletLoss(nn.Module):
                      pairwise euclidean distance matrix.
 
         Returns:
-            triplet_loss: scalar tensor containing the triplet loss
+            torch.Tensor: scalar tensor containing the triplet loss
         """
         # Get the pairwise distance matrix
         pairwise_dist = self._pairwise_distances(embeddings, squared=squared)
@@ -169,7 +169,7 @@ class TripletLoss(nn.Module):
             targets: labels of the batch, of size (batch_size,)
 
         Returns:
-            triplet_loss: scalar tensor containing the triplet loss
+            torch.Tensor: scalar tensor containing the triplet loss
         """
         return self._batch_hard_triplet_loss(embeddings, targets, self.margin)
 

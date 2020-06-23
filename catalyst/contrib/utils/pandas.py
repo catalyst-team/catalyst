@@ -21,7 +21,7 @@ def dataframe_to_list(dataframe: pd.DataFrame) -> List[dict]:
         dataframe (DataFrame): input dataframe
 
     Returns:
-        (List[dict]): list of rows
+        List[dict]: list of rows
     """
     result = list(dataframe.to_dict(orient="index").values())
     return result
@@ -292,7 +292,7 @@ def split_dataframe(
         n_folds (int): number of folds
 
     Returns:
-        (tuple): tuple with 4 dataframes
+        tuple: tuple with 4 dataframes
             whole dataframe, train part, valid part and infer part
     """
     if args_are_not_none(tag2class, tag_column, class_column):
@@ -371,7 +371,7 @@ def read_multiple_dataframes(
         class_column (str, optional): column to use for split
 
     Returns:
-        (tuple): tuple with 4 dataframes
+        tuple: tuple with 4 dataframes
             whole dataframe, train part, valid part and infer part
     """
     assert any(
@@ -458,7 +458,7 @@ def read_csv_data(
         class_column (str): column to use for split
 
     Returns:
-        (Tuple[pd.DataFrame, List[dict], List[dict], List[dict]]):
+        Tuple[pd.DataFrame, List[dict], List[dict], List[dict]]:
             tuple with 4 elements
             (whole dataframe,
             list with train data,

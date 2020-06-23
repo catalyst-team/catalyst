@@ -65,7 +65,7 @@ class SymmetricCrossEntropyLoss(nn.Module):
                 values of a vector correspond to class index
 
         Returns:
-            computed loss
+            torch.Tensor: computed loss
         """
         num_classes = input_.shape[1]
         target_one_hot = F.one_hot(target, num_classes).float()
@@ -104,7 +104,7 @@ class MaskCrossEntropyLoss(nn.Module):
             mask: targets mask
 
         Returns:
-            computed loss
+            torch.Tensor: computed loss
         """
         loss = self.ce_loss.forward(logits, target)
         loss = torch.mean(loss[mask == 1])

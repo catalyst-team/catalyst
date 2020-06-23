@@ -38,7 +38,7 @@ class Experiment(ConfigExperiment):
             **kwargs: extra params
 
         Returns:
-            datasets - ordered dict with datasets
+            ordered dict with datasets
         """
         datasets = OrderedDict()
         for mode in ("train", "valid"):

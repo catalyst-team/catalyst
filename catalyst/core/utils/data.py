@@ -19,7 +19,7 @@ def _force_make_distributed_loader(loader: DataLoader) -> DataLoader:
         loader (DataLoader): pytorch dataloder
 
     Returns:
-        (DataLoader): pytorch dataloder with distributed sampler.
+        DataLoader: pytorch dataloder with distributed sampler.
     """
     sampler = (
         DistributedSampler(dataset=loader.dataset)
@@ -50,7 +50,7 @@ def validate_loaders(loaders: Dict[str, DataLoader]) -> Dict[str, DataLoader]:
         loaders (Dict[str, DataLoader]): dictionery with pytorch dataloaders
 
     Returns:
-        (Dict[str, DataLoader]): dictionery
+        Dict[str, DataLoader]: dictionery
             with pytorch dataloaders (with distributed samplers if necessary)
     """
     rank = get_rank()

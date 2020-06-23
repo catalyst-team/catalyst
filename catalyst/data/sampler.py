@@ -147,26 +147,30 @@ class BalanceBatchSampler(Sampler):
     @property
     def batch_size(self) -> int:
         """
-        Returns: this value should be used in DataLoader as batch size
+        Returns:
+            this value should be used in DataLoader as batch size
         """
         return self._batch_size
 
     @property
     def batches_in_epoch(self) -> int:
         """
-        Returns: number of batches in an epoch
+        Returns:
+            number of batches in an epoch
         """
         return int(np.ceil(self._num_epoch_classes / self._p))
 
     def __len__(self) -> int:
         """
-        Returns: number of samples in an epoch
+        Returns:
+            number of samples in an epoch
         """
         return self._num_epoch_classes * self._k
 
     def __iter__(self) -> Iterator[int]:
         """
-        Returns: indeces for sampling dataset elems during an epoch
+        Returns:
+            indeces for sampling dataset elems during an epoch
         """
         inds = []
 

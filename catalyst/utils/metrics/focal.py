@@ -65,7 +65,7 @@ def reduced_focal_loss(
     threshold: float = 0.5,
     gamma: float = 2.0,
     reduction="mean",
-):
+) -> torch.Tensor:
     """Compute reduced focal loss between target and output logits.
 
     It has been proposed in `Reduced Focal Loss\: 1st Place Solution to xView
@@ -96,7 +96,7 @@ def reduced_focal_loss(
             ``"batchwise_mean"`` computes mean loss per sample in batch.
             Default: "mean"
 
-    Returns:
+    Returns:  # noqa: DAR201
         torch.Tensor: computed loss
     """
     targets = targets.type(outputs.type())

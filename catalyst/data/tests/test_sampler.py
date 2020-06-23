@@ -11,7 +11,8 @@ from catalyst.data.sampler import BalanceBatchSampler
 @pytest.fixture()
 def input_balance_batch_sampler() -> List[Tuple[List[int], int, int]]:
     """
-    Returns: test data for sampler in the following order: (labels, p, k)
+    Returns:
+        test data for sampler in the following order: (labels, p, k)
     """
     input_cases = [
         # ideal case
@@ -51,8 +52,6 @@ def single_check_balance_batch_sampler(
         labels: list of classes labels
         p: number of classes in a batch
         k: number of instances for each class in a batch
-
-    Returns: None
     """
     sampler = BalanceBatchSampler(labels=labels, p=p, k=k)
     sampled_ids = list(sampler)
@@ -98,8 +97,6 @@ def test_balance_batch_sampler(input_balance_batch_sampler_fixture) -> None:
     """
     Args:
         input_balance_batch_sampler_fixture: pytest fixture
-
-    Returns: None
     """
     for labels, p, k in input_balance_batch_sampler_fixture:
         single_check_balance_batch_sampler(labels, p, k)

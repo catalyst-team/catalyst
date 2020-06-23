@@ -50,7 +50,7 @@ class SupervisedExperiment(Experiment):
                 training stages.
 
         Returns:
-            (OrderedDict[str, Callback]): Ordered dictionary of callbacks
+            OrderedDict[str, Callback]: Ordered dictionary of callbacks
                 for experiment
         """
         callbacks = super().get_callbacks(stage=stage) or OrderedDict()

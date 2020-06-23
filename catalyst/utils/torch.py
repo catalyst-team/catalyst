@@ -337,7 +337,7 @@ def trim_tensors(tensors):
         tensors ([torch.tensor]): list of tensors to trim.
 
     Returns:
-        ([torch.tensor]): list of trimmed tensors.
+        List[torch.tensor]: list of trimmed tensors.
     """
     max_len = torch.max(torch.sum((tensors[0] != 0), 1))
     if max_len > 2:
