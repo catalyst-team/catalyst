@@ -319,3 +319,35 @@ def test_infer_all():
         stage="infer",
     )
     _test_callbacks(test_callbacks, exp, "infer")
+
+
+def test_hparams():
+    """
+    Test for hparam property of experiment.
+    Check if lr, batch_size, optimizer name is in hparams dict
+    """
+    model = torch.nn.Linear(10, 10)
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters())
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, 10)
+    dataset = torch.utils.data.Dataset()
+    dataloader = torch.utils.data.DataLoader(dataset)
+    loaders = OrderedDict()
+    loaders["train"] = dataloader
+
+    exp = SupervisedExperiment(
+        model=model,
+        loaders=loaders,
+        criterion=criterion,
+        optimizer=optimizer,
+        scheduler=scheduler,
+        verbose=True,
+        check_run=True,
+        stage="infer",
+    )
+    hparams = exp.hparams
+
+    assert hparams is not None
+    assert hparams["lr"] == 1e-3
+    assert hparams["train_batch_size"] == 1
+    assert hparams["optimizer"] == "Adam"

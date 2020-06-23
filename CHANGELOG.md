@@ -4,10 +4,32 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [20.06] - YYYY-MM-DD
+## [20.07] - YYYY-MM-DD
 
 ### Added
 
+- `log` parameter to `WandbLogger` ([#836](https://github.com/catalyst-team/catalyst/pull/836))
+- hparams experiment property ([#839](https://github.com/catalyst-team/catalyst/pull/839))
+- add docs build on push to master branch ([#844](https://github.com/catalyst-team/catalyst/pull/844))
+
+### Changed
+
+- 
+
+### Removed
+
+- 
+
+### Fixed
+
+- `.dependabot/config.yml` contained invalid details ([#781](https://github.com/catalyst-team/catalyst/issues/781))
+- `LanguageModelingDataset` ([#841](https://github.com/catalyst-team/catalyst/pull/841))
+
+## [20.06] - 2020-06-04
+
+### Added
+
+- `Mergify` ([#831](https://github.com/catalyst-team/catalyst/pull/831))
 - `PerplexityMetricCallback` ([#819](https://github.com/catalyst-team/catalyst/pull/819))
 - `PeriodicLoaderRunnerCallback` ([#818](https://github.com/catalyst-team/catalyst/pull/818))
 
@@ -107,7 +129,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--
+- 
 
 ### Changed
 
@@ -126,7 +148,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--
+- 
 
 ### Changed
 
