@@ -94,6 +94,11 @@ class ConfigExperiment(IExperiment):
         else:
             self._logdir = None
 
+    @property
+    def hparams(self) -> OrderedDict:
+        """Returns hyper params"""
+        return OrderedDict(self._config)
+
     def _get_stages_config(self, stages_config: Dict):
         stages_defaults = {}
         stages_config_out = OrderedDict()

@@ -62,6 +62,22 @@ class IExperiment(ABC):
 
     @property
     @abstractmethod
+    def hparams(self) -> OrderedDict:
+        """Returns hyper-parameters
+
+        Example::
+            >>> experiment.hparams
+            OrderedDict([('optimizer', 'Adam'),
+             ('lr', 0.02),
+             ('betas', (0.9, 0.999)),
+             ('eps', 1e-08),
+             ('weight_decay', 0),
+             ('amsgrad', False),
+             ('train_batch_size', 32)])
+        """
+
+    @property
+    @abstractmethod
     def stages(self) -> Iterable[str]:
         """Experiment's stage names.
 
