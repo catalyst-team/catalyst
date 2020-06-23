@@ -39,7 +39,7 @@ OrderedLoader.add_implicit_resolver(
 
 
 def _load_ordered_yaml(stream):
-    return yaml.safe_load(stream, OrderedLoader)
+    return yaml.load(stream, OrderedLoader)
 
 
 def load_config(
@@ -100,7 +100,7 @@ def load_config(
 
         elif suffix in [".yml", ".yaml"]:
             loader = OrderedLoader if ordered else yaml.Loader
-            config = yaml.safe_load(stream, loader)
+            config = yaml.load(stream, loader)
 
     if config is None:
         return {}
