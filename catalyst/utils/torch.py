@@ -347,6 +347,7 @@ def normalize(samples: Tensor) -> Tensor:
     """
     Args:
         samples: tensor with shape of [n_samples, features_dim]
+
     Returns:
         normalized tensor with the same shape
     """

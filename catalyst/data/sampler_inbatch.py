@@ -1,12 +1,11 @@
-from typing import List, Tuple
 from abc import ABC, abstractmethod
 from collections import Counter
 from itertools import combinations, product
 from random import sample
 from sys import maxsize
+from typing import List, Tuple
 
 import numpy as np
-
 import torch
 from torch import Tensor
 
@@ -30,24 +29,6 @@ class InBatchTripletsSampler(ABC):
 
     But you are not limited to using it in any other way.
     """
-
-    def sample(self, features: Tensor, labels: List[int]) -> TTriplets:
-        """
-        Args:
-            features: has the shape of [batch_size, feature_size]
-            labels: labels of the samples in the batch
-
-        Returns:
-            the batch of the triplets in the order below:
-            (anchor, positive, negative)
-        """
-        self._check_input_labels(labels=labels)
-
-        ids_anchor, ids_pos, ids_neg = self._sample(
-            features=features, labels=labels
-        )
-
-        return features[ids_anchor], features[ids_pos], features[ids_neg]
 
     @staticmethod
     def _check_input_labels(labels: List[int]) -> None:
@@ -79,6 +60,24 @@ class InBatchTripletsSampler(ABC):
         Returns: indeces of the batch samples to forming triplets.
         """
         raise NotImplementedError
+
+    def sample(self, features: Tensor, labels: List[int]) -> TTriplets:
+        """
+        Args:
+            features: has the shape of [batch_size, feature_size]
+            labels: labels of the samples in the batch
+
+        Returns:
+            the batch of the triplets in the order below:
+            (anchor, positive, negative)
+        """
+        self._check_input_labels(labels=labels)
+
+        ids_anchor, ids_pos, ids_neg = self._sample(
+            features=features, labels=labels
+        )
+
+        return features[ids_anchor], features[ids_pos], features[ids_neg]
 
 
 class AllTripletsSampler(InBatchTripletsSampler):
@@ -164,7 +163,7 @@ class HardTrripletsSampler(InBatchTripletsSampler):
 
     @staticmethod
     def _sample_from_distmat(
-        distmat: Tensor, labels: List[int]
+            distmat: Tensor, labels: List[int]
     ) -> TTripletsIds:
         """
         This method samples the hardest triplets based on the given
