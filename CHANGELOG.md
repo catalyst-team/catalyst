@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- `log` parameter to `WandbLogger` ([#836](https://github.com/catalyst-team/catalyst/pull/836))
+- hparams experiment property ([#839](https://github.com/catalyst-team/catalyst/pull/839))
 - add docs build on push to master branch ([#844](https://github.com/catalyst-team/catalyst/pull/844))
 
 ### Changed
