@@ -1,11 +1,12 @@
+from typing import List, Tuple
 from abc import ABC, abstractmethod
 from collections import Counter
 from itertools import combinations, product
 from random import sample
 from sys import maxsize
-from typing import List, Tuple
 
 import numpy as np
+
 import torch
 from torch import Tensor
 
@@ -163,7 +164,7 @@ class HardTrripletsSampler(InBatchTripletsSampler):
 
     @staticmethod
     def _sample_from_distmat(
-            distmat: Tensor, labels: List[int]
+        distmat: Tensor, labels: List[int]
     ) -> TTripletsIds:
         """
         This method samples the hardest triplets based on the given
