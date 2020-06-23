@@ -1,3 +1,5 @@
+# flake8: noqa
+# TODO: add docs and move to pure contrib
 import itertools
 
 import numpy as np

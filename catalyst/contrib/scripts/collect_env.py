@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: recheck codestyle later
 """
 This script outputs relevant system environment info.
 Diagnose your system and show basic information.

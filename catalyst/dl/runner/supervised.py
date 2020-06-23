@@ -124,6 +124,9 @@ class SupervisedRunner(Runner):
             batch (Mapping[str, Any]): dictionary with data batches
                 from DataLoaders.
             **kwargs: additional parameters to pass to the model
+
+        Returns:
+            dict with model output batch
         """
         output = self._process_input(batch, **kwargs)
         output = self._process_output(output)

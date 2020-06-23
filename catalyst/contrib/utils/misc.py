@@ -26,6 +26,9 @@ def pairwise(iterable: Iterable[Any]) -> Iterable[Any]:
 def make_tuple(tuple_like):
     """Creates a tuple if given ``tuple_like`` value isn't list or tuple.
 
+    Args:
+        tuple_like: tuple like object - list or tuple
+
     Returns:
         tuple or list
     """
@@ -62,7 +65,8 @@ def find_value_ids(it: Iterable[Any], value: Any) -> List[int]:
         it: list of any
         value: query element
 
-    Returns: indices of the all elements equal x0
+    Returns:
+        indices of the all elements equal x0
     """
     inds = [i for i, el in enumerate(it) if el == value]
     return inds

@@ -223,7 +223,7 @@ def get_model_confidences(
     confidences: np.ndarray,
     thresholds: Dict[int, float] = None,
     classes: List[int] = None,
-):
+) -> np.ndarray:
     """
     @TODO: Docs (add description). Contribution is welcome
 
@@ -232,6 +232,9 @@ def get_model_confidences(
             [dataset_len; class_confidences]
         thresholds (Dict[int, float]): thresholds for each class
         classes (List[int]): classes of interest for evaluation
+
+    Returns:
+        thresholded confidences
     """
     if classes is not None:
         classes = np.array(classes)

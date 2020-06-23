@@ -312,8 +312,6 @@ class IExperiment(ABC):
             stage (str): stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
             epoch (int): epoch index
-            **kwargs (dict): additional parameters to use during
-                dataset creation
 
         Returns:
             OrderedDict[str, DataLoader]: Ordered dictionary
@@ -350,6 +348,14 @@ class IExperiment(ABC):
                 - :py:mod:`catalyst.core.experiment.IExperiment`
                 - :py:mod:`catalyst.core.runner.IRunner`
                 - :py:mod:`catalyst.core.callback.Callback`
+
+        Args:
+            stage (str): stage name of interest,
+                like "pretrain" / "train" / "finetune" / etc
+
+        Returns:
+            OrderedDict[str, Callback]: Ordered dictionary
+                with callbacks for current stage.
         """
         pass
 

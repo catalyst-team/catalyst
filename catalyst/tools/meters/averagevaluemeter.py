@@ -35,6 +35,7 @@ class AverageValueMeter(meter.Meter):
         Args:
             value (float): value for update,
                 can be scalar number or PyTorch tensor
+            batch_size (int): batch size for update
 
         .. note::
             Because of algorithm design,

@@ -53,6 +53,12 @@ class Ralamb(Optimizer):
         Args:
             closure (callable, optional): A closure that reevaluates
                 the model and returns the loss.
+
+        Returns:
+            computed loss
+
+        Raises:
+            RuntimeError: Ralamb does not support sparse gradients
         """
         loss = None
         if closure is not None:

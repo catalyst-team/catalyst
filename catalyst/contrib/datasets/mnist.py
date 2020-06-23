@@ -1,3 +1,5 @@
+# flake8: noqa
+# TODO: docs and refactor for datasets-contrib
 import codecs
 import os
 

@@ -8,8 +8,15 @@ from catalyst import utils
 
 
 def build_args(parser):
-    """Constructs the command-line arguments for
+    """
+    Constructs the command-line arguments for
     ``catalyst-data split-dataframe``.
+
+    Args:
+        parser: parser
+
+    Returns:
+        modified parser
     """
     parser.add_argument(
         "--in-csv",

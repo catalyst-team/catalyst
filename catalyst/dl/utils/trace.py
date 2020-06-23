@@ -123,7 +123,11 @@ def trace_model(
         predict_params (dict): additional parameters for model forward
 
     Returns:
-        (ScriptModule): Traced model
+        (jit.ScriptModule): Traced model
+
+    Raises:
+        ValueError: if both batch and predict_fn must be specified or
+          mode is not in 'eval' or 'train'.
     """
     if batch is None or predict_fn is None:
         raise ValueError("Both batch and predict_fn must be specified.")
@@ -371,7 +375,7 @@ def save_traced_model(
     out_dir: Union[str, Path] = None,
     out_model: Union[str, Path] = None,
     checkpoint_name: str = None,
-):
+) -> None:
     """Saves traced model.
 
     Args:
@@ -386,6 +390,10 @@ def save_traced_model(
         out_model (Union[str, Path]): Path to save model to
             (overrides logdir & out_dir)
         checkpoint_name (str): Checkpoint name used to restore the model
+
+    Raises:
+        ValueError: if nothing out of `logdir`, `out_dir` or `out_model`
+          is specified.
     """
     if out_model is None:
         file_name = get_trace_name(

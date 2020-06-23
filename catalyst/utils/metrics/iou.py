@@ -2,7 +2,7 @@
 IoU metric. Jaccard metric refers to IoU here, same functionality.
 """
 
-from typing import List, Union
+from typing import List
 from functools import partial
 
 import torch
@@ -19,11 +19,13 @@ def iou(
     eps: float = 1e-7,
     threshold: float = None,
     activation: str = "Sigmoid",
-) -> Union[float, List[float]]:
+) -> torch.Tensor:
     """
     Args:
         outputs (torch.Tensor): A list of predicted elements
         targets (torch.Tensor):  A list of elements that are to be predicted
+        classes (List[str]): if classes are specified
+            we reduce across all dims except channels
         eps (float): epsilon to avoid zero division
         threshold (float): threshold for outputs binarization
         activation (str): An torch.nn activation applied to the outputs.
@@ -38,6 +40,7 @@ def iou(
     if threshold is not None:
         outputs = (outputs > threshold).float()
 
+    # TODO: fix classes issue
     # ! fix backward compatibility
     if classes is not None:
         # if classes are specified we reduce across all dims except channels

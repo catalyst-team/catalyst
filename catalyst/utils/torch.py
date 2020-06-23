@@ -274,15 +274,18 @@ def get_network_output(net: Model, *input_shapes_args, **input_shapes_kwargs):
     """# noqa: D202
     For each input shape returns an output tensor
 
-    Args:
-        net (Model): the model
-        *input_shapes_args: variable length argument list of shapes
-        **input_shapes_kwargs:
-
     Examples:
         >>> net = nn.Linear(10, 5)
         >>> utils.get_network_output(net, (1, 10))
         tensor([[[-0.2665,  0.5792,  0.9757, -0.5782,  0.1530]]])
+
+    Args:
+        net (Model): the model
+        *input_shapes_args: variable length argument list of shapes
+        **input_shapes_kwargs: key-value arguemnts of shapes
+
+    Returns:
+        tensor with network output
     """
 
     def _rand_sample(

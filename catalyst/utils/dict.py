@@ -89,6 +89,10 @@ def get_dictkey_auto_fn(key: Optional[Union[str, List[str]]]) -> Callable:
 
     Returns:
         function
+
+    Raises:
+        NotImplementedError: if key is out of
+            `str`, `tuple`, `list`, `dict`, `None`
     """
     if isinstance(key, str):
         if key == "__all__":

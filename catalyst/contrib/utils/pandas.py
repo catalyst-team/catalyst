@@ -1,3 +1,5 @@
+# flake8: noqa
+# TODO: add docs and refactor for pure contrib
 from typing import Dict, List, Optional, Tuple, Union
 from collections import defaultdict
 
@@ -531,6 +533,10 @@ def balance_classes(
 
     Returns:
         pd.DataFrame: new dataframe with balanced ``class_column``
+
+    Raises:
+        NotImplementedError:
+            if `how` is not in ["upsampling", "downsampling", int]
     """
     cnt = defaultdict(lambda: 0.0)
     for label in sorted(dataframe[class_column].unique()):

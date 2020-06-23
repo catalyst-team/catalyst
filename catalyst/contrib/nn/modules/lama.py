@@ -75,11 +75,15 @@ class TemporalAttentionPooling(nn.Module):
         self, x: torch.Tensor, mask: torch.Tensor = None
     ) -> torch.Tensor:
         """
+        Forward call.
+
         Args:
             x (torch.Tensor): tensor of size
                 (batch_size, history_len, feature_size)
+            mask: mask to use
 
-        @TODO: Docs. Contribution is welcome.
+        Returns:
+            pooling result
         """
         batch_size, history_len, feature_size = x.shape
 
@@ -104,11 +108,15 @@ class TemporalConcatPooling(nn.Module):
         self, x: torch.Tensor, mask: torch.Tensor = None
     ) -> torch.Tensor:
         """
+        Concat pooling forward.
+
         Args:
             x (torch.Tensor): tensor of size
                 (batch_size, history_len, feature_size)
+            mask: mask to use
 
-        @TODO: Docs. Contribution is welcome.
+        Returns:
+            concated result
         """
         x = x.view(x.shape[0], -1)
         return x
@@ -197,11 +205,15 @@ class LamaPooling(nn.Module):
         self, x: torch.Tensor, mask: torch.Tensor = None
     ) -> torch.Tensor:
         """
+        Forward method of the LAMA.
+
         Args:
             x (torch.Tensor): tensor of size
                 (batch_size, history_len, feature_size)
+            mask (torch.Tensor): mask to use for attention compute
 
-        @TODO: Docs. Contribution is welcome.
+        Returns:
+            torch.Tensor: LAMA pooling result
         """
         batch_size, history_len, feature_size = x.shape
 

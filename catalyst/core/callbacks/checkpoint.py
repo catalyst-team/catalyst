@@ -343,6 +343,9 @@ class CheckpointCallback(BaseCheckpointCallback):
         Args:
             checkpoint (dict): checkpoint dict,
                 should contain ``stage_name`` and ``epoch`` keys.
+
+        Returns:
+            str: checkpoint suffix
         """
         result = f"{checkpoint['stage_name']}.{checkpoint['epoch']}"
         return result
@@ -355,6 +358,9 @@ class CheckpointCallback(BaseCheckpointCallback):
         Args:
             last_valid_metrics (dict): dict with metrics
                 from last validation step.
+
+        Returns:
+            OrderedDict: processed metrics
         """
         top_best_checkpoints = [
             (Path(filepath).stem, valid_metric)
@@ -687,6 +693,9 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         Args:
             checkpoint (dict): checkpoint dict,
                 should contain ``stage_name`` and ``epoch`` keys.
+
+        Returns:
+            str: checkpoint suffix
         """
         result = (
             f"{checkpoint['stage_name']}."

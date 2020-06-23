@@ -1,3 +1,5 @@
+# flake8: noqa
+# TODO: update docs and shapes
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -61,6 +63,9 @@ class SymmetricCrossEntropyLoss(nn.Module):
                 (batch_size, num_classes)
             target (torch.Tensor): target tensor of size (batch_size), where
                 values of a vector correspond to class index
+
+        Returns:
+            computed loss
         """
         num_classes = input_.shape[1]
         target_one_hot = F.one_hot(target, num_classes).float()
@@ -79,33 +84,29 @@ class SymmetricCrossEntropyLoss(nn.Module):
         return loss
 
 
-class MaskCrossEntropyLoss(torch.nn.CrossEntropyLoss):
+class MaskCrossEntropyLoss(nn.Module):
     """@TODO: Docs. Contribution is welcome."""
 
-    def __init__(
-        self,
-        *args,
-        target_name: str = "targets",
-        mask_name: str = "mask",
-        **kwargs
-    ):
+    def __init__(self, *args, **kwargs):
         """@TODO: Docs. Contribution is welcome."""
-        super().__init__(*args, **kwargs)
-        self.target_name = target_name
-        self.mask_name = mask_name
-        self.reduction = "none"
+        super().__init__()
+        self.ce_loss = nn.CrossEntropyLoss(*args, **kwargs, reduction="none")
 
     def forward(
-        self, input_: torch.Tensor, target_mask: torch.Tensor
+        self, logits: torch.Tensor, target: torch.Tensor, mask: torch.Tensor,
     ) -> torch.Tensor:
-        """Calculates loss between ``input_`` and ``target_mask`` tensors.
-
-        @TODO: Docs. Contribution is welcome.
         """
-        target = target_mask[self.target_name]
-        mask = target_mask[self.mask_name]
+        Calculates loss between ``logits`` and ``target`` tensors.
 
-        loss = super().forward(input_, target)
+        Args:
+            logits: model logits
+            target: true targets
+            mask: targets mask
+
+        Returns:
+            computed loss
+        """
+        loss = self.ce_loss.forward(logits, target)
         loss = torch.mean(loss[mask == 1])
         return loss
 

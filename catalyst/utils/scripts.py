@@ -110,8 +110,8 @@ def distributed_cmd_run(
     Distributed run
 
     Args:
-        worker_fn (Callable):
-        distributed (bool):
+        worker_fn (Callable): worker fn to run in distributed mode
+        distributed (bool): distributed flag
         args: additional parameters for worker_fn
         kwargs: additional key-value parameters for worker_fn
     """

@@ -85,10 +85,14 @@ def get_environment_vars() -> Dict[str, Any]:
 
 def list_pip_packages() -> str:
     """
-    @TODO: Docs. Contribution is welcome
-    @TODO: When catching exception, e has no attribute 'output'
+    Lists pip installed packages.
+
+    Returns:
+        string with pip installed packages
     """
     result = ""
+    # TODO: Docs. Contribution is welcome
+    # TODO: When catching exception, e has no attribute 'output'
     with open(os.devnull, "w") as devnull:
         try:
             result = (
@@ -113,11 +117,15 @@ def list_pip_packages() -> str:
 
 def list_conda_packages() -> str:
     """
-    @TODO: Docs. Contribution is welcome
-    @TODO: When catching exception, e has no attribute 'output'
+    Lists conda installed packages.
+
+    Returns:
+        list with cinda installed packages
     """
     result = ""
     conda_meta_path = Path(sys.prefix) / "conda-meta"
+    # TODO: Docs. Contribution is welcome
+    # TODO: When catching exception, e has no attribute 'output'
     if conda_meta_path.exists():
         # We are currently in conda virtual env
         with open(os.devnull, "w") as devnull:

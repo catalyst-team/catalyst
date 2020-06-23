@@ -27,6 +27,9 @@ class GlobalAvgPool2d(nn.Module):
 
         Args:
             in_features: number of channels in the input sample
+
+        Returns:
+            number of output features
         """
         return in_features
 
@@ -53,6 +56,9 @@ class GlobalMaxPool2d(nn.Module):
 
         Args:
             in_features: number of channels in the input sample
+
+        Returns:
+            number of output features
         """
         return in_features
 
@@ -76,6 +82,9 @@ class GlobalConcatPool2d(nn.Module):
 
         Args:
             in_features: number of channels in the input sample
+
+        Returns:
+            number of output features
         """
         return in_features * 2
 
@@ -108,6 +117,9 @@ class GlobalAttnPool2d(nn.Module):
 
         Args:
             in_features: number of channels in the input sample
+
+        Returns:
+            number of output features
         """
         return in_features
 
@@ -131,6 +143,9 @@ class GlobalAvgAttnPool2d(nn.Module):
 
         Args:
             in_features: number of channels in the input sample
+
+        Returns:
+            number of output features
         """
         return in_features * 2
 
@@ -154,6 +169,9 @@ class GlobalMaxAttnPool2d(nn.Module):
 
         Args:
             in_features: number of channels in the input sample
+
+        Returns:
+            number of output features
         """
         return in_features * 2
 
@@ -178,5 +196,8 @@ class GlobalConcatAttnPool2d(nn.Module):
 
         Args:
             in_features: number of channels in the input sample
+
+        Returns:
+            number of output features
         """
         return in_features * 3

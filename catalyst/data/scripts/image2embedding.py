@@ -62,8 +62,15 @@ def dict_transformer(sample):
 
 
 def build_args(parser):
-    """Constructs the command-line arguments for
+    """
+    Constructs the command-line arguments for
     ``catalyst-data image2embeddings``.
+
+    Args:
+        parser: parser
+
+    Returns:
+        modified parser
     """
     parser.add_argument(
         "--in-csv", type=str, dest="in_csv", help="Path to csv with photos"

@@ -21,6 +21,8 @@ def sigmoid_focal_loss(
     Args:
         outputs: tensor of arbitrary shape
         targets: tensor of the same shape as input
+        gamma: gamma for focal loss
+        alpha: alpha for focal loss
         reduction (string, optional):
             specifies the reduction to apply to the output:
             ``"none"`` | ``"mean"`` | ``"sum"`` | ``"batchwise_mean"``.
@@ -28,6 +30,9 @@ def sigmoid_focal_loss(
             ``"mean"``: the sum of the output will be divided by the number of
             elements in the output,
             ``"sum"``: the output will be summed.
+
+    Returns:
+        computed loss
 
     Source: https://github.com/BloodAxe/pytorch-toolbelt
     """
@@ -66,9 +71,21 @@ def reduced_focal_loss(
     It has been proposed in `Reduced Focal Loss\: 1st Place Solution to xView
     object detection in Satellite Imagery`_ paper.
 
+    .. note::
+        ``size_average`` and ``reduce`` params are in the process of being
+        deprecated, and in the meantime, specifying either of those two args
+        will override ``reduction``.
+
+    Source: https://github.com/BloodAxe/pytorch-toolbelt
+
+    .. _Reduced Focal Loss\: 1st Place Solution to xView object detection
+        in Satellite Imagery: https://arxiv.org/abs/1903.01347
+
     Args:
         outputs: tensor of arbitrary shape
         targets: tensor of the same shape as input
+        threshold: threshold for focal reduction
+        gamma: gamma for focal reduction
         reduction (string, optional):
             specifies the reduction to apply to the output:
             ``"none"`` | ``"mean"`` | ``"sum"`` | ``"batchwise_mean"``.
@@ -79,15 +96,8 @@ def reduced_focal_loss(
             ``"batchwise_mean"`` computes mean loss per sample in batch.
             Default: "mean"
 
-    .. note::
-        ``size_average`` and ``reduce`` params are in the process of being
-        deprecated, and in the meantime, specifying either of those two args
-        will override ``reduction``.
-
-    Source: https://github.com/BloodAxe/pytorch-toolbelt
-
-    .. _Reduced Focal Loss\: 1st Place Solution to xView object detection
-        in Satellite Imagery: https://arxiv.org/abs/1903.01347
+    Returns:
+        computed loss
     """
     targets = targets.type(outputs.type())
 

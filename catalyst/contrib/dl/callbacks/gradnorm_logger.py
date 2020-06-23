@@ -42,6 +42,7 @@ class GradNormLogger(Callback):
             model (Model): model which gradients to be saved.
             prefix (str): prefix for keys in resulting dictionary.
             norm_type (int): norm type of gradient norm.
+
         Returns:
             Dict: dictionary in which gradient norms are stored.
         """

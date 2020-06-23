@@ -26,6 +26,9 @@ def tokenize_text(
         lowercase (bool): if true makes text lowercase before tokenizing
         remove_punctuation (bool): if true
             removes ``string.punctuation`` from text before tokenizing
+
+    Returns:
+        batch with tokenized text
     """
     if strip:
         text = text.strip()

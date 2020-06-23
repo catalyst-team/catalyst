@@ -121,8 +121,8 @@ class APMeter(meter.Meter):
     def value(self):
         """Returns the model"s average precision for each class.
 
-        Return:
-            FloatTensor: 1xK tensor, with avg precision for each class k
+        Returns:
+            torch.Tensor: 1xK tensor, with avg precision for each class k
         """
         if self.scores.numel() == 0:
             return 0

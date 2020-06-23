@@ -46,6 +46,9 @@ class PeriodicLoaderCallback(Callback):
 
         Arguments:
             runner (IRunner): current runner
+
+        Raises:
+            ValueError: if there are no loaders in epoch
         """
         # store pointers to data loader objects
         for name, loader in runner.loaders.items():
@@ -76,7 +79,8 @@ class PeriodicLoaderCallback(Callback):
                 )
 
     def on_epoch_start(self, runner: IRunner) -> None:
-        """Set loaders for current epoch.
+        """
+        Set loaders for current epoch.
         If validation is not required then the first loader
         from loaders used in current epoch will be used
         as validation loader.
@@ -86,6 +90,9 @@ class PeriodicLoaderCallback(Callback):
 
         Arguments:
             runner (IRunner): current runner
+
+        Raises:
+            ValueError: if there are no loaders in epoch
         """
         epoch_num = runner.epoch
         # loaders to use in current epoch

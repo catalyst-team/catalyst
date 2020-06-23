@@ -43,6 +43,12 @@ class RAdam(Optimizer):
         Args:
             closure (callable, optional): A closure that reevaluates
                 the model and returns the loss.
+
+        Returns:
+            computed loss
+
+        Raises:
+            RuntimeError: RAdam does not support sparse gradients
         """
         loss = None
         if closure is not None:

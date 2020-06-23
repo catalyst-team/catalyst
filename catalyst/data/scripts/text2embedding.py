@@ -16,8 +16,15 @@ from catalyst.dl import utils
 
 
 def build_args(parser):
-    """Constructs the command-line arguments for
+    """
+    Constructs the command-line arguments for
     ``catalyst-data text2embeddings``.
+
+    Args:
+        parser: parser
+
+    Returns:
+        modified parser
     """
     parser.add_argument(
         "--in-csv", type=str, help="Path to csv with text", required=True
@@ -116,7 +123,7 @@ def main(args, _=None):
     utils.set_global_seed(args.seed)
     utils.prepare_cudnn(args.deterministic, args.benchmark)
 
-    if hasattr(args, "in_huggingface"):
+    if getattr(args, "in_huggingface", False):
         model_config = BertConfig.from_pretrained(args.in_huggingface)
         model_config.output_hidden_states = args.output_hidden_states
         model = BertModel.from_pretrained(
@@ -128,7 +135,7 @@ def main(args, _=None):
         model_config.output_hidden_states = args.output_hidden_states
         model = BertModel(config=model_config)
         tokenizer = BertTokenizer.from_pretrained(args.in_vocab)
-    if hasattr(args, "in_model"):
+    if getattr(args, "in_model", None) is not None:
         checkpoint = utils.load_checkpoint(args.in_model)
         checkpoint = {"model_state_dict": checkpoint}
         utils.unpack_checkpoint(checkpoint=checkpoint, model=model)

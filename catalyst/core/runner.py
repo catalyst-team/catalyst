@@ -489,6 +489,10 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
 
         Args:
             value (Union[Model, Dict[str, Model]]): new model.
+
+        Raises:
+            TypeError: if value is out of
+                `torch.nn.Module` or `Dict[str, torch.nn.Module]`
         """
         if isinstance(value, nn.Module):
             model = value
@@ -530,6 +534,9 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
 
         Args:
             value (Device): new torch device.
+
+        Raises:
+            TypeError: if `value` is out of `torch.device`, `str` or `None`
         """
         if isinstance(value, torch.device):
             self._device = value
@@ -659,6 +666,9 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
             key (str): name for attribute of interest,
                 like `criterion`, `optimizer`, `scheduler`
             inner_key (str): name of inner dictionary key
+
+        Returns:
+            inner attribute
         """
         if inner_key is None:
             return getattr(self, key)
@@ -912,6 +922,12 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         Args:
             experiment (IExperiment): Experiment instance to use for Runner.
 
+        Returns:
+            self, `IRunner` instance after the experiment
+
+        Raises:
+            Exception, KeyboardInterrupt: if during pipeline exception,
+                no handler we found into callbacks
         """
         self.experiment = experiment or self.experiment
         assert self.experiment is not None

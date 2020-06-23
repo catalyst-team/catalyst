@@ -186,6 +186,9 @@ class KNNMetricCallback(Callback):
 
         Args:
             runner (IRunner): current runner
+
+        Raises:
+            Warning: if targets has more classes than num classes
         """
         self.features = np.stack(self.features)
         self.targets = np.stack(self.targets)

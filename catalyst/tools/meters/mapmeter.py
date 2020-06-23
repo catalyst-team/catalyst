@@ -56,7 +56,7 @@ class mAPMeter(meter.Meter):  # noqa: N801
     def value(self):
         """Returns mean of `self.apmeter` value.
 
-        Return:
-            FloatTensor: mAP scalar tensor
+        Returns:
+            torch.Tensor: mAP scalar tensor
         """
         return self.apmeter.value().mean()

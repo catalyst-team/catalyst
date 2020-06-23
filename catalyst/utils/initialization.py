@@ -2,6 +2,7 @@ from typing import Callable
 
 from torch import nn
 
+# TODO: move to global registry with activation functions
 ACTIVATIONS = {  # noqa: WPS407
     None: "sigmoid",
     nn.Sigmoid: "sigmoid",
@@ -29,6 +30,14 @@ def get_optimal_inner_init(
 
     Args:
         nonlinearity: non-linear activation
+        **kwargs: extra kwargs
+
+    Returns:
+        optimal initialization function
+
+    Raises:
+        NotImplementedError: if nonlinearity is out of
+            `sigmoid`, `tanh`, `relu, `leaky_relu`
     """
     nonlinearity: str = _nonlinearity2name(nonlinearity)
     assert isinstance(nonlinearity, str)
@@ -55,6 +64,12 @@ def outer_init(layer: nn.Module) -> None:
     """
     Initialization for output layers of policy and value networks typically
     used in deep reinforcement learning literature.
+
+    Args:
+        layer: torch nn.Module instance
+
+    Returns:
+        None
     """
     if isinstance(layer, (nn.Linear, nn.Conv1d, nn.Conv2d)):
         v = 3e-3

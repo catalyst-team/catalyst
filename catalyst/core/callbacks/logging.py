@@ -144,6 +144,9 @@ class ConsoleLogger(Callback):
         """
         Translate ``runner.metric_manager`` to console and text file
         at the end of an epoch.
+
+        Args:
+            runner (IRunner): current runner instance
         """
         self.logger.info("", extra={"runner": runner})
 

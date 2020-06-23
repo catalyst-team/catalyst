@@ -104,6 +104,11 @@ def get_loaders_from_params(
     Returns:
         OrderedDict[str, DataLoader]: dictionary with
             ``torch.utils.data.DataLoader``
+
+    Raises:
+        NotImplementedError: if datasource is out of `Dataset` or dict
+        ValueError: if batch_sampler option is mutually
+            exclusive with distributed
     """
     default_batch_size = batch_size
     default_num_workers = num_workers

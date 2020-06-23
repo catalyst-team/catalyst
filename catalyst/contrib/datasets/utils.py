@@ -53,6 +53,10 @@ def download_url(url, root, filename=None, md5=None):
             If None, use the basename of the URL
         md5 (str, optional): MD5 checksum of the download.
             If None, do not check
+
+    Raises:
+        IOError: if failed to download url
+        RuntimeError: if file not found or corrupted
     """
     import urllib
 

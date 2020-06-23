@@ -50,7 +50,8 @@ class FocalLossBinary(_Loss):
             logits: [bs; ...]
             targets: [bs; ...]
 
-        @TODO: Docs. Contribution is welcome.
+        Returns:
+            computed loss
         """
         targets = targets.view(-1)
         logits = logits.view(-1)
@@ -84,7 +85,8 @@ class FocalLossMultiClass(FocalLossBinary):
             logits: [bs; num_classes; ...]
             targets: [bs; ...]
 
-        @TODO: Docs. Contribution is welcome.
+        Returns:
+            computed loss
         """
         num_classes = logits.size(1)
         loss = 0

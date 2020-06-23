@@ -82,6 +82,9 @@ class LRFinder(LRUpdater):
 
         Args:
             runner (IRunner): current runner
+
+        Raises:
+            NotImplementedError: at the end of LRFinder
         """
         super().on_batch_end(runner=runner)
         if self.find_iter > self.num_steps:

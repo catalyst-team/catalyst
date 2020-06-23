@@ -19,6 +19,7 @@ def f1score(precision_value, recall_value, eps=1e-5):
     Args:
         precision_value: precision (0-1)
         recall_value: recall (0-1)
+        eps: epsilon to use
 
     Returns:
         F1 score (0-1)
@@ -36,6 +37,7 @@ def precision(tp, fp, eps: float = 1e-5) -> float:
     Args:
         tp (int): number of true positives
         fp (int): number of false positives
+        eps: epsilon to use
 
     Returns:
         precision value (0-1)
@@ -54,6 +56,7 @@ def recall(tp, fn, eps=1e-5) -> float:
     Args:
         tp: number of true positives
         fn: number of false negatives
+        eps: epsilon to use
 
     Returns:
         recall value (0-1)

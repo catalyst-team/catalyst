@@ -15,6 +15,10 @@ def sort_callbacks_by_order(
 
     Returns:
         sequence of callbacks sorted by ``callback order``
+
+    Raises:
+        TypeError: if `callbacks` is out of
+            `None`, `dict`, `OrderedDict`, `list`
     """
     if callbacks is None:
         output = OrderedDict()

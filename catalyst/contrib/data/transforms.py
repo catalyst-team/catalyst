@@ -16,6 +16,10 @@ def to_tensor(pic: np.ndarray) -> torch.Tensor:
 
     Returns:
         Tensor: Converted image.
+
+    Raises:
+        TypeError: if `pic` is not np.ndarray
+        ValueError: if `pic` is not 2/3 dimensional.
     """
     if not isinstance(pic, np.ndarray):
         raise TypeError(f"pic should be ndarray. Got {type(pic)}")
@@ -34,7 +38,7 @@ def to_tensor(pic: np.ndarray) -> torch.Tensor:
     return img
 
 
-def normalize(tensor, mean, std, inplace=False):
+def normalize(tensor: torch.Tensor, mean, std, inplace=False):
     """Normalize a tensor image with mean and standard deviation.
 
     .. note::
@@ -49,6 +53,9 @@ def normalize(tensor, mean, std, inplace=False):
 
     Returns:
         Tensor: Normalized Tensor image.
+
+    Raises:
+        TypeError: if `tensor` is not torch.Tensor
     """
     if not (torch.is_tensor(tensor) and tensor.ndimension() == 3):
         raise TypeError("tensor is not a torch image.")

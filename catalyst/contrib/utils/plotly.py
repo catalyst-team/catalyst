@@ -1,3 +1,5 @@
+# flake8: noqa
+# TODO: add docs and move to pure contrib
 from typing import Dict, List, Optional, Union
 from collections import defaultdict
 from pathlib import Path

@@ -300,11 +300,15 @@ class ConfigExperiment(IExperiment):
     def get_optimizer(
         self, stage: str, model: Union[Model, Dict[str, Model]]
     ) -> Union[Optimizer, Dict[str, Optimizer]]:
-        """Returns the optimizer for a given stage.
+        """
+        Returns the optimizer for a given stage.
 
         Args:
             stage (str): stage name
             model (Union[Model, Dict[str, Model]]): model or a dict of models
+
+        Returns:
+            optimizer for selected stage
         """
         optimizer_params = self.stages_config[stage].get(
             "optimizer_params", {}
@@ -393,12 +397,16 @@ class ConfigExperiment(IExperiment):
     def get_transforms(
         self, stage: str = None, dataset: str = None
     ) -> Callable:
-        """Returns transform for a given stage and dataset.
+        """
+        Returns transform for a given stage and dataset.
 
         Args:
             stage (str): stage name
             dataset (str): dataset name (e.g. "train", "valid"),
-              will be used only if the value of `_key_value`` is ``True``
+                will be used only if the value of `_key_value`` is ``True``
+
+        Returns:
+            Callable: transform function
         """
         transform_params = deepcopy(
             self.stages_config[stage].get("transform_params", {})
