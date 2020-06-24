@@ -1,5 +1,5 @@
 import argparse
-import pickle
+import pickle  # noqa: S403
 
 import nmslib
 import numpy as np
@@ -43,11 +43,11 @@ def main(args, _=None):
     print("[==       Loading features       ==]")
     features = None
     for in_npy in args.in_npy.split(","):
-        features_ = np.load(in_npy, mmap_mode="r")
+        features_fold = np.load(in_npy, mmap_mode="r")
         if features is None:
-            features = features_
+            features = features_fold
         else:
-            features = np.concatenate((features, features_), axis=0)
+            features = np.concatenate((features, features_fold), axis=0)
 
     if args.n_hidden is not None:
         pipeline = Pipeline(

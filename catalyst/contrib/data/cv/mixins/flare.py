@@ -1,7 +1,7 @@
 from typing import Dict
 import random
 
-import albumentations as A
+import albumentations as albu
 
 
 class FlareMixin:
@@ -24,7 +24,7 @@ class FlareMixin:
         self.output_key = output_key
 
         self.sunflare_params = sunflare_params or {}
-        self.transform = A.RandomSunFlare(**self.sunflare_params)
+        self.transform = albu.RandomSunFlare(**self.sunflare_params)
 
     def __call__(self, dictionary):
         """@TODO: Docs. Contribution is welcome."""

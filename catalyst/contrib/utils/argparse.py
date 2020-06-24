@@ -6,7 +6,7 @@ def boolean_flag(
     parser: argparse.ArgumentParser,
     name: str,
     default: Optional[bool] = False,
-    help: str = None,
+    help: str = None,  # noqa: WPS125
     shorthand: str = None,
 ) -> None:
     """Add a boolean flag to a parser inplace.

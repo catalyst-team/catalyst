@@ -20,6 +20,9 @@ def maybe_recursive_call(
         recursive_args: list of arguments to pass to the ``method``
         recursive_kwargs: list of key-arguments to pass to the ``method``
         **kwargs: Arbitrary keyword arguments
+
+    Returns:
+        result of `method` call
     """
     if isinstance(object_or_dict, dict):
         result = type(object_or_dict)()
@@ -90,6 +93,9 @@ def format_metric(name: str, value: float) -> str:
     Args:
         name (str): metric name
         value (float): value of metric
+
+    Returns:
+        str: formatted metric
     """
     if value < 1e-4:
         return f"{name}={value:1.3e}"

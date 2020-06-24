@@ -7,7 +7,7 @@ import numpy as np
 
 import torch
 
-from . import meter
+from catalyst.tools.meters import meter
 
 
 class ClassErrorMeter(meter.Meter):
@@ -47,7 +47,11 @@ class ClassErrorMeter(meter.Meter):
         maxk = int(topk[-1])  # seems like Python3 wants int and not np.int64
         no = output.shape[0]
 
-        pred = torch.from_numpy(output).topk(maxk, 1, True, True)[1].numpy()
+        pred = (
+            torch.from_numpy(output)
+            .topk(maxk, dim=1, largest=True, sorted=True)[1]
+            .numpy()
+        )
         correct = pred == target[:, np.newaxis].repeat(pred.shape[1], 1)
 
         for k in topk:
@@ -65,4 +69,4 @@ class ClassErrorMeter(meter.Meter):
             else:
                 return float(self.sum[k]) / self.n * 100.0
         else:
-            return [self.value(k_) for k_ in self.topk]
+            return [self.value(topk) for topk in self.topk]

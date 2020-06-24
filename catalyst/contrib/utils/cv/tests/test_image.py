@@ -4,7 +4,8 @@ import torch
 
 from catalyst import utils
 from catalyst.contrib.data.transforms import normalize, to_tensor
-from catalyst.contrib.utils.cv.tensor import _IMAGENET_MEAN, _IMAGENET_STD
+from catalyst.contrib.utils.cv.tensor import _IMAGENET_MEAN  # noqa: WPS450
+from catalyst.contrib.utils.cv.tensor import _IMAGENET_STD  # noqa: WPS450
 
 
 def test_imread():

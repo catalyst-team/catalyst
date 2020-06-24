@@ -10,6 +10,9 @@ def get_native_batch_from_loader(loader: DataLoader, batch_index: int = 0):
     Args:
         loader (DataLoader): Loader to get batch from
         batch_index (int): Index of batch to take from dataset of the loader
+
+    Returns:
+        batch from loader
     """
     dataset = loader.dataset
     collate_fn = loader.collate_fn
@@ -28,17 +31,25 @@ def get_native_batch_from_loaders(
         loaders (Dict[str, DataLoader]): Loaders list to get loader from
         loader (Union[str, int]): Loader name or its index, default is zero
         batch_index (int): Index of batch to take from dataset of the loader
+
+    Returns:
+        batch from loader
+
+    Raises:
+        TypeError: if loader parameter is not a string or an integer
     """
     if isinstance(loader, str):
-        _loader = loaders[loader]
+        loader_instance = loaders[loader]
     elif isinstance(loader, int):
-        _loader = list(loaders.values())[loader]
+        loader_instance = list(loaders.values())[loader]
     else:
         raise TypeError("Loader parameter must be a string or an integer")
 
-    return get_native_batch_from_loader(
-        loader=_loader, batch_index=batch_index
+    output = get_native_batch_from_loader(
+        loader=loader_instance, batch_index=batch_index
     )
+
+    return output
 
 
 __all__ = [

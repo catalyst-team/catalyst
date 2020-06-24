@@ -3,12 +3,21 @@ from functools import partial
 
 import numpy as np
 
-from .blocks import DecoderSumBlock, EncoderDownsampleBlock
-from .bridge import UnetBridge
-from .core import ResnetUnetSpec, UnetSpec
-from .decoder import UNetDecoder
-from .encoder import ResnetEncoder, UnetEncoder
-from .head import UnetHead
+from catalyst.contrib.models.cv.segmentation.blocks import (
+    DecoderSumBlock,
+    EncoderDownsampleBlock,
+)
+from catalyst.contrib.models.cv.segmentation.bridge import UnetBridge
+from catalyst.contrib.models.cv.segmentation.core import (
+    ResnetUnetSpec,
+    UnetSpec,
+)
+from catalyst.contrib.models.cv.segmentation.decoder import UNetDecoder
+from catalyst.contrib.models.cv.segmentation.encoder import (
+    ResnetEncoder,
+    UnetEncoder,
+)
+from catalyst.contrib.models.cv.segmentation.head import UnetHead
 
 
 class Linknet(UnetSpec):

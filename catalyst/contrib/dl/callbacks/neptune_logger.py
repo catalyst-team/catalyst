@@ -80,9 +80,9 @@ class NeptuneLogger(Callback):
                  be turned off. It is useful for debugging
         """
         super().__init__(
-            order=CallbackOrder.Logging,
-            node=CallbackNode.Master,
-            scope=CallbackScope.Experiment,
+            order=CallbackOrder.logging,
+            node=CallbackNode.master,
+            scope=CallbackScope.experiment,
         )
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
@@ -139,9 +139,9 @@ class NeptuneLogger(Callback):
         """Log batch metrics to Neptune."""
         if self.log_on_batch_end:
             mode = runner.loader_name
-            metrics_ = runner.batch_metrics
+            metrics = runner.batch_metrics
             self._log_metrics(
-                metrics=metrics_,
+                metrics=metrics,
                 step=runner.global_sample_step,
                 mode=mode,
                 suffix=self.batch_log_suffix,
@@ -151,9 +151,9 @@ class NeptuneLogger(Callback):
         """Translate epoch metrics to Neptune."""
         if self.log_on_epoch_end:
             mode = runner.loader_name
-            metrics_ = runner.loader_metrics
+            metrics = runner.loader_metrics
             self._log_metrics(
-                metrics=metrics_,
+                metrics=metrics,
                 step=runner.global_epoch,
                 mode=mode,
                 suffix=self.epoch_log_suffix,

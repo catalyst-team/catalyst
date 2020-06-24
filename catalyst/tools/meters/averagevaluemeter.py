@@ -3,7 +3,7 @@ Average value meter
 """
 import numpy as np
 
-from . import meter
+from catalyst.tools.meters import meter
 
 
 class AverageValueMeter(meter.Meter):
@@ -35,6 +35,7 @@ class AverageValueMeter(meter.Meter):
         Args:
             value (float): value for update,
                 can be scalar number or PyTorch tensor
+            batch_size (int): batch size for update
 
         .. note::
             Because of algorithm design,
@@ -45,7 +46,8 @@ class AverageValueMeter(meter.Meter):
         self.n_samples += batch_size
 
         if self.n == 1:
-            self.mean = 0.0 + value  # Force a copy in torch/numpy
+            # Force a copy in torch/numpy
+            self.mean = 0.0 + value  # noqa: WPS345
             self.std = 0.0
             self.mean_old = self.mean
             self.m_s = 0.0
@@ -63,8 +65,8 @@ class AverageValueMeter(meter.Meter):
         """Returns meter values.
 
         Returns:
-            mean (float): Mean that has been updated online.
-            std (float): Standard deviation that has been updated online.
+            Tuple[float, float]: tuple of mean and std
+            that have been updated online.
         """
         return self.mean, self.std
 

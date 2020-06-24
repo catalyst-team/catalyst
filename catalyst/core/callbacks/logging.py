@@ -8,9 +8,8 @@ from tqdm import tqdm
 from catalyst.contrib.tools.tensorboard import SummaryWriter
 from catalyst.core import utils
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.callbacks import formatters
 from catalyst.core.runner import IRunner
-
-from . import formatters
 
 
 class VerboseLogger(Callback):
@@ -26,7 +25,7 @@ class VerboseLogger(Callback):
                 to remove always_show metrics set it to an empty list ``[]``
             never_show (List[str]): list of metrics which will not be shown
         """
-        super().__init__(order=CallbackOrder.Logging, node=CallbackNode.Master)
+        super().__init__(order=CallbackOrder.logging, node=CallbackNode.master)
         self.tqdm: tqdm = None
         self.step = 0
         self.always_show = (
@@ -36,12 +35,12 @@ class VerboseLogger(Callback):
 
         intersection = set(self.always_show) & set(self.never_show)
 
-        _error_message = (
+        error_message = (
             f"Intersection of always_show and "
             f"never_show has common values: {intersection}"
         )
         if bool(intersection):
-            raise ValueError(_error_message)
+            raise ValueError(error_message)
 
     def _need_show(self, key: str):
         not_is_never_shown: bool = key not in self.never_show
@@ -103,7 +102,7 @@ class ConsoleLogger(Callback):
 
     def __init__(self):
         """Init ``ConsoleLogger``."""
-        super().__init__(order=CallbackOrder.Logging, node=CallbackNode.Master)
+        super().__init__(order=CallbackOrder.logging, node=CallbackNode.master)
         self.logger = None
 
     @staticmethod
@@ -145,6 +144,9 @@ class ConsoleLogger(Callback):
         """
         Translate ``runner.metric_manager`` to console and text file
         at the end of an epoch.
+
+        Args:
+            runner (IRunner): current runner instance
         """
         self.logger.info("", extra={"runner": runner})
 
@@ -165,7 +167,7 @@ class TensorboardLogger(Callback):
             log_on_batch_end (bool): logs per-batch metrics if set True
             log_on_epoch_end (bool): logs per-epoch metrics if set True
         """
-        super().__init__(order=CallbackOrder.Logging, node=CallbackNode.Master)
+        super().__init__(order=CallbackOrder.logging, node=CallbackNode.master)
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
         self.log_on_epoch_end = log_on_epoch_end
@@ -210,9 +212,9 @@ class TensorboardLogger(Callback):
 
         if self.log_on_batch_end:
             mode = runner.loader_name
-            metrics_ = runner.batch_metrics
+            metrics = runner.batch_metrics
             self._log_metrics(
-                metrics=metrics_,
+                metrics=metrics,
                 step=runner.global_sample_step,
                 mode=mode,
                 suffix="/batch",
