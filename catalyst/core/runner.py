@@ -10,6 +10,7 @@ from torch.utils.data import DataLoader, DistributedSampler
 from catalyst.core import utils
 from catalyst.core.callback import Callback, CallbackScope
 from catalyst.core.experiment import IExperiment
+from catalyst.core.legacy import IRunnerLegacy
 from catalyst.tools import settings
 from catalyst.tools.frozen_class import FrozenClass
 from catalyst.tools.typing import (
@@ -23,8 +24,6 @@ from catalyst.tools.typing import (
     RunnerScheduler,
     Scheduler,
 )
-
-from .legacy import IRunnerLegacy
 
 
 class IRunner(ABC, IRunnerLegacy, FrozenClass):
@@ -490,6 +489,10 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
 
         Args:
             value (Union[Model, Dict[str, Model]]): new model.
+
+        Raises:
+            TypeError: if value is out of
+                `torch.nn.Module` or `Dict[str, torch.nn.Module]`
         """
         if isinstance(value, nn.Module):
             model = value
@@ -531,6 +534,9 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
 
         Args:
             value (Device): new torch device.
+
+        Raises:
+            TypeError: if `value` is out of `torch.device`, `str` or `None`
         """
         if isinstance(value, torch.device):
             self._device = value
@@ -660,6 +666,9 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
             key (str): name for attribute of interest,
                 like `criterion`, `optimizer`, `scheduler`
             inner_key (str): name of inner dictionary key
+
+        Returns:
+            inner attribute
         """
         if inner_key is None:
             return getattr(self, key)
@@ -704,7 +713,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
             and getattr(self, "callbacks", None) is not None
         ):
             for key, value in self.callbacks.items():
-                if value.scope == CallbackScope.Experiment:
+                if value.scope == CallbackScope.experiment:
                     callbacks[key] = value
 
         callbacks = utils.sort_callbacks_by_order(callbacks)
@@ -913,6 +922,14 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         Args:
             experiment (IExperiment): Experiment instance to use for Runner.
 
+        Returns:
+            self, `IRunner` instance after the experiment
+
+        Raises:
+            Exception: if during pipeline exception,
+                no handler we found into callbacks
+            KeyboardInterrupt: if during pipeline exception,
+                no handler we found into callbacks
         """
         self.experiment = experiment or self.experiment
         assert self.experiment is not None

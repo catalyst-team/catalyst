@@ -64,7 +64,7 @@ class CircleLoss(nn.Module):
             labels: batch with samples correct labels of shape [bs; ]
 
         Returns:
-            (Tensor): circle loss
+            torch.Tensor: circle loss
         """
         sp, sn = _convert_label_to_similarity(normed_features, labels)
 

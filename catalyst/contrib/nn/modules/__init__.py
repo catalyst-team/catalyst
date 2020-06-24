@@ -14,7 +14,7 @@ from .pooling import (
 )
 from .rms_norm import RMSNorm
 from .se import (
-    ChannelSqueezeAndSpatialExcitation,
-    ConcurrentSpatialAndChannelSqueezeAndChannelExcitation,
-    SqueezeAndExcitation,
+    sSE,
+    scSE,
+    cSE,
 )

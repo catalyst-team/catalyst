@@ -38,7 +38,7 @@ OrderedLoader.add_implicit_resolver(
 )
 
 
-def _load_ordered_yaml(stream,):
+def _load_ordered_yaml(stream):
     return yaml.load(stream, OrderedLoader)
 
 
@@ -61,7 +61,7 @@ def load_config(
         encoding (str): encoding to read the config
 
     Returns:
-        (Union[Dict, List]): config
+        Union[Dict, List]: config
 
     Raises:
         Exception: if path ``path`` doesn't exists

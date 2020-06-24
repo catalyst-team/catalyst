@@ -1,7 +1,7 @@
 from typing import List, Optional
-from abc import ABC
+from abc import ABC, abstractmethod
 
-from torch.optim.lr_scheduler import _LRScheduler
+from torch.optim.lr_scheduler import _LRScheduler  # noqa: WPS450
 
 from catalyst.utils.torch import set_optimizer_momentum
 
@@ -9,13 +9,11 @@ from catalyst.utils.torch import set_optimizer_momentum
 class BaseScheduler(_LRScheduler, ABC):
     """Base class for all schedulers with momentum update."""
 
+    @abstractmethod
     def get_momentum(self) -> List[float]:
         """Function that returns the new momentum for optimizer.
-
-        Returns:
-            List[float]: calculated momentum for every param groups
         """
-        raise NotImplementedError
+        pass
 
     def step(self, epoch: Optional[int] = None) -> None:
         """Make one scheduler step.

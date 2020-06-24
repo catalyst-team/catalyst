@@ -12,7 +12,7 @@ class ValidationManagerCallback(Callback):
     def __init__(self):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__(
-            order=CallbackOrder.Validation, node=CallbackNode.All,
+            order=CallbackOrder.validation, node=CallbackNode.all,
         )
 
     def on_epoch_start(self, runner: IRunner) -> None:

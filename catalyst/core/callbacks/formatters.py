@@ -51,12 +51,12 @@ class TxtMetricsFormatter(MetricsFormatter):
     def _format_metrics(self, metrics: Dict[str, Dict[str, float]]):
         metrics_formatted = {}
         for key, value in metrics.items():
-            metrics_formatted_ = [
+            metrics_formatted_part = [
                 utils.format_metric(m_name, m_value)
                 for m_name, m_value in sorted(value.items())
             ]
-            metrics_formatted_ = " | ".join(metrics_formatted_)
-            metrics_formatted[key] = metrics_formatted_
+            metrics_formatted_part = " | ".join(metrics_formatted_part)
+            metrics_formatted[key] = metrics_formatted_part
 
         return metrics_formatted
 

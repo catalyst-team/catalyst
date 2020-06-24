@@ -30,7 +30,7 @@ def get_key_list(
     Returns:
         sub-dict
     """
-    result = {key_: dictionary[key_] for key_ in key}
+    result = {name: dictionary[name] for name in key}
     return result
 
 
@@ -89,6 +89,10 @@ def get_dictkey_auto_fn(key: Optional[Union[str, List[str]]]) -> Callable:
 
     Returns:
         function
+
+    Raises:
+        NotImplementedError: if key is out of
+            `str`, `tuple`, `list`, `dict`, `None`
     """
     if isinstance(key, str):
         if key == "__all__":

@@ -102,6 +102,11 @@ class Runner(IStageBasedRunner):
                 best checkpoint state (model, optimizer, etc)
                 according to validation metrics. Requires specified ``logdir``.
             initial_seed (int): experiment's initial seed value
+            state_kwargs (dict): deprecated, use `stage_kwargs` instead
+
+        Raises:
+            NotImplementedError: if both `resume` and `CheckpointCallback`
+                already exist
         """
         assert state_kwargs is None or stage_kwargs is None
 
@@ -185,11 +190,10 @@ class Runner(IStageBasedRunner):
             callbacks (Union[List[Callback], OrderedDict[str, Callback]]):
                 list or dictionary with Catalyst callbacks
             logdir (str): path to output directory
+            resume (str): path to checkpoint to use for resume
             verbose (bool): if `True`, it displays the status of the training
                 to the console.
             stage_kwargs (dict): additional stage params
-            checkpoint_data (dict): additional data to save in checkpoint,
-                for example: ``class_names``, ``date_of_training``, etc
             fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
                 See https://nvidia.github.io/apex/amp.html#properties
                 if fp16=True, params by default will be ``{"opt_level": "O1"}``
@@ -198,6 +202,11 @@ class Runner(IStageBasedRunner):
             timeit (bool): if True, computes the execution time
                 of training process and displays it to the console.
             initial_seed (int): experiment's initial seed value
+            state_kwargs (dict): deprecated, use `stage_kwargs` instead
+
+        Raises:
+            NotImplementedError: if both `resume` and `CheckpointCallback`
+                already exist
         """
         assert state_kwargs is None or stage_kwargs is None
 
@@ -242,8 +251,12 @@ class Runner(IStageBasedRunner):
                 from DataLoader.
             **kwargs: additional kwargs to pass to the model
 
+        # noqa: DAR202
         Returns:
             Mapping[str, Any]: model output dictionary
+
+        Raises:
+            NotImplementedError: if not implemented yet
         """
         raise NotImplementedError(
             "Please implement `runner.predict_batch` method"
@@ -264,14 +277,14 @@ class Runner(IStageBasedRunner):
         python Generator with model predictions from `runner.predict_batch`
 
         Args:
-            loader (DataLoader):
-            model (Model):
-            resume (str):
-            fp16 (Union[Dict, bool]):
-            initial_seed (int):
+            loader (DataLoader): loader to predict
+            model (Model): model to use for prediction
+            resume (str): path to checkpoint to resume
+            fp16 (Union[Dict, bool]): fp16 usage flag
+            initial_seed (int): seed to use before prediction
 
-        Returns:
-            (Generator) model predictions from `runner.predict_batch` method.
+        Yields:
+            bathes with model predictions
         """
         if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
@@ -284,7 +297,13 @@ class Runner(IStageBasedRunner):
             checkpoint = utils.load_checkpoint(resume)
             utils.unpack_checkpoint(checkpoint, model=self.model)
 
-        self.model, _, _, _, self.device = utils.process_components(
+        (  # noqa: WPS122
+            self.model,
+            _,
+            _,
+            _,
+            self.device,
+        ) = utils.process_components(
             model=self.model, distributed_params=fp16, device=self.device,
         )
 
@@ -323,6 +342,12 @@ class Runner(IStageBasedRunner):
                 tracing params to FP16
             device (Device): Torch device or a string
             predict_params (dict): additional parameters for model forward
+
+        Returns:
+            ScriptModule: traced model
+
+        Raises:
+            ValueError: if `batch` and `loader` are Nones
         """
         if batch is None:
             if loader is None:
@@ -352,7 +377,7 @@ class Runner(IStageBasedRunner):
             device = self.device
 
         # Dumping previous state of the model, we will need it to restore
-        _device, _is_training, _requires_grad = (
+        device_dump, is_training_dump, requires_grad_dump = (
             self.device,
             self.model.training,
             utils.get_requires_grad(self.model),
@@ -361,11 +386,11 @@ class Runner(IStageBasedRunner):
         self.model.to(device)
 
         # function to run prediction on batch
-        def predict_fn(model, inputs, **kwargs):
-            _model = self.model
+        def predict_fn(model, inputs, **kwargs):  # noqa: WPS442
+            model_dump = self.model
             self.model = model
             result = self.predict_batch(inputs, **kwargs)
-            self.model = _model
+            self.model = model_dump
             return result
 
         traced_model = utils.trace_model(
@@ -391,9 +416,9 @@ class Runner(IStageBasedRunner):
             )
 
         # Restore previous state of the model
-        getattr(self.model, "train" if _is_training else "eval")()
-        utils.set_requires_grad(self.model, _requires_grad)
-        self.model.to(_device)
+        getattr(self.model, "train" if is_training_dump else "eval")()
+        utils.set_requires_grad(self.model, requires_grad_dump)
+        self.model.to(device_dump)
 
         return traced_model
 

@@ -154,12 +154,16 @@ class TestWrapperCallback(unittest.TestCase):
 
         for order in orders:
             callback = RaiserCallback(order, "on_loader_start")
-            wrapper = WrapperCallback(callback, filter_fn="lambda s, e, l: True")
+            wrapper = WrapperCallback(
+                callback, filter_fn="lambda s, e, l: True"
+            )
 
             wrapper.on_loader_start(runner)
 
             callback = RaiserCallback(order, "on_loader_start")
-            wrapper = WrapperCallback(callback, filter_fn="lambda s, e, l: False")
+            wrapper = WrapperCallback(
+                callback, filter_fn="lambda s, e, l: False"
+            )
 
             with self.assertRaises(Dummy):
                 wrapper.on_loader_start(runner)
@@ -177,13 +181,17 @@ class TestWrapperCallback(unittest.TestCase):
         for event in events:
             for order in orders:
                 callback = RaiserCallback(order, event)
-                wrapper = WrapperCallback(callback, filter_fn="lambda s, e, l: True")
+                wrapper = WrapperCallback(
+                    callback, filter_fn="lambda s, e, l: True"
+                )
 
                 wrapper.on_loader_start(runner)
                 wrapper.__getattribute__(event)(runner)
 
                 callback = RaiserCallback(order, event)
-                wrapper = WrapperCallback(callback, filter_fn="lambda s, e, l: False")
+                wrapper = WrapperCallback(
+                    callback, filter_fn="lambda s, e, l: False"
+                )
 
                 wrapper.on_loader_start(runner)
                 with self.assertRaises(Dummy):
@@ -216,4 +224,6 @@ class TestWrapperCallback(unittest.TestCase):
             for order in orders:
                 callback = RaiserCallback(order, event)
                 with self.assertRaises(ValueError):
-                    wrapper = WrapperCallback(callback, filter_fn="lambda s, e, l")
+                    wrapper = WrapperCallback(
+                        callback, filter_fn="lambda s, e, l"
+                    )

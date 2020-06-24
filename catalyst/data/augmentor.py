@@ -13,6 +13,8 @@ class Augmentor:
         **kwargs,
     ):
         """
+        Augmentation abstraction to use with data dictionaries.
+
         Args:
             dict_key (str): key to transform
             augment_fn (Callable): augmentation function to use

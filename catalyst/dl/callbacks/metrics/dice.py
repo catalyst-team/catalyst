@@ -2,9 +2,8 @@ import numpy as np
 
 from catalyst.core import Callback, CallbackOrder, IRunner, MetricCallback
 from catalyst.dl import utils
+from catalyst.dl.callbacks.metrics.functional import calculate_dice
 from catalyst.utils import metrics
-
-from .functional import calculate_dice
 
 
 class DiceCallback(MetricCallback):
@@ -63,7 +62,7 @@ class MulticlassDiceMetricCallback(Callback):
                 This allows you to ignore class indices.
                 if list, make sure it corresponds to the number of classes
         """
-        super().__init__(CallbackOrder.Metric)
+        super().__init__(CallbackOrder.metric)
         self.input_key = input_key
         self.output_key = output_key
         self.prefix = prefix

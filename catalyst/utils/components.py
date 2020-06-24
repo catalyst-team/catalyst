@@ -42,6 +42,13 @@ def process_components(
         distributed_params (dict, optional): dict with the parameters
             for distributed and FP16 method
         device (Device, optional): device
+
+    Returns:
+        tuple with processed model, criterion, optimizer, scheduler and device.
+
+    Raises:
+        NotImplementedError: if model is not nn.Module or dict for multi-gpu,
+            nn.ModuleDict for DataParallel not implemented yet
     """
     distributed_params = distributed_params or {}
     distributed_params = copy.deepcopy(distributed_params)

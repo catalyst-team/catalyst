@@ -6,7 +6,7 @@ from torch.utils.data.dataloader import default_collate
 class FilteringCollateFn:
     """
     Callable object doing job of ``collate_fn`` like ``default_collate``,
-    but does not cast batch items with specified key to :class:`torch.Tensor`.
+    but does not cast batch items with specified key to `torch.Tensor`.
 
     Only adds them to list.
     Supports only key-value format batches

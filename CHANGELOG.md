@@ -15,7 +15,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
-- 
+- Renaming ([#837](https://github.com/catalyst-team/catalyst/pull/837))
+    - `SqueezeAndExcitation` -> `cSE`
+    - `ChannelSqueezeAndSpatialExcitation` -> `sSE`
+    - `ConcurrentSpatialAndChannelSqueezeAndChannelExcitation` -> `scSE`
+    - `_MetricCallback` -> `IMetricCallback`
+    - `dl.Experiment.process_loaders` -> `dl.Experiment._get_loaders`
+- `LRUpdater` become abstract class ([#837](https://github.com/catalyst-team/catalyst/pull/837))
+- `calculate_confusion_matrix_from_arrays` changed params order ([#837](https://github.com/catalyst-team/catalyst/pull/837))
 
 ### Removed
 
