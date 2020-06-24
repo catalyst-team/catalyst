@@ -6,10 +6,10 @@ from catalyst.dl import (
 )
 
 class IncreaseCheckerCallback(Callback):
-    def __init__(self, attribute: str):
+    def __init__(self, attribute: str, start_value: int = None):
         super().__init__(CallbackOrder.Internal)
         self.attr = attribute
-        self.prev = None
+        self.prev = start_value
 
     def on_epoch_start(self, runner):
         if not hasattr(runner, self.attr):
@@ -82,4 +82,39 @@ runner.train(
     num_epochs=4,
     verbose=False,
     callbacks=callbacks
+)
+
+# new exp
+runner = SupervisedRunner()
+
+# first stage
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    loaders=loaders,
+    logdir=logdir,
+    num_epochs=2,
+    verbose=False,
+    callbacks=[
+        IncreaseCheckerCallback("global_epoch"),
+        IncreaseCheckerCallback("global_batch_step"),
+        IncreaseCheckerCallback("global_sample_step"),
+    ]
+)
+
+# second stage
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    loaders=loaders,
+    logdir=logdir,
+    num_epochs=3,
+    verbose=False,
+    callbacks=[
+        IncreaseCheckerCallback("global_epoch", 2),
+        IncreaseCheckerCallback("global_batch_step", 626),
+        IncreaseCheckerCallback("global_sample_step", 20_000),
+    ]
 )
