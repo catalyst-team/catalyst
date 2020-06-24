@@ -779,7 +779,7 @@ and much more.
 During the tests, we compare their convergence metrics in order to verify 
 the correctness of the training procedure and its reproducibility.
 
-As a result, Catalyst provides fully tested, and reproducible 
+As a result, Catalyst provides fully tested and reproducible 
 best practices for your deep learning research.
 
 
