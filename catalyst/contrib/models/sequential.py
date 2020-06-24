@@ -107,7 +107,7 @@ class SequentialNet(nn.Module):
 
         net = []
         for i, (f_in, f_out) in enumerate(utils.pairwise(hiddens)):
-            block = []
+            block_list = []
             for key in layer_order:
                 sub_fn = name2fn[key]
                 sub_params = deepcopy(name2params[key][i])
@@ -120,20 +120,21 @@ class SequentialNet(nn.Module):
 
                 sub_block = sub_fn(sub_module, f_in, f_out, **sub_params)
                 if sub_block is not None:
-                    block.append((f"{key}", sub_block))
+                    block_list.append((f"{key}", sub_block))
 
-            block = torch.nn.Sequential(OrderedDict(block))
+            block_dict = OrderedDict(block_list)
+            block_net = torch.nn.Sequential(block_dict)
 
-            if block.get("act", None) is not None:
-                activation = block["act"]
+            if block_dict.get("act", None) is not None:
+                activation = block_dict["act"]
                 activation_init = utils.get_optimal_inner_init(
                     nonlinearity=activation
                 )
-                block.apply(activation_init)
+                block_net.apply(activation_init)
 
             if residual == "hard" or (residual == "soft" and f_in == f_out):
-                block = ResidualWrapper(net=block)
-            net.append((f"block_{i}", block))
+                block_net = ResidualWrapper(net=block_net)
+            net.append((f"block_{i}", block_net))
 
         self.net = torch.nn.Sequential(OrderedDict(net))
 
