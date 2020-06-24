@@ -63,6 +63,10 @@ class LRFinder(LRUpdater):
         self.find_iter += 1
         return res
 
+    def calc_momentum(self):
+        """@TODO: Docs. Contribution is welcome."""
+        pass
+
     def on_loader_start(self, runner: IRunner):
         """@TODO: Docs. Contribution is welcome.
 
