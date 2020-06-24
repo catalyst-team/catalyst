@@ -718,6 +718,16 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
 
         callbacks = utils.sort_callbacks_by_order(callbacks)
 
+        if self.state is not None and migrate_from_previous_stage:
+            migrating_params.update(
+                {
+                    "global_batch_step": getattr(self, "global_batch_step", 0),
+                    "global_sample_step": getattr(self, "global_sample_step", 0),
+                    "global_epoch": getattr(self, "global_epoch", 1),
+                    "resume": getattr(self, "resume", None),
+                }
+            )
+
         self._prepare_inner_state(
             stage=stage,
             model=model,
