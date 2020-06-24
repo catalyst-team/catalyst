@@ -32,14 +32,15 @@ class WrapperCallback(Callback):
         loaders: Union[
             str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]
         ] = None,
-        ignore_foo: Callable[[int, str], bool] = None,
+        filter_fn: Union[str, Callable[[str, int, str], bool]] = None,
+        use_global_epochs: bool = False,
     ):
-        """``loaders`` and ``ignore_foo`` are interchangeable arguments.
+        """``loaders`` and ``filter_fn`` are interchangeable arguments.
 
         Args:
             base_callback: callback to wrap
             loaders: loaders to change base callback behaviour
-            ignore_foo: function to use instead of loaders
+            filter_fn: function to use instead of loaders
         """
         callback = base_callback
 
@@ -48,9 +49,10 @@ class WrapperCallback(Callback):
         )
 
         self.callback = callback
+        self.use_global_epochs = use_global_epochs
 
         # loader parameters
-        self.ignore_foo = None
+        self.filter_fn = None
         self._is_active = True
 
         if loaders is not None:
@@ -59,7 +61,7 @@ class WrapperCallback(Callback):
             # sequence of loaders
             if isinstance(loaders, (list, tuple)):
                 loaders = sorted(set(loaders))  # ignore duplicates
-                self.ignore_foo = lambda epoch, loader: loader in loaders
+                self.filter_fn = lambda stage, epoch, loader: loader in loaders
             # loader: ignore epoch or epochs
             elif isinstance(loaders, (dict, OrderedDict)):
                 ignore_list = {}
@@ -82,7 +84,7 @@ class WrapperCallback(Callback):
                             "'ignore_list' should be a dict where "
                             "keys is a int/float/List[int]/Tuple[int]!"
                         )
-                self.ignore_foo = lambda epoch, loader: epoch in (
+                self.filter_fn = lambda stage, epoch, loader: epoch in (
                     ignore_list.get(loader) or {}
                 )
             else:
@@ -91,15 +93,25 @@ class WrapperCallback(Callback):
                     "Sequence[str], Mapping[str, int] or "
                     "Mapping[str, Sequence[int]]!"
                 )
-        elif ignore_foo is not None:
-            if not callable(ignore_foo):
-                raise ValueError("'ignore_foo' should be a callable!")
-            if ignore_foo.__code__.co_argcount != 2:
+        elif filter_fn is not None:
+            if isinstance(filter_fn, str):
+                # python lambda functions in config api
+                try:
+                    filter_fn = eval(filter_fn)
+                except (ValueError, SyntaxError):
+                    raise ValueError(
+                        "'filter_fn' should be a valid "
+                        "python lambda function with "
+                        "three arguments - 'stage', 'epoch' and 'loader'!"
+                    )
+            if not callable(filter_fn):
+                raise ValueError("'filter_fn' should be a callable!")
+            if filter_fn.__code__.co_argcount != 3:
                 raise ValueError(
-                    "Ignore function should have two arguments - "
-                    "'epoch' and 'loader'!"
+                    "Filter function should have three arguments - "
+                    "'stage', 'epoch' and 'loader'!"
                 )
-            self.ignore_foo = ignore_foo
+            self.filter_fn = filter_fn
 
     def on_loader_start(self, runner: IRunner) -> None:
         """
@@ -108,11 +120,12 @@ class WrapperCallback(Callback):
         Args:
             runner (IRunner): current runner
         """
+        stage = runner.stage_name
         loader = runner.loader_name
-        epoch = runner.epoch
+        epoch = runner.global_epoch if self.use_global_epochs else runner.epoch
 
-        if self.ignore_foo is not None:
-            self._is_active = not self.ignore_foo(epoch, loader)
+        if self.filter_fn is not None:
+            self._is_active = not self.filter_fn(stage, epoch, loader)
 
         if self._is_active:
             self.callback.on_loader_start(runner)

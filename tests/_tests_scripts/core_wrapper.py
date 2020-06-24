@@ -65,26 +65,26 @@ class TestWrapperCallback(unittest.TestCase):
         callback = RaiserCallback(order, "on_epoch_start")
 
         with self.assertRaises(ValueError):
-            wrapper = WrapperCallback(callback, ignore_foo=12345)
+            wrapper = WrapperCallback(callback, filter_fn=12345)
 
         with self.assertRaises(ValueError):
-            wrapper = WrapperCallback(callback, ignore_foo=lambda arg: True)
+            wrapper = WrapperCallback(callback, filter_fn=lambda arg: True)
 
         with self.assertRaises(ValueError):
-            wrapper = WrapperCallback(callback, ignore_foo=lambda *args: True)
+            wrapper = WrapperCallback(callback, filter_fn=lambda *args: True)
 
         with self.assertRaises(ValueError):
             wrapper = WrapperCallback(
-                callback, ignore_foo=lambda one, two, three, four: True
+                callback, filter_fn=lambda one, two, three, four: True
             )
 
         with self.assertRaises(ValueError):
             wrapper = WrapperCallback(
-                callback, ignore_foo=lambda *args, **kwargs: True
+                callback, filter_fn=lambda *args, **kwargs: True
             )
 
-    def test_ignore_foo_with_wrong_args(self):
-        runner = Mock(loader_name="train", epoch=1)
+    def test_filter_fn_with_wrong_args(self):
+        runner = Mock(stage_name="stage1", loader_name="train", epoch=1)
         orders = (
             CallbackOrder.Internal,
             CallbackOrder.Metric,
@@ -96,20 +96,20 @@ class TestWrapperCallback(unittest.TestCase):
             CallbackOrder.External,
         )
 
-        def _ignore_foo(epoch: int, loader: str) -> bool:
+        def _ignore_foo(stage: str, epoch: int, loader: str) -> bool:
             return True
 
-        def _raise_foo(epoch: int, loader: str) -> bool:
+        def _raise_foo(stage: str, epoch: int, loader: str) -> bool:
             return False
 
         for order in orders:
             callback = RaiserCallback(order, "on_loader_start")
-            wrapper = WrapperCallback(callback, ignore_foo=_ignore_foo)
+            wrapper = WrapperCallback(callback, filter_fn=_ignore_foo)
 
             wrapper.on_loader_start(runner)
 
             callback = RaiserCallback(order, "on_loader_start")
-            wrapper = WrapperCallback(callback, ignore_foo=_raise_foo)
+            wrapper = WrapperCallback(callback, filter_fn=_raise_foo)
 
             with self.assertRaises(Dummy):
                 wrapper.on_loader_start(runner)
@@ -127,14 +127,93 @@ class TestWrapperCallback(unittest.TestCase):
         for event in events:
             for order in orders:
                 callback = RaiserCallback(order, event)
-                wrapper = WrapperCallback(callback, ignore_foo=_ignore_foo)
+                wrapper = WrapperCallback(callback, filter_fn=_ignore_foo)
 
                 wrapper.on_loader_start(runner)
                 wrapper.__getattribute__(event)(runner)
 
                 callback = RaiserCallback(order, event)
-                wrapper = WrapperCallback(callback, ignore_foo=_raise_foo)
+                wrapper = WrapperCallback(callback, filter_fn=_raise_foo)
 
                 wrapper.on_loader_start(runner)
                 with self.assertRaises(Dummy):
                     wrapper.__getattribute__(event)(runner)
+
+    def test_filter_fn_with_eval(self):
+        runner = Mock(stage_name="stage1", loader_name="train", epoch=1)
+        orders = (
+            CallbackOrder.Internal,
+            CallbackOrder.Metric,
+            CallbackOrder.MetricAggregation,
+            CallbackOrder.Optimizer,
+            CallbackOrder.Validation,
+            CallbackOrder.Scheduler,
+            CallbackOrder.Logging,
+            CallbackOrder.External,
+        )
+
+        for order in orders:
+            callback = RaiserCallback(order, "on_loader_start")
+            wrapper = WrapperCallback(callback, filter_fn="lambda s, e, l: True")
+
+            wrapper.on_loader_start(runner)
+
+            callback = RaiserCallback(order, "on_loader_start")
+            wrapper = WrapperCallback(callback, filter_fn="lambda s, e, l: False")
+
+            with self.assertRaises(Dummy):
+                wrapper.on_loader_start(runner)
+
+        events = (
+            "on_loader_end",
+            "on_stage_start",
+            "on_stage_end",
+            "on_epoch_start",
+            "on_epoch_end",
+            "on_batch_start",
+            "on_batch_end",
+            "on_exception",
+        )
+        for event in events:
+            for order in orders:
+                callback = RaiserCallback(order, event)
+                wrapper = WrapperCallback(callback, filter_fn="lambda s, e, l: True")
+
+                wrapper.on_loader_start(runner)
+                wrapper.__getattribute__(event)(runner)
+
+                callback = RaiserCallback(order, event)
+                wrapper = WrapperCallback(callback, filter_fn="lambda s, e, l: False")
+
+                wrapper.on_loader_start(runner)
+                with self.assertRaises(Dummy):
+                    wrapper.__getattribute__(event)(runner)
+
+    def test_filter_fn_with_err_in_eval(self):
+        orders = (
+            CallbackOrder.Internal,
+            CallbackOrder.Metric,
+            CallbackOrder.MetricAggregation,
+            CallbackOrder.Optimizer,
+            CallbackOrder.Validation,
+            CallbackOrder.Scheduler,
+            CallbackOrder.Logging,
+            CallbackOrder.External,
+        )
+
+        events = (
+            "on_loader_start",
+            "on_loader_end",
+            "on_stage_start",
+            "on_stage_end",
+            "on_epoch_start",
+            "on_epoch_end",
+            "on_batch_start",
+            "on_batch_end",
+            "on_exception",
+        )
+        for event in events:
+            for order in orders:
+                callback = RaiserCallback(order, event)
+                with self.assertRaises(ValueError):
+                    wrapper = WrapperCallback(callback, filter_fn="lambda s, e, l")
