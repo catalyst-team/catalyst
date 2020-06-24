@@ -1,9 +1,14 @@
+# flake8: noqa
 import torch
 from torch.utils.data import DataLoader, TensorDataset
+
 from catalyst.dl import (
-    SupervisedRunner, Callback, CallbackOrder,
+    Callback,
+    CallbackOrder,
     CriterionCallback,
+    SupervisedRunner,
 )
+
 
 class IncreaseCheckerCallback(Callback):
     def __init__(self, attribute: str, start_value: int = None):
@@ -16,12 +21,15 @@ class IncreaseCheckerCallback(Callback):
             raise ValueError(f"There is no {self.attr} in runner!")
         value = getattr(runner, self.attr)
         if self.prev is not None:
-            print(f">>> '{self.attr}': previous - {self.prev}, current - {value}")
+            print(
+                f">>> '{self.attr}': previous - {self.prev}, current - {value}"
+            )
             assert self.prev < value
         self.prev = value
 
+
 # experiment_setup
-logdir = './logs/core_runner'
+logdir = "./logs/core_runner"
 
 # data
 num_samples, num_features = int(1e4), int(1e1)
@@ -30,8 +38,8 @@ y = torch.randint(0, 5, size=[num_samples])
 dataset = TensorDataset(X, y)
 loader = DataLoader(dataset, batch_size=32, num_workers=1)
 loaders = {
-    'train': loader,
-    'valid': loader,
+    "train": loader,
+    "valid": loader,
 }
 
 # model, criterion, optimizer, scheduler
@@ -57,7 +65,7 @@ runner.train(
     logdir=logdir,
     num_epochs=2,
     verbose=False,
-    callbacks=callbacks
+    callbacks=callbacks,
 )
 
 # second stage
@@ -69,7 +77,7 @@ runner.train(
     logdir=logdir,
     num_epochs=3,
     verbose=False,
-    callbacks=callbacks
+    callbacks=callbacks,
 )
 
 # third stage
@@ -81,7 +89,7 @@ runner.train(
     logdir=logdir,
     num_epochs=4,
     verbose=False,
-    callbacks=callbacks
+    callbacks=callbacks,
 )
 
 # new exp
@@ -100,7 +108,7 @@ runner.train(
         IncreaseCheckerCallback("global_epoch"),
         IncreaseCheckerCallback("global_batch_step"),
         IncreaseCheckerCallback("global_sample_step"),
-    ]
+    ],
 )
 
 # second stage
@@ -116,5 +124,5 @@ runner.train(
         IncreaseCheckerCallback("global_epoch", 2),
         IncreaseCheckerCallback("global_batch_step", 626),
         IncreaseCheckerCallback("global_sample_step", 20_000),
-    ]
+    ],
 )

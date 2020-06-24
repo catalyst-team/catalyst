@@ -722,7 +722,9 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
             migrating_params.update(
                 {
                     "global_batch_step": getattr(self, "global_batch_step", 0),
-                    "global_sample_step": getattr(self, "global_sample_step", 0),
+                    "global_sample_step": getattr(
+                        self, "global_sample_step", 0
+                    ),
                     "global_epoch": getattr(self, "global_epoch", 1),
                     "resume": getattr(self, "resume", None),
                 }
