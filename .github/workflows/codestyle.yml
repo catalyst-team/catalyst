@@ -48,7 +48,7 @@ jobs:
         run: |
           # python -m pip install --upgrade --user pip
           pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-nlp.txt -r ./requirements/requirements-contrib.txt
-          pip install git+https://github.com/catalyst-team/codestyle.git@update_flake8#egg=catalyst-codestyle
+          pip install -U git+https://github.com/catalyst-team/codestyle.git@update_flake8#egg=catalyst-codestyle
           python --version
           pip --version
           pip list
@@ -101,7 +101,7 @@ jobs:
         run: |
           # python -m pip install --upgrade --user pip
           pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-nlp.txt  -r ./requirements/requirements-contrib.txt
-          pip install git+https://github.com/catalyst-team/codestyle.git@update_flake8#egg=catalyst-codestyle
+          pip install -U git+https://github.com/catalyst-team/codestyle.git@update_flake8#egg=catalyst-codestyle
           pip uninstall nitpick -y
           python --version
           pip --version
