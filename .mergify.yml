@@ -1,10 +1,4 @@
 pull_request_rules:
-  - name: assign PR to autor
-    conditions: []
-    actions:
-      assign:
-        users:
-          - "@{{ author }}"
   - name: remove outdated reviews
     conditions: []
     actions:
@@ -13,7 +7,6 @@ pull_request_rules:
     conditions:
       - "#approved-reviews-by>=2"
       - approved-reviews-by!=github-actions
-      - status-success=codestyle-reviewdog
       - status-success=codestyle (ubuntu-18.04, 3.6)
       - status-success=dl-cpu-core (ubuntu-18.04, 3.6, minimal)
       - status-success=dl-cpu-core (ubuntu-18.04, 3.6, latest)
@@ -29,7 +22,6 @@ pull_request_rules:
     conditions:
       - "#approved-reviews-by>=3"
       - approved-reviews-by=github-actions
-      - status-success=codestyle-reviewdog
       - status-success=codestyle (ubuntu-18.04, 3.6)
       - status-success=dl-cpu-core (ubuntu-18.04, 3.6, minimal)
       - status-success=dl-cpu-core (ubuntu-18.04, 3.6, latest)
