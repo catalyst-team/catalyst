@@ -15,7 +15,7 @@ class InferCallback(Callback):
         Args:
             @TODO: Docs. Contribution is welcome
         """
-        super().__init__(CallbackOrder.Internal)
+        super().__init__(CallbackOrder.internal)
         self.out_dir = out_dir
         self.out_prefix = out_prefix
         self.predictions = defaultdict(lambda: [])
@@ -33,7 +33,7 @@ class InferCallback(Callback):
                 setattr(self, key, value)
         # assert self.out_prefix is not None
         if self.out_dir is not None:
-            self.out_prefix = str(self.out_dir) + "/" + str(self.out_prefix)
+            self.out_prefix = f"{str(self.out_dir)}/{str(self.out_prefix)}"
         if self.out_prefix is not None:
             os.makedirs(os.path.dirname(self.out_prefix), exist_ok=True)
 

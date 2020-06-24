@@ -73,8 +73,8 @@ class ScalarReader(ReaderSpec):
         self.smoothing = smoothing
         if self.one_hot_classes is not None and self.smoothing is not None:
             assert 0.0 < smoothing < 1.0, (
-                f"If smoothing is specified it must be in (0; 1), "
-                f"got {smoothing}"
+                "If smoothing is specified it must be in (0; 1), "
+                + f"got {smoothing}"
             )
 
     def __call__(self, element):
@@ -107,7 +107,7 @@ class LambdaReader(ReaderSpec):
         self,
         input_key: str,
         output_key: str,
-        lambda_fn: Callable = lambda x: x,
+        lambda_fn: Callable = None,
         **kwargs,
     ):
         """
@@ -115,10 +115,11 @@ class LambdaReader(ReaderSpec):
             input_key (str): input key to use from annotation dict
             output_key (str): output key to use to store the result
             lambda_fn (callable): encode function to use to prepare your data
-                (for example convert chars/words/tokens to indices, etc)
+              (for example convert chars/words/tokens to indices, etc)
             kwargs: kwargs for encode function
         """
         super().__init__(input_key, output_key)
+        lambda_fn = lambda_fn or (lambda x: x)
         self.lambda_fn = functools.partial(lambda_fn, **kwargs)
 
     def __call__(self, element):
@@ -164,10 +165,10 @@ class ReaderCompose(object):
             Value after applying all readers and mixins
         """
         result = {}
-        for fn in self.readers:
-            result = {**result, **fn(element)}
-        for fn in self.mixins:
-            result = {**result, **fn(result)}
+        for reader_fn in self.readers:
+            result = {**result, **reader_fn(element)}
+        for mixin_fn in self.mixins:
+            result = {**result, **mixin_fn(result)}
         return result
 
 

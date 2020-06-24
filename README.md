@@ -770,16 +770,17 @@ utils.distributed_cmd_run(train)
 
 
 ### Tests
-All the Catalyst code is [tested rigorously with every new PR](./tests).
+All Catalyst code, features and pipelines [are fully tested](./tests) 
+with our own [catalyst-codestyle](https://github.com/catalyst-team/codestyle).
 
 In fact, we train a number of different models for various of tasks - 
-image classification, image segmentation, text classification, GAN training.
+image classification, image segmentation, text classification, GANs training 
+and much more.
 During the tests, we compare their convergence metrics in order to verify 
 the correctness of the training procedure and its reproducibility.
 
-Overall, Catalyst guarantees fully tested, correct and reproducible 
-best practices for the automated parts.
-
+As a result, Catalyst provides fully tested and reproducible 
+best practices for your deep learning research.
 
 
 ## Catalyst

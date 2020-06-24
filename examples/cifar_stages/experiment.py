@@ -1,3 +1,4 @@
+# flake8: noqa
 from collections import OrderedDict
 
 import torch
@@ -32,7 +33,8 @@ class Experiment(ConfigExperiment):
 
     def get_model(self, stage: str):
         """
-        Model specification for currect stage
+        Model specification for current stage
+
         Args:
             stage: current stage name
 
@@ -43,8 +45,10 @@ class Experiment(ConfigExperiment):
         if isinstance(model, torch.nn.DataParallel):
             model = model.module
 
+        conv_layres = ["conv1", "pool", "conv2"]
+
         if stage == "stage2":
-            for key in ["conv1", "pool", "conv2"]:
+            for key in conv_layres:
                 layer = getattr(model, key)
                 utils.set_requires_grad(layer, requires_grad=False)
         return model

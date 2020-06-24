@@ -95,11 +95,11 @@ try:
     COMMANDS["process-images"] = process_images
     COMMANDS["image2embedding"] = image2embedding
     COMMANDS["project-embeddings"] = project_embeddings
-except ImportError as ex:
+except ImportError as ex:  # noqa: WPS440
     if settings.cv_required:
         logger.warning(
             "some of catalyst-cv dependencies not available,"
-            " to install dependencies, run `pip install catalyst[cv]`."
+            + " to install dependencies, run `pip install catalyst[cv]`."
         )
         raise ex
 
@@ -108,11 +108,11 @@ try:
     from catalyst.data.scripts import text2embedding
 
     COMMANDS["text2embedding"] = text2embedding
-except ImportError as ex:
+except ImportError as ex:  # noqa: WPS440
     if settings.transformers_required:
         logger.warning(
             "transformers not available, to install transformers,"
-            " run `pip install transformers`."
+            + " run `pip install transformers`."
         )
         raise ex
 

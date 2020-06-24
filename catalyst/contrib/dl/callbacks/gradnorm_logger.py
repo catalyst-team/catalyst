@@ -25,7 +25,7 @@ class GradNormLogger(Callback):
                 Should be the same as in `OptimizerCallback`.
         """
         super().__init__(
-            order=CallbackOrder.Optimizer + 1, node=CallbackNode.All
+            order=CallbackOrder.optimizer + 1, node=CallbackNode.all
         )
 
         self.grad_norm_prefix = "_grad_norm"
@@ -35,13 +35,14 @@ class GradNormLogger(Callback):
         self._accumulation_counter: int = 0
 
     @staticmethod
-    def grad_norm(*, model: Model, prefix: str, norm_type: int,) -> Dict:
+    def grad_norm(*, model: Model, prefix: str, norm_type: int) -> Dict:
         """Computes gradient norms for a given model.
 
         Args:
             model (Model): model which gradients to be saved.
             prefix (str): prefix for keys in resulting dictionary.
             norm_type (int): norm type of gradient norm.
+
         Returns:
             Dict: dictionary in which gradient norms are stored.
         """
@@ -59,8 +60,7 @@ class GradNormLogger(Callback):
             grad_norm[metrics_tag] = param_norm
 
         total_norm = total_norm ** (1.0 / norm_type)
-        tag = "total"
-        metrics_tag = f"{prefix}/{tag}"
+        metrics_tag = f"{prefix}/total"
         grad_norm[metrics_tag] = total_norm
 
         return grad_norm

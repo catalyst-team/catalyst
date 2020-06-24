@@ -23,7 +23,7 @@ class Model(torch.nn.Module):
         return x
 
     @classmethod
-    def get_from_params(cls, **model_params,) -> "Model":
+    def get_from_params(cls, **model_params) -> "Model":
         """
         @TODO: Docs. Contribution is welcome
         """

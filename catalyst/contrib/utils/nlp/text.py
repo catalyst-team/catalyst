@@ -26,6 +26,9 @@ def tokenize_text(
         lowercase (bool): if true makes text lowercase before tokenizing
         remove_punctuation (bool): if true
             removes ``string.punctuation`` from text before tokenizing
+
+    Returns:
+        batch with tokenized text
     """
     if strip:
         text = text.strip()
@@ -88,8 +91,8 @@ def process_bert_output(
     }
 
     if output_hidden_states:
-        for i, feature_ in enumerate(bert_output[2]):
-            output[i] = _process_features(feature_)
+        for i, feature in enumerate(bert_output[2]):
+            output[i] = _process_features(feature)
 
     return output
 

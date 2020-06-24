@@ -47,16 +47,16 @@ def build_args(parser):
     parser.add_argument(
         "--img-size",
         type=int,
-        default=16,
+        default=16,  # noqa: WPS432
         help="if --img-col is defined, "
-        "then images will be resized to (img-size, img-size, 3)",
+        + "then images will be resized to (img-size, img-size, 3)",
     )
     parser.add_argument(
         "--num-rows",
         type=int,
         default=None,
         help="count of rows to use in csv "
-        "(if not defined then it will use whole data)",
+        + "(if not defined then it will use whole data)",
     )
     parser.add_argument(
         "--meta-cols",
@@ -106,9 +106,9 @@ def main(args, _=None):
         img_data = np.stack(
             [load_image(name, args.img_size) for name in image_names], axis=0
         )
-        img_data = (img_data.transpose((0, 3, 1, 2)) / 255.0).astype(
-            np.float32
-        )
+        img_data = (
+            img_data.transpose((0, 3, 1, 2)) / 255.0  # noqa: WPS432
+        ).astype(np.float32)
         img_data = torch.from_numpy(img_data)
     else:
         img_data = None
@@ -124,7 +124,7 @@ def main(args, _=None):
 
     print(
         f"Done. Run `tensorboard --logdir={args.out_dir}` "
-        f"to view in Tensorboard"
+        + "to view in Tensorboard"
     )
 
 

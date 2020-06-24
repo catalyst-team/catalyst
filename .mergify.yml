@@ -9,10 +9,11 @@ pull_request_rules:
     conditions: []
     actions:
       dismiss_reviews: {}
-  - name: automatic merge for master when CI passes and 1 review (excluding reviewdog)
+  - name: automatic merge for master when CI passes and 2 review
     conditions:
-      - "#approved-reviews-by>=1"
+      - "#approved-reviews-by>=2"
       - approved-reviews-by!=github-actions
+      - status-success=codestyle-reviewdog
       - status-success=codestyle (ubuntu-18.04, 3.6)
       - status-success=dl-cpu-core (ubuntu-18.04, 3.6, minimal)
       - status-success=dl-cpu-core (ubuntu-18.04, 3.6, latest)
@@ -24,10 +25,11 @@ pull_request_rules:
     actions:
       merge:
         method: squash
-  - name: automatic merge for master when CI passes and 2 review (including reviewdog)
+  - name: automatic merge for master when CI passes and 2 review
     conditions:
-      - "#approved-reviews-by>=2"
+      - "#approved-reviews-by>=3"
       - approved-reviews-by=github-actions
+      - status-success=codestyle-reviewdog
       - status-success=codestyle (ubuntu-18.04, 3.6)
       - status-success=dl-cpu-core (ubuntu-18.04, 3.6, minimal)
       - status-success=dl-cpu-core (ubuntu-18.04, 3.6, latest)
@@ -44,7 +46,7 @@ pull_request_rules:
       - merged
     actions:
       delete_head_branch: {}
-  - name: ask to resolve conflict 
+  - name: ask to resolve conflict
     conditions:
       - conflict
     actions:

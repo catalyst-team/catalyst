@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 
 import torch
-import torch.distributed
+import torch.distributed  # noqa: WPS301
 
 from catalyst.core import Callback, CallbackNode, CallbackOrder, IRunner
 from catalyst.dl import utils
@@ -29,7 +29,7 @@ class ConfusionMatrixCallback(Callback):
         Args:
             @TODO: Docs. Contribution is welcome
         """
-        super().__init__(CallbackOrder.Metric, CallbackNode.All)
+        super().__init__(CallbackOrder.metric, CallbackNode.all)
         self.prefix = prefix
         self.output_key = output_key
         self.input_key = input_key
