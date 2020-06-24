@@ -86,7 +86,7 @@ def import_experiment_and_runner(expdir: pathlib.Path):
     m = import_module(expdir)
     runner_fn = m.Runner
     if hasattr(m, "Experiment"):
-        experiment_fn = m.experiment
+        experiment_fn = m.Experiment
     else:
         experiment_fn = None
     return experiment_fn, runner_fn

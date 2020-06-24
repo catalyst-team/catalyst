@@ -22,8 +22,8 @@ def calculate_confusion_matrix_from_arrays(
     If labels value is outside of the [0, num_classes) it is excluded.
 
     Args:
-        labels (np.ndarray): ground truth labels
         predictions (np.ndarray): model predictions
+        labels (np.ndarray): ground truth labels
         num_classes (int): number of classes
 
     Returns:

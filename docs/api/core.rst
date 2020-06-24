@@ -91,7 +91,7 @@ Logging
 
 Metrics
 ~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.core.callbacks.metrics._MetricCallback
+.. autoclass:: catalyst.core.callbacks.metrics.IMetricCallback
     :members:
     :undoc-members:
     :show-inheritance:
