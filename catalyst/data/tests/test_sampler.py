@@ -93,7 +93,9 @@ def single_check_balance_batch_sampler(
     assert max(sampled_ids) <= len(labels) - 1
 
 
-def test_balance_batch_sampler(input_balance_batch_sampler) -> None:  # noqa: WPS442, W505
+def test_balance_batch_sampler(
+    input_balance_batch_sampler,  # noqa: WPS442
+) -> None:
     """
     Args:
         input_balance_batch_sampler: pytest fixture
