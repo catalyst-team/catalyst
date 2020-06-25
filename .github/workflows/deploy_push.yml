@@ -64,7 +64,7 @@ jobs:
         run: |
           REMOVE_BUILDS=0 make check-docs
           # Remove master docs, do not touch the past versions
-          rm -f *
+          rm -f * || true
           rm -rf .doctrees _modules _sources _static api info
           cp -a builds/* .
           rm -rf builds

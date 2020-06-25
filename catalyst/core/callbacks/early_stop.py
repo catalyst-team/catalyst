@@ -51,9 +51,7 @@ class EarlyStoppingCallback(Callback):
             return
 
         score = runner.valid_metrics[self.metric]
-        if self.best_score is None:
-            self.best_score = score
-        if self.is_better(score, self.best_score):
+        if self.best_score is None or self.is_better(score, self.best_score):
             self.num_bad_epochs = 0
             self.best_score = score
         else:

@@ -6,7 +6,7 @@ import torch.nn.functional as F
 class cSE(nn.Module):  # noqa: N801
     """
     The channel-wise SE (Squeeze and Excitation) block from the
-    [Squeeze-and-Excitation Networks](https://arxiv.org/abs/1709.01507) paper.
+    `Squeeze-and-Excitation Networks`__ paper.
 
     Adapted from
     https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/65939
@@ -17,6 +17,8 @@ class cSE(nn.Module):  # noqa: N801
 
     - Input: (batch, channels, height, width)
     - Output: (batch, channels, height, width) (same shape as input)
+
+    __ https://arxiv.org/abs/1709.01507
     """
 
     def __init__(self, in_channels: int, r: int = 16):
@@ -48,8 +50,8 @@ class cSE(nn.Module):  # noqa: N801
 class sSE(nn.Module):  # noqa: N801
     """
     The sSE (Channel Squeeze and Spatial Excitation) block from the
-    [Concurrent Spatial and Channel ‘Squeeze & Excitation’
-    in Fully Convolutional Networks](https://arxiv.org/abs/1803.02579) paper.
+    `Concurrent Spatial and Channel ‘Squeeze & Excitation’
+    in Fully Convolutional Networks`__ paper.
 
     Adapted from
     https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/66178
@@ -58,6 +60,8 @@ class sSE(nn.Module):  # noqa: N801
 
     - Input: (batch, channels, height, width)
     - Output: (batch, channels, height, width) (same shape as input)
+
+    __ https://arxiv.org/abs/1803.02579
     """
 
     def __init__(self, in_channels: int):
@@ -83,8 +87,8 @@ class sSE(nn.Module):  # noqa: N801
 class scSE(nn.Module):  # noqa: N801
     """
     The scSE (Concurrent Spatial and Channel Squeeze and Channel Excitation)
-    block from the [Concurrent Spatial and Channel ‘Squeeze & Excitation’
-    in Fully Convolutional Networks](https://arxiv.org/abs/1803.02579) paper.
+    block from the `Concurrent Spatial and Channel ‘Squeeze & Excitation’
+    in Fully Convolutional Networks`__ paper.
 
     Adapted from
     https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/66178
@@ -93,6 +97,8 @@ class scSE(nn.Module):  # noqa: N801
 
     - Input: (batch, channels, height, width)
     - Output: (batch, channels, height, width) (same shape as input)
+
+    __ https://arxiv.org/abs/1803.02579
     """
 
     def __init__(self, in_channels: int, r: int = 16):

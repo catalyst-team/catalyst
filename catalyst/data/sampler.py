@@ -292,8 +292,7 @@ class DynamicLenBatchSampler(BatchSampler):
     A dynamic batch length data sampler.
     Should be used with `catalyst.utils.trim_tensors`.
 
-    Adapted from "Dynamic minibatch trimming to improve BERT training speed"
-    https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779
+    Adapted from `Dynamic minibatch trimming to improve BERT training speed`_.
 
     Args:
         sampler (torch.utils.data.Sampler): Base sampler.
@@ -321,6 +320,9 @@ class DynamicLenBatchSampler(BatchSampler):
         >>>     tensors = utils.trim_tensors(batch)
         >>>     b_input_ids, b_input_mask, b_segment_ids, b_labels = \
         >>>         tuple(t.to(device) for t in tensors)
+
+    .. _`Dynamic minibatch trimming to improve BERT training speed`:
+        https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779
     """
 
     def __iter__(self):
