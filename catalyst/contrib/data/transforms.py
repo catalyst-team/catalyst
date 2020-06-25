@@ -1,6 +1,7 @@
 """
-This subpackage was borrowed from
-torchvision(https://github.com/pytorch/vision).
+This subpackage was borrowed from `torchvision`__.
+
+__ https://github.com/pytorch/vision
 """
 
 import numpy as np
