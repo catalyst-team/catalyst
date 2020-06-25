@@ -718,7 +718,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
 
         callbacks = utils.sort_callbacks_by_order(callbacks)
 
-        if self.state is not None and migrate_from_previous_stage:
+        if migrate_from_previous_stage:
             migrating_params.update(
                 {
                     "global_batch_step": getattr(self, "global_batch_step", 0),
