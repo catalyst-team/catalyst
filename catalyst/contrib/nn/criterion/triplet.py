@@ -7,8 +7,7 @@ from catalyst.contrib.nn.criterion.functional import triplet_loss
 class TripletLoss(nn.Module):
     """Triplet loss with hard positive/negative mining.
 
-    Reference:
-        Code imported from https://github.com/NegatioN/OnlineMiningTripletLoss
+    Adapted from: https://github.com/NegatioN/OnlineMiningTripletLoss
     """
 
     def __init__(self, margin: float = 0.3):

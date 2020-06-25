@@ -330,14 +330,16 @@ def trim_tensors(tensors):
     Trim padding off of a batch of tensors to the smallest possible length.
     Should be used with `catalyst.data.DynamicLenBatchSampler`.
 
-    Adapted from "Dynamic minibatch trimming to improve BERT training speed"
-    https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779
+    Adapted from `Dynamic minibatch trimming to improve BERT training speed`_.
 
     Args:
         tensors ([torch.tensor]): list of tensors to trim.
 
     Returns:
         List[torch.tensor]: list of trimmed tensors.
+
+    .. _`Dynamic minibatch trimming to improve BERT training speed`:
+        https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779
     """
     max_len = torch.max(torch.sum((tensors[0] != 0), 1))
     if max_len > 2:
