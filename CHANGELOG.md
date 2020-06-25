@@ -32,6 +32,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `.dependabot/config.yml` contained invalid details ([#781](https://github.com/catalyst-team/catalyst/issues/781))
 - `LanguageModelingDataset` ([#841](https://github.com/catalyst-team/catalyst/pull/841))
 - `global_*` counters in `Runner` ([#858](https://github.com/catalyst-team/catalyst/pull/858))
+- EarlyStoppingCallback considers first epoch as bad
+ ([#854](https://github.com/catalyst-team/catalyst/issues/854))
+ 
 
 ## [20.06] - 2020-06-04
 
