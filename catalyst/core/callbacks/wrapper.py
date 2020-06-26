@@ -1,3 +1,4 @@
+
 from typing import Callable, Mapping, Sequence, Union
 from collections import OrderedDict
 
@@ -83,7 +84,7 @@ def _filter_fn_from_arg(filter_fn: Union[str, FILTER_FN]) -> FILTER_FN:
     if isinstance(filter_fn, str):
         # lambda function from string
         try:
-            filter_fn = eval(filter_fn)
+            filter_fn = eval(filter_fn)  # noqa
         except (ValueError, SyntaxError):
             raise ValueError(
                 "'filter_fn' should be a valid "
