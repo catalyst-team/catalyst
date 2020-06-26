@@ -30,4 +30,4 @@ def check_callback_isinstance(first: Callback, second: Callback) -> bool:
     return isinstance(first, second)
 
 
-__all__ = ["get_original_callback", "check_isinstance"]
+__all__ = ["get_original_callback", "check_callback_isinstance"]

@@ -155,8 +155,14 @@ class WrapperCallback(Callback):
 
         runner = SupervisedRunner()
         runner.train(
-            model=model, criterion=criterion, optimizer=optimizer, scheduler=scheduler,
-            loaders=loaders, logdir="./logdir", num_epochs=8, verbose=True,
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            loaders=loaders,
+            logdir="./logdir",
+            num_epochs=8,
+            verbose=True,
             callbacks=[
                 WrapperCallback(
                     base_callback=CriterionCallback(),
@@ -211,8 +217,9 @@ class WrapperCallback(Callback):
                 for loaders with specified names.
 
                 If passed dictionary where key is a string and values
-                int or list of integers then callback will be disabled on epochs
-                (dictionary value) for specified loader (dictionary key).
+                int or list of integers then callback will be
+                disabled on epochs (dictionary value) for specified
+                loader (dictionary key).
 
                 Default value is ``None``.
             filter_fn (str or Callable[[str, int, str], bool]):
@@ -238,7 +245,8 @@ class WrapperCallback(Callback):
         """
         if epochs is None and loaders is None and filter_fn is None:
             raise ValueError(
-                "Expected one of arguments - 'epochs' or 'loaders' or 'filter_fn'!"
+                "Expected one of arguments - "
+                "'epochs' or 'loaders' or 'filter_fn'!"
             )
 
         callback = base_callback
