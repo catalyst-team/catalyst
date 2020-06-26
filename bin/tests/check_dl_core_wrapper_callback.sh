@@ -380,6 +380,38 @@ check_checkpoints "${CHECKPOINTS}/best" 1
 check_checkpoints "${CHECKPOINTS}/last" 1
 check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
 check_checkpoints "${CHECKPOINTS}/stage2\.[[:digit:]]" 1
-check_num_files ${CHECKPOINTS} 9   # 3x2 checkpoints + metrics.json
+check_num_files ${CHECKPOINTS} 9   # 4x2 checkpoints + metrics.json
+
+rm -rf ${LOGDIR} ${EXP_OUTPUT}
+
+
+###############################  pipeline 08 ################################
+# setup: multiple stages and global epochs and epochs arg
+
+LOG_MSG='pipeline 08'
+echo ${LOG_MSG}
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config27.yml \
+  --logdir=${LOGDIR} > ${EXP_OUTPUT}
+
+cat ${EXP_OUTPUT}
+check_line_counts ${EXP_OUTPUT} "(train)\: accuracy" 5
+check_line_counts ${EXP_OUTPUT} "(valid)\: accuracy" 5
+check_line_counts ${EXP_OUTPUT} "Epoch [257] (train): loss" 3
+check_line_counts ${EXP_OUTPUT} "Epoch [257] (valid): loss" 3
+
+
+check_file_existence ${LOGFILE}
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
+check_checkpoints "${CHECKPOINTS}/stage2\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 9   # 4x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR} ${EXP_OUTPUT}

@@ -23,7 +23,28 @@ class RaiserCallback(Callback):
 
 
 class TestWrapperCallback(unittest.TestCase):
-    def test_loaders_exceptions(self):
+    def test_epochs_with_wrong_args(self):
+        orders = (
+            CallbackOrder.Internal,
+            CallbackOrder.Metric,
+            CallbackOrder.MetricAggregation,
+            CallbackOrder.Optimizer,
+            CallbackOrder.Validation,
+            CallbackOrder.Scheduler,
+            CallbackOrder.Logging,
+            CallbackOrder.External,
+        )
+        order = random.choice(orders)
+
+        callback = RaiserCallback(order, "on_epoch_start")
+
+        with self.assertRaises(ValueError):
+            wrapper = WrapperCallback(callback, epochs=None)
+
+        with self.assertRaises(ValueError):
+            wrapper = WrapperCallback(callback, epochs="123456")
+
+    def test_loaders_with_wrong_args(self):
         orders = (
             CallbackOrder.Internal,
             CallbackOrder.Metric,
@@ -49,7 +70,7 @@ class TestWrapperCallback(unittest.TestCase):
                 callback, loaders={"train": ["", "fjdskjfdk", "1234"]}
             )
 
-    def test_ignore_foo_exceptions(self):
+    def test_ignore_foo_with_wrong_args(self):
         orders = (
             CallbackOrder.Internal,
             CallbackOrder.Metric,

@@ -8,8 +8,35 @@ LOADERS = Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]]
 FILTER_FN = Callable[[str, int, str], bool]
 
 
+def _filter_fn_from_epochs(
+    epochs: Union[int, float, Sequence[int]]
+) -> FILTER_FN:
+    """Build ``filter_fn`` from epochs for ``WrapperCallback``
+
+    Args:
+        epochs (int/Sequence[int]): epochs description
+
+    Raises:
+        ValueError: if passed object with unexpected type
+
+    Returns:
+        filter function which accepts 3 arguments - stage (str),
+        epoch (int), loader (str) and return ``True`` if
+        need to disable callback
+    """
+    if isinstance(epochs, (int, float)):
+        epochs = [int(epochs)]
+
+    if isinstance(epochs, (list, tuple)):
+        epochs = sorted(set(epochs))
+        filter_fn = lambda stage, epoch, loader: epoch in epochs
+    else:
+        raise ValueError("'epochs' should be int/float/Sequence[int]!")
+    return filter_fn
+
+
 def _filter_fn_from_loaders(loaders: LOADERS) -> FILTER_FN:
-    """Build ``filter_fn`` from loaders for `WrapperCallback`.
+    """Build ``filter_fn`` from loaders for ``WrapperCallback``.
 
     Args:
         loaders (str/Sequence[str]/Mapping[str, int/Sequence[str]]):
@@ -62,7 +89,7 @@ def _filter_fn_from_loaders(loaders: LOADERS) -> FILTER_FN:
 
 def _filter_fn_from_arg(filter_fn: Union[str, FILTER_FN]) -> FILTER_FN:
     """Check if filter function from argumets
-    can be used with filter callback.
+    can be used with ``WrapperCallback``.
 
     Args:
         filter_fn (str or Callable): filter function to check
@@ -110,21 +137,32 @@ class WrapperCallback(Callback):
 
     .. code-block:: python
 
+        import torch
+        from torch.utils.data import DataLoader, TensorDataset
         from catalyst.dl import (
-            SupervisedRunner, WrapperCallback, CriterionCallback
+            SupervisedRunner, CriterionCallback, WrapperCallback
         )
+
+        num_samples, num_features = 10_000, 10
+        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
+        loader = DataLoader(TensorDataset(X, y), batch_size=32, num_workers=1)
+        loaders = {"train": loader, "valid": loader}
+
+        model = torch.nn.Linear(num_features, 1)
+        criterion = torch.nn.MSELoss()
+        optimizer = torch.optim.Adam(model.parameters())
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+
         runner = SupervisedRunner()
         runner.train(
-            ...
+            model=model, criterion=criterion, optimizer=optimizer, scheduler=scheduler,
+            loaders=loaders, logdir="./logdir", num_epochs=8, verbose=True,
             callbacks=[
-                ...
                 WrapperCallback(
                     base_callback=CriterionCallback(),
                     loaders=["valid"]
-                ),
-                ...
+                )
             ]
-            ...
         )
 
     In config API need to use ``_wrapper`` argument:
@@ -145,6 +183,7 @@ class WrapperCallback(Callback):
     def __init__(
         self,
         base_callback: Callback,
+        epochs: Union[int, Sequence[int]] = None,
         loaders: LOADERS = None,
         filter_fn: Union[str, FILTER_FN] = None,
         use_global_epochs: bool = False,
@@ -152,40 +191,54 @@ class WrapperCallback(Callback):
         """
         Args:
             base_callback (Callback): callback to wrap
+            epochs (int/Sequence[int]): epochs numbers where
+                need to disable callback behaviour.
+
+                If passed int/float then will be disabled callback
+                on specified epoch.
+
+                If passed list of epochs then will be disabled callback
+                on specified epochs.
+
+                Default value is ``None``.
             loaders (str/Sequence[str]/Mapping[str, int/Sequence[str]]):
                 loaders to change base callback behaviour.
 
-                If passed string object then will be ignored loader
-                with this name.
+                If passed string object then will be disabled callback for
+                loader with specified name.
 
-                If passed list/tuple of strings then will be ignored
-                loaders with same names.
+                If passed list/tuple of strings then will be disabled callback
+                for loaders with specified names.
 
                 If passed dictionary where key is a string and values
-                int or list of integers then will be ignored epochs
-                (dictionary value) for loader (dictionary key).
+                int or list of integers then callback will be disabled on epochs
+                (dictionary value) for specified loader (dictionary key).
 
                 Default value is ``None``.
             filter_fn (str or Callable[[str, int, str], bool]):
-                function to use instead of loaders.
+                function to use instead of ``loaders`` or ``epochs`` arguments.
 
                 If the object passed to a ``filter_fn`` is a string
-                then it will be evaluated as python code
-                with a lambda function.
+                then it will be interpreted as python code. Expected
+                lambda function with three arguments stage name (str),
+                epoch number (int), loader name (str) and this function
+                should return ``True`` if callback should be disabled
+                on some condition.
 
                 If passed callable object then it should accept
-                3 arguments - stage name (str), epoch number (int),
-                loader name (str) and return ``True`` (if callback
-                should be ignored) or ``False``.
+                three arguments - stage name (str), epoch number (int),
+                loader name (str) and should return ``True`` if callback
+                should be disabled on some condition othervise should
+                return ``False``.
 
                 Default value is ``None``.
             use_global_epochs (bool): if ``True`` then
                 will be used global epochs instead of epochs in
                 a stage, the default value is ``False``
         """
-        if loaders is None and filter_fn is None:
+        if epochs is None and loaders is None and filter_fn is None:
             raise ValueError(
-                "Expected one of arguments - 'loaders' or 'filter_fn'!"
+                "Expected one of arguments - 'epochs' or 'loaders' or 'filter_fn'!"
             )
 
         callback = base_callback
@@ -198,7 +251,9 @@ class WrapperCallback(Callback):
         self.filter_fn = None
         self._is_active = True
 
-        if loaders is not None:
+        if epochs is not None:
+            self.filter_fn = _filter_fn_from_epochs(epochs)
+        elif loaders is not None:
             self.filter_fn = _filter_fn_from_loaders(loaders)
         elif filter_fn is not None:
             self.filter_fn = _filter_fn_from_arg(filter_fn)
