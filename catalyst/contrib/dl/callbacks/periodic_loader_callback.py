@@ -25,6 +25,13 @@ class PeriodicLoaderCallback(Callback):
         runner = SupervisedRunner()
         runner.train(
             ...
+            loaders={
+                "train": ...,
+                "train_additional": ...,
+                "valid": ...,
+                "valid_additional":...
+            }
+            ...
             callbacks=[
                 ...
                 PeriodicLoaderRunnerCallback(
