@@ -15,7 +15,7 @@ def get_original_callback(callback: Callback) -> Callback:
     return callback
 
 
-def check_isinstance(first: Callback, second: Callback) -> bool:
+def check_callback_isinstance(first: Callback, second: Callback) -> bool:
     """Check if first callback is the same type as second callback
 
     Args:

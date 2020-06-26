@@ -19,7 +19,7 @@ from catalyst.dl import (
     ValidationManagerCallback,
     VerboseLogger,
 )
-from catalyst.dl.utils import check_isinstance
+from catalyst.dl.utils import check_callback_isinstance
 from catalyst.tools import settings
 from catalyst.tools.typing import Criterion, Model, Optimizer, Scheduler
 
@@ -250,7 +250,8 @@ class Experiment(IExperiment):
 
         for callback_name, callback_fn in default_callbacks:
             is_already_present = any(
-                check_isinstance(x, callback_fn) for x in callbacks.values()
+                check_callback_isinstance(x, callback_fn)
+                for x in callbacks.values()
             )
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
