@@ -140,16 +140,19 @@ class WrapperCallback(Callback):
         import torch
         from torch.utils.data import DataLoader, TensorDataset
         from catalyst.dl import (
-            SupervisedRunner, CriterionCallback, WrapperCallback
+            SupervisedRunner, AccuracyCallback,
+            CriterionCallback, WrapperCallback,
         )
 
         num_samples, num_features = 10_000, 10
-        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
+        n_classes = 10
+        X = torch.rand(num_samples, num_features)
+        y = torch.randint(0, n_classes, [num_samples])
         loader = DataLoader(TensorDataset(X, y), batch_size=32, num_workers=1)
         loaders = {"train": loader, "valid": loader}
 
-        model = torch.nn.Linear(num_features, 1)
-        criterion = torch.nn.MSELoss()
+        model = torch.nn.Linear(num_features, n_classes)
+        criterion = torch.nn.CrossEntropyLoss()
         optimizer = torch.optim.Adam(model.parameters())
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
 
@@ -161,15 +164,21 @@ class WrapperCallback(Callback):
             scheduler=scheduler,
             loaders=loaders,
             logdir="./logdir",
-            num_epochs=8,
-            verbose=True,
+            num_epochs=5,
+            verbose=False,
+            main_metric="accuracy03",
+            minimize_metric=False,
             callbacks=[
+                AccuracyCallback(
+                    accuracy_args=[1, 3, 5]
+                ),
                 WrapperCallback(
                     base_callback=CriterionCallback(),
-                    loaders=["valid"]
+                    loaders="valid"
                 )
             ]
         )
+
 
     In config API need to use ``_wrapper`` argument:
 
