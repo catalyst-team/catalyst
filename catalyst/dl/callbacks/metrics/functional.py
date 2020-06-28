@@ -6,15 +6,19 @@ def calculate_dice(
     false_positives: np.array,
     false_negatives: np.array,
 ) -> np.array:
-    """Calculate list of Dice coefficients.
+    """
+    Calculate list of Dice coefficients.
 
     Args:
-        true_positives:
-        false_positives:
-        false_negatives:
+        true_positives: true positives numpy tensor
+        false_positives: false positives numpy tensor
+        false_negatives: false negatives numpy tensor
 
     Returns:
         np.array: dice score
+
+    Raises:
+        ValueError: if `dice` is out of [0; 1] bounds
     """
     epsilon = 1e-7
 

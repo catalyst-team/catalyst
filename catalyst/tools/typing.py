@@ -11,7 +11,7 @@ from torch.utils import data
 Model = nn.Module
 Criterion = nn.Module
 Optimizer = optim.Optimizer
-Scheduler = lr_scheduler._LRScheduler  # noinspection PyProtectedMember
+Scheduler = lr_scheduler._LRScheduler  # noqa: WPS437
 Dataset = data.Dataset
 Device = Union[str, torch.device]
 

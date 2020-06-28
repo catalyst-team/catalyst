@@ -8,9 +8,8 @@ from catalyst.dl import (
     OptimizerCallback,
     SchedulerCallback,
 )
+from catalyst.dl.experiment.experiment import Experiment
 from catalyst.tools.typing import Criterion, Optimizer, Scheduler
-
-from .experiment import Experiment
 
 
 class SupervisedExperiment(Experiment):
@@ -51,7 +50,7 @@ class SupervisedExperiment(Experiment):
                 training stages.
 
         Returns:
-            (OrderedDict[str, Callback]): Ordered dictionary of callbacks
+            OrderedDict[str, Callback]: Ordered dictionary of callbacks
                 for experiment
         """
         callbacks = super().get_callbacks(stage=stage) or OrderedDict()

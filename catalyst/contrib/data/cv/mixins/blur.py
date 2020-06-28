@@ -3,7 +3,7 @@ import random
 
 import numpy as np
 
-import albumentations as A
+import albumentations as albu
 
 
 class BlurMixin:
@@ -28,7 +28,7 @@ class BlurMixin:
         self.blur_min = blur_min
         self.blur_max = blur_max
         blur = blur or ["Blur"]
-        self.blur = [A.__dict__[x]() for x in blur]
+        self.blur = [albu.__dict__[x]() for x in blur]
         self.num_blur = len(self.blur)
         self.num_blur_classes = blur_max - blur_min + 1 + 1
         self.blur_probability = (

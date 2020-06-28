@@ -12,7 +12,7 @@ import numpy as np
 
 import torch
 
-from . import meter
+from catalyst.tools.meters import meter
 
 
 class AUCMeter(meter.Meter):
@@ -93,14 +93,14 @@ class AUCMeter(meter.Meter):
                 tpr[i] = tpr[i - 1]
                 fpr[i] = fpr[i - 1] + 1
 
-        tpr /= self.targets.sum() * 1.0
+        tpr /= self.targets.sum() * 1.0  # noqa: WPS345
         fpr /= (self.targets - 1.0).sum() * -1.0
 
         # calculating area under curve using trapezoidal rule
         n = tpr.shape[0]
-        h = fpr[1:n] - fpr[0 : n - 1]
+        h = fpr[1:n] - fpr[: n - 1]
         sum_h = np.zeros(fpr.shape)
-        sum_h[0 : n - 1] = h
+        sum_h[: n - 1] = h
         sum_h[1:n] += h
         area = (sum_h * tpr).sum() / 2.0
 

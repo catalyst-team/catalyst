@@ -13,9 +13,9 @@ class CallbackNode(IntFlag):
     - Worker (2) - use only in worker nodes.
     """
 
-    All = 0
-    Master = 1
-    Worker = 2
+    All = all = 0  # noqa: WPS115
+    Master = master = 1  # noqa: WPS115
+    Worker = worker = 2  # noqa: WPS115
 
 
 class CallbackOrder(IntFlag):
@@ -57,14 +57,14 @@ class CallbackOrder(IntFlag):
     .. _Alchemy: https://alchemy.host
     """
 
-    Internal = 0  # pytorch
-    Metric = 20  # pytorch
-    MetricAggregation = 40  # pytorch
-    Optimizer = 60  # pytorch
-    Validation = 80  # numpy
-    Scheduler = 100  # numpy
-    Logging = 120  # numpy
-    External = 200  # numpy
+    Internal = internal = 0  # noqa: WPS115
+    Metric = metric = 20  # noqa: WPS115
+    MetricAggregation = metric_aggregation = 40  # noqa: WPS115
+    Optimizer = optimizer = 60  # noqa: WPS115
+    Validation = validation = 80  # noqa: WPS115
+    Scheduler = scheduler = 100  # noqa: WPS115
+    Logging = logging = 120  # noqa: WPS115
+    External = external = 200  # noqa: WPS115
 
 
 class CallbackScope(IntFlag):
@@ -74,8 +74,8 @@ class CallbackScope(IntFlag):
     - Experiment (1) - use Callback during whole experiment run.
     """
 
-    Stage = 0
-    Experiment = 1
+    Stage = stage = 0  # noqa: WPS115
+    Experiment = experiment = 1  # noqa: WPS115
 
 
 class Callback:
@@ -122,8 +122,8 @@ class Callback:
     def __init__(
         self,
         order: int,
-        node: int = CallbackNode.All,
-        scope: int = CallbackScope.Stage,
+        node: int = CallbackNode.all,
+        scope: int = CallbackScope.stage,
     ):
         """Callback initializer.
 

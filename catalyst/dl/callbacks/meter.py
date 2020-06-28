@@ -43,7 +43,7 @@ class MeterMetricsCallback(Callback):
             activation (str): An torch.nn activation applied to the logits.
                 Must be one of ['none', 'Sigmoid', 'Softmax2d']
         """
-        super().__init__(CallbackOrder.Metric)
+        super().__init__(CallbackOrder.metric)
         self.metric_names = metric_names
         self.meters = meter_list
         self.input_key = input_key
@@ -92,15 +92,15 @@ class MeterMetricsCallback(Callback):
             postfix = (
                 self.class_names[i] if self.class_names is not None else str(i)
             )
-            for prefix, metric_ in zip(self.metric_names, metrics):
+            for prefix, metric in zip(self.metric_names, metrics):
                 # appending the per-class values
-                metrics_tracker[prefix].append(metric_)
+                metrics_tracker[prefix].append(metric)
                 metric_name = f"{prefix}/class_{postfix}"
-                loader_values[metric_name] = metric_
+                loader_values[metric_name] = metric
         # averaging the per-class values for each metric
-        for prefix in self.metric_names:
-            mean_value = float(np.mean(metrics_tracker[prefix]))
-            metric_name = f"{prefix}/_mean"
+        for prefix2 in self.metric_names:
+            mean_value = float(np.mean(metrics_tracker[prefix2]))
+            metric_name = f"{prefix2}/_mean"
             loader_values[metric_name] = mean_value
 
         self._reset_stats()

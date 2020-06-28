@@ -1,3 +1,5 @@
+# flake8: noqa
+# TODO: add docs and refactor for pure contrib
 from typing import Dict, List, Optional, Tuple, Union
 from collections import defaultdict
 
@@ -7,7 +9,7 @@ from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.utils import shuffle
 from tqdm.auto import tqdm
 
-from .misc import args_are_not_none
+from catalyst.contrib.utils.misc import args_are_not_none
 
 tqdm.pandas()
 
@@ -19,7 +21,7 @@ def dataframe_to_list(dataframe: pd.DataFrame) -> List[dict]:
         dataframe (DataFrame): input dataframe
 
     Returns:
-        (List[dict]): list of rows
+        List[dict]: list of rows
     """
     result = list(dataframe.to_dict(orient="index").values())
     return result
@@ -130,7 +132,7 @@ def split_dataframe_on_stratified_folds(
     Args:
         dataframe: a dataset
         class_column: which column to use for split
-        random_state: seed for random shuffle
+        random_state (int): seed for random shuffle
         n_folds: number of result folds
 
     Returns:
@@ -290,7 +292,7 @@ def split_dataframe(
         n_folds (int): number of folds
 
     Returns:
-        (tuple): tuple with 4 dataframes
+        tuple: tuple with 4 dataframes
             whole dataframe, train part, valid part and infer part
     """
     if args_are_not_none(tag2class, tag_column, class_column):
@@ -369,7 +371,7 @@ def read_multiple_dataframes(
         class_column (str, optional): column to use for split
 
     Returns:
-        (tuple): tuple with 4 dataframes
+        tuple: tuple with 4 dataframes
             whole dataframe, train part, valid part and infer part
     """
     assert any(
@@ -456,7 +458,7 @@ def read_csv_data(
         class_column (str): column to use for split
 
     Returns:
-        (Tuple[pd.DataFrame, List[dict], List[dict], List[dict]]):
+        Tuple[pd.DataFrame, List[dict], List[dict], List[dict]]:
             tuple with 4 elements
             (whole dataframe,
             list with train data,
@@ -526,12 +528,15 @@ def balance_classes(
     Args:
         dataframe: a dataset
         class_column: which column to use for split
-        random_state: seed for random shuffle
-        how: strategy to sample
-            must be one on ["downsampling", "upsampling"]
+        random_state (int): seed for random shuffle
+        how: strategy to sample, must be one on ["downsampling", "upsampling"]
 
     Returns:
         pd.DataFrame: new dataframe with balanced ``class_column``
+
+    Raises:
+        NotImplementedError:
+            if `how` is not in ["upsampling", "downsampling", int]
     """
     cnt = defaultdict(lambda: 0.0)
     for label in sorted(dataframe[class_column].unique()):

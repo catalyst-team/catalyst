@@ -62,6 +62,22 @@ class IExperiment(ABC):
 
     @property
     @abstractmethod
+    def hparams(self) -> OrderedDict:
+        """Returns hyper-parameters
+
+        Example::
+            >>> experiment.hparams
+            OrderedDict([('optimizer', 'Adam'),
+             ('lr', 0.02),
+             ('betas', (0.9, 0.999)),
+             ('eps', 1e-08),
+             ('weight_decay', 0),
+             ('amsgrad', False),
+             ('train_batch_size', 32)])
+        """
+
+    @property
+    @abstractmethod
     def stages(self) -> Iterable[str]:
         """Experiment's stage names.
 
@@ -119,7 +135,7 @@ class IExperiment(ABC):
             stage (str): stage name of interest
                 like "pretrain" / "train" / "finetune" / etc
 
-        Returns:
+        Returns:  # noqa: DAR202
             dict: parameters for a given stage.
         """
         pass
@@ -142,7 +158,7 @@ class IExperiment(ABC):
             stage (str): stage name of interest
                 like "pretrain" / "train" / "finetune" / etc
 
-        Returns:
+        Returns:  # noqa: DAR202
             Model: model for a given stage.
         """
         pass
@@ -161,7 +177,7 @@ class IExperiment(ABC):
             stage (str): stage name of interest
                 like "pretrain" / "train" / "finetune" / etc
 
-        Returns:
+        Returns:  # noqa: DAR202
             Criterion: criterion for a given stage.
         """
         pass
@@ -180,7 +196,7 @@ class IExperiment(ABC):
                 like "pretrain" / "train" / "finetune" / etc
             model (Model): model to optimize with stage optimizer
 
-        Returns:
+        Returns:  # noqa: DAR202
             Optimizer: optimizer for a given stage and model.
         """
         pass
@@ -198,7 +214,7 @@ class IExperiment(ABC):
                 like "pretrain" / "train" / "finetune" / etc
             optimizer (Optimizer): optimizer to schedule with stage scheduler
 
-        Returns:
+        Returns:  # noqa: DAR202
             Scheduler: scheduler for a given stage and optimizer.
         """
         pass
@@ -236,6 +252,8 @@ class IExperiment(ABC):
     def get_transforms(self, stage: str = None, dataset: str = None):
         """Returns the data transforms for a given stage and dataset.
 
+        # noqa: DAR401, W505
+
         Args:
             stage (str): stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
@@ -246,7 +264,7 @@ class IExperiment(ABC):
             For datasets/loaders nameing please follow
             :py:mod:`catalyst.core.runner` documentation.
 
-        Returns:
+        Returns:  # noqa: DAR202
             Data transformations to use for specified dataset.
 
         """
@@ -255,7 +273,7 @@ class IExperiment(ABC):
     def get_datasets(
         self, stage: str, epoch: int = None, **kwargs,
     ) -> "OrderedDict[str, Dataset]":
-        """Returns the datasets for a given stage and epoch.
+        """Returns the datasets for a given stage and epoch.  # noqa: DAR401
 
         .. note::
             For Deep Learning cases you have the same dataset
@@ -271,7 +289,7 @@ class IExperiment(ABC):
             **kwargs (dict): additional parameters to use during
                 dataset creation
 
-        Returns:
+        Returns:  # noqa: DAR202
             OrderedDict[str, Dataset]: Ordered dictionary
                 with datasets for current stage and epoch.
 
@@ -300,7 +318,7 @@ class IExperiment(ABC):
     def get_loaders(
         self, stage: str, epoch: int = None,
     ) -> "OrderedDict[str, DataLoader]":
-        """Returns the loaders for a given stage.
+        """Returns the loaders for a given stage.  # noqa: DAR401
 
         .. note::
             Wrapper for
@@ -312,10 +330,8 @@ class IExperiment(ABC):
             stage (str): stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
             epoch (int): epoch index
-            **kwargs (dict): additional parameters to use during
-                dataset creation
 
-        Returns:
+        Returns:  # noqa: DAR202
             OrderedDict[str, DataLoader]: Ordered dictionary
                 with loaders for current stage and epoch.
 
@@ -340,8 +356,8 @@ class IExperiment(ABC):
             stage (str): stage name of interest
                 like "pretrain" / "train" / "finetune" / etc
 
-        Returns:
-            OrderedDict[str, Callback]: Ordered dictionary
+        Returns:  # noqa: DAR202
+            OrderedDict[str, Callback]: Ordered dictionary  # noqa: DAR202
             with callbacks for current stage.
 
         .. note::
@@ -350,6 +366,14 @@ class IExperiment(ABC):
                 - :py:mod:`catalyst.core.experiment.IExperiment`
                 - :py:mod:`catalyst.core.runner.IRunner`
                 - :py:mod:`catalyst.core.callback.Callback`
+
+        Args:
+            stage (str): stage name of interest,
+                like "pretrain" / "train" / "finetune" / etc
+
+        Returns:
+            OrderedDict[str, Callback]: Ordered dictionary
+                with callbacks for current stage.
         """
         pass
 

@@ -5,7 +5,7 @@ from catalyst.tools import meters
 
 def test_averagevaluemeter():
     """Test for ``catalyst.tools.meters.AverageValueMeter``."""
-    meter = meters.AverageValueMeter()
+    meter_instance = meters.AverageValueMeter()
 
     def batch_generator(length, batch_size=10):
         data = torch.rand(length)
@@ -29,4 +29,4 @@ def test_averagevaluemeter():
 
     confs = ((100, 1), (100, 10), (100, 16), (1024, 53), (10, 16), (100, 100))
     for conf in confs:
-        test(meter, *conf)
+        test(meter_instance, *conf)

@@ -52,6 +52,9 @@ class Lookahead(Optimizer):
         Args:
             closure (callable, optional): A closure that reevaluates
                 the model and returns the loss.
+
+        Returns:
+            computed loss
         """
         loss = self.optimizer.step(closure)
         for group in self.param_groups:

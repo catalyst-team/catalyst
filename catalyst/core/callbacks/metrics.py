@@ -13,7 +13,7 @@ from catalyst.tools import meters
 logger = logging.getLogger(__name__)
 
 
-class _MetricCallback(ABC, Callback):
+class IMetricCallback(ABC, Callback):
     """@TODO: Docs. Contribution is welcome."""
 
     def __init__(
@@ -25,7 +25,7 @@ class _MetricCallback(ABC, Callback):
         **metrics_kwargs,
     ):
         """@TODO: Docs. Contribution is welcome."""
-        super().__init__(order=CallbackOrder.Metric, node=CallbackNode.All)
+        super().__init__(order=CallbackOrder.metric, node=CallbackNode.all)
         self.prefix = prefix
         # self.metric_fn = partial(metric_fn, **metrics_kwargs)
         self.input_key = input_key
@@ -69,16 +69,16 @@ class _MetricCallback(ABC, Callback):
 
     def _compute_metric_value(self, runner: IRunner):
         output = self._get_output(runner.output, self.output_key)
-        input = self._get_input(runner.input, self.input_key)
+        input_ = self._get_input(runner.input, self.input_key)
 
-        metric = self.metric_fn(output, input, **self.metrics_kwargs)
+        metric = self.metric_fn(output, input_, **self.metrics_kwargs)
         return metric
 
     def _compute_metric_key_value(self, runner: IRunner):
         output = self._get_output(runner.output, self.output_key)
-        input = self._get_input(runner.input, self.input_key)
+        input_ = self._get_input(runner.input, self.input_key)
 
-        metric = self.metric_fn(**output, **input, **self.metrics_kwargs)
+        metric = self.metric_fn(**output, **input_, **self.metrics_kwargs)
         return metric
 
     def on_batch_end(self, runner: IRunner) -> None:
@@ -87,7 +87,7 @@ class _MetricCallback(ABC, Callback):
         runner.batch_metrics[self.prefix] = metric
 
 
-class MetricCallback(_MetricCallback):
+class MetricCallback(IMetricCallback):
     """A callback that returns single metric on `runner.on_batch_end`."""
 
     def __init__(
@@ -145,9 +145,9 @@ class MultiMetricCallback(MetricCallback):
         Args:
             runner (IRunner): current runner
         """
-        metrics_ = self._compute_metric(runner)
+        metrics = self._compute_metric(runner)
 
-        for arg, metric in zip(self.list_args, metrics_):
+        for arg, metric in zip(self.list_args, metrics):
             if isinstance(arg, int):
                 key = f"{self.prefix}{arg:02}"
             else:
@@ -176,7 +176,7 @@ class MetricAggregationCallback(Callback):
             multiplier (float): scale factor for the aggregated metric.
         """
         super().__init__(
-            order=CallbackOrder.MetricAggregation, node=CallbackNode.All
+            order=CallbackOrder.metric_aggregation, node=CallbackNode.all
         )
 
         if prefix is None or not isinstance(prefix, str):
@@ -255,12 +255,13 @@ class MetricManagerCallback(Callback):
     def __init__(self):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__(
-            order=CallbackOrder.Logging - 1, node=CallbackNode.All,
+            order=CallbackOrder.logging - 1, node=CallbackNode.all,
         )
         self.meters: Dict[str, meters.AverageValueMeter] = None
 
     @staticmethod
-    def _to_single_value(value: Any) -> float:
+    def to_single_value(value: Any) -> float:
+        """@TODO: Docs. Contribution is welcome."""
         if hasattr(value, "item"):
             value = value.item()
 
@@ -272,7 +273,7 @@ class MetricManagerCallback(Callback):
         output = {}
         for key, value in metrics.items():
             value = utils.get_distributed_mean(value)
-            value = MetricManagerCallback._to_single_value(value)
+            value = MetricManagerCallback.to_single_value(value)
             output[key] = value
         return output
 
@@ -325,7 +326,7 @@ class MetricManagerCallback(Callback):
 
 
 __all__ = [
-    "_MetricCallback",
+    "IMetricCallback",
     "MetricCallback",
     "MultiMetricCallback",
     "MetricAggregationCallback",

@@ -4,9 +4,8 @@ import numpy as np
 
 from torch.optim import Optimizer
 
+from catalyst.contrib.nn.schedulers.base import BatchScheduler
 from catalyst.utils.torch import get_optimizer_momentum
-
-from .base import BatchScheduler
 
 
 class OneCycleLRWithWarmup(BatchScheduler):
@@ -199,7 +198,7 @@ class OneCycleLRWithWarmup(BatchScheduler):
         )
         self.last_epoch = 0
 
-    def recalculate(self, loader_len: int, current_step: int,) -> None:
+    def recalculate(self, loader_len: int, current_step: int) -> None:
         """Recalculates total num_steps for ``batch`` mode.
 
         Args:

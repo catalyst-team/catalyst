@@ -5,7 +5,7 @@ import math
 
 import torch
 
-from . import meter
+from catalyst.tools.meters import meter
 
 
 class APMeter(meter.Meter):
@@ -69,18 +69,18 @@ class APMeter(meter.Meter):
         if output.dim() == 1:
             output = output.view(-1, 1)
         else:
-            assert (
-                output.dim() == 2
-            ), "wrong output size (should be 1D or 2D with one column \
-                per class)"
+            assert output.dim() == 2, (
+                "wrong output size "
+                "(should be 1D or 2D with one column per class)"
+            )
 
         if target.dim() == 1:
             target = target.view(-1, 1)
         else:
-            assert (
-                target.dim() == 2
-            ), "wrong target size (should be 1D or 2D with one column \
-                per class)"
+            assert target.dim() == 2, (
+                "wrong target size "
+                "(should be 1D or 2D with one column per class)"
+            )
 
         if weight is not None:
             assert weight.dim() == 1, "Weight dimension should be 1"
@@ -118,11 +118,11 @@ class APMeter(meter.Meter):
             self.weights.resize_(offset + weight.size(0))
             self.weights.narrow(0, offset, weight.size(0)).copy_(weight)
 
-    def value(self):
+    def value(self) -> torch.Tensor:
         """Returns the model"s average precision for each class.
 
-        Return:
-            FloatTensor: 1xK tensor, with avg precision for each class k
+        Returns:
+            torch.Tensor: 1xK tensor, with avg precision for each class k
         """
         if self.scores.numel() == 0:
             return 0
@@ -140,7 +140,7 @@ class APMeter(meter.Meter):
             # sort scores
             scores = self.scores[:, k]
             targets = self.targets[:, k]
-            _, sortind = torch.sort(scores, 0, True)
+            _, sortind = torch.sort(scores, dim=0, descending=True)
             truth = targets[sortind]
             if self.weights.numel() > 0:
                 weight = self.weights[sortind]

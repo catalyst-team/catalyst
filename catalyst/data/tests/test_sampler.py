@@ -1,7 +1,7 @@
-from typing import List, Tuple
 from collections import Counter
 from operator import itemgetter
 from random import randint, shuffle
+from typing import List, Tuple
 
 import pytest
 
@@ -36,7 +36,8 @@ def generate_valid_labels(num: int) -> TLabelsPK:
 @pytest.fixture()
 def input_for_balance_batch_sampler() -> TLabelsPK:
     """
-    Returns: test data for sampler in the following order: (labels, p, k)
+    Returns:
+        test data for sampler in the following order: (labels, p, k)
     """
     input_cases = [
         # ideal case
@@ -70,8 +71,6 @@ def check_balance_batch_sampler_epoch(
         labels: list of classes labels
         p: number of classes in a batch
         k: number of instances for each class in a batch
-
-    Returns: None
     """
     sampler = BalanceBatchSampler(labels=labels, p=p, k=k)
     sampled_ids = list(sampler)
@@ -91,7 +90,7 @@ def check_balance_batch_sampler_epoch(
         sampled_classes.extend(list(labels_counter.keys()))
 
         # batch-level invariants
-        assert 4 <= len(set(batch_ids))
+        assert len(set(batch_ids)) >= 4
 
         is_last_batch = i == sampler.batches_in_epoch - 1
         if is_last_batch:
@@ -113,12 +112,12 @@ def check_balance_batch_sampler_epoch(
     assert max(sampled_ids) <= len(labels) - 1
 
 
-def test_balance_batch_sampler(input_for_balance_batch_sampler) -> None:
+def test_balance_batch_sampler(
+    input_balance_batch_sampler,  # noqa: WPS442
+) -> None:
     """
     Args:
         input_balance_batch_sampler: pytest fixture
-
-    Returns: None
     """
     for labels, p, k in input_for_balance_batch_sampler:
         check_balance_batch_sampler_epoch(labels=labels, p=p, k=k)

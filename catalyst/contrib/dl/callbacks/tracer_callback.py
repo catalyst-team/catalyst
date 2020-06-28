@@ -45,7 +45,7 @@ class TracerCallback(Callback):
             out_model (Union[str, Path]): Path to save model to
                 (overrides `out_dir` argument)
         """
-        super().__init__(order=CallbackOrder.External, node=CallbackNode.All)
+        super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
 
         if trace_mode not in ["train", "eval"]:
             raise ValueError(

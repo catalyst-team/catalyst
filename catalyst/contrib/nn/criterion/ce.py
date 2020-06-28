@@ -1,3 +1,5 @@
+# flake8: noqa
+# TODO: update docs and shapes
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -12,20 +14,20 @@ class NaiveCrossEntropyLoss(nn.Module):
         self.size_average = size_average
 
     def forward(
-        self, input: torch.Tensor, target: torch.Tensor
+        self, input_: torch.Tensor, target: torch.Tensor
     ) -> torch.Tensor:
-        """Calculates loss between ``input`` and ``target`` tensors.
+        """Calculates loss between ``input_`` and ``target`` tensors.
 
         Args:
-            input (torch.Tensor): input tensor of shape ...
+            input_ (torch.Tensor): input tensor of shape ...
             target (torch.Tensor): target tensor of shape ...
 
         @TODO: Docs (add shapes). Contribution is welcome.
         """
-        assert input.size() == target.size()
-        input = F.log_softmax(input)
-        loss = -torch.sum(input * target)
-        loss = loss / input.size()[0] if self.size_average else loss
+        assert input_.size() == target.size()
+        input_ = F.log_softmax(input_)
+        loss = -torch.sum(input_ * target)
+        loss = loss / input_.size()[0] if self.size_average else loss
         return loss
 
 
@@ -52,60 +54,59 @@ class SymmetricCrossEntropyLoss(nn.Module):
         self.beta = beta
 
     def forward(
-        self, input: torch.Tensor, target: torch.Tensor
+        self, input_: torch.Tensor, target: torch.Tensor
     ) -> torch.Tensor:
-        """Calculates loss between ``input`` and ``target`` tensors.
+        """Calculates loss between ``input_`` and ``target`` tensors.
 
         Args:
-            input (torch.Tensor): input tensor of size
+            input_ (torch.Tensor): input tensor of size
                 (batch_size, num_classes)
             target (torch.Tensor): target tensor of size (batch_size), where
                 values of a vector correspond to class index
-        """
-        num_classes = input.shape[1]
-        target_one_hot = F.one_hot(target, num_classes).float()
-        assert target_one_hot.shape == input.shape
 
-        input = torch.clamp(input, min=1e-7, max=1.0)
+        Returns:
+            torch.Tensor: computed loss
+        """
+        num_classes = input_.shape[1]
+        target_one_hot = F.one_hot(target, num_classes).float()
+        assert target_one_hot.shape == input_.shape
+
+        input_ = torch.clamp(input_, min=1e-7, max=1.0)
         target_one_hot = torch.clamp(target_one_hot, min=1e-4, max=1.0)
 
         cross_entropy = (
-            -torch.sum(target_one_hot * torch.log(input), dim=1)
+            -torch.sum(target_one_hot * torch.log(input_), dim=1)
         ).mean()
         reverse_cross_entropy = (
-            -torch.sum(input * torch.log(target_one_hot), dim=1)
+            -torch.sum(input_ * torch.log(target_one_hot), dim=1)
         ).mean()
         loss = self.alpha * cross_entropy + self.beta * reverse_cross_entropy
         return loss
 
 
-class MaskCrossEntropyLoss(torch.nn.CrossEntropyLoss):
+class MaskCrossEntropyLoss(nn.Module):
     """@TODO: Docs. Contribution is welcome."""
 
-    def __init__(
-        self,
-        *args,
-        target_name: str = "targets",
-        mask_name: str = "mask",
-        **kwargs
-    ):
+    def __init__(self, *args, **kwargs):
         """@TODO: Docs. Contribution is welcome."""
-        super().__init__(*args, **kwargs)
-        self.target_name = target_name
-        self.mask_name = mask_name
-        self.reduction = "none"
+        super().__init__()
+        self.ce_loss = nn.CrossEntropyLoss(*args, **kwargs, reduction="none")
 
     def forward(
-        self, input: torch.Tensor, target_mask: torch.Tensor
+        self, logits: torch.Tensor, target: torch.Tensor, mask: torch.Tensor,
     ) -> torch.Tensor:
-        """Calculates loss between ``input`` and ``target_mask`` tensors.
-
-        @TODO: Docs. Contribution is welcome.
         """
-        target = target_mask[self.target_name]
-        mask = target_mask[self.mask_name]
+        Calculates loss between ``logits`` and ``target`` tensors.
 
-        loss = super().forward(input, target)
+        Args:
+            logits: model logits
+            target: true targets
+            mask: targets mask
+
+        Returns:
+            torch.Tensor: computed loss
+        """
+        loss = self.ce_loss.forward(logits, target)
         loss = torch.mean(loss[mask == 1])
         return loss
 

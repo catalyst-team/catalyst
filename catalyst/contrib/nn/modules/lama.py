@@ -25,9 +25,9 @@ class TemporalAvgPooling(nn.Module):
         if mask is None:
             x_out = x.mean(1, keepdim=True)
         else:
-            x_ = torch.sum(x * mask.float(), dim=1, keepdim=True)
-            mask_ = torch.sum(mask.float(), dim=1, keepdim=True)
-            x_out = x_ / mask_
+            x_masked = torch.sum(x * mask.float(), dim=1, keepdim=True)
+            mask_sum = torch.sum(mask.float(), dim=1, keepdim=True)
+            x_out = x_masked / mask_sum
         return x_out
 
 
@@ -39,8 +39,8 @@ class TemporalMaxPooling(nn.Module):
     ) -> torch.Tensor:
         """Forward call."""
         if mask is not None:
-            mask_ = (~mask.bool()).float() * (-x.max()).float()
-            x = torch.sum(x + mask_, dim=1, keepdim=True)
+            x_mask = (~mask.bool()).float() * (-x.max()).float()
+            x = torch.sum(x + x_mask, dim=1, keepdim=True)
         x_out = x.max(1, keepdim=True)[0]
         return x_out
 
@@ -75,11 +75,15 @@ class TemporalAttentionPooling(nn.Module):
         self, x: torch.Tensor, mask: torch.Tensor = None
     ) -> torch.Tensor:
         """
+        Forward call.
+
         Args:
             x (torch.Tensor): tensor of size
                 (batch_size, history_len, feature_size)
+            mask: mask to use
 
-        @TODO: Docs. Contribution is welcome.
+        Returns:
+            pooling result
         """
         batch_size, history_len, feature_size = x.shape
 
@@ -104,11 +108,15 @@ class TemporalConcatPooling(nn.Module):
         self, x: torch.Tensor, mask: torch.Tensor = None
     ) -> torch.Tensor:
         """
+        Concat pooling forward.
+
         Args:
             x (torch.Tensor): tensor of size
                 (batch_size, history_len, feature_size)
+            mask: mask to use
 
-        @TODO: Docs. Contribution is welcome.
+        Returns:
+            concated result
         """
         x = x.view(x.shape[0], -1)
         return x
@@ -131,17 +139,17 @@ class TemporalDropLastWrapper(nn.Module):
 
 def _get_pooling(key, in_features, **params):
     """@TODO: Docs. Contribution is welcome."""
-    key_ = key.split("_", 1)[0]
+    key_prefix = key.split("_", 1)[0]
 
-    if key_ == "last":
+    if key_prefix == "last":
         return TemporalLastPooling()
-    elif key_ == "avg":
+    elif key_prefix == "avg":
         layer = TemporalAvgPooling()
-    elif key_ == "max":
+    elif key_prefix == "max":
         layer = TemporalMaxPooling()
-    elif key_ in ["softmax", "tanh", "sigmoid"]:
+    elif key_prefix in ["softmax", "tanh", "sigmoid"]:
         layer = TemporalAttentionPooling(
-            in_features=in_features, activation=key_, **params
+            in_features=in_features, activation=key_prefix, **params
         )
     else:
         raise NotImplementedError()
@@ -186,8 +194,8 @@ class LamaPooling(nn.Module):
             if isinstance(key, str):
                 groups[key] = _get_pooling(key, self.in_features)
             elif isinstance(key, dict):
-                key_ = key.pop("key")
-                groups[key_] = _get_pooling(key_, in_features, **key)
+                key_key = key.pop("key")
+                groups[key_key] = _get_pooling(key_key, in_features, **key)
             else:
                 raise NotImplementedError()
 
@@ -197,19 +205,23 @@ class LamaPooling(nn.Module):
         self, x: torch.Tensor, mask: torch.Tensor = None
     ) -> torch.Tensor:
         """
+        Forward method of the LAMA.
+
         Args:
             x (torch.Tensor): tensor of size
                 (batch_size, history_len, feature_size)
+            mask (torch.Tensor): mask to use for attention compute
 
-        @TODO: Docs. Contribution is welcome.
+        Returns:
+            torch.Tensor: LAMA pooling result
         """
         batch_size, history_len, feature_size = x.shape
 
-        x_ = []
+        features_list = []
         for pooling_fn in self.groups.values():
-            features_ = pooling_fn(x, mask)
-            x_.append(features_)
-        x = torch.cat(x_, dim=1)
+            features = pooling_fn(x, mask)
+            features_list.append(features)
+        x = torch.cat(features_list, dim=1)
         x = x.view(batch_size, -1)
 
         return x

@@ -102,15 +102,17 @@ def main_worker(args, unknown_args):
 
     config.setdefault("distributed_params", {})["apex"] = args.apex
 
-    Experiment, Runner = utils.import_experiment_and_runner(Path(args.expdir))
-    if Experiment is None:
+    experiment_fn, runner_fn = utils.import_experiment_and_runner(
+        Path(args.expdir)
+    )
+    if experiment_fn is None:
         experiment_params = config.get("experiment_params", {})
         experiment = experiment_params.get("experiment", "Experiment")
-        Experiment = EXPERIMENTS.get(experiment)
+        experiment_fn = EXPERIMENTS.get(experiment)
 
     runner_params = config.get("runner_params", {})
-    experiment = Experiment(config)
-    runner = Runner(**runner_params)
+    experiment = experiment_fn(config)
+    runner = runner_fn(**runner_params)
 
     if experiment.logdir is not None and get_rank() <= 0:
         utils.dump_environment(config, experiment.logdir, args.configs)

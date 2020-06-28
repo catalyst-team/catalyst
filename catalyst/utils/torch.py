@@ -11,8 +11,7 @@ import torch.backends
 from torch.backends import cudnn
 
 from catalyst.tools.typing import Device, Model, Optimizer
-
-from .dict import merge_dicts
+from catalyst.utils.dict import merge_dicts
 
 
 def get_optimizable_params(model_or_params):
@@ -204,10 +203,10 @@ def process_model_params(
     model_params = []
     for name, parameters in params:
         options = {}
-        for pattern, options_ in layerwise_params.items():
+        for pattern, pattern_options in layerwise_params.items():
             if re.match(pattern, name) is not None:
                 # all new LR rules write on top of the old ones
-                options = merge_dicts(options, options_)
+                options = merge_dicts(options, pattern_options)
 
         # no bias decay from https://arxiv.org/abs/1812.01187
         if no_bias_weight_decay and name.endswith("bias"):
@@ -275,15 +274,18 @@ def get_network_output(net: Model, *input_shapes_args, **input_shapes_kwargs):
     """# noqa: D202
     For each input shape returns an output tensor
 
-    Args:
-        net (Model): the model
-        *input_shapes_args: variable length argument list of shapes
-        **input_shapes_kwargs:
-
     Examples:
         >>> net = nn.Linear(10, 5)
         >>> utils.get_network_output(net, (1, 10))
         tensor([[[-0.2665,  0.5792,  0.9757, -0.5782,  0.1530]]])
+
+    Args:
+        net (Model): the model
+        *input_shapes_args: variable length argument list of shapes
+        **input_shapes_kwargs: key-value arguemnts of shapes
+
+    Returns:
+        tensor with network output
     """
 
     def _rand_sample(
@@ -291,8 +293,8 @@ def get_network_output(net: Model, *input_shapes_args, **input_shapes_kwargs):
     ) -> Union[torch.Tensor, Dict[str, torch.Tensor]]:
         if isinstance(input_shape, dict):
             input_t = {
-                key: torch.Tensor(torch.randn((1,) + input_shape_))
-                for key, input_shape_ in input_shape.items()
+                key: torch.Tensor(torch.randn((1,) + key_input_shape))
+                for key, key_input_shape in input_shape.items()
             }
         else:
             input_t = torch.Tensor(torch.randn((1,) + input_shape))
@@ -328,14 +330,16 @@ def trim_tensors(tensors):
     Trim padding off of a batch of tensors to the smallest possible length.
     Should be used with `catalyst.data.DynamicLenBatchSampler`.
 
-    Adapted from "Dynamic minibatch trimming to improve BERT training speed"
-    https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779
+    Adapted from `Dynamic minibatch trimming to improve BERT training speed`_.
 
     Args:
         tensors ([torch.tensor]): list of tensors to trim.
 
     Returns:
-        ([torch.tensor]): list of trimmed tensors.
+        List[torch.tensor]: list of trimmed tensors.
+
+    .. _`Dynamic minibatch trimming to improve BERT training speed`:
+        https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779
     """
     max_len = torch.max(torch.sum((tensors[0] != 0), 1))
     if max_len > 2:

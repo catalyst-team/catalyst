@@ -84,6 +84,12 @@ class QHAdamW(Optimizer):
         Args:
             closure (callable, optional): A closure that reevaluates
                 the model and returns the loss.
+
+        Returns:
+            computed loss
+
+        Raises:
+            RuntimeError: QHAdamW does not support sparse gradients
         """
         loss = None
         if closure is not None:

@@ -18,7 +18,7 @@ from catalyst.dl import (
 )
 from catalyst.dl.experiment.config import ConfigExperiment
 
-DEFAULT_MINIMAL_CONFIG = {
+DEFAULT_MINIMAL_CONFIG = {  # noqa: WPS407
     "model_params": {"model": "SomeModel"},
     "stages": {"data_params": {"num_workers": 0}, "train": {}},
     "args": {"logdir": "./logdir"},
@@ -88,7 +88,7 @@ def test_defaults():
     inherit from different parent classes.
     Also very important to check which callbacks are added by default
     """
-    exp = ConfigExperiment(config=DEFAULT_MINIMAL_CONFIG)
+    exp = ConfigExperiment(config=DEFAULT_MINIMAL_CONFIG.copy())
 
     assert exp.initial_seed == 42
     assert exp.logdir == "./logdir"
@@ -165,7 +165,7 @@ def test_not_implemented_datasets():
     Test on ``get_datasets`` method, which should be implememnted by user.
     Method ``get_loaders`` will call ``get_dataset``.
     """
-    exp = ConfigExperiment(config=DEFAULT_MINIMAL_CONFIG)
+    exp = ConfigExperiment(config=DEFAULT_MINIMAL_CONFIG.copy())
 
     with pytest.raises(NotImplementedError):
         exp.get_loaders("train")

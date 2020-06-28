@@ -27,6 +27,9 @@ class GlobalAvgPool2d(nn.Module):
 
         Args:
             in_features: number of channels in the input sample
+
+        Returns:
+            number of output features
         """
         return in_features
 
@@ -53,6 +56,9 @@ class GlobalMaxPool2d(nn.Module):
 
         Args:
             in_features: number of channels in the input sample
+
+        Returns:
+            number of output features
         """
         return in_features
 
@@ -64,7 +70,7 @@ class GlobalConcatPool2d(nn.Module):
         """Constructor method for the ``GlobalConcatPool2d`` class."""
         super().__init__()
         self.avg = GlobalAvgPool2d()
-        self.max = GlobalMaxPool2d()
+        self.max = GlobalMaxPool2d()  # noqa: WPS125
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward call."""
@@ -76,6 +82,9 @@ class GlobalConcatPool2d(nn.Module):
 
         Args:
             in_features: number of channels in the input sample
+
+        Returns:
+            number of output features
         """
         return in_features * 2
 
@@ -108,6 +117,9 @@ class GlobalAttnPool2d(nn.Module):
 
         Args:
             in_features: number of channels in the input sample
+
+        Returns:
+            number of output features
         """
         return in_features
 
@@ -131,6 +143,9 @@ class GlobalAvgAttnPool2d(nn.Module):
 
         Args:
             in_features: number of channels in the input sample
+
+        Returns:
+            number of output features
         """
         return in_features * 2
 
@@ -141,7 +156,7 @@ class GlobalMaxAttnPool2d(nn.Module):
     def __init__(self, in_features, activation_fn="Sigmoid"):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__()
-        self.max = GlobalMaxPool2d()
+        self.max = GlobalMaxPool2d()  # noqa: WPS125
         self.attn = GlobalAttnPool2d(in_features, activation_fn)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -154,6 +169,9 @@ class GlobalMaxAttnPool2d(nn.Module):
 
         Args:
             in_features: number of channels in the input sample
+
+        Returns:
+            number of output features
         """
         return in_features * 2
 
@@ -165,7 +183,7 @@ class GlobalConcatAttnPool2d(nn.Module):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__()
         self.avg = GlobalAvgPool2d()
-        self.max = GlobalMaxPool2d()
+        self.max = GlobalMaxPool2d()  # noqa: WPS125
         self.attn = GlobalAttnPool2d(in_features, activation_fn)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -178,5 +196,8 @@ class GlobalConcatAttnPool2d(nn.Module):
 
         Args:
             in_features: number of channels in the input sample
+
+        Returns:
+            number of output features
         """
         return in_features * 3
