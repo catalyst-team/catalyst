@@ -46,7 +46,7 @@ stages:
         callback: OptimizerCallback
       accuracy:
         _wrapper:
-            callback: WrapperCallback
+            callback: ControlFlowCallback
             epochs: 2
             use_global_epochs: False
         callback: AccuracyCallback
@@ -75,7 +75,7 @@ stages:
         callback: OptimizerCallback
       accuracy:
         _wrapper:
-            callback: WrapperCallback
+            callback: ControlFlowCallback
             epochs: [5, 7]
             use_global_epochs: True
         callback: AccuracyCallback

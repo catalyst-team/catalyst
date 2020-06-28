@@ -46,7 +46,7 @@ stages:
         callback: OptimizerCallback
       accuracy:
         _wrapper:
-            callback: WrapperCallback
+            callback: ControlFlowCallback
             filter_fn: "lambda s, e, l: e % 2 == 0 if s == 'stage1' and l == 'train' else e % 3 == 0"
         callback: AccuracyCallback
         accuracy_args: [1, 3, 5]

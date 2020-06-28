@@ -43,7 +43,7 @@ stages:
     callbacks_params:
       loss:
         _wrapper:
-            callback: WrapperCallback
+            callback: ControlFlowCallback
             ignore_loaders:
               - valid
         callback: CriterionCallback

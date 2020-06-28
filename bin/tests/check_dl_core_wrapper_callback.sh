@@ -74,7 +74,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import (
     SupervisedRunner, Callback, CallbackOrder,
-    WrapperCallback, AccuracyCallback, CriterionCallback,
+    ControlFlowCallback, AccuracyCallback, CriterionCallback,
 )
 
 # experiment_setup
@@ -98,10 +98,6 @@ criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters())
 runner = SupervisedRunner()
 
-
-loss_callback = CriterionCallback()
-wrapper = WrapperCallback(loss_callback, ignore_loaders=['valid'])
-
 # first stage
 runner.train(
     model=model,
@@ -113,7 +109,10 @@ runner.train(
     verbose=False,
     main_metric='accuracy01',
     callbacks=[
-        wrapper,
+        ControlFlowCallback(
+            CriterionCallback(), 
+            ignore_loaders=['valid']
+        ),
         AccuracyCallback(accuracy_args=[1, 3, 5])
     ]
 )
@@ -152,7 +151,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import (
     SupervisedRunner, Callback, CallbackOrder,
-    WrapperCallback, AccuracyCallback,
+    ControlFlowCallback, AccuracyCallback,
 )
 
 # experiment_setup
@@ -186,9 +185,9 @@ runner.train(
     num_epochs=num_epochs,
     verbose=False,
     callbacks=[
-        WrapperCallback(
+        ControlFlowCallback(
             AccuracyCallback(accuracy_args=[1, 3, 5]),
-            ignore_loaders=['valid']
+            ignore_loaders='valid'
         )
     ]
 )
@@ -391,7 +390,8 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 
 
 ###############################  pipeline 08 ################################
-# setup: multiple stages and global epochs and epochs arg
+# setup: multiple stages with multiple types of epochs
+#        and global epochs
 
 LOG_MSG='pipeline 08'
 echo ${LOG_MSG}
@@ -403,10 +403,10 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --logdir=${LOGDIR} > ${EXP_OUTPUT}
 
 cat ${EXP_OUTPUT}
-check_line_counts ${EXP_OUTPUT} "(train)\: accuracy" 5
-check_line_counts ${EXP_OUTPUT} "(valid)\: accuracy" 5
-check_line_counts ${EXP_OUTPUT} "Epoch [257] (train): loss" 3
-check_line_counts ${EXP_OUTPUT} "Epoch [257] (valid): loss" 3
+check_line_counts ${EXP_OUTPUT} "(train)\: accuracy" 4
+check_line_counts ${EXP_OUTPUT} "(valid)\: accuracy" 4
+check_line_counts ${EXP_OUTPUT} "Epoch [2457] (train): loss" 4
+check_line_counts ${EXP_OUTPUT} "Epoch [2457] (valid): loss" 4
 
 
 check_file_existence ${LOGFILE}
@@ -438,7 +438,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import (
     SupervisedRunner, Callback, CallbackOrder,
-    WrapperCallback, AccuracyCallback, CriterionCallback,
+    ControlFlowCallback, AccuracyCallback, CriterionCallback,
 )
 
 # experiment_setup
@@ -464,7 +464,7 @@ runner = SupervisedRunner()
 
 
 loss_callback = CriterionCallback()
-wrapper = WrapperCallback(loss_callback, loaders=['train'])
+wrapper = ControlFlowCallback(loss_callback, loaders=['train'])
 
 # first stage
 runner.train(
@@ -516,7 +516,7 @@ import torch
 from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import (
     SupervisedRunner, Callback, CallbackOrder,
-    WrapperCallback, AccuracyCallback,
+    ControlFlowCallback, AccuracyCallback,
 )
 
 # experiment_setup
@@ -550,7 +550,7 @@ runner.train(
     num_epochs=num_epochs,
     verbose=False,
     callbacks=[
-        WrapperCallback(
+        ControlFlowCallback(
             AccuracyCallback(accuracy_args=[1, 3, 5]),
             loaders=['train']
         )
@@ -619,10 +619,10 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --logdir=${LOGDIR} > ${EXP_OUTPUT}
 
 cat ${EXP_OUTPUT}
-check_line_counts ${EXP_OUTPUT} "(train)\: accuracy" 3
-check_line_counts ${EXP_OUTPUT} "(valid)\: accuracy" 3
-check_line_counts ${EXP_OUTPUT} "Epoch [13468] (train): loss" 5
-check_line_counts ${EXP_OUTPUT} "Epoch [13468] (valid): loss" 5
+check_line_counts ${EXP_OUTPUT} "(train)\: accuracy" 4
+check_line_counts ${EXP_OUTPUT} "(valid)\: accuracy" 4
+check_line_counts ${EXP_OUTPUT} "Epoch [1368] (train): loss" 4
+check_line_counts ${EXP_OUTPUT} "Epoch [1368] (valid): loss" 4
 
 
 check_file_existence ${LOGFILE}

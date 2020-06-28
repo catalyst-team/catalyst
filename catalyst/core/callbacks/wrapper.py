@@ -8,6 +8,113 @@ LOADERS = Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]]
 FILTER_FN = Callable[[str, int, str], bool]
 
 
+class WrapperCallback(Callback):
+    """Enable/disable callback execution."""
+
+    def __init__(self, base_callback: Callback, enable_callback: bool = True):
+        """
+        Args:
+            base_callback (Callback): callback to wrap
+            enable_callback (boolean): indicator to enable/disable
+                callback, if ``True`` then callback will be enabled,
+                default ``True``
+        """
+        if base_callback is None or not isinstance(base_callback, Callback):
+            raise ValueError(
+                f"Expected callback but got - {type(base_callback)}!"
+            )
+        super().__init__(
+            order=base_callback.order,
+            node=base_callback.node,
+            scope=base_callback.scope,
+        )
+        self.callback = base_callback
+        self._is_active = enable_callback
+
+    def on_loader_start(self, runner: IRunner) -> None:
+        """
+        Check if current epoch should be skipped.
+
+        Args:
+            runner (IRunner): current runner
+        """
+        if self._is_active:
+            self.callback.on_loader_start(runner)
+
+    def on_loader_end(self, runner: IRunner) -> None:
+        """
+        Reset status of callback
+
+        Args:
+            runner (IRunner): current runner
+        """
+        if self._is_active:
+            self.callback.on_loader_end(runner)
+
+    def on_stage_start(self, runner: IRunner) -> None:
+        """Run base_callback (if possible)
+
+        Args:
+            runner (IRunner): current runner
+        """
+        if self._is_active:
+            self.callback.on_stage_start(runner)
+
+    def on_stage_end(self, runner: IRunner) -> None:
+        """Run base_callback (if possible)
+
+        Args:
+            runner (IRunner): current runner
+        """
+        if self._is_active:
+            self.callback.on_stage_end(runner)
+
+    def on_epoch_start(self, runner: IRunner) -> None:
+        """Run base_callback (if possible)
+
+        Args:
+            runner (IRunner): current runner
+        """
+        if self._is_active:
+            self.callback.on_epoch_start(runner)
+
+    def on_epoch_end(self, runner: IRunner) -> None:
+        """Run base_callback (if possible)
+
+        Args:
+            runner (IRunner): current runner
+        """
+        if self._is_active:
+            self.callback.on_epoch_end(runner)
+
+    def on_batch_start(self, runner: IRunner) -> None:
+        """Run base_callback (if possible)
+
+        Args:
+            runner (IRunner): current runner
+        """
+        if self._is_active:
+            self.callback.on_batch_start(runner)
+
+    def on_batch_end(self, runner: IRunner) -> None:
+        """Run base_callback (if possible)
+
+        Args:
+            runner (IRunner): current runner
+        """
+        if self._is_active:
+            self.callback.on_batch_end(runner)
+
+    def on_exception(self, runner: IRunner) -> None:
+        """Run base_callback (if possible)
+
+        Args:
+            runner (IRunner): current runner
+        """
+        if self._is_active:
+            self.callback.on_exception(runner)
+
+
 def _filter_fn_from_epochs(
     epochs: Union[int, float, Sequence[int]], reverse_condition: bool
 ) -> FILTER_FN:
@@ -27,9 +134,12 @@ def _filter_fn_from_epochs(
         need to disable callback
     """
     if isinstance(epochs, (int, float)):
-        epochs = [int(epochs)]
-
-    if isinstance(epochs, (list, tuple)):
+        epochs = int(epochs)
+        if reverse_condition:
+            filter_fn = lambda stage, epoch, loader: epoch % epochs != 0
+        else:
+            filter_fn = lambda stage, epoch, loader: epoch % epochs == 0
+    elif isinstance(epochs, (list, tuple)):
         epochs = sorted(set(epochs))
         if reverse_condition:
             filter_fn = lambda stage, epoch, loader: epoch not in epochs
@@ -148,9 +258,9 @@ def _filter_fn_from_arg(filter_fn: Union[str, FILTER_FN]) -> FILTER_FN:
     return filter_fn
 
 
-class WrapperCallback(Callback):
-    """
-    Customize callback execution on different stages, loaders and epoch.
+class ControlFlowCallback(WrapperCallback):
+    """Customize callback execution on different
+    stages, loaders and epochs.
 
     For example, if you don't want to compute loss on a validation
     you can ignore ``CriterionCallback``, for notebook API
@@ -233,8 +343,10 @@ class WrapperCallback(Callback):
                 need to execute callback, on other epochs
                 callback will be disabled.
 
-                If passed int/float then will be executed callback
-                on specified epoch.
+                If passed int/float then callback will be enabled
+                with period specified as epochs value
+                (``epoch_number % epochs == 0``) and disabled on
+                other epochs.
 
                 If passed list of epochs then will be executed callback
                 on specified epochs.
@@ -319,15 +431,10 @@ class WrapperCallback(Callback):
                 "or 'filter_fn'!"
             )
 
-        callback = base_callback
-        super().__init__(
-            order=callback.order, node=callback.node, scope=callback.scope
-        )
-        self.callback = callback
+        super().__init__(base_callback, True)
         self.use_global_epochs = use_global_epochs
         # loader parameters
         self.filter_fn = None
-        self._is_active = True
 
         if epochs is not None:
             self.filter_fn = _filter_fn_from_epochs(epochs, True)
@@ -354,8 +461,7 @@ class WrapperCallback(Callback):
         if self.filter_fn is not None:
             self._is_active = not self.filter_fn(stage, epoch, loader)
 
-        # import inspect
-        # print(">>>", inspect.getsource(self.filter_fn))
+        print(">>>", self._is_active)
 
         if self._is_active:
             self.callback.on_loader_start(runner)
@@ -371,68 +477,5 @@ class WrapperCallback(Callback):
             self.callback.on_loader_end(runner)
         self._is_active = True
 
-    def on_stage_start(self, runner: IRunner) -> None:
-        """Run base_callback (if possible)
 
-        Args:
-            runner (IRunner): current runner
-        """
-        if self._is_active:
-            self.callback.on_stage_start(runner)
-
-    def on_stage_end(self, runner: IRunner) -> None:
-        """Run base_callback (if possible)
-
-        Args:
-            runner (IRunner): current runner
-        """
-        if self._is_active:
-            self.callback.on_stage_end(runner)
-
-    def on_epoch_start(self, runner: IRunner) -> None:
-        """Run base_callback (if possible)
-
-        Args:
-            runner (IRunner): current runner
-        """
-        if self._is_active:
-            self.callback.on_epoch_start(runner)
-
-    def on_epoch_end(self, runner: IRunner) -> None:
-        """Run base_callback (if possible)
-
-        Args:
-            runner (IRunner): current runner
-        """
-        if self._is_active:
-            self.callback.on_epoch_end(runner)
-
-    def on_batch_start(self, runner: IRunner) -> None:
-        """Run base_callback (if possible)
-
-        Args:
-            runner (IRunner): current runner
-        """
-        if self._is_active:
-            self.callback.on_batch_start(runner)
-
-    def on_batch_end(self, runner: IRunner) -> None:
-        """Run base_callback (if possible)
-
-        Args:
-            runner (IRunner): current runner
-        """
-        if self._is_active:
-            self.callback.on_batch_end(runner)
-
-    def on_exception(self, runner: IRunner) -> None:
-        """Run base_callback (if possible)
-
-        Args:
-            runner (IRunner): current runner
-        """
-        if self._is_active:
-            self.callback.on_exception(runner)
-
-
-__all__ = ["WrapperCallback"]
+__all__ = ["WrapperCallback", "ControlFlowCallback"]

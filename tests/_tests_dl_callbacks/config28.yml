@@ -35,7 +35,7 @@ stages:
       callback: OptimizerCallback
     accuracy:
       _wrapper:
-          callback: WrapperCallback
+          callback: ControlFlowCallback
           loaders:
             train: [1, 2, 6, 7]
           use_global_epochs: True

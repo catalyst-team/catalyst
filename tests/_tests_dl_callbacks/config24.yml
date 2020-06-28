@@ -46,7 +46,7 @@ stages:
         callback: OptimizerCallback
       accuracy:
         _wrapper:
-            callback: WrapperCallback
+            callback: ControlFlowCallback
             ignore_loaders:
               train: [3, 3, 1, 4]
               valid: [2, 5, 5, 5, 5, 5, 5]
