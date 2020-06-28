@@ -16,9 +16,6 @@ from catalyst.utils.distributed import (
 )
 from catalyst.utils.misc import get_utcnow_time
 
-warnings.simplefilter("once")
-warnings.filterwarnings("once")
-
 
 def import_module(expdir: pathlib.Path):
     """
