@@ -129,6 +129,12 @@ Validation
     :undoc-members:
     :show-inheritance:
 
+Wrapper
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.core.callbacks.wrapper
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Registry
 ----------------------

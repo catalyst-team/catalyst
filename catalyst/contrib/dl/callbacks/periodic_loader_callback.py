@@ -12,13 +12,38 @@ class PeriodicLoaderCallback(Callback):
     """Callback for runing loaders with specified period.
     To disable loader use ``0`` as period.
 
-    Example:
+    For example, if you have ``train``, ``train_additional``,
+    ``valid`` and ``valid_additional`` loaders and wan't to
+    use ``train_additional`` every 2 epochs, ``valid`` - every
+    3 epochs and ``valid_additional`` - every 5 epochs:
 
-        >>> PeriodicLoaderRunnerCallback(
-        >>>     train_additional=2,
-        >>>     valid=3,
-        >>>     valid_additional=5
-        >>> )
+    .. code-block:: python
+
+        from catalyst.dl import (
+            SupervisedRunner, PeriodicLoaderRunnerCallback,
+        )
+        runner = SupervisedRunner()
+        runner.train(
+            ...
+            loaders={
+                "train": ...,
+                "train_additional": ...,
+                "valid": ...,
+                "valid_additional":...
+            }
+            ...
+            callbacks=[
+                ...
+                PeriodicLoaderRunnerCallback(
+                    train_additional=2,
+                    valid=3,
+                    valid_additional=5
+                ),
+                ...
+            ]
+            ...
+        )
+
     """
 
     def __init__(self, **kwargs):
