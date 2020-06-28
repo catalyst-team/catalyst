@@ -1,7 +1,7 @@
+from typing import List, Tuple
 from collections import Counter
 from operator import itemgetter
 from random import randint, shuffle
-from typing import List, Tuple
 
 import pytest
 
@@ -18,14 +18,15 @@ def generate_valid_labels(num: int) -> TLabelsPK:
     Args:
         num: number of generated samples
 
-    Returns: samples in the folowing order: (labels, p, k)
+    Returns:
+        samples in the folowing order: (labels, p, k)
     """
     labels_pk = []
 
     for _ in range(num):
         p, k = randint(2, 12), randint(2, 12)
-        labels_ = [[label] * randint(2, 12) for label in range(p)]
-        labels = [el for sublist in labels_ for el in sublist]
+        labels_list = [[label] * randint(2, 12) for label in range(p)]
+        labels = [el for sublist in labels_list for el in sublist]
 
         shuffle(labels)
         labels_pk.append((labels, p, k))

@@ -39,8 +39,6 @@ class InBatchTripletsSampler(ABC):
 
         Args:
             labels: labels of the samples in the batch
-
-        Returns: None
         """
         labels_counter = Counter(labels)
         assert all(n > 1 for n in labels_counter.values())
@@ -122,7 +120,7 @@ class AllTripletsSampler(InBatchTripletsSampler):
         return list(ids_anchor), list(ids_pos), list(ids_neg)
 
 
-class HardTrripletsSampler(InBatchTripletsSampler):
+class HardTripletsSampler(InBatchTripletsSampler):
     """
     This sampler selects hardest triplets based on distances between features:
     the hardest positive sample has the maximal distance to the anchor sample,

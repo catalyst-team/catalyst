@@ -45,7 +45,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `Mergify` ([#831](https://github.com/catalyst-team/catalyst/pull/831))
 - `PerplexityMetricCallback` ([#819](https://github.com/catalyst-team/catalyst/pull/819))
 - `PeriodicLoaderRunnerCallback` ([#818](https://github.com/catalyst-team/catalyst/pull/818))
-- `InBatchSamplers` ([#825](https://github.com/catalyst-team/catalyst/pull/825))
+- `InBatchSamplers`: `AllTripletsSampler` and `HardTripletsSampler` ([#825](https://github.com/catalyst-team/catalyst/pull/825))
 
 ### Changed
 

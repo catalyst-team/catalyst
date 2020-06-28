@@ -12,7 +12,7 @@ from torch import Tensor, tensor
 from catalyst.contrib.utils.misc import find_value_ids
 from catalyst.data.sampler_inbatch import (
     AllTripletsSampler,
-    HardTrripletsSampler,
+    HardTripletsSampler,
 )
 from catalyst.data.tests.test_sampler import generate_valid_labels
 
@@ -64,8 +64,6 @@ def check_all_triplets_number(
         labels: list of classes labels
         num_selected_tri: number of selected triplets
         max_tri: limit on the number of selected triplets
-
-    Returns: None
     """
     labels_counts = Counter(labels).values()
 
@@ -90,8 +88,6 @@ def check_triplets_consistency(
         ids_pos: positive indexes of selected triplets
         ids_neg: negative indexes of selected triplets
         labels: labels of the samples in the batch
-
-    Returns: None
     """
     num_sampled_tri = len(ids_anchor)
 
@@ -121,8 +117,6 @@ def check_triplets_are_hardest(
         ids_neg: negative indexes of selected triplets
         labels: labels of the samples in the batch
         distmat: distances between features
-
-    Returns: None
     """
     ids_all = set(range(len(labels)))
 
@@ -141,12 +135,10 @@ def check_triplets_are_hardest(
         )
 
 
-def test_all_tri_sampler(features_and_labels) -> None:
+def test_all_triplets_sampler(features_and_labels) -> None:
     """
     Args:
         features_and_labels: features and valid labels
-
-    Returns: None
     """
     max_tri = 512
     sampler = AllTripletsSampler(max_output_triplets=max_tri)
@@ -167,10 +159,8 @@ def test_hard_sampler_from_features(features_and_labels) -> None:
     """
     Args:
         features_and_labels: features and valid labels
-
-    Returns: None
     """
-    sampler = HardTrripletsSampler(need_norm=True)
+    sampler = HardTripletsSampler(need_norm=True)
 
     for features, labels in features_and_labels:
         ids_a, ids_p, ids_n = sampler._sample(features=features, labels=labels)
@@ -187,10 +177,8 @@ def test_hard_sampler_from_dist(distmats_and_labels) -> None:
     Args:
         distmats_and_labels:
             list of distance matrices and valid labels
-
-    Returns: None
     """
-    sampler = HardTrripletsSampler(need_norm=True)
+    sampler = HardTripletsSampler(need_norm=True)
 
     for distmat, labels in distmats_and_labels:
         ids_a, ids_p, ids_n = sampler._sample_from_distmat(
@@ -215,8 +203,6 @@ def test_hard_sampler_from_dist(distmats_and_labels) -> None:
 def test_hard_sampler_manual() -> None:
     """
     Test on manual example.
-
-    Returns: None
     """
     labels = [0, 0, 1, 1]
 
@@ -231,7 +217,7 @@ def test_hard_sampler_manual() -> None:
 
     gt = {(0, 1, 2), (1, 0, 2), (2, 3, 0), (3, 2, 0)}
 
-    sampler = HardTrripletsSampler(need_norm=True)
+    sampler = HardTripletsSampler(need_norm=True)
 
     ids_a, ids_p, ids_n = sampler._sample_from_distmat(
         distmat=dist_mat, labels=labels
