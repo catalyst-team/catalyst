@@ -19,10 +19,6 @@ def _transforms_loader(r: Registry):
 
         r.add_from_module(p, prefix=["A.", "albu.", "albumentations."])
 
-        from kornia import augmentation as k
-
-        r.add_from_module(k, prefix=["kornia."])
-
         from catalyst.contrib.data.cv import transforms as t
 
         r.add_from_module(t, prefix=["catalyst.", "C."])
@@ -31,6 +27,18 @@ def _transforms_loader(r: Registry):
             logger.warning(
                 "albumentations not available, to install albumentations, "
                 "run `pip install albumentations`."
+            )
+            raise ex
+
+    try:
+        from kornia import augmentation as k
+
+        r.add_from_module(k, prefix=["kornia."])
+    except ImportError as ex:
+        if settings.kornia_required:
+            logger.warning(
+                "kornia not available, to install kornia, "
+                "run `pip install kornia`."
             )
             raise ex
 
