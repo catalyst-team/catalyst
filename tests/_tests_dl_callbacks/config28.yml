@@ -36,7 +36,7 @@ stages:
     accuracy:
       _wrapper:
           callback: WrapperCallback
-          ignore_loaders:
+          loaders:
             train: [1, 2, 6, 7]
           use_global_epochs: True
       callback: AccuracyCallback

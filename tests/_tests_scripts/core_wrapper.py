@@ -23,6 +23,22 @@ class RaiserCallback(Callback):
 
 
 class TestWrapperCallback(unittest.TestCase):
+    def test_with_missing_args(self):
+        orders = (
+            CallbackOrder.Internal,
+            CallbackOrder.Metric,
+            CallbackOrder.MetricAggregation,
+            CallbackOrder.Optimizer,
+            CallbackOrder.Validation,
+            CallbackOrder.Scheduler,
+            CallbackOrder.Logging,
+            CallbackOrder.External,
+        )
+        for order in orders:
+            callback = RaiserCallback(order, "on_epoch_start")
+            with self.assertRaises(ValueError):
+                WrapperCallback(callback)
+
     def test_epochs_with_wrong_args(self):
         orders = (
             CallbackOrder.Internal,
@@ -43,6 +59,27 @@ class TestWrapperCallback(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             wrapper = WrapperCallback(callback, epochs="123456")
+
+    def test_ignore_epochs_with_wrong_args(self):
+        orders = (
+            CallbackOrder.Internal,
+            CallbackOrder.Metric,
+            CallbackOrder.MetricAggregation,
+            CallbackOrder.Optimizer,
+            CallbackOrder.Validation,
+            CallbackOrder.Scheduler,
+            CallbackOrder.Logging,
+            CallbackOrder.External,
+        )
+        order = random.choice(orders)
+
+        callback = RaiserCallback(order, "on_epoch_start")
+
+        with self.assertRaises(ValueError):
+            wrapper = WrapperCallback(callback, ignore_epochs=None)
+
+        with self.assertRaises(ValueError):
+            wrapper = WrapperCallback(callback, ignore_epochs="123456")
 
     def test_loaders_with_wrong_args(self):
         orders = (
@@ -68,6 +105,32 @@ class TestWrapperCallback(unittest.TestCase):
         with self.assertRaises(ValueError):
             wrapper = WrapperCallback(
                 callback, loaders={"train": ["", "fjdskjfdk", "1234"]}
+            )
+
+    def test_ignore_loaders_with_wrong_args(self):
+        orders = (
+            CallbackOrder.Internal,
+            CallbackOrder.Metric,
+            CallbackOrder.MetricAggregation,
+            CallbackOrder.Optimizer,
+            CallbackOrder.Validation,
+            CallbackOrder.Scheduler,
+            CallbackOrder.Logging,
+            CallbackOrder.External,
+        )
+        order = random.choice(orders)
+
+        callback = RaiserCallback(order, "on_epoch_start")
+
+        with self.assertRaises(ValueError):
+            wrapper = WrapperCallback(callback, ignore_loaders=1234.56)
+
+        with self.assertRaises(ValueError):
+            wrapper = WrapperCallback(callback, ignore_loaders=1234.56)
+
+        with self.assertRaises(ValueError):
+            wrapper = WrapperCallback(
+                callback, ignore_loaders={"train": ["", "fjdskjfdk", "1234"]}
             )
 
     def test_ignore_foo_with_wrong_args(self):

@@ -100,7 +100,7 @@ runner = SupervisedRunner()
 
 
 loss_callback = CriterionCallback()
-wrapper = WrapperCallback(loss_callback, loaders=['valid'])
+wrapper = WrapperCallback(loss_callback, ignore_loaders=['valid'])
 
 # first stage
 runner.train(
@@ -188,7 +188,7 @@ runner.train(
     callbacks=[
         WrapperCallback(
             AccuracyCallback(accuracy_args=[1, 3, 5]),
-            loaders=['valid']
+            ignore_loaders=['valid']
         )
     ]
 )
@@ -209,6 +209,7 @@ check_checkpoints "${CHECKPOINTS}/train\.[[:digit:]]" 1
 check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR} ${EXP_OUTPUT}
+
 
 ################################  pipeline 02 ################################
 # setup: ignore accuracy when it is not a main metric
@@ -236,6 +237,7 @@ check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
 check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR} ${EXP_OUTPUT}
+
 
 ################################  pipeline 03 ################################
 # setup: ignore loss when it is not a main metric
@@ -294,6 +296,7 @@ check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR} ${EXP_OUTPUT}
 
+
 ################################  pipeline 05 ################################
 # setup: different ignore schemes for loaders (with duplicated epochs)
 
@@ -324,6 +327,7 @@ check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR} ${EXP_OUTPUT}
 
+
 ################################  pipeline 06 ################################
 # setup: eval function from config
 
@@ -353,6 +357,7 @@ check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
 check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR} ${EXP_OUTPUT}
+
 
 ###############################  pipeline 07 ################################
 # setup: multiple stages and global epochs
@@ -402,6 +407,222 @@ check_line_counts ${EXP_OUTPUT} "(train)\: accuracy" 5
 check_line_counts ${EXP_OUTPUT} "(valid)\: accuracy" 5
 check_line_counts ${EXP_OUTPUT} "Epoch [257] (train): loss" 3
 check_line_counts ${EXP_OUTPUT} "Epoch [257] (valid): loss" 3
+
+
+check_file_existence ${LOGFILE}
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
+check_checkpoints "${CHECKPOINTS}/stage2\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 9   # 4x2 checkpoints + metrics.json
+
+rm -rf ${LOGDIR} ${EXP_OUTPUT}
+
+
+# ################################  pipeline 09  ################################
+# setup: ignore loss when it is not a main metric
+LOG_MSG='pipeline 09'
+echo ${LOG_MSG}
+
+LOGDIR=./tests/logs/_tests_dl_callbacks
+CHECKPOINTS=${LOGDIR}/checkpoints
+LOGFILE=${CHECKPOINTS}/_metrics.json
+EXP_OUTPUT=./tests/output.txt
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python3 -c "
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst.dl import (
+    SupervisedRunner, Callback, CallbackOrder,
+    WrapperCallback, AccuracyCallback, CriterionCallback,
+)
+
+# experiment_setup
+logdir = '${LOGDIR}'
+num_epochs = 5
+
+# data
+num_samples, num_features = int(1e4), int(1e1)
+X = torch.rand(num_samples, num_features)
+y = torch.randint(0, 5, size=[num_samples])
+dataset = TensorDataset(X, y)
+loader = DataLoader(dataset, batch_size=32, num_workers=1)
+loaders = {
+    'train': loader,
+    'valid': loader,
+}
+
+# model, criterion, optimizer, scheduler
+model = torch.nn.Linear(num_features, 5)
+criterion = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters())
+runner = SupervisedRunner()
+
+
+loss_callback = CriterionCallback()
+wrapper = WrapperCallback(loss_callback, loaders=['train'])
+
+# first stage
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    loaders=loaders,
+    logdir=logdir,
+    num_epochs=num_epochs,
+    verbose=False,
+    main_metric='accuracy01',
+    callbacks=[
+        wrapper,
+        AccuracyCallback(accuracy_args=[1, 3, 5])
+    ]
+)
+" > ${EXP_OUTPUT}
+
+cat ${EXP_OUTPUT}
+check_line_counts ${EXP_OUTPUT} "\(train\).* loss" 5
+check_line_counts ${EXP_OUTPUT} "\(valid\).* loss" 0
+check_line_counts ${EXP_OUTPUT} ".*/train\.[[:digit:]]\.pth" 1
+
+check_file_existence ${LOGFILE}
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/train\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
+
+rm -rf ${LOGDIR} ${EXP_OUTPUT}
+
+
+################################  pipeline 10  ################################
+# setup: ignore accuracy when it is not a main metric
+LOG_MSG='pipeline 10'
+echo ${LOG_MSG}
+
+LOGDIR=./tests/logs/_tests_dl_callbacks
+CHECKPOINTS=${LOGDIR}/checkpoints
+LOGFILE=${CHECKPOINTS}/_metrics.json
+EXP_OUTPUT=./tests/output.txt
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python3 -c "
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst.dl import (
+    SupervisedRunner, Callback, CallbackOrder,
+    WrapperCallback, AccuracyCallback,
+)
+
+# experiment_setup
+logdir = '${LOGDIR}'
+num_epochs = 5
+
+# data
+num_samples, num_features = int(1e4), int(1e1)
+X = torch.rand(num_samples, num_features)
+y = torch.randint(0, 5, size=[num_samples])
+dataset = TensorDataset(X, y)
+loader = DataLoader(dataset, batch_size=32, num_workers=1)
+loaders = {
+    'train': loader,
+    'valid': loader,
+}
+
+# model, criterion, optimizer, scheduler
+model = torch.nn.Linear(num_features, 5)
+criterion = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters())
+runner = SupervisedRunner()
+
+# first stage
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    loaders=loaders,
+    logdir=logdir,
+    num_epochs=num_epochs,
+    verbose=False,
+    callbacks=[
+        WrapperCallback(
+            AccuracyCallback(accuracy_args=[1, 3, 5]),
+            loaders=['train']
+        )
+    ]
+)
+" > ${EXP_OUTPUT}
+
+cat ${EXP_OUTPUT}
+check_line_counts ${EXP_OUTPUT} "(train)\: accuracy" 5
+check_line_counts ${EXP_OUTPUT} "(valid)\: accuracy" 0
+check_line_counts ${EXP_OUTPUT} ".*/train\.[[:digit:]]\.pth" 1
+
+check_file_existence ${LOGFILE}
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/train\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
+
+rm -rf ${LOGDIR} ${EXP_OUTPUT}
+
+
+###############################  pipeline 11 ################################
+# setup: multiple stages and global epochs and inversed loaders
+
+LOG_MSG='pipeline 11'
+echo ${LOG_MSG}
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config28.yml \
+  --logdir=${LOGDIR} > ${EXP_OUTPUT}
+
+cat ${EXP_OUTPUT}
+check_line_counts ${EXP_OUTPUT} "(train)\: accuracy" 4
+check_line_counts ${EXP_OUTPUT} "(valid)\: accuracy" 0
+check_line_counts ${EXP_OUTPUT} "Epoch [3458] (train): loss" 4
+
+
+check_file_existence ${LOGFILE}
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
+check_checkpoints "${CHECKPOINTS}/stage2\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 9   # 4x2 checkpoints + metrics.json
+
+rm -rf ${LOGDIR} ${EXP_OUTPUT}
+
+
+###############################  pipeline 12 ################################
+# setup: multiple stages and global epochs and inversed epochs
+
+LOG_MSG='pipeline 11'
+echo ${LOG_MSG}
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config29.yml \
+  --logdir=${LOGDIR} > ${EXP_OUTPUT}
+
+cat ${EXP_OUTPUT}
+check_line_counts ${EXP_OUTPUT} "(train)\: accuracy" 3
+check_line_counts ${EXP_OUTPUT} "(valid)\: accuracy" 3
+check_line_counts ${EXP_OUTPUT} "Epoch [13468] (train): loss" 5
+check_line_counts ${EXP_OUTPUT} "Epoch [13468] (valid): loss" 5
 
 
 check_file_existence ${LOGFILE}

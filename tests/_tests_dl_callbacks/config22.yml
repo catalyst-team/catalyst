@@ -44,7 +44,7 @@ stages:
       loss:
         _wrapper:
             callback: WrapperCallback
-            loaders:
+            ignore_loaders:
               - valid
         callback: CriterionCallback
       optimizer:

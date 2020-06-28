@@ -47,7 +47,7 @@ stages:
       accuracy:
         _wrapper:
             callback: WrapperCallback
-            epochs: 2
+            ignore_epochs: 2
             use_global_epochs: False
         callback: AccuracyCallback
         accuracy_args: [1, 3, 5]
@@ -76,7 +76,7 @@ stages:
       accuracy:
         _wrapper:
             callback: WrapperCallback
-            epochs: [5, 7]
+            ignore_epochs: [5, 7]
             use_global_epochs: True
         callback: AccuracyCallback
         accuracy_args: [1, 3, 5]

@@ -48,7 +48,7 @@ stages:
       accuracy:
         _wrapper:
             callback: WrapperCallback
-            loaders:
+            ignore_loaders:
               train: 3
               valid: 2
         callback: AccuracyCallback

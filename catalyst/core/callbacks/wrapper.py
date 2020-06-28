@@ -9,12 +9,14 @@ FILTER_FN = Callable[[str, int, str], bool]
 
 
 def _filter_fn_from_epochs(
-    epochs: Union[int, float, Sequence[int]]
+    epochs: Union[int, float, Sequence[int]], reverse_condition: bool
 ) -> FILTER_FN:
     """Build ``filter_fn`` from epochs for ``WrapperCallback``
 
     Args:
         epochs (int/Sequence[int]): epochs description
+        reverse_condition (bool): indicator to use reversed
+            condition in filter function
 
     Raises:
         ValueError: if passed object with unexpected type
@@ -29,18 +31,28 @@ def _filter_fn_from_epochs(
 
     if isinstance(epochs, (list, tuple)):
         epochs = sorted(set(epochs))
-        filter_fn = lambda stage, epoch, loader: epoch in epochs
+        if reverse_condition:
+            filter_fn = lambda stage, epoch, loader: epoch not in epochs
+        else:
+            filter_fn = lambda stage, epoch, loader: epoch in epochs
     else:
-        raise ValueError("'epochs' should be int/float/Sequence[int]!")
+        raise ValueError(
+            "'epochs' should be int/float/Sequence[int]! "
+            f"(got {type(epochs)})"
+        )
     return filter_fn
 
 
-def _filter_fn_from_loaders(loaders: LOADERS) -> FILTER_FN:
+def _filter_fn_from_loaders(
+    loaders: LOADERS, reverse_condition: bool
+) -> FILTER_FN:
     """Build ``filter_fn`` from loaders for ``WrapperCallback``.
 
     Args:
         loaders (str/Sequence[str]/Mapping[str, int/Sequence[str]]):
             loaders description
+        reverse_condition (bool): indicator to use reversed
+            condition in filter function
 
     Raises:
         ValueError: if can't build filter_fn from mappings
@@ -57,7 +69,10 @@ def _filter_fn_from_loaders(loaders: LOADERS) -> FILTER_FN:
     # sequence of loaders
     if isinstance(loaders, (list, tuple)):
         loaders = sorted(set(loaders))  # ignore duplicates
-        filter_fn = lambda stage, epoch, loader: loader in loaders
+        if reverse_condition:
+            filter_fn = lambda stage, epoch, loader: loader not in loaders
+        else:
+            filter_fn = lambda stage, epoch, loader: loader in loaders
     # loader: ignore epoch or epochs
     elif isinstance(loaders, (dict, OrderedDict)):
         ignore_list = {}
@@ -75,14 +90,20 @@ def _filter_fn_from_loaders(loaders: LOADERS) -> FILTER_FN:
                         "'ignore_list' should be a dict where "
                         "keys is a int/float/List[int]/Tuple[int]!"
                     )
-        filter_fn = lambda stage, epoch, loader: epoch in (
-            ignore_list.get(loader) or {}
-        )
+        if reverse_condition:
+            filter_fn = lambda stage, epoch, loader: epoch not in (
+                ignore_list.get(loader) or {}  # {loader: [epoch]}.get(loader)
+            )
+        else:
+            filter_fn = lambda stage, epoch, loader: epoch in (
+                ignore_list.get(loader) or {}
+            )
     else:
         raise ValueError(
             "'loaders' type should be one of - str, "
             "Sequence[str], Mapping[str, int] or "
-            "Mapping[str, Sequence[int]]!"
+            "Mapping[str, Sequence[int]]! "
+            f"(got {type(loaders)})"
         )
     return filter_fn
 
@@ -174,7 +195,7 @@ class WrapperCallback(Callback):
                 ),
                 WrapperCallback(
                     base_callback=CriterionCallback(),
-                    loaders="valid"
+                    ignore_loaders="valid"  # or loaders="train"
                 )
             ]
         )
@@ -189,7 +210,7 @@ class WrapperCallback(Callback):
           loss:
             _wrapper:
                callback: WrapperCallback
-               loaders: valid
+               ignore_loaders: valid
             callback: CriterionCallback
           ...
 
@@ -199,7 +220,9 @@ class WrapperCallback(Callback):
         self,
         base_callback: Callback,
         epochs: Union[int, Sequence[int]] = None,
+        ignore_epochs: Union[int, Sequence[int]] = None,
         loaders: LOADERS = None,
+        ignore_loaders: LOADERS = None,
         filter_fn: Union[str, FILTER_FN] = None,
         use_global_epochs: bool = False,
     ):
@@ -207,7 +230,19 @@ class WrapperCallback(Callback):
         Args:
             base_callback (Callback): callback to wrap
             epochs (int/Sequence[int]): epochs numbers where
-                need to disable callback behaviour.
+                need to execute callback, on other epochs
+                callback will be disabled.
+
+                If passed int/float then will be executed callback
+                on specified epoch.
+
+                If passed list of epochs then will be executed callback
+                on specified epochs.
+
+                Default value is ``None``.
+            ignore_epochs: (int/Sequence[int]): epochs numbers where
+                need to disable callback, on other epochs
+                callback will be enabled.
 
                 If passed int/float then will be disabled callback
                 on specified epoch.
@@ -217,7 +252,24 @@ class WrapperCallback(Callback):
 
                 Default value is ``None``.
             loaders (str/Sequence[str]/Mapping[str, int/Sequence[str]]):
-                loaders to change base callback behaviour.
+                loader names where should be enabled callback, on
+                other loaders callback will be disabled.
+
+                If passed string object then will be disabled callback for
+                loader with specified name.
+
+                If passed list/tuple of strings then will be disabled callback
+                for loaders with specified names.
+
+                If passed dictionary where key is a string and values
+                int or list of integers then callback will be
+                disabled on epochs (dictionary value) for specified
+                loader (dictionary key).
+
+                Default value is ``None``.
+            ignore_loaders (str/Sequence[str]/Mapping[str, int/Sequence[str]]):
+                loader names where should be disabled callback, on
+                other loaders callback will be enabled.
 
                 If passed string object then will be disabled callback for
                 loader with specified name.
@@ -252,10 +304,19 @@ class WrapperCallback(Callback):
                 will be used global epochs instead of epochs in
                 a stage, the default value is ``False``
         """
-        if epochs is None and loaders is None and filter_fn is None:
+        required_args = (
+            epochs,
+            ignore_epochs,
+            loaders,
+            ignore_loaders,
+            filter_fn,
+        )
+        if all(arg is None for arg in required_args):
             raise ValueError(
                 "Expected one of arguments - "
-                "'epochs' or 'loaders' or 'filter_fn'!"
+                "'epochs', 'ignore_epochs', "
+                "'loaders', 'ignore_loaders' "
+                "or 'filter_fn'!"
             )
 
         callback = base_callback
@@ -269,9 +330,13 @@ class WrapperCallback(Callback):
         self._is_active = True
 
         if epochs is not None:
-            self.filter_fn = _filter_fn_from_epochs(epochs)
+            self.filter_fn = _filter_fn_from_epochs(epochs, True)
+        elif ignore_epochs is not None:
+            self.filter_fn = _filter_fn_from_epochs(ignore_epochs, False)
         elif loaders is not None:
-            self.filter_fn = _filter_fn_from_loaders(loaders)
+            self.filter_fn = _filter_fn_from_loaders(loaders, True)
+        elif ignore_loaders is not None:
+            self.filter_fn = _filter_fn_from_loaders(ignore_loaders, False)
         elif filter_fn is not None:
             self.filter_fn = _filter_fn_from_arg(filter_fn)
 
@@ -288,6 +353,9 @@ class WrapperCallback(Callback):
 
         if self.filter_fn is not None:
             self._is_active = not self.filter_fn(stage, epoch, loader)
+
+        # import inspect
+        # print(">>>", inspect.getsource(self.filter_fn))
 
         if self._is_active:
             self.callback.on_loader_start(runner)
