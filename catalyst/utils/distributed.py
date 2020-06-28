@@ -4,7 +4,6 @@ import os
 import random
 import socket
 import subprocess
-import warnings
 
 import deprecation
 
@@ -15,9 +14,6 @@ import torch.distributed
 from catalyst import __version__
 from catalyst.utils.misc import get_fn_default_params
 from catalyst.utils.torch import get_available_gpus
-
-warnings.simplefilter("once")
-warnings.filterwarnings("once")
 
 
 def check_ddp_wrapped(model: nn.Module) -> bool:
