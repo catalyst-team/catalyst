@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List
 
 import torch
 
@@ -12,7 +12,8 @@ def _cmc_score_count(
     More convenient to write tests with distance_matrix
     Args:
         distances: distance matrix shape of (n_embeddings_x, n_embeddings_y)
-        conformity_matrix: binary matrix with 1 on same label pos and 0 otherwise
+        conformity_matrix: binary matrix with 1 on same label pos
+            and 0 otherwise
         topk: number of top examples for cumulative score counting
 
     Returns:
@@ -59,19 +60,29 @@ class CMCScoreCallback(Callback):
     def __init__(
         self,
         conformity_matrix: torch.Tensor,
-        gallery_key: str = "embeddings_gallery",
         queries_key: str = "embeddings_queries",
+        gallery_key: str = "embeddings_gallery",
         prefix: str = "cmc",
         map_args: List[int] = None,
     ):
         """
+        This callback is design to count cumulative matching characteristics.
+        Expecting that your dataset has two keys in output dict
+        `queries_key` and `gallery_key`. If current object is in
+        querries set you should provide `None` value to `gallery_key`
+        and embedding of this object should be stored in `queries_key`.
+        if object is in gallery you should provide `None` value to
+        `queries_key` and embedding of this object should be stored in
+        `gallery_key`.
+        On batch end callback accumulate
+        all embeddings
         Args:
             output_key (str): embeddings key in output dict
             prefix (str): key for the metric's name
             map_args (List[int]): specifies which map@K to log.
-                [1] - map@1
-                [1, 3] - map@1 and map@3
-                [1, 3, 5] - map@1, map@3 and map@5
+                [1] - cmc@1
+                [1, 3] - cmc@1 and cmc@3
+                [1, 3, 5] - cmc@1, cmc@3 and cmc@5
             num_classes (int): number of classes to calculate ``map_args``
                 if ``map_args`` is None
         """
@@ -82,14 +93,19 @@ class CMCScoreCallback(Callback):
         self.gallery_key = gallery_key
         self.queries_key = queries_key
         self._gallery_embeddings: torch.Tensor = None
-        self._queries_embeddings = None
+        self._queries_embeddings: torch.Tensor = None
 
     def on_batch_end(self, runner: "IRunner"):
-        current_gallery = runner.output.get(self.gallery_key, None)
-        current_queries = runner.output.get(self.queries_key, None)
+        """On batch end action"""
+        current_gallery = (
+            runner.output.get(self.gallery_key, None).detach().cpu()
+        )
+        current_queries = (
+            runner.output.get(self.queries_key, None).detach().cpu()
+        )
         if current_gallery is not None:
             if self._gallery_embeddings is None:
-                self._gallery_embeddings = current_gallery
+                self._gallery_embeddings = current_gallery.d
             else:
                 self._gallery_embeddings = torch.cat(
                     [self._gallery_embeddings, current_gallery], dim=0
@@ -103,6 +119,7 @@ class CMCScoreCallback(Callback):
                 )
 
     def on_loader_end(self, runner: "IRunner"):
+        """On loader end action"""
         for k in self.list_args:
             metric = self._metric_fn(
                 self._gallery_embeddings,
