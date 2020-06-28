@@ -66,7 +66,7 @@ class CMCScoreCallback(Callback):
         map_args: List[int] = None,
     ):
         """
-        This callback is design to count cumulative matching characteristics.
+        This callback was designed to count cumulative matching characteristics.
         Expecting that your dataset has two keys in output dict
         `queries_key` and `gallery_key`. If current object is in
         querries set you should provide `None` value to `gallery_key`
