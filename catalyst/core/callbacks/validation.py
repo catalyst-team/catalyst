@@ -57,7 +57,7 @@ class ValidationManagerCallback(Callback):
         if is_best:
             runner.is_best_valid = True
             runner.best_valid_metrics = runner.valid_metrics.copy()
-        # print(">>> Is Best:", is_best)
+        print(">>> Is Best:", is_best)
 
 
 __all__ = ["ValidationManagerCallback"]
