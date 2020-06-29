@@ -135,7 +135,7 @@ def check_triplets_are_hardest(
         )
 
 
-def test_all_triplets_sampler(features_and_labels) -> None:
+def test_all_triplets_sampler(features_and_labels) -> None:  # noqa: WPS442
     """
     Args:
         features_and_labels: features and valid labels
@@ -143,7 +143,7 @@ def test_all_triplets_sampler(features_and_labels) -> None:
     max_tri = 512
     sampler = AllTripletsSampler(max_output_triplets=max_tri)
 
-    for _, labels in features_and_labels:
+    for _, labels in features_and_labels:  # noqa: WPS437
         ids_a, ids_p, ids_n = sampler._sample(labels=labels)
 
         check_all_triplets_number(
@@ -155,7 +155,9 @@ def test_all_triplets_sampler(features_and_labels) -> None:
         )
 
 
-def test_hard_sampler_from_features(features_and_labels) -> None:
+def test_hard_sampler_from_features(
+    features_and_labels,
+) -> None:  # noqa: WPS442
     """
     Args:
         features_and_labels: features and valid labels
@@ -163,7 +165,9 @@ def test_hard_sampler_from_features(features_and_labels) -> None:
     sampler = HardTripletsSampler(need_norm=True)
 
     for features, labels in features_and_labels:
-        ids_a, ids_p, ids_n = sampler._sample(features=features, labels=labels)
+        ids_a, ids_p, ids_n = sampler._sample(
+            features=features, labels=labels
+        )  # noqa: WPS437
 
         check_triplets_consistency(
             ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels
@@ -172,7 +176,7 @@ def test_hard_sampler_from_features(features_and_labels) -> None:
         assert len(ids_a) == len(labels)
 
 
-def test_hard_sampler_from_dist(distmats_and_labels) -> None:
+def test_hard_sampler_from_dist(distmats_and_labels) -> None:  # noqa: WPS442
     """
     Args:
         distmats_and_labels:
@@ -221,7 +225,7 @@ def test_hard_sampler_manual() -> None:
 
     ids_a, ids_p, ids_n = sampler._sample_from_distmat(
         distmat=dist_mat, labels=labels
-    )
+    )  # noqa: WPS437
     predict = set(zip(ids_a, ids_p, ids_n))
 
     check_triplets_consistency(

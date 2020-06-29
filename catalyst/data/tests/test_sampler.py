@@ -23,7 +23,7 @@ def generate_valid_labels(num: int) -> TLabelsPK:
     """
     labels_pk = []
 
-    for _ in range(num):
+    for _ in range(num):  # noqa: WPS122
         p, k = randint(2, 12), randint(2, 12)
         labels_list = [[label] * randint(2, 12) for label in range(p)]
         labels = [el for sublist in labels_list for el in sublist]
@@ -114,11 +114,11 @@ def check_balance_batch_sampler_epoch(
 
 
 def test_balance_batch_sampler(
-    input_balance_batch_sampler,  # noqa: WPS442
+    input_for_balance_batch_sampler,  # noqa: WPS442
 ) -> None:
     """
     Args:
-        input_balance_batch_sampler: pytest fixture
+        input_for_balance_batch_sampler: list of (labels, p, k)
     """
     for labels, p, k in input_for_balance_batch_sampler:
         check_balance_batch_sampler_epoch(labels=labels, p=p, k=k)
