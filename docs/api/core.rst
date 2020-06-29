@@ -129,9 +129,9 @@ Validation
     :undoc-members:
     :show-inheritance:
 
-Wrapper
+Control Flow
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.wrapper
+.. automodule:: catalyst.core.callbacks.control_flow
     :members:
     :undoc-members:
     :show-inheritance:

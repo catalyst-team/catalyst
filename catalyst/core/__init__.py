@@ -7,6 +7,12 @@
 
 from .experiment import IExperiment
 from .runner import IRunner, IStageBasedRunner
-from .callback import Callback, CallbackOrder, CallbackNode, CallbackScope
+from .callback import (
+    Callback,
+    CallbackOrder,
+    CallbackNode,
+    CallbackScope,
+    WrapperCallback,
+)
 from .callbacks import *
 from .state import State
