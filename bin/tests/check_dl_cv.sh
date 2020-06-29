@@ -358,14 +358,14 @@ rm -rf ${LOGDIR}
 
 ################################  pipeline 16  ################################
 echo 'pipeline 16'
-EXPDIR=./tests/_tests_cv_classification_experiment_registry/test1
-LOGDIR=./tests/logs/_tests_cv_classification_experiment_registry/test1
+EXPDIR=./tests/_tests_cv_classification_transforms
+LOGDIR=./tests/logs/_tests_cv_classification_transforms
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
-  --config=${EXPDIR}/config1.yml \
+  --config=${EXPDIR}/config6_kornia.yml \
   --logdir=${LOGDIR} \
   --check
 
@@ -388,8 +388,8 @@ rm -rf ${LOGDIR}
 
 ################################  pipeline 17  ################################
 echo 'pipeline 17'
-EXPDIR=./tests/_tests_cv_classification_experiment_registry/test2
-LOGDIR=./tests/logs/_tests_cv_classification_experiment_registry/test2
+EXPDIR=./tests/_tests_cv_classification_experiment_registry/test1
+LOGDIR=./tests/logs/_tests_cv_classification_experiment_registry/test1
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
@@ -426,7 +426,7 @@ LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
-  --config=${EXPDIR}/config2.yml \
+  --config=${EXPDIR}/config1.yml \
   --logdir=${LOGDIR} \
   --check
 
@@ -442,6 +442,36 @@ from catalyst import utils
 metrics = utils.load_config('$LOGFILE')
 assert metrics['stage1.1']['loss'] < 3.3
 assert metrics['stage1.2']['loss'] < 3.3
+"""
+
+rm -rf ${LOGDIR}
+
+
+################################  pipeline 19  ################################
+echo 'pipeline 19'
+EXPDIR=./tests/_tests_cv_classification_experiment_registry/test2
+LOGDIR=./tests/logs/_tests_cv_classification_experiment_registry/test2
+LOGFILE=${LOGDIR}/checkpoints/_metrics.json
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config2.yml \
+  --logdir=${LOGDIR} \
+  --check
+
+if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
+    echo "File $LOGFILE does not exist"
+    exit 1
+fi
+
+cat $LOGFILE
+echo 'pipeline 19'
+python -c """
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
+# assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
+assert metrics['stage1.2']['loss'] < 2.33
 """
 
 rm -rf ${LOGDIR}
@@ -472,6 +502,48 @@ fi
 
 cat $LOGFILE
 echo 'pipeline 21 - SEGMENTATION'
+python -c """
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
+
+iou = metrics['last']['iou']
+loss = metrics['last']['loss']
+
+print('iou', iou)
+print('loss', loss)
+
+assert iou > 0.5, f'iou must be > 0.5, got {iou}'
+assert loss < 1.4, f'loss must be < 1.4, got {loss}'
+"""
+
+rm -rf ${LOGDIR}
+
+
+################################  pipeline 22  ################################
+# SEGMENTATION & kornia augmentations for the images and masks
+echo 'pipeline 22 - SEGMENTATION'
+EXPDIR=./tests/_tests_cv_segmentation
+LOGDIR=./tests/logs/_tests_cv_segmentation
+LOGFILE=${LOGDIR}/checkpoints/_metrics.json
+
+## train
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --configs ${EXPDIR}/config2_kornia.yml ${EXPDIR}/transforms.yml \
+  --logdir=${LOGDIR} \
+  --stages/data_params/image_path=./data/segmentation_data/train:str \
+  --stages/data_params/mask_path=./data/segmentation_data/train_masks:str \
+  --check
+
+## check metrics
+if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
+    echo "File $LOGFILE does not exist"
+    exit 1
+fi
+
+cat $LOGFILE
+echo 'pipeline 22 - SEGMENTATION & kornia'
 python -c """
 from catalyst import utils
 metrics = utils.load_config('$LOGFILE')

@@ -1,6 +1,6 @@
-from typing import Dict, Optional, Sequence, Tuple
+from typing import Dict, Optional, Sequence, Tuple, Union
 
-from kornia import augmentation
+from kornia.augmentation import AugmentationBase
 import torch
 from torch import nn
 
@@ -31,10 +31,12 @@ class BatchTransformCallback(Callback):
         """Constructor method for the :class:`BatchTransformCallback` callback.
 
         Args:
-            transform (Sequence[dict]): A sequence of dits with params
-                for each transform to apply. Must contain `transform` key
-                with augmentation name as a value. If augmentation is custom,
-                then you should add it to the TRANSFORMS registry first.
+            transform (Sequence[Union[dict, AugmentationBase]]): A sequence
+                of dits with params for each kornia transform or sequence of
+                transforms to apply. If sequence of params then must contain
+                `transform` key with augmentation name as a value
+                and if augmentation is custom, then you should add it
+                to the `TRANSFORMS` registry first.
             input_key (str): Key in batch dict mapping to to tranform,
                 e.g. `'image'`.
             output_key (Optional[str]): Key to use to store the result
@@ -66,11 +68,14 @@ class BatchTransformCallback(Callback):
             else self._process_output_tensor
         )
 
-        transforms: Sequence[augmentation.AugmentationBase] = [
-            TRANSFORMS.get_from_params(**params) for params in transform
+        transforms: Sequence[AugmentationBase] = [
+            item
+            if isinstance(item, AugmentationBase)
+            else TRANSFORMS.get_from_params(**item)
+            for item in transform
         ]
         assert all(
-            isinstance(t, augmentation.AugmentationBase) for t in transforms
+            isinstance(t, AugmentationBase) for t in transforms
         ), "`kornia.AugmentationBase` should be a base class for transforms"
 
         self.transform = nn.Sequential(*transforms)
