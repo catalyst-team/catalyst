@@ -19,6 +19,10 @@ def _transforms_loader(r: Registry):
 
         r.add_from_module(p, prefix=["A.", "albu.", "albumentations."])
 
+        from kornia import augmentation as k
+
+        r.add_from_module(k, prefix=["kornia."])
+
         from catalyst.contrib.data.cv import transforms as t
 
         r.add_from_module(t, prefix=["catalyst.", "C."])

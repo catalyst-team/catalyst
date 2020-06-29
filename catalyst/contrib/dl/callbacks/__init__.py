@@ -25,6 +25,17 @@ except ImportError as ex:
         raise ex
 
 try:
+    import kornia
+    from .kornia_transform import BatchTransformCallback
+except ImportError as ex:
+    if settings.cv_required:
+        logger.warning(
+            "some of catalyst-cv dependencies not available,"
+            " to install dependencies, run `pip install catalyst[cv]`."
+        )
+    raise ex
+
+try:
     import alchemy
     from .alchemy_logger import AlchemyLogger
 except ImportError as ex:
