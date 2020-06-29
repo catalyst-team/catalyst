@@ -144,7 +144,7 @@ def test_all_triplets_sampler(features_and_labels) -> None:  # noqa: WPS442
     sampler = AllTripletsSampler(max_output_triplets=max_tri)
 
     for _, labels in features_and_labels:  # noqa: WPS437
-        ids_a, ids_p, ids_n = sampler._sample(labels=labels)
+        ids_a, ids_p, ids_n = sampler._sample(labels=labels)  # noqa: WPS437
 
         check_all_triplets_number(
             labels=labels, max_tri=max_tri, num_selected_tri=len(ids_a),
@@ -156,8 +156,8 @@ def test_all_triplets_sampler(features_and_labels) -> None:  # noqa: WPS442
 
 
 def test_hard_sampler_from_features(
-    features_and_labels,
-) -> None:  # noqa: WPS442
+    features_and_labels,  # noqa: WPS442
+) -> None:
     """
     Args:
         features_and_labels: features and valid labels
@@ -165,9 +165,9 @@ def test_hard_sampler_from_features(
     sampler = HardTripletsSampler(need_norm=True)
 
     for features, labels in features_and_labels:
-        ids_a, ids_p, ids_n = sampler._sample(
+        ids_a, ids_p, ids_n = sampler._sample(  # noqa: WPS437
             features=features, labels=labels
-        )  # noqa: WPS437
+        )
 
         check_triplets_consistency(
             ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels
@@ -185,7 +185,7 @@ def test_hard_sampler_from_dist(distmats_and_labels) -> None:  # noqa: WPS442
     sampler = HardTripletsSampler(need_norm=True)
 
     for distmat, labels in distmats_and_labels:
-        ids_a, ids_p, ids_n = sampler._sample_from_distmat(
+        ids_a, ids_p, ids_n = sampler._sample_from_distmat(  # noqa: WPS437
             distmat=distmat, labels=labels
         )
 
@@ -223,9 +223,9 @@ def test_hard_sampler_manual() -> None:
 
     sampler = HardTripletsSampler(need_norm=True)
 
-    ids_a, ids_p, ids_n = sampler._sample_from_distmat(
+    ids_a, ids_p, ids_n = sampler._sample_from_distmat(  # noqa: WPS437
         distmat=dist_mat, labels=labels
-    )  # noqa: WPS437
+    )
     predict = set(zip(ids_a, ids_p, ids_n))
 
     check_triplets_consistency(
