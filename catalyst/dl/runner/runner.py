@@ -300,7 +300,7 @@ class Runner(IStageBasedRunner):
             utils.unpack_checkpoint(checkpoint, model=self.model)
 
         utils.set_global_seed(initial_seed)
-        (model, _, _, _, device,) = utils.process_components(  # noqa: WPS122
+        (model, _, _, _, device) = utils.process_components(  # noqa: WPS122
             model=self.model, distributed_params=fp16, device=self.device,
         )
         self._prepare_inner_state(stage="infer", model=model, device=device)
