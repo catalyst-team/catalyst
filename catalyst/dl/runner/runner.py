@@ -286,6 +286,8 @@ class Runner(IStageBasedRunner):
         Yields:
             bathes with model predictions
         """
+        self.experiment = None
+
         if isinstance(fp16, bool) and fp16:
             fp16 = {"opt_level": "O1"}
 
@@ -297,15 +299,11 @@ class Runner(IStageBasedRunner):
             checkpoint = utils.load_checkpoint(resume)
             utils.unpack_checkpoint(checkpoint, model=self.model)
 
-        (  # noqa: WPS122
-            self.model,
-            _,
-            _,
-            _,
-            self.device,
-        ) = utils.process_components(
+        utils.set_global_seed(initial_seed)
+        (model, _, _, _, device,) = utils.process_components(  # noqa: WPS122
             model=self.model, distributed_params=fp16, device=self.device,
         )
+        self._prepare_inner_state(stage="infer", model=model, device=device)
 
         utils.set_global_seed(initial_seed)
         for batch in loader:
