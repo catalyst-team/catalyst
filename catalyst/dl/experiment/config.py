@@ -32,6 +32,7 @@ from catalyst.dl.registry import (
     SCHEDULERS,
     TRANSFORMS,
 )
+from catalyst.dl.utils import check_callback_isinstance
 from catalyst.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
@@ -521,7 +522,7 @@ class ConfigExperiment(IExperiment):
         for callback_name, callback_fn in default_callbacks:
             is_already_present = False
             for x in callbacks.values():
-                if isinstance(x, callback_fn):
+                if check_callback_isinstance(x, callback_fn):
                     is_already_present = True
                     break
             if not is_already_present:

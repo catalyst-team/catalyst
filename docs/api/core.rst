@@ -129,6 +129,12 @@ Validation
     :undoc-members:
     :show-inheritance:
 
+Control Flow
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.core.callbacks.control_flow
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Registry
 ----------------------
