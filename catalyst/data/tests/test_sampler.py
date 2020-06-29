@@ -7,9 +7,35 @@ import pytest
 
 from catalyst.data.sampler import BalanceBatchSampler
 
+TLabelsPK = List[Tuple[List[int], int, int]]
+
+
+def generate_valid_labels(num: int) -> TLabelsPK:
+    """
+    This function generates some valid inputs for samplers.
+    It generates k instances for p classes.
+
+    Args:
+        num: number of generated samples
+
+    Returns:
+        samples in the folowing order: (labels, p, k)
+    """
+    labels_pk = []
+
+    for _ in range(num):  # noqa: WPS122
+        p, k = randint(2, 12), randint(2, 12)
+        labels_list = [[label] * randint(2, 12) for label in range(p)]
+        labels = [el for sublist in labels_list for el in sublist]
+
+        shuffle(labels)
+        labels_pk.append((labels, p, k))
+
+    return labels_pk
+
 
 @pytest.fixture()
-def input_balance_batch_sampler() -> List[Tuple[List[int], int, int]]:
+def input_for_balance_batch_sampler() -> TLabelsPK:
     """
     Returns:
         test data for sampler in the following order: (labels, p, k)
@@ -31,20 +57,14 @@ def input_balance_batch_sampler() -> List[Tuple[List[int], int, int]]:
         ([0, 1, 2, 2, 1, 0, 1, 0, 2, 0, 1, 2], 3, 2),
     ]
 
-    num_random_cases = 0
     # (alekseysh) It was checked once with N = 100_000 before doing the PR
-    for _ in range(num_random_cases):  # noqa: WPS122
-        # code below generates same valid inputs for sampler
-        p, k = randint(2, 12), randint(2, 12)
-        labels_matrix = [[label] * randint(2, 12) for label in range(p + 1)]
-        labels_flatten = [el for sublist in labels_matrix for el in sublist]
-        shuffle(labels_flatten)
-        input_cases.append((labels_flatten, p, k))
+    num_random_cases = 100
+    input_cases.extend((generate_valid_labels(num_random_cases)))
 
     return input_cases
 
 
-def single_check_balance_batch_sampler(
+def check_balance_batch_sampler_epoch(
     labels: List[int], p: int, k: int
 ) -> None:
     """
@@ -94,11 +114,11 @@ def single_check_balance_batch_sampler(
 
 
 def test_balance_batch_sampler(
-    input_balance_batch_sampler,  # noqa: WPS442
+    input_for_balance_batch_sampler,  # noqa: WPS442
 ) -> None:
     """
     Args:
-        input_balance_batch_sampler: pytest fixture
+        input_for_balance_batch_sampler: list of (labels, p, k)
     """
-    for labels, p, k in input_balance_batch_sampler:
-        single_check_balance_batch_sampler(labels, p, k)
+    for labels, p, k in input_for_balance_batch_sampler:
+        check_balance_batch_sampler_epoch(labels=labels, p=p, k=k)

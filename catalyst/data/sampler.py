@@ -109,9 +109,12 @@ class BalanceBatchSampler(Sampler):
     - If C % P == 1 then one of the classes should be dropped
     otherwise statement (1) will not be met.
 
-    This type of sampling can be found in the classical paper of Person Re-Id:
-    "In Defense of the Triplet Loss for Person Re-Identification",
-    where P equals 32 and K equals 4.
+    This type of sampling can be found in the classical paper of Person Re-Id,
+    where P equals 32 and K equals 4:
+    `In Defense of the Triplet Loss for Person Re-Identification`_.
+
+    .. _In Defense of the Triplet Loss for Person Re-Identification:
+        https://arxiv.org/abs/1703.07737
     """
 
     def __init__(self, labels: List[int], p: int, k: int):
