@@ -152,5 +152,7 @@ class PeriodicLoaderCallback(Callback):
             # use previous score on validation
             runner.valid_metrics = self.valid_metrics
 
+        print(">>", runner.epoch, runner.valid_metrics)
+
 
 __all__ = ["PeriodicLoaderCallback"]
