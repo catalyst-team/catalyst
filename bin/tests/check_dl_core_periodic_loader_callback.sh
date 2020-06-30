@@ -736,7 +736,7 @@ echo ${LOG_MSG}
 rm -rf ${LOGDIR} ${EXP_OUTPUT}
 
 ################################  pipeline 12  ################################
-# setup: never run validation
+# setup: check for load correct best state (from epoch 3)
 LOG_MSG='pipeline 12'
 echo ${LOG_MSG}
 
