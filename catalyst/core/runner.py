@@ -352,14 +352,14 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         """
         self._device = None
         self._model = None
-        self.device: Device = device
-        self.model: RunnerModel = model
+        self._prepare_inner_state(model=model, device=device)
+        self._unfreeze()
         self._init(**kwargs)
         self._freeze()
 
     def _prepare_inner_state(
         self,
-        stage: str = settings.stage_infer_prefix,  # @TODO: wtf?
+        stage: str = settings.stage_infer_prefix,
         device: Device = None,
         model: RunnerModel = None,
         criterion: RunnerCriterion = None,
@@ -451,7 +451,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         self.loader_batch_size = 0
         self.is_train_loader: bool = False
         self.is_valid_loader: bool = False
-        self.is_infer_loader: bool = False
+        self.is_infer_loader: bool = True
         # batch info
         self.batch_size: int = 0
 
@@ -721,11 +721,11 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         if migrate_from_previous_stage:
             migrating_params.update(
                 {
+                    "global_epoch": getattr(self, "global_epoch", 1),
                     "global_batch_step": getattr(self, "global_batch_step", 0),
                     "global_sample_step": getattr(
                         self, "global_sample_step", 0
                     ),
-                    "global_epoch": getattr(self, "global_epoch", 1),
                     "resume": getattr(self, "resume", None),
                 }
             )
