@@ -150,9 +150,9 @@ class PeriodicLoaderCallback(Callback):
             # use previous score on validation
             runner.valid_metrics = self.valid_metrics
             runner.is_best_valid = False
-        else:
-            # store first loader while waiting for epoch with validation
-            self.valid_metrics = runner.valid_metrics.copy()
+        # else:
+        #     # store first loader while waiting for epoch with validation
+        #     self.valid_metrics = runner.valid_metrics.copy()
 
 
 __all__ = ["PeriodicLoaderCallback"]
