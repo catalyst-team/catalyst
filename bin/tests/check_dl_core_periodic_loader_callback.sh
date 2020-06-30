@@ -734,3 +734,66 @@ cat ${EXP_OUTPUT}
 echo ${LOG_MSG}
 
 rm -rf ${LOGDIR} ${EXP_OUTPUT}
+
+################################  pipeline 12  ################################
+# setup: never run validation
+LOG_MSG='pipeline 12'
+echo ${LOG_MSG}
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python3 -c "
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst.dl import (
+    SupervisedRunner, Callback, CallbackOrder, PeriodicLoaderCallback,
+)
+
+# data
+num_samples, num_features = int(1e4), int(1e1)
+X = torch.rand(num_samples, num_features)
+y = torch.randint(0, 5, size=[num_samples])
+dataset = TensorDataset(X, y)
+loader = DataLoader(dataset, batch_size=32, num_workers=1)
+loaders = {
+    'train': loader,
+    'valid': loader,
+}
+
+# model, criterion, optimizer, scheduler
+model = torch.nn.Linear(num_features, 5)
+criterion = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters())
+runner = SupervisedRunner()
+
+# first stage
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    loaders=loaders,
+    logdir='${LOGDIR}',
+    num_epochs=5,
+    verbose=False,
+    callbacks=[
+        PeriodicLoaderCallback(valid=3)
+    ],
+    load_best_on_end=True
+)
+" > ${EXP_OUTPUT}
+
+cat ${EXP_OUTPUT}
+check_line_counts ${EXP_OUTPUT} "(train):" 5
+check_line_counts ${EXP_OUTPUT} "(valid):" 1
+check_line_counts ${EXP_OUTPUT} "\(global epoch 3, epoch 3, stage train\)" 1
+check_line_counts ${EXP_OUTPUT} ".*/train\.[[:digit:]]\.pth" 1
+
+check_file_existence ${LOGFILE}
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/train\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
+
+rm -rf ${LOGDIR} ${EXP_OUTPUT}
