@@ -279,16 +279,16 @@
 <li><p><a class="reference internal" href="#callbacks" id="id9">Callbacks</a></p>
 <ul>
 <li><p><a class="reference internal" href="#module-catalyst.core.callbacks.checkpoint" id="id10">Checkpoint</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.criterion" id="id11">Criterion</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.early_stop" id="id12">Early Stop</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.exception" id="id13">Exception</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.logging" id="id14">Logging</a></p></li>
-<li><p><a class="reference internal" href="#metrics" id="id15">Metrics</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.optimizer" id="id16">Optimizer</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.scheduler" id="id17">Scheduler</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.timer" id="id18">Timer</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.validation" id="id19">Validation</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.control_flow" id="id20">Control Flow</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.control_flow" id="id11">Control Flow</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.criterion" id="id12">Criterion</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.early_stop" id="id13">Early Stop</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.exception" id="id14">Exception</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.logging" id="id15">Logging</a></p></li>
+<li><p><a class="reference internal" href="#metrics" id="id16">Metrics</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.optimizer" id="id17">Optimizer</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.scheduler" id="id18">Scheduler</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.timer" id="id19">Timer</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.validation" id="id20">Validation</a></p></li>
 </ul>
 </li>
 <li><p><a class="reference internal" href="#module-catalyst.core.registry" id="id21">Registry</a></p></li>
@@ -2618,8 +2618,173 @@ should contain <code class="docutils literal notranslate"><span class="pre">stag
 </dd></dl>
 
 </div>
+<div class="section" id="module-catalyst.core.callbacks.control_flow">
+<span id="control-flow"></span><h3><a class="toc-backref" href="#id11">Control Flow</a><a class="headerlink" href="#module-catalyst.core.callbacks.control_flow" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.core.callbacks.control_flow.ControlFlowCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.control_flow.</code><code class="sig-name descname">ControlFlowCallback</code><span class="sig-paren">(</span><em class="sig-param">base_callback: catalyst.core.callback.Callback, epochs: Union[int, Sequence[int]] = None, ignore_epochs: Union[int, Sequence[int]] = None, loaders: Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]] = None, ignore_loaders: Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]] = None, filter_fn: Union[str, Callable[[str, int, str], bool]] = None, use_global_epochs: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/control_flow.html#ControlFlowCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.control_flow.ControlFlowCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.WrapperCallback" title="catalyst.core.callback.WrapperCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.WrapperCallback</span></code></a></p>
+<p>Customize callback execution on different
+stages, loaders and epochs.</p>
+<p>For example, if you don’t want to compute loss on a validation
+you can ignore <code class="docutils literal notranslate"><span class="pre">CriterionCallback</span></code>, for notebook API
+need to wrap callback:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SupervisedRunner</span><span class="p">,</span> <span class="n">AccuracyCallback</span><span class="p">,</span>
+    <span class="n">CriterionCallback</span><span class="p">,</span> <span class="n">ControlFlowCallback</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span> <span class="o">=</span> <span class="mi">10_000</span><span class="p">,</span> <span class="mi">10</span>
+<span class="n">n_classes</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_classes</span><span class="p">,</span> <span class="p">[</span><span class="n">num_samples</span><span class="p">])</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">}</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="n">n_classes</span><span class="p">)</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+<span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
+    <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir&quot;</span><span class="p">,</span>
+    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">main_metric</span><span class="o">=</span><span class="s2">&quot;accuracy03&quot;</span><span class="p">,</span>
+    <span class="n">minimize_metric</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">AccuracyCallback</span><span class="p">(</span>
+            <span class="n">accuracy_args</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+        <span class="p">),</span>
+        <span class="n">ControlFlowCallback</span><span class="p">(</span>
+            <span class="n">base_callback</span><span class="o">=</span><span class="n">CriterionCallback</span><span class="p">(),</span>
+            <span class="n">ignore_loaders</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span>  <span class="c1"># or loaders=&quot;train&quot;</span>
+        <span class="p">)</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>In config API need to use <code class="docutils literal notranslate"><span class="pre">_wrapper</span></code> argument:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">callbacks_params</span><span class="p">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">...</span>
+  <span class="l l-Scalar l-Scalar-Plain">loss</span><span class="p p-Indicator">:</span>
+    <span class="nt">_wrapper</span><span class="p">:</span>
+       <span class="nt">callback</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ControlFlowCallback</span>
+       <span class="nt">ignore_loaders</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">valid</span>
+    <span class="nt">callback</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CriterionCallback</span>
+  <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="catalyst.core.callbacks.control_flow.ControlFlowCallback.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">base_callback: catalyst.core.callback.Callback, epochs: Union[int, Sequence[int]] = None, ignore_epochs: Union[int, Sequence[int]] = None, loaders: Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]] = None, ignore_loaders: Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]] = None, filter_fn: Union[str, Callable[[str, int, str], bool]] = None, use_global_epochs: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/control_flow.html#ControlFlowCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.control_flow.ControlFlowCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_callback</strong> (<a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a>) – callback to wrap</p></li>
+<li><p><strong>epochs</strong> (<em>int/Sequence</em><em>[</em><em>int</em><em>]</em>) – <p>epochs numbers where
+need to execute callback, on other epochs
+callback will be disabled.</p>
+<p>If passed int/float then callback will be enabled
+with period specified as epochs value
+(epochs expression <code class="docutils literal notranslate"><span class="pre">epoch_number</span> <span class="pre">%</span> <span class="pre">epochs</span> <span class="pre">!=</span> <span class="pre">0</span></code>)
+and disabled on other epochs.</p>
+<p>If passed list of epochs then will be executed callback
+on specified epochs.</p>
+<p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</p></li>
+<li><p><strong>ignore_epochs</strong> – <p>(int/Sequence[int]): epochs numbers where
+need to disable callback, on other epochs
+callback will be enabled.</p>
+<p>If passed int/float then callback will be disabled
+with period specified as epochs value
+(epochs expression <code class="docutils literal notranslate"><span class="pre">epoch_number</span> <span class="pre">%</span> <span class="pre">epochs</span> <span class="pre">==</span> <span class="pre">0</span></code>)
+and enabled on other epochs.</p>
+<p>If passed list of epochs then will be disabled callback
+on specified epochs.</p>
+<p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</p></li>
+<li><p><strong>loaders</strong> (<em>str/Sequence</em><em>[</em><em>str</em><em>]</em><em>/Mapping</em><em>[</em><em>str</em><em>, </em><em>int/Sequence</em><em>[</em><em>str</em><em>]</em><em>]</em>) – <p>loader names where should be enabled callback, on
+other loaders callback will be disabled.</p>
+<p>If passed string object then will be disabled callback for
+loader with specified name.</p>
+<p>If passed list/tuple of strings then will be disabled callback
+for loaders with specified names.</p>
+<p>If passed dictionary where key is a string and values
+int or list of integers then callback will be
+disabled on epochs (dictionary value) for specified
+loader (dictionary key).</p>
+<p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</p></li>
+<li><p><strong>ignore_loaders</strong> (<em>str/Sequence</em><em>[</em><em>str</em><em>]</em><em>/Mapping</em><em>[</em><em>str</em><em>, </em><em>int/Sequence</em><em>[</em><em>str</em><em>]</em><em>]</em>) – <p>loader names where should be disabled callback, on
+other loaders callback will be enabled.</p>
+<p>If passed string object then will be disabled callback for
+loader with specified name.</p>
+<p>If passed list/tuple of strings then will be disabled callback
+for loaders with specified names.</p>
+<p>If passed dictionary where key is a string and values
+int or list of integers then callback will be
+disabled on epochs (dictionary value) for specified
+loader (dictionary key).</p>
+<p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</p></li>
+<li><p><strong>filter_fn</strong> (<em>str</em><em> or </em><em>Callable</em><em>[</em><em>[</em><em>str</em><em>, </em><em>int</em><em>, </em><em>str</em><em>]</em><em>, </em><em>bool</em><em>]</em>) – <p>function to use instead of <code class="docutils literal notranslate"><span class="pre">loaders</span></code> or <code class="docutils literal notranslate"><span class="pre">epochs</span></code> arguments.</p>
+<p>If the object passed to a <code class="docutils literal notranslate"><span class="pre">filter_fn</span></code> is a string
+then it will be interpreted as python code. Expected
+lambda function with three arguments stage name (str),
+epoch number (int), loader name (str) and this function
+should return <code class="docutils literal notranslate"><span class="pre">True</span></code> if callback should be disabled
+on some condition.</p>
+<p>If passed callable object then it should accept
+three arguments - stage name (str), epoch number (int),
+loader name (str) and should return <code class="docutils literal notranslate"><span class="pre">True</span></code> if callback
+should be disabled on some condition othervise should
+return <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+<p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</p></li>
+<li><p><strong>use_global_epochs</strong> (<em>bool</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> then
+will be used global epochs instead of epochs in
+a stage, the default value is <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callbacks.control_flow.ControlFlowCallback.on_loader_end">
+<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/control_flow.html#ControlFlowCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.control_flow.ControlFlowCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset status of callback</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callbacks.control_flow.ControlFlowCallback.on_loader_start">
+<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/control_flow.html#ControlFlowCallback.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.control_flow.ControlFlowCallback.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if current epoch should be skipped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-catalyst.core.callbacks.criterion">
-<span id="criterion"></span><h3><a class="toc-backref" href="#id11">Criterion</a><a class="headerlink" href="#module-catalyst.core.callbacks.criterion" title="Permalink to this headline">¶</a></h3>
+<span id="criterion"></span><h3><a class="toc-backref" href="#id12">Criterion</a><a class="headerlink" href="#module-catalyst.core.callbacks.criterion" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.core.callbacks.criterion.CriterionCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.criterion.</code><code class="sig-name descname">CriterionCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', prefix: str = 'loss', criterion_key: str = None, multiplier: float = 1.0, **metric_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/criterion.html#CriterionCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.criterion.CriterionCallback" title="Permalink to this definition">¶</a></dt>
@@ -2670,7 +2835,7 @@ there are several of them and they are in a dictionary format.</p></li>
 
 </div>
 <div class="section" id="module-catalyst.core.callbacks.early_stop">
-<span id="early-stop"></span><h3><a class="toc-backref" href="#id12">Early Stop</a><a class="headerlink" href="#module-catalyst.core.callbacks.early_stop" title="Permalink to this headline">¶</a></h3>
+<span id="early-stop"></span><h3><a class="toc-backref" href="#id13">Early Stop</a><a class="headerlink" href="#module-catalyst.core.callbacks.early_stop" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.core.callbacks.early_stop.CheckRunCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.early_stop.</code><code class="sig-name descname">CheckRunCallback</code><span class="sig-paren">(</span><em class="sig-param">num_batch_steps: int = 3</em>, <em class="sig-param">num_epoch_steps: int = 2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/early_stop.html#CheckRunCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.early_stop.CheckRunCallback" title="Permalink to this definition">¶</a></dt>
@@ -2717,7 +2882,7 @@ there are several of them and they are in a dictionary format.</p></li>
 
 </div>
 <div class="section" id="module-catalyst.core.callbacks.exception">
-<span id="exception"></span><h3><a class="toc-backref" href="#id13">Exception</a><a class="headerlink" href="#module-catalyst.core.callbacks.exception" title="Permalink to this headline">¶</a></h3>
+<span id="exception"></span><h3><a class="toc-backref" href="#id14">Exception</a><a class="headerlink" href="#module-catalyst.core.callbacks.exception" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.core.callbacks.exception.ExceptionCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.exception.</code><code class="sig-name descname">ExceptionCallback</code><a class="reference internal" href="../_modules/catalyst/core/callbacks/exception.html#ExceptionCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.exception.ExceptionCallback" title="Permalink to this definition">¶</a></dt>
@@ -2739,7 +2904,7 @@ there are several of them and they are in a dictionary format.</p></li>
 
 </div>
 <div class="section" id="module-catalyst.core.callbacks.logging">
-<span id="logging"></span><h3><a class="toc-backref" href="#id14">Logging</a><a class="headerlink" href="#module-catalyst.core.callbacks.logging" title="Permalink to this headline">¶</a></h3>
+<span id="logging"></span><h3><a class="toc-backref" href="#id15">Logging</a><a class="headerlink" href="#module-catalyst.core.callbacks.logging" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.core.callbacks.logging.ConsoleLogger">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.logging.</code><code class="sig-name descname">ConsoleLogger</code><a class="reference internal" href="../_modules/catalyst/core/callbacks/logging.html#ConsoleLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.logging.ConsoleLogger" title="Permalink to this definition">¶</a></dt>
@@ -2878,7 +3043,7 @@ to remove always_show metrics set it to an empty list <code class="docutils lite
 
 </div>
 <div class="section" id="metrics">
-<h3><a class="toc-backref" href="#id15">Metrics</a><a class="headerlink" href="#metrics" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id16">Metrics</a><a class="headerlink" href="#metrics" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.core.callbacks.metrics.IMetricCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">IMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metrics_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#IMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.IMetricCallback" title="Permalink to this definition">¶</a></dt>
@@ -3099,7 +3264,7 @@ Must be either <code class="docutils literal notranslate"><span class="pre">sum<
 
 </div>
 <div class="section" id="module-catalyst.core.callbacks.optimizer">
-<span id="optimizer"></span><h3><a class="toc-backref" href="#id16">Optimizer</a><a class="headerlink" href="#module-catalyst.core.callbacks.optimizer" title="Permalink to this headline">¶</a></h3>
+<span id="optimizer"></span><h3><a class="toc-backref" href="#id17">Optimizer</a><a class="headerlink" href="#module-catalyst.core.callbacks.optimizer" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.core.callbacks.optimizer.OptimizerCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.optimizer.</code><code class="sig-name descname">OptimizerCallback</code><span class="sig-paren">(</span><em class="sig-param">metric_key: str = None</em>, <em class="sig-param">optimizer_key: str = None</em>, <em class="sig-param">accumulation_steps: int = 1</em>, <em class="sig-param">grad_clip_params: Dict = None</em>, <em class="sig-param">decouple_weight_decay: bool = True</em>, <em class="sig-param">loss_key: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/optimizer.html#OptimizerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.optimizer.OptimizerCallback" title="Permalink to this definition">¶</a></dt>
@@ -3183,7 +3348,7 @@ for each param group</p></li>
 
 </div>
 <div class="section" id="module-catalyst.core.callbacks.scheduler">
-<span id="scheduler"></span><h3><a class="toc-backref" href="#id17">Scheduler</a><a class="headerlink" href="#module-catalyst.core.callbacks.scheduler" title="Permalink to this headline">¶</a></h3>
+<span id="scheduler"></span><h3><a class="toc-backref" href="#id18">Scheduler</a><a class="headerlink" href="#module-catalyst.core.callbacks.scheduler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.core.callbacks.scheduler.SchedulerCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.scheduler.</code><code class="sig-name descname">SchedulerCallback</code><span class="sig-paren">(</span><em class="sig-param">scheduler_key: str = None</em>, <em class="sig-param">mode: str = None</em>, <em class="sig-param">reduced_metric: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/scheduler.html#SchedulerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.scheduler.SchedulerCallback" title="Permalink to this definition">¶</a></dt>
@@ -3339,7 +3504,7 @@ for learning rate scheduling</p>
 
 </div>
 <div class="section" id="module-catalyst.core.callbacks.timer">
-<span id="timer"></span><h3><a class="toc-backref" href="#id18">Timer</a><a class="headerlink" href="#module-catalyst.core.callbacks.timer" title="Permalink to this headline">¶</a></h3>
+<span id="timer"></span><h3><a class="toc-backref" href="#id19">Timer</a><a class="headerlink" href="#module-catalyst.core.callbacks.timer" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.core.callbacks.timer.TimerCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.timer.</code><code class="sig-name descname">TimerCallback</code><a class="reference internal" href="../_modules/catalyst/core/callbacks/timer.html#TimerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.timer.TimerCallback" title="Permalink to this definition">¶</a></dt>
@@ -3399,7 +3564,7 @@ for learning rate scheduling</p>
 
 </div>
 <div class="section" id="module-catalyst.core.callbacks.validation">
-<span id="validation"></span><h3><a class="toc-backref" href="#id19">Validation</a><a class="headerlink" href="#module-catalyst.core.callbacks.validation" title="Permalink to this headline">¶</a></h3>
+<span id="validation"></span><h3><a class="toc-backref" href="#id20">Validation</a><a class="headerlink" href="#module-catalyst.core.callbacks.validation" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.core.callbacks.validation.ValidationManagerCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.validation.</code><code class="sig-name descname">ValidationManagerCallback</code><a class="reference internal" href="../_modules/catalyst/core/callbacks/validation.html#ValidationManagerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.validation.ValidationManagerCallback" title="Permalink to this definition">¶</a></dt>
@@ -3426,171 +3591,6 @@ for learning rate scheduling</p>
 <dt id="catalyst.core.callbacks.validation.ValidationManagerCallback.on_epoch_start">
 <code class="sig-name descname">on_epoch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/validation.html#ValidationManagerCallback.on_epoch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.validation.ValidationManagerCallback.on_epoch_start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Epoch start hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-catalyst.core.callbacks.control_flow">
-<span id="control-flow"></span><h3><a class="toc-backref" href="#id20">Control Flow</a><a class="headerlink" href="#module-catalyst.core.callbacks.control_flow" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="catalyst.core.callbacks.control_flow.ControlFlowCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.control_flow.</code><code class="sig-name descname">ControlFlowCallback</code><span class="sig-paren">(</span><em class="sig-param">base_callback: catalyst.core.callback.Callback, epochs: Union[int, Sequence[int]] = None, ignore_epochs: Union[int, Sequence[int]] = None, loaders: Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]] = None, ignore_loaders: Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]] = None, filter_fn: Union[str, Callable[[str, int, str], bool]] = None, use_global_epochs: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/control_flow.html#ControlFlowCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.control_flow.ControlFlowCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.WrapperCallback" title="catalyst.core.callback.WrapperCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.WrapperCallback</span></code></a></p>
-<p>Customize callback execution on different
-stages, loaders and epochs.</p>
-<p>For example, if you don’t want to compute loss on a validation
-you can ignore <code class="docutils literal notranslate"><span class="pre">CriterionCallback</span></code>, for notebook API
-need to wrap callback:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">SupervisedRunner</span><span class="p">,</span> <span class="n">AccuracyCallback</span><span class="p">,</span>
-    <span class="n">CriterionCallback</span><span class="p">,</span> <span class="n">ControlFlowCallback</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span> <span class="o">=</span> <span class="mi">10_000</span><span class="p">,</span> <span class="mi">10</span>
-<span class="n">n_classes</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">)</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_classes</span><span class="p">,</span> <span class="p">[</span><span class="n">num_samples</span><span class="p">])</span>
-<span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">}</span>
-
-<span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="n">n_classes</span><span class="p">)</span>
-<span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
-<span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
-
-<span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
-    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
-    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
-    <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
-    <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
-    <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir&quot;</span><span class="p">,</span>
-    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">main_metric</span><span class="o">=</span><span class="s2">&quot;accuracy03&quot;</span><span class="p">,</span>
-    <span class="n">minimize_metric</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
-        <span class="n">AccuracyCallback</span><span class="p">(</span>
-            <span class="n">accuracy_args</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
-        <span class="p">),</span>
-        <span class="n">ControlFlowCallback</span><span class="p">(</span>
-            <span class="n">base_callback</span><span class="o">=</span><span class="n">CriterionCallback</span><span class="p">(),</span>
-            <span class="n">ignore_loaders</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span>  <span class="c1"># or loaders=&quot;train&quot;</span>
-        <span class="p">)</span>
-    <span class="p">]</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>In config API need to use <code class="docutils literal notranslate"><span class="pre">_wrapper</span></code> argument:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">callbacks_params</span><span class="p">:</span>
-  <span class="l l-Scalar l-Scalar-Plain">...</span>
-  <span class="l l-Scalar l-Scalar-Plain">loss</span><span class="p p-Indicator">:</span>
-    <span class="nt">_wrapper</span><span class="p">:</span>
-       <span class="nt">callback</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ControlFlowCallback</span>
-       <span class="nt">ignore_loaders</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">valid</span>
-    <span class="nt">callback</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CriterionCallback</span>
-  <span class="l l-Scalar l-Scalar-Plain">...</span>
-</pre></div>
-</div>
-<dl class="method">
-<dt id="catalyst.core.callbacks.control_flow.ControlFlowCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">base_callback: catalyst.core.callback.Callback, epochs: Union[int, Sequence[int]] = None, ignore_epochs: Union[int, Sequence[int]] = None, loaders: Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]] = None, ignore_loaders: Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]] = None, filter_fn: Union[str, Callable[[str, int, str], bool]] = None, use_global_epochs: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/control_flow.html#ControlFlowCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.control_flow.ControlFlowCallback.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>base_callback</strong> (<a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a>) – callback to wrap</p></li>
-<li><p><strong>epochs</strong> (<em>int/Sequence</em><em>[</em><em>int</em><em>]</em>) – <p>epochs numbers where
-need to execute callback, on other epochs
-callback will be disabled.</p>
-<p>If passed int/float then callback will be enabled
-with period specified as epochs value
-(epochs expression <code class="docutils literal notranslate"><span class="pre">epoch_number</span> <span class="pre">%</span> <span class="pre">epochs</span> <span class="pre">!=</span> <span class="pre">0</span></code>)
-and disabled on other epochs.</p>
-<p>If passed list of epochs then will be executed callback
-on specified epochs.</p>
-<p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
-</p></li>
-<li><p><strong>ignore_epochs</strong> – <p>(int/Sequence[int]): epochs numbers where
-need to disable callback, on other epochs
-callback will be enabled.</p>
-<p>If passed int/float then callback will be disabled
-with period specified as epochs value
-(epochs expression <code class="docutils literal notranslate"><span class="pre">epoch_number</span> <span class="pre">%</span> <span class="pre">epochs</span> <span class="pre">==</span> <span class="pre">0</span></code>)
-and enabled on other epochs.</p>
-<p>If passed list of epochs then will be disabled callback
-on specified epochs.</p>
-<p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
-</p></li>
-<li><p><strong>loaders</strong> (<em>str/Sequence</em><em>[</em><em>str</em><em>]</em><em>/Mapping</em><em>[</em><em>str</em><em>, </em><em>int/Sequence</em><em>[</em><em>str</em><em>]</em><em>]</em>) – <p>loader names where should be enabled callback, on
-other loaders callback will be disabled.</p>
-<p>If passed string object then will be disabled callback for
-loader with specified name.</p>
-<p>If passed list/tuple of strings then will be disabled callback
-for loaders with specified names.</p>
-<p>If passed dictionary where key is a string and values
-int or list of integers then callback will be
-disabled on epochs (dictionary value) for specified
-loader (dictionary key).</p>
-<p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
-</p></li>
-<li><p><strong>ignore_loaders</strong> (<em>str/Sequence</em><em>[</em><em>str</em><em>]</em><em>/Mapping</em><em>[</em><em>str</em><em>, </em><em>int/Sequence</em><em>[</em><em>str</em><em>]</em><em>]</em>) – <p>loader names where should be disabled callback, on
-other loaders callback will be enabled.</p>
-<p>If passed string object then will be disabled callback for
-loader with specified name.</p>
-<p>If passed list/tuple of strings then will be disabled callback
-for loaders with specified names.</p>
-<p>If passed dictionary where key is a string and values
-int or list of integers then callback will be
-disabled on epochs (dictionary value) for specified
-loader (dictionary key).</p>
-<p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
-</p></li>
-<li><p><strong>filter_fn</strong> (<em>str</em><em> or </em><em>Callable</em><em>[</em><em>[</em><em>str</em><em>, </em><em>int</em><em>, </em><em>str</em><em>]</em><em>, </em><em>bool</em><em>]</em>) – <p>function to use instead of <code class="docutils literal notranslate"><span class="pre">loaders</span></code> or <code class="docutils literal notranslate"><span class="pre">epochs</span></code> arguments.</p>
-<p>If the object passed to a <code class="docutils literal notranslate"><span class="pre">filter_fn</span></code> is a string
-then it will be interpreted as python code. Expected
-lambda function with three arguments stage name (str),
-epoch number (int), loader name (str) and this function
-should return <code class="docutils literal notranslate"><span class="pre">True</span></code> if callback should be disabled
-on some condition.</p>
-<p>If passed callable object then it should accept
-three arguments - stage name (str), epoch number (int),
-loader name (str) and should return <code class="docutils literal notranslate"><span class="pre">True</span></code> if callback
-should be disabled on some condition othervise should
-return <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
-<p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
-</p></li>
-<li><p><strong>use_global_epochs</strong> (<em>bool</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> then
-will be used global epochs instead of epochs in
-a stage, the default value is <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callbacks.control_flow.ControlFlowCallback.on_loader_end">
-<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/control_flow.html#ControlFlowCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.control_flow.ControlFlowCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reset status of callback</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callbacks.control_flow.ControlFlowCallback.on_loader_start">
-<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/control_flow.html#ControlFlowCallback.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.control_flow.ControlFlowCallback.on_loader_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if current epoch should be skipped.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
@@ -3983,6 +3983,7 @@ Please use <cite>runner</cite> instead.</p>
 </li>
 <li><a class="reference internal" href="#callbacks">Callbacks</a><ul>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.checkpoint">Checkpoint</a></li>
+<li><a class="reference internal" href="#module-catalyst.core.callbacks.control_flow">Control Flow</a></li>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.criterion">Criterion</a></li>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.early_stop">Early Stop</a></li>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.exception">Exception</a></li>
@@ -3992,7 +3993,6 @@ Please use <cite>runner</cite> instead.</p>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.scheduler">Scheduler</a></li>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.timer">Timer</a></li>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.validation">Validation</a></li>
-<li><a class="reference internal" href="#module-catalyst.core.callbacks.control_flow">Control Flow</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-catalyst.core.registry">Registry</a></li>

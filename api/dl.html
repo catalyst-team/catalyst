@@ -706,7 +706,10 @@ from DataLoader.</p></li>
 <dt id="catalyst.dl.runner.runner.Runner.predict_loader">
 <code class="sig-name descname">predict_loader</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">loader: torch.utils.data.dataloader.DataLoader</em>, <em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">resume: str = None</em>, <em class="sig-param">fp16: Union[Dict</em>, <em class="sig-param">bool] = None</em>, <em class="sig-param">initial_seed: int = 42</em><span class="sig-paren">)</span> &#x2192; Generator<a class="reference internal" href="../_modules/catalyst/dl/runner/runner.html#Runner.predict_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.runner.runner.Runner.predict_loader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs model inference on PyTorch Dataloader and returns
-python Generator with model predictions from <cite>runner.predict_batch</cite></p>
+python generator with model predictions from <cite>runner.predict_batch</cite>.
+Cleans up the experiment info to avoid possible collisions.
+Sets <cite>is_train_loader</cite> and <cite>is_valid_loader</cite> to <cite>False</cite> while
+keeping <cite>is_infer_loader</cite> as True. Moves model to evaluation mode.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

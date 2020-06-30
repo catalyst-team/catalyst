@@ -612,14 +612,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">=</span> <span class="n">device</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_inner_state</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unfreeze</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_init</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_freeze</span><span class="p">()</span></div>
 
     <span class="k">def</span> <span class="nf">_prepare_inner_state</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">stage_infer_prefix</span><span class="p">,</span>  <span class="c1"># @TODO: wtf?</span>
+        <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">stage_infer_prefix</span><span class="p">,</span>
         <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">criterion</span><span class="p">:</span> <span class="n">RunnerCriterion</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -711,7 +711,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">loader_batch_size</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_valid_loader</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">is_infer_loader</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_infer_loader</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="c1"># batch info</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -981,11 +981,11 @@
         <span class="k">if</span> <span class="n">migrate_from_previous_stage</span><span class="p">:</span>
             <span class="n">migrating_params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
                 <span class="p">{</span>
+                    <span class="s2">&quot;global_epoch&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;global_epoch&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
                     <span class="s2">&quot;global_batch_step&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;global_batch_step&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
                     <span class="s2">&quot;global_sample_step&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span>
                         <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;global_sample_step&quot;</span><span class="p">,</span> <span class="mi">0</span>
                     <span class="p">),</span>
-                    <span class="s2">&quot;global_epoch&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;global_epoch&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
                     <span class="s2">&quot;resume&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;resume&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
                 <span class="p">}</span>
             <span class="p">)</span>

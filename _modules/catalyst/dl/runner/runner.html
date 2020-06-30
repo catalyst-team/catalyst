@@ -534,7 +534,10 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Runs model inference on PyTorch Dataloader and returns</span>
-<span class="sd">        python Generator with model predictions from `runner.predict_batch`</span>
+<span class="sd">        python generator with model predictions from `runner.predict_batch`.</span>
+<span class="sd">        Cleans up the experiment info to avoid possible collisions.</span>
+<span class="sd">        Sets `is_train_loader` and `is_valid_loader` to `False` while</span>
+<span class="sd">        keeping `is_infer_loader` as True. Moves model to evaluation mode.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            loader (DataLoader): loader to predict</span>
@@ -557,15 +560,20 @@
             <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">resume</span><span class="p">)</span>
             <span class="n">utils</span><span class="o">.</span><span class="n">unpack_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
 
-        <span class="p">(</span>  <span class="c1"># noqa: WPS122</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
-            <span class="n">_</span><span class="p">,</span>
-            <span class="n">_</span><span class="p">,</span>
-            <span class="n">_</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
-        <span class="p">)</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_components</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">set_global_seed</span><span class="p">(</span><span class="n">initial_seed</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_components</span><span class="p">(</span>  <span class="c1"># noqa: WPS122</span>
             <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">distributed_params</span><span class="o">=</span><span class="n">fp16</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">,</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_inner_state</span><span class="p">(</span>
+            <span class="n">stage</span><span class="o">=</span><span class="s2">&quot;infer&quot;</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
+            <span class="n">is_train_loader</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">is_valid_loader</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">is_infer_loader</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">maybe_recursive_call</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="n">utils</span><span class="o">.</span><span class="n">set_global_seed</span><span class="p">(</span><span class="n">initial_seed</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">loader</span><span class="p">:</span>
