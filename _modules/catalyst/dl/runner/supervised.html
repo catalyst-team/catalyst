@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.runner.supervised &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.dl.runner.supervised &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -355,7 +355,7 @@
         <span class="k">return</span> <span class="n">output</span>
 
     <span class="k">def</span> <span class="nf">_process_input_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="nb">input</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">}</span>
+        <span class="nb">input</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">}</span>  <span class="c1"># noqa: WPS125</span>
         <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="o">**</span><span class="nb">input</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">output</span>
 
@@ -384,6 +384,9 @@
 <span class="sd">            batch (Mapping[str, Any]): dictionary with data batches</span>
 <span class="sd">                from DataLoaders.</span>
 <span class="sd">            **kwargs: additional parameters to pass to the model</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict with model output batch</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_input</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_output</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.callbacks.metrics.dice &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.dl.callbacks.metrics.dice &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -262,9 +262,8 @@
 
 <span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">IRunner</span><span class="p">,</span> <span class="n">MetricCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.callbacks.metrics.functional</span> <span class="kn">import</span> <span class="n">calculate_dice</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="n">metrics</span>
-
-<span class="kn">from</span> <span class="nn">.functional</span> <span class="kn">import</span> <span class="n">calculate_dice</span>
 
 
 <div class="viewcode-block" id="DiceCallback"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.dice.DiceCallback">[docs]</a><span class="k">class</span> <span class="nc">DiceCallback</span><span class="p">(</span><span class="n">MetricCallback</span><span class="p">):</span>
@@ -323,7 +322,7 @@
 <span class="sd">                This allows you to ignore class indices.</span>
 <span class="sd">                if list, make sure it corresponds to the number of classes</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Metric</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">metric</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span> <span class="o">=</span> <span class="n">input_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span> <span class="o">=</span> <span class="n">output_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span>

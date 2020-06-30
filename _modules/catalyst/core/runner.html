@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.core.runner &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.core.runner &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../_static/js/google.analytics.js"></script>
+  <script src="../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -270,6 +270,7 @@
 <span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackScope</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.experiment</span> <span class="kn">import</span> <span class="n">IExperiment</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.legacy</span> <span class="kn">import</span> <span class="n">IRunnerLegacy</span>
 <span class="kn">from</span> <span class="nn">catalyst.tools</span> <span class="kn">import</span> <span class="n">settings</span>
 <span class="kn">from</span> <span class="nn">catalyst.tools.frozen_class</span> <span class="kn">import</span> <span class="n">FrozenClass</span>
 <span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="p">(</span>
@@ -283,8 +284,6 @@
     <span class="n">RunnerScheduler</span><span class="p">,</span>
     <span class="n">Scheduler</span><span class="p">,</span>
 <span class="p">)</span>
-
-<span class="kn">from</span> <span class="nn">.legacy</span> <span class="kn">import</span> <span class="n">IRunnerLegacy</span>
 
 
 <div class="viewcode-block" id="IRunner"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.runner.IRunner">[docs]</a><span class="k">class</span> <span class="nc">IRunner</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">IRunnerLegacy</span><span class="p">,</span> <span class="n">FrozenClass</span><span class="p">):</span>
@@ -750,6 +749,10 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            value (Union[Model, Dict[str, Model]]): new model.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: if value is out of</span>
+<span class="sd">                `torch.nn.Module` or `Dict[str, torch.nn.Module]`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">value</span>
@@ -791,6 +794,9 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            value (Device): new torch device.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: if `value` is out of `torch.device`, `str` or `None`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">value</span>
@@ -920,6 +926,9 @@
 <span class="sd">            key (str): name for attribute of interest,</span>
 <span class="sd">                like `criterion`, `optimizer`, `scheduler`</span>
 <span class="sd">            inner_key (str): name of inner dictionary key</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            inner attribute</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">inner_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
@@ -964,10 +973,22 @@
             <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;callbacks&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="p">):</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">scope</span> <span class="o">==</span> <span class="n">CallbackScope</span><span class="o">.</span><span class="n">Experiment</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">scope</span> <span class="o">==</span> <span class="n">CallbackScope</span><span class="o">.</span><span class="n">experiment</span><span class="p">:</span>
                     <span class="n">callbacks</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
         <span class="n">callbacks</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">sort_callbacks_by_order</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">migrate_from_previous_stage</span><span class="p">:</span>
+            <span class="n">migrating_params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;global_batch_step&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;global_batch_step&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                    <span class="s2">&quot;global_sample_step&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span>
+                        <span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;global_sample_step&quot;</span><span class="p">,</span> <span class="mi">0</span>
+                    <span class="p">),</span>
+                    <span class="s2">&quot;global_epoch&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;global_epoch&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                    <span class="s2">&quot;resume&quot;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;resume&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_inner_state</span><span class="p">(</span>
             <span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">,</span>
@@ -1173,6 +1194,14 @@
 <span class="sd">        Args:</span>
 <span class="sd">            experiment (IExperiment): Experiment instance to use for Runner.</span>
 
+<span class="sd">        Returns:</span>
+<span class="sd">            self, `IRunner` instance after the experiment</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            Exception: if during pipeline exception,</span>
+<span class="sd">                no handler we found into callbacks</span>
+<span class="sd">            KeyboardInterrupt: if during pipeline exception,</span>
+<span class="sd">                no handler we found into callbacks</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span> <span class="o">=</span> <span class="n">experiment</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>

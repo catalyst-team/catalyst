@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.callbacks.scheduler &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.dl.callbacks.scheduler &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -323,6 +323,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">find_iter</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">res</span></div>
 
+<div class="viewcode-block" id="LRFinder.calc_momentum"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.scheduler.LRFinder.calc_momentum">[docs]</a>    <span class="k">def</span> <span class="nf">calc_momentum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
 <div class="viewcode-block" id="LRFinder.on_loader_start"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.scheduler.LRFinder.on_loader_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.</span>
 
@@ -330,9 +334,9 @@
 <span class="sd">            runner (IRunner): current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">:</span>
-            <span class="n">lr_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_lr</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_lr</span>
+            <span class="n">lr_step</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_lr</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_lr</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span> <span class="ow">or</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_len</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span> <span class="o">=</span> <span class="n">lr_</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">multiplier</span> <span class="o">=</span> <span class="n">lr_step</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">lr_step</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">final_lr</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_lr</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_loader_start</span><span class="p">(</span><span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">)</span></div>
@@ -342,6 +346,9 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            runner (IRunner): current runner</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: at the end of LRFinder</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_batch_end</span><span class="p">(</span><span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_iter</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_steps</span><span class="p">:</span>

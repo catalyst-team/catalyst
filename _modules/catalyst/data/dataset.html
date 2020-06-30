@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.data.dataset &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.data.dataset &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../_static/js/google.analytics.js"></script>
+  <script src="../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -330,8 +330,8 @@
 <span class="sd">            dict_transform (callable): transforms common for all datasets.</span>
 <span class="sd">                (for example normalize image, add blur, crop/resize/etc)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">datasets</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">datasets</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">datasets</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span> <span class="o">=</span> <span class="n">datasets</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dict_transform</span> <span class="o">=</span> <span class="n">dict_transform</span></div>
 
@@ -357,7 +357,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            int: length of the dataset</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">len</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span></div></div>
 
 
 <div class="viewcode-block" id="NumpyDataset"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.dataset.NumpyDataset">[docs]</a><span class="k">class</span> <span class="nc">NumpyDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
@@ -370,12 +370,14 @@
         <span class="n">dict_transform</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        General purpose dataset class to use with `numpy_data`.</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            numpy_data (np.ndarray): numpy data</span>
-<span class="sd">                (for example path to embeddings, features, etc.)</span>
+<span class="sd">              (for example path to embeddings, features, etc.)</span>
 <span class="sd">            numpy_key (str): key to use for output dictionary</span>
 <span class="sd">            dict_transform (callable): transforms to use on dict.</span>
-<span class="sd">                (for example normalize vector, etc)</span>
+<span class="sd">              (for example normalize vector, etc)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">numpy_data</span>

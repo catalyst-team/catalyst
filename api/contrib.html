@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contrib &mdash; Catalyst 20.06 documentation</title>
+  <title>Contrib &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -33,7 +33,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../_static/js/google.analytics.js"></script>
+  <script src="../_static/js/googleanalytics.min.js"></script>
   
   <script src="../_static/js/modernizr.min.js"></script>
 
@@ -148,7 +148,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -268,143 +268,142 @@
 </div>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#module-catalyst.contrib.data" id="id8">Data</a></p>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.data" id="id12">Data</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.data.transforms" id="id9">Transforms</a></p></li>
-<li><p><a class="reference internal" href="#computer-vision" id="id10">Computer Vision</a></p>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.data.transforms" id="id13">Transforms</a></p></li>
+<li><p><a class="reference internal" href="#computer-vision" id="id14">Computer Vision</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.data.cv.mixins.blur" id="id11">Mixins</a></p></li>
-<li><p><a class="reference internal" href="#id1" id="id12">Transforms</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.data.cv.reader" id="id13">Reader</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.data.cv.mixins.blur" id="id15">Mixins</a></p></li>
+<li><p><a class="reference internal" href="#id2" id="id16">Transforms</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.data.cv.reader" id="id17">Reader</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#natural-language-processing" id="id14">Natural Language Processing</a></p>
+<li><p><a class="reference internal" href="#natural-language-processing" id="id18">Natural Language Processing</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.data.nlp.dataset.language_modeling" id="id15">Dataset</a></p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.datasets" id="id16">Datasets</a></p>
-<ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.datasets.mnist" id="id17">MNIST</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#dl" id="id18">DL</a></p>
-<ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks" id="id19">Callbacks</a></p>
-<ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.alchemy_logger" id="id20">AlchemyLogger</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.cutmix_callback" id="id21">CutmixCallback</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.gradnorm_logger" id="id22">GradNormLogger</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.knn_metric" id="id23">KNNMetricCallback</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.mask_inference" id="id24">InferMaskCallback</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.neptune_logger" id="id25">NeptuneLogger</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.periodic_loader_callback" id="id26">PeriodicLoaderCallback</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.perplexity_metric" id="id27">PerplexityMetricCallback</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.telegram_logger" id="id28">TelegramLogger</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.tracer_callback" id="id29">TracerCallback</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.visdom_logger" id="id30">VisdomLogger</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.wandb_logger" id="id31">WandbLogger</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.data.nlp.dataset.language_modeling" id="id19">Dataset</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#models" id="id32">Models</a></p></li>
-<li><p><a class="reference internal" href="#nn" id="id33">NN</a></p>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.datasets" id="id20">Datasets</a></p>
 <ul>
-<li><p><a class="reference internal" href="#criterion" id="id34">Criterion</a></p>
-<ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.ce" id="id35">Cross entropy</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.contrastive" id="id36">Contrastive</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.circle" id="id37">Circle</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.dice" id="id38">Dice</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.focal" id="id39">Focal</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.gan" id="id40">GAN</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.huber" id="id41">Huber</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.iou" id="id42">IOU</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.lovasz" id="id43">Lovasz</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.margin" id="id44">Margin</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.triplet" id="id45">Triplet</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.wing" id="id46">Wing</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.datasets.mnist" id="id21">MNIST</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#modules" id="id47">Modules</a></p>
+<li><p><a class="reference internal" href="#dl" id="id22">DL</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.common" id="id48">Common modules</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.lama" id="id49">Last-Mean-Average-Attention (LAMA)-Pooling</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.pooling" id="id50">Pooling</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.rms_norm" id="id51">RMSNorm</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.se" id="id52">SqueezeAndExcitation</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#optimizers" id="id53">Optimizers</a></p>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks" id="id23">Callbacks</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.optimizers.lamb" id="id54">Lamb</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.optimizers.lookahead" id="id55">Lookahead</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.optimizers.qhadamw" id="id56">QHAdamW</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.optimizers.radam" id="id57">RAdam</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.optimizers.ralamb" id="id58">Ralamb</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.schedulers.base" id="id59">Schedulers</a></p>
-<ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.schedulers.onecycle" id="id60">OneCycleLRWithWarmup</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.alchemy_logger" id="id24">AlchemyLogger</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.cutmix_callback" id="id25">CutmixCallback</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.gradnorm_logger" id="id26">GradNormLogger</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.knn_metric" id="id27">KNNMetricCallback</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.mask_inference" id="id28">InferMaskCallback</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.neptune_logger" id="id29">NeptuneLogger</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.periodic_loader_callback" id="id30">PeriodicLoaderCallback</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.perplexity_metric" id="id31">PerplexityMetricCallback</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.telegram_logger" id="id32">TelegramLogger</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.tracer_callback" id="id33">TracerCallback</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.visdom_logger" id="id34">VisdomLogger</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.dl.callbacks.wandb_logger" id="id35">WandbLogger</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#id6" id="id61">Models</a></p>
+<li><p><a class="reference internal" href="#models" id="id36">Models</a></p></li>
+<li><p><a class="reference internal" href="#nn" id="id37">NN</a></p>
 <ul>
-<li><p><a class="reference internal" href="#segmentation" id="id62">Segmentation</a></p>
+<li><p><a class="reference internal" href="#criterion" id="id38">Criterion</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.models.cv.segmentation.unet" id="id63">Unet</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.models.cv.segmentation.linknet" id="id64">Linknet</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.models.cv.segmentation.fpn" id="id65">FPNnet</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.models.cv.segmentation.psp" id="id66">PSPnet</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.ce" id="id39">Cross entropy</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.contrastive" id="id40">Contrastive</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.circle" id="id41">Circle</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.dice" id="id42">Dice</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.focal" id="id43">Focal</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.gan" id="id44">GAN</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.huber" id="id45">Huber</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.iou" id="id46">IOU</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.lovasz" id="id47">Lovasz</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.margin" id="id48">Margin</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.triplet" id="id49">Triplet</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.wing" id="id50">Wing</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#modules" id="id51">Modules</a></p>
+<ul>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.common" id="id52">Common modules</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.lama" id="id53">Last-Mean-Average-Attention (LAMA)-Pooling</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.pooling" id="id54">Pooling</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.rms_norm" id="id55">RMSNorm</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.se" id="id56">SqueezeAndExcitation</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#optimizers" id="id57">Optimizers</a></p>
+<ul>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.optimizers.lamb" id="id58">Lamb</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.optimizers.lookahead" id="id59">Lookahead</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.optimizers.qhadamw" id="id60">QHAdamW</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.optimizers.radam" id="id61">RAdam</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.optimizers.ralamb" id="id62">Ralamb</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.schedulers.base" id="id63">Schedulers</a></p>
+<ul>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.schedulers.onecycle" id="id64">OneCycleLRWithWarmup</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.registry" id="id67">Registry</a></p></li>
-<li><p><a class="reference internal" href="#tools" id="id68">Tools</a></p>
+<li><p><a class="reference internal" href="#id10" id="id65">Models</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.tools.tensorboard" id="id69">Tensorboard</a></p></li>
+<li><p><a class="reference internal" href="#segmentation" id="id66">Segmentation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.models.cv.segmentation.unet" id="id67">Unet</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.models.cv.segmentation.linknet" id="id68">Linknet</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.models.cv.segmentation.fpn" id="id69">FPNnet</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.models.cv.segmentation.psp" id="id70">PSPnet</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#utilities" id="id70">Utilities</a></p>
-<ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.argparse" id="id71">Argparse</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.compression" id="id72">Compression</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.confusion_matrix" id="id73">Confusion Matrix</a></p></li>
-<li><p><a class="reference internal" href="#id7" id="id74">Dataset</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.misc" id="id75">Misc</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.pandas" id="id76">Pandas</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.parallel" id="id77">Parallel</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.plotly" id="id78">Plotly</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.serialization" id="id79">Serialization</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.visualization" id="id80">Visualization</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#computer-vision-utilities" id="id81">Computer Vision utilities</a></p>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.registry" id="id71">Registry</a></p></li>
+<li><p><a class="reference internal" href="#tools" id="id72">Tools</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.cv.image" id="id82">Image</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.cv.tensor" id="id83">Tensor</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.tools.tensorboard" id="id73">Tensorboard</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#natural-language-processing-utilities" id="id84">Natural Language Processing utilities</a></p>
+<li><p><a class="reference internal" href="#utilities" id="id74">Utilities</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.nlp.text" id="id85">Text</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.argparse" id="id75">Argparse</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.compression" id="id76">Compression</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.confusion_matrix" id="id77">Confusion Matrix</a></p></li>
+<li><p><a class="reference internal" href="#id11" id="id78">Dataset</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.misc" id="id79">Misc</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.pandas" id="id80">Pandas</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.parallel" id="id81">Parallel</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.plotly" id="id82">Plotly</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.serialization" id="id83">Serialization</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.visualization" id="id84">Visualization</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#computer-vision-utilities" id="id85">Computer Vision utilities</a></p>
+<ul>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.cv.image" id="id86">Image</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.cv.tensor" id="id87">Tensor</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#natural-language-processing-utilities" id="id88">Natural Language Processing utilities</a></p>
+<ul>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.nlp.text" id="id89">Text</a></p></li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section" id="module-catalyst.contrib.data">
-<span id="data"></span><h2><a class="toc-backref" href="#id8">Data</a><a class="headerlink" href="#module-catalyst.contrib.data" title="Permalink to this headline">¶</a></h2>
+<span id="data"></span><h2><a class="toc-backref" href="#id12">Data</a><a class="headerlink" href="#module-catalyst.contrib.data" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-catalyst.contrib.data.transforms">
-<span id="transforms"></span><h3><a class="toc-backref" href="#id9">Transforms</a><a class="headerlink" href="#module-catalyst.contrib.data.transforms" title="Permalink to this headline">¶</a></h3>
-<p>This subpackage was borrowed from
-torchvision(<a class="reference external" href="https://github.com/pytorch/vision">https://github.com/pytorch/vision</a>).</p>
+<span id="transforms"></span><h3><a class="toc-backref" href="#id13">Transforms</a><a class="headerlink" href="#module-catalyst.contrib.data.transforms" title="Permalink to this headline">¶</a></h3>
+<p>This subpackage was borrowed from <a class="reference external" href="https://github.com/pytorch/vision">torchvision</a>.</p>
 <dl class="class">
 <dt id="catalyst.contrib.data.transforms.Compose">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.transforms.</code><code class="sig-name descname">Compose</code><span class="sig-paren">(</span><em class="sig-param">transforms</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/transforms.html#Compose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.transforms.Compose" title="Permalink to this definition">¶</a></dt>
@@ -471,7 +470,7 @@ In the other cases, tensors are returned without scaling.</p>
 
 <dl class="function">
 <dt id="catalyst.contrib.data.transforms.normalize">
-<code class="sig-prename descclassname">catalyst.contrib.data.transforms.</code><code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param">tensor</em>, <em class="sig-param">mean</em>, <em class="sig-param">std</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/transforms.html#normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.transforms.normalize" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.contrib.data.transforms.</code><code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param">tensor: torch.Tensor</em>, <em class="sig-param">mean</em>, <em class="sig-param">std</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/transforms.html#normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.transforms.normalize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Normalize a tensor image with mean and standard deviation.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -493,7 +492,10 @@ In the other cases, tensors are returned without scaling.</p>
 <dd class="field-even"><p>Normalized Tensor image.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tensor</p>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>TypeError</strong> – if <cite>tensor</cite> is not torch.Tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -510,16 +512,22 @@ In the other cases, tensors are returned without scaling.</p>
 <dd class="field-even"><p>Converted image.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tensor</p>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>TypeError</strong> – if <cite>pic</cite> is not np.ndarray</p></li>
+<li><p><strong>ValueError</strong> – if <cite>pic</cite> is not 2/3 dimensional.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
 
 </div>
 <div class="section" id="computer-vision">
-<h3><a class="toc-backref" href="#id10">Computer Vision</a><a class="headerlink" href="#computer-vision" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id14">Computer Vision</a><a class="headerlink" href="#computer-vision" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="module-catalyst.contrib.data.cv.mixins.blur">
-<span id="mixins"></span><h4><a class="toc-backref" href="#id11">Mixins</a><a class="headerlink" href="#module-catalyst.contrib.data.cv.mixins.blur" title="Permalink to this headline">¶</a></h4>
+<span id="mixins"></span><h4><a class="toc-backref" href="#id15">Mixins</a><a class="headerlink" href="#module-catalyst.contrib.data.cv.mixins.blur" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.data.cv.mixins.blur.BlurMixin">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.cv.mixins.blur.</code><code class="sig-name descname">BlurMixin</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'image'</em>, <em class="sig-param">output_key: str = 'blur_factor'</em>, <em class="sig-param">blur_min: int = 3</em>, <em class="sig-param">blur_max: int = 9</em>, <em class="sig-param">blur: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/mixins/blur.html#BlurMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.mixins.blur.BlurMixin" title="Permalink to this definition">¶</a></dt>
@@ -583,8 +591,8 @@ In the other cases, tensors are returned without scaling.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="id1">
-<h4><a class="toc-backref" href="#id12">Transforms</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="id2">
+<h4><a class="toc-backref" href="#id16">Transforms</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
 <span class="target" id="module-catalyst.contrib.data.cv.transforms.tensor"></span><dl class="class">
 <dt id="catalyst.contrib.data.cv.transforms.tensor.TensorToImage">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.cv.transforms.tensor.</code><code class="sig-name descname">TensorToImage</code><span class="sig-paren">(</span><em class="sig-param">denormalize: bool = False</em>, <em class="sig-param">move_channels_dim: bool = True</em>, <em class="sig-param">always_apply: bool = False</em>, <em class="sig-param">p: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/tensor.html#TensorToImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.tensor.TensorToImage" title="Permalink to this definition">¶</a></dt>
@@ -657,7 +665,7 @@ to <code class="docutils literal notranslate"><span class="pre">torch.tensor</sp
 
 </div>
 <div class="section" id="module-catalyst.contrib.data.cv.reader">
-<span id="reader"></span><h4><a class="toc-backref" href="#id13">Reader</a><a class="headerlink" href="#module-catalyst.contrib.data.cv.reader" title="Permalink to this headline">¶</a></h4>
+<span id="reader"></span><h4><a class="toc-backref" href="#id17">Reader</a><a class="headerlink" href="#module-catalyst.contrib.data.cv.reader" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.data.cv.reader.ImageReader">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.cv.reader.</code><code class="sig-name descname">ImageReader</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: str</em>, <em class="sig-param">rootpath: str = None</em>, <em class="sig-param">grayscale: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/reader.html#ImageReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.reader.ImageReader" title="Permalink to this definition">¶</a></dt>
@@ -710,9 +718,9 @@ to the interval edges</p></li>
 </div>
 </div>
 <div class="section" id="natural-language-processing">
-<h3><a class="toc-backref" href="#id14">Natural Language Processing</a><a class="headerlink" href="#natural-language-processing" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id18">Natural Language Processing</a><a class="headerlink" href="#natural-language-processing" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="module-catalyst.contrib.data.nlp.dataset.language_modeling">
-<span id="dataset"></span><h4><a class="toc-backref" href="#id15">Dataset</a><a class="headerlink" href="#module-catalyst.contrib.data.nlp.dataset.language_modeling" title="Permalink to this headline">¶</a></h4>
+<span id="dataset"></span><h4><a class="toc-backref" href="#id19">Dataset</a><a class="headerlink" href="#module-catalyst.contrib.data.nlp.dataset.language_modeling" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.data.nlp.dataset.language_modeling.LanguageModelingDataset">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.nlp.dataset.language_modeling.</code><code class="sig-name descname">LanguageModelingDataset</code><span class="sig-paren">(</span><em class="sig-param">texts: Iterable[str], tokenizer: Union[str, transformers.tokenization_utils.PreTrainedTokenizer], max_seq_length: int = None, sort: bool = True, lazy: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/nlp/dataset/language_modeling.html#LanguageModelingDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.nlp.dataset.language_modeling.LanguageModelingDataset" title="Permalink to this definition">¶</a></dt>
@@ -773,9 +781,9 @@ appropriate tokenization</p></li>
 </div>
 </div>
 <div class="section" id="module-catalyst.contrib.datasets">
-<span id="datasets"></span><h2><a class="toc-backref" href="#id16">Datasets</a><a class="headerlink" href="#module-catalyst.contrib.datasets" title="Permalink to this headline">¶</a></h2>
+<span id="datasets"></span><h2><a class="toc-backref" href="#id20">Datasets</a><a class="headerlink" href="#module-catalyst.contrib.datasets" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-catalyst.contrib.datasets.mnist">
-<span id="mnist"></span><h3><a class="toc-backref" href="#id17">MNIST</a><a class="headerlink" href="#module-catalyst.contrib.datasets.mnist" title="Permalink to this headline">¶</a></h3>
+<span id="mnist"></span><h3><a class="toc-backref" href="#id21">MNIST</a><a class="headerlink" href="#module-catalyst.contrib.datasets.mnist" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.contrib.datasets.mnist.MNIST">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.datasets.mnist.</code><code class="sig-name descname">MNIST</code><span class="sig-paren">(</span><em class="sig-param">root</em>, <em class="sig-param">train=True</em>, <em class="sig-param">transform=None</em>, <em class="sig-param">target_transform=None</em>, <em class="sig-param">download=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/mnist.html#MNIST"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MNIST" title="Permalink to this definition">¶</a></dt>
@@ -907,11 +915,11 @@ Argument may be a filename, compressed filename, or file object.</p>
 </div>
 </div>
 <div class="section" id="dl">
-<h2><a class="toc-backref" href="#id18">DL</a><a class="headerlink" href="#dl" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id22">DL</a><a class="headerlink" href="#dl" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-catalyst.contrib.dl.callbacks">
-<span id="callbacks"></span><h3><a class="toc-backref" href="#id19">Callbacks</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks" title="Permalink to this headline">¶</a></h3>
+<span id="callbacks"></span><h3><a class="toc-backref" href="#id23">Callbacks</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="module-catalyst.contrib.dl.callbacks.alchemy_logger">
-<span id="alchemylogger"></span><h4><a class="toc-backref" href="#id20">AlchemyLogger</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.alchemy_logger" title="Permalink to this headline">¶</a></h4>
+<span id="alchemylogger"></span><h4><a class="toc-backref" href="#id24">AlchemyLogger</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.alchemy_logger" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.dl.callbacks.alchemy_logger.AlchemyLogger">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.callbacks.alchemy_logger.</code><code class="sig-name descname">AlchemyLogger</code><span class="sig-paren">(</span><em class="sig-param">metric_names: List[str] = None</em>, <em class="sig-param">log_on_batch_end: bool = True</em>, <em class="sig-param">log_on_epoch_end: bool = True</em>, <em class="sig-param">**logging_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/alchemy_logger.html#AlchemyLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.alchemy_logger.AlchemyLogger" title="Permalink to this definition">¶</a></dt>
@@ -980,18 +988,18 @@ if none - logs everything</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.dl.callbacks.cutmix_callback">
-<span id="cutmixcallback"></span><h4><a class="toc-backref" href="#id21">CutmixCallback</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.cutmix_callback" title="Permalink to this headline">¶</a></h4>
+<span id="cutmixcallback"></span><h4><a class="toc-backref" href="#id25">CutmixCallback</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.cutmix_callback" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.dl.callbacks.cutmix_callback.CutmixCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.callbacks.cutmix_callback.</code><code class="sig-name descname">CutmixCallback</code><span class="sig-paren">(</span><em class="sig-param">fields: List[str] = ('features'</em>, <em class="sig-param">)</em>, <em class="sig-param">alpha=1.0</em>, <em class="sig-param">on_train_only=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/cutmix_callback.html#CutmixCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.cutmix_callback.CutmixCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.criterion.CriterionCallback" title="catalyst.core.callbacks.criterion.CriterionCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.criterion.CriterionCallback</span></code></a></p>
 <p>Callback to do Cutmix augmentation that has been proposed in
-<a class="reference external" href="https://arxiv.org/abs/1905.04899">CutMix: Regularization Strategy to Train Strong Classifiers
+<a class="reference external" href="https://arxiv.org/abs/1905.04899#noqa:W605,E501,W505">CutMix: Regularization Strategy to Train Strong Classifiers
 with Localizable Features</a>.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.dl.callbacks.CutmixCallback</span></code> is inherited from
-<code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.CriterionCallback</span></code> and does its work.
+<p><cite>catalyst.contrib.dl.callbacks.CutmixCallback</cite> is inherited from
+<cite>catalyst.dl.CriterionCallback</cite> and does its work.
 You may not use them together.</p>
 </div>
 <dl class="method">
@@ -1036,7 +1044,7 @@ for validation.</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.dl.callbacks.gradnorm_logger">
-<span id="gradnormlogger"></span><h4><a class="toc-backref" href="#id22">GradNormLogger</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.gradnorm_logger" title="Permalink to this headline">¶</a></h4>
+<span id="gradnormlogger"></span><h4><a class="toc-backref" href="#id26">GradNormLogger</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.gradnorm_logger" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.dl.callbacks.gradnorm_logger.GradNormLogger">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.callbacks.gradnorm_logger.</code><code class="sig-name descname">GradNormLogger</code><span class="sig-paren">(</span><em class="sig-param">norm_type: int = 2</em>, <em class="sig-param">accumulation_steps: int = 1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/gradnorm_logger.html#GradNormLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.gradnorm_logger.GradNormLogger" title="Permalink to this definition">¶</a></dt>
@@ -1096,7 +1104,7 @@ Should be the same as in <cite>OptimizerCallback</cite>.</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.dl.callbacks.knn_metric">
-<span id="knnmetriccallback"></span><h4><a class="toc-backref" href="#id23">KNNMetricCallback</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.knn_metric" title="Permalink to this headline">¶</a></h4>
+<span id="knnmetriccallback"></span><h4><a class="toc-backref" href="#id27">KNNMetricCallback</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.knn_metric" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.dl.callbacks.knn_metric.KNNMetricCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.callbacks.knn_metric.</code><code class="sig-name descname">KNNMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'logits'</em>, <em class="sig-param">output_key: str = 'targets'</em>, <em class="sig-param">prefix: str = 'knn'</em>, <em class="sig-param">num_classes: int = 2</em>, <em class="sig-param">class_names: dict = None</em>, <em class="sig-param">cv_loader_names: Dict[str</em>, <em class="sig-param">List[str]] = None</em>, <em class="sig-param">metric_fn: str = 'f1-score'</em>, <em class="sig-param">knn_metric: str = 'euclidean'</em>, <em class="sig-param">num_neighbors: int = 5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/knn_metric.html#KNNMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.knn_metric.KNNMetricCallback" title="Permalink to this definition">¶</a></dt>
@@ -1156,6 +1164,9 @@ default is <cite>f1-score</cite>.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="core.html#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>Warning</strong> – if targets has more classes than num classes</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -1163,7 +1174,7 @@ default is <cite>f1-score</cite>.</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.dl.callbacks.mask_inference">
-<span id="infermaskcallback"></span><h4><a class="toc-backref" href="#id24">InferMaskCallback</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.mask_inference" title="Permalink to this headline">¶</a></h4>
+<span id="infermaskcallback"></span><h4><a class="toc-backref" href="#id28">InferMaskCallback</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.mask_inference" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.dl.callbacks.mask_inference.InferMaskCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.callbacks.mask_inference.</code><code class="sig-name descname">InferMaskCallback</code><span class="sig-paren">(</span><em class="sig-param">out_dir=None</em>, <em class="sig-param">out_prefix=None</em>, <em class="sig-param">input_key=None</em>, <em class="sig-param">output_key=None</em>, <em class="sig-param">name_key=None</em>, <em class="sig-param">mean=None</em>, <em class="sig-param">std=None</em>, <em class="sig-param">threshold: float = 0.5</em>, <em class="sig-param">mask_strength: float = 0.5</em>, <em class="sig-param">mask_type: str = 'soft'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/mask_inference.html#InferMaskCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.mask_inference.InferMaskCallback" title="Permalink to this definition">¶</a></dt>
@@ -1216,7 +1227,7 @@ default is <cite>f1-score</cite>.</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.dl.callbacks.neptune_logger">
-<span id="neptunelogger"></span><h4><a class="toc-backref" href="#id25">NeptuneLogger</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.neptune_logger" title="Permalink to this headline">¶</a></h4>
+<span id="neptunelogger"></span><h4><a class="toc-backref" href="#id29">NeptuneLogger</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.neptune_logger" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.dl.callbacks.neptune_logger.NeptuneLogger">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.callbacks.neptune_logger.</code><code class="sig-name descname">NeptuneLogger</code><span class="sig-paren">(</span><em class="sig-param">metric_names: List[str] = None</em>, <em class="sig-param">log_on_batch_end: bool = True</em>, <em class="sig-param">log_on_epoch_end: bool = True</em>, <em class="sig-param">offline_mode: bool = False</em>, <em class="sig-param">**logging_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/neptune_logger.html#NeptuneLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.neptune_logger.NeptuneLogger" title="Permalink to this definition">¶</a></dt>
@@ -1300,19 +1311,41 @@ be turned off. It is useful for debugging</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.dl.callbacks.periodic_loader_callback">
-<span id="periodicloadercallback"></span><h4><a class="toc-backref" href="#id26">PeriodicLoaderCallback</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.periodic_loader_callback" title="Permalink to this headline">¶</a></h4>
+<span id="periodicloadercallback"></span><h4><a class="toc-backref" href="#id30">PeriodicLoaderCallback</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.periodic_loader_callback" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.dl.callbacks.periodic_loader_callback.PeriodicLoaderCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.callbacks.periodic_loader_callback.</code><code class="sig-name descname">PeriodicLoaderCallback</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/periodic_loader_callback.html#PeriodicLoaderCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.periodic_loader_callback.PeriodicLoaderCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
 <p>Callback for runing loaders with specified period.
 To disable loader use <code class="docutils literal notranslate"><span class="pre">0</span></code> as period.</p>
-<p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">PeriodicLoaderRunnerCallback</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">train_additional</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">valid</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">valid_additional</span><span class="o">=</span><span class="mi">5</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<p>For example, if you have <code class="docutils literal notranslate"><span class="pre">train</span></code>, <code class="docutils literal notranslate"><span class="pre">train_additional</span></code>,
+<code class="docutils literal notranslate"><span class="pre">valid</span></code> and <code class="docutils literal notranslate"><span class="pre">valid_additional</span></code> loaders and wan’t to
+use <code class="docutils literal notranslate"><span class="pre">train_additional</span></code> every 2 epochs, <code class="docutils literal notranslate"><span class="pre">valid</span></code> - every
+3 epochs and <code class="docutils literal notranslate"><span class="pre">valid_additional</span></code> - every 5 epochs:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SupervisedRunner</span><span class="p">,</span> <span class="n">PeriodicLoaderRunnerCallback</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="o">...</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span>
+        <span class="s2">&quot;train_additional&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span>
+        <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span>
+        <span class="s2">&quot;valid_additional&quot;</span><span class="p">:</span><span class="o">...</span>
+    <span class="p">}</span>
+    <span class="o">...</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
+        <span class="o">...</span>
+        <span class="n">PeriodicLoaderRunnerCallback</span><span class="p">(</span>
+            <span class="n">train_additional</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">valid</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">valid_additional</span><span class="o">=</span><span class="mi">5</span>
+        <span class="p">),</span>
+        <span class="o">...</span>
+    <span class="p">]</span>
+    <span class="o">...</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <dl class="method">
@@ -1351,6 +1384,9 @@ in the epochs where this loader is missing.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="core.html#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if there are no loaders in epoch</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -1362,6 +1398,9 @@ in the epochs where this loader is missing.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="core.html#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if there are no loaders in epoch</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -1369,7 +1408,7 @@ in the epochs where this loader is missing.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.dl.callbacks.perplexity_metric">
-<span id="perplexitymetriccallback"></span><h4><a class="toc-backref" href="#id27">PerplexityMetricCallback</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.perplexity_metric" title="Permalink to this headline">¶</a></h4>
+<span id="perplexitymetriccallback"></span><h4><a class="toc-backref" href="#id31">PerplexityMetricCallback</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.perplexity_metric" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.dl.callbacks.perplexity_metric.PerplexityMetricCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.callbacks.perplexity_metric.</code><code class="sig-name descname">PerplexityMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'perplexity'</em>, <em class="sig-param">ignore_index: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/perplexity_metric.html#PerplexityMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.perplexity_metric.PerplexityMetricCallback" title="Permalink to this definition">¶</a></dt>
@@ -1403,7 +1442,7 @@ logits of the predicted tokens</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.dl.callbacks.telegram_logger">
-<span id="telegramlogger"></span><h4><a class="toc-backref" href="#id28">TelegramLogger</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.telegram_logger" title="Permalink to this headline">¶</a></h4>
+<span id="telegramlogger"></span><h4><a class="toc-backref" href="#id32">TelegramLogger</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.telegram_logger" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.dl.callbacks.telegram_logger.TelegramLogger">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.callbacks.telegram_logger.</code><code class="sig-name descname">TelegramLogger</code><span class="sig-paren">(</span><em class="sig-param">token: str = None</em>, <em class="sig-param">chat_id: str = None</em>, <em class="sig-param">metric_names: List[str] = None</em>, <em class="sig-param">log_on_stage_start: bool = True</em>, <em class="sig-param">log_on_loader_start: bool = True</em>, <em class="sig-param">log_on_loader_end: bool = True</em>, <em class="sig-param">log_on_stage_end: bool = True</em>, <em class="sig-param">log_on_exception: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/telegram_logger.html#TelegramLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.telegram_logger.TelegramLogger" title="Permalink to this definition">¶</a></dt>
@@ -1464,7 +1503,7 @@ if none - logs everything.</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.dl.callbacks.tracer_callback">
-<span id="tracercallback"></span><h4><a class="toc-backref" href="#id29">TracerCallback</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.tracer_callback" title="Permalink to this headline">¶</a></h4>
+<span id="tracercallback"></span><h4><a class="toc-backref" href="#id33">TracerCallback</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.tracer_callback" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.dl.callbacks.tracer_callback.TracerCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.callbacks.tracer_callback.</code><code class="sig-name descname">TracerCallback</code><span class="sig-paren">(</span><em class="sig-param">metric: str = 'loss'</em>, <em class="sig-param">minimize: bool = True</em>, <em class="sig-param">min_delta: float = 1e-06</em>, <em class="sig-param">mode: str = 'best'</em>, <em class="sig-param">do_once: bool = True</em>, <em class="sig-param">method_name: str = 'forward'</em>, <em class="sig-param">requires_grad: bool = False</em>, <em class="sig-param">opt_level: str = None</em>, <em class="sig-param">trace_mode: str = 'eval'</em>, <em class="sig-param">out_dir: Union[str</em>, <em class="sig-param">pathlib.Path] = None</em>, <em class="sig-param">out_model: Union[str</em>, <em class="sig-param">pathlib.Path] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/tracer_callback.html#TracerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.tracer_callback.TracerCallback" title="Permalink to this definition">¶</a></dt>
@@ -1522,7 +1561,7 @@ used as entrypoint during tracing</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.dl.callbacks.visdom_logger">
-<span id="visdomlogger"></span><h4><a class="toc-backref" href="#id30">VisdomLogger</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.visdom_logger" title="Permalink to this headline">¶</a></h4>
+<span id="visdomlogger"></span><h4><a class="toc-backref" href="#id34">VisdomLogger</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.visdom_logger" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.dl.callbacks.visdom_logger.VisdomLogger">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.callbacks.visdom_logger.</code><code class="sig-name descname">VisdomLogger</code><span class="sig-paren">(</span><em class="sig-param">metric_names: List[str] = None</em>, <em class="sig-param">log_on_batch_end: bool = False</em>, <em class="sig-param">log_on_epoch_end: bool = True</em>, <em class="sig-param">**logging_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/visdom_logger.html#VisdomLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.visdom_logger.VisdomLogger" title="Permalink to this definition">¶</a></dt>
@@ -1583,10 +1622,10 @@ if none - logs everything</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.dl.callbacks.wandb_logger">
-<span id="wandblogger"></span><h4><a class="toc-backref" href="#id31">WandbLogger</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.wandb_logger" title="Permalink to this headline">¶</a></h4>
+<span id="wandblogger"></span><h4><a class="toc-backref" href="#id35">WandbLogger</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.wandb_logger" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.dl.callbacks.wandb_logger.WandbLogger">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.callbacks.wandb_logger.</code><code class="sig-name descname">WandbLogger</code><span class="sig-paren">(</span><em class="sig-param">metric_names: List[str] = None</em>, <em class="sig-param">log_on_batch_end: bool = False</em>, <em class="sig-param">log_on_epoch_end: bool = True</em>, <em class="sig-param">**logging_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/wandb_logger.html#WandbLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.wandb_logger.WandbLogger" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.callbacks.wandb_logger.</code><code class="sig-name descname">WandbLogger</code><span class="sig-paren">(</span><em class="sig-param">metric_names: List[str] = None</em>, <em class="sig-param">log_on_batch_end: bool = False</em>, <em class="sig-param">log_on_epoch_end: bool = True</em>, <em class="sig-param">log: str = None</em>, <em class="sig-param">**logging_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/wandb_logger.html#WandbLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.wandb_logger.WandbLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
 <p>Logger callback, translates <code class="docutils literal notranslate"><span class="pre">runner.*_metrics</span></code> to Weights &amp; Biases.
 Read about Weights &amp; Biases here <a class="reference external" href="https://docs.wandb.com/">https://docs.wandb.com/</a></p>
@@ -1632,7 +1671,7 @@ Read about Weights &amp; Biases here <a class="reference external" href="https:/
 </div>
 <dl class="method">
 <dt id="catalyst.contrib.dl.callbacks.wandb_logger.WandbLogger.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">metric_names: List[str] = None</em>, <em class="sig-param">log_on_batch_end: bool = False</em>, <em class="sig-param">log_on_epoch_end: bool = True</em>, <em class="sig-param">**logging_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/wandb_logger.html#WandbLogger.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.wandb_logger.WandbLogger.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">metric_names: List[str] = None</em>, <em class="sig-param">log_on_batch_end: bool = False</em>, <em class="sig-param">log_on_epoch_end: bool = True</em>, <em class="sig-param">log: str = None</em>, <em class="sig-param">**logging_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/wandb_logger.html#WandbLogger.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.wandb_logger.WandbLogger.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1640,6 +1679,8 @@ Read about Weights &amp; Biases here <a class="reference external" href="https:/
 if None - logs everything</p></li>
 <li><p><strong>log_on_batch_end</strong> (<em>bool</em>) – logs per-batch metrics if set True</p></li>
 <li><p><strong>log_on_epoch_end</strong> (<em>bool</em>) – logs per-epoch metrics if set True</p></li>
+<li><p><strong>log</strong> (<em>str</em>) – wandb.watch parameter. Can be “all”, “gradients”
+or “parameters”</p></li>
 <li><p><strong>**logging_params</strong> – any parameters of function <cite>wandb.init</cite>
 except <cite>reinit</cite> which is automatically set to <cite>True</cite>
 and <cite>dir</cite> which is set to <cite>&lt;logdir&gt;</cite></p></li>
@@ -1684,31 +1725,45 @@ and <cite>dir</cite> which is set to <cite>&lt;logdir&gt;</cite></p></li>
 </div>
 </div>
 <div class="section" id="models">
-<h2><a class="toc-backref" href="#id32">Models</a><a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id36">Models</a><a class="headerlink" href="#models" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="nn">
-<h2><a class="toc-backref" href="#id33">NN</a><a class="headerlink" href="#nn" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id37">NN</a><a class="headerlink" href="#nn" title="Permalink to this headline">¶</a></h2>
 <p>Extensions for <code class="docutils literal notranslate"><span class="pre">torch.nn</span></code></p>
 <div class="section" id="criterion">
-<h3><a class="toc-backref" href="#id34">Criterion</a><a class="headerlink" href="#criterion" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id38">Criterion</a><a class="headerlink" href="#criterion" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="module-catalyst.contrib.nn.criterion.ce">
-<span id="cross-entropy"></span><h4><a class="toc-backref" href="#id35">Cross entropy</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.ce" title="Permalink to this headline">¶</a></h4>
+<span id="cross-entropy"></span><h4><a class="toc-backref" href="#id39">Cross entropy</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.ce" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.ce.MaskCrossEntropyLoss">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.ce.</code><code class="sig-name descname">MaskCrossEntropyLoss</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">target_name: str = 'targets'</em>, <em class="sig-param">mask_name: str = 'mask'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/ce.html#MaskCrossEntropyLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.ce.MaskCrossEntropyLoss" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.loss.CrossEntropyLoss</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.ce.</code><code class="sig-name descname">MaskCrossEntropyLoss</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/ce.html#MaskCrossEntropyLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.ce.MaskCrossEntropyLoss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>&#64;TODO: Docs. Contribution is welcome.</p>
 <dl class="method">
 <dt id="catalyst.contrib.nn.criterion.ce.MaskCrossEntropyLoss.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">target_name: str = 'targets'</em>, <em class="sig-param">mask_name: str = 'mask'</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/ce.html#MaskCrossEntropyLoss.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.ce.MaskCrossEntropyLoss.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/ce.html#MaskCrossEntropyLoss.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.ce.MaskCrossEntropyLoss.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.contrib.nn.criterion.ce.MaskCrossEntropyLoss.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: torch.Tensor</em>, <em class="sig-param">target_mask: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/ce.html#MaskCrossEntropyLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.ce.MaskCrossEntropyLoss.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates loss between <code class="docutils literal notranslate"><span class="pre">input</span></code> and <code class="docutils literal notranslate"><span class="pre">target_mask</span></code> tensors.</p>
-<p>&#64;TODO: Docs. Contribution is welcome.</p>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">logits: torch.Tensor</em>, <em class="sig-param">target: torch.Tensor</em>, <em class="sig-param">mask: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/ce.html#MaskCrossEntropyLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.ce.MaskCrossEntropyLoss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates loss between <code class="docutils literal notranslate"><span class="pre">logits</span></code> and <code class="docutils literal notranslate"><span class="pre">target</span></code> tensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logits</strong> – model logits</p></li>
+<li><p><strong>target</strong> – true targets</p></li>
+<li><p><strong>mask</strong> – targets mask</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>computed loss</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1735,16 +1790,22 @@ with Noisy Labels</a>.</p>
 
 <dl class="method">
 <dt id="catalyst.contrib.nn.criterion.ce.SymmetricCrossEntropyLoss.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: torch.Tensor</em>, <em class="sig-param">target: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/ce.html#SymmetricCrossEntropyLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.ce.SymmetricCrossEntropyLoss.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates loss between <code class="docutils literal notranslate"><span class="pre">input</span></code> and <code class="docutils literal notranslate"><span class="pre">target</span></code> tensors.</p>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input_: torch.Tensor</em>, <em class="sig-param">target: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/ce.html#SymmetricCrossEntropyLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.ce.SymmetricCrossEntropyLoss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates loss between <code class="docutils literal notranslate"><span class="pre">input_</span></code> and <code class="docutils literal notranslate"><span class="pre">target</span></code> tensors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>torch.Tensor</em>) – input tensor of size
+<li><p><strong>input_</strong> (<em>torch.Tensor</em>) – input tensor of size
 (batch_size, num_classes)</p></li>
 <li><p><strong>target</strong> (<em>torch.Tensor</em>) – target tensor of size (batch_size), where
 values of a vector correspond to class index</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>computed loss</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1764,12 +1825,12 @@ values of a vector correspond to class index</p></li>
 
 <dl class="method">
 <dt id="catalyst.contrib.nn.criterion.ce.NaiveCrossEntropyLoss.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: torch.Tensor</em>, <em class="sig-param">target: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/ce.html#NaiveCrossEntropyLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.ce.NaiveCrossEntropyLoss.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates loss between <code class="docutils literal notranslate"><span class="pre">input</span></code> and <code class="docutils literal notranslate"><span class="pre">target</span></code> tensors.</p>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input_: torch.Tensor</em>, <em class="sig-param">target: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/ce.html#NaiveCrossEntropyLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.ce.NaiveCrossEntropyLoss.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates loss between <code class="docutils literal notranslate"><span class="pre">input_</span></code> and <code class="docutils literal notranslate"><span class="pre">target</span></code> tensors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>torch.Tensor</em>) – input tensor of shape …</p></li>
+<li><p><strong>input_</strong> (<em>torch.Tensor</em>) – input tensor of shape …</p></li>
 <li><p><strong>target</strong> (<em>torch.Tensor</em>) – target tensor of shape …</p></li>
 </ul>
 </dd>
@@ -1781,7 +1842,7 @@ values of a vector correspond to class index</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.contrastive">
-<span id="contrastive"></span><h4><a class="toc-backref" href="#id36">Contrastive</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.contrastive" title="Permalink to this headline">¶</a></h4>
+<span id="contrastive"></span><h4><a class="toc-backref" href="#id40">Contrastive</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.contrastive" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.contrastive.</code><code class="sig-name descname">ContrastiveEmbeddingLoss</code><span class="sig-paren">(</span><em class="sig-param">margin=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/contrastive.html#ContrastiveEmbeddingLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss" title="Permalink to this definition">¶</a></dt>
@@ -1911,14 +1972,13 @@ by Learning an Invariant Mapping</a>.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.circle">
-<span id="circle"></span><h4><a class="toc-backref" href="#id37">Circle</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.circle" title="Permalink to this headline">¶</a></h4>
+<span id="circle"></span><h4><a class="toc-backref" href="#id41">Circle</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.circle" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.circle.CircleLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.circle.</code><code class="sig-name descname">CircleLoss</code><span class="sig-paren">(</span><em class="sig-param">margin: float</em>, <em class="sig-param">gamma: float</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/circle.html#CircleLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.circle.CircleLoss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<p>CircleLoss from
-“Circle Loss: A Unified Perspective of Pair Similarity Optimization”
-<a class="reference external" href="https://arxiv.org/abs/2002.10857">https://arxiv.org/abs/2002.10857</a></p>
+<p>CircleLoss from <a class="reference external" href="https://arxiv.org/abs/2002.10857">Circle Loss: A Unified Perspective
+of Pair Similarity Optimization</a> paper.</p>
 <p>Adapter from:
 <a class="reference external" href="https://github.com/TinyZeaMays/CircleLoss">https://github.com/TinyZeaMays/CircleLoss</a></p>
 <p class="rubric">Example</p>
@@ -1960,7 +2020,7 @@ by Learning an Invariant Mapping</a>.</p>
 <dd class="field-even"><p>circle loss</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Tensor)</p>
+<dd class="field-odd"><p>torch.Tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1969,7 +2029,7 @@ by Learning an Invariant Mapping</a>.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.dice">
-<span id="dice"></span><h4><a class="toc-backref" href="#id38">Dice</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.dice" title="Permalink to this headline">¶</a></h4>
+<span id="dice"></span><h4><a class="toc-backref" href="#id42">Dice</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.dice" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.dice.BCEDiceLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.dice.</code><code class="sig-name descname">BCEDiceLoss</code><span class="sig-paren">(</span><em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em>, <em class="sig-param">bce_weight: float = 0.5</em>, <em class="sig-param">dice_weight: float = 0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/dice.html#BCEDiceLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.dice.BCEDiceLoss" title="Permalink to this definition">¶</a></dt>
@@ -2004,14 +2064,24 @@ by Learning an Invariant Mapping</a>.</p>
 <dt id="catalyst.contrib.nn.criterion.dice.DiceLoss.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">logits: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/dice.html#DiceLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.dice.DiceLoss.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculates loss between <code class="docutils literal notranslate"><span class="pre">logits</span></code> and <code class="docutils literal notranslate"><span class="pre">target</span></code> tensors.</p>
-<p>&#64;TODO: Docs. Contribution is welcome</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logits</strong> – model logits</p></li>
+<li><p><strong>targets</strong> – ground truth labels</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>computed loss</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.focal">
-<span id="focal"></span><h4><a class="toc-backref" href="#id39">Focal</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.focal" title="Permalink to this headline">¶</a></h4>
+<span id="focal"></span><h4><a class="toc-backref" href="#id43">Focal</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.focal" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.focal.FocalLossBinary">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.focal.</code><code class="sig-name descname">FocalLossBinary</code><span class="sig-paren">(</span><em class="sig-param">ignore: int = None</em>, <em class="sig-param">reduced: bool = False</em>, <em class="sig-param">gamma: float = 2.0</em>, <em class="sig-param">alpha: float = 0.25</em>, <em class="sig-param">threshold: float = 0.5</em>, <em class="sig-param">reduction: str = 'mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/focal.html#FocalLossBinary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.focal.FocalLossBinary" title="Permalink to this definition">¶</a></dt>
@@ -2035,8 +2105,10 @@ by Learning an Invariant Mapping</a>.</p>
 <li><p><strong>targets</strong> – [bs; …]</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>computed loss</p>
+</dd>
 </dl>
-<p>&#64;TODO: Docs. Contribution is welcome.</p>
 </dd></dl>
 
 </dd></dl>
@@ -2059,15 +2131,17 @@ Ignores targets having -1 label.</p>
 <li><p><strong>targets</strong> – [bs; …]</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>computed loss</p>
+</dd>
 </dl>
-<p>&#64;TODO: Docs. Contribution is welcome.</p>
 </dd></dl>
 
 </dd></dl>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.gan">
-<span id="gan"></span><h4><a class="toc-backref" href="#id40">GAN</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.gan" title="Permalink to this headline">¶</a></h4>
+<span id="gan"></span><h4><a class="toc-backref" href="#id44">GAN</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.gan" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.gan.MeanOutputLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.gan.</code><code class="sig-name descname">MeanOutputLoss</code><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/gan.html#MeanOutputLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.gan.MeanOutputLoss" title="Permalink to this definition">¶</a></dt>
@@ -2077,8 +2151,8 @@ Ignores targets having -1 label.</p>
 <dl class="method">
 <dt id="catalyst.contrib.nn.criterion.gan.MeanOutputLoss.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">output</em>, <em class="sig-param">target</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/gan.html#MeanOutputLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.gan.MeanOutputLoss.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute criterion.</p>
-<p>&#64;TODO: Docs (add typing). Contribution is welcome.</p>
+<dd><p>Compute criterion.
+&#64;TODO: Docs (add typing). Contribution is welcome.</p>
 </dd></dl>
 
 </dd></dl>
@@ -2095,19 +2169,15 @@ Ignores targets having -1 label.</p>
 <dl class="method">
 <dt id="catalyst.contrib.nn.criterion.gan.GradientPenaltyLoss.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">fake_data</em>, <em class="sig-param">real_data</em>, <em class="sig-param">critic</em>, <em class="sig-param">critic_condition_args</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/gan.html#GradientPenaltyLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.gan.GradientPenaltyLoss.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute gradient penalty.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>&#64;TODO</strong> – Docs. Contribution is welcome.</p>
-</dd>
-</dl>
+<dd><p>Compute gradient penalty.
+&#64;TODO: Docs. Contribution is welcome.</p>
 </dd></dl>
 
 </dd></dl>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.huber">
-<span id="huber"></span><h4><a class="toc-backref" href="#id41">Huber</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.huber" title="Permalink to this headline">¶</a></h4>
+<span id="huber"></span><h4><a class="toc-backref" href="#id45">Huber</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.huber" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.huber.HuberLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.huber.</code><code class="sig-name descname">HuberLoss</code><span class="sig-paren">(</span><em class="sig-param">clip_delta=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/huber.html#HuberLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.huber.HuberLoss" title="Permalink to this definition">¶</a></dt>
@@ -2129,7 +2199,7 @@ Ignores targets having -1 label.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.iou">
-<span id="iou"></span><h4><a class="toc-backref" href="#id42">IOU</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.iou" title="Permalink to this headline">¶</a></h4>
+<span id="iou"></span><h4><a class="toc-backref" href="#id46">IOU</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.iou" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.iou.IoULoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.iou.</code><code class="sig-name descname">IoULoss</code><span class="sig-paren">(</span><em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/iou.html#IoULoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.iou.IoULoss" title="Permalink to this definition">¶</a></dt>
@@ -2192,7 +2262,7 @@ to the output of BCE</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.lovasz">
-<span id="lovasz"></span><h4><a class="toc-backref" href="#id43">Lovasz</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.lovasz" title="Permalink to this headline">¶</a></h4>
+<span id="lovasz"></span><h4><a class="toc-backref" href="#id47">Lovasz</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.lovasz" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.lovasz.LovaszLossBinary">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.lovasz.</code><code class="sig-name descname">LovaszLossBinary</code><span class="sig-paren">(</span><em class="sig-param">per_image=False</em>, <em class="sig-param">ignore=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/lovasz.html#LovaszLossBinary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.lovasz.LovaszLossBinary" title="Permalink to this definition">¶</a></dt>
@@ -2288,48 +2358,55 @@ in neural networks</a>.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.margin">
-<span id="margin"></span><h4><a class="toc-backref" href="#id44">Margin</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.margin" title="Permalink to this headline">¶</a></h4>
+<span id="margin"></span><h4><a class="toc-backref" href="#id48">Margin</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.margin" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.margin.MarginLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.margin.</code><code class="sig-name descname">MarginLoss</code><span class="sig-paren">(</span><em class="sig-param">alpha: float = 0.2</em>, <em class="sig-param">beta: float = 1.0</em>, <em class="sig-param">skip_labels: Union[int</em>, <em class="sig-param">List[int]] = -1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/margin.html#MarginLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.margin.MarginLoss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<p>&#64;TODO: Docs. Contribution is welcome.</p>
+<p>Margin loss criterion</p>
 <dl class="method">
 <dt id="catalyst.contrib.nn.criterion.margin.MarginLoss.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">alpha: float = 0.2</em>, <em class="sig-param">beta: float = 1.0</em>, <em class="sig-param">skip_labels: Union[int</em>, <em class="sig-param">List[int]] = -1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/margin.html#MarginLoss.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.margin.MarginLoss.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Margin loss constructor.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>alpha</strong> (<em>float</em>) – </p></li>
-<li><p><strong>beta</strong> (<em>float</em>) – </p></li>
-<li><p><strong>skip_labels</strong> (<em>int</em><em> or </em><em>List</em><em>[</em><em>int</em><em>]</em>) – </p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – alpha</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – beta</p></li>
+<li><p><strong>skip_labels</strong> (<em>int</em><em> or </em><em>List</em><em>[</em><em>int</em><em>]</em>) – labels to skip</p></li>
 </ul>
 </dd>
 </dl>
-<p>&#64;TODO: Docs. Contribution is welcome.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.contrib.nn.criterion.margin.MarginLoss.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">embeddings: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/margin.html#MarginLoss.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.margin.MarginLoss.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Forward propagation method for the margin loss.</p>
-<p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><p>Forward method for the margin loss.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>embeddings</strong> – tensor with embeddings</p></li>
+<li><p><strong>targets</strong> – tensor with target labels</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>computed loss</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.triplet">
-<span id="triplet"></span><h4><a class="toc-backref" href="#id45">Triplet</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.triplet" title="Permalink to this headline">¶</a></h4>
+<span id="triplet"></span><h4><a class="toc-backref" href="#id49">Triplet</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.triplet" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.triplet.TripletLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.triplet.</code><code class="sig-name descname">TripletLoss</code><span class="sig-paren">(</span><em class="sig-param">margin: float = 0.3</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/triplet.html#TripletLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.triplet.TripletLoss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>Triplet loss with hard positive/negative mining.</p>
-<dl class="simple">
-<dt>Reference:</dt><dd><p>Code imported from <a class="reference external" href="https://github.com/NegatioN/OnlineMiningTripletLoss">https://github.com/NegatioN/OnlineMiningTripletLoss</a></p>
-</dd>
-</dl>
+<p>Adapted from: <a class="reference external" href="https://github.com/NegatioN/OnlineMiningTripletLoss">https://github.com/NegatioN/OnlineMiningTripletLoss</a></p>
 <dl class="method">
 <dt id="catalyst.contrib.nn.criterion.triplet.TripletLoss.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">margin: float = 0.3</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/triplet.html#TripletLoss.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.triplet.TripletLoss.__init__" title="Permalink to this definition">¶</a></dt>
@@ -2355,7 +2432,7 @@ in neural networks</a>.</p>
 <dd class="field-even"><p>scalar tensor containing the triplet loss</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>triplet_loss</p>
+<dd class="field-odd"><p>torch.Tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2408,7 +2485,7 @@ with shape [batch_size, embedding_size]</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.wing">
-<span id="wing"></span><h4><a class="toc-backref" href="#id46">Wing</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.wing" title="Permalink to this headline">¶</a></h4>
+<span id="wing"></span><h4><a class="toc-backref" href="#id50">Wing</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.wing" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.wing.WingLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.wing.</code><code class="sig-name descname">WingLoss</code><span class="sig-paren">(</span><em class="sig-param">width: int = 5</em>, <em class="sig-param">curvature: float = 0.5</em>, <em class="sig-param">reduction: str = 'mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/wing.html#WingLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.wing.WingLoss" title="Permalink to this definition">¶</a></dt>
@@ -2445,9 +2522,9 @@ with Convolutional Neural Networks</a>.</p>
 </div>
 </div>
 <div class="section" id="modules">
-<h3><a class="toc-backref" href="#id47">Modules</a><a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id51">Modules</a><a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="module-catalyst.contrib.nn.modules.common">
-<span id="common-modules"></span><h4><a class="toc-backref" href="#id48">Common modules</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.common" title="Permalink to this headline">¶</a></h4>
+<span id="common-modules"></span><h4><a class="toc-backref" href="#id52">Common modules</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.common" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.common.Flatten">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.common.</code><code class="sig-name descname">Flatten</code><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/common.html#Flatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.common.Flatten" title="Permalink to this definition">¶</a></dt>
@@ -2542,7 +2619,7 @@ Default: 0.1.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.modules.lama">
-<span id="last-mean-average-attention-lama-pooling"></span><h4><a class="toc-backref" href="#id49">Last-Mean-Average-Attention (LAMA)-Pooling</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.lama" title="Permalink to this headline">¶</a></h4>
+<span id="last-mean-average-attention-lama-pooling"></span><h4><a class="toc-backref" href="#id53">Last-Mean-Average-Attention (LAMA)-Pooling</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.lama" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.lama.TemporalLastPooling">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.lama.</code><code class="sig-name descname">TemporalLastPooling</code><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/lama.html#TemporalLastPooling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.lama.TemporalLastPooling" title="Permalink to this definition">¶</a></dt>
@@ -2615,13 +2692,19 @@ Default: 0.1.</p>
 <dl class="method">
 <dt id="catalyst.contrib.nn.modules.lama.TemporalAttentionPooling.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em>, <em class="sig-param">mask: torch.Tensor = None</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/lama.html#TemporalAttentionPooling.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.lama.TemporalAttentionPooling.forward" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Forward call.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>x</strong> (<em>torch.Tensor</em>) – tensor of size
-(batch_size, history_len, feature_size)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>torch.Tensor</em>) – tensor of size
+(batch_size, history_len, feature_size)</p></li>
+<li><p><strong>mask</strong> – mask to use</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>pooling result</p>
 </dd>
 </dl>
-<p>&#64;TODO: Docs. Contribution is welcome.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -2645,13 +2728,19 @@ Default: 0.1.</p>
 <dl class="method">
 <dt id="catalyst.contrib.nn.modules.lama.TemporalConcatPooling.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em>, <em class="sig-param">mask: torch.Tensor = None</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/lama.html#TemporalConcatPooling.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.lama.TemporalConcatPooling.forward" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Concat pooling forward.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>x</strong> (<em>torch.Tensor</em>) – tensor of size
-(batch_size, history_len, feature_size)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>torch.Tensor</em>) – tensor of size
+(batch_size, history_len, feature_size)</p></li>
+<li><p><strong>mask</strong> – mask to use</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>concated result</p>
 </dd>
 </dl>
-<p>&#64;TODO: Docs. Contribution is welcome.</p>
 </dd></dl>
 
 </dd></dl>
@@ -2675,20 +2764,29 @@ Default: 0.1.</p>
 <dl class="method">
 <dt id="catalyst.contrib.nn.modules.lama.LamaPooling.forward">
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em>, <em class="sig-param">mask: torch.Tensor = None</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/lama.html#LamaPooling.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.lama.LamaPooling.forward" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Forward method of the LAMA.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>x</strong> (<em>torch.Tensor</em>) – tensor of size
-(batch_size, history_len, feature_size)</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>torch.Tensor</em>) – tensor of size
+(batch_size, history_len, feature_size)</p></li>
+<li><p><strong>mask</strong> (<em>torch.Tensor</em>) – mask to use for attention compute</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>LAMA pooling result</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torch.Tensor</p>
 </dd>
 </dl>
-<p>&#64;TODO: Docs. Contribution is welcome.</p>
 </dd></dl>
 
 </dd></dl>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.modules.pooling">
-<span id="pooling"></span><h4><a class="toc-backref" href="#id50">Pooling</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.pooling" title="Permalink to this headline">¶</a></h4>
+<span id="pooling"></span><h4><a class="toc-backref" href="#id54">Pooling</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.pooling" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.pooling.GlobalAttnPool2d">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.pooling.</code><code class="sig-name descname">GlobalAttnPool2d</code><span class="sig-paren">(</span><em class="sig-param">in_features</em>, <em class="sig-param">activation_fn='Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/pooling.html#GlobalAttnPool2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.pooling.GlobalAttnPool2d" title="Permalink to this definition">¶</a></dt>
@@ -2713,6 +2811,9 @@ Default: 0.1.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>in_features</strong> – number of channels in the input sample</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>number of output features</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2743,6 +2844,9 @@ Default: 0.1.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>in_features</strong> – number of channels in the input sample</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>number of output features</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2776,6 +2880,9 @@ composed of several input planes.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>in_features</strong> – number of channels in the input sample</p>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>number of output features</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -2805,6 +2912,9 @@ composed of several input planes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>in_features</strong> – number of channels in the input sample</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>number of output features</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2836,6 +2946,9 @@ composed of several input planes.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>in_features</strong> – number of channels in the input sample</p>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>number of output features</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -2865,6 +2978,9 @@ composed of several input planes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>in_features</strong> – number of channels in the input sample</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>number of output features</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2898,6 +3014,9 @@ composed of several input planes.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>in_features</strong> – number of channels in the input sample</p>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>number of output features</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -2905,7 +3024,7 @@ composed of several input planes.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.modules.rms_norm">
-<span id="rmsnorm"></span><h4><a class="toc-backref" href="#id51">RMSNorm</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.rms_norm" title="Permalink to this headline">¶</a></h4>
+<span id="rmsnorm"></span><h4><a class="toc-backref" href="#id55">RMSNorm</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.rms_norm" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.rms_norm.RMSNorm">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.rms_norm.</code><code class="sig-name descname">RMSNorm</code><span class="sig-paren">(</span><em class="sig-param">dimension: int</em>, <em class="sig-param">epsilon: float = 1e-08</em>, <em class="sig-param">is_bias: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/rms_norm.html#RMSNorm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.rms_norm.RMSNorm" title="Permalink to this definition">¶</a></dt>
@@ -2938,83 +3057,13 @@ while normalization</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.modules.se">
-<span id="squeezeandexcitation"></span><h4><a class="toc-backref" href="#id52">SqueezeAndExcitation</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.se" title="Permalink to this headline">¶</a></h4>
+<span id="squeezeandexcitation"></span><h4><a class="toc-backref" href="#id56">SqueezeAndExcitation</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.se" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
-<dt id="catalyst.contrib.nn.modules.se.ChannelSqueezeAndSpatialExcitation">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.se.</code><code class="sig-name descname">ChannelSqueezeAndSpatialExcitation</code><span class="sig-paren">(</span><em class="sig-param">in_channels: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#ChannelSqueezeAndSpatialExcitation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.ChannelSqueezeAndSpatialExcitation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<p>The sSE (Channel Squeeze and Spatial Excitation) block from the
-[Concurrent Spatial and Channel ‘Squeeze &amp; Excitation’
-in Fully Convolutional Networks](<a class="reference external" href="https://arxiv.org/abs/1803.02579">https://arxiv.org/abs/1803.02579</a>) paper.</p>
-<p>Adapted from
-<a class="reference external" href="https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/66178">https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/66178</a></p>
-<p>Shape:</p>
-<ul class="simple">
-<li><p>Input: (batch, channels, height, width)</p></li>
-<li><p>Output: (batch, channels, height, width) (same shape as input)</p></li>
-</ul>
-<dl class="method">
-<dt id="catalyst.contrib.nn.modules.se.ChannelSqueezeAndSpatialExcitation.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">in_channels: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#ChannelSqueezeAndSpatialExcitation.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.ChannelSqueezeAndSpatialExcitation.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>in_channels</strong> (<em>int</em>) – The number of channels
-in the feature map of the input.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.contrib.nn.modules.se.ChannelSqueezeAndSpatialExcitation.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#ChannelSqueezeAndSpatialExcitation.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.ChannelSqueezeAndSpatialExcitation.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Forward call.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="catalyst.contrib.nn.modules.se.ConcurrentSpatialAndChannelSqueezeAndChannelExcitation">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.se.</code><code class="sig-name descname">ConcurrentSpatialAndChannelSqueezeAndChannelExcitation</code><span class="sig-paren">(</span><em class="sig-param">in_channels: int</em>, <em class="sig-param">r: int = 16</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#ConcurrentSpatialAndChannelSqueezeAndChannelExcitation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.ConcurrentSpatialAndChannelSqueezeAndChannelExcitation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
-<p>The scSE (Concurrent Spatial and Channel Squeeze and Channel Excitation)
-block from the [Concurrent Spatial and Channel ‘Squeeze &amp; Excitation’
-in Fully Convolutional Networks](<a class="reference external" href="https://arxiv.org/abs/1803.02579">https://arxiv.org/abs/1803.02579</a>) paper.</p>
-<p>Adapted from
-<a class="reference external" href="https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/66178">https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/66178</a></p>
-<p>Shape:</p>
-<ul class="simple">
-<li><p>Input: (batch, channels, height, width)</p></li>
-<li><p>Output: (batch, channels, height, width) (same shape as input)</p></li>
-</ul>
-<dl class="method">
-<dt id="catalyst.contrib.nn.modules.se.ConcurrentSpatialAndChannelSqueezeAndChannelExcitation.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">in_channels: int</em>, <em class="sig-param">r: int = 16</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#ConcurrentSpatialAndChannelSqueezeAndChannelExcitation.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.ConcurrentSpatialAndChannelSqueezeAndChannelExcitation.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>in_channels</strong> (<em>int</em>) – The number of channels
-in the feature map of the input.</p></li>
-<li><p><strong>r</strong> (<em>int</em>) – The reduction ratio of the intermediate channels.
-Default: 16.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.contrib.nn.modules.se.ConcurrentSpatialAndChannelSqueezeAndChannelExcitation.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#ConcurrentSpatialAndChannelSqueezeAndChannelExcitation.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.ConcurrentSpatialAndChannelSqueezeAndChannelExcitation.forward" title="Permalink to this definition">¶</a></dt>
-<dd><p>Forward call.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="catalyst.contrib.nn.modules.se.SqueezeAndExcitation">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.se.</code><code class="sig-name descname">SqueezeAndExcitation</code><span class="sig-paren">(</span><em class="sig-param">in_channels: int</em>, <em class="sig-param">r: int = 16</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#SqueezeAndExcitation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.SqueezeAndExcitation" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.nn.modules.se.cSE">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.se.</code><code class="sig-name descname">cSE</code><span class="sig-paren">(</span><em class="sig-param">in_channels: int</em>, <em class="sig-param">r: int = 16</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#cSE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.cSE" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>The channel-wise SE (Squeeze and Excitation) block from the
-[Squeeze-and-Excitation Networks](<a class="reference external" href="https://arxiv.org/abs/1709.01507">https://arxiv.org/abs/1709.01507</a>) paper.</p>
+<a class="reference external" href="https://arxiv.org/abs/1709.01507">Squeeze-and-Excitation Networks</a> paper.</p>
 <p>Adapted from
 <a class="reference external" href="https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/65939">https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/65939</a>
 and
@@ -3025,8 +3074,8 @@ and
 <li><p>Output: (batch, channels, height, width) (same shape as input)</p></li>
 </ul>
 <dl class="method">
-<dt id="catalyst.contrib.nn.modules.se.SqueezeAndExcitation.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">in_channels: int</em>, <em class="sig-param">r: int = 16</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#SqueezeAndExcitation.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.SqueezeAndExcitation.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.nn.modules.se.cSE.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">in_channels: int</em>, <em class="sig-param">r: int = 16</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#cSE.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.cSE.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -3040,8 +3089,78 @@ Default: 16.</p></li>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.contrib.nn.modules.se.SqueezeAndExcitation.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#SqueezeAndExcitation.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.SqueezeAndExcitation.forward" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.nn.modules.se.cSE.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#cSE.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.cSE.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward call.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.nn.modules.se.sSE">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.se.</code><code class="sig-name descname">sSE</code><span class="sig-paren">(</span><em class="sig-param">in_channels: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#sSE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.sSE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>The sSE (Channel Squeeze and Spatial Excitation) block from the
+<a class="reference external" href="https://arxiv.org/abs/1803.02579">Concurrent Spatial and Channel ‘Squeeze &amp; Excitation’
+in Fully Convolutional Networks</a> paper.</p>
+<p>Adapted from
+<a class="reference external" href="https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/66178">https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/66178</a></p>
+<p>Shape:</p>
+<ul class="simple">
+<li><p>Input: (batch, channels, height, width)</p></li>
+<li><p>Output: (batch, channels, height, width) (same shape as input)</p></li>
+</ul>
+<dl class="method">
+<dt id="catalyst.contrib.nn.modules.se.sSE.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">in_channels: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#sSE.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.sSE.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>in_channels</strong> (<em>int</em>) – The number of channels
+in the feature map of the input.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.nn.modules.se.sSE.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#sSE.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.sSE.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward call.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.nn.modules.se.scSE">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.se.</code><code class="sig-name descname">scSE</code><span class="sig-paren">(</span><em class="sig-param">in_channels: int</em>, <em class="sig-param">r: int = 16</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#scSE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.scSE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>The scSE (Concurrent Spatial and Channel Squeeze and Channel Excitation)
+block from the <a class="reference external" href="https://arxiv.org/abs/1803.02579">Concurrent Spatial and Channel ‘Squeeze &amp; Excitation’
+in Fully Convolutional Networks</a> paper.</p>
+<p>Adapted from
+<a class="reference external" href="https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/66178">https://www.kaggle.com/c/tgs-salt-identification-challenge/discussion/66178</a></p>
+<p>Shape:</p>
+<ul class="simple">
+<li><p>Input: (batch, channels, height, width)</p></li>
+<li><p>Output: (batch, channels, height, width) (same shape as input)</p></li>
+</ul>
+<dl class="method">
+<dt id="catalyst.contrib.nn.modules.se.scSE.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">in_channels: int</em>, <em class="sig-param">r: int = 16</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#scSE.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.scSE.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_channels</strong> (<em>int</em>) – The number of channels
+in the feature map of the input.</p></li>
+<li><p><strong>r</strong> (<em>int</em>) – The reduction ratio of the intermediate channels.
+Default: 16.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.nn.modules.se.scSE.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">x: torch.Tensor</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#scSE.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.scSE.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Forward call.</p>
 </dd></dl>
 
@@ -3050,9 +3169,9 @@ Default: 16.</p></li>
 </div>
 </div>
 <div class="section" id="optimizers">
-<h3><a class="toc-backref" href="#id53">Optimizers</a><a class="headerlink" href="#optimizers" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id57">Optimizers</a><a class="headerlink" href="#optimizers" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="module-catalyst.contrib.nn.optimizers.lamb">
-<span id="lamb"></span><h4><a class="toc-backref" href="#id54">Lamb</a><a class="headerlink" href="#module-catalyst.contrib.nn.optimizers.lamb" title="Permalink to this headline">¶</a></h4>
+<span id="lamb"></span><h4><a class="toc-backref" href="#id58">Lamb</a><a class="headerlink" href="#module-catalyst.contrib.nn.optimizers.lamb" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.optimizers.lamb.Lamb">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.lamb.</code><code class="sig-name descname">Lamb</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">lr: Optional[float] = 0.001</em>, <em class="sig-param">betas: Optional[Tuple[float</em>, <em class="sig-param">float]] = (0.9</em>, <em class="sig-param">0.999)</em>, <em class="sig-param">eps: Optional[float] = 1e-06</em>, <em class="sig-param">weight_decay: Optional[float] = 0.0</em>, <em class="sig-param">adam: Optional[bool] = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/lamb.html#Lamb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.lamb.Lamb" title="Permalink to this definition">¶</a></dt>
@@ -3091,6 +3210,12 @@ this into Adam. Useful for comparison purposes.</p></li>
 <dd class="field-odd"><p><strong>closure</strong> (<em>callable</em><em>, </em><em>optional</em>) – A closure that reevaluates
 the model and returns the loss.</p>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>computed loss</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – Lamb does not support sparse gradients</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -3098,7 +3223,7 @@ the model and returns the loss.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.optimizers.lookahead">
-<span id="lookahead"></span><h4><a class="toc-backref" href="#id55">Lookahead</a><a class="headerlink" href="#module-catalyst.contrib.nn.optimizers.lookahead" title="Permalink to this headline">¶</a></h4>
+<span id="lookahead"></span><h4><a class="toc-backref" href="#id59">Lookahead</a><a class="headerlink" href="#module-catalyst.contrib.nn.optimizers.lookahead" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.optimizers.lookahead.Lookahead">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.lookahead.</code><code class="sig-name descname">Lookahead</code><span class="sig-paren">(</span><em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em>, <em class="sig-param">k: int = 5</em>, <em class="sig-param">alpha: float = 0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/lookahead.html#Lookahead"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.lookahead.Lookahead" title="Permalink to this definition">¶</a></dt>
@@ -3147,6 +3272,9 @@ the model and returns the loss.</p>
 <dd class="field-odd"><p><strong>closure</strong> (<em>callable</em><em>, </em><em>optional</em>) – A closure that reevaluates
 the model and returns the loss.</p>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>computed loss</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -3166,7 +3294,7 @@ the model and returns the loss.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.optimizers.qhadamw">
-<span id="qhadamw"></span><h4><a class="toc-backref" href="#id56">QHAdamW</a><a class="headerlink" href="#module-catalyst.contrib.nn.optimizers.qhadamw" title="Permalink to this headline">¶</a></h4>
+<span id="qhadamw"></span><h4><a class="toc-backref" href="#id60">QHAdamW</a><a class="headerlink" href="#module-catalyst.contrib.nn.optimizers.qhadamw" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.optimizers.qhadamw.QHAdamW">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.qhadamw.</code><code class="sig-name descname">QHAdamW</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">lr=0.001</em>, <em class="sig-param">betas=(0.995</em>, <em class="sig-param">0.999)</em>, <em class="sig-param">nus=(0.7</em>, <em class="sig-param">1.0)</em>, <em class="sig-param">weight_decay=0.0</em>, <em class="sig-param">eps=1e-08</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/qhadamw.html#QHAdamW"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.qhadamw.QHAdamW" title="Permalink to this definition">¶</a></dt>
@@ -3223,6 +3351,12 @@ numerical stability
 <dd class="field-odd"><p><strong>closure</strong> (<em>callable</em><em>, </em><em>optional</em>) – A closure that reevaluates
 the model and returns the loss.</p>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>computed loss</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – QHAdamW does not support sparse gradients</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -3230,7 +3364,7 @@ the model and returns the loss.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.optimizers.radam">
-<span id="radam"></span><h4><a class="toc-backref" href="#id57">RAdam</a><a class="headerlink" href="#module-catalyst.contrib.nn.optimizers.radam" title="Permalink to this headline">¶</a></h4>
+<span id="radam"></span><h4><a class="toc-backref" href="#id61">RAdam</a><a class="headerlink" href="#module-catalyst.contrib.nn.optimizers.radam" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.optimizers.radam.RAdam">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.radam.</code><code class="sig-name descname">RAdam</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">lr=0.001</em>, <em class="sig-param">betas=(0.9</em>, <em class="sig-param">0.999)</em>, <em class="sig-param">eps=1e-08</em>, <em class="sig-param">weight_decay=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/radam.html#RAdam"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.radam.RAdam" title="Permalink to this definition">¶</a></dt>
@@ -3256,6 +3390,12 @@ and Beyond</a>.</p>
 <dd class="field-odd"><p><strong>closure</strong> (<em>callable</em><em>, </em><em>optional</em>) – A closure that reevaluates
 the model and returns the loss.</p>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>computed loss</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – RAdam does not support sparse gradients</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -3263,7 +3403,7 @@ the model and returns the loss.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.optimizers.ralamb">
-<span id="ralamb"></span><h4><a class="toc-backref" href="#id58">Ralamb</a><a class="headerlink" href="#module-catalyst.contrib.nn.optimizers.ralamb" title="Permalink to this headline">¶</a></h4>
+<span id="ralamb"></span><h4><a class="toc-backref" href="#id62">Ralamb</a><a class="headerlink" href="#module-catalyst.contrib.nn.optimizers.ralamb" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.optimizers.ralamb.Ralamb">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.optimizers.ralamb.</code><code class="sig-name descname">Ralamb</code><span class="sig-paren">(</span><em class="sig-param">params: Iterable</em>, <em class="sig-param">lr: float = 0.001</em>, <em class="sig-param">betas: Tuple[float</em>, <em class="sig-param">float] = (0.9</em>, <em class="sig-param">0.999)</em>, <em class="sig-param">eps: float = 1e-08</em>, <em class="sig-param">weight_decay: float = 0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/optimizers/ralamb.html#Ralamb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.optimizers.ralamb.Ralamb" title="Permalink to this definition">¶</a></dt>
@@ -3302,6 +3442,12 @@ numerical stability (default: 1e-8)</p></li>
 <dd class="field-odd"><p><strong>closure</strong> (<em>callable</em><em>, </em><em>optional</em>) – A closure that reevaluates
 the model and returns the loss.</p>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>computed loss</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – Ralamb does not support sparse gradients</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -3310,7 +3456,7 @@ the model and returns the loss.</p>
 </div>
 </div>
 <div class="section" id="module-catalyst.contrib.nn.schedulers.base">
-<span id="schedulers"></span><h3><a class="toc-backref" href="#id59">Schedulers</a><a class="headerlink" href="#module-catalyst.contrib.nn.schedulers.base" title="Permalink to this headline">¶</a></h3>
+<span id="schedulers"></span><h3><a class="toc-backref" href="#id63">Schedulers</a><a class="headerlink" href="#module-catalyst.contrib.nn.schedulers.base" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.contrib.nn.schedulers.base.BaseScheduler">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.schedulers.base.</code><code class="sig-name descname">BaseScheduler</code><span class="sig-paren">(</span><em class="sig-param">optimizer</em>, <em class="sig-param">last_epoch=-1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/schedulers/base.html#BaseScheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.schedulers.base.BaseScheduler" title="Permalink to this definition">¶</a></dt>
@@ -3318,16 +3464,8 @@ the model and returns the loss.</p>
 <p>Base class for all schedulers with momentum update.</p>
 <dl class="method">
 <dt id="catalyst.contrib.nn.schedulers.base.BaseScheduler.get_momentum">
-<code class="sig-name descname">get_momentum</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[float]<a class="reference internal" href="../_modules/catalyst/contrib/nn/schedulers/base.html#BaseScheduler.get_momentum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.schedulers.base.BaseScheduler.get_momentum" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">get_momentum</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[float]<a class="reference internal" href="../_modules/catalyst/contrib/nn/schedulers/base.html#BaseScheduler.get_momentum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.schedulers.base.BaseScheduler.get_momentum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function that returns the new momentum for optimizer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>calculated momentum for every param groups</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>List[float]</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="method">
@@ -3351,7 +3489,7 @@ the model and returns the loss.</p>
 </dd></dl>
 
 <div class="section" id="module-catalyst.contrib.nn.schedulers.onecycle">
-<span id="onecyclelrwithwarmup"></span><h4><a class="toc-backref" href="#id60">OneCycleLRWithWarmup</a><a class="headerlink" href="#module-catalyst.contrib.nn.schedulers.onecycle" title="Permalink to this headline">¶</a></h4>
+<span id="onecyclelrwithwarmup"></span><h4><a class="toc-backref" href="#id64">OneCycleLRWithWarmup</a><a class="headerlink" href="#module-catalyst.contrib.nn.schedulers.onecycle" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.schedulers.onecycle.OneCycleLRWithWarmup">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.schedulers.onecycle.</code><code class="sig-name descname">OneCycleLRWithWarmup</code><span class="sig-paren">(</span><em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em>, <em class="sig-param">num_steps: int</em>, <em class="sig-param">lr_range=(1.0</em>, <em class="sig-param">0.005)</em>, <em class="sig-param">init_lr: float = None</em>, <em class="sig-param">warmup_steps: int = 0</em>, <em class="sig-param">warmup_fraction: float = None</em>, <em class="sig-param">decay_steps: int = 0</em>, <em class="sig-param">decay_fraction: float = None</em>, <em class="sig-param">momentum_range=(0.8</em>, <em class="sig-param">0.99</em>, <em class="sig-param">0.999)</em>, <em class="sig-param">init_momentum: float = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/schedulers/onecycle.html#OneCycleLRWithWarmup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.schedulers.onecycle.OneCycleLRWithWarmup" title="Permalink to this definition">¶</a></dt>
@@ -3443,12 +3581,12 @@ Cannot be set together with <code class="docutils literal notranslate"><span cla
 </div>
 </div>
 </div>
-<div class="section" id="id6">
-<h2><a class="toc-backref" href="#id61">Models</a><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id10">
+<h2><a class="toc-backref" href="#id65">Models</a><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="segmentation">
-<h3><a class="toc-backref" href="#id62">Segmentation</a><a class="headerlink" href="#segmentation" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id66">Segmentation</a><a class="headerlink" href="#segmentation" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="module-catalyst.contrib.models.cv.segmentation.unet">
-<span id="unet"></span><h4><a class="toc-backref" href="#id63">Unet</a><a class="headerlink" href="#module-catalyst.contrib.models.cv.segmentation.unet" title="Permalink to this headline">¶</a></h4>
+<span id="unet"></span><h4><a class="toc-backref" href="#id67">Unet</a><a class="headerlink" href="#module-catalyst.contrib.models.cv.segmentation.unet" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.models.cv.segmentation.unet.ResnetUnet">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.cv.segmentation.unet.</code><code class="sig-name descname">ResnetUnet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">arch: str = 'resnet18'</em>, <em class="sig-param">pretrained: bool = True</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em>, <em class="sig-param">state_dict: Union[dict</em>, <em class="sig-param">str</em>, <em class="sig-param">pathlib.Path] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/cv/segmentation/unet.html#ResnetUnet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.cv.segmentation.unet.ResnetUnet" title="Permalink to this definition">¶</a></dt>
@@ -3465,7 +3603,7 @@ Cannot be set together with <code class="docutils literal notranslate"><span cla
 
 </div>
 <div class="section" id="module-catalyst.contrib.models.cv.segmentation.linknet">
-<span id="linknet"></span><h4><a class="toc-backref" href="#id64">Linknet</a><a class="headerlink" href="#module-catalyst.contrib.models.cv.segmentation.linknet" title="Permalink to this headline">¶</a></h4>
+<span id="linknet"></span><h4><a class="toc-backref" href="#id68">Linknet</a><a class="headerlink" href="#module-catalyst.contrib.models.cv.segmentation.linknet" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.models.cv.segmentation.linknet.Linknet">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.cv.segmentation.linknet.</code><code class="sig-name descname">Linknet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">in_channels: int = 3</em>, <em class="sig-param">num_channels: int = 32</em>, <em class="sig-param">num_blocks: int = 4</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em>, <em class="sig-param">state_dict: Union[dict</em>, <em class="sig-param">str</em>, <em class="sig-param">pathlib.Path] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/cv/segmentation/linknet.html#Linknet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.cv.segmentation.linknet.Linknet" title="Permalink to this definition">¶</a></dt>
@@ -3482,7 +3620,7 @@ Cannot be set together with <code class="docutils literal notranslate"><span cla
 
 </div>
 <div class="section" id="module-catalyst.contrib.models.cv.segmentation.fpn">
-<span id="fpnnet"></span><h4><a class="toc-backref" href="#id65">FPNnet</a><a class="headerlink" href="#module-catalyst.contrib.models.cv.segmentation.fpn" title="Permalink to this headline">¶</a></h4>
+<span id="fpnnet"></span><h4><a class="toc-backref" href="#id69">FPNnet</a><a class="headerlink" href="#module-catalyst.contrib.models.cv.segmentation.fpn" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.models.cv.segmentation.fpn.FPNUnet">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.cv.segmentation.fpn.</code><code class="sig-name descname">FPNUnet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">in_channels: int = 3</em>, <em class="sig-param">num_channels: int = 32</em>, <em class="sig-param">num_blocks: int = 4</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em>, <em class="sig-param">state_dict: Union[dict</em>, <em class="sig-param">str</em>, <em class="sig-param">pathlib.Path] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/cv/segmentation/fpn.html#FPNUnet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.cv.segmentation.fpn.FPNUnet" title="Permalink to this definition">¶</a></dt>
@@ -3499,7 +3637,7 @@ Cannot be set together with <code class="docutils literal notranslate"><span cla
 
 </div>
 <div class="section" id="module-catalyst.contrib.models.cv.segmentation.psp">
-<span id="pspnet"></span><h4><a class="toc-backref" href="#id66">PSPnet</a><a class="headerlink" href="#module-catalyst.contrib.models.cv.segmentation.psp" title="Permalink to this headline">¶</a></h4>
+<span id="pspnet"></span><h4><a class="toc-backref" href="#id70">PSPnet</a><a class="headerlink" href="#module-catalyst.contrib.models.cv.segmentation.psp" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.models.cv.segmentation.psp.PSPnet">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.models.cv.segmentation.psp.</code><code class="sig-name descname">PSPnet</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int = 1</em>, <em class="sig-param">in_channels: int = 3</em>, <em class="sig-param">num_channels: int = 32</em>, <em class="sig-param">num_blocks: int = 4</em>, <em class="sig-param">encoder_params: Dict = None</em>, <em class="sig-param">bridge_params: Dict = None</em>, <em class="sig-param">decoder_params: Dict = None</em>, <em class="sig-param">head_params: Dict = None</em>, <em class="sig-param">state_dict: Union[dict</em>, <em class="sig-param">str</em>, <em class="sig-param">pathlib.Path] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/models/cv/segmentation/psp.html#PSPnet"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.models.cv.segmentation.psp.PSPnet" title="Permalink to this definition">¶</a></dt>
@@ -3518,11 +3656,11 @@ Cannot be set together with <code class="docutils literal notranslate"><span cla
 </div>
 </div>
 <div class="section" id="module-catalyst.contrib.registry">
-<span id="registry"></span><h2><a class="toc-backref" href="#id67">Registry</a><a class="headerlink" href="#module-catalyst.contrib.registry" title="Permalink to this headline">¶</a></h2>
+<span id="registry"></span><h2><a class="toc-backref" href="#id71">Registry</a><a class="headerlink" href="#module-catalyst.contrib.registry" title="Permalink to this headline">¶</a></h2>
 <p>catalyst subpackage registries</p>
 <dl class="function">
 <dt id="catalyst.contrib.registry.Criterion">
-<code class="sig-prename descclassname">catalyst.contrib.registry.</code><code class="sig-name descname">Criterion</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.contrib.registry.Criterion" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.contrib.registry.</code><code class="sig-name descname">Criterion</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.contrib.registry.Criterion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -3539,14 +3677,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.contrib.registry.Optimizer">
-<code class="sig-prename descclassname">catalyst.contrib.registry.</code><code class="sig-name descname">Optimizer</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.contrib.registry.Optimizer" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.contrib.registry.</code><code class="sig-name descname">Optimizer</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.contrib.registry.Optimizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -3563,14 +3704,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.contrib.registry.Scheduler">
-<code class="sig-prename descclassname">catalyst.contrib.registry.</code><code class="sig-name descname">Scheduler</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.contrib.registry.Scheduler" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.contrib.registry.</code><code class="sig-name descname">Scheduler</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.contrib.registry.Scheduler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -3587,14 +3731,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.contrib.registry.Module">
-<code class="sig-prename descclassname">catalyst.contrib.registry.</code><code class="sig-name descname">Module</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.contrib.registry.Module" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.contrib.registry.</code><code class="sig-name descname">Module</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.contrib.registry.Module" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -3611,14 +3758,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.contrib.registry.Model">
-<code class="sig-prename descclassname">catalyst.contrib.registry.</code><code class="sig-name descname">Model</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.contrib.registry.Model" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.contrib.registry.</code><code class="sig-name descname">Model</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.contrib.registry.Model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -3635,14 +3785,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.contrib.registry.Sampler">
-<code class="sig-prename descclassname">catalyst.contrib.registry.</code><code class="sig-name descname">Sampler</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.contrib.registry.Sampler" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.contrib.registry.</code><code class="sig-name descname">Sampler</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.contrib.registry.Sampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -3659,14 +3812,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.contrib.registry.Transform">
-<code class="sig-prename descclassname">catalyst.contrib.registry.</code><code class="sig-name descname">Transform</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.contrib.registry.Transform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.contrib.registry.</code><code class="sig-name descname">Transform</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.contrib.registry.Transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -3683,14 +3839,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.contrib.registry.Experiment">
-<code class="sig-prename descclassname">catalyst.contrib.registry.</code><code class="sig-name descname">Experiment</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.contrib.registry.Experiment" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.contrib.registry.</code><code class="sig-name descname">Experiment</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.contrib.registry.Experiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -3707,16 +3866,19 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 </div>
 <div class="section" id="tools">
-<h2><a class="toc-backref" href="#id68">Tools</a><a class="headerlink" href="#tools" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id72">Tools</a><a class="headerlink" href="#tools" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-catalyst.contrib.tools.tensorboard">
-<span id="tensorboard"></span><h3><a class="toc-backref" href="#id69">Tensorboard</a><a class="headerlink" href="#module-catalyst.contrib.tools.tensorboard" title="Permalink to this headline">¶</a></h3>
+<span id="tensorboard"></span><h3><a class="toc-backref" href="#id73">Tensorboard</a><a class="headerlink" href="#module-catalyst.contrib.tools.tensorboard" title="Permalink to this headline">¶</a></h3>
 <dl class="simple">
 <dt>Tensorboard readers:</dt><dd><ul class="simple">
 <li><p><a class="reference internal" href="#catalyst.contrib.tools.tensorboard.EventsFileReader" title="catalyst.contrib.tools.tensorboard.EventsFileReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventsFileReader</span></code></a></p></li>
@@ -3815,9 +3977,9 @@ single instance.</p></li>
 </div>
 </div>
 <div class="section" id="utilities">
-<h2><a class="toc-backref" href="#id70">Utilities</a><a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id74">Utilities</a><a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-catalyst.contrib.utils.argparse">
-<span id="argparse"></span><h3><a class="toc-backref" href="#id71">Argparse</a><a class="headerlink" href="#module-catalyst.contrib.utils.argparse" title="Permalink to this headline">¶</a></h3>
+<span id="argparse"></span><h3><a class="toc-backref" href="#id75">Argparse</a><a class="headerlink" href="#module-catalyst.contrib.utils.argparse" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.argparse.boolean_flag">
 <code class="sig-prename descclassname">catalyst.contrib.utils.argparse.</code><code class="sig-name descname">boolean_flag</code><span class="sig-paren">(</span><em class="sig-param">parser: argparse.ArgumentParser</em>, <em class="sig-param">name: str</em>, <em class="sig-param">default: Optional[bool] = False</em>, <em class="sig-param">help: str = None</em>, <em class="sig-param">shorthand: str = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/contrib/utils/argparse.html#boolean_flag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.argparse.boolean_flag" title="Permalink to this definition">¶</a></dt>
@@ -3846,7 +4008,7 @@ while –no-&lt;name&gt; will disable it</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.utils.compression">
-<span id="compression"></span><h3><a class="toc-backref" href="#id72">Compression</a><a class="headerlink" href="#module-catalyst.contrib.utils.compression" title="Permalink to this headline">¶</a></h3>
+<span id="compression"></span><h3><a class="toc-backref" href="#id76">Compression</a><a class="headerlink" href="#module-catalyst.contrib.utils.compression" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.compression.pack">
 <code class="sig-prename descclassname">catalyst.contrib.utils.compression.</code><code class="sig-name descname">pack</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.contrib.utils.compression.pack" title="Permalink to this definition">¶</a></dt>
@@ -3877,7 +4039,7 @@ while –no-&lt;name&gt; will disable it</p></li>
 
 <dl class="function">
 <dt id="catalyst.contrib.utils.compression.unpack">
-<code class="sig-prename descclassname">catalyst.contrib.utils.compression.</code><code class="sig-name descname">unpack</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.contrib.utils.compression.unpack" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.contrib.utils.compression.</code><code class="sig-name descname">unpack</code><span class="sig-paren">(</span><em class="sig-param">bytes</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.contrib.utils.compression.unpack" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deserialize bytes into an object using pickle.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3891,7 +4053,7 @@ while –no-&lt;name&gt; will disable it</p></li>
 
 <dl class="function">
 <dt id="catalyst.contrib.utils.compression.unpack_if_needed">
-<code class="sig-prename descclassname">catalyst.contrib.utils.compression.</code><code class="sig-name descname">unpack_if_needed</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.contrib.utils.compression.unpack_if_needed" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.contrib.utils.compression.</code><code class="sig-name descname">unpack_if_needed</code><span class="sig-paren">(</span><em class="sig-param">bytes</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.contrib.utils.compression.unpack_if_needed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deserialize bytes into an object using pickle.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3905,7 +4067,7 @@ while –no-&lt;name&gt; will disable it</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.utils.confusion_matrix">
-<span id="confusion-matrix"></span><h3><a class="toc-backref" href="#id73">Confusion Matrix</a><a class="headerlink" href="#module-catalyst.contrib.utils.confusion_matrix" title="Permalink to this headline">¶</a></h3>
+<span id="confusion-matrix"></span><h3><a class="toc-backref" href="#id77">Confusion Matrix</a><a class="headerlink" href="#module-catalyst.contrib.utils.confusion_matrix" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.confusion_matrix.calculate_tp_fp_fn">
 <code class="sig-prename descclassname">catalyst.contrib.utils.confusion_matrix.</code><code class="sig-name descname">calculate_tp_fp_fn</code><span class="sig-paren">(</span><em class="sig-param">confusion_matrix: numpy.ndarray</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="../_modules/catalyst/contrib/utils/confusion_matrix.html#calculate_tp_fp_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.confusion_matrix.calculate_tp_fp_fn" title="Permalink to this definition">¶</a></dt>
@@ -3914,33 +4076,52 @@ while –no-&lt;name&gt; will disable it</p></li>
 
 <dl class="function">
 <dt id="catalyst.contrib.utils.confusion_matrix.calculate_confusion_matrix_from_arrays">
-<code class="sig-prename descclassname">catalyst.contrib.utils.confusion_matrix.</code><code class="sig-name descname">calculate_confusion_matrix_from_arrays</code><span class="sig-paren">(</span><em class="sig-param">ground_truth: numpy.ndarray</em>, <em class="sig-param">prediction: numpy.ndarray</em>, <em class="sig-param">num_classes: int</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="../_modules/catalyst/contrib/utils/confusion_matrix.html#calculate_confusion_matrix_from_arrays"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.confusion_matrix.calculate_confusion_matrix_from_arrays" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.contrib.utils.confusion_matrix.</code><code class="sig-name descname">calculate_confusion_matrix_from_arrays</code><span class="sig-paren">(</span><em class="sig-param">predictions: numpy.ndarray</em>, <em class="sig-param">labels: numpy.ndarray</em>, <em class="sig-param">num_classes: int</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="../_modules/catalyst/contrib/utils/confusion_matrix.html#calculate_confusion_matrix_from_arrays"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.confusion_matrix.calculate_confusion_matrix_from_arrays" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate confusion matrix for a given set of classes.
-If GT value is outside of the [0, num_classes) it is excluded.</p>
+If labels value is outside of the [0, num_classes) it is excluded.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ground_truth</strong> (<em>np.ndarray</em>) – </p></li>
-<li><p><strong>prediction</strong> (<em>np.ndarray</em>) – </p></li>
-<li><p><strong>num_classes</strong> (<em>int</em>) – </p></li>
+<li><p><strong>predictions</strong> (<em>np.ndarray</em>) – model predictions</p></li>
+<li><p><strong>labels</strong> (<em>np.ndarray</em>) – ground truth labels</p></li>
+<li><p><strong>num_classes</strong> (<em>int</em>) – number of classes</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>confusion matrix</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
 </dl>
-<p>&#64;TODO: Docs . Contribution is welcome</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.contrib.utils.confusion_matrix.calculate_confusion_matrix_from_tensors">
 <code class="sig-prename descclassname">catalyst.contrib.utils.confusion_matrix.</code><code class="sig-name descname">calculate_confusion_matrix_from_tensors</code><span class="sig-paren">(</span><em class="sig-param">y_pred_logits: torch.Tensor</em>, <em class="sig-param">y_true: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="../_modules/catalyst/contrib/utils/confusion_matrix.html#calculate_confusion_matrix_from_tensors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.confusion_matrix.calculate_confusion_matrix_from_tensors" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><p>Calculate confusion matrix from tensors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_pred_logits</strong> – model logits</p></li>
+<li><p><strong>y_true</strong> – true labels</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>confusion matrix</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
-<div class="section" id="id7">
-<h3><a class="toc-backref" href="#id74">Dataset</a><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id11">
+<h3><a class="toc-backref" href="#id78">Dataset</a><a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
 <span class="target" id="module-catalyst.contrib.utils.dataset"></span><dl class="function">
 <dt id="catalyst.contrib.utils.dataset.create_dataset">
-<code class="sig-prename descclassname">catalyst.contrib.utils.dataset.</code><code class="sig-name descname">create_dataset</code><span class="sig-paren">(</span><em class="sig-param">dirs: str, extension: str = None, process_fn: Callable[[str], object] = None, recursive: bool = False</em><span class="sig-paren">)</span> &#x2192; Dict[str, object]<a class="reference internal" href="../_modules/catalyst/contrib/utils/dataset.html#create_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.dataset.create_dataset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.contrib.utils.dataset.</code><code class="sig-name descname">create_dataset</code><span class="sig-paren">(</span><em class="sig-param">dirs: str</em>, <em class="sig-param">extension: str = None</em>, <em class="sig-param">process_fn: Callable[str</em>, <em class="sig-param">object] = None</em>, <em class="sig-param">recursive: bool = False</em><span class="sig-paren">)</span> &#x2192; Dict[str, object]<a class="reference internal" href="../_modules/catalyst/contrib/utils/dataset.html#create_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.dataset.create_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create dataset (dict like <cite>{key: [values]}</cite>) from vctk-like dataset:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">/</span>
     <span class="n">cat</span><span class="o">/</span>
@@ -4038,14 +4219,14 @@ using this as the class labels.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.utils.misc">
-<span id="misc"></span><h3><a class="toc-backref" href="#id75">Misc</a><a class="headerlink" href="#module-catalyst.contrib.utils.misc" title="Permalink to this headline">¶</a></h3>
+<span id="misc"></span><h3><a class="toc-backref" href="#id79">Misc</a><a class="headerlink" href="#module-catalyst.contrib.utils.misc" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.misc.args_are_not_none">
 <code class="sig-prename descclassname">catalyst.contrib.utils.misc.</code><code class="sig-name descname">args_are_not_none</code><span class="sig-paren">(</span><em class="sig-param">*args: Optional[Any]</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/contrib/utils/misc.html#args_are_not_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.misc.args_are_not_none" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check that all arguments are not <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>*args</strong> (<em>Any</em>) – values</p>
+<dd class="field-odd"><p><strong>*args</strong> (<em>Any</em>) – values  # noqa: RST213</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>True if all value were not None, False otherwise</p>
@@ -4061,8 +4242,11 @@ using this as the class labels.</p>
 <code class="sig-prename descclassname">catalyst.contrib.utils.misc.</code><code class="sig-name descname">make_tuple</code><span class="sig-paren">(</span><em class="sig-param">tuple_like</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/utils/misc.html#make_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.misc.make_tuple" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a tuple if given <code class="docutils literal notranslate"><span class="pre">tuple_like</span></code> value isn’t list or tuple.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>tuple or list</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tuple_like</strong> – tuple like object - list or tuple</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple or list</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4099,13 +4283,15 @@ using this as the class labels.</p>
 <li><p><strong>value</strong> – query element</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>indices of the all elements equal x0</p>
+</dd>
 </dl>
-<p>Returns: indices of the all elements equal x0</p>
 </dd></dl>
 
 </div>
 <div class="section" id="module-catalyst.contrib.utils.pandas">
-<span id="pandas"></span><h3><a class="toc-backref" href="#id76">Pandas</a><a class="headerlink" href="#module-catalyst.contrib.utils.pandas" title="Permalink to this headline">¶</a></h3>
+<span id="pandas"></span><h3><a class="toc-backref" href="#id80">Pandas</a><a class="headerlink" href="#module-catalyst.contrib.utils.pandas" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.pandas.dataframe_to_list">
 <code class="sig-prename descclassname">catalyst.contrib.utils.pandas.</code><code class="sig-name descname">dataframe_to_list</code><span class="sig-paren">(</span><em class="sig-param">dataframe: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; List[dict]<a class="reference internal" href="../_modules/catalyst/contrib/utils/pandas.html#dataframe_to_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.pandas.dataframe_to_list" title="Permalink to this definition">¶</a></dt>
@@ -4118,7 +4304,7 @@ using this as the class labels.</p>
 <dd class="field-even"><p>list of rows</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(List[dict])</p>
+<dd class="field-odd"><p>List[dict]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4182,7 +4368,7 @@ and <code class="docutils literal notranslate"><span class="pre">valid_folds</sp
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(tuple)</p>
+<dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4240,7 +4426,7 @@ and <code class="docutils literal notranslate"><span class="pre">valid_folds</sp
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataframe</strong> – a dataset</p></li>
 <li><p><strong>class_column</strong> – which column to use for split</p></li>
-<li><p><strong>random_state</strong> – seed for random shuffle</p></li>
+<li><p><strong>random_state</strong> (<em>int</em>) – seed for random shuffle</p></li>
 <li><p><strong>n_folds</strong> – number of result folds</p></li>
 </ul>
 </dd>
@@ -4338,7 +4524,7 @@ using this as the class labels.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(tuple)</p>
+<dd class="field-odd"><p>tuple</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4464,7 +4650,7 @@ list with valid data
 and list with infer data)</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Tuple[pd.DataFrame, List[dict], List[dict], List[dict]])</p>
+<dd class="field-odd"><p>Tuple[pd.DataFrame, List[dict], List[dict], List[dict]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4479,9 +4665,8 @@ and list with infer data)</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataframe</strong> – a dataset</p></li>
 <li><p><strong>class_column</strong> – which column to use for split</p></li>
-<li><p><strong>random_state</strong> – seed for random shuffle</p></li>
-<li><p><strong>how</strong> – strategy to sample
-must be one on [“downsampling”, “upsampling”]</p></li>
+<li><p><strong>random_state</strong> (<em>int</em>) – seed for random shuffle</p></li>
+<li><p><strong>how</strong> – strategy to sample, must be one on [“downsampling”, “upsampling”]</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -4490,12 +4675,15 @@ must be one on [“downsampling”, “upsampling”]</p></li>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – if <cite>how</cite> is not in [“upsampling”, “downsampling”, int]</p>
+</dd>
 </dl>
 </dd></dl>
 
 </div>
 <div class="section" id="module-catalyst.contrib.utils.parallel">
-<span id="parallel"></span><h3><a class="toc-backref" href="#id77">Parallel</a><a class="headerlink" href="#module-catalyst.contrib.utils.parallel" title="Permalink to this headline">¶</a></h3>
+<span id="parallel"></span><h3><a class="toc-backref" href="#id81">Parallel</a><a class="headerlink" href="#module-catalyst.contrib.utils.parallel" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.parallel.parallel_imap">
 <code class="sig-prename descclassname">catalyst.contrib.utils.parallel.</code><code class="sig-name descname">parallel_imap</code><span class="sig-paren">(</span><em class="sig-param">func, args, pool: Union[multiprocessing.pool.Pool, catalyst.contrib.utils.parallel.DumbPool]</em><span class="sig-paren">)</span> &#x2192; List[T]<a class="reference internal" href="../_modules/catalyst/contrib/utils/parallel.html#parallel_imap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.parallel.parallel_imap" title="Permalink to this definition">¶</a></dt>
@@ -4516,7 +4704,7 @@ must be one on [“downsampling”, “upsampling”]</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.utils.plotly">
-<span id="plotly"></span><h3><a class="toc-backref" href="#id78">Plotly</a><a class="headerlink" href="#module-catalyst.contrib.utils.plotly" title="Permalink to this headline">¶</a></h3>
+<span id="plotly"></span><h3><a class="toc-backref" href="#id82">Plotly</a><a class="headerlink" href="#module-catalyst.contrib.utils.plotly" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.plotly.plot_tensorboard_log">
 <code class="sig-prename descclassname">catalyst.contrib.utils.plotly.</code><code class="sig-name descname">plot_tensorboard_log</code><span class="sig-paren">(</span><em class="sig-param">logdir: Union[str, pathlib.Path], step: Optional[str] = 'batch', metrics: Optional[List[str]] = None, height: Optional[int] = None, width: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/contrib/utils/plotly.html#plot_tensorboard_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.plotly.plot_tensorboard_log" title="Permalink to this definition">¶</a></dt>
@@ -4548,7 +4736,7 @@ that was specified during training</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.utils.serialization">
-<span id="serialization"></span><h3><a class="toc-backref" href="#id79">Serialization</a><a class="headerlink" href="#module-catalyst.contrib.utils.serialization" title="Permalink to this headline">¶</a></h3>
+<span id="serialization"></span><h3><a class="toc-backref" href="#id83">Serialization</a><a class="headerlink" href="#module-catalyst.contrib.utils.serialization" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.serialization.serialize">
 <code class="sig-prename descclassname">catalyst.contrib.utils.serialization.</code><code class="sig-name descname">serialize</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.contrib.utils.serialization.serialize" title="Permalink to this definition">¶</a></dt>
@@ -4565,7 +4753,7 @@ that was specified during training</p></li>
 
 <dl class="function">
 <dt id="catalyst.contrib.utils.serialization.deserialize">
-<code class="sig-prename descclassname">catalyst.contrib.utils.serialization.</code><code class="sig-name descname">deserialize</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.contrib.utils.serialization.deserialize" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.contrib.utils.serialization.</code><code class="sig-name descname">deserialize</code><span class="sig-paren">(</span><em class="sig-param">bytes</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.contrib.utils.serialization.deserialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Deserialize bytes into an object using pickle.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -4579,7 +4767,7 @@ that was specified during training</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.utils.visualization">
-<span id="visualization"></span><h3><a class="toc-backref" href="#id80">Visualization</a><a class="headerlink" href="#module-catalyst.contrib.utils.visualization" title="Permalink to this headline">¶</a></h3>
+<span id="visualization"></span><h3><a class="toc-backref" href="#id84">Visualization</a><a class="headerlink" href="#module-catalyst.contrib.utils.visualization" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.visualization.plot_confusion_matrix">
 <code class="sig-prename descclassname">catalyst.contrib.utils.visualization.</code><code class="sig-name descname">plot_confusion_matrix</code><span class="sig-paren">(</span><em class="sig-param">cm</em>, <em class="sig-param">class_names=None</em>, <em class="sig-param">normalize=False</em>, <em class="sig-param">title='confusion matrix'</em>, <em class="sig-param">fname=None</em>, <em class="sig-param">show=True</em>, <em class="sig-param">figsize=12</em>, <em class="sig-param">fontsize=32</em>, <em class="sig-param">colormap='Blues'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/utils/visualization.html#plot_confusion_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.visualization.plot_confusion_matrix" title="Permalink to this definition">¶</a></dt>
@@ -4596,9 +4784,9 @@ Normalization can be applied by setting <cite>normalize=True</cite>.</p>
 </div>
 </div>
 <div class="section" id="computer-vision-utilities">
-<h2><a class="toc-backref" href="#id81">Computer Vision utilities</a><a class="headerlink" href="#computer-vision-utilities" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id85">Computer Vision utilities</a><a class="headerlink" href="#computer-vision-utilities" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-catalyst.contrib.utils.cv.image">
-<span id="image"></span><h3><a class="toc-backref" href="#id82">Image</a><a class="headerlink" href="#module-catalyst.contrib.utils.cv.image" title="Permalink to this headline">¶</a></h3>
+<span id="image"></span><h3><a class="toc-backref" href="#id86">Image</a><a class="headerlink" href="#module-catalyst.contrib.utils.cv.image" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.cv.image.has_image_extension">
 <code class="sig-prename descclassname">catalyst.contrib.utils.cv.image.</code><code class="sig-name descname">has_image_extension</code><span class="sig-paren">(</span><em class="sig-param">uri</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/contrib/utils/cv/image.html#has_image_extension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.cv.image.has_image_extension" title="Permalink to this definition">¶</a></dt>
@@ -4626,10 +4814,13 @@ Normalization can be applied by setting <cite>normalize=True</cite>.</p>
 <li><p><strong>uri</strong> (<em>str</em><em>, </em><em>pathlib.Path</em><em>, </em><em>bytes</em><em>, </em><em>file</em>) – the resource to load the image
 from, e.g. a filename, <code class="docutils literal notranslate"><span class="pre">pathlib.Path</span></code>, http address or file object,
 see <code class="docutils literal notranslate"><span class="pre">imageio.imread</span></code> docs for more info</p></li>
-<li><p><strong>grayscale</strong> (<em>bool</em>) – </p></li>
-<li><p><strong>expand_dims</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>grayscale</strong> (<em>bool</em>) – if True, make all images grayscale</p></li>
+<li><p><strong>expand_dims</strong> (<em>bool</em>) – if True, append channel axis to grayscale images
+rootpath (Union[str, pathlib.Path]): path to the resource with image
+(allows to use relative path)</p></li>
 <li><p><strong>rootpath</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>pathlib.Path</em><em>]</em>) – path to the resource with image
 (allows to use relative path)</p></li>
+<li><p><strong>**kwargs</strong> – extra params for image read</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -4651,6 +4842,9 @@ Alias for <code class="docutils literal notranslate"><span class="pre">imageio.i
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>**kwargs</strong> – parameters for <code class="docutils literal notranslate"><span class="pre">imageio.imwrite</span></code></p>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>image save result</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -4663,6 +4857,9 @@ Alias for <code class="docutils literal notranslate"><span class="pre">imageio.i
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>**kwargs</strong> – parameters for <code class="docutils literal notranslate"><span class="pre">imageio.imsave</span></code></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>image save result</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4703,7 +4900,10 @@ see <code class="docutils literal notranslate"><span class="pre">imageio.mimread
 image values outside the interval are clipped to the interval edges</p></li>
 <li><p><strong>expand_dims</strong> (<em>bool</em>) – if True, append channel axis to grayscale images
 rootpath (Union[str, pathlib.Path]): path to the resource with image
-(allows to use relative path),</p></li>
+(allows to use relative path)</p></li>
+<li><p><strong>rootpath</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>pathlib.Path</em><em>]</em>) – path to the resource with image
+(allows to use relative path)</p></li>
+<li><p><strong>**kwargs</strong> – extra params for image read</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -4723,7 +4923,7 @@ rootpath (Union[str, pathlib.Path]): path to the resource with image
 
 </div>
 <div class="section" id="module-catalyst.contrib.utils.cv.tensor">
-<span id="tensor"></span><h3><a class="toc-backref" href="#id83">Tensor</a><a class="headerlink" href="#module-catalyst.contrib.utils.cv.tensor" title="Permalink to this headline">¶</a></h3>
+<span id="tensor"></span><h3><a class="toc-backref" href="#id87">Tensor</a><a class="headerlink" href="#module-catalyst.contrib.utils.cv.tensor" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.cv.tensor.tensor_from_rgb_image">
 <code class="sig-prename descclassname">catalyst.contrib.utils.cv.tensor.</code><code class="sig-name descname">tensor_from_rgb_image</code><span class="sig-paren">(</span><em class="sig-param">image: numpy.ndarray</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/utils/cv/tensor.html#tensor_from_rgb_image"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.cv.tensor.tensor_from_rgb_image" title="Permalink to this definition">¶</a></dt>
@@ -4756,9 +4956,9 @@ when dtype is <cite>np.uint8</cite>.</p>
 </div>
 </div>
 <div class="section" id="natural-language-processing-utilities">
-<h2><a class="toc-backref" href="#id84">Natural Language Processing utilities</a><a class="headerlink" href="#natural-language-processing-utilities" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id88">Natural Language Processing utilities</a><a class="headerlink" href="#natural-language-processing-utilities" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-catalyst.contrib.utils.nlp.text">
-<span id="text"></span><h3><a class="toc-backref" href="#id85">Text</a><a class="headerlink" href="#module-catalyst.contrib.utils.nlp.text" title="Permalink to this headline">¶</a></h3>
+<span id="text"></span><h3><a class="toc-backref" href="#id89">Text</a><a class="headerlink" href="#module-catalyst.contrib.utils.nlp.text" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.nlp.text.tokenize_text">
 <code class="sig-prename descclassname">catalyst.contrib.utils.nlp.text.</code><code class="sig-name descname">tokenize_text</code><span class="sig-paren">(</span><em class="sig-param">text: str</em>, <em class="sig-param">tokenizer</em>, <em class="sig-param">max_length: int</em>, <em class="sig-param">strip: bool = True</em>, <em class="sig-param">lowercase: bool = True</em>, <em class="sig-param">remove_punctuation: bool = True</em><span class="sig-paren">)</span> &#x2192; Dict[str, numpy.array]<a class="reference internal" href="../_modules/catalyst/contrib/utils/nlp/text.html#tokenize_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.nlp.text.tokenize_text" title="Permalink to this definition">¶</a></dt>
@@ -4774,6 +4974,9 @@ when dtype is <cite>np.uint8</cite>.</p>
 <li><p><strong>remove_punctuation</strong> (<em>bool</em>) – if true
 removes <code class="docutils literal notranslate"><span class="pre">string.punctuation</span></code> from text before tokenizing</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>batch with tokenized text</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4830,7 +5033,7 @@ removes <code class="docutils literal notranslate"><span class="pre">string.punc
 <li><a class="reference internal" href="#module-catalyst.contrib.data.transforms">Transforms</a></li>
 <li><a class="reference internal" href="#computer-vision">Computer Vision</a><ul>
 <li><a class="reference internal" href="#module-catalyst.contrib.data.cv.mixins.blur">Mixins</a></li>
-<li><a class="reference internal" href="#id1">Transforms</a></li>
+<li><a class="reference internal" href="#id2">Transforms</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.data.cv.reader">Reader</a></li>
 </ul>
 </li>
@@ -4901,7 +5104,7 @@ removes <code class="docutils literal notranslate"><span class="pre">string.punc
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id6">Models</a><ul>
+<li><a class="reference internal" href="#id10">Models</a><ul>
 <li><a class="reference internal" href="#segmentation">Segmentation</a><ul>
 <li><a class="reference internal" href="#module-catalyst.contrib.models.cv.segmentation.unet">Unet</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.models.cv.segmentation.linknet">Linknet</a></li>
@@ -4920,7 +5123,7 @@ removes <code class="docutils literal notranslate"><span class="pre">string.punc
 <li><a class="reference internal" href="#module-catalyst.contrib.utils.argparse">Argparse</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.utils.compression">Compression</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.utils.confusion_matrix">Confusion Matrix</a></li>
-<li><a class="reference internal" href="#id7">Dataset</a></li>
+<li><a class="reference internal" href="#id11">Dataset</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.utils.misc">Misc</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.utils.pandas">Pandas</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.utils.parallel">Parallel</a></li>

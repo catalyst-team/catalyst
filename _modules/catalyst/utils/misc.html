@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.misc &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.utils.misc &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../_static/js/google.analytics.js"></script>
+  <script src="../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -280,6 +280,9 @@
 <span class="sd">        recursive_args: list of arguments to pass to the ``method``</span>
 <span class="sd">        recursive_kwargs: list of key-arguments to pass to the ``method``</span>
 <span class="sd">        **kwargs: Arbitrary keyword arguments</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        result of `method` call</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">object_or_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">result</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">object_or_dict</span><span class="p">)()</span>
@@ -350,6 +353,9 @@
 <span class="sd">    Args:</span>
 <span class="sd">        name (str): metric name</span>
 <span class="sd">        value (float): value of metric</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: formatted metric</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mf">1e-4</span><span class="p">:</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">:</span><span class="s2">1.3e</span><span class="si">}</span><span class="s2">&quot;</span>

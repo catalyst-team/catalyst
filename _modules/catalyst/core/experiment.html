@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.core.experiment &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.core.experiment &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../_static/js/google.analytics.js"></script>
+  <script src="../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -322,6 +322,22 @@
 
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">hparams</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns hyper-parameters</span>
+
+<span class="sd">        Example::</span>
+<span class="sd">            &gt;&gt;&gt; experiment.hparams</span>
+<span class="sd">            OrderedDict([(&#39;optimizer&#39;, &#39;Adam&#39;),</span>
+<span class="sd">             (&#39;lr&#39;, 0.02),</span>
+<span class="sd">             (&#39;betas&#39;, (0.9, 0.999)),</span>
+<span class="sd">             (&#39;eps&#39;, 1e-08),</span>
+<span class="sd">             (&#39;weight_decay&#39;, 0),</span>
+<span class="sd">             (&#39;amsgrad&#39;, False),</span>
+<span class="sd">             (&#39;train_batch_size&#39;, 32)])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">stages</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Experiment&#39;s stage names.</span>
 
@@ -379,7 +395,7 @@
 <span class="sd">            stage (str): stage name of interest</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
-<span class="sd">        Returns:</span>
+<span class="sd">        Returns:  # noqa: DAR202</span>
 <span class="sd">            dict: parameters for a given stage.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
@@ -402,7 +418,7 @@
 <span class="sd">            stage (str): stage name of interest</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
-<span class="sd">        Returns:</span>
+<span class="sd">        Returns:  # noqa: DAR202</span>
 <span class="sd">            Model: model for a given stage.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
@@ -421,7 +437,7 @@
 <span class="sd">            stage (str): stage name of interest</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
-<span class="sd">        Returns:</span>
+<span class="sd">        Returns:  # noqa: DAR202</span>
 <span class="sd">            Criterion: criterion for a given stage.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
@@ -440,7 +456,7 @@
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 <span class="sd">            model (Model): model to optimize with stage optimizer</span>
 
-<span class="sd">        Returns:</span>
+<span class="sd">        Returns:  # noqa: DAR202</span>
 <span class="sd">            Optimizer: optimizer for a given stage and model.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
@@ -458,7 +474,7 @@
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 <span class="sd">            optimizer (Optimizer): optimizer to schedule with stage scheduler</span>
 
-<span class="sd">        Returns:</span>
+<span class="sd">        Returns:  # noqa: DAR202</span>
 <span class="sd">            Scheduler: scheduler for a given stage and optimizer.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
@@ -496,6 +512,8 @@
 <div class="viewcode-block" id="IExperiment.get_transforms"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment.IExperiment.get_transforms">[docs]</a>    <span class="k">def</span> <span class="nf">get_transforms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the data transforms for a given stage and dataset.</span>
 
+<span class="sd">        # noqa: DAR401, W505</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): stage name of interest,</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
@@ -506,7 +524,7 @@
 <span class="sd">            For datasets/loaders nameing please follow</span>
 <span class="sd">            :py:mod:`catalyst.core.runner` documentation.</span>
 
-<span class="sd">        Returns:</span>
+<span class="sd">        Returns:  # noqa: DAR202</span>
 <span class="sd">            Data transformations to use for specified dataset.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -515,7 +533,7 @@
 <div class="viewcode-block" id="IExperiment.get_datasets"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.experiment.IExperiment.get_datasets">[docs]</a>    <span class="k">def</span> <span class="nf">get_datasets</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Dataset]&quot;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Returns the datasets for a given stage and epoch.</span>
+        <span class="sd">&quot;&quot;&quot;Returns the datasets for a given stage and epoch.  # noqa: DAR401</span>
 
 <span class="sd">        .. note::</span>
 <span class="sd">            For Deep Learning cases you have the same dataset</span>
@@ -531,7 +549,7 @@
 <span class="sd">            **kwargs (dict): additional parameters to use during</span>
 <span class="sd">                dataset creation</span>
 
-<span class="sd">        Returns:</span>
+<span class="sd">        Returns:  # noqa: DAR202</span>
 <span class="sd">            OrderedDict[str, Dataset]: Ordered dictionary</span>
 <span class="sd">                with datasets for current stage and epoch.</span>
 
@@ -560,7 +578,7 @@
     <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Returns the loaders for a given stage.</span>
+        <span class="sd">&quot;&quot;&quot;Returns the loaders for a given stage.  # noqa: DAR401</span>
 
 <span class="sd">        .. note::</span>
 <span class="sd">            Wrapper for</span>
@@ -572,10 +590,8 @@
 <span class="sd">            stage (str): stage name of interest,</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 <span class="sd">            epoch (int): epoch index</span>
-<span class="sd">            **kwargs (dict): additional parameters to use during</span>
-<span class="sd">                dataset creation</span>
 
-<span class="sd">        Returns:</span>
+<span class="sd">        Returns:  # noqa: DAR202</span>
 <span class="sd">            OrderedDict[str, DataLoader]: Ordered dictionary</span>
 <span class="sd">                with loaders for current stage and epoch.</span>
 
@@ -600,8 +616,8 @@
 <span class="sd">            stage (str): stage name of interest</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            OrderedDict[str, Callback]: Ordered dictionary</span>
+<span class="sd">        Returns:  # noqa: DAR202</span>
+<span class="sd">            OrderedDict[str, Callback]: Ordered dictionary  # noqa: DAR202</span>
 <span class="sd">            with callbacks for current stage.</span>
 
 <span class="sd">        .. note::</span>
@@ -610,6 +626,14 @@
 <span class="sd">                - :py:mod:`catalyst.core.experiment.IExperiment`</span>
 <span class="sd">                - :py:mod:`catalyst.core.runner.IRunner`</span>
 <span class="sd">                - :py:mod:`catalyst.core.callback.Callback`</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            stage (str): stage name of interest,</span>
+<span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            OrderedDict[str, Callback]: Ordered dictionary</span>
+<span class="sd">                with callbacks for current stage.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div></div>
 

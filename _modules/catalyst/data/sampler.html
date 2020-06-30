@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.data.sampler &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.data.sampler &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../_static/js/google.analytics.js"></script>
+  <script src="../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -324,9 +324,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lbl2idx</span><span class="p">):</span>
-            <span class="n">replace_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples_per_class</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lbl2idx</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+            <span class="n">replace_flag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples_per_class</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lbl2idx</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
             <span class="n">indices</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">lbl2idx</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples_per_class</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace_</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">lbl2idx</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples_per_class</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace_flag</span>
             <span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span>
         <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
@@ -369,9 +369,12 @@
 <span class="sd">    - If C % P == 1 then one of the classes should be dropped</span>
 <span class="sd">    otherwise statement (1) will not be met.</span>
 
-<span class="sd">    This type of sampling can be found in the classical paper of Person Re-Id:</span>
-<span class="sd">    &quot;In Defense of the Triplet Loss for Person Re-Identification&quot;,</span>
-<span class="sd">    where P equals 32 and K equals 4.</span>
+<span class="sd">    This type of sampling can be found in the classical paper of Person Re-Id,</span>
+<span class="sd">    where P equals 32 and K equals 4:</span>
+<span class="sd">    `In Defense of the Triplet Loss for Person Re-Identification`_.</span>
+
+<span class="sd">    .. _In Defense of the Triplet Loss for Person Re-Identification:</span>
+<span class="sd">        https://arxiv.org/abs/1703.07737</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="BalanceBatchSampler.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.BalanceBatchSampler.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">p</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
@@ -407,31 +410,35 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">batch_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns: this value should be used in DataLoader as batch size</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            this value should be used in DataLoader as batch size</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">batches_in_epoch</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns: number of batches in an epoch</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            number of batches in an epoch</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_num_epoch_classes</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_p</span><span class="p">))</span>
 
 <div class="viewcode-block" id="BalanceBatchSampler.__len__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.BalanceBatchSampler.__len__">[docs]</a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns: number of samples in an epoch</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            number of samples in an epoch</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_epoch_classes</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_k</span></div>
 
 <div class="viewcode-block" id="BalanceBatchSampler.__iter__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.BalanceBatchSampler.__iter__">[docs]</a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns: indeces for sampling dataset elems during an epoch</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            indeces for sampling dataset elems during an epoch</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">inds</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_classes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_epoch_classes</span><span class="p">):</span>
-            <span class="n">all_cls_inds</span> <span class="o">=</span> <span class="n">find_value_ids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">cls_id</span> <span class="ow">in</span> <span class="n">sample</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_classes</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_epoch_classes</span><span class="p">):</span>
+            <span class="n">all_cls_inds</span> <span class="o">=</span> <span class="n">find_value_ids</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_labels</span><span class="p">,</span> <span class="n">cls_id</span><span class="p">)</span>
 
             <span class="c1"># we&#39;ve checked in __init__ that this value must be &gt; 1</span>
             <span class="n">num_samples_exists</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_cls_inds</span><span class="p">)</span>
@@ -454,8 +461,7 @@
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; MiniEpochSampler(len(dataset), mini_epoch_len=100)</span>
-<span class="sd">        &gt;&gt;&gt; MiniEpochSampler(len(dataset), mini_epoch_len=100,</span>
-<span class="sd">        &gt;&gt;&gt;     drop_last=True)</span>
+<span class="sd">        &gt;&gt;&gt; MiniEpochSampler(len(dataset), mini_epoch_len=100, drop_last=True)</span>
 <span class="sd">        &gt;&gt;&gt; MiniEpochSampler(len(dataset), mini_epoch_len=100,</span>
 <span class="sd">        &gt;&gt;&gt;     shuffle=&quot;per_epoch&quot;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -471,14 +477,14 @@
 <span class="sd">        Args:</span>
 <span class="sd">            data_len (int): Size of the dataset</span>
 <span class="sd">            mini_epoch_len (int): Num samples from the dataset used in one</span>
-<span class="sd">                mini epoch.</span>
+<span class="sd">              mini epoch.</span>
 <span class="sd">            drop_last (bool): If ``True``, sampler will drop the last batches</span>
-<span class="sd">                if its size would be less than ``batches_per_epoch``</span>
+<span class="sd">              if its size would be less than ``batches_per_epoch``</span>
 <span class="sd">            shuffle (str): one of  ``&quot;always&quot;``, ``&quot;real_epoch&quot;``, or `None``.</span>
-<span class="sd">                The sampler will shuffle indices</span>
-<span class="sd">                &gt; &quot;per_mini_epoch&quot; - every mini epoch (every ``__iter__`` call)</span>
-<span class="sd">                &gt; &quot;per_epoch&quot; -- every real epoch</span>
-<span class="sd">                &gt; None -- don&#39;t shuffle</span>
+<span class="sd">              The sampler will shuffle indices</span>
+<span class="sd">              &gt; &quot;per_mini_epoch&quot; - every mini epoch (every ``__iter__`` call)</span>
+<span class="sd">              &gt; &quot;per_epoch&quot; -- every real epoch</span>
+<span class="sd">              &gt; None -- don&#39;t shuffle</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 
@@ -502,8 +508,8 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">shuffle</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">shuffle</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;per_mini_epoch&quot;</span><span class="p">,</span> <span class="s2">&quot;per_epoch&quot;</span><span class="p">]):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Shuffle must be one of [&#39;per_mini_epoch&#39;, &#39;per_epoch&#39;]. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="n">shuffle</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;Shuffle must be one of [&#39;per_mini_epoch&#39;, &#39;per_epoch&#39;]. &quot;</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="n">shuffle</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shuffle_type</span> <span class="o">=</span> <span class="n">shuffle</span></div>
 
@@ -549,8 +555,7 @@
 <span class="sd">    A dynamic batch length data sampler.</span>
 <span class="sd">    Should be used with `catalyst.utils.trim_tensors`.</span>
 
-<span class="sd">    Adapted from &quot;Dynamic minibatch trimming to improve BERT training speed&quot;</span>
-<span class="sd">    https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779</span>
+<span class="sd">    Adapted from `Dynamic minibatch trimming to improve BERT training speed`_.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        sampler (torch.utils.data.Sampler): Base sampler.</span>
@@ -578,6 +583,9 @@
 <span class="sd">        &gt;&gt;&gt;     tensors = utils.trim_tensors(batch)</span>
 <span class="sd">        &gt;&gt;&gt;     b_input_ids, b_input_mask, b_segment_ids, b_labels = \</span>
 <span class="sd">        &gt;&gt;&gt;         tuple(t.to(device) for t in tensors)</span>
+
+<span class="sd">    .. _`Dynamic minibatch trimming to improve BERT training speed`:</span>
+<span class="sd">        https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="DynamicLenBatchSampler.__iter__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.DynamicLenBatchSampler.__iter__">[docs]</a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -602,10 +610,10 @@
                 <span class="n">buckets</span><span class="p">[</span><span class="n">count_zeros</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">batch</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="n">leftover</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx</span> <span class="k">for</span> <span class="n">bucket</span> <span class="ow">in</span> <span class="n">buckets</span> <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">bucket</span><span class="p">]</span>
+        <span class="n">leftover</span> <span class="o">=</span> <span class="p">[</span><span class="n">idx2</span> <span class="k">for</span> <span class="n">bucket</span> <span class="ow">in</span> <span class="n">buckets</span> <span class="k">for</span> <span class="n">idx2</span> <span class="ow">in</span> <span class="n">bucket</span><span class="p">]</span>
 
-        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">leftover</span><span class="p">:</span>
-            <span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx3</span> <span class="ow">in</span> <span class="n">leftover</span><span class="p">:</span>
+            <span class="n">batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">idx3</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">:</span>
                 <span class="n">yielded</span> <span class="o">+=</span> <span class="mi">1</span>
                 <span class="k">yield</span> <span class="n">batch</span>
@@ -617,7 +625,7 @@
 
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="n">yielded</span><span class="p">,</span> <span class="p">(</span>
             <span class="s2">&quot;produced an inccorect number of batches. &quot;</span>
-            <span class="s2">&quot;expected </span><span class="si">%i</span><span class="s2">, but yielded </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">yielded</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;expected </span><span class="si">%i</span><span class="s2">, but yielded </span><span class="si">%i</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="n">yielded</span><span class="p">)</span>
         <span class="p">)</span></div></div>
 
 
@@ -627,7 +635,7 @@
 <span class="sd">    Allows you to use any sampler in distributed mode.</span>
 
 <span class="sd">    It is especially useful in conjunction with</span>
-<span class="sd">    :class:`torch.nn.parallel.DistributedDataParallel`. In such case, each</span>
+<span class="sd">    `torch.nn.parallel.DistributedDataParallel`. In such case, each</span>
 <span class="sd">    process can pass a DistributedSamplerWrapper instance as a DataLoader</span>
 <span class="sd">    sampler, and load a subset of subsampled data of the original dataset</span>
 <span class="sd">    that is exclusive to it.</span>
@@ -644,14 +652,15 @@
         <span class="n">shuffle</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            sampler: Sampler used for subsampling</span>
 <span class="sd">            num_replicas (int, optional): Number of processes participating in</span>
-<span class="sd">                distributed training</span>
+<span class="sd">              distributed training</span>
 <span class="sd">            rank (int, optional): Rank of the current process</span>
-<span class="sd">                within ``num_replicas``</span>
+<span class="sd">              within ``num_replicas``</span>
 <span class="sd">            shuffle (bool, optional): If true (default),</span>
-<span class="sd">                sampler will shuffle the indices</span>
+<span class="sd">              sampler will shuffle the indices</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">DistributedSamplerWrapper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">DatasetFromSampler</span><span class="p">(</span><span class="n">sampler</span><span class="p">),</span>

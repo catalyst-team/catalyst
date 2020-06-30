@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.models.cv.segmentation.psp &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.contrib.models.cv.segmentation.psp &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -260,10 +260,16 @@
   <h1>Source code for catalyst.contrib.models.cv.segmentation.psp</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
 
-<span class="kn">from</span> <span class="nn">.core</span> <span class="kn">import</span> <span class="n">ResnetUnetSpec</span><span class="p">,</span> <span class="n">UnetSpec</span>
-<span class="kn">from</span> <span class="nn">.decoder</span> <span class="kn">import</span> <span class="n">PSPDecoder</span>
-<span class="kn">from</span> <span class="nn">.encoder</span> <span class="kn">import</span> <span class="n">ResnetEncoder</span><span class="p">,</span> <span class="n">UnetEncoder</span>
-<span class="kn">from</span> <span class="nn">.head</span> <span class="kn">import</span> <span class="n">UnetHead</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.models.cv.segmentation.core</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ResnetUnetSpec</span><span class="p">,</span>
+    <span class="n">UnetSpec</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.models.cv.segmentation.decoder</span> <span class="kn">import</span> <span class="n">PSPDecoder</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.models.cv.segmentation.encoder</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ResnetEncoder</span><span class="p">,</span>
+    <span class="n">UnetEncoder</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.models.cv.segmentation.head</span> <span class="kn">import</span> <span class="n">UnetHead</span>
 
 
 <div class="viewcode-block" id="PSPnet"><a class="viewcode-back" href="../../../../../../api/contrib.html#catalyst.contrib.models.cv.segmentation.psp.PSPnet">[docs]</a><span class="k">class</span> <span class="nc">PSPnet</span><span class="p">(</span><span class="n">UnetSpec</span><span class="p">):</span>

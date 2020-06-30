@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.nn.criterion.triplet &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.contrib.nn.criterion.triplet &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -261,14 +261,13 @@
 <span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 
-<span class="kn">from</span> <span class="nn">.functional</span> <span class="kn">import</span> <span class="n">triplet_loss</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.nn.criterion.functional</span> <span class="kn">import</span> <span class="n">triplet_loss</span>
 
 
 <div class="viewcode-block" id="TripletLoss"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletLoss">[docs]</a><span class="k">class</span> <span class="nc">TripletLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Triplet loss with hard positive/negative mining.</span>
 
-<span class="sd">    Reference:</span>
-<span class="sd">        Code imported from https://github.com/NegatioN/OnlineMiningTripletLoss</span>
+<span class="sd">    Adapted from: https://github.com/NegatioN/OnlineMiningTripletLoss</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="TripletLoss.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.3</span><span class="p">):</span>
@@ -329,7 +328,7 @@
 <span class="sd">            labels: tf.int32 `Tensor` with shape [batch_size]</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            mask: tf.bool `Tensor` with shape [batch_size, batch_size]</span>
+<span class="sd">            torch.Tensor: mask with shape [batch_size, batch_size]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">indices_equal</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
 
@@ -354,7 +353,7 @@
 <span class="sd">            labels: tf.int32 `Tensor` with shape [batch_size]</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            mask: tf.bool `Tensor` with shape [batch_size, batch_size]</span>
+<span class="sd">            torch.Tensor: mask with shape [batch_size, batch_size]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Check if labels[i] != labels[k]</span>
         <span class="c1"># Uses broadcasting where the 1st argument</span>
@@ -378,7 +377,7 @@
 <span class="sd">                     pairwise euclidean distance matrix.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            triplet_loss: scalar tensor containing the triplet loss</span>
+<span class="sd">            torch.Tensor: scalar tensor containing the triplet loss</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Get the pairwise distance matrix</span>
         <span class="n">pairwise_dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pairwise_distances</span><span class="p">(</span><span class="n">embeddings</span><span class="p">,</span> <span class="n">squared</span><span class="o">=</span><span class="n">squared</span><span class="p">)</span>
@@ -417,9 +416,9 @@
         <span class="c1"># Combine biggest d(a, p) and smallest d(a, n) into final triplet loss</span>
         <span class="n">tl</span> <span class="o">=</span> <span class="n">hardest_positive_dist</span> <span class="o">-</span> <span class="n">hardest_negative_dist</span> <span class="o">+</span> <span class="n">margin</span>
         <span class="n">tl</span><span class="p">[</span><span class="n">tl</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">triplet_loss</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">tl</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="n">triplet_loss</span>
+        <span class="k">return</span> <span class="n">loss</span>
 
 <div class="viewcode-block" id="TripletLoss.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Forward propagation method for the triplet loss.</span>
@@ -429,7 +428,7 @@
 <span class="sd">            targets: labels of the batch, of size (batch_size,)</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            triplet_loss: scalar tensor containing the triplet loss</span>
+<span class="sd">            torch.Tensor: scalar tensor containing the triplet loss</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_hard_triplet_loss</span><span class="p">(</span><span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="p">)</span></div></div>
 
@@ -447,7 +446,7 @@
 
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">triplet_loss</span><span class="p">(</span><span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="p">,)</span>
+        <span class="k">return</span> <span class="n">triplet_loss</span><span class="p">(</span><span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="TripletPairwiseEmbeddingLoss"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletPairwiseEmbeddingLoss">[docs]</a><span class="k">class</span> <span class="nc">TripletPairwiseEmbeddingLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>

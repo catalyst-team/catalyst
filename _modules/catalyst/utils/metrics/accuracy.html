@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.metrics.accuracy &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.utils.metrics.accuracy &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -264,15 +264,19 @@
 <span class="sd">    * :func:`average_accuracy`</span>
 <span class="sd">    * :func:`mean_average_accuracy`</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="n">get_activation_fn</span>
 
 
 <div class="viewcode-block" id="accuracy"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.metrics.accuracy.accuracy">[docs]</a><span class="k">def</span> <span class="nf">accuracy</span><span class="p">(</span>
-    <span class="n">outputs</span><span class="p">,</span>
-    <span class="n">targets</span><span class="p">,</span>
-    <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,),</span>
+    <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">topk</span><span class="p">:</span> <span class="n">Tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span>
     <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">activation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
@@ -297,6 +301,16 @@
 <span class="sd">        multi-label classification).</span>
 <span class="sd">      - outputs, targets are tensors with shape: batch_size x num_classes</span>
 <span class="sd">      - targets is a tensor with binary vectors</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        outputs (torch.Tensor): model outputs, logits</span>
+<span class="sd">        targets (torch.Tensor): ground truth, labels</span>
+<span class="sd">        topk (tuple): tuple with specified `N` for top`N` accuracy computing</span>
+<span class="sd">        threshold (float): threshold for outputs</span>
+<span class="sd">        activation (str): activation for outputs</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        computed topK accuracy</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">activation_fn</span> <span class="o">=</span> <span class="n">get_activation_fn</span><span class="p">(</span><span class="n">activation</span><span class="p">)</span>
     <span class="n">outputs</span> <span class="o">=</span> <span class="n">activation_fn</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
@@ -304,12 +318,13 @@
     <span class="k">if</span> <span class="n">threshold</span><span class="p">:</span>
         <span class="n">outputs</span> <span class="o">=</span> <span class="p">(</span><span class="n">outputs</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
 
+    <span class="c1"># TODO: move to separate function</span>
     <span class="c1"># multi-label classification</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">targets</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">long</span><span class="p">()</span> <span class="o">==</span> <span class="n">outputs</span><span class="o">.</span><span class="n">long</span><span class="p">())</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">float</span><span class="p">()</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">long</span><span class="p">()</span> <span class="o">==</span> <span class="n">outputs</span><span class="o">.</span><span class="n">long</span><span class="p">())</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">float</span><span class="p">()</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span>
             <span class="n">targets</span><span class="o">.</span><span class="n">shape</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">res</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">output</span><span class="p">]</span>
 
     <span class="n">max_k</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">topk</span><span class="p">)</span>
     <span class="n">batch_size</span> <span class="o">=</span> <span class="n">targets</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -317,15 +332,15 @@
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">outputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">pred</span> <span class="o">=</span> <span class="n">outputs</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">outputs</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">max_k</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">outputs</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">max_k</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>  <span class="c1"># noqa: WPS425</span>
         <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
     <span class="n">correct</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">long</span><span class="p">()</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">expand_as</span><span class="p">(</span><span class="n">pred</span><span class="p">))</span>
 
-    <span class="n">res</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">topk</span><span class="p">:</span>
         <span class="n">correct_k</span> <span class="o">=</span> <span class="n">correct</span><span class="p">[:</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">correct_k</span><span class="o">.</span><span class="n">mul_</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">batch_size</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">res</span></div>
+        <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">correct_k</span><span class="o">.</span><span class="n">mul_</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">batch_size</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">output</span></div>
 
 
 <div class="viewcode-block" id="average_accuracy"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.metrics.accuracy.average_accuracy">[docs]</a><span class="k">def</span> <span class="nf">average_accuracy</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
@@ -340,7 +355,7 @@
 <span class="sd">        k (int, optional): The maximum number of predicted elements</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        double: The average accuracy at k over the input lists</span>
+<span class="sd">        float: The average accuracy at k over the input lists</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">k</span><span class="p">:</span>
         <span class="n">outputs</span> <span class="o">=</span> <span class="n">outputs</span><span class="p">[:</span><span class="n">k</span><span class="p">]</span>
@@ -371,10 +386,10 @@
 <span class="sd">        topk (int, optional): The maximum number of predicted elements</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        double: The mean average accuracy at k over the input lists</span>
+<span class="sd">        float: The mean average accuracy at k over the input lists</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">max_k</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">topk</span><span class="p">)</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">outputs</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">max_k</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">pred</span> <span class="o">=</span> <span class="n">outputs</span><span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">max_k</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>  <span class="c1"># noqa: WPS425</span>
 
     <span class="n">targets</span> <span class="o">=</span> <span class="n">targets</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
     <span class="n">actual_list</span> <span class="o">=</span> <span class="p">[]</span>

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.utils.parallel &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.contrib.utils.parallel &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -289,7 +289,7 @@
         <span class="k">return</span> <span class="bp">self</span>
 
 
-<div class="viewcode-block" id="parallel_imap"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.utils.parallel.parallel_imap">[docs]</a><span class="k">def</span> <span class="nf">parallel_imap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">pool</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Pool</span><span class="p">,</span> <span class="n">DumbPool</span><span class="p">],)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
+<div class="viewcode-block" id="parallel_imap"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.utils.parallel.parallel_imap">[docs]</a><span class="k">def</span> <span class="nf">parallel_imap</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">pool</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Pool</span><span class="p">,</span> <span class="n">DumbPool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">T</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pool</span><span class="o">.</span><span class="n">imap_unordered</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">args</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">result</span></div>

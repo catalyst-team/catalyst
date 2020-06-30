@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.components &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.utils.components &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../_static/js/google.analytics.js"></script>
+  <script src="../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -302,6 +302,13 @@
 <span class="sd">        distributed_params (dict, optional): dict with the parameters</span>
 <span class="sd">            for distributed and FP16 method</span>
 <span class="sd">        device (Device, optional): device</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple with processed model, criterion, optimizer, scheduler and device.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        NotImplementedError: if model is not nn.Module or dict for multi-gpu,</span>
+<span class="sd">            nn.ModuleDict for DataParallel not implemented yet</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">distributed_params</span> <span class="o">=</span> <span class="n">distributed_params</span> <span class="ow">or</span> <span class="p">{}</span>
     <span class="n">distributed_params</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">distributed_params</span><span class="p">)</span>

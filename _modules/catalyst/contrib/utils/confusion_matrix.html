@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.utils.confusion_matrix &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.contrib.utils.confusion_matrix &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -276,20 +276,22 @@
 
 
 <div class="viewcode-block" id="calculate_confusion_matrix_from_arrays"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.utils.confusion_matrix.calculate_confusion_matrix_from_arrays">[docs]</a><span class="k">def</span> <span class="nf">calculate_confusion_matrix_from_arrays</span><span class="p">(</span>
-    <span class="n">ground_truth</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">prediction</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">predictions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Calculate confusion matrix for a given set of classes.</span>
-<span class="sd">    If GT value is outside of the [0, num_classes) it is excluded.</span>
+<span class="sd">    If labels value is outside of the [0, num_classes) it is excluded.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        ground_truth (np.ndarray):</span>
-<span class="sd">        prediction (np.ndarray):</span>
-<span class="sd">        num_classes (int):</span>
+<span class="sd">        predictions (np.ndarray): model predictions</span>
+<span class="sd">        labels (np.ndarray): ground truth labels</span>
+<span class="sd">        num_classes (int): number of classes</span>
 
-<span class="sd">    @TODO: Docs . Contribution is welcome</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: confusion matrix</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># @TODO: add `num_class`=None handling</span>
     <span class="c1"># a long 2xn array with each column being a pixel pair</span>
-    <span class="n">replace_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">ground_truth</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">prediction</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span>
+    <span class="n">replace_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">labels</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">predictions</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span>
 
     <span class="n">valid_index</span> <span class="o">=</span> <span class="n">replace_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">&lt;</span> <span class="n">num_classes</span>
     <span class="n">replace_indices</span> <span class="o">=</span> <span class="n">replace_indices</span><span class="p">[:,</span> <span class="n">valid_index</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
@@ -306,14 +308,23 @@
 <div class="viewcode-block" id="calculate_confusion_matrix_from_tensors"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.utils.confusion_matrix.calculate_confusion_matrix_from_tensors">[docs]</a><span class="k">def</span> <span class="nf">calculate_confusion_matrix_from_tensors</span><span class="p">(</span>
     <span class="n">y_pred_logits</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">y_true</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate confusion matrix from tensors.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        y_pred_logits: model logits</span>
+<span class="sd">        y_true: true labels</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: confusion matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">num_classes</span> <span class="o">=</span> <span class="n">y_pred_logits</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">y_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y_pred_logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">ground_truth</span> <span class="o">=</span> <span class="n">y_true</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-    <span class="n">prediction</span> <span class="o">=</span> <span class="n">y_pred</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">y_pred</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">y_true</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">calculate_confusion_matrix_from_arrays</span><span class="p">(</span>
-        <span class="n">ground_truth</span><span class="p">,</span> <span class="n">prediction</span><span class="p">,</span> <span class="n">num_classes</span>
+        <span class="n">predictions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">num_classes</span>
     <span class="p">)</span></div>
 
 

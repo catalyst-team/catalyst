@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.nn.criterion.margin &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.contrib.nn.criterion.margin &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -263,11 +263,11 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 
-<span class="kn">from</span> <span class="nn">.functional</span> <span class="kn">import</span> <span class="n">margin_loss</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.nn.criterion.functional</span> <span class="kn">import</span> <span class="n">margin_loss</span>
 
 
 <div class="viewcode-block" id="MarginLoss"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.margin.MarginLoss">[docs]</a><span class="k">class</span> <span class="nc">MarginLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Margin loss criterion&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="MarginLoss.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.margin.MarginLoss.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -276,12 +276,12 @@
         <span class="n">skip_labels</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Args:</span>
-<span class="sd">            alpha (float):</span>
-<span class="sd">            beta (float):</span>
-<span class="sd">            skip_labels (int or List[int]):</span>
+<span class="sd">        Margin loss constructor.</span>
 
-<span class="sd">        @TODO: Docs. Contribution is welcome.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            alpha (float): alpha</span>
+<span class="sd">            beta (float): beta</span>
+<span class="sd">            skip_labels (int or List[int]): labels to skip</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
@@ -291,9 +291,15 @@
 <div class="viewcode-block" id="MarginLoss.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.margin.MarginLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Forward propagation method for the margin loss.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Forward method for the margin loss.</span>
 
-<span class="sd">        @TODO: Docs. Contribution is welcome.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            embeddings: tensor with embeddings</span>
+<span class="sd">            targets: tensor with target labels</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            computed loss</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">margin_loss</span><span class="p">(</span>
             <span class="n">embeddings</span><span class="p">,</span>

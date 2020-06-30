@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.experiment.config &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.dl.experiment.config &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -264,7 +264,7 @@
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>  <span class="c1"># noqa F401</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">IExperiment</span>
 <span class="kn">from</span> <span class="nn">catalyst.data</span> <span class="kn">import</span> <span class="n">Augmentor</span><span class="p">,</span> <span class="n">AugmentorCompose</span>
@@ -292,6 +292,7 @@
     <span class="n">SCHEDULERS</span><span class="p">,</span>
     <span class="n">TRANSFORMS</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="kn">import</span> <span class="n">check_callback_isinstance</span>
 <span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
 
 
@@ -300,7 +301,7 @@
 <span class="sd">    Experiment created from a configuration file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">STAGE_KEYWORDS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">STAGE_KEYWORDS</span> <span class="o">=</span> <span class="p">[</span>  <span class="c1"># noqa: WPS115</span>
         <span class="s2">&quot;criterion_params&quot;</span><span class="p">,</span>
         <span class="s2">&quot;optimizer_params&quot;</span><span class="p">,</span>
         <span class="s2">&quot;scheduler_params&quot;</span><span class="p">,</span>
@@ -340,19 +341,24 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s2">&quot;stages&quot;</span><span class="p">]</span>
         <span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">__prepare_logdir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">EXCLUDE_TAG</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+    <span class="k">def</span> <span class="nf">__prepare_logdir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># noqa: WPS112</span>
+        <span class="n">exclude_tag</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
 
         <span class="n">logdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;logdir&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">baselogdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;baselogdir&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">logdir</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="n">EXCLUDE_TAG</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">logdir</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="n">exclude_tag</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="o">=</span> <span class="n">logdir</span>
-        <span class="k">elif</span> <span class="n">baselogdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">baselogdir</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="n">EXCLUDE_TAG</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">baselogdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">baselogdir</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="n">exclude_tag</span><span class="p">:</span>
             <span class="n">logdir_postfix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">baselogdir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">logdir_postfix</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hparams</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns hyper params&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_stages_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stages_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
         <span class="n">stages_defaults</span> <span class="o">=</span> <span class="p">{}</span>
@@ -374,19 +380,19 @@
             <span class="p">):</span>
                 <span class="k">continue</span>
             <span class="n">stages_config_out</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">STAGE_KEYWORDS</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;stage_params&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key2</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">STAGE_KEYWORDS</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key2</span> <span class="o">==</span> <span class="s2">&quot;stage_params&quot;</span><span class="p">:</span>
                     <span class="c1"># backward compatibility</span>
-                    <span class="n">stages_config_out</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge_dicts</span><span class="p">(</span>
+                    <span class="n">stages_config_out</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="n">key2</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge_dicts</span><span class="p">(</span>
                         <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_params&quot;</span><span class="p">,</span> <span class="p">{})),</span>
-                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})),</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key2</span><span class="p">,</span> <span class="p">{})),</span>
                         <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;state_params&quot;</span><span class="p">,</span> <span class="p">{})),</span>
-                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})),</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key2</span><span class="p">,</span> <span class="p">{})),</span>
                     <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">stages_config_out</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge_dicts</span><span class="p">(</span>
-                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})),</span>
-                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})),</span>
+                    <span class="n">stages_config_out</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="n">key2</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge_dicts</span><span class="p">(</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_defaults</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key2</span><span class="p">,</span> <span class="p">{})),</span>
+                        <span class="n">deepcopy</span><span class="p">(</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key2</span><span class="p">,</span> <span class="p">{})),</span>
                     <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">stages_config_out</span>
@@ -428,8 +434,10 @@
 
         <span class="k">if</span> <span class="n">key_value_flag</span><span class="p">:</span>
             <span class="n">model</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">params_</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">model</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConfigExperiment</span><span class="o">.</span><span class="n">_get_model</span><span class="p">(</span><span class="o">**</span><span class="n">params_</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">model_key</span><span class="p">,</span> <span class="n">model_params</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">model</span><span class="p">[</span><span class="n">model_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConfigExperiment</span><span class="o">.</span><span class="n">_get_model</span><span class="p">(</span>  <span class="c1"># noqa: WPS437</span>
+                    <span class="o">**</span><span class="n">model_params</span>
+                <span class="p">)</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleDict</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">MODELS</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
@@ -447,8 +455,12 @@
 
         <span class="k">if</span> <span class="n">key_value_flag</span><span class="p">:</span>
             <span class="n">criterion</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">params_</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">criterion</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConfigExperiment</span><span class="o">.</span><span class="n">_get_criterion</span><span class="p">(</span><span class="o">**</span><span class="n">params_</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">key_params</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">criterion</span><span class="p">[</span>
+                    <span class="n">key</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="n">ConfigExperiment</span><span class="o">.</span><span class="n">_get_criterion</span><span class="p">(</span>  <span class="c1"># noqa: WPS437</span>
+                    <span class="o">**</span><span class="n">key_params</span>
+                <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">criterion</span> <span class="o">=</span> <span class="n">CRITERIONS</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">criterion</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
@@ -508,14 +520,14 @@
             <span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_key</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
             <span class="n">model_params</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">model_key_</span> <span class="ow">in</span> <span class="n">model_key</span><span class="p">:</span>
-                <span class="n">model_params_</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_model_params</span><span class="p">(</span>
-                    <span class="n">model</span><span class="p">[</span><span class="n">model_key_</span><span class="p">],</span>
+            <span class="k">for</span> <span class="n">model_key_el</span> <span class="ow">in</span> <span class="n">model_key</span><span class="p">:</span>
+                <span class="n">model_params_el</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_model_params</span><span class="p">(</span>
+                    <span class="n">model</span><span class="p">[</span><span class="n">model_key_el</span><span class="p">],</span>
                     <span class="n">layerwise_params</span><span class="p">,</span>
                     <span class="n">no_bias_weight_decay</span><span class="p">,</span>
                     <span class="n">lr_scaling</span><span class="p">,</span>
                 <span class="p">)</span>
-                <span class="n">model_params</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">model_params_</span><span class="p">)</span>
+                <span class="n">model_params</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">model_params_el</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;unknown type of model_params&quot;</span><span class="p">)</span>
 
@@ -539,24 +551,30 @@
             <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model_params</span><span class="p">:</span>
                 <span class="n">param</span> <span class="o">=</span> <span class="n">param</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
                 <span class="n">optimizer_state</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
-                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">optimizer_state</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="n">optimizer_state</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">any2device</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">state_key</span><span class="p">,</span> <span class="n">state_value</span> <span class="ow">in</span> <span class="n">optimizer_state</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">optimizer_state</span><span class="p">[</span><span class="n">state_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">any2device</span><span class="p">(</span>
+                        <span class="n">state_value</span><span class="p">,</span> <span class="n">device</span>
+                    <span class="p">)</span>
 
             <span class="c1"># update optimizer params</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">for</span> <span class="n">pg</span> <span class="ow">in</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
-                    <span class="n">pg</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="k">for</span> <span class="n">optimizer_param_group</span> <span class="ow">in</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
+                    <span class="n">optimizer_param_group</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
         <span class="k">return</span> <span class="n">optimizer</span>
 
 <div class="viewcode-block" id="ConfigExperiment.get_optimizer"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_optimizer">[docs]</a>    <span class="k">def</span> <span class="nf">get_optimizer</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Model</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Model</span><span class="p">]]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Optimizer</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">]]:</span>
-        <span class="sd">&quot;&quot;&quot;Returns the optimizer for a given stage.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the optimizer for a given stage.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): stage name</span>
 <span class="sd">            model (Union[Model, Dict[str, Model]]): model or a dict of models</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            optimizer for selected stage</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">optimizer_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
             <span class="s2">&quot;optimizer_params&quot;</span><span class="p">,</span> <span class="p">{}</span>
@@ -565,13 +583,13 @@
 
         <span class="k">if</span> <span class="n">key_value_flag</span><span class="p">:</span>
             <span class="n">optimizer</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">params_</span> <span class="ow">in</span> <span class="n">optimizer_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">optimizer_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="c1"># load specified optimizer from checkpoint</span>
                 <span class="n">optimizer_key</span> <span class="o">=</span> <span class="s2">&quot;optimizer_key&quot;</span>
-                <span class="k">assert</span> <span class="n">optimizer_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params_</span><span class="p">,</span> <span class="s2">&quot;keyword reserved&quot;</span>
-                <span class="n">params_</span><span class="p">[</span><span class="n">optimizer_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
+                <span class="k">assert</span> <span class="n">optimizer_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="p">,</span> <span class="s2">&quot;keyword reserved&quot;</span>
+                <span class="n">params</span><span class="p">[</span><span class="n">optimizer_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
 
-                <span class="n">optimizer</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_optimizer</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">params_</span><span class="p">)</span>
+                <span class="n">optimizer</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_optimizer</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_optimizer</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">optimizer_params</span><span class="p">)</span>
 
@@ -583,9 +601,11 @@
 
         <span class="k">if</span> <span class="n">key_value_flag</span><span class="p">:</span>
             <span class="n">scheduler</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">params_</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">scheduler</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConfigExperiment</span><span class="o">.</span><span class="n">_get_scheduler</span><span class="p">(</span>
-                    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">params_</span>
+            <span class="k">for</span> <span class="n">scheduler_key</span><span class="p">,</span> <span class="n">scheduler_params</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">scheduler</span><span class="p">[</span>
+                    <span class="n">scheduler_key</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="n">ConfigExperiment</span><span class="o">.</span><span class="n">_get_scheduler</span><span class="p">(</span>  <span class="c1"># noqa: WPS437</span>
+                    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">scheduler_params</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">scheduler</span> <span class="o">=</span> <span class="n">SCHEDULERS</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span>
@@ -609,8 +629,10 @@
 
         <span class="k">if</span> <span class="n">key_value_flag</span><span class="p">:</span>
             <span class="n">transforms_composition</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="n">key</span><span class="p">:</span> <span class="n">ConfigExperiment</span><span class="o">.</span><span class="n">_get_transform</span><span class="p">(</span><span class="o">**</span><span class="n">params_</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">params_</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="n">transform_key</span><span class="p">:</span> <span class="n">ConfigExperiment</span><span class="o">.</span><span class="n">_get_transform</span><span class="p">(</span>  <span class="c1"># noqa: WPS437</span>
+                    <span class="o">**</span><span class="n">transform_params</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">transform_key</span><span class="p">,</span> <span class="n">transform_params</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
             <span class="p">}</span>
 
             <span class="n">transform</span> <span class="o">=</span> <span class="n">AugmentorCompose</span><span class="p">(</span>
@@ -627,7 +649,9 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="s2">&quot;transforms&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
                 <span class="n">transforms_composition</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="n">ConfigExperiment</span><span class="o">.</span><span class="n">_get_transform</span><span class="p">(</span><span class="o">**</span><span class="n">transform_params</span><span class="p">)</span>
+                    <span class="n">ConfigExperiment</span><span class="o">.</span><span class="n">_get_transform</span><span class="p">(</span>  <span class="c1"># noqa: WPS437</span>
+                        <span class="o">**</span><span class="n">transform_params</span>
+                    <span class="p">)</span>
                     <span class="k">for</span> <span class="n">transform_params</span> <span class="ow">in</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;transforms&quot;</span><span class="p">]</span>
                 <span class="p">]</span>
                 <span class="n">params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">transforms</span><span class="o">=</span><span class="n">transforms_composition</span><span class="p">)</span>
@@ -639,12 +663,16 @@
 <div class="viewcode-block" id="ConfigExperiment.get_transforms"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_transforms">[docs]</a>    <span class="k">def</span> <span class="nf">get_transforms</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Returns transform for a given stage and mode.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns transform for a given stage and dataset.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            stage (str): stage name</span>
 <span class="sd">            dataset (str): dataset name (e.g. &quot;train&quot;, &quot;valid&quot;),</span>
 <span class="sd">                will be used only if the value of `_key_value`` is ``True``</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Callable: transform function</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">transform_params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;transform_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
@@ -654,19 +682,19 @@
         <span class="k">if</span> <span class="n">key_value_flag</span><span class="p">:</span>
             <span class="n">transform_params</span> <span class="o">=</span> <span class="n">transform_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="p">{})</span>
 
-        <span class="n">transform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_transform</span><span class="p">(</span><span class="o">**</span><span class="n">transform_params</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">transform</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">transform_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_transform</span><span class="p">(</span><span class="o">**</span><span class="n">transform_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">transform_fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 
-            <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="n">dict_</span><span class="p">):</span>
+            <span class="k">def</span> <span class="nf">transform_fn</span><span class="p">(</span><span class="n">dict_</span><span class="p">):</span>  <span class="c1"># noqa: WPS440</span>
                 <span class="k">return</span> <span class="n">dict_</span>
 
-        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">AugmentorCompose</span><span class="p">):</span>
-            <span class="n">transform_</span> <span class="o">=</span> <span class="n">transform</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transform_fn</span><span class="p">,</span> <span class="n">AugmentorCompose</span><span class="p">):</span>
+            <span class="n">transform_fn_origin</span> <span class="o">=</span> <span class="n">transform_fn</span>
 
-            <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="n">dict_</span><span class="p">):</span>
-                <span class="k">return</span> <span class="n">transform_</span><span class="p">(</span><span class="o">**</span><span class="n">dict_</span><span class="p">)</span>
+            <span class="k">def</span> <span class="nf">transform_fn</span><span class="p">(</span><span class="n">dict_</span><span class="p">):</span>  <span class="c1"># noqa: WPS440</span>
+                <span class="k">return</span> <span class="n">transform_fn_origin</span><span class="p">(</span><span class="o">**</span><span class="n">dict_</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">transform</span></div>
+        <span class="k">return</span> <span class="n">transform_fn</span></div>
 
 <div class="viewcode-block" id="ConfigExperiment.get_loaders"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_loaders">[docs]</a>    <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -687,7 +715,9 @@
         <span class="n">callback</span> <span class="o">=</span> <span class="n">CALLBACKS</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">wrapper_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">wrapper_params</span><span class="p">[</span><span class="s2">&quot;base_callback&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">callback</span>
-            <span class="k">return</span> <span class="n">ConfigExperiment</span><span class="o">.</span><span class="n">_get_callback</span><span class="p">(</span><span class="o">**</span><span class="n">wrapper_params</span><span class="p">)</span>
+            <span class="n">callback</span> <span class="o">=</span> <span class="n">ConfigExperiment</span><span class="o">.</span><span class="n">_get_callback</span><span class="p">(</span>  <span class="c1"># noqa: WPS437</span>
+                <span class="o">**</span><span class="n">wrapper_params</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="n">callback</span>
 
     <span class="nd">@staticmethod</span>
@@ -752,7 +782,7 @@
         <span class="k">for</span> <span class="n">callback_name</span><span class="p">,</span> <span class="n">callback_fn</span> <span class="ow">in</span> <span class="n">default_callbacks</span><span class="p">:</span>
             <span class="n">is_already_present</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">callback_fn</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">check_callback_isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">callback_fn</span><span class="p">):</span>
                     <span class="n">is_already_present</span> <span class="o">=</span> <span class="kc">True</span>
                     <span class="k">break</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">is_already_present</span><span class="p">:</span>

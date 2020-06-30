@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.utils.serialization &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.contrib.utils.serialization &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -288,7 +288,7 @@
     <span class="k">return</span> <span class="n">pyarrow</span><span class="o">.</span><span class="n">serialize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">to_buffer</span><span class="p">()</span><span class="o">.</span><span class="n">to_pybytes</span><span class="p">()</span>
 
 
-<span class="k">def</span> <span class="nf">pyarrow_deserialize</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">pyarrow_deserialize</span><span class="p">(</span><span class="nb">bytes</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Deserialize bytes into an object using pyarrow.</span>
 
 <span class="sd">    Args:</span>
@@ -297,7 +297,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        Returns a value deserialized from the bytes-like object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">pyarrow</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pyarrow</span><span class="o">.</span><span class="n">deserialize</span><span class="p">(</span><span class="nb">bytes</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">pickle_serialize</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
@@ -312,7 +312,7 @@
     <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">pickle_deserialize</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">pickle_deserialize</span><span class="p">(</span><span class="nb">bytes</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Deserialize bytes into an object using pickle.</span>
 
 <span class="sd">    Args:</span>
@@ -321,7 +321,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        Returns a value deserialized from the bytes-like object.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="nb">bytes</span><span class="p">)</span>
 
 
 <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">use_pyarrow</span><span class="p">:</span>

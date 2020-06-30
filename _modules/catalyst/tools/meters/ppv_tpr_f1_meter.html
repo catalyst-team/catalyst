@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.tools.meters.ppv_tpr_f1_meter &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.tools.meters.ppv_tpr_f1_meter &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -268,7 +268,7 @@
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">meter</span>
+<span class="kn">from</span> <span class="nn">catalyst.tools.meters</span> <span class="kn">import</span> <span class="n">meter</span>
 
 
 <div class="viewcode-block" id="f1score"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.ppv_tpr_f1_meter.f1score">[docs]</a><span class="k">def</span> <span class="nf">f1score</span><span class="p">(</span><span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
@@ -279,6 +279,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        precision_value: precision (0-1)</span>
 <span class="sd">        recall_value: recall (0-1)</span>
+<span class="sd">        eps: epsilon to use</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        F1 score (0-1)</span>
@@ -296,6 +297,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        tp (int): number of true positives</span>
 <span class="sd">        fp (int): number of false positives</span>
+<span class="sd">        eps: epsilon to use</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        precision value (0-1)</span>
@@ -314,6 +316,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        tp: number of true positives</span>
 <span class="sd">        fn: number of false negatives</span>
+<span class="sd">        eps: epsilon to use</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        recall value (0-1)</span>

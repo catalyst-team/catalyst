@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.utils.cv.image &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.contrib.utils.cv.image &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -277,10 +277,10 @@
         <span class="kn">import</span> <span class="nn">jpeg4py</span> <span class="k">as</span> <span class="nn">jpeg</span>
 
         <span class="c1"># check libjpeg-turbo availability through image reading</span>
-        <span class="n">img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+        <span class="n">_test_img</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
         <span class="k">with</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">(</span><span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.jpg&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
-            <span class="n">imageio</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">img</span><span class="p">)</span>
-            <span class="n">img</span> <span class="o">=</span> <span class="n">jpeg</span><span class="o">.</span><span class="n">JPEG</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+            <span class="n">imageio</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">_test_img</span><span class="p">)</span>
+            <span class="n">_test_img</span> <span class="o">=</span> <span class="n">jpeg</span><span class="o">.</span><span class="n">JPEG</span><span class="p">(</span><span class="n">fp</span><span class="o">.</span><span class="n">name</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
 
     <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
@@ -310,10 +310,13 @@
 <span class="sd">        uri (str, pathlib.Path, bytes, file): the resource to load the image</span>
 <span class="sd">          from, e.g. a filename, ``pathlib.Path``, http address or file object,</span>
 <span class="sd">          see ``imageio.imread`` docs for more info</span>
-<span class="sd">        grayscale (bool):</span>
-<span class="sd">        expand_dims (bool):</span>
+<span class="sd">        grayscale (bool): if True, make all images grayscale</span>
+<span class="sd">        expand_dims (bool): if True, append channel axis to grayscale images</span>
+<span class="sd">          rootpath (Union[str, pathlib.Path]): path to the resource with image</span>
+<span class="sd">          (allows to use relative path)</span>
 <span class="sd">        rootpath (Union[str, pathlib.Path]): path to the resource with image</span>
 <span class="sd">            (allows to use relative path)</span>
+<span class="sd">        **kwargs: extra params for image read</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        np.ndarray: image</span>
@@ -331,6 +334,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># @TODO: add tiff support, currently – jpg and png</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">imageio</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">as_gray</span><span class="o">=</span><span class="n">grayscale</span><span class="p">,</span> <span class="n">pilmode</span><span class="o">=</span><span class="s2">&quot;RGB&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
     <span class="k">if</span> <span class="n">grayscale</span><span class="p">:</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">rgb2gray</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
 
@@ -349,6 +353,9 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        **kwargs: parameters for ``imageio.imwrite``</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        image save result</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">imageio</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -362,6 +369,9 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        **kwargs: parameters for ``imageio.imsave``</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        image save result</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">imageio</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -384,7 +394,10 @@
 <span class="sd">          image values outside the interval are clipped to the interval edges</span>
 <span class="sd">        expand_dims (bool): if True, append channel axis to grayscale images</span>
 <span class="sd">          rootpath (Union[str, pathlib.Path]): path to the resource with image</span>
-<span class="sd">          (allows to use relative path),</span>
+<span class="sd">          (allows to use relative path)</span>
+<span class="sd">        rootpath (Union[str, pathlib.Path]): path to the resource with image</span>
+<span class="sd">            (allows to use relative path)</span>
+<span class="sd">        **kwargs: extra params for image read</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        np.ndarray: image</span>

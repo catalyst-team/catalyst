@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.tools.registry &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.tools.registry &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../_static/js/google.analytics.js"></script>
+  <script src="../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -361,7 +361,10 @@
 <span class="sd">            named_factories: Factory and their names as kwargs</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (Factory): First factory passed</span>
+<span class="sd">            Factory: First factory passed</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RegistryException: if factory with provided name is already present</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">factories</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">RegistryException</span><span class="p">(</span>
@@ -415,6 +418,9 @@
 <span class="sd">            prefix (Union[str, List[str]]): prefix string for all the module&#39;s</span>
 <span class="sd">                factories. If prefix is a list, all values will be treated</span>
 <span class="sd">                as aliases.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: if prefix is not a list or a string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">factories</span> <span class="o">=</span> <span class="p">{</span>
             <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
@@ -431,7 +437,7 @@
             <span class="n">prefix</span> <span class="o">=</span> <span class="p">[</span><span class="n">prefix</span><span class="p">]</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">if</span> <span class="nb">any</span><span class="p">((</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="nb">str</span><span class="p">))</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">prefix</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;All prefix in list must be strings.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;All prefix in list must be strings.&quot;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Prefix must be a list or a string, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span>
@@ -454,6 +460,9 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Factory: factory by name</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RegistryException: if no factory with provided name was registered</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_do_late_add</span><span class="p">()</span>
 
@@ -491,6 +500,9 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            created instance</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RegistryException: if could not create object instance</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">meta_factory</span> <span class="o">=</span> <span class="n">meta_factory</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">meta_factory</span>
         <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>

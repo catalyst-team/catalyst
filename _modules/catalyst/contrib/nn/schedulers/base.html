@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.nn.schedulers.base &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.contrib.nn.schedulers.base &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -259,9 +259,9 @@
               
   <h1>Source code for catalyst.contrib.nn.schedulers.base</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 
-<span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="n">_LRScheduler</span>
+<span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="n">_LRScheduler</span>  <span class="c1"># noqa: WPS450</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="n">set_optimizer_momentum</span>
 
@@ -269,13 +269,11 @@
 <div class="viewcode-block" id="BaseScheduler"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.schedulers.base.BaseScheduler">[docs]</a><span class="k">class</span> <span class="nc">BaseScheduler</span><span class="p">(</span><span class="n">_LRScheduler</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base class for all schedulers with momentum update.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="BaseScheduler.get_momentum"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.schedulers.base.BaseScheduler.get_momentum">[docs]</a>    <span class="k">def</span> <span class="nf">get_momentum</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<div class="viewcode-block" id="BaseScheduler.get_momentum"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.schedulers.base.BaseScheduler.get_momentum">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_momentum</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Function that returns the new momentum for optimizer.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            List[float]: calculated momentum for every param groups</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+        <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="BaseScheduler.step"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.schedulers.base.BaseScheduler.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Make one scheduler step.</span>

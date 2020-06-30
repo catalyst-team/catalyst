@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.core.callbacks.scheduler &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.core.callbacks.scheduler &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -259,6 +259,7 @@
               
   <h1>Source code for catalyst.core.callbacks.scheduler</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
@@ -278,7 +279,7 @@
         <span class="n">reduced_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Scheduler</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">All</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">scheduler</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">all</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scheduler_key</span> <span class="o">=</span> <span class="n">scheduler_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reduced_metric</span> <span class="o">=</span> <span class="n">reduced_metric</span></div>
@@ -400,7 +401,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">step_epoch</span><span class="p">(</span><span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="LRUpdater"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.scheduler.LRUpdater">[docs]</a><span class="k">class</span> <span class="nc">LRUpdater</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+<div class="viewcode-block" id="LRUpdater"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.scheduler.LRUpdater">[docs]</a><span class="k">class</span> <span class="nc">LRUpdater</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">Callback</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Basic class that all Lr updaters inherit from.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="LRUpdater.__init__"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.scheduler.LRUpdater.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optimizer_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -409,17 +410,19 @@
 <span class="sd">            optimizer_key (str): which optimizer key to use</span>
 <span class="sd">                for learning rate scheduling</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Scheduler</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">All</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">scheduler</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">all</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">init_lr</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optimizer_key</span> <span class="o">=</span> <span class="n">optimizer_key</span></div>
 
-<div class="viewcode-block" id="LRUpdater.calc_lr"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.scheduler.LRUpdater.calc_lr">[docs]</a>    <span class="k">def</span> <span class="nf">calc_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="LRUpdater.calc_lr"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.scheduler.LRUpdater.calc_lr">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">calc_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="kc">None</span></div>
+        <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="LRUpdater.calc_momentum"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.scheduler.LRUpdater.calc_momentum">[docs]</a>    <span class="k">def</span> <span class="nf">calc_momentum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="LRUpdater.calc_momentum"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.scheduler.LRUpdater.calc_momentum">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">calc_momentum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="kc">None</span></div>
+        <span class="k">pass</span></div>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_update_lr</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">new_lr</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.utils.nlp.text &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.contrib.utils.nlp.text &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -286,6 +286,9 @@
 <span class="sd">        lowercase (bool): if true makes text lowercase before tokenizing</span>
 <span class="sd">        remove_punctuation (bool): if true</span>
 <span class="sd">            removes ``string.punctuation`` from text before tokenizing</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        batch with tokenized text</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">strip</span><span class="p">:</span>
         <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -348,8 +351,8 @@
     <span class="p">}</span>
 
     <span class="k">if</span> <span class="n">output_hidden_states</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">feature_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bert_output</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
-            <span class="n">output</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">_process_features</span><span class="p">(</span><span class="n">feature_</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">feature</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">bert_output</span><span class="p">[</span><span class="mi">2</span><span class="p">]):</span>
+            <span class="n">output</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">_process_features</span><span class="p">(</span><span class="n">feature</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">output</span></div>
 

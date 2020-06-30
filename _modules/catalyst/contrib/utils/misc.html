@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.utils.misc &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.contrib.utils.misc &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -286,6 +286,9 @@
 <div class="viewcode-block" id="make_tuple"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.utils.misc.make_tuple">[docs]</a><span class="k">def</span> <span class="nf">make_tuple</span><span class="p">(</span><span class="n">tuple_like</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Creates a tuple if given ``tuple_like`` value isn&#39;t list or tuple.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        tuple_like: tuple like object - list or tuple</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple or list</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -301,7 +304,7 @@
     <span class="sd">&quot;&quot;&quot;Check that all arguments are not ``None``.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        *args (Any): values</span>
+<span class="sd">        *args (Any): values  # noqa: RST213</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">         bool: True if all value were not None, False otherwise</span>
@@ -322,7 +325,8 @@
 <span class="sd">        it: list of any</span>
 <span class="sd">        value: query element</span>
 
-<span class="sd">    Returns: indices of the all elements equal x0</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        indices of the all elements equal x0</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">inds</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">el</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">it</span><span class="p">)</span> <span class="k">if</span> <span class="n">el</span> <span class="o">==</span> <span class="n">value</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">inds</span></div>

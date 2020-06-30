@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.checkpoint &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.utils.checkpoint &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../_static/js/google.analytics.js"></script>
+  <script src="../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -266,8 +266,8 @@
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">.distributed</span> <span class="kn">import</span> <span class="n">get_nn_from_ddp_module</span>
-<span class="kn">from</span> <span class="nn">.misc</span> <span class="kn">import</span> <span class="n">maybe_recursive_call</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">get_nn_from_ddp_module</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">maybe_recursive_call</span>
 
 
 <div class="viewcode-block" id="pack_checkpoint"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.checkpoint.pack_checkpoint">[docs]</a><span class="k">def</span> <span class="nf">pack_checkpoint</span><span class="p">(</span>
@@ -279,9 +279,9 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">model_</span> <span class="o">=</span> <span class="n">get_nn_from_ddp_module</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="n">model_module</span> <span class="o">=</span> <span class="n">get_nn_from_ddp_module</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
         <span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;model_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maybe_recursive_call</span><span class="p">(</span>
-            <span class="n">model_</span><span class="p">,</span> <span class="s2">&quot;state_dict&quot;</span>
+            <span class="n">model_module</span><span class="p">,</span> <span class="s2">&quot;state_dict&quot;</span>
         <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">dict2save</span><span class="p">,</span> <span class="n">name2save</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
@@ -294,10 +294,10 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dict2save</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dict2save</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">name2save_</span> <span class="o">=</span> <span class="n">name2save</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                    <span class="n">state_dict2save</span> <span class="o">=</span> <span class="n">name2save</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
                     <span class="c1"># checkpoint[name2save_] = value</span>
-                    <span class="n">name2save_</span> <span class="o">=</span> <span class="n">name2save_</span> <span class="o">+</span> <span class="s2">&quot;_state_dict&quot;</span>
-                    <span class="n">checkpoint</span><span class="p">[</span><span class="n">name2save_</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
+                    <span class="n">state_dict2save</span> <span class="o">=</span> <span class="n">state_dict2save</span> <span class="o">+</span> <span class="s2">&quot;_state_dict&quot;</span>
+                    <span class="n">checkpoint</span><span class="p">[</span><span class="n">state_dict2save</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">state_dict</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># checkpoint[name2save] = dict2save</span>
             <span class="n">name2save</span> <span class="o">=</span> <span class="n">name2save</span> <span class="o">+</span> <span class="s2">&quot;_state_dict&quot;</span>
@@ -328,8 +328,8 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dict2load</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dict2load</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">name2load_</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name2load</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">_state_dict&quot;</span>
-                    <span class="n">value</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">[</span><span class="n">name2load_</span><span class="p">])</span>
+                    <span class="n">state_dict2load</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name2load</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">_state_dict&quot;</span>
+                    <span class="n">value</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">[</span><span class="n">state_dict2load</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">name2load</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name2load</span><span class="si">}</span><span class="s2">_state_dict&quot;</span>
             <span class="n">dict2load</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">[</span><span class="n">name2load</span><span class="p">])</span></div>

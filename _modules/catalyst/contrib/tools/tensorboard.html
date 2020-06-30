@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.tools.tensorboard &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.contrib.tools.tensorboard &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -411,7 +411,7 @@
 <span class="sd">        Only scalars are supported at the moment.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">_DECODERS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">_DECODERS</span> <span class="o">=</span> <span class="p">{</span>  <span class="c1"># noqa: WPS115</span>
         <span class="s2">&quot;scalar&quot;</span><span class="p">:</span> <span class="n">_get_scalar</span><span class="p">,</span>
     <span class="p">}</span>
 
@@ -444,14 +444,16 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid type name&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_decode_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SummaryItem</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Convert events to `SummaryItem` instances.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert events to `SummaryItem` instances.</span>
+<span class="sd">        Returns a generator with decoded events</span>
+<span class="sd">        or `None` if an event can&#39;t be decoded.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            events: An iterable with events objects</span>
+<span class="sd">            events: An iterable with events objects.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A generator with decoded events</span>
-<span class="sd">            or `None`s if an event can&quot;t be decoded</span>
+<span class="sd">            Optional[SummaryItem]: decoded event</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">event</span> <span class="ow">in</span> <span class="n">events</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">event</span><span class="o">.</span><span class="n">HasField</span><span class="p">(</span><span class="s2">&quot;summary&quot;</span><span class="p">):</span>

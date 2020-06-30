@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.dl.callbacks.periodic_loader_callback &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.contrib.dl.callbacks.periodic_loader_callback &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -272,13 +272,38 @@
     <span class="sd">&quot;&quot;&quot;Callback for runing loaders with specified period.</span>
 <span class="sd">    To disable loader use ``0`` as period.</span>
 
-<span class="sd">    Example:</span>
+<span class="sd">    For example, if you have ``train``, ``train_additional``,</span>
+<span class="sd">    ``valid`` and ``valid_additional`` loaders and wan&#39;t to</span>
+<span class="sd">    use ``train_additional`` every 2 epochs, ``valid`` - every</span>
+<span class="sd">    3 epochs and ``valid_additional`` - every 5 epochs:</span>
 
-<span class="sd">        &gt;&gt;&gt; PeriodicLoaderRunnerCallback(</span>
-<span class="sd">        &gt;&gt;&gt;     train_additional=2,</span>
-<span class="sd">        &gt;&gt;&gt;     valid=3,</span>
-<span class="sd">        &gt;&gt;&gt;     valid_additional=5</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst.dl import (</span>
+<span class="sd">            SupervisedRunner, PeriodicLoaderRunnerCallback,</span>
+<span class="sd">        )</span>
+<span class="sd">        runner = SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            ...</span>
+<span class="sd">            loaders={</span>
+<span class="sd">                &quot;train&quot;: ...,</span>
+<span class="sd">                &quot;train_additional&quot;: ...,</span>
+<span class="sd">                &quot;valid&quot;: ...,</span>
+<span class="sd">                &quot;valid_additional&quot;:...</span>
+<span class="sd">            }</span>
+<span class="sd">            ...</span>
+<span class="sd">            callbacks=[</span>
+<span class="sd">                ...</span>
+<span class="sd">                PeriodicLoaderRunnerCallback(</span>
+<span class="sd">                    train_additional=2,</span>
+<span class="sd">                    valid=3,</span>
+<span class="sd">                    valid_additional=5</span>
+<span class="sd">                ),</span>
+<span class="sd">                ...</span>
+<span class="sd">            ]</span>
+<span class="sd">            ...</span>
+<span class="sd">        )</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PeriodicLoaderCallback.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.dl.callbacks.periodic_loader_callback.PeriodicLoaderCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -286,7 +311,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            kwargs: loader names and their run periods.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">External</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">external</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">valid_loader</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">valid_metrics</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -306,6 +331,9 @@
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            runner (IRunner): current runner</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: if there are no loaders in epoch</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># store pointers to data loader objects</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">loader</span> <span class="ow">in</span> <span class="n">runner</span><span class="o">.</span><span class="n">loaders</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -336,7 +364,8 @@
                 <span class="p">)</span></div>
 
 <div class="viewcode-block" id="PeriodicLoaderCallback.on_epoch_start"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.dl.callbacks.periodic_loader_callback.PeriodicLoaderCallback.on_epoch_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Set loaders for current epoch.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set loaders for current epoch.</span>
 <span class="sd">        If validation is not required then the first loader</span>
 <span class="sd">        from loaders used in current epoch will be used</span>
 <span class="sd">        as validation loader.</span>
@@ -346,6 +375,9 @@
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            runner (IRunner): current runner</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: if there are no loaders in epoch</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">epoch_num</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">epoch</span>
         <span class="c1"># loaders to use in current epoch</span>

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Core &mdash; Catalyst 20.06 documentation</title>
+  <title>Core &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -34,7 +34,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../_static/js/google.analytics.js"></script>
+  <script src="../_static/js/googleanalytics.min.js"></script>
   
   <script src="../_static/js/modernizr.min.js"></script>
 
@@ -149,7 +149,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -288,13 +288,14 @@
 <li><p><a class="reference internal" href="#module-catalyst.core.callbacks.scheduler" id="id17">Scheduler</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.core.callbacks.timer" id="id18">Timer</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.core.callbacks.validation" id="id19">Validation</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.control_flow" id="id20">Control Flow</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#module-catalyst.core.registry" id="id20">Registry</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.core.utils" id="id21">Utils</a></p></li>
-<li><p><a class="reference internal" href="#legacy" id="id22">Legacy</a></p>
+<li><p><a class="reference internal" href="#module-catalyst.core.registry" id="id21">Registry</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.utils" id="id22">Utils</a></p></li>
+<li><p><a class="reference internal" href="#legacy" id="id23">Legacy</a></p>
 <ul>
-<li><p><a class="reference internal" href="#id4" id="id23">Runner</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id24">Runner</a></p></li>
 </ul>
 </li>
 </ul>
@@ -365,12 +366,10 @@ or to compute all the metrics before logging :)</p>
 <dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Ordered dictionary
+</dl>
+<dl class="simple">
+<dt>Returns:  # noqa: DAR202</dt><dd><p>OrderedDict[str, Callback]: Ordered dictionary  # noqa: DAR202
 with callbacks for current stage.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>OrderedDict[str, <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback">Callback</a>]</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -384,6 +383,22 @@ with callbacks for current stage.</p>
 </ul>
 </div></blockquote>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest,
+like “pretrain” / “train” / “finetune” / etc</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Ordered dictionary</dt><dd><p>with callbacks for current stage.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>OrderedDict[str, <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback">Callback</a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -401,11 +416,9 @@ with callbacks for current stage.</p>
 <dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>criterion for a given stage.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Criterion</p>
+</dl>
+<dl class="simple">
+<dt>Returns:  # noqa: DAR202</dt><dd><p>Criterion: criterion for a given stage.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -413,7 +426,7 @@ like “pretrain” / “train” / “finetune” / etc</p>
 <dl class="method">
 <dt id="catalyst.core.experiment.IExperiment.get_datasets">
 <code class="sig-name descname">get_datasets</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em>, <em class="sig-param">epoch: int = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, Dataset]<a class="reference internal" href="../_modules/catalyst/core/experiment.html#IExperiment.get_datasets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.experiment.IExperiment.get_datasets" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the datasets for a given stage and epoch.</p>
+<dd><p>Returns the datasets for a given stage and epoch.  # noqa: DAR401</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>For Deep Learning cases you have the same dataset
@@ -431,15 +444,12 @@ like “pretrain” / “train” / “finetune” / etc</p></li>
 dataset creation</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Ordered dictionary</dt><dd><p>with datasets for current stage and epoch.</p>
+</dl>
+<dl class="simple">
+<dt>Returns:  # noqa: DAR202</dt><dd><dl class="simple">
+<dt>OrderedDict[str, Dataset]: Ordered dictionary</dt><dd><p>with datasets for current stage and epoch.</p>
 </dd>
 </dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>OrderedDict[str, <a class="reference internal" href="utils.html#catalyst.tools.typing.Dataset" title="catalyst.tools.typing.Dataset">Dataset</a>]</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -498,7 +508,7 @@ like “pretrain” / “train” / “finetune” / etc</p></li>
 <dl class="method">
 <dt id="catalyst.core.experiment.IExperiment.get_loaders">
 <em class="property">abstract </em><code class="sig-name descname">get_loaders</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em>, <em class="sig-param">epoch: int = None</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, DataLoader]<a class="reference internal" href="../_modules/catalyst/core/experiment.html#IExperiment.get_loaders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.experiment.IExperiment.get_loaders" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the loaders for a given stage.</p>
+<dd><p>Returns the loaders for a given stage.  # noqa: DAR401</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Wrapper for
@@ -512,19 +522,14 @@ method only.</p>
 <li><p><strong>stage</strong> (<em>str</em>) – stage name of interest,
 like “pretrain” / “train” / “finetune” / etc</p></li>
 <li><p><strong>epoch</strong> (<em>int</em>) – epoch index</p></li>
-<li><p><strong>**kwargs</strong> (<em>dict</em>) – additional parameters to use during
-dataset creation</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Ordered dictionary</dt><dd><p>with loaders for current stage and epoch.</p>
+</dl>
+<dl class="simple">
+<dt>Returns:  # noqa: DAR202</dt><dd><dl class="simple">
+<dt>OrderedDict[str, DataLoader]: Ordered dictionary</dt><dd><p>with loaders for current stage and epoch.</p>
 </dd>
 </dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>OrderedDict[str, DataLoader]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -548,11 +553,9 @@ dataset creation</p></li>
 <dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>model for a given stage.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Model</p>
+</dl>
+<dl class="simple">
+<dt>Returns:  # noqa: DAR202</dt><dd><p>Model: model for a given stage.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -574,11 +577,9 @@ like “pretrain” / “train” / “finetune” / etc</p></li>
 <li><p><strong>model</strong> (<em>Model</em>) – model to optimize with stage optimizer</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>optimizer for a given stage and model.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="utils.html#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer">Optimizer</a></p>
+</dl>
+<dl class="simple">
+<dt>Returns:  # noqa: DAR202</dt><dd><p>Optimizer: optimizer for a given stage and model.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -602,11 +603,9 @@ like “pretrain” / “train” / “finetune” / etc</p></li>
 <li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer to schedule with stage scheduler</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>scheduler for a given stage and optimizer.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Scheduler</p>
+</dl>
+<dl class="simple">
+<dt>Returns:  # noqa: DAR202</dt><dd><p>Scheduler: scheduler for a given stage and optimizer.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -634,11 +633,9 @@ like “pretrain” / “train” / “finetune” / etc</p></li>
 <dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>parameters for a given stage.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict</p>
+</dl>
+<dl class="simple">
+<dt>Returns:  # noqa: DAR202</dt><dd><p>dict: parameters for a given stage.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -647,6 +644,7 @@ like “pretrain” / “train” / “finetune” / etc</p>
 <dt id="catalyst.core.experiment.IExperiment.get_transforms">
 <code class="sig-name descname">get_transforms</code><span class="sig-paren">(</span><em class="sig-param">stage: str = None</em>, <em class="sig-param">dataset: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/experiment.html#IExperiment.get_transforms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.experiment.IExperiment.get_transforms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the data transforms for a given stage and dataset.</p>
+<p># noqa: DAR401, W505</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -662,9 +660,27 @@ like “train” / “valid” / “infer”</p></li>
 <p>For datasets/loaders nameing please follow
 <a class="reference internal" href="#module-catalyst.core.runner" title="catalyst.core.runner"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.runner</span></code></a> documentation.</p>
 </div>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Data transformations to use for specified dataset.</p>
+<dl class="simple">
+<dt>Returns:  # noqa: DAR202</dt><dd><p>Data transformations to use for specified dataset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.experiment.IExperiment.hparams">
+<em class="property">abstract property </em><code class="sig-name descname">hparams</code><a class="headerlink" href="#catalyst.core.experiment.IExperiment.hparams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns hyper-parameters</p>
+<dl>
+<dt>Example::</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">experiment</span><span class="o">.</span><span class="n">hparams</span>
+<span class="go">OrderedDict([(&#39;optimizer&#39;, &#39;Adam&#39;),</span>
+<span class="go"> (&#39;lr&#39;, 0.02),</span>
+<span class="go"> (&#39;betas&#39;, (0.9, 0.999)),</span>
+<span class="go"> (&#39;eps&#39;, 1e-08),</span>
+<span class="go"> (&#39;weight_decay&#39;, 0),</span>
+<span class="go"> (&#39;amsgrad&#39;, False),</span>
+<span class="go"> (&#39;train_batch_size&#39;, 32)])</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 </dd></dl>
@@ -776,12 +792,10 @@ or to compute all the metrics before logging :)</p>
 <dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Ordered dictionary
+</dl>
+<dl class="simple">
+<dt>Returns:  # noqa: DAR202</dt><dd><p>OrderedDict[str, Callback]: Ordered dictionary  # noqa: DAR202
 with callbacks for current stage.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>OrderedDict[str, <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback">Callback</a>]</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -795,6 +809,22 @@ with callbacks for current stage.</p>
 </ul>
 </div></blockquote>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest,
+like “pretrain” / “train” / “finetune” / etc</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Ordered dictionary</dt><dd><p>with callbacks for current stage.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>OrderedDict[str, <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback">Callback</a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -812,11 +842,9 @@ with callbacks for current stage.</p>
 <dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>criterion for a given stage.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Criterion</p>
+</dl>
+<dl class="simple">
+<dt>Returns:  # noqa: DAR202</dt><dd><p>Criterion: criterion for a given stage.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -824,7 +852,7 @@ like “pretrain” / “train” / “finetune” / etc</p>
 <dl class="method">
 <dt>
 <code class="sig-name descname">get_datasets</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em>, <em class="sig-param">epoch: int = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, Dataset]<a class="reference internal" href="../_modules/catalyst/core/experiment.html#IExperiment.get_datasets"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns the datasets for a given stage and epoch.</p>
+<dd><p>Returns the datasets for a given stage and epoch.  # noqa: DAR401</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>For Deep Learning cases you have the same dataset
@@ -842,15 +870,12 @@ like “pretrain” / “train” / “finetune” / etc</p></li>
 dataset creation</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Ordered dictionary</dt><dd><p>with datasets for current stage and epoch.</p>
+</dl>
+<dl class="simple">
+<dt>Returns:  # noqa: DAR202</dt><dd><dl class="simple">
+<dt>OrderedDict[str, Dataset]: Ordered dictionary</dt><dd><p>with datasets for current stage and epoch.</p>
 </dd>
 </dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>OrderedDict[str, <a class="reference internal" href="utils.html#catalyst.tools.typing.Dataset" title="catalyst.tools.typing.Dataset">Dataset</a>]</p>
 </dd>
 </dl>
 <div class="admonition note">
@@ -909,7 +934,7 @@ like “pretrain” / “train” / “finetune” / etc</p></li>
 <dl class="method">
 <dt>
 <em class="property">abstract </em><code class="sig-name descname">get_loaders</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em>, <em class="sig-param">epoch: int = None</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, DataLoader]<a class="reference internal" href="../_modules/catalyst/core/experiment.html#IExperiment.get_loaders"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns the loaders for a given stage.</p>
+<dd><p>Returns the loaders for a given stage.  # noqa: DAR401</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Wrapper for
@@ -923,19 +948,14 @@ method only.</p>
 <li><p><strong>stage</strong> (<em>str</em>) – stage name of interest,
 like “pretrain” / “train” / “finetune” / etc</p></li>
 <li><p><strong>epoch</strong> (<em>int</em>) – epoch index</p></li>
-<li><p><strong>**kwargs</strong> (<em>dict</em>) – additional parameters to use during
-dataset creation</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Ordered dictionary</dt><dd><p>with loaders for current stage and epoch.</p>
+</dl>
+<dl class="simple">
+<dt>Returns:  # noqa: DAR202</dt><dd><dl class="simple">
+<dt>OrderedDict[str, DataLoader]: Ordered dictionary</dt><dd><p>with loaders for current stage and epoch.</p>
 </dd>
 </dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>OrderedDict[str, DataLoader]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -959,11 +979,9 @@ dataset creation</p></li>
 <dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>model for a given stage.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Model</p>
+</dl>
+<dl class="simple">
+<dt>Returns:  # noqa: DAR202</dt><dd><p>Model: model for a given stage.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -985,11 +1003,9 @@ like “pretrain” / “train” / “finetune” / etc</p></li>
 <li><p><strong>model</strong> (<em>Model</em>) – model to optimize with stage optimizer</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>optimizer for a given stage and model.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="utils.html#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer">Optimizer</a></p>
+</dl>
+<dl class="simple">
+<dt>Returns:  # noqa: DAR202</dt><dd><p>Optimizer: optimizer for a given stage and model.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1013,11 +1029,9 @@ like “pretrain” / “train” / “finetune” / etc</p></li>
 <li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer to schedule with stage scheduler</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>scheduler for a given stage and optimizer.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Scheduler</p>
+</dl>
+<dl class="simple">
+<dt>Returns:  # noqa: DAR202</dt><dd><p>Scheduler: scheduler for a given stage and optimizer.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1045,11 +1059,9 @@ like “pretrain” / “train” / “finetune” / etc</p></li>
 <dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>parameters for a given stage.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dict</p>
+</dl>
+<dl class="simple">
+<dt>Returns:  # noqa: DAR202</dt><dd><p>dict: parameters for a given stage.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1058,6 +1070,7 @@ like “pretrain” / “train” / “finetune” / etc</p>
 <dt>
 <code class="sig-name descname">get_transforms</code><span class="sig-paren">(</span><em class="sig-param">stage: str = None</em>, <em class="sig-param">dataset: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/experiment.html#IExperiment.get_transforms"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Returns the data transforms for a given stage and dataset.</p>
+<p># noqa: DAR401, W505</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1073,9 +1086,27 @@ like “train” / “valid” / “infer”</p></li>
 <p>For datasets/loaders nameing please follow
 <a class="reference internal" href="#module-catalyst.core.runner" title="catalyst.core.runner"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.runner</span></code></a> documentation.</p>
 </div>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Data transformations to use for specified dataset.</p>
+<dl class="simple">
+<dt>Returns:  # noqa: DAR202</dt><dd><p>Data transformations to use for specified dataset.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<em class="property">abstract property </em><code class="sig-name descname">hparams</code></dt>
+<dd><p>Returns hyper-parameters</p>
+<dl>
+<dt>Example::</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">experiment</span><span class="o">.</span><span class="n">hparams</span>
+<span class="go">OrderedDict([(&#39;optimizer&#39;, &#39;Adam&#39;),</span>
+<span class="go"> (&#39;lr&#39;, 0.02),</span>
+<span class="go"> (&#39;betas&#39;, (0.9, 0.999)),</span>
+<span class="go"> (&#39;eps&#39;, 1e-08),</span>
+<span class="go"> (&#39;weight_decay&#39;, 0),</span>
+<span class="go"> (&#39;amsgrad&#39;, False),</span>
+<span class="go"> (&#39;train_batch_size&#39;, 32)])</span>
+</pre></div>
+</div>
 </dd>
 </dl>
 </dd></dl>
@@ -1421,6 +1452,9 @@ like <cite>criterion</cite>, <cite>optimizer</cite>, <cite>scheduler</cite></p><
 <li><p><strong>inner_key</strong> (<em>str</em>) – name of inner dictionary key</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>inner attribute</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -1437,6 +1471,17 @@ like <cite>criterion</cite>, <cite>optimizer</cite>, <cite>scheduler</cite></p><
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>experiment</strong> (<a class="reference internal" href="#catalyst.core.experiment.IExperiment" title="catalyst.core.experiment.IExperiment"><em>IExperiment</em></a>) – Experiment instance to use for Runner.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self, <cite>IRunner</cite> instance after the experiment</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Exception</strong> – if during pipeline exception,
+    no handler we found into callbacks</p></li>
+<li><p><strong>KeyboardInterrupt</strong> – if during pipeline exception,
+    no handler we found into callbacks</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -1744,6 +1789,9 @@ like <cite>criterion</cite>, <cite>optimizer</cite>, <cite>scheduler</cite></p><
 <li><p><strong>inner_key</strong> (<em>str</em>) – name of inner dictionary key</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>inner attribute</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -1760,6 +1808,17 @@ like <cite>criterion</cite>, <cite>optimizer</cite>, <cite>scheduler</cite></p><
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>experiment</strong> (<a class="reference internal" href="#catalyst.core.experiment.IExperiment" title="catalyst.core.experiment.IExperiment"><em>IExperiment</em></a>) – Experiment instance to use for Runner.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>self, <cite>IRunner</cite> instance after the experiment</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Exception</strong> – if during pipeline exception,
+    no handler we found into callbacks</p></li>
+<li><p><strong>KeyboardInterrupt</strong> – if during pipeline exception,
+    no handler we found into callbacks</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -1967,6 +2026,21 @@ exception – <span class="k">if</span> an Exception was raised
 <code class="sig-name descname">Worker</code><em class="property"> = 2</em><a class="headerlink" href="#catalyst.core.callback.CallbackNode.Worker" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="attribute">
+<dt id="catalyst.core.callback.CallbackNode.all">
+<code class="sig-name descname">all</code><em class="property"> = 0</em><a class="headerlink" href="#catalyst.core.callback.CallbackNode.all" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.core.callback.CallbackNode.master">
+<code class="sig-name descname">master</code><em class="property"> = 1</em><a class="headerlink" href="#catalyst.core.callback.CallbackNode.master" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.core.callback.CallbackNode.worker">
+<code class="sig-name descname">worker</code><em class="property"> = 2</em><a class="headerlink" href="#catalyst.core.callback.CallbackNode.worker" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -2046,6 +2120,46 @@ for example:</p>
 <code class="sig-name descname">Validation</code><em class="property"> = 80</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.Validation" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+<dl class="attribute">
+<dt id="catalyst.core.callback.CallbackOrder.external">
+<code class="sig-name descname">external</code><em class="property"> = 200</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.external" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.core.callback.CallbackOrder.internal">
+<code class="sig-name descname">internal</code><em class="property"> = 0</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.internal" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.core.callback.CallbackOrder.logging">
+<code class="sig-name descname">logging</code><em class="property"> = 120</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.logging" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.core.callback.CallbackOrder.metric">
+<code class="sig-name descname">metric</code><em class="property"> = 20</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.metric" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.core.callback.CallbackOrder.metric_aggregation">
+<code class="sig-name descname">metric_aggregation</code><em class="property"> = 40</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.metric_aggregation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.core.callback.CallbackOrder.optimizer">
+<code class="sig-name descname">optimizer</code><em class="property"> = 60</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.optimizer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.core.callback.CallbackOrder.scheduler">
+<code class="sig-name descname">scheduler</code><em class="property"> = 100</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.scheduler" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.core.callback.CallbackOrder.validation">
+<code class="sig-name descname">validation</code><em class="property"> = 80</em><a class="headerlink" href="#catalyst.core.callback.CallbackOrder.validation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -2066,6 +2180,137 @@ for example:</p>
 <dt id="catalyst.core.callback.CallbackScope.Stage">
 <code class="sig-name descname">Stage</code><em class="property"> = 0</em><a class="headerlink" href="#catalyst.core.callback.CallbackScope.Stage" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.core.callback.CallbackScope.experiment">
+<code class="sig-name descname">experiment</code><em class="property"> = 1</em><a class="headerlink" href="#catalyst.core.callback.CallbackScope.experiment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.core.callback.CallbackScope.stage">
+<code class="sig-name descname">stage</code><em class="property"> = 0</em><a class="headerlink" href="#catalyst.core.callback.CallbackScope.stage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.core.callback.WrapperCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callback.</code><code class="sig-name descname">WrapperCallback</code><span class="sig-paren">(</span><em class="sig-param">base_callback: catalyst.core.callback.Callback</em>, <em class="sig-param">enable_callback: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#WrapperCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.WrapperCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
+<p>Enable/disable callback execution.</p>
+<dl class="method">
+<dt id="catalyst.core.callback.WrapperCallback.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">base_callback: catalyst.core.callback.Callback</em>, <em class="sig-param">enable_callback: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#WrapperCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.WrapperCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_callback</strong> (<a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a>) – callback to wrap</p></li>
+<li><p><strong>enable_callback</strong> (<em>boolean</em>) – indicator to enable/disable
+callback, if <code class="docutils literal notranslate"><span class="pre">True</span></code> then callback will be enabled,
+default <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callback.WrapperCallback.on_batch_end">
+<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callback.html#WrapperCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.WrapperCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run base_callback (if possible)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callback.WrapperCallback.on_batch_start">
+<code class="sig-name descname">on_batch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callback.html#WrapperCallback.on_batch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.WrapperCallback.on_batch_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run base_callback (if possible)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callback.WrapperCallback.on_epoch_end">
+<code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callback.html#WrapperCallback.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.WrapperCallback.on_epoch_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run base_callback (if possible)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callback.WrapperCallback.on_epoch_start">
+<code class="sig-name descname">on_epoch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callback.html#WrapperCallback.on_epoch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.WrapperCallback.on_epoch_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run base_callback (if possible)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callback.WrapperCallback.on_exception">
+<code class="sig-name descname">on_exception</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callback.html#WrapperCallback.on_exception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.WrapperCallback.on_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run base_callback (if possible)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callback.WrapperCallback.on_loader_end">
+<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callback.html#WrapperCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.WrapperCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset status of callback</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callback.WrapperCallback.on_loader_start">
+<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callback.html#WrapperCallback.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.WrapperCallback.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if current epoch should be skipped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callback.WrapperCallback.on_stage_end">
+<code class="sig-name descname">on_stage_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callback.html#WrapperCallback.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.WrapperCallback.on_stage_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run base_callback (if possible)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callback.WrapperCallback.on_stage_start">
+<code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callback.html#WrapperCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.WrapperCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run base_callback (if possible)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -2164,6 +2409,12 @@ and will be used the last runner.</p>
 <dd class="field-odd"><p><strong>checkpoint</strong> (<em>dict</em>) – checkpoint dict,
 should contain <code class="docutils literal notranslate"><span class="pre">stage_name</span></code> and <code class="docutils literal notranslate"><span class="pre">epoch</span></code> keys.</p>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>checkpoint suffix</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -2236,6 +2487,12 @@ and keep <code class="docutils literal notranslate"><span class="pre">save_n_bes
 <dd class="field-odd"><p><strong>last_valid_metrics</strong> (<em>dict</em>) – dict with metrics
 from last validation step.</p>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>processed metrics</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>OrderedDict</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -2288,6 +2545,12 @@ or <code class="docutils literal notranslate"><span class="pre">last</span></cod
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>checkpoint</strong> (<em>dict</em>) – checkpoint dict,
 should contain <code class="docutils literal notranslate"><span class="pre">stage_name</span></code> and <code class="docutils literal notranslate"><span class="pre">epoch</span></code> keys.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>checkpoint suffix</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2360,7 +2623,7 @@ should contain <code class="docutils literal notranslate"><span class="pre">stag
 <dl class="class">
 <dt id="catalyst.core.callbacks.criterion.CriterionCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.criterion.</code><code class="sig-name descname">CriterionCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', prefix: str = 'loss', criterion_key: str = None, multiplier: float = 1.0, **metric_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/criterion.html#CriterionCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.criterion.CriterionCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callbacks.metrics._MetricCallback" title="catalyst.core.callbacks.metrics._MetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics._MetricCallback</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callbacks.metrics.IMetricCallback" title="catalyst.core.callbacks.metrics.IMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.IMetricCallback</span></code></a></p>
 <p>Callback for that measures loss with specified criterion.</p>
 <dl class="method">
 <dt id="catalyst.core.callbacks.criterion.CriterionCallback.__init__">
@@ -2494,6 +2757,11 @@ translates <code class="docutils literal notranslate"><span class="pre">runner.*
 <code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/logging.html#ConsoleLogger.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.logging.ConsoleLogger.on_epoch_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Translate <code class="docutils literal notranslate"><span class="pre">runner.metric_manager</span></code> to console and text file
 at the end of an epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner instance</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -2612,19 +2880,19 @@ to remove always_show metrics set it to an empty list <code class="docutils lite
 <div class="section" id="metrics">
 <h3><a class="toc-backref" href="#id15">Metrics</a><a class="headerlink" href="#metrics" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
-<dt id="catalyst.core.callbacks.metrics._MetricCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">_MetricCallback</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metrics_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#_MetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics._MetricCallback" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.core.callbacks.metrics.IMetricCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">IMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metrics_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#IMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.IMetricCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code>, <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
 <p>&#64;TODO: Docs. Contribution is welcome.</p>
 <dl class="method">
-<dt id="catalyst.core.callbacks.metrics._MetricCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metrics_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#_MetricCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics._MetricCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.core.callbacks.metrics.IMetricCallback.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metrics_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#IMetricCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.IMetricCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.core.callbacks.metrics._MetricCallback.metric_fn">
-<em class="property">abstract property </em><code class="sig-name descname">metric_fn</code><a class="headerlink" href="#catalyst.core.callbacks.metrics._MetricCallback.metric_fn" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.core.callbacks.metrics.IMetricCallback.metric_fn">
+<em class="property">abstract property </em><code class="sig-name descname">metric_fn</code><a class="headerlink" href="#catalyst.core.callbacks.metrics.IMetricCallback.metric_fn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Docs. Contribution is welcome.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -2634,17 +2902,47 @@ to remove always_show metrics set it to an empty list <code class="docutils lite
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.core.callbacks.metrics._MetricCallback.on_batch_end">
-<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#_MetricCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics._MetricCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.core.callbacks.metrics.IMetricCallback.on_batch_end">
+<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#IMetricCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.IMetricCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the metric and add it to batch metrics.</p>
 </dd></dl>
 
 </dd></dl>
 
 <span class="target" id="module-catalyst.core.callbacks.metrics"></span><dl class="class">
+<dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">IMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metrics_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#IMetricCallback"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code>, <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
+<p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dl class="method">
+<dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metrics_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#IMetricCallback.__init__"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<em class="property">abstract property </em><code class="sig-name descname">metric_fn</code></dt>
+<dd><p>Docs. Contribution is welcome.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>&#64;TODO</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#IMetricCallback.on_batch_end"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Computes the metric and add it to batch metrics.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="catalyst.core.callbacks.metrics.MetricCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">MetricCallback</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, metric_fn: Callable, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metric_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callbacks.metrics._MetricCallback" title="catalyst.core.callbacks.metrics._MetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics._MetricCallback</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callbacks.metrics.IMetricCallback" title="catalyst.core.callbacks.metrics.IMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.IMetricCallback</span></code></a></p>
 <p>A callback that returns single metric on <cite>runner.on_batch_end</cite>.</p>
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.MetricCallback.__init__">
@@ -2789,6 +3087,12 @@ Must be either <code class="docutils literal notranslate"><span class="pre">sum<
 <dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callbacks.metrics.MetricManagerCallback.to_single_value">
+<em class="property">static </em><code class="sig-name descname">to_single_value</code><span class="sig-paren">(</span><em class="sig-param">value: Any</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricManagerCallback.to_single_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricManagerCallback.to_single_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
 </dd></dl>
 
 </dd></dl>
@@ -2962,7 +3266,7 @@ for each param group</p></li>
 <dl class="class">
 <dt id="catalyst.core.callbacks.scheduler.LRUpdater">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.scheduler.</code><code class="sig-name descname">LRUpdater</code><span class="sig-paren">(</span><em class="sig-param">optimizer_key: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/scheduler.html#LRUpdater"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.scheduler.LRUpdater" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code>, <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
 <p>Basic class that all Lr updaters inherit from.</p>
 <dl class="method">
 <dt id="catalyst.core.callbacks.scheduler.LRUpdater.__init__">
@@ -2977,13 +3281,13 @@ for learning rate scheduling</p>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.scheduler.LRUpdater.calc_lr">
-<code class="sig-name descname">calc_lr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/scheduler.html#LRUpdater.calc_lr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.scheduler.LRUpdater.calc_lr" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">calc_lr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/scheduler.html#LRUpdater.calc_lr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.scheduler.LRUpdater.calc_lr" title="Permalink to this definition">¶</a></dt>
 <dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.scheduler.LRUpdater.calc_momentum">
-<code class="sig-name descname">calc_momentum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/scheduler.html#LRUpdater.calc_momentum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.scheduler.LRUpdater.calc_momentum" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">calc_momentum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/scheduler.html#LRUpdater.calc_momentum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.scheduler.LRUpdater.calc_momentum" title="Permalink to this definition">¶</a></dt>
 <dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
 </dd></dl>
 
@@ -3132,12 +3436,177 @@ for learning rate scheduling</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-catalyst.core.callbacks.control_flow">
+<span id="control-flow"></span><h3><a class="toc-backref" href="#id20">Control Flow</a><a class="headerlink" href="#module-catalyst.core.callbacks.control_flow" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.core.callbacks.control_flow.ControlFlowCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.control_flow.</code><code class="sig-name descname">ControlFlowCallback</code><span class="sig-paren">(</span><em class="sig-param">base_callback: catalyst.core.callback.Callback, epochs: Union[int, Sequence[int]] = None, ignore_epochs: Union[int, Sequence[int]] = None, loaders: Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]] = None, ignore_loaders: Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]] = None, filter_fn: Union[str, Callable[[str, int, str], bool]] = None, use_global_epochs: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/control_flow.html#ControlFlowCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.control_flow.ControlFlowCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.WrapperCallback" title="catalyst.core.callback.WrapperCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.WrapperCallback</span></code></a></p>
+<p>Customize callback execution on different
+stages, loaders and epochs.</p>
+<p>For example, if you don’t want to compute loss on a validation
+you can ignore <code class="docutils literal notranslate"><span class="pre">CriterionCallback</span></code>, for notebook API
+need to wrap callback:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SupervisedRunner</span><span class="p">,</span> <span class="n">AccuracyCallback</span><span class="p">,</span>
+    <span class="n">CriterionCallback</span><span class="p">,</span> <span class="n">ControlFlowCallback</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span> <span class="o">=</span> <span class="mi">10_000</span><span class="p">,</span> <span class="mi">10</span>
+<span class="n">n_classes</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_classes</span><span class="p">,</span> <span class="p">[</span><span class="n">num_samples</span><span class="p">])</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">}</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="n">n_classes</span><span class="p">)</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+<span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
+    <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir&quot;</span><span class="p">,</span>
+    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">main_metric</span><span class="o">=</span><span class="s2">&quot;accuracy03&quot;</span><span class="p">,</span>
+    <span class="n">minimize_metric</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">AccuracyCallback</span><span class="p">(</span>
+            <span class="n">accuracy_args</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+        <span class="p">),</span>
+        <span class="n">ControlFlowCallback</span><span class="p">(</span>
+            <span class="n">base_callback</span><span class="o">=</span><span class="n">CriterionCallback</span><span class="p">(),</span>
+            <span class="n">ignore_loaders</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span>  <span class="c1"># or loaders=&quot;train&quot;</span>
+        <span class="p">)</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>In config API need to use <code class="docutils literal notranslate"><span class="pre">_wrapper</span></code> argument:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">callbacks_params</span><span class="p">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">...</span>
+  <span class="l l-Scalar l-Scalar-Plain">loss</span><span class="p p-Indicator">:</span>
+    <span class="nt">_wrapper</span><span class="p">:</span>
+       <span class="nt">callback</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ControlFlowCallback</span>
+       <span class="nt">ignore_loaders</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">valid</span>
+    <span class="nt">callback</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CriterionCallback</span>
+  <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="catalyst.core.callbacks.control_flow.ControlFlowCallback.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">base_callback: catalyst.core.callback.Callback, epochs: Union[int, Sequence[int]] = None, ignore_epochs: Union[int, Sequence[int]] = None, loaders: Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]] = None, ignore_loaders: Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]] = None, filter_fn: Union[str, Callable[[str, int, str], bool]] = None, use_global_epochs: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/control_flow.html#ControlFlowCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.control_flow.ControlFlowCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_callback</strong> (<a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a>) – callback to wrap</p></li>
+<li><p><strong>epochs</strong> (<em>int/Sequence</em><em>[</em><em>int</em><em>]</em>) – <p>epochs numbers where
+need to execute callback, on other epochs
+callback will be disabled.</p>
+<p>If passed int/float then callback will be enabled
+with period specified as epochs value
+(epochs expression <code class="docutils literal notranslate"><span class="pre">epoch_number</span> <span class="pre">%</span> <span class="pre">epochs</span> <span class="pre">!=</span> <span class="pre">0</span></code>)
+and disabled on other epochs.</p>
+<p>If passed list of epochs then will be executed callback
+on specified epochs.</p>
+<p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</p></li>
+<li><p><strong>ignore_epochs</strong> – <p>(int/Sequence[int]): epochs numbers where
+need to disable callback, on other epochs
+callback will be enabled.</p>
+<p>If passed int/float then callback will be disabled
+with period specified as epochs value
+(epochs expression <code class="docutils literal notranslate"><span class="pre">epoch_number</span> <span class="pre">%</span> <span class="pre">epochs</span> <span class="pre">==</span> <span class="pre">0</span></code>)
+and enabled on other epochs.</p>
+<p>If passed list of epochs then will be disabled callback
+on specified epochs.</p>
+<p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</p></li>
+<li><p><strong>loaders</strong> (<em>str/Sequence</em><em>[</em><em>str</em><em>]</em><em>/Mapping</em><em>[</em><em>str</em><em>, </em><em>int/Sequence</em><em>[</em><em>str</em><em>]</em><em>]</em>) – <p>loader names where should be enabled callback, on
+other loaders callback will be disabled.</p>
+<p>If passed string object then will be disabled callback for
+loader with specified name.</p>
+<p>If passed list/tuple of strings then will be disabled callback
+for loaders with specified names.</p>
+<p>If passed dictionary where key is a string and values
+int or list of integers then callback will be
+disabled on epochs (dictionary value) for specified
+loader (dictionary key).</p>
+<p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</p></li>
+<li><p><strong>ignore_loaders</strong> (<em>str/Sequence</em><em>[</em><em>str</em><em>]</em><em>/Mapping</em><em>[</em><em>str</em><em>, </em><em>int/Sequence</em><em>[</em><em>str</em><em>]</em><em>]</em>) – <p>loader names where should be disabled callback, on
+other loaders callback will be enabled.</p>
+<p>If passed string object then will be disabled callback for
+loader with specified name.</p>
+<p>If passed list/tuple of strings then will be disabled callback
+for loaders with specified names.</p>
+<p>If passed dictionary where key is a string and values
+int or list of integers then callback will be
+disabled on epochs (dictionary value) for specified
+loader (dictionary key).</p>
+<p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</p></li>
+<li><p><strong>filter_fn</strong> (<em>str</em><em> or </em><em>Callable</em><em>[</em><em>[</em><em>str</em><em>, </em><em>int</em><em>, </em><em>str</em><em>]</em><em>, </em><em>bool</em><em>]</em>) – <p>function to use instead of <code class="docutils literal notranslate"><span class="pre">loaders</span></code> or <code class="docutils literal notranslate"><span class="pre">epochs</span></code> arguments.</p>
+<p>If the object passed to a <code class="docutils literal notranslate"><span class="pre">filter_fn</span></code> is a string
+then it will be interpreted as python code. Expected
+lambda function with three arguments stage name (str),
+epoch number (int), loader name (str) and this function
+should return <code class="docutils literal notranslate"><span class="pre">True</span></code> if callback should be disabled
+on some condition.</p>
+<p>If passed callable object then it should accept
+three arguments - stage name (str), epoch number (int),
+loader name (str) and should return <code class="docutils literal notranslate"><span class="pre">True</span></code> if callback
+should be disabled on some condition othervise should
+return <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+<p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+</p></li>
+<li><p><strong>use_global_epochs</strong> (<em>bool</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> then
+will be used global epochs instead of epochs in
+a stage, the default value is <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callbacks.control_flow.ControlFlowCallback.on_loader_end">
+<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/control_flow.html#ControlFlowCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.control_flow.ControlFlowCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset status of callback</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callbacks.control_flow.ControlFlowCallback.on_loader_start">
+<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/control_flow.html#ControlFlowCallback.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.control_flow.ControlFlowCallback.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if current epoch should be skipped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 <div class="section" id="module-catalyst.core.registry">
-<span id="registry"></span><h2><a class="toc-backref" href="#id20">Registry</a><a class="headerlink" href="#module-catalyst.core.registry" title="Permalink to this headline">¶</a></h2>
+<span id="registry"></span><h2><a class="toc-backref" href="#id21">Registry</a><a class="headerlink" href="#module-catalyst.core.registry" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="catalyst.core.registry.Callback">
-<code class="sig-prename descclassname">catalyst.core.registry.</code><code class="sig-name descname">Callback</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.core.registry.Callback" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.core.registry.</code><code class="sig-name descname">Callback</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.core.registry.Callback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -3154,14 +3623,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.core.registry.Criterion">
-<code class="sig-prename descclassname">catalyst.core.registry.</code><code class="sig-name descname">Criterion</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.core.registry.Criterion" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.core.registry.</code><code class="sig-name descname">Criterion</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.core.registry.Criterion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -3178,14 +3650,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.core.registry.Optimizer">
-<code class="sig-prename descclassname">catalyst.core.registry.</code><code class="sig-name descname">Optimizer</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.core.registry.Optimizer" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.core.registry.</code><code class="sig-name descname">Optimizer</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.core.registry.Optimizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -3202,14 +3677,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.core.registry.Scheduler">
-<code class="sig-prename descclassname">catalyst.core.registry.</code><code class="sig-name descname">Scheduler</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.core.registry.Scheduler" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.core.registry.</code><code class="sig-name descname">Scheduler</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.core.registry.Scheduler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -3226,14 +3704,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.core.registry.Module">
-<code class="sig-prename descclassname">catalyst.core.registry.</code><code class="sig-name descname">Module</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.core.registry.Module" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.core.registry.</code><code class="sig-name descname">Module</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.core.registry.Module" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -3250,14 +3731,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.core.registry.Model">
-<code class="sig-prename descclassname">catalyst.core.registry.</code><code class="sig-name descname">Model</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.core.registry.Model" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.core.registry.</code><code class="sig-name descname">Model</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.core.registry.Model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -3274,14 +3758,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.core.registry.Sampler">
-<code class="sig-prename descclassname">catalyst.core.registry.</code><code class="sig-name descname">Sampler</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.core.registry.Sampler" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.core.registry.</code><code class="sig-name descname">Sampler</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.core.registry.Sampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -3298,14 +3785,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.core.registry.Transform">
-<code class="sig-prename descclassname">catalyst.core.registry.</code><code class="sig-name descname">Transform</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.core.registry.Transform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.core.registry.</code><code class="sig-name descname">Transform</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.core.registry.Transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -3322,17 +3812,20 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 </div>
 <div class="section" id="module-catalyst.core.utils">
-<span id="utils"></span><h2><a class="toc-backref" href="#id21">Utils</a><a class="headerlink" href="#module-catalyst.core.utils" title="Permalink to this headline">¶</a></h2>
+<span id="utils"></span><h2><a class="toc-backref" href="#id22">Utils</a><a class="headerlink" href="#module-catalyst.core.utils" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-catalyst.core.utils.callbacks"></span><dl class="function">
 <dt id="catalyst.core.utils.callbacks.sort_callbacks_by_order">
-<code class="sig-prename descclassname">catalyst.core.utils.callbacks.</code><code class="sig-name descname">sort_callbacks_by_order</code><span class="sig-paren">(</span><em class="sig-param">callbacks: Union[List, Dict, collections.OrderedDict]</em><span class="sig-paren">)</span> &#x2192; collections.OrderedDict<a class="reference internal" href="../_modules/catalyst/core/utils/callbacks.html#sort_callbacks_by_order"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.utils.callbacks.sort_callbacks_by_order" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.core.utils.callbacks.</code><code class="sig-name descname">sort_callbacks_by_order</code><span class="sig-paren">(</span><em class="sig-param">callbacks: Union[List, Dict]</em><span class="sig-paren">)</span> &#x2192; collections.OrderedDict<a class="reference internal" href="../_modules/catalyst/core/utils/callbacks.html#sort_callbacks_by_order"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.utils.callbacks.sort_callbacks_by_order" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an sequence of callbacks and sort them.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3341,12 +3834,16 @@ single instance.</p></li>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>sequence of callbacks sorted by <code class="docutils literal notranslate"><span class="pre">callback</span> <span class="pre">order</span></code></p>
 </dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>TypeError</strong> – if <cite>callbacks</cite> is out of
+    <cite>None</cite>, <cite>dict</cite>, <cite>OrderedDict</cite>, <cite>list</cite></p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.core.utils.callbacks.filter_callbacks_by_node">
-<code class="sig-prename descclassname">catalyst.core.utils.callbacks.</code><code class="sig-name descname">filter_callbacks_by_node</code><span class="sig-paren">(</span><em class="sig-param">callbacks: Union[Dict, collections.OrderedDict]</em><span class="sig-paren">)</span> &#x2192; Union[Dict, collections.OrderedDict]<a class="reference internal" href="../_modules/catalyst/core/utils/callbacks.html#filter_callbacks_by_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.utils.callbacks.filter_callbacks_by_node" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.core.utils.callbacks.</code><code class="sig-name descname">filter_callbacks_by_node</code><span class="sig-paren">(</span><em class="sig-param">callbacks: Dict</em><span class="sig-paren">)</span> &#x2192; Dict<a class="reference internal" href="../_modules/catalyst/core/utils/callbacks.html#filter_callbacks_by_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.utils.callbacks.filter_callbacks_by_node" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filters callbacks based on running node.
 Deletes worker-only callbacks from <code class="docutils literal notranslate"><span class="pre">CallbackNode.Master</span></code>
 and master-only callbacks from <code class="docutils literal notranslate"><span class="pre">CallbackNode.Worker</span></code>.</p>
@@ -3365,9 +3862,9 @@ and master-only callbacks from <code class="docutils literal notranslate"><span 
 
 </div>
 <div class="section" id="legacy">
-<h2><a class="toc-backref" href="#id22">Legacy</a><a class="headerlink" href="#legacy" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id23">Legacy</a><a class="headerlink" href="#legacy" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="id4">
-<h3><a class="toc-backref" href="#id23">Runner</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id24">Runner</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.core.legacy.IRunnerLegacy">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.legacy.</code><code class="sig-name descname">IRunnerLegacy</code><a class="reference internal" href="../_modules/catalyst/core/legacy.html#IRunnerLegacy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.legacy.IRunnerLegacy" title="Permalink to this definition">¶</a></dt>
@@ -3495,6 +3992,7 @@ Please use <cite>runner</cite> instead.</p>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.scheduler">Scheduler</a></li>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.timer">Timer</a></li>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.validation">Validation</a></li>
+<li><a class="reference internal" href="#module-catalyst.core.callbacks.control_flow">Control Flow</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#module-catalyst.core.registry">Registry</a></li>

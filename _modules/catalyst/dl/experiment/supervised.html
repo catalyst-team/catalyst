@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.experiment.supervised &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.dl.experiment.supervised &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../_static/js/google.analytics.js"></script>
+  <script src="../../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -268,9 +268,9 @@
     <span class="n">OptimizerCallback</span><span class="p">,</span>
     <span class="n">SchedulerCallback</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.experiment.experiment</span> <span class="kn">import</span> <span class="n">Experiment</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="kn">import</span> <span class="n">check_callback_isinstance</span>
 <span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
-
-<span class="kn">from</span> <span class="nn">.experiment</span> <span class="kn">import</span> <span class="n">Experiment</span>
 
 
 <div class="viewcode-block" id="SupervisedExperiment"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.supervised.SupervisedExperiment">[docs]</a><span class="k">class</span> <span class="nc">SupervisedExperiment</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
@@ -311,7 +311,7 @@
 <span class="sd">                training stages.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            (OrderedDict[str, Callback]): Ordered dictionary of callbacks</span>
+<span class="sd">            OrderedDict[str, Callback]: Ordered dictionary of callbacks</span>
 <span class="sd">                for experiment</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">callbacks</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_callbacks</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">)</span> <span class="ow">or</span> <span class="n">OrderedDict</span><span class="p">()</span>
@@ -334,7 +334,8 @@
 
         <span class="k">for</span> <span class="n">callback_name</span><span class="p">,</span> <span class="n">callback_fn</span> <span class="ow">in</span> <span class="n">default_callbacks</span><span class="p">:</span>
             <span class="n">is_already_present</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
-                <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">callback_fn</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+                <span class="n">check_callback_isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">callback_fn</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">is_already_present</span><span class="p">:</span>
                 <span class="n">callbacks</span><span class="p">[</span><span class="n">callback_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">callback_fn</span><span class="p">()</span>

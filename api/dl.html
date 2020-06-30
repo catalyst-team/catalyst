@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>DL &mdash; Catalyst 20.06 documentation</title>
+  <title>DL &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -34,7 +34,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../_static/js/google.analytics.js"></script>
+  <script src="../_static/js/googleanalytics.min.js"></script>
   
   <script src="../_static/js/modernizr.min.js"></script>
 
@@ -149,7 +149,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -416,6 +416,12 @@ for distributed and FP16 method</p></li>
 </dd></dl>
 
 <dl class="method">
+<dt id="catalyst.dl.experiment.experiment.Experiment.hparams">
+<em class="property">property </em><code class="sig-name descname">hparams</code><a class="headerlink" href="#catalyst.dl.experiment.experiment.Experiment.hparams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns hyper parameters</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="catalyst.dl.experiment.experiment.Experiment.initial_seed">
 <em class="property">property </em><code class="sig-name descname">initial_seed</code><a class="headerlink" href="#catalyst.dl.experiment.experiment.Experiment.initial_seed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Experiment’s initial seed value.</p>
@@ -425,12 +431,6 @@ for distributed and FP16 method</p></li>
 <dt id="catalyst.dl.experiment.experiment.Experiment.logdir">
 <em class="property">property </em><code class="sig-name descname">logdir</code><a class="headerlink" href="#catalyst.dl.experiment.experiment.Experiment.logdir" title="Permalink to this definition">¶</a></dt>
 <dd><p>Path to the directory where the experiment logs.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.dl.experiment.experiment.Experiment.process_loaders">
-<em class="property">static </em><code class="sig-name descname">process_loaders</code><span class="sig-paren">(</span><em class="sig-param">loaders: OrderedDict[str, DataLoader], datasets: Dict, stage: str, valid_loader: str, initial_seed: int</em><span class="sig-paren">)</span> &#x2192; Tuple[OrderedDict[str, DataLoader], str]<a class="reference internal" href="../_modules/catalyst/dl/experiment/experiment.html#Experiment.process_loaders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.experiment.Experiment.process_loaders" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prepares loaders for a given stage.</p>
 </dd></dl>
 
 <dl class="method">
@@ -505,6 +505,9 @@ for distributed and FP16 method</p></li>
 <li><p><strong>model</strong> (<em>Union</em><em>[</em><em>Model</em><em>, </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Model</em><em>]</em><em>]</em>) – model or a dict of models</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>optimizer for selected stage</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -523,7 +526,7 @@ for distributed and FP16 method</p></li>
 <dl class="method">
 <dt id="catalyst.dl.experiment.config.ConfigExperiment.get_transforms">
 <code class="sig-name descname">get_transforms</code><span class="sig-paren">(</span><em class="sig-param">stage: str = None</em>, <em class="sig-param">dataset: str = None</em><span class="sig-paren">)</span> &#x2192; Callable<a class="reference internal" href="../_modules/catalyst/dl/experiment/config.html#ConfigExperiment.get_transforms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.config.ConfigExperiment.get_transforms" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns transform for a given stage and mode.</p>
+<dd><p>Returns transform for a given stage and dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -532,7 +535,19 @@ for distributed and FP16 method</p></li>
 will be used only if the value of <cite>_key_value`</cite> is <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>transform function</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.experiment.config.ConfigExperiment.hparams">
+<em class="property">property </em><code class="sig-name descname">hparams</code><a class="headerlink" href="#catalyst.dl.experiment.config.ConfigExperiment.hparams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns hyper params</p>
 </dd></dl>
 
 <dl class="method">
@@ -606,7 +621,7 @@ training stages.</p>
 </p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(OrderedDict[str, <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback">Callback</a>])</p>
+<dd class="field-odd"><p>OrderedDict[str, <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback">Callback</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -642,11 +657,10 @@ with one or several <code class="docutils literal notranslate"><span class="pre"
 for training, validation or inference</p></li>
 <li><p><strong>callbacks</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>, </em><em>OrderedDict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>]</em>) – list or dictionary with Catalyst callbacks</p></li>
 <li><p><strong>logdir</strong> (<em>str</em>) – path to output directory</p></li>
+<li><p><strong>resume</strong> (<em>str</em>) – path to checkpoint to use for resume</p></li>
 <li><p><strong>verbose</strong> (<em>bool</em>) – if <cite>True</cite>, it displays the status of the training
 to the console.</p></li>
 <li><p><strong>stage_kwargs</strong> (<em>dict</em>) – additional stage params</p></li>
-<li><p><strong>checkpoint_data</strong> (<em>dict</em>) – additional data to save in checkpoint,
-for example: <code class="docutils literal notranslate"><span class="pre">class_names</span></code>, <code class="docutils literal notranslate"><span class="pre">date_of_training</span></code>, etc</p></li>
 <li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets training to FP16.
 See <a class="reference external" href="https://nvidia.github.io/apex/amp.html#properties">https://nvidia.github.io/apex/amp.html#properties</a>
 if fp16=True, params by default will be <code class="docutils literal notranslate"><span class="pre">{&quot;opt_level&quot;:</span> <span class="pre">&quot;O1&quot;}</span></code></p></li>
@@ -655,7 +669,12 @@ if fp16=True, params by default will be <code class="docutils literal notranslat
 <li><p><strong>timeit</strong> (<em>bool</em>) – if True, computes the execution time
 of training process and displays it to the console.</p></li>
 <li><p><strong>initial_seed</strong> (<em>int</em>) – experiment’s initial seed value</p></li>
+<li><p><strong>state_kwargs</strong> (<em>dict</em>) – deprecated, use <cite>stage_kwargs</cite> instead</p></li>
 </ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – if both <cite>resume</cite> and <cite>CheckpointCallback</cite>
+    already exist</p>
 </dd>
 </dl>
 </dd></dl>
@@ -672,11 +691,13 @@ from DataLoader.</p></li>
 <li><p><strong>**kwargs</strong> – additional kwargs to pass to the model</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>model output dictionary</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Mapping[str, Any]</p>
+</dl>
+<p># noqa: DAR202
+:returns: model output dictionary
+:rtype: Mapping[str, Any]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>NotImplementedError</strong> – if not implemented yet</p>
 </dd>
 </dl>
 </dd></dl>
@@ -689,15 +710,15 @@ python Generator with model predictions from <cite>runner.predict_batch</cite></
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>loader</strong> (<em>DataLoader</em>) – </p></li>
-<li><p><strong>model</strong> (<em>Model</em>) – </p></li>
-<li><p><strong>resume</strong> (<em>str</em>) – </p></li>
-<li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – </p></li>
-<li><p><strong>initial_seed</strong> (<em>int</em>) – </p></li>
+<li><p><strong>loader</strong> (<em>DataLoader</em>) – loader to predict</p></li>
+<li><p><strong>model</strong> (<em>Model</em>) – model to use for prediction</p></li>
+<li><p><strong>resume</strong> (<em>str</em>) – path to checkpoint to resume</p></li>
+<li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – fp16 usage flag</p></li>
+<li><p><strong>initial_seed</strong> (<em>int</em>) – seed to use before prediction</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>(Generator) model predictions from <cite>runner.predict_batch</cite> method.</p>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p>bathes with model predictions</p>
 </dd>
 </dl>
 </dd></dl>
@@ -723,6 +744,15 @@ tracing params to FP16</p></li>
 <li><p><strong>device</strong> (<em>Device</em>) – Torch device or a string</p></li>
 <li><p><strong>predict_params</strong> (<em>dict</em>) – additional parameters for model forward</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>traced model</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ScriptModule</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if <cite>batch</cite> and <cite>loader</cite> are Nones</p>
 </dd>
 </dl>
 </dd></dl>
@@ -777,7 +807,12 @@ of training process and displays it to the console.</p></li>
 best checkpoint state (model, optimizer, etc)
 according to validation metrics. Requires specified <code class="docutils literal notranslate"><span class="pre">logdir</span></code>.</p></li>
 <li><p><strong>initial_seed</strong> (<em>int</em>) – experiment’s initial seed value</p></li>
+<li><p><strong>state_kwargs</strong> (<em>dict</em>) – deprecated, use <cite>stage_kwargs</cite> instead</p></li>
 </ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – if both <cite>resume</cite> and <cite>CheckpointCallback</cite>
+    already exist</p>
 </dd>
 </dl>
 </dd></dl>
@@ -822,6 +857,9 @@ If your model has specific interface, override this method to use it</p>
 from DataLoaders.</p></li>
 <li><p><strong>**kwargs</strong> – additional parameters to pass to the model</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict with model output batch</p>
 </dd>
 </dl>
 </dd></dl>
@@ -983,11 +1021,11 @@ from DataLoader.</p></li>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.criterion.CriterionCallback" title="catalyst.core.callbacks.criterion.CriterionCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.criterion.CriterionCallback</span></code></a></p>
 <p>Callback to do mixup augmentation.</p>
 <p>More details about mixin can be found in the paper
-<a class="reference external" href="https://arxiv.org/abs/1710.09412">mixup: Beyond Empirical Risk Minimization</a>.</p>
+<a class="reference external" href="#noqa:W605https://arxiv.org/abs/1710.09412">mixup: Beyond Empirical Risk Minimization</a>.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.callbacks.MixupCallback</span></code> is inherited from
-<code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.CriterionCallback</span></code> and does its work.
+<p><cite>catalyst.dl.callbacks.MixupCallback</cite> is inherited from
+<cite>catalyst.dl.CriterionCallback</cite> and does its work.
 You may not use them together.</p>
 </div>
 <dl class="method">
@@ -1069,12 +1107,21 @@ for learning rate scheduling</p></li>
 </dd></dl>
 
 <dl class="method">
+<dt id="catalyst.dl.callbacks.scheduler.LRFinder.calc_momentum">
+<code class="sig-name descname">calc_momentum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/scheduler.html#LRFinder.calc_momentum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.scheduler.LRFinder.calc_momentum" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="catalyst.dl.callbacks.scheduler.LRFinder.on_batch_end">
 <code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/scheduler.html#LRFinder.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.scheduler.LRFinder.on_batch_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="core.html#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – at the end of LRFinder</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1513,7 +1560,11 @@ used as entrypoint during tracing</p></li>
 <dd class="field-even"><p>Traced model</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(ScriptModule)</p>
+<dd class="field-odd"><p>jit.ScriptModule</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if both batch and predict_fn must be specified or
+    mode is not in ‘eval’ or ‘train’.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1565,7 +1616,7 @@ used as entrypoint during tracing</p></li>
 <dd class="field-even"><p>Traced model</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(ScriptModule)</p>
+<dd class="field-odd"><p>ScriptModule</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1588,14 +1639,14 @@ used as entrypoint during tracing</p></li>
 <dd class="field-even"><p>Filename for traced model to be saved.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>file_name (str)</p>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.dl.utils.trace.save_traced_model">
-<code class="sig-prename descclassname">catalyst.dl.utils.trace.</code><code class="sig-name descname">save_traced_model</code><span class="sig-paren">(</span><em class="sig-param">model: torch.jit.ScriptModule</em>, <em class="sig-param">logdir: Union[str</em>, <em class="sig-param">pathlib.Path] = None</em>, <em class="sig-param">method_name: str = 'forward'</em>, <em class="sig-param">mode: str = 'eval'</em>, <em class="sig-param">requires_grad: bool = False</em>, <em class="sig-param">opt_level: str = None</em>, <em class="sig-param">out_dir: Union[str</em>, <em class="sig-param">pathlib.Path] = None</em>, <em class="sig-param">out_model: Union[str</em>, <em class="sig-param">pathlib.Path] = None</em>, <em class="sig-param">checkpoint_name: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils/trace.html#save_traced_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.trace.save_traced_model" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.dl.utils.trace.</code><code class="sig-name descname">save_traced_model</code><span class="sig-paren">(</span><em class="sig-param">model: torch.jit.ScriptModule</em>, <em class="sig-param">logdir: Union[str</em>, <em class="sig-param">pathlib.Path] = None</em>, <em class="sig-param">method_name: str = 'forward'</em>, <em class="sig-param">mode: str = 'eval'</em>, <em class="sig-param">requires_grad: bool = False</em>, <em class="sig-param">opt_level: str = None</em>, <em class="sig-param">out_dir: Union[str</em>, <em class="sig-param">pathlib.Path] = None</em>, <em class="sig-param">out_model: Union[str</em>, <em class="sig-param">pathlib.Path] = None</em>, <em class="sig-param">checkpoint_name: str = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/dl/utils/trace.html#save_traced_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.trace.save_traced_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Saves traced model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1612,6 +1663,10 @@ used as entrypoint during tracing</p></li>
 (overrides logdir &amp; out_dir)</p></li>
 <li><p><strong>checkpoint_name</strong> (<em>str</em>) – Checkpoint name used to restore the model</p></li>
 </ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if nothing out of <cite>logdir</cite>, <cite>out_dir</cite> or <cite>out_model</cite>
+    is specified.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1632,7 +1687,7 @@ used as entrypoint during tracing</p></li>
 <dd class="field-even"><p>Traced model</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(ScriptModule)</p>
+<dd class="field-odd"><p>ScriptModule</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1679,7 +1734,7 @@ lists to ease the choice.</p>
 <span id="registry"></span><h2><a class="toc-backref" href="#id26">Registry</a><a class="headerlink" href="#module-catalyst.dl.registry" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="catalyst.dl.registry.Callback">
-<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Callback</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.dl.registry.Callback" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Callback</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.dl.registry.Callback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -1696,14 +1751,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.dl.registry.Criterion">
-<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Criterion</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.dl.registry.Criterion" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Criterion</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.dl.registry.Criterion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -1720,14 +1778,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.dl.registry.Optimizer">
-<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Optimizer</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.dl.registry.Optimizer" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Optimizer</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.dl.registry.Optimizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -1744,14 +1805,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.dl.registry.Scheduler">
-<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Scheduler</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.dl.registry.Scheduler" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Scheduler</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.dl.registry.Scheduler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -1768,14 +1832,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.dl.registry.Module">
-<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Module</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.dl.registry.Module" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Module</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.dl.registry.Module" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -1792,14 +1859,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.dl.registry.Model">
-<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Model</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.dl.registry.Model" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Model</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.dl.registry.Model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -1816,14 +1886,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.dl.registry.Sampler">
-<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Sampler</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.dl.registry.Sampler" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Sampler</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.dl.registry.Sampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -1840,14 +1913,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.dl.registry.Transform">
-<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Transform</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.dl.registry.Transform" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Transform</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.dl.registry.Transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -1864,14 +1940,17 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.dl.registry.Experiment">
-<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Experiment</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="headerlink" href="#catalyst.dl.registry.Experiment" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Experiment</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.dl.registry.Experiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -1888,7 +1967,10 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>

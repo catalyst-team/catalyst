@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.sys &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.utils.sys &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../_static/js/google.analytics.js"></script>
+  <script src="../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -265,13 +265,13 @@
 <span class="kn">import</span> <span class="nn">platform</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">from</span> <span class="nn">subprocess</span> <span class="kn">import</span> <span class="n">CalledProcessError</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.contrib.tools.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
-
-<span class="kn">from</span> <span class="nn">.config</span> <span class="kn">import</span> <span class="n">save_config</span>
-<span class="kn">from</span> <span class="nn">.misc</span> <span class="kn">import</span> <span class="n">get_utcnow_time</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.config</span> <span class="kn">import</span> <span class="n">save_config</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">get_utcnow_time</span>
 
 
 <span class="k">def</span> <span class="nf">_decode_dict</span><span class="p">(</span><span class="n">dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
@@ -282,7 +282,7 @@
 <span class="sd">        dictionary: a dict</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        dict: decoded dict</span>
+<span class="sd">        Dict: decoded dict</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
         <span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">==</span> <span class="nb">bytes</span> <span class="k">else</span> <span class="n">v</span>
@@ -296,7 +296,7 @@
 <span class="sd">    Creates a dictionary with environment variables.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        dict: environment variables</span>
+<span class="sd">        Dict: environment variables</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;python_version&quot;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
@@ -337,7 +337,7 @@
                 <span class="s2">&quot;origin_commit&quot;</span><span class="p">:</span> <span class="n">git_origin_commit</span><span class="p">,</span>
             <span class="p">}</span>
             <span class="n">result</span><span class="p">[</span><span class="s2">&quot;git&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_decode_dict</span><span class="p">(</span><span class="n">git</span><span class="p">)</span>
-        <span class="k">except</span> <span class="p">(</span><span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">):</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">CalledProcessError</span><span class="p">,</span> <span class="ne">FileNotFoundError</span><span class="p">):</span>
             <span class="k">pass</span>
 
     <span class="n">result</span> <span class="o">=</span> <span class="n">_decode_dict</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
@@ -346,10 +346,14 @@
 
 <div class="viewcode-block" id="list_pip_packages"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.sys.list_pip_packages">[docs]</a><span class="k">def</span> <span class="nf">list_pip_packages</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    @TODO: Docs. Contribution is welcome</span>
-<span class="sd">    @TODO: When catching exception, e has no attribute &#39;output&#39;</span>
+<span class="sd">    Lists pip installed packages.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: string with pip installed packages</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="c1"># TODO: Docs. Contribution is welcome</span>
+    <span class="c1"># TODO: When catching exception, e has no attribute &#39;output&#39;</span>
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">devnull</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="p">(</span>
@@ -359,9 +363,9 @@
             <span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Failed to freeze pip packages. &quot;</span>
+                <span class="s2">&quot;Failed to freeze pip packages. &quot;</span>
                 <span class="c1"># f&quot;Pip Output: ```{e.output}```.&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Continue experiment without pip packages dumping.&quot;</span>
+                <span class="s2">&quot;Continue experiment without pip packages dumping.&quot;</span>
             <span class="p">)</span>
             <span class="k">pass</span>
         <span class="c1"># except FileNotFoundError:</span>
@@ -374,11 +378,15 @@
 
 <div class="viewcode-block" id="list_conda_packages"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.sys.list_conda_packages">[docs]</a><span class="k">def</span> <span class="nf">list_conda_packages</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    @TODO: Docs. Contribution is welcome</span>
-<span class="sd">    @TODO: When catching exception, e has no attribute &#39;output&#39;</span>
+<span class="sd">    Lists conda installed packages.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: list with conda installed packages</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
     <span class="n">conda_meta_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">prefix</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;conda-meta&quot;</span>
+    <span class="c1"># TODO: Docs. Contribution is welcome</span>
+    <span class="c1"># TODO: When catching exception, e has no attribute &#39;output&#39;</span>
     <span class="k">if</span> <span class="n">conda_meta_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="c1"># We are currently in conda virtual env</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">devnull</span><span class="p">:</span>
@@ -392,10 +400,10 @@
                 <span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                 <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Running from conda env, &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;but failed to list conda packages. &quot;</span>
+                    <span class="s2">&quot;Running from conda env, &quot;</span>
+                    <span class="s2">&quot;but failed to list conda packages. &quot;</span>
                     <span class="c1"># f&quot;Conda Output: ```{e.output}```.&quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;Continue experiment without conda packages dumping.&quot;</span>
+                    <span class="s2">&quot;Continue experiment without conda packages dumping.&quot;</span>
                 <span class="p">)</span>
                 <span class="k">pass</span>
             <span class="c1"># except FileNotFoundError:</span>

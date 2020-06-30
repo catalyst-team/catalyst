@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Data &mdash; Catalyst 20.06 documentation</title>
+  <title>Data &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -34,7 +34,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../_static/js/google.analytics.js"></script>
+  <script src="../_static/js/googleanalytics.min.js"></script>
   
   <script src="../_static/js/modernizr.min.js"></script>
 
@@ -149,7 +149,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -356,7 +356,8 @@ or image directory with specified neural net architecture</p>
 <dl class="method">
 <dt id="catalyst.data.augmentor.Augmentor.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">dict_key: str</em>, <em class="sig-param">augment_fn: Callable</em>, <em class="sig-param">input_key: str = None</em>, <em class="sig-param">output_key: str = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/augmentor.html#Augmentor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.augmentor.Augmentor.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Augmentation abstraction to use with data dictionaries.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dict_key</strong> (<em>str</em>) – key to transform</p></li>
@@ -416,7 +417,7 @@ to augmentation function to apply</p>
 <dt id="catalyst.data.collate_fn.FilteringCollateFn">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.collate_fn.</code><code class="sig-name descname">FilteringCollateFn</code><span class="sig-paren">(</span><em class="sig-param">*keys</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/collate_fn.html#FilteringCollateFn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.collate_fn.FilteringCollateFn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Callable object doing job of <code class="docutils literal notranslate"><span class="pre">collate_fn</span></code> like <code class="docutils literal notranslate"><span class="pre">default_collate</span></code>,
-but does not cast batch items with specified key to <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code>.</p>
+but does not cast batch items with specified key to <cite>torch.Tensor</cite>.</p>
 <p>Only adds them to list.
 Supports only key-value format batches</p>
 <dl class="method">
@@ -575,7 +576,8 @@ transfer it to data, needed by your network
 <dl class="method">
 <dt id="catalyst.data.dataset.NumpyDataset.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">numpy_data: numpy.ndarray</em>, <em class="sig-param">numpy_key: str = 'features'</em>, <em class="sig-param">dict_transform: Callable = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#NumpyDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.NumpyDataset.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>General purpose dataset class to use with <cite>numpy_data</cite>.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>numpy_data</strong> (<em>np.ndarray</em>) – numpy data
@@ -605,7 +607,7 @@ transfer it to data, needed by your network
 
 <dl class="class">
 <dt id="catalyst.data.dataset.PathsDataset">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.dataset.</code><code class="sig-name descname">PathsDataset</code><span class="sig-paren">(</span><em class="sig-param">filenames: List[Union[str, pathlib.Path]], open_fn: Callable[[dict], dict], label_fn: Callable[[Union[str, pathlib.Path]], Any], **list_dataset_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#PathsDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.PathsDataset" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.dataset.</code><code class="sig-name descname">PathsDataset</code><span class="sig-paren">(</span><em class="sig-param">filenames: List[Union[str, pathlib.Path]], open_fn: Callable[dict, dict], label_fn: Callable[Union[str, pathlib.Path], Any], **list_dataset_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#PathsDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.PathsDataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.data.dataset.ListDataset" title="catalyst.data.dataset.ListDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.data.dataset.ListDataset</span></code></a></p>
 <p>Dataset that derives features and targets from samples filesystem paths.</p>
 <p class="rubric">Examples</p>
@@ -619,7 +621,7 @@ transfer it to data, needed by your network
 </div>
 <dl class="method">
 <dt id="catalyst.data.dataset.PathsDataset.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">filenames: List[Union[str, pathlib.Path]], open_fn: Callable[[dict], dict], label_fn: Callable[[Union[str, pathlib.Path]], Any], **list_dataset_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#PathsDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.PathsDataset.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">filenames: List[Union[str, pathlib.Path]], open_fn: Callable[dict, dict], label_fn: Callable[Union[str, pathlib.Path], Any], **list_dataset_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset.html#PathsDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.PathsDataset.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -776,7 +778,7 @@ to one_hot classes</p></li>
 
 <dl class="class">
 <dt id="catalyst.data.reader.LambdaReader">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.reader.</code><code class="sig-name descname">LambdaReader</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: str</em>, <em class="sig-param">lambda_fn: Callable = &lt;function LambdaReader.&lt;lambda&gt;&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#LambdaReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.LambdaReader" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.reader.</code><code class="sig-name descname">LambdaReader</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: str</em>, <em class="sig-param">lambda_fn: Callable = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#LambdaReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.LambdaReader" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reader abstraction with an lambda encoders.
 Can read an elem from dataset and apply <cite>encode_fn</cite> function to it.</p>
 <dl class="method">
@@ -796,7 +798,7 @@ and applies <cite>encode_fn</cite> function.</p>
 
 <dl class="method">
 <dt id="catalyst.data.reader.LambdaReader.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: str</em>, <em class="sig-param">lambda_fn: Callable = &lt;function LambdaReader.&lt;lambda&gt;&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#LambdaReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.LambdaReader.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: str</em>, <em class="sig-param">lambda_fn: Callable = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#LambdaReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.LambdaReader.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -915,9 +917,9 @@ P and K should be &gt; 1. (1)</p>
 a choice will be made with repetition.
 - If C % P == 1 then one of the classes should be dropped
 otherwise statement (1) will not be met.</p>
-<p>This type of sampling can be found in the classical paper of Person Re-Id:
-“In Defense of the Triplet Loss for Person Re-Identification”,
-where P equals 32 and K equals 4.</p>
+<p>This type of sampling can be found in the classical paper of Person Re-Id,
+where P equals 32 and K equals 4:
+<a class="reference external" href="https://arxiv.org/abs/1703.07737">In Defense of the Triplet Loss for Person Re-Identification</a>.</p>
 <dl class="method">
 <dt id="catalyst.data.sampler.BalanceBatchSampler.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">labels: List[int], p: int, k: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceBatchSampler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceBatchSampler.__init__" title="Permalink to this definition">¶</a></dt>
@@ -935,35 +937,35 @@ where P equals 32 and K equals 4.</p>
 <dl class="method">
 <dt id="catalyst.data.sampler.BalanceBatchSampler.__iter__">
 <code class="sig-name descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Iterator[int]<a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceBatchSampler.__iter__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceBatchSampler.__iter__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns: indeces for sampling dataset elems during an epoch</p>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>indeces for sampling dataset elems during an epoch</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.data.sampler.BalanceBatchSampler.__len__">
 <code class="sig-name descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceBatchSampler.__len__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceBatchSampler.__len__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns: number of samples in an epoch</p>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>number of samples in an epoch</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.data.sampler.BalanceBatchSampler.batch_size">
 <em class="property">property </em><code class="sig-name descname">batch_size</code><a class="headerlink" href="#catalyst.data.sampler.BalanceBatchSampler.batch_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>this value should be used in DataLoader as batch size</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Returns</p>
-</dd>
-</dl>
+<dd><p>Returns:
+this value should be used in DataLoader as batch size</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.data.sampler.BalanceBatchSampler.batches_in_epoch">
 <em class="property">property </em><code class="sig-name descname">batches_in_epoch</code><a class="headerlink" href="#catalyst.data.sampler.BalanceBatchSampler.batches_in_epoch" title="Permalink to this definition">¶</a></dt>
-<dd><p>number of batches in an epoch</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>Returns</p>
-</dd>
-</dl>
+<dd><p>Returns:
+number of batches in an epoch</p>
 </dd></dl>
 
 </dd></dl>
@@ -974,8 +976,7 @@ where P equals 32 and K equals 4.</p>
 <dd><p>Sampler iterates mini epochs from the dataset used by <code class="docutils literal notranslate"><span class="pre">mini_epoch_len</span></code>.</p>
 <p class="rubric">Example</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MiniEpochSampler</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">mini_epoch_len</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">MiniEpochSampler</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">mini_epoch_len</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MiniEpochSampler</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">mini_epoch_len</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">MiniEpochSampler</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">mini_epoch_len</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="n">shuffle</span><span class="o">=</span><span class="s2">&quot;per_epoch&quot;</span><span class="p">)</span>
 </pre></div>
@@ -1034,7 +1035,7 @@ The sampler will shuffle indices
 <dd><p>Wrapper over <cite>Sampler</cite> for distributed training.
 Allows you to use any sampler in distributed mode.</p>
 <p>It is especially useful in conjunction with
-<code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.parallel.DistributedDataParallel</span></code>. In such case, each
+<cite>torch.nn.parallel.DistributedDataParallel</cite>. In such case, each
 process can pass a DistributedSamplerWrapper instance as a DataLoader
 sampler, and load a subset of subsampled data of the original dataset
 that is exclusive to it.</p>
@@ -1073,8 +1074,7 @@ sampler will shuffle the indices</p></li>
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler.</code><code class="sig-name descname">DynamicLenBatchSampler</code><span class="sig-paren">(</span><em class="sig-param">sampler</em>, <em class="sig-param">batch_size</em>, <em class="sig-param">drop_last</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#DynamicLenBatchSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.DynamicLenBatchSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>A dynamic batch length data sampler.
 Should be used with <cite>catalyst.utils.trim_tensors</cite>.</p>
-<p>Adapted from “Dynamic minibatch trimming to improve BERT training speed”
-<a class="reference external" href="https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779">https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779</a></p>
+<p>Adapted from <a class="reference external" href="https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779">Dynamic minibatch trimming to improve BERT training speed</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

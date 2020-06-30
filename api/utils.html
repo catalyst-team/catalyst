@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Tools and Utilities &mdash; Catalyst 20.06 documentation</title>
+  <title>Tools and Utilities &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -34,7 +34,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../_static/js/google.analytics.js"></script>
+  <script src="../_static/js/googleanalytics.min.js"></script>
   
   <script src="../_static/js/modernizr.min.js"></script>
 
@@ -149,7 +149,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -343,12 +343,12 @@ Example of usage can be found in <a class="reference internal" href="core.html#c
 .. todo:: Representative docstring for this module</p>
 <dl class="class">
 <dt id="catalyst.tools.registry.Registry">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.registry.</code><code class="sig-name descname">Registry</code><span class="sig-paren">(</span><em class="sig-param">default_name_key: str, default_meta_factory: Callable[[Union[Type, Callable[[...], Any]], Tuple, Mapping], Any] = &lt;function _default_meta_factory&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.registry.</code><code class="sig-name descname">Registry</code><span class="sig-paren">(</span><em class="sig-param">default_name_key: str, default_meta_factory: Callable[[Union[Type, Callable[..., Any]], Tuple, Mapping], Any] = &lt;function _default_meta_factory&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableMapping</span></code></p>
 <p>Universal class allowing to add and access various factories by name.</p>
 <dl class="method">
 <dt id="catalyst.tools.registry.Registry.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">default_name_key: str, default_meta_factory: Callable[[Union[Type, Callable[[...], Any]], Tuple, Mapping], Any] = &lt;function _default_meta_factory&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">default_name_key: str, default_meta_factory: Callable[[Union[Type, Callable[..., Any]], Tuple, Mapping], Any] = &lt;function _default_meta_factory&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -363,7 +363,7 @@ that calls factory. Optional. Default just calls factory.</p></li>
 
 <dl class="method">
 <dt id="catalyst.tools.registry.Registry.add">
-<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.add" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -380,7 +380,10 @@ single instance.</p></li>
 <dd class="field-even"><p>First factory passed</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Factory)</p>
+<dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
 </dd>
 </dl>
 </dd></dl>
@@ -399,6 +402,9 @@ factories. If prefix is a list, all values will be treated
 as aliases.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>TypeError</strong> – if prefix is not a list or a string</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -414,7 +420,7 @@ as aliases.</p></li>
 
 <dl class="method">
 <dt id="catalyst.tools.registry.Registry.get">
-<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">name: str</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any], None]<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">name: str</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any], None]<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves factory, without creating any objects with it
 or raises error.</p>
 <dl class="field-list simple">
@@ -426,6 +432,9 @@ or raises error.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Factory</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if no factory with provided name was registered</p>
 </dd>
 </dl>
 </dd></dl>
@@ -451,7 +460,7 @@ If not provided, default is used.</p></li>
 
 <dl class="method">
 <dt id="catalyst.tools.registry.Registry.get_if_str">
-<code class="sig-name descname">get_if_str</code><span class="sig-paren">(</span><em class="sig-param">obj: Union[str, Type, Callable[[...], Any]]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get_if_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get_if_str" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_if_str</code><span class="sig-paren">(</span><em class="sig-param">obj: Union[str, Type, Callable[..., Any]]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get_if_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get_if_str" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns object from the registry if <code class="docutils literal notranslate"><span class="pre">obj</span></code> type is string.</p>
 </dd></dl>
 
@@ -473,12 +482,15 @@ If not provided, default is used</p></li>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>created instance</p>
 </dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if could not create object instance</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.tools.registry.Registry.late_add">
-<code class="sig-name descname">late_add</code><span class="sig-paren">(</span><em class="sig-param">cb: Callable[[Registry], None]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.late_add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.late_add" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">late_add</code><span class="sig-paren">(</span><em class="sig-param">cb: Callable[Registry, None]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.late_add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.late_add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows to prevent cycle imports by delaying some imports till next
 registry query.</p>
 <dl class="field-list simple">
@@ -789,14 +801,14 @@ each example (each weight &gt; 0)</p></li>
 
 <dl class="method">
 <dt id="catalyst.tools.meters.apmeter.APMeter.value">
-<code class="sig-name descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/apmeter.html#APMeter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.apmeter.APMeter.value" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/tools/meters/apmeter.html#APMeter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.apmeter.APMeter.value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the model”s average precision for each class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>1xK tensor, with avg precision for each class k</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>FloatTensor</p>
+<dd class="field-even"><p>torch.Tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -892,8 +904,11 @@ Values are not cached, only the last added.</p>
 <a class="reference external" href="https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance">Welford’s online algorithm</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<em>float</em>) – value for update,
-can be scalar number or PyTorch tensor</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>float</em>) – value for update,
+can be scalar number or PyTorch tensor</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – batch size for update</p></li>
+</ul>
 </dd>
 </dl>
 <div class="admonition note">
@@ -915,11 +930,11 @@ you can update meter values with only one value a time.</p>
 <dd><p>Returns meter values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Mean that has been updated online.
-std (float): Standard deviation that has been updated online.</p>
+<dd class="field-odd"><p>tuple of mean and std
+that have been updated online.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>mean (float)</p>
+<dd class="field-even"><p>Tuple[float, float]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1082,7 +1097,7 @@ as <cite>Nx1</cite> Tensor</p></li>
 <dd class="field-odd"><p>mAP scalar tensor</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>FloatTensor</p>
+<dd class="field-even"><p>torch.Tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1273,6 +1288,7 @@ redundancy.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>precision_value</strong> – precision (0-1)</p></li>
 <li><p><strong>recall_value</strong> – recall (0-1)</p></li>
+<li><p><strong>eps</strong> – epsilon to use</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1291,6 +1307,7 @@ classification and segmentation.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tp</strong> (<em>int</em>) – number of true positives</p></li>
 <li><p><strong>fp</strong> (<em>int</em>) – number of false positives</p></li>
+<li><p><strong>eps</strong> – epsilon to use</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1309,6 +1326,7 @@ segmentation.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>tp</strong> – number of true positives</p></li>
 <li><p><strong>fn</strong> – number of false negatives</p></li>
+<li><p><strong>eps</strong> – epsilon to use</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1371,6 +1389,13 @@ for distributed and FP16 method</p></li>
 <li><p><strong>device</strong> (<em>Device</em><em>, </em><em>optional</em>) – device</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple with processed model, criterion, optimizer, scheduler and device.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>NotImplementedError</strong> – if model is not nn.Module or dict for multi-gpu,
+    nn.ModuleDict for DataParallel not implemented yet</p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -1398,7 +1423,7 @@ for distributed and FP16 method</p></li>
 <dd class="field-even"><p>config</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Union[Dict, List])</p>
+<dd class="field-odd"><p>Union[Dict, List]</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><strong>Exception</strong> – if path <code class="docutils literal notranslate"><span class="pre">path</span></code> doesn’t exists
@@ -1495,11 +1520,10 @@ apex.parallel.DistributedDataParallel.</p>
 <dd><p>Returns the rank of the current worker.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">rank</span></code> if torch.distributed is initialized,
-otherwise <code class="docutils literal notranslate"><span class="pre">-1</span></code></p>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">rank</span></code> if torch.distributed is initialized, otherwise <code class="docutils literal notranslate"><span class="pre">-1</span></code></p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>(int)</p>
+<dd class="field-even"><p>int</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1595,12 +1619,22 @@ otherwise <code class="docutils literal notranslate"><span class="pre">-1</span>
 <span id="initialization"></span><h3><a class="toc-backref" href="#id23">Initialization</a><a class="headerlink" href="#module-catalyst.utils.initialization" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.utils.initialization.get_optimal_inner_init">
-<code class="sig-prename descclassname">catalyst.utils.initialization.</code><code class="sig-name descname">get_optimal_inner_init</code><span class="sig-paren">(</span><em class="sig-param">nonlinearity: torch.nn.modules.module.Module</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; Callable[[torch.nn.modules.module.Module], None]<a class="reference internal" href="../_modules/catalyst/utils/initialization.html#get_optimal_inner_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.get_optimal_inner_init" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.initialization.</code><code class="sig-name descname">get_optimal_inner_init</code><span class="sig-paren">(</span><em class="sig-param">nonlinearity: torch.nn.modules.module.Module</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; Callable[torch.nn.modules.module.Module, None]<a class="reference internal" href="../_modules/catalyst/utils/initialization.html#get_optimal_inner_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.get_optimal_inner_init" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create initializer for inner layers
 based on their activation function (nonlinearity).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>nonlinearity</strong> – non-linear activation</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nonlinearity</strong> – non-linear activation</p></li>
+<li><p><strong>**kwargs</strong> – extra kwargs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>optimal initialization function</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>NotImplementedError</strong> – if nonlinearity is out of
+    <cite>sigmoid</cite>, <cite>tanh</cite>, <cite>relu, `leaky_relu</cite></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1610,6 +1644,11 @@ based on their activation function (nonlinearity).</p>
 <code class="sig-prename descclassname">catalyst.utils.initialization.</code><code class="sig-name descname">outer_init</code><span class="sig-paren">(</span><em class="sig-param">layer: torch.nn.modules.module.Module</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/initialization.html#outer_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.initialization.outer_init" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialization for output layers of policy and value networks typically
 used in deep reinforcement learning literature.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>layer</strong> – torch nn.Module instance</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -1642,12 +1681,18 @@ decimal chars are not enough (metric value lower than 1e-4).</p>
 <li><p><strong>value</strong> (<em>float</em>) – value of metric</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>formatted metric</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.misc.get_fn_default_params">
-<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">get_fn_default_params</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[[...], Any], exclude: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#get_fn_default_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.get_fn_default_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">get_fn_default_params</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[..., Any], exclude: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#get_fn_default_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.get_fn_default_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return default parameters of Callable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1667,7 +1712,7 @@ decimal chars are not enough (metric value lower than 1e-4).</p>
 
 <dl class="function">
 <dt id="catalyst.utils.misc.get_fn_argsnames">
-<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">get_fn_argsnames</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[[...], Any], exclude: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#get_fn_argsnames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.get_fn_argsnames" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">get_fn_argsnames</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[..., Any], exclude: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#get_fn_argsnames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.get_fn_argsnames" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return parameter names of Callable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1722,12 +1767,15 @@ decimal chars are not enough (metric value lower than 1e-4).</p>
 <li><p><strong>**kwargs</strong> – Arbitrary keyword arguments</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>result of <cite>method</cite> call</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.misc.fn_ends_with_pass">
-<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">fn_ends_with_pass</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[[...], Any]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#fn_ends_with_pass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.fn_ends_with_pass" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">fn_ends_with_pass</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[..., Any]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#fn_ends_with_pass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.fn_ends_with_pass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check that function end with pass statement
 (probably does nothing in any way).
 Mainly used to filter callbacks with empty on_{event} methods.</p>
@@ -1842,8 +1890,8 @@ from <code class="docutils literal notranslate"><span class="pre">Bag</span> <sp
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>worker_fn</strong> (<em>Callable</em>) – </p></li>
-<li><p><strong>distributed</strong> (<em>bool</em>) – </p></li>
+<li><p><strong>worker_fn</strong> (<em>Callable</em>) – worker fn to run in distributed mode</p></li>
+<li><p><strong>distributed</strong> (<em>bool</em>) – distributed flag</p></li>
 <li><p><strong>args</strong> – additional parameters for worker_fn</p></li>
 <li><p><strong>kwargs</strong> – additional key-value parameters for worker_fn</p></li>
 </ul>
@@ -1877,7 +1925,7 @@ from <code class="docutils literal notranslate"><span class="pre">Bag</span> <sp
 <dd class="field-odd"><p>environment variables</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>dict</p>
+<dd class="field-even"><p>Dict</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1885,15 +1933,29 @@ from <code class="docutils literal notranslate"><span class="pre">Bag</span> <sp
 <dl class="function">
 <dt id="catalyst.utils.sys.list_conda_packages">
 <code class="sig-prename descclassname">catalyst.utils.sys.</code><code class="sig-name descname">list_conda_packages</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/catalyst/utils/sys.html#list_conda_packages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.sys.list_conda_packages" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome
-&#64;TODO: When catching exception, e has no attribute ‘output’</p>
+<dd><p>Lists conda installed packages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list with conda installed packages</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.sys.list_pip_packages">
 <code class="sig-prename descclassname">catalyst.utils.sys.</code><code class="sig-name descname">list_pip_packages</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="reference internal" href="../_modules/catalyst/utils/sys.html#list_pip_packages"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.sys.list_pip_packages" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome
-&#64;TODO: When catching exception, e has no attribute ‘output’</p>
+<dd><p>Lists pip installed packages.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>string with pip installed packages</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -2121,21 +2183,24 @@ if 1.0, learning rates will not be scaled</p></li>
 <code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">get_network_output</code><span class="sig-paren">(</span><em class="sig-param">net: torch.nn.modules.module.Module</em>, <em class="sig-param">*input_shapes_args</em>, <em class="sig-param">**input_shapes_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_network_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_network_output" title="Permalink to this definition">¶</a></dt>
 <dd><p># noqa: D202
 For each input shape returns an output tensor</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>net</strong> (<em>Model</em>) – the model</p></li>
-<li><p><strong>*input_shapes_args</strong> – variable length argument list of shapes</p></li>
-<li><p><strong>**input_shapes_kwargs</strong> – </p></li>
-</ul>
-</dd>
-</dl>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">utils</span><span class="o">.</span><span class="n">get_network_output</span><span class="p">(</span><span class="n">net</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
 <span class="go">tensor([[[-0.2665,  0.5792,  0.9757, -0.5782,  0.1530]]])</span>
 </pre></div>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>net</strong> (<em>Model</em>) – the model</p></li>
+<li><p><strong>*input_shapes_args</strong> – variable length argument list of shapes</p></li>
+<li><p><strong>**input_shapes_kwargs</strong> – key-value arguemnts of shapes</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tensor with network output</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -2158,8 +2223,7 @@ convert it to numpy array</p>
 <code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">trim_tensors</code><span class="sig-paren">(</span><em class="sig-param">tensors</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#trim_tensors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.trim_tensors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Trim padding off of a batch of tensors to the smallest possible length.
 Should be used with <cite>catalyst.data.DynamicLenBatchSampler</cite>.</p>
-<p>Adapted from “Dynamic minibatch trimming to improve BERT training speed”
-<a class="reference external" href="https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779">https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779</a></p>
+<p>Adapted from <a class="reference external" href="https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779">Dynamic minibatch trimming to improve BERT training speed</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>tensors</strong> (<em>[</em><em>torch.tensor</em><em>]</em>) – list of tensors to trim.</p>
@@ -2168,7 +2232,20 @@ Should be used with <cite>catalyst.data.DynamicLenBatchSampler</cite>.</p>
 <dd class="field-even"><p>list of trimmed tensors.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>([torch.tensor])</p>
+<dd class="field-odd"><p>List[torch.tensor]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.torch.normalize">
+<code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param">samples: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/utils/torch.html#normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>samples</strong> – tensor with shape of [n_samples, features_dim]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>normalized tensor with the same shape</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2189,7 +2266,7 @@ Should be used with <cite>catalyst.data.DynamicLenBatchSampler</cite>.</p>
 </dl>
 <dl class="function">
 <dt id="catalyst.utils.metrics.accuracy.accuracy">
-<code class="sig-prename descclassname">catalyst.utils.metrics.accuracy.</code><code class="sig-name descname">accuracy</code><span class="sig-paren">(</span><em class="sig-param">outputs</em>, <em class="sig-param">targets</em>, <em class="sig-param">topk=(1</em>, <em class="sig-param">)</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/metrics/accuracy.html#accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.metrics.accuracy.accuracy" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.metrics.accuracy.</code><code class="sig-name descname">accuracy</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">topk: Tuple = (1</em>, <em class="sig-param">)</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/metrics/accuracy.html#accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.metrics.accuracy.accuracy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the accuracy.</p>
 <p>It can be used either for:</p>
 <ol class="arabic simple">
@@ -2217,6 +2294,20 @@ multi-label classification).</p></li>
 <li><p>targets is a tensor with binary vectors</p></li>
 </ul>
 </div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – model outputs, logits</p></li>
+<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – ground truth, labels</p></li>
+<li><p><strong>topk</strong> (<em>tuple</em>) – tuple with specified <cite>N</cite> for top`N` accuracy computing</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs</p></li>
+<li><p><strong>activation</strong> (<em>str</em>) – activation for outputs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>computed topK accuracy</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -2237,7 +2328,7 @@ accuracy at k between two lists of items.</p>
 <dd class="field-even"><p>The average accuracy at k over the input lists</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>double</p>
+<dd class="field-odd"><p>float</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2260,7 +2351,7 @@ of lists of items.</p>
 <dd class="field-even"><p>The mean average accuracy at k over the input lists</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>double</p>
+<dd class="field-odd"><p>float</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2288,7 +2379,7 @@ Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
 <dd class="field-even"><p>Dice score</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>double</p>
+<dd class="field-odd"><p>float</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2340,6 +2431,8 @@ Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>outputs</strong> – tensor of arbitrary shape</p></li>
 <li><p><strong>targets</strong> – tensor of the same shape as input</p></li>
+<li><p><strong>gamma</strong> – gamma for focal loss</p></li>
+<li><p><strong>alpha</strong> – alpha for focal loss</p></li>
 <li><p><strong>reduction</strong> (<em>string</em><em>, </em><em>optional</em>) – specifies the reduction to apply to the output:
 <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;sum&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;batchwise_mean&quot;</span></code>.
 <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code>: no reduction will be applied,
@@ -2348,21 +2441,33 @@ elements in the output,
 <code class="docutils literal notranslate"><span class="pre">&quot;sum&quot;</span></code>: the output will be summed.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>computed loss</p>
+</dd>
 </dl>
 <p>Source: <a class="reference external" href="https://github.com/BloodAxe/pytorch-toolbelt">https://github.com/BloodAxe/pytorch-toolbelt</a></p>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.metrics.focal.reduced_focal_loss">
-<code class="sig-prename descclassname">catalyst.utils.metrics.focal.</code><code class="sig-name descname">reduced_focal_loss</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">threshold: float = 0.5</em>, <em class="sig-param">gamma: float = 2.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/metrics/focal.html#reduced_focal_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.metrics.focal.reduced_focal_loss" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.metrics.focal.</code><code class="sig-name descname">reduced_focal_loss</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">threshold: float = 0.5</em>, <em class="sig-param">gamma: float = 2.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/utils/metrics/focal.html#reduced_focal_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.metrics.focal.reduced_focal_loss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute reduced focal loss between target and output logits.</p>
 <p>It has been proposed in <a class="reference external" href="https://arxiv.org/abs/1903.01347">Reduced Focal Loss: 1st Place Solution to xView
 object detection in Satellite Imagery</a> paper.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">size_average</span></code> and <code class="docutils literal notranslate"><span class="pre">reduce</span></code> params are in the process of being
+deprecated, and in the meantime, specifying either of those two args
+will override <code class="docutils literal notranslate"><span class="pre">reduction</span></code>.</p>
+</div>
+<p>Source: <a class="reference external" href="https://github.com/BloodAxe/pytorch-toolbelt">https://github.com/BloodAxe/pytorch-toolbelt</a></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>outputs</strong> – tensor of arbitrary shape</p></li>
 <li><p><strong>targets</strong> – tensor of the same shape as input</p></li>
+<li><p><strong>threshold</strong> – threshold for focal reduction</p></li>
+<li><p><strong>gamma</strong> – gamma for focal reduction</p></li>
 <li><p><strong>reduction</strong> (<em>string</em><em>, </em><em>optional</em>) – specifies the reduction to apply to the output:
 <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;mean&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;sum&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;batchwise_mean&quot;</span></code>.
 <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code>: no reduction will be applied,
@@ -2374,13 +2479,10 @@ Default: “mean”</p></li>
 </ul>
 </dd>
 </dl>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p><code class="docutils literal notranslate"><span class="pre">size_average</span></code> and <code class="docutils literal notranslate"><span class="pre">reduce</span></code> params are in the process of being
-deprecated, and in the meantime, specifying either of those two args
-will override <code class="docutils literal notranslate"><span class="pre">reduction</span></code>.</p>
-</div>
-<p>Source: <a class="reference external" href="https://github.com/BloodAxe/pytorch-toolbelt">https://github.com/BloodAxe/pytorch-toolbelt</a></p>
+<dl class="simple">
+<dt>Returns:  # noqa: DAR201</dt><dd><p>torch.Tensor: computed loss</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -2389,12 +2491,14 @@ will override <code class="docutils literal notranslate"><span class="pre">reduc
 <p>IoU metric. Jaccard metric refers to IoU here, same functionality.</p>
 <dl class="function">
 <dt id="catalyst.utils.metrics.iou.iou">
-<code class="sig-prename descclassname">catalyst.utils.metrics.iou.</code><code class="sig-name descname">iou</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">classes: List[str] = None</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span> &#x2192; Union[float, List[float]]<a class="reference internal" href="../_modules/catalyst/utils/metrics/iou.html#iou"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.metrics.iou.iou" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.metrics.iou.</code><code class="sig-name descname">iou</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">classes: List[str] = None</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/utils/metrics/iou.html#iou"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.metrics.iou.iou" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – A list of predicted elements</p></li>
 <li><p><strong>targets</strong> (<em>torch.Tensor</em>) – A list of elements that are to be predicted</p></li>
+<li><p><strong>classes</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – if classes are specified
+we reduce across all dims except channels</p></li>
 <li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
 <li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
 <li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
@@ -2412,12 +2516,14 @@ Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
 
 <dl class="function">
 <dt id="catalyst.utils.metrics.iou.jaccard">
-<code class="sig-prename descclassname">catalyst.utils.metrics.iou.</code><code class="sig-name descname">jaccard</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">classes: List[str] = None</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span> &#x2192; Union[float, List[float]]<a class="headerlink" href="#catalyst.utils.metrics.iou.jaccard" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.metrics.iou.</code><code class="sig-name descname">jaccard</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">classes: List[str] = None</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="headerlink" href="#catalyst.utils.metrics.iou.jaccard" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – A list of predicted elements</p></li>
 <li><p><strong>targets</strong> (<em>torch.Tensor</em>) – A list of elements that are to be predicted</p></li>
+<li><p><strong>classes</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – if classes are specified
+we reduce across all dims except channels</p></li>
 <li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
 <li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
 <li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.scripts &mdash; Catalyst 20.06 documentation</title>
+  <title>catalyst.utils.scripts &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -32,7 +32,7 @@
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../_static/js/google.analytics.js"></script>
+  <script src="../../../_static/js/googleanalytics.min.js"></script>
   
   <script src="../../../_static/js/modernizr.min.js"></script>
 
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.07</a>
                 </div>
               
             
@@ -270,11 +270,11 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.distributed</span>
 
-<span class="kn">from</span> <span class="nn">.distributed</span> <span class="kn">import</span> <span class="n">get_distributed_env</span><span class="p">,</span> <span class="n">get_distributed_params</span>
-<span class="kn">from</span> <span class="nn">.misc</span> <span class="kn">import</span> <span class="n">get_utcnow_time</span>
-
-<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;once&quot;</span><span class="p">)</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;once&quot;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_distributed_env</span><span class="p">,</span>
+    <span class="n">get_distributed_params</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">get_utcnow_time</span>
 
 
 <div class="viewcode-block" id="import_module"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.scripts.import_module">[docs]</a><span class="k">def</span> <span class="nf">import_module</span><span class="p">(</span><span class="n">expdir</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
@@ -308,7 +308,7 @@
 <span class="sd">    @TODO: Docs. Contribution is welcome</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">expdir</span> <span class="o">=</span> <span class="n">expdir</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">expdir</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">expdir</span>
-    <span class="n">new_src_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;code&quot;</span>
+    <span class="n">new_src_dir</span> <span class="o">=</span> <span class="s2">&quot;code&quot;</span>
 
     <span class="c1"># @TODO: hardcoded</span>
     <span class="n">old_pro_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="vm">__file__</span><span class="p">))</span> <span class="o">+</span> <span class="s2">&quot;/../&quot;</span>
@@ -316,8 +316,8 @@
     <span class="n">_tricky_dir_copy</span><span class="p">(</span><span class="n">old_pro_dir</span><span class="p">,</span> <span class="n">new_pro_dir</span><span class="p">)</span>
 
     <span class="n">old_expdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
-    <span class="n">expdir_</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">old_expdir</span><span class="p">)</span>
-    <span class="n">new_expdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">logdir</span><span class="p">,</span> <span class="n">new_src_dir</span><span class="p">,</span> <span class="n">expdir_</span><span class="p">)</span>
+    <span class="n">new_expdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">old_expdir</span><span class="p">)</span>
+    <span class="n">new_expdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">logdir</span><span class="p">,</span> <span class="n">new_src_dir</span><span class="p">,</span> <span class="n">new_expdir</span><span class="p">)</span>
     <span class="n">_tricky_dir_copy</span><span class="p">(</span><span class="n">old_expdir</span><span class="p">,</span> <span class="n">new_expdir</span><span class="p">)</span></div>
 
 
@@ -341,12 +341,12 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expdir</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
         <span class="n">expdir</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
     <span class="n">m</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
-    <span class="n">Runner</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">Runner</span>
+    <span class="n">runner_fn</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">Runner</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s2">&quot;Experiment&quot;</span><span class="p">):</span>
-        <span class="n">Experiment</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">Experiment</span>
+        <span class="n">experiment_fn</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">Experiment</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">Experiment</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">return</span> <span class="n">Experiment</span><span class="p">,</span> <span class="n">Runner</span></div>
+        <span class="n">experiment_fn</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">experiment_fn</span><span class="p">,</span> <span class="n">runner_fn</span></div>
 
 
 <div class="viewcode-block" id="dump_base_experiment_code"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.scripts.dump_base_experiment_code">[docs]</a><span class="k">def</span> <span class="nf">dump_base_experiment_code</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="n">dst</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
@@ -354,8 +354,8 @@
 <span class="sd">    @TODO: Docs. Contribution is welcome</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">utcnow</span> <span class="o">=</span> <span class="n">get_utcnow_time</span><span class="p">()</span>
-    <span class="n">dst_</span> <span class="o">=</span> <span class="n">dst</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">)</span>
-    <span class="n">dst</span> <span class="o">=</span> <span class="n">dst</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;code-</span><span class="si">{</span><span class="n">utcnow</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">dst_</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="n">dst_</span>
+    <span class="n">dst</span> <span class="o">=</span> <span class="n">dst</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">)</span>
+    <span class="n">dst</span> <span class="o">=</span> <span class="n">dst</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;code-</span><span class="si">{</span><span class="n">utcnow</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="n">dst</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="k">else</span> <span class="n">dst</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dst</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">dump_python_files</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">)</span></div>
 
@@ -367,8 +367,8 @@
 <span class="sd">    Distributed run</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        worker_fn (Callable):</span>
-<span class="sd">        distributed (bool):</span>
+<span class="sd">        worker_fn (Callable): worker fn to run in distributed mode</span>
+<span class="sd">        distributed (bool): distributed flag</span>
 <span class="sd">        args: additional parameters for worker_fn</span>
 <span class="sd">        kwargs: additional key-value parameters for worker_fn</span>
 <span class="sd">    &quot;&quot;&quot;</span>
