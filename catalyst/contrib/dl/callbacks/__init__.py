@@ -3,6 +3,7 @@ import logging
 
 from catalyst.tools import settings
 
+from .batch_overfit_callback import BatchOverfitCallback
 from .cutmix_callback import CutmixCallback
 from .gradnorm_logger import GradNormLogger
 from .knn_metric import KNNMetricCallback

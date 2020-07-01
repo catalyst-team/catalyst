@@ -9,7 +9,7 @@ from catalyst.core.runner import IRunner
 
 
 class PeriodicLoaderCallback(Callback):
-    """Callback for runing loaders with specified period.
+    """Callback for running loaders with specified period.
     To disable loader use ``0`` as period.
 
     For example, if you have ``train``, ``train_additional``,
