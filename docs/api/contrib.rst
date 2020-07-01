@@ -110,6 +110,13 @@ AlchemyLogger
     :undoc-members:
     :show-inheritance:
 
+BatchOverfitCallback
+"""""""""""""
+.. automodule:: catalyst.contrib.dl.callbacks.batch_overfit_callback
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 CutmixCallback
 """"""""""""""
 .. automodule:: catalyst.contrib.dl.callbacks.cutmix_callback
