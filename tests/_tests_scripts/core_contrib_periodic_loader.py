@@ -592,7 +592,7 @@ def test_loading_best_state_at_end():
         )
         == 1
     )
-    assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 2
+    assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 1
 
     assert os.path.isfile(logfile)
     assert os.path.isfile(checkpoint + "/train.3.pth")
