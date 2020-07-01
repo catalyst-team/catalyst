@@ -4,11 +4,11 @@ from torch.utils.data import DataLoader
 
 
 class BatchLimitLoaderWrapper:
-
     def __init__(self, loader: DataLoader, num_batches: Union[int, float]):
-        assert isinstance(num_batches, (int, float)), \
-            "Expected loader num_batches type is int/float" \
+        assert isinstance(num_batches, (int, float)), (
+            "Expected loader num_batches type is int/float"
             f"but got {type(num_batches)}"
+        )
         if isinstance(num_batches, float):
             num_batches = int(len(loader) * num_batches)
 

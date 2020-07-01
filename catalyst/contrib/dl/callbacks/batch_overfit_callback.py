@@ -120,8 +120,7 @@ class BatchOverfitCallback(Callback):
             if isinstance(num_batches, float):
                 num_batches = int(len(loader) * num_batches)
             epoch_loaders[name] = BatchLimitLoaderWrapper(
-                loader=loader,
-                num_batches=num_batches,
+                loader=loader, num_batches=num_batches,
             )
 
         runner.loaders = epoch_loaders
