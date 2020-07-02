@@ -61,6 +61,13 @@ Checkpoint
     :undoc-members:
     :show-inheritance:
 
+Control Flow
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.core.callbacks.control_flow
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Criterion
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.core.callbacks.criterion
@@ -91,7 +98,7 @@ Logging
 
 Metrics
 ~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.core.callbacks.metrics._MetricCallback
+.. autoclass:: catalyst.core.callbacks.metrics.IMetricCallback
     :members:
     :undoc-members:
     :show-inheritance:

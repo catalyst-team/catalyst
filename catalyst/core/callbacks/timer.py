@@ -10,7 +10,7 @@ class TimerCallback(Callback):
 
     def __init__(self):
         """@TODO: Docs. Contribution is welcome."""
-        super().__init__(order=CallbackOrder.Metric + 1, node=CallbackNode.All)
+        super().__init__(order=CallbackOrder.metric + 1, node=CallbackNode.all)
         self.timer = TimeManager()
 
     def on_loader_start(self, runner: IRunner) -> None:

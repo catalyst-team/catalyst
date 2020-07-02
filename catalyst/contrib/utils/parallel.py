@@ -29,7 +29,7 @@ class DumbPool:
         return self
 
 
-def parallel_imap(func, args, pool: Union[Pool, DumbPool],) -> List[T]:
+def parallel_imap(func, args, pool: Union[Pool, DumbPool]) -> List[T]:
     """@TODO: Docs. Contribution is welcome."""
     result = list(pool.imap_unordered(func, args))
     return result

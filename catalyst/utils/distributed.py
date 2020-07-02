@@ -4,7 +4,6 @@ import os
 import random
 import socket
 import subprocess
-import warnings
 
 import deprecation
 
@@ -13,12 +12,8 @@ from torch import nn
 import torch.distributed
 
 from catalyst import __version__
-
-from .misc import get_fn_default_params
-from .torch import get_available_gpus
-
-warnings.simplefilter("once")
-warnings.filterwarnings("once")
+from catalyst.utils.misc import get_fn_default_params
+from catalyst.utils.torch import get_available_gpus
 
 
 def check_ddp_wrapped(model: nn.Module) -> bool:
@@ -117,8 +112,7 @@ def get_rank() -> int:
     Returns the rank of the current worker.
 
     Returns:
-        (int): ``rank`` if torch.distributed is initialized,
-        otherwise ``-1``
+        int: ``rank`` if torch.distributed is initialized, otherwise ``-1``
     """
     if check_torch_distributed_initialized():
         return torch.distributed.get_rank()

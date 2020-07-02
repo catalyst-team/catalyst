@@ -1,3 +1,5 @@
+# flake8: noqa
+# TODO: refactor and add docs, move to utils
 from typing import List, Optional, Union
 
 import torch
@@ -26,9 +28,7 @@ def cosine_distance(
     x: torch.Tensor, z: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
     """Calculate cosine distance between x and z.
-
-    Args:
-        @TODO: Docs. Contribution is welcome.
+    @TODO: Docs. Contribution is welcome.
     """
     x = F.normalize(x)
 
@@ -44,9 +44,7 @@ def batch_all(
     labels: torch.Tensor, exclude_negatives: bool = True,
 ) -> torch.Tensor:
     """Create a 3D mask of all possible triplets.
-
-    Args:
-        @TODO: Docs. Contribution is welcome.
+    @TODO: Docs. Contribution is welcome.
     """
     batch_size = labels.size(0)
     indices_equal = torch.eye(batch_size, device=labels.device).type(

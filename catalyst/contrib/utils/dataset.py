@@ -50,7 +50,7 @@ def create_dataset(
         if process_fn is None:
             dataset[label].extend(files)
         else:
-            dataset[label].extend(list(map(lambda x: process_fn(x), files)))
+            dataset[label].extend([process_fn(x) for x in files])
 
     return dataset
 

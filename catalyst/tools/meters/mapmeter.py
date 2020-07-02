@@ -5,10 +5,10 @@ from typing import Optional
 
 import torch
 
-from . import APMeter, meter
+from catalyst.tools.meters import APMeter, meter
 
 
-class mAPMeter(meter.Meter):
+class mAPMeter(meter.Meter):  # noqa: N801
     """
     This meter is a wrapper for
     :py:class:`catalyst.tools.meters.apmeter.APMeter`.
@@ -56,7 +56,7 @@ class mAPMeter(meter.Meter):
     def value(self):
         """Returns mean of `self.apmeter` value.
 
-        Return:
-            FloatTensor: mAP scalar tensor
+        Returns:
+            torch.Tensor: mAP scalar tensor
         """
         return self.apmeter.value().mean()

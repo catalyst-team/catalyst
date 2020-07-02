@@ -13,9 +13,9 @@ class CallbackNode(IntFlag):
     - Worker (2) - use only in worker nodes.
     """
 
-    All = 0
-    Master = 1
-    Worker = 2
+    All = all = 0  # noqa: WPS115
+    Master = master = 1  # noqa: WPS115
+    Worker = worker = 2  # noqa: WPS115
 
 
 class CallbackOrder(IntFlag):
@@ -57,14 +57,14 @@ class CallbackOrder(IntFlag):
     .. _Alchemy: https://alchemy.host
     """
 
-    Internal = 0  # pytorch
-    Metric = 20  # pytorch
-    MetricAggregation = 40  # pytorch
-    Optimizer = 60  # pytorch
-    Validation = 80  # numpy
-    Scheduler = 100  # numpy
-    Logging = 120  # numpy
-    External = 200  # numpy
+    Internal = internal = 0  # noqa: WPS115
+    Metric = metric = 20  # noqa: WPS115
+    MetricAggregation = metric_aggregation = 40  # noqa: WPS115
+    Optimizer = optimizer = 60  # noqa: WPS115
+    Validation = validation = 80  # noqa: WPS115
+    Scheduler = scheduler = 100  # noqa: WPS115
+    Logging = logging = 120  # noqa: WPS115
+    External = external = 200  # noqa: WPS115
 
 
 class CallbackScope(IntFlag):
@@ -74,8 +74,8 @@ class CallbackScope(IntFlag):
     - Experiment (1) - use Callback during whole experiment run.
     """
 
-    Stage = 0
-    Experiment = 1
+    Stage = stage = 0  # noqa: WPS115
+    Experiment = experiment = 1  # noqa: WPS115
 
 
 class Callback:
@@ -122,8 +122,8 @@ class Callback:
     def __init__(
         self,
         order: int,
-        node: int = CallbackNode.All,
-        scope: int = CallbackScope.Stage,
+        node: int = CallbackNode.all,
+        scope: int = CallbackScope.stage,
     ):
         """Callback initializer.
 
@@ -209,9 +209,117 @@ class Callback:
         pass
 
 
+class WrapperCallback(Callback):
+    """Enable/disable callback execution."""
+
+    def __init__(self, base_callback: Callback, enable_callback: bool = True):
+        """
+        Args:
+            base_callback (Callback): callback to wrap
+            enable_callback (boolean): indicator to enable/disable
+                callback, if ``True`` then callback will be enabled,
+                default ``True``
+        """
+        if base_callback is None or not isinstance(base_callback, Callback):
+            raise ValueError(
+                f"Expected callback but got - {type(base_callback)}!"
+            )
+        super().__init__(
+            order=base_callback.order,
+            node=base_callback.node,
+            scope=base_callback.scope,
+        )
+        self.callback = base_callback
+        self._is_active = enable_callback
+
+    def on_loader_start(self, runner: "IRunner") -> None:
+        """
+        Check if current epoch should be skipped.
+
+        Args:
+            runner (IRunner): current runner
+        """
+        if self._is_active:
+            self.callback.on_loader_start(runner)
+
+    def on_loader_end(self, runner: "IRunner") -> None:
+        """
+        Reset status of callback
+
+        Args:
+            runner (IRunner): current runner
+        """
+        if self._is_active:
+            self.callback.on_loader_end(runner)
+
+    def on_stage_start(self, runner: "IRunner") -> None:
+        """Run base_callback (if possible)
+
+        Args:
+            runner (IRunner): current runner
+        """
+        if self._is_active:
+            self.callback.on_stage_start(runner)
+
+    def on_stage_end(self, runner: "IRunner") -> None:
+        """Run base_callback (if possible)
+
+        Args:
+            runner (IRunner): current runner
+        """
+        if self._is_active:
+            self.callback.on_stage_end(runner)
+
+    def on_epoch_start(self, runner: "IRunner") -> None:
+        """Run base_callback (if possible)
+
+        Args:
+            runner (IRunner): current runner
+        """
+        if self._is_active:
+            self.callback.on_epoch_start(runner)
+
+    def on_epoch_end(self, runner: "IRunner") -> None:
+        """Run base_callback (if possible)
+
+        Args:
+            runner (IRunner): current runner
+        """
+        if self._is_active:
+            self.callback.on_epoch_end(runner)
+
+    def on_batch_start(self, runner: "IRunner") -> None:
+        """Run base_callback (if possible)
+
+        Args:
+            runner (IRunner): current runner
+        """
+        if self._is_active:
+            self.callback.on_batch_start(runner)
+
+    def on_batch_end(self, runner: "IRunner") -> None:
+        """Run base_callback (if possible)
+
+        Args:
+            runner (IRunner): current runner
+        """
+        if self._is_active:
+            self.callback.on_batch_end(runner)
+
+    def on_exception(self, runner: "IRunner") -> None:
+        """Run base_callback (if possible)
+
+        Args:
+            runner (IRunner): current runner
+        """
+        if self._is_active:
+            self.callback.on_exception(runner)
+
+
 __all__ = [
     "Callback",
     "CallbackNode",
     "CallbackOrder",
     "CallbackScope",
+    "WrapperCallback",
 ]

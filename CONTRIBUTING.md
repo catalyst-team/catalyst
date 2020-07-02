@@ -1,9 +1,22 @@
 # Contribution guide
 
-## How to strart?
+## How to start?
 
 Contributing is quite easy: suggest ideas and make them done.
 We use [GitHub issues](https://github.com/catalyst-team/catalyst/issues) for bug reports and feature requests.
+
+Every good PR is usually consists of:
+- feature implementation :)
+- documentation to describe this feature to other people
+- tests to ensure everything is implemented correctly
+- `CHANGELOG.md` update for framework development history
+
+You can check these examples as a good example to follow:
+- https://github.com/catalyst-team/catalyst/pull/855
+- https://github.com/catalyst-team/catalyst/pull/858
+- https://github.com/catalyst-team/catalyst/pull/842
+- https://github.com/catalyst-team/catalyst/pull/825
+- https://github.com/catalyst-team/catalyst/pull/862
 
 #### Step-by-step guide
 

@@ -63,14 +63,16 @@ jobs:
       - name: make docs
         run: |
           REMOVE_BUILDS=0 make check-docs
-          # Remove master docs, do not touch the past versions
-          rm -f *
-          rm -rf .doctrees _modules _sources _static api info
-          cp -a builds/* .
-          rm -rf builds
 
       - name: commit documentation changes
         run: |
+          git clone https://github.com/catalyst-team/catalyst.git --branch gh-pages --single-branch gh-pages
+          cd gh-pages
+          # Remove master docs, do not touch the past versions
+          rm -f * || true
+          rm -rf .doctrees _modules _sources _static api info
+          cp -a ../builds/* .
+          # commit changes
           git config --local user.email "action@ithub.com"
           git config --local user.name "GitHub Action"
           git add .
@@ -80,4 +82,5 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           branch: gh-pages
+          directory: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}

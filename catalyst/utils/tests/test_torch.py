@@ -3,7 +3,7 @@ from typing import Dict
 import torch
 from torch import nn
 
-from .. import torch as torch_utils
+from catalyst.utils import torch as torch_utils
 
 
 def test_network_output():

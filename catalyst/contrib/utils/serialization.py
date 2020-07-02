@@ -28,7 +28,7 @@ def pyarrow_serialize(data):
     return pyarrow.serialize(data).to_buffer().to_pybytes()
 
 
-def pyarrow_deserialize(data):
+def pyarrow_deserialize(bytes):
     """Deserialize bytes into an object using pyarrow.
 
     Args:
@@ -37,7 +37,7 @@ def pyarrow_deserialize(data):
     Returns:
         Returns a value deserialized from the bytes-like object.
     """
-    return pyarrow.deserialize(data)
+    return pyarrow.deserialize(bytes)
 
 
 def pickle_serialize(data):
@@ -52,7 +52,7 @@ def pickle_serialize(data):
     return pickle.dumps(data)
 
 
-def pickle_deserialize(data):
+def pickle_deserialize(bytes):
     """Deserialize bytes into an object using pickle.
 
     Args:
@@ -61,7 +61,7 @@ def pickle_deserialize(data):
     Returns:
         Returns a value deserialized from the bytes-like object.
     """
-    return pickle.loads(data)
+    return pickle.loads(bytes)
 
 
 if settings.use_pyarrow:

@@ -22,7 +22,7 @@ from catalyst.tools.registry import Registry
 
 
 def _callbacks_loader(r: Registry):
-    from catalyst.dl import callbacks as m
+    from catalyst.dl import callbacks as m  # noqa: WPS347
 
     r.add_from_module(m)
 

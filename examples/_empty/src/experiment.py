@@ -4,7 +4,6 @@ from collections import OrderedDict
 from torchvision import transforms
 
 from catalyst.dl import ConfigExperiment
-
 from .dataset import SomeDataset
 
 

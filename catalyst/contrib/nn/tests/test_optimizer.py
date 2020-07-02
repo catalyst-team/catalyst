@@ -7,13 +7,13 @@ from catalyst.contrib.nn.optimizers import Lookahead
 def test_optimizer_init():
     """@TODO: Docs. Contribution is welcome."""
     model = nn.Linear(10, 10)
-    for name, cls in module.__dict__.items():
-        if isinstance(cls, type):
+    for name, module_class in module.__dict__.items():
+        if isinstance(module_class, type):
             if name == "Optimizer":
                 continue
-            elif cls == Lookahead:
+            elif module_class == Lookahead:
                 instance = optim.SGD(model.parameters(), lr=1e-3)
-                instance = cls(instance)
+                instance = module_class(instance)
             else:
-                instance = cls(model.parameters(), lr=1e-3)
+                instance = module_class(model.parameters(), lr=1e-3)
             assert instance is not None

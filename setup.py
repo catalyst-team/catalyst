@@ -36,7 +36,7 @@ def load_readme():
     """
     readme_path = os.path.join(PROJECT_ROOT, "README.md")
     with io.open(readme_path, encoding="utf-8") as f:
-        return "\n" + f.read()
+        return f"\n{f.read()}"
 
 
 def load_version():

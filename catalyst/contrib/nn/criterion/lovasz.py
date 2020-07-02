@@ -1,3 +1,4 @@
+# flake8: noqa
 # Lovasz-Softmax and Jaccard hinge loss in PyTorch
 # Maxim Berman 2018 ESAT-PSI KU Leuven (MIT License)
 

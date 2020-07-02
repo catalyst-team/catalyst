@@ -62,8 +62,15 @@ def dict_transformer(sample):
 
 
 def build_args(parser):
-    """Constructs the command-line arguments for
+    """
+    Constructs the command-line arguments for
     ``catalyst-data image2embeddings``.
+
+    Args:
+        parser: parser
+
+    Returns:
+        modified parser
     """
     parser.add_argument(
         "--in-csv", type=str, dest="in_csv", help="Path to csv with photos"
@@ -165,7 +172,7 @@ def main(args, _=None):
     utils.set_global_seed(args.seed)
     utils.prepare_cudnn(args.deterministic, args.benchmark)
 
-    IMG_SIZE = (args.img_size, args.img_size)
+    IMG_SIZE = (args.img_size, args.img_size)  # noqa: WPS442
 
     if args.traced_model is not None:
         device = utils.get_device()
@@ -195,9 +202,9 @@ def main(args, _=None):
     dataloader = tqdm(dataloader) if args.verbose else dataloader
     with torch.no_grad():
         for batch in dataloader:
-            features_ = model(batch["image"].to(device))
-            features_ = features_.cpu().detach().numpy()
-            features.append(features_)
+            batch_features = model(batch["image"].to(device))
+            batch_features = batch_features.cpu().detach().numpy()
+            features.append(batch_features)
 
     features = np.concatenate(features, axis=0)
     np.save(args.out_npy, features)

@@ -1,5 +1,4 @@
 # flake8: noqa
-# isort:skip_file
 """
 All utils are gathered in :py:mod:`catalyst.utils` for easier access.
 

@@ -5,13 +5,13 @@ from pathlib import Path
 import platform
 import shutil
 import subprocess
+from subprocess import CalledProcessError
 import sys
 import warnings
 
 from catalyst.contrib.tools.tensorboard import SummaryWriter
-
-from .config import save_config
-from .misc import get_utcnow_time
+from catalyst.utils.config import save_config
+from catalyst.utils.misc import get_utcnow_time
 
 
 def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:
@@ -22,7 +22,7 @@ def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:
         dictionary: a dict
 
     Returns:
-        dict: decoded dict
+        Dict: decoded dict
     """
     result = {
         k: v.decode("UTF-8") if type(v) == bytes else v
@@ -36,7 +36,7 @@ def get_environment_vars() -> Dict[str, Any]:
     Creates a dictionary with environment variables.
 
     Returns:
-        dict: environment variables
+        Dict: environment variables
     """
     result = {
         "python_version": sys.version,
@@ -77,7 +77,7 @@ def get_environment_vars() -> Dict[str, Any]:
                 "origin_commit": git_origin_commit,
             }
             result["git"] = _decode_dict(git)
-        except (subprocess.CalledProcessError, FileNotFoundError):
+        except (CalledProcessError, FileNotFoundError):
             pass
 
     result = _decode_dict(result)
@@ -86,10 +86,14 @@ def get_environment_vars() -> Dict[str, Any]:
 
 def list_pip_packages() -> str:
     """
-    @TODO: Docs. Contribution is welcome
-    @TODO: When catching exception, e has no attribute 'output'
+    Lists pip installed packages.
+
+    Returns:
+        str: string with pip installed packages
     """
     result = ""
+    # TODO: Docs. Contribution is welcome
+    # TODO: When catching exception, e has no attribute 'output'
     with open(os.devnull, "w") as devnull:
         try:
             result = (
@@ -99,9 +103,9 @@ def list_pip_packages() -> str:
             )
         except Exception:
             warnings.warn(
-                f"Failed to freeze pip packages. "
+                "Failed to freeze pip packages. "
                 # f"Pip Output: ```{e.output}```."
-                f"Continue experiment without pip packages dumping."
+                "Continue experiment without pip packages dumping."
             )
             pass
         # except FileNotFoundError:
@@ -114,11 +118,15 @@ def list_pip_packages() -> str:
 
 def list_conda_packages() -> str:
     """
-    @TODO: Docs. Contribution is welcome
-    @TODO: When catching exception, e has no attribute 'output'
+    Lists conda installed packages.
+
+    Returns:
+        str: list with conda installed packages
     """
     result = ""
     conda_meta_path = Path(sys.prefix) / "conda-meta"
+    # TODO: Docs. Contribution is welcome
+    # TODO: When catching exception, e has no attribute 'output'
     if conda_meta_path.exists():
         # We are currently in conda virtual env
         with open(os.devnull, "w") as devnull:
@@ -132,10 +140,10 @@ def list_conda_packages() -> str:
                 )
             except Exception:
                 warnings.warn(
-                    f"Running from conda env, "
-                    f"but failed to list conda packages. "
+                    "Running from conda env, "
+                    "but failed to list conda packages. "
                     # f"Conda Output: ```{e.output}```."
-                    f"Continue experiment without conda packages dumping."
+                    "Continue experiment without conda packages dumping."
                 )
                 pass
             # except FileNotFoundError:

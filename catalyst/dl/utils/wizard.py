@@ -50,8 +50,8 @@ class Wizard:
                    /    #       #    \\
                   /      #######      \\
                  (_____________________)
-        \n"""
-        )
+            \n"""
+        )  # noqa: WPS355
 
         self._cfg = OrderedDict(
             [
@@ -143,7 +143,7 @@ class Wizard:
         return False
 
     def _callbacks_step(self, stage):
-        self.__sep(f"Callbacks")
+        self.__sep("Callbacks")
         print(
             "Let's add some callbacks!\n\n"
             "!!! Remember that Catalyst will add Criterion, Optimizer and "
@@ -167,7 +167,7 @@ class Wizard:
             self._basic_params_step("callback", callback_params)
             opts[callback] = callback_params["callback_params"]
 
-    def _basic_params_step(self, param, stage, optional=False):
+    def _basic_params_step(self, param, stage, optional=False) -> None:
         """
         Step #x
 
@@ -219,13 +219,13 @@ class Wizard:
         self.__res(opts, is_yaml=True)
         stage[f"{param}_params"] = opts
 
-    def _stage_params_step(self, stage):
+    def _stage_params_step(self, stage) -> None:
         """
         Step #5.b
 
         ``stage_params`` of Experiment.
         """
-        self.__sep(f"stage_params")
+        self.__sep("stage_params")
         if self._skip_override_stages_common("stage_params"):
             return
         opts = OrderedDict()
@@ -246,7 +246,7 @@ class Wizard:
         self.__res(opts["minimize_metric"])
         stage["stage_params"] = opts
 
-    def _data_params_step(self, stage):
+    def _data_params_step(self, stage) -> None:
         """
         Step #5.a
 
@@ -254,7 +254,7 @@ class Wizard:
         couldn't be run without ``num_worker`` param, but it's rarely when user
         needs batch_size of 1
         """
-        self.__sep(f"data_params")
+        self.__sep("data_params")
         if self._skip_override_stages_common("data_params"):
             return
         opts = OrderedDict()
@@ -268,7 +268,7 @@ class Wizard:
         self.__res(opts["num_workers"])
         stage["data_params"] = opts
 
-    def _stage_step(self, stage):
+    def _stage_step(self, stage) -> None:
         """
         Step #5
 
@@ -281,9 +281,8 @@ class Wizard:
         self._basic_params_step("optimizer", stage)
         self._basic_params_step("scheduler", stage, optional=True)
         self._callbacks_step(stage)
-        return
 
-    def _stages_step(self):
+    def _stages_step(self) -> None:
         """
         Step #4
 
@@ -323,7 +322,7 @@ class Wizard:
         """
         self._basic_params_step("model", self._cfg)
 
-    def __export_user_modules(self):
+    def __export_user_modules(self):  # noqa: WPS112
         """
         Private method to try to export user's modules.
         We need this to add user's modules to list of choices for pipeline

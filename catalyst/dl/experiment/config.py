@@ -4,7 +4,7 @@ from copy import deepcopy
 
 import torch
 from torch import nn
-from torch.utils.data import DataLoader  # noqa F401
+from torch.utils.data import DataLoader
 
 from catalyst.core import IExperiment
 from catalyst.data import Augmentor, AugmentorCompose
@@ -32,6 +32,7 @@ from catalyst.dl.registry import (
     SCHEDULERS,
     TRANSFORMS,
 )
+from catalyst.dl.utils import check_callback_isinstance
 from catalyst.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 
@@ -40,7 +41,7 @@ class ConfigExperiment(IExperiment):
     Experiment created from a configuration file.
     """
 
-    STAGE_KEYWORDS = [
+    STAGE_KEYWORDS = [  # noqa: WPS115
         "criterion_params",
         "optimizer_params",
         "scheduler_params",
@@ -80,24 +81,24 @@ class ConfigExperiment(IExperiment):
             self._config["stages"]
         )
 
-    @property
-    def hparams(self) -> OrderedDict:
-        """Returns hyper params"""
-        return OrderedDict(self._config)
-
-    def __prepare_logdir(self):
-        EXCLUDE_TAG = "none"
+    def __prepare_logdir(self):  # noqa: WPS112
+        exclude_tag = "none"
 
         logdir = self._config.get("args", {}).get("logdir", None)
         baselogdir = self._config.get("args", {}).get("baselogdir", None)
 
-        if logdir is not None and logdir.lower() != EXCLUDE_TAG:
+        if logdir is not None and logdir.lower() != exclude_tag:
             self._logdir = logdir
-        elif baselogdir is not None and baselogdir.lower() != EXCLUDE_TAG:
+        elif baselogdir is not None and baselogdir.lower() != exclude_tag:
             logdir_postfix = self._get_logdir(self._config)
             self._logdir = f"{baselogdir}/{logdir_postfix}"
         else:
             self._logdir = None
+
+    @property
+    def hparams(self) -> OrderedDict:
+        """Returns hyper params"""
+        return OrderedDict(self._config)
 
     def _get_stages_config(self, stages_config: Dict):
         stages_defaults = {}
@@ -119,19 +120,19 @@ class ConfigExperiment(IExperiment):
             ):
                 continue
             stages_config_out[stage] = {}
-            for key in self.STAGE_KEYWORDS:
-                if key == "stage_params":
+            for key2 in self.STAGE_KEYWORDS:
+                if key2 == "stage_params":
                     # backward compatibility
-                    stages_config_out[stage][key] = utils.merge_dicts(
+                    stages_config_out[stage][key2] = utils.merge_dicts(
                         deepcopy(stages_defaults.get("state_params", {})),
-                        deepcopy(stages_defaults.get(key, {})),
+                        deepcopy(stages_defaults.get(key2, {})),
                         deepcopy(stages_config[stage].get("state_params", {})),
-                        deepcopy(stages_config[stage].get(key, {})),
+                        deepcopy(stages_config[stage].get(key2, {})),
                     )
                 else:
-                    stages_config_out[stage][key] = utils.merge_dicts(
-                        deepcopy(stages_defaults.get(key, {})),
-                        deepcopy(stages_config[stage].get(key, {})),
+                    stages_config_out[stage][key2] = utils.merge_dicts(
+                        deepcopy(stages_defaults.get(key2, {})),
+                        deepcopy(stages_config[stage].get(key2, {})),
                     )
 
         return stages_config_out
@@ -173,8 +174,10 @@ class ConfigExperiment(IExperiment):
 
         if key_value_flag:
             model = {}
-            for key, params_ in params.items():
-                model[key] = ConfigExperiment._get_model(**params_)
+            for model_key, model_params in params.items():
+                model[model_key] = ConfigExperiment._get_model(  # noqa: WPS437
+                    **model_params
+                )
             model = nn.ModuleDict(model)
         else:
             model = MODELS.get_from_params(**params)
@@ -192,8 +195,12 @@ class ConfigExperiment(IExperiment):
 
         if key_value_flag:
             criterion = {}
-            for key, params_ in params.items():
-                criterion[key] = ConfigExperiment._get_criterion(**params_)
+            for key, key_params in params.items():
+                criterion[
+                    key
+                ] = ConfigExperiment._get_criterion(  # noqa: WPS437
+                    **key_params
+                )
         else:
             criterion = CRITERIONS.get_from_params(**params)
             if criterion is not None and torch.cuda.is_available():
@@ -253,14 +260,14 @@ class ConfigExperiment(IExperiment):
             )
         elif isinstance(model_key, (list, tuple)):
             model_params = []
-            for model_key_ in model_key:
-                model_params_ = utils.process_model_params(
-                    model[model_key_],
+            for model_key_el in model_key:
+                model_params_el = utils.process_model_params(
+                    model[model_key_el],
                     layerwise_params,
                     no_bias_weight_decay,
                     lr_scaling,
                 )
-                model_params.extend(model_params_)
+                model_params.extend(model_params_el)
         else:
             raise ValueError("unknown type of model_params")
 
@@ -284,24 +291,30 @@ class ConfigExperiment(IExperiment):
             for param in model_params:
                 param = param["params"][0]
                 optimizer_state = optimizer.state[param]
-                for key, value in optimizer_state.items():
-                    optimizer_state[key] = utils.any2device(value, device)
+                for state_key, state_value in optimizer_state.items():
+                    optimizer_state[state_key] = utils.any2device(
+                        state_value, device
+                    )
 
             # update optimizer params
             for key, value in params.items():
-                for pg in optimizer.param_groups:
-                    pg[key] = value
+                for optimizer_param_group in optimizer.param_groups:
+                    optimizer_param_group[key] = value
 
         return optimizer
 
     def get_optimizer(
         self, stage: str, model: Union[Model, Dict[str, Model]]
     ) -> Union[Optimizer, Dict[str, Optimizer]]:
-        """Returns the optimizer for a given stage.
+        """
+        Returns the optimizer for a given stage.
 
         Args:
             stage (str): stage name
             model (Union[Model, Dict[str, Model]]): model or a dict of models
+
+        Returns:
+            optimizer for selected stage
         """
         optimizer_params = self.stages_config[stage].get(
             "optimizer_params", {}
@@ -310,13 +323,13 @@ class ConfigExperiment(IExperiment):
 
         if key_value_flag:
             optimizer = {}
-            for key, params_ in optimizer_params.items():
+            for key, params in optimizer_params.items():
                 # load specified optimizer from checkpoint
                 optimizer_key = "optimizer_key"
-                assert optimizer_key not in params_, "keyword reserved"
-                params_[optimizer_key] = key
+                assert optimizer_key not in params, "keyword reserved"
+                params[optimizer_key] = key
 
-                optimizer[key] = self._get_optimizer(stage, model, **params_)
+                optimizer[key] = self._get_optimizer(stage, model, **params)
         else:
             optimizer = self._get_optimizer(stage, model, **optimizer_params)
 
@@ -328,9 +341,11 @@ class ConfigExperiment(IExperiment):
 
         if key_value_flag:
             scheduler = {}
-            for key, params_ in params.items():
-                scheduler[key] = ConfigExperiment._get_scheduler(
-                    optimizer=optimizer, **params_
+            for scheduler_key, scheduler_params in params.items():
+                scheduler[
+                    scheduler_key
+                ] = ConfigExperiment._get_scheduler(  # noqa: WPS437
+                    optimizer=optimizer, **scheduler_params
                 )
         else:
             scheduler = SCHEDULERS.get_from_params(
@@ -354,8 +369,10 @@ class ConfigExperiment(IExperiment):
 
         if key_value_flag:
             transforms_composition = {
-                key: ConfigExperiment._get_transform(**params_)
-                for key, params_ in params.items()
+                transform_key: ConfigExperiment._get_transform(  # noqa: WPS437
+                    **transform_params
+                )
+                for transform_key, transform_params in params.items()
             }
 
             transform = AugmentorCompose(
@@ -372,7 +389,9 @@ class ConfigExperiment(IExperiment):
         else:
             if "transforms" in params:
                 transforms_composition = [
-                    ConfigExperiment._get_transform(**transform_params)
+                    ConfigExperiment._get_transform(  # noqa: WPS437
+                        **transform_params
+                    )
                     for transform_params in params["transforms"]
                 ]
                 params.update(transforms=transforms_composition)
@@ -384,12 +403,16 @@ class ConfigExperiment(IExperiment):
     def get_transforms(
         self, stage: str = None, dataset: str = None
     ) -> Callable:
-        """Returns transform for a given stage and mode.
+        """
+        Returns transform for a given stage and dataset.
 
         Args:
             stage (str): stage name
             dataset (str): dataset name (e.g. "train", "valid"),
                 will be used only if the value of `_key_value`` is ``True``
+
+        Returns:
+            Callable: transform function
         """
         transform_params = deepcopy(
             self.stages_config[stage].get("transform_params", {})
@@ -399,19 +422,19 @@ class ConfigExperiment(IExperiment):
         if key_value_flag:
             transform_params = transform_params.get(dataset, {})
 
-        transform = self._get_transform(**transform_params)
-        if transform is None:
+        transform_fn = self._get_transform(**transform_params)
+        if transform_fn is None:
 
-            def transform(dict_):
+            def transform_fn(dict_):  # noqa: WPS440
                 return dict_
 
-        elif not isinstance(transform, AugmentorCompose):
-            transform_ = transform
+        elif not isinstance(transform_fn, AugmentorCompose):
+            transform_fn_origin = transform_fn
 
-            def transform(dict_):
-                return transform_(**dict_)
+            def transform_fn(dict_):  # noqa: WPS440
+                return transform_fn_origin(**dict_)
 
-        return transform
+        return transform_fn
 
     def get_loaders(
         self, stage: str, epoch: int = None,
@@ -432,7 +455,9 @@ class ConfigExperiment(IExperiment):
         callback = CALLBACKS.get_from_params(**params)
         if wrapper_params is not None:
             wrapper_params["base_callback"] = callback
-            return ConfigExperiment._get_callback(**wrapper_params)
+            callback = ConfigExperiment._get_callback(  # noqa: WPS437
+                **wrapper_params
+            )
         return callback
 
     @staticmethod
@@ -497,7 +522,7 @@ class ConfigExperiment(IExperiment):
         for callback_name, callback_fn in default_callbacks:
             is_already_present = False
             for x in callbacks.values():
-                if isinstance(x, callback_fn):
+                if check_callback_isinstance(x, callback_fn):
                     is_already_present = True
                     break
             if not is_already_present:
