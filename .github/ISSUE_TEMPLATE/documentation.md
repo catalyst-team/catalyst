@@ -1,9 +1,9 @@
 ---
 name: Typos and documentation fixes
-about: Make awesome documentation and tutorials 
+about: Make awesome documentation and tutorials
 title: ''
-labels: typo, documentation
-assignees:
+labels: ''
+assignees: Scitator, bagxi
 
 ---
 
