@@ -770,16 +770,17 @@ utils.distributed_cmd_run(train)
 
 
 ### Tests
-All the Catalyst code is [tested rigorously with every new PR](./tests).
+All Catalyst code, features and pipelines [are fully tested](./tests) 
+with our own [catalyst-codestyle](https://github.com/catalyst-team/codestyle).
 
 In fact, we train a number of different models for various of tasks - 
-image classification, image segmentation, text classification, GAN training.
+image classification, image segmentation, text classification, GANs training 
+and much more.
 During the tests, we compare their convergence metrics in order to verify 
 the correctness of the training procedure and its reproducibility.
 
-Overall, Catalyst guarantees fully tested, correct and reproducible 
-best practices for the automated parts.
-
+As a result, Catalyst provides fully tested and reproducible 
+best practices for your deep learning research.
 
 
 ## Catalyst
@@ -805,7 +806,9 @@ best practices for the automated parts.
 
 ### Guides
 
+- [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff)
 - [Distributed training best practices](https://catalyst-team.github.io/catalyst/info/distributed.html)
+- [BERT Distillation with Catalyst](https://medium.com/pytorch/bert-distillation-with-catalyst-c6f30c985854?source=friends_link&sk=1a28469ac8c0e6e6ad35bd26dfd95dd9)
 
 
 ### Projects
@@ -852,7 +855,7 @@ best practices for the automated parts.
 - [MLComp](https://github.com/catalyst-team/mlcomp) – distributed DAG framework for machine learning with UI by [Lightforever](https://github.com/lightforever)
 - [Pytorch toolbelt](https://github.com/BloodAxe/pytorch-toolbelt) - PyTorch extensions for fast R&D prototyping and Kaggle farming by [BloodAxe](https://github.com/BloodAxe)
 - [Helper functions](https://github.com/ternaus/iglovikov_helper_functions) - An unstructured set of helper functions by [Ternaus](https://github.com/ternaus)
-
+- [BERT Distillation with Catalyst](https://github.com/elephantmipt/bert-distillation) by [elephantmipt](https://github.com/elephantmipt)
 
 ### Talks and videos
 - [Catalyst-team YouTube channel](https://www.youtube.com/channel/UC39Z1Cwr9n8DVpuXcsyi9FQ)

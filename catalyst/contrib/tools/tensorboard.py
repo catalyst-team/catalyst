@@ -151,7 +151,7 @@ class SummaryReader(Iterable):
         Only scalars are supported at the moment.
     """
 
-    _DECODERS = {
+    _DECODERS = {  # noqa: WPS115
         "scalar": _get_scalar,
     }
 
@@ -184,14 +184,16 @@ class SummaryReader(Iterable):
             raise ValueError("Invalid type name")
 
     def _decode_events(self, events: Iterable) -> Optional[SummaryItem]:
-        """Convert events to `SummaryItem` instances.
+        """
+        Convert events to `SummaryItem` instances.
+        Returns a generator with decoded events
+        or `None` if an event can't be decoded.
 
         Args:
-            events: An iterable with events objects
+            events: An iterable with events objects.
 
         Returns:
-            A generator with decoded events
-            or `None`s if an event can"t be decoded
+            Optional[SummaryItem]: decoded event
         """
         for event in events:
             if not event.HasField("summary"):

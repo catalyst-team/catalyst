@@ -15,11 +15,11 @@ class MixupCallback(CriterionCallback):
     `mixup: Beyond Empirical Risk Minimization`_.
 
     .. warning::
-        :class:`catalyst.dl.callbacks.MixupCallback` is inherited from
-        :class:`catalyst.dl.CriterionCallback` and does its work.
+        `catalyst.dl.callbacks.MixupCallback` is inherited from
+        `catalyst.dl.CriterionCallback` and does its work.
         You may not use them together.
 
-    .. _mixup\: Beyond Empirical Risk Minimization:
+    .. _mixup\: Beyond Empirical Risk Minimization:  # noqa: W605
         https://arxiv.org/abs/1710.09412
     """
 

@@ -8,8 +8,7 @@ from typing import (  # isort:skip
 import inspect
 from pathlib import Path
 
-from torch import nn
-from torch.jit import load, save, ScriptModule, trace
+from torch import jit, nn
 
 from catalyst.core.runner import IRunner
 from catalyst.dl.experiment.config import ConfigExperiment
@@ -41,7 +40,7 @@ def _get_input_argnames(
         exclude (List[str]): List of string of names to exclude
 
     Returns:
-        (List[str]): List of input argument names
+        List[str]: List of input argument names
     """
     argspec = inspect.getfullargspec(fn)
     assert (
@@ -76,7 +75,7 @@ class _TracingModelWrapper(nn.Module):
         super().__init__()
         self.model = model
         self.method_name = method_name
-        self.tracing_result: ScriptModule
+        self.tracing_result: jit.ScriptModule
 
     def __call__(self, *args, **kwargs):
         method_model = _ForwardOverrideModel(self.model, self.method_name)
@@ -88,10 +87,10 @@ class _TracingModelWrapper(nn.Module):
             method_argnames = _get_input_argnames(fn=fn, exclude=["self"])
             method_input = tuple(kwargs[name] for name in method_argnames)
 
-            self.tracing_result = trace(method_model, method_input)
+            self.tracing_result = jit.trace(method_model, method_input)
         except Exception:
             # for backward compatibility
-            self.tracing_result = trace(method_model, *args, **kwargs)
+            self.tracing_result = jit.trace(method_model, *args, **kwargs)
         output = self.model.forward(*args, **kwargs)
 
         return output
@@ -107,7 +106,7 @@ def trace_model(
     opt_level: str = None,
     device: Device = "cpu",
     predict_params: dict = None,
-) -> ScriptModule:
+) -> jit.ScriptModule:
     """Traces model using runner and batch.
 
     Args:
@@ -124,7 +123,11 @@ def trace_model(
         predict_params (dict): additional parameters for model forward
 
     Returns:
-        (ScriptModule): Traced model
+        jit.ScriptModule: Traced model
+
+    Raises:
+        ValueError: if both batch and predict_fn must be specified or
+          mode is not in 'eval' or 'train'.
     """
     if batch is None or predict_fn is None:
         raise ValueError("Both batch and predict_fn must be specified.")
@@ -194,8 +197,8 @@ def trace_model_from_checkpoint(
     expdir = Path(logdir) / "code" / config_expdir.name
 
     print("Import experiment and runner from logdir")
-    ExperimentType, RunnerType = import_experiment_and_runner(expdir)
-    experiment: ConfigExperiment = ExperimentType(config)
+    experiment_fn, runner_fn = import_experiment_and_runner(expdir)
+    experiment: ConfigExperiment = experiment_fn(config)
 
     print(f"Load model state from checkpoints/{checkpoint_name}.pth")
     if stage is None:
@@ -205,7 +208,7 @@ def trace_model_from_checkpoint(
     checkpoint = load_checkpoint(checkpoint_path)
     unpack_checkpoint(checkpoint, model=model)
 
-    runner: RunnerType = RunnerType(**runner_params)
+    runner: runner_fn = runner_fn(**runner_params)
     runner.model, runner.device = model, device
 
     if loader is None:
@@ -215,11 +218,11 @@ def trace_model_from_checkpoint(
     )
 
     # function to run prediction on batch
-    def predict_fn(model, inputs, **kwargs):
-        _model = runner.model
+    def predict_fn(model, inputs, **kwargs):  # noqa: WPS442
+        model_dump = runner.model
         runner.model = model
         result = runner.predict_batch(inputs, **kwargs)
-        runner.model = _model
+        runner.model = model_dump
         return result
 
     print("Tracing")
@@ -246,7 +249,7 @@ def trace_model_from_runner(
     requires_grad: bool = False,
     opt_level: str = None,
     device: Device = "cpu",
-) -> ScriptModule:
+) -> jit.ScriptModule:
     """
     Traces model using created experiment and runner.
 
@@ -262,7 +265,7 @@ def trace_model_from_runner(
         device (str): Torch device
 
     Returns:
-        (ScriptModule): Traced model
+        ScriptModule: Traced model
     """
     logdir = runner.logdir
     model = get_nn_from_ddp_module(runner.model)
@@ -290,7 +293,7 @@ def trace_model_from_runner(
     batch = any2device(batch, device)
 
     # Dumping previous runner of the model, we will need it to restore
-    _device, _is_training, _requires_grad = (
+    device_dump, is_training_dump, requires_grad_dump = (
         runner.device,
         model.training,
         get_requires_grad(model),
@@ -299,7 +302,7 @@ def trace_model_from_runner(
     model.to(device)
 
     # Function to run prediction on batch
-    def predict_fn(model: Model, inputs, **kwargs):
+    def predict_fn(model: Model, inputs, **kwargs):  # noqa: WPS442
         return model(**inputs, **kwargs)
 
     traced_model = trace_model(
@@ -317,9 +320,9 @@ def trace_model_from_runner(
         unpack_checkpoint(checkpoint=dumped_checkpoint, model=model)
 
     # Restore previous runner of the model
-    getattr(model, "train" if _is_training else "eval")()
-    set_requires_grad(model, _requires_grad)
-    model.to(_device)
+    getattr(model, "train" if is_training_dump else "eval")()
+    set_requires_grad(model, requires_grad_dump)
+    model.to(device_dump)
 
     return traced_model
 
@@ -341,9 +344,9 @@ def get_trace_name(
         additional_string (str): any additional information
 
     Returns:
-        file_name (str): Filename for traced model to be saved.
+        str: Filename for traced model to be saved.
     """
-    file_name = f"traced"
+    file_name = "traced"
     if additional_string is not None:
         file_name += f"-{additional_string}"
 
@@ -352,10 +355,10 @@ def get_trace_name(
         file_name += "-in_train"
 
     if requires_grad:
-        file_name += f"-with_grad"
+        file_name += "-with_grad"
 
     if opt_level is not None:
-        file_name += f"-opt_{opt_level}"
+        file_name += "-opt_{opt_level}"
 
     file_name += ".pth"
 
@@ -363,7 +366,7 @@ def get_trace_name(
 
 
 def save_traced_model(
-    model: ScriptModule,
+    model: jit.ScriptModule,
     logdir: Union[str, Path] = None,
     method_name: str = "forward",
     mode: str = "eval",
@@ -372,7 +375,7 @@ def save_traced_model(
     out_dir: Union[str, Path] = None,
     out_model: Union[str, Path] = None,
     checkpoint_name: str = None,
-):
+) -> None:
     """Saves traced model.
 
     Args:
@@ -387,6 +390,10 @@ def save_traced_model(
         out_model (Union[str, Path]): Path to save model to
             (overrides logdir & out_dir)
         checkpoint_name (str): Checkpoint name used to restore the model
+
+    Raises:
+        ValueError: if nothing out of `logdir`, `out_dir` or `out_model`
+          is specified.
     """
     if out_model is None:
         file_name = get_trace_name(
@@ -412,14 +419,14 @@ def save_traced_model(
     else:
         out_model = str(out_model)
 
-    save(model, out_model)
+    jit.save(model, out_model)
 
 
 def load_traced_model(
     model_path: Union[str, Path],
     device: Device = "cpu",
     opt_level: str = None,
-) -> ScriptModule:
+) -> jit.ScriptModule:
     """Loads a traced model.
 
     Args:
@@ -428,7 +435,7 @@ def load_traced_model(
         opt_level (str): Apex FP16 init level, optional
 
     Returns:
-        (ScriptModule): Traced model
+        ScriptModule: Traced model
     """
     # jit.load dont work with pathlib.Path
     model_path = str(model_path)
@@ -436,7 +443,7 @@ def load_traced_model(
     if opt_level is not None:
         device = "cuda"
 
-    model = load(model_path, map_location=device)
+    model = jit.load(model_path, map_location=device)
 
     if opt_level is not None:
         assert_fp16_available()

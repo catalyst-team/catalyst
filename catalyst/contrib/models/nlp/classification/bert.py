@@ -56,7 +56,7 @@ class BertClassifier(nn.Module):
                 or [num_hidden_layers x num_heads]
 
         Returns:
-            PyTorch Tensor with predicted class probabilities
+            torch.Tensor: PyTorch Tensor with predicted class probabilities
         """
         assert attention_mask is not None, "attention mask is none"
         distilbert_output = self.distilbert(

@@ -19,6 +19,7 @@ from catalyst.dl import (
     ValidationManagerCallback,
     VerboseLogger,
 )
+from catalyst.dl.utils import check_callback_isinstance
 from catalyst.tools import settings
 from catalyst.tools.typing import Criterion, Model, Optimizer, Scheduler
 
@@ -97,7 +98,7 @@ class Experiment(IExperiment):
         ), "Please specify the data sources"
 
         self._model = model
-        self._loaders, self._valid_loader = self.process_loaders(
+        self._loaders, self._valid_loader = self._get_loaders(
             loaders=loaders,
             datasets=datasets,
             stage=stage,
@@ -161,7 +162,7 @@ class Experiment(IExperiment):
         return hparams
 
     @staticmethod
-    def process_loaders(
+    def _get_loaders(
         loaders: "OrderedDict[str, DataLoader]",
         datasets: Dict,
         stage: str,
@@ -249,7 +250,8 @@ class Experiment(IExperiment):
 
         for callback_name, callback_fn in default_callbacks:
             is_already_present = any(
-                isinstance(x, callback_fn) for x in callbacks.values()
+                check_callback_isinstance(x, callback_fn)
+                for x in callbacks.values()
             )
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()

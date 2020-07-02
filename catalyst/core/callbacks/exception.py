@@ -9,7 +9,7 @@ class ExceptionCallback(Callback):
     def __init__(self):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__(
-            order=CallbackOrder.External + 1, node=CallbackNode.All
+            order=CallbackOrder.external + 1, node=CallbackNode.all
         )
 
     def on_exception(self, runner: IRunner):

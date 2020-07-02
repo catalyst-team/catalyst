@@ -182,7 +182,7 @@ class BaseCheckpointCallback(Callback):
             metrics_filename (str): filename to save metrics
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
         """
-        super().__init__(order=CallbackOrder.External, node=CallbackNode.All)
+        super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         self.metrics_filename = metrics_filename
         self.metrics: dict = {}
 
@@ -213,7 +213,7 @@ class BaseCheckpointCallback(Callback):
             metrics = self.metrics
             metrics[suffix] = runner.valid_metrics
             self.save_metric(runner.logdir, metrics)
-        except Exception:
+        except Exception:  # noqa: S110
             pass
 
 
@@ -308,7 +308,7 @@ class CheckpointCallback(BaseCheckpointCallback):
                 **NOTE:** Loading will be performed always at stage end.
         """
         super().__init__(metrics_filename)
-        _possible_states = {
+        possible_states = {
             None,
             "best",
             "last",
@@ -319,9 +319,9 @@ class CheckpointCallback(BaseCheckpointCallback):
         if save_n_best == 0:
             assert load_on_stage_end in (None, "last", "last_full")
         if isinstance(load_on_stage_start, str):
-            assert load_on_stage_start in _possible_states
+            assert load_on_stage_start in possible_states
         if isinstance(load_on_stage_end, str):
-            assert load_on_stage_end in _possible_states
+            assert load_on_stage_end in possible_states
         if resume_dir is not None:
             assert resume is not None
 
@@ -343,6 +343,9 @@ class CheckpointCallback(BaseCheckpointCallback):
         Args:
             checkpoint (dict): checkpoint dict,
                 should contain ``stage_name`` and ``epoch`` keys.
+
+        Returns:
+            str: checkpoint suffix
         """
         result = f"{checkpoint['stage_name']}.{checkpoint['epoch']}"
         return result
@@ -355,6 +358,9 @@ class CheckpointCallback(BaseCheckpointCallback):
         Args:
             last_valid_metrics (dict): dict with metrics
                 from last validation step.
+
+        Returns:
+            OrderedDict: processed metrics
         """
         top_best_checkpoints = [
             (Path(filepath).stem, valid_metric)
@@ -535,28 +541,28 @@ class CheckpointCallback(BaseCheckpointCallback):
             self._load_runner(runner, mapping=self.resume, load_full=True)
             self.resume = None
         else:
-            _exists_checkpoint = False
-            _load_full = False
+            checkpoint_exists = False
+            need_load_full = False
             if isinstance(self.load_on_stage_start, str):
-                _exists_checkpoint = os.path.isfile(
+                checkpoint_exists = os.path.isfile(
                     "{}/checkpoints/{}.pth".format(
                         runner.logdir, self.load_on_stage_start
                     )
                 )
-                _load_full = self.load_on_stage_start.endswith("full")
+                need_load_full = self.load_on_stage_start.endswith("full")
             elif isinstance(self.load_on_stage_start, dict):
                 required_files = _required_files(
                     runner.logdir, self.load_on_stage_start
                 ).keys()
-                _exists_checkpoint = all(
+                checkpoint_exists = all(
                     os.path.isfile(file) for file in required_files
                 )
 
-            if self.load_on_stage_start is not None and _exists_checkpoint:
+            if self.load_on_stage_start is not None and checkpoint_exists:
                 self._load_runner(
                     runner,
                     mapping=self.load_on_stage_start,
-                    load_full=_load_full,
+                    load_full=need_load_full,
                 )
 
     def on_epoch_end(self, runner: IRunner) -> None:
@@ -622,25 +628,27 @@ class CheckpointCallback(BaseCheckpointCallback):
                 ]
             )
         print(log_message)
-        _not_required_load_states = {"last", "last_full"}
+        not_required_load_states = {"last", "last_full"}
         if (
             isinstance(self.load_on_stage_end, str)
-            and self.load_on_stage_end not in _not_required_load_states
+            and self.load_on_stage_end not in not_required_load_states
             and self.save_n_best > 0
         ):
-            _load_full = (
+            need_load_full = (
                 self.load_on_stage_end.endswith("full")
                 if isinstance(self.load_on_stage_end, str)
                 else False
             )
             self._load_runner(
-                runner, mapping=self.load_on_stage_end, load_full=_load_full,
+                runner,
+                mapping=self.load_on_stage_end,
+                load_full=need_load_full,
             )
         elif isinstance(self.load_on_stage_end, dict) and self.save_n_best > 0:
             to_load = {
                 k: v
                 for k, v in self.load_on_stage_end.items()
-                if v not in _not_required_load_states
+                if v not in not_required_load_states
             }
             self._load_runner(runner, mapping=to_load)
 
@@ -685,6 +693,9 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         Args:
             checkpoint (dict): checkpoint dict,
                 should contain ``stage_name`` and ``epoch`` keys.
+
+        Returns:
+            str: checkpoint suffix
         """
         result = (
             f"{checkpoint['stage_name']}."

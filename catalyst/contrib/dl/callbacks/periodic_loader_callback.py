@@ -12,13 +12,38 @@ class PeriodicLoaderCallback(Callback):
     """Callback for runing loaders with specified period.
     To disable loader use ``0`` as period.
 
-    Example:
+    For example, if you have ``train``, ``train_additional``,
+    ``valid`` and ``valid_additional`` loaders and wan't to
+    use ``train_additional`` every 2 epochs, ``valid`` - every
+    3 epochs and ``valid_additional`` - every 5 epochs:
 
-        >>> PeriodicLoaderRunnerCallback(
-        >>>     train_additional=2,
-        >>>     valid=3,
-        >>>     valid_additional=5
-        >>> )
+    .. code-block:: python
+
+        from catalyst.dl import (
+            SupervisedRunner, PeriodicLoaderRunnerCallback,
+        )
+        runner = SupervisedRunner()
+        runner.train(
+            ...
+            loaders={
+                "train": ...,
+                "train_additional": ...,
+                "valid": ...,
+                "valid_additional":...
+            }
+            ...
+            callbacks=[
+                ...
+                PeriodicLoaderRunnerCallback(
+                    train_additional=2,
+                    valid=3,
+                    valid_additional=5
+                ),
+                ...
+            ]
+            ...
+        )
+
     """
 
     def __init__(self, **kwargs):
@@ -26,7 +51,7 @@ class PeriodicLoaderCallback(Callback):
         Args:
             kwargs: loader names and their run periods.
         """
-        super().__init__(order=CallbackOrder.External)
+        super().__init__(order=CallbackOrder.external)
 
         self.valid_loader: str = None
         self.valid_metrics: Mapping[str, float] = None
@@ -46,6 +71,9 @@ class PeriodicLoaderCallback(Callback):
 
         Arguments:
             runner (IRunner): current runner
+
+        Raises:
+            ValueError: if there are no loaders in epoch
         """
         # store pointers to data loader objects
         for name, loader in runner.loaders.items():
@@ -76,7 +104,8 @@ class PeriodicLoaderCallback(Callback):
                 )
 
     def on_epoch_start(self, runner: IRunner) -> None:
-        """Set loaders for current epoch.
+        """
+        Set loaders for current epoch.
         If validation is not required then the first loader
         from loaders used in current epoch will be used
         as validation loader.
@@ -86,6 +115,9 @@ class PeriodicLoaderCallback(Callback):
 
         Arguments:
             runner (IRunner): current runner
+
+        Raises:
+            ValueError: if there are no loaders in epoch
         """
         epoch_num = runner.epoch
         # loaders to use in current epoch

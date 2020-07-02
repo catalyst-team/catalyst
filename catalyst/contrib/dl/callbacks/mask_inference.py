@@ -5,7 +5,7 @@ import numpy as np
 from skimage.color import label2rgb
 
 import torch
-import torch.nn.functional as F
+import torch.nn.functional as F  # noqa: N812, WPS301
 
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
@@ -32,7 +32,7 @@ class InferMaskCallback(Callback):
         Args:
             @TODO: Docs. Contribution is welcome
         """
-        super().__init__(CallbackOrder.Internal)
+        super().__init__(CallbackOrder.internal)
         self.out_dir = out_dir
         self.out_prefix = out_prefix
         self.mean = mean or np.array([0.485, 0.456, 0.406])
@@ -107,9 +107,9 @@ class InferMaskCallback(Callback):
                 mask[ch >= self.threshold] = i + 1
             masks.append(mask)
 
-        for i, (image, mask) in enumerate(zip(images, masks)):
+        for index, (image, mask) in enumerate(zip(images, masks)):
             try:
-                suffix = names[i]
+                suffix = names[index]
             except IndexError:
                 suffix = f"{self.counter:06d}"
             self.counter += 1
