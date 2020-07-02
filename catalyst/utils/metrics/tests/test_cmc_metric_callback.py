@@ -1,9 +1,9 @@
 import torch
 
 from catalyst.contrib.dl.callbacks.cmc_callback import (  # noqa: F401
-    _cmc_score_count,
     CMCScoreCallback,
 )
+from catalyst.utils.metrics.cmc_score import _cmc_score_count
 
 
 def test_metric_simple_0():
