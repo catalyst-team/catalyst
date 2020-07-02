@@ -37,6 +37,8 @@ Project [manifest](https://github.com/catalyst-team/catalyst/blob/master/MANIFES
 
 ----
 
+It's only a test, but no one cares.
+
 ## Getting started
 
 ```bash
