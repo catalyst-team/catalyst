@@ -826,6 +826,8 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         Args:
             loader (DataLoader): dataloader to iterate
         """
+        assert loader, f"DataLoader with name {self.loader_name} is empty."
+
         self.loader_batch_size = (
             loader.batch_sampler.batch_size
             if loader.batch_sampler is not None
