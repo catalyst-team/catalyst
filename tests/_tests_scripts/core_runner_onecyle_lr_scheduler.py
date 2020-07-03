@@ -51,9 +51,9 @@ model = torch.nn.Linear(num_features, 5)
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters())
 scheduler = OneCycleLRWithWarmup(
-    optimizer, 
+    optimizer,
     num_steps=num_steps,
-    lr_range=(max_lr, min_lr), 
+    lr_range=(max_lr, min_lr),
     init_lr=init_lr,
     warmup_fraction=warmup_fraction,
 )
