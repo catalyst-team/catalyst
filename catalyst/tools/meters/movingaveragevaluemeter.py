@@ -5,7 +5,7 @@ import math
 
 import torch
 
-from . import meter
+from catalyst.tools.meters import meter
 
 
 class MovingAverageValueMeter(meter.Meter):

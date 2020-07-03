@@ -3,11 +3,11 @@ from typing import List, Union
 import torch
 from torch import nn
 
-from .functional import margin_loss
+from catalyst.contrib.nn.criterion.functional import margin_loss
 
 
 class MarginLoss(nn.Module):
-    """@TODO: Docs. Contribution is welcome."""
+    """Margin loss criterion"""
 
     def __init__(
         self,
@@ -16,12 +16,12 @@ class MarginLoss(nn.Module):
         skip_labels: Union[int, List[int]] = -1,
     ):
         """
-        Args:
-            alpha (float):
-            beta (float):
-            skip_labels (int or List[int]):
+        Margin loss constructor.
 
-        @TODO: Docs. Contribution is welcome.
+        Args:
+            alpha (float): alpha
+            beta (float): beta
+            skip_labels (int or List[int]): labels to skip
         """
         super().__init__()
         self.alpha = alpha
@@ -31,9 +31,15 @@ class MarginLoss(nn.Module):
     def forward(
         self, embeddings: torch.Tensor, targets: torch.Tensor
     ) -> torch.Tensor:
-        """Forward propagation method for the margin loss.
+        """
+        Forward method for the margin loss.
 
-        @TODO: Docs. Contribution is welcome.
+        Args:
+            embeddings: tensor with embeddings
+            targets: tensor with target labels
+
+        Returns:
+            computed loss
         """
         return margin_loss(
             embeddings,

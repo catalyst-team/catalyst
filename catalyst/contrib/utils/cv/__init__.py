@@ -1,5 +1,4 @@
 # flake8: noqa
-# isort:skip_file
 
 import logging
 import os

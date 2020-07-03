@@ -18,7 +18,7 @@ def build_args(parser):
         type=str,
         default=None,
         help="Path to directory with dataset"
-        "or paths separated by commas for several datasets",
+        + "or paths separated by commas for several datasets",
     )
 
     parser.add_argument(

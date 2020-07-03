@@ -7,7 +7,7 @@ class CheckRunCallback(Callback):
 
     def __init__(self, num_batch_steps: int = 3, num_epoch_steps: int = 2):
         """@TODO: Docs. Contribution is welcome."""
-        super().__init__(order=CallbackOrder.External, node=CallbackNode.All)
+        super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         self.num_batch_steps = num_batch_steps
         self.num_epoch_steps = num_epoch_steps
 
@@ -33,7 +33,7 @@ class EarlyStoppingCallback(Callback):
         min_delta: float = 1e-6,
     ):
         """@TODO: Docs. Contribution is welcome."""
-        super().__init__(order=CallbackOrder.External, node=CallbackNode.All)
+        super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         self.best_score = None
         self.metric = metric
         self.patience = patience
@@ -51,9 +51,7 @@ class EarlyStoppingCallback(Callback):
             return
 
         score = runner.valid_metrics[self.metric]
-        if self.best_score is None:
-            self.best_score = score
-        if self.is_better(score, self.best_score):
+        if self.best_score is None or self.is_better(score, self.best_score):
             self.num_bad_epochs = 0
             self.best_score = score
         else:

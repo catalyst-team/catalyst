@@ -76,10 +76,10 @@ class Visdom(Logger):
             assert (
                 self.viz.check_connection()
             ), "No connection could be formed quickly"
-        except BaseException as e:
+        except Exception as e:
             logging.error(
                 "The visdom experienced an exception while"
-                + "running: {}".format(repr(e))
+                + "running: {}".format(repr(e))  # noqa: P101
             )
 
     def _run_worker(self):
@@ -192,9 +192,9 @@ class VisdomLogger(Callback):
             log_on_epoch_end (bool): logs per-epoch metrics if set True
         """
         super().__init__(
-            order=CallbackOrder.Logging,
-            node=CallbackNode.Master,
-            scope=CallbackScope.Experiment,
+            order=CallbackOrder.logging,
+            node=CallbackNode.master,
+            scope=CallbackScope.experiment,
         )
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
@@ -250,9 +250,9 @@ class VisdomLogger(Callback):
         """Translate batch metrics to Visdom."""
         if self.log_on_batch_end:
             mode = runner.loader_name
-            metrics_ = runner.batch_metrics
+            metrics = runner.batch_metrics
             self._log_metrics(
-                metrics=metrics_,
+                metrics=metrics,
                 step=runner.global_sample_step,
                 mode=mode,
                 suffix=self.batch_log_suffix,

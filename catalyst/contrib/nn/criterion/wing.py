@@ -1,3 +1,5 @@
+# flake8: noqa
+# TODO: add docs and refactor
 from functools import partial
 import math
 

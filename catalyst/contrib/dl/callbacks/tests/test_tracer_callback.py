@@ -4,7 +4,7 @@ from pathlib import Path
 import shutil
 
 import torch
-import torch.nn as nn
+from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
@@ -56,7 +56,7 @@ class _TracedNet(nn.Module):
             x (torch.Tensor): Input tensor
 
         Returns:
-            (torch.Tensor): Output tensor
+            torch.Tensor: Output tensor
         """
         for conv in [self.conv1, self.conv2]:
             x = conv(x)
@@ -82,7 +82,7 @@ class _TracedNet(nn.Module):
             stride (Tuple[int]): size of convolution stride.
 
         Returns:
-            (Tuple[int, int]): output size
+            Tuple[int, int]: output size
         """
         size, kernel_size, stride = map(
             lambda x: torch.tensor(x, dtype=torch.int32),
@@ -106,7 +106,7 @@ def _get_loaders(
         num_workers (int): Num of workers.
 
     Returns:
-        (Dict[str, DataLoader]): Dict of loaders.
+        Dict[str, DataLoader]: Dict of loaders.
     """
     data_transform = ToTensor()
 
@@ -139,7 +139,7 @@ class _OnStageEndCheckModelTracedCallback(Callback):
             path (Union[str, Path]): Path to traced model.
             inputs (torch.Tensor): Input samples.
         """
-        super().__init__(CallbackOrder.External)
+        super().__init__(CallbackOrder.external)
         self.path: Path = Path(path)
         self.inputs: torch.Tensor = inputs
         self.device = get_device()

@@ -1,3 +1,5 @@
+# flake8: noqa
+# TODO: refactor code, examples and docs
 import torch
 from torch import nn
 
@@ -10,7 +12,6 @@ class MeanOutputLoss(nn.Module):
 
     def forward(self, output, target):
         """Compute criterion.
-
         @TODO: Docs (add typing). Contribution is welcome.
         """
         return output.mean()
@@ -25,9 +26,7 @@ class GradientPenaltyLoss(nn.Module):
 
     def forward(self, fake_data, real_data, critic, critic_condition_args):
         """Compute gradient penalty.
-
-        Args:
-            @TODO: Docs. Contribution is welcome.
+        @TODO: Docs. Contribution is welcome.
         """
         device = real_data.device
         # Random weight term for interpolation between real and fake samples

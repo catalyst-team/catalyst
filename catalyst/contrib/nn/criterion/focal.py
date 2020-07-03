@@ -1,6 +1,6 @@
 from functools import partial
 
-from torch.nn.modules.loss import _Loss
+from torch.nn.modules.loss import _Loss  # noqa: WPS450
 
 from catalyst.utils import metrics
 
@@ -50,7 +50,8 @@ class FocalLossBinary(_Loss):
             logits: [bs; ...]
             targets: [bs; ...]
 
-        @TODO: Docs. Contribution is welcome.
+        Returns:
+            computed loss
         """
         targets = targets.view(-1)
         logits = logits.view(-1)
@@ -84,7 +85,8 @@ class FocalLossMultiClass(FocalLossBinary):
             logits: [bs; num_classes; ...]
             targets: [bs; ...]
 
-        @TODO: Docs. Contribution is welcome.
+        Returns:
+            computed loss
         """
         num_classes = logits.size(1)
         loss = 0
@@ -95,9 +97,11 @@ class FocalLossMultiClass(FocalLossBinary):
         if self.ignore is not None:
             not_ignored = targets != self.ignore
 
-        for cls in range(num_classes):
-            cls_label_target = (targets == (cls + 0)).long()
-            cls_label_input = logits[..., cls]
+        for class_id in range(num_classes):
+            cls_label_target = (
+                targets == (class_id + 0)  # noqa: WPS345
+            ).long()
+            cls_label_input = logits[..., class_id]
 
             if self.ignore is not None:
                 cls_label_target = cls_label_target[not_ignored]

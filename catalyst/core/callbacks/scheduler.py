@@ -1,4 +1,5 @@
 from typing import Tuple
+from abc import ABC, abstractmethod
 
 import torch
 
@@ -18,7 +19,7 @@ class SchedulerCallback(Callback):
         reduced_metric: str = None,
     ):
         """@TODO: Docs. Contribution is welcome."""
-        super().__init__(order=CallbackOrder.Scheduler, node=CallbackNode.All)
+        super().__init__(order=CallbackOrder.scheduler, node=CallbackNode.all)
         self.scheduler_key = scheduler_key
         self.mode = mode
         self.reduced_metric = reduced_metric
@@ -140,7 +141,7 @@ class SchedulerCallback(Callback):
             self.step_epoch(runner=runner)
 
 
-class LRUpdater(Callback):
+class LRUpdater(ABC, Callback):
     """Basic class that all Lr updaters inherit from."""
 
     def __init__(self, optimizer_key: str = None):
@@ -149,17 +150,19 @@ class LRUpdater(Callback):
             optimizer_key (str): which optimizer key to use
                 for learning rate scheduling
         """
-        super().__init__(order=CallbackOrder.Scheduler, node=CallbackNode.All)
+        super().__init__(order=CallbackOrder.scheduler, node=CallbackNode.all)
         self.init_lr = 0
         self.optimizer_key = optimizer_key
 
+    @abstractmethod
     def calc_lr(self):
         """@TODO: Docs. Contribution is welcome."""
-        return None
+        pass
 
+    @abstractmethod
     def calc_momentum(self):
         """@TODO: Docs. Contribution is welcome."""
-        return None
+        pass
 
     @staticmethod
     def _update_lr(optimizer, new_lr) -> None:

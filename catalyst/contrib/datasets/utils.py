@@ -20,7 +20,7 @@ def gen_bar_updater():
     return bar_update
 
 
-def calculate_md5(fpath, chunk_size=1024 * 1024):
+def calculate_md5(fpath, chunk_size=1024 * 1024):  # noqa: WPS404
     """@TODO: Docs. Contribution is welcome."""
     md5 = hashlib.md5()
     with open(fpath, "rb") as f:
@@ -53,6 +53,10 @@ def download_url(url, root, filename=None, md5=None):
             If None, use the basename of the URL
         md5 (str, optional): MD5 checksum of the download.
             If None, do not check
+
+    Raises:
+        IOError: if failed to download url
+        RuntimeError: if file not found or corrupted
     """
     import urllib
 
@@ -106,7 +110,9 @@ def extract_archive(from_path, to_path=None, remove_finished=False):
     elif from_path.endswith(".gz"):
         root, _ = os.path.splitext(os.path.basename(from_path))
         to_path = os.path.join(to_path, root)
-        with open(to_path, "wb") as out_f, gzip.GzipFile(from_path) as zip_f:
+        with open(to_path, "wb") as out_f, gzip.GzipFile(  # noqa: WPS316
+            from_path
+        ) as zip_f:
             out_f.write(zip_f.read())
     elif from_path.endswith(".zip"):
         with zipfile.ZipFile(from_path, "r") as z:

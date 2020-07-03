@@ -4,15 +4,19 @@ Various accuracy metrics:
     * :func:`average_accuracy`
     * :func:`mean_average_accuracy`
 """
+from typing import Tuple
+
 import numpy as np
+
+import torch
 
 from catalyst.utils.torch import get_activation_fn
 
 
 def accuracy(
-    outputs,
-    targets,
-    topk=(1,),
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    topk: Tuple = (1,),
     threshold: float = None,
     activation: str = None,
 ):
@@ -37,6 +41,16 @@ def accuracy(
         multi-label classification).
       - outputs, targets are tensors with shape: batch_size x num_classes
       - targets is a tensor with binary vectors
+
+    Args:
+        outputs (torch.Tensor): model outputs, logits
+        targets (torch.Tensor): ground truth, labels
+        topk (tuple): tuple with specified `N` for top`N` accuracy computing
+        threshold (float): threshold for outputs
+        activation (str): activation for outputs
+
+    Returns:
+        computed topK accuracy
     """
     activation_fn = get_activation_fn(activation)
     outputs = activation_fn(outputs)
@@ -44,12 +58,13 @@ def accuracy(
     if threshold:
         outputs = (outputs > threshold).long()
 
+    # TODO: move to separate function
     # multi-label classification
     if len(targets.shape) > 1 and targets.size(1) > 1:
-        res = (targets.long() == outputs.long()).sum().float() / np.prod(
+        output = (targets.long() == outputs.long()).sum().float() / np.prod(
             targets.shape
         )
-        return [res]
+        return [output]
 
     max_k = max(topk)
     batch_size = targets.size(0)
@@ -57,15 +72,15 @@ def accuracy(
     if len(outputs.shape) == 1 or outputs.shape[1] == 1:
         pred = outputs.t()
     else:
-        _, pred = outputs.topk(max_k, 1, True, True)
+        _, pred = outputs.topk(max_k, 1, True, True)  # noqa: WPS425
         pred = pred.t()
     correct = pred.eq(targets.long().view(1, -1).expand_as(pred))
 
-    res = []
+    output = []
     for k in topk:
         correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
-        res.append(correct_k.mul_(1.0 / batch_size))
-    return res
+        output.append(correct_k.mul_(1.0 / batch_size))
+    return output
 
 
 def average_accuracy(outputs, targets, k=10):
@@ -80,7 +95,7 @@ def average_accuracy(outputs, targets, k=10):
         k (int, optional): The maximum number of predicted elements
 
     Returns:
-        double: The average accuracy at k over the input lists
+        float: The average accuracy at k over the input lists
     """
     if len(outputs) > k:
         outputs = outputs[:k]
@@ -111,10 +126,10 @@ def mean_average_accuracy(outputs, targets, topk=(1,)):
         topk (int, optional): The maximum number of predicted elements
 
     Returns:
-        double: The mean average accuracy at k over the input lists
+        float: The mean average accuracy at k over the input lists
     """
     max_k = max(topk)
-    _, pred = outputs.topk(max_k, 1, True, True)
+    _, pred = outputs.topk(max_k, 1, True, True)  # noqa: WPS425
 
     targets = targets.data.cpu().numpy().tolist()
     actual_list = []
