@@ -14,6 +14,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from catalyst.dl import (
     Callback,
     CallbackOrder,
+    CheckRunCallback,
     CriterionCallback,
     PeriodicLoaderCallback,
     SupervisedRunner,
@@ -81,6 +82,7 @@ def test_multiple_stages_with_magic_callback():
         callbacks=[
             PeriodicLoaderCallback(valid=2),
             BestStateCheckerCallback(),
+            CheckRunCallback(num_epoch_steps=5),
         ],
     )
 
@@ -96,6 +98,7 @@ def test_multiple_stages_with_magic_callback():
         callbacks=[
             PeriodicLoaderCallback(valid=3),
             BestStateCheckerCallback(),
+            CheckRunCallback(num_epoch_steps=6),
         ],
     )
 
@@ -111,6 +114,7 @@ def test_multiple_stages_with_magic_callback():
         callbacks=[
             PeriodicLoaderCallback(valid=4),
             BestStateCheckerCallback(),
+            CheckRunCallback(num_epoch_steps=6),
         ],
     )
 
@@ -152,7 +156,10 @@ def test_validation_with_period_3():
         logdir=logdir,
         num_epochs=10,
         verbose=False,
-        callbacks=[PeriodicLoaderCallback(valid=3)],
+        callbacks=[
+            PeriodicLoaderCallback(valid=3),
+            CheckRunCallback(num_epoch_steps=10),
+        ],
     )
 
     sys.stdout = old_stdout
@@ -207,7 +214,10 @@ def test_validation_with_period_0():
         logdir=logdir,
         num_epochs=5,
         verbose=False,
-        callbacks=[PeriodicLoaderCallback(valid=0)],
+        callbacks=[
+            PeriodicLoaderCallback(valid=0),
+            CheckRunCallback(num_epoch_steps=5),
+        ],
     )
 
     sys.stdout = old_stdout
@@ -267,7 +277,8 @@ def test_multiple_loaders():
         callbacks=[
             PeriodicLoaderCallback(
                 train_additional=2, valid=3, valid_additional=0
-            )
+            ),
+            CheckRunCallback(num_epoch_steps=10),
         ],
     )
 
@@ -330,7 +341,8 @@ def test_multiple_loaders_and_multiple_stages():
         callbacks=[
             PeriodicLoaderCallback(
                 train_additional=2, valid=3, valid_additional=0
-            )
+            ),
+            CheckRunCallback(num_epoch_steps=5),
         ],
     )
 
@@ -346,7 +358,8 @@ def test_multiple_loaders_and_multiple_stages():
         callbacks=[
             PeriodicLoaderCallback(
                 train_additional=2, valid=3, valid_additional=0
-            )
+            ),
+            CheckRunCallback(num_epoch_steps=10),
         ],
     )
 
@@ -517,7 +530,8 @@ def test_ignoring_unknown_loaders():
                 valid=3,
                 valid_additional=0,
                 valid_not_exist=1,
-            )
+            ),
+            CheckRunCallback(num_epoch_steps=10),
         ],
     )
 
@@ -577,7 +591,10 @@ def test_loading_best_state_at_end():
         logdir=logdir,
         num_epochs=5,
         verbose=False,
-        callbacks=[PeriodicLoaderCallback(valid=3)],
+        callbacks=[
+            PeriodicLoaderCallback(valid=3),
+            CheckRunCallback(num_epoch_steps=5),
+        ],
         load_best_on_end=True,
     )
 
