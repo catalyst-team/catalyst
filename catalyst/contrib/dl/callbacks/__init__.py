@@ -33,7 +33,7 @@ except ImportError as ex:
             "some of catalyst-cv dependencies not available,"
             " to install dependencies, run `pip install catalyst[cv]`."
         )
-    raise ex
+        raise ex
 
 try:
     import alchemy
