@@ -21,9 +21,10 @@ jobs:
         os: [ubuntu-18.04, windows-2019, macOS-10.15]
         python-version: [3.6, 3.7, 3.8]
         requirements: ['minimal', 'latest']
-#        exclude:
-#          - python-version: 3.8
-#            requirements: 'minimal'
+        exclude:
+          # pypi problems
+          - python-version: 3.8
+            requirements: 'minimal'
 
     timeout-minutes: 30
     steps:

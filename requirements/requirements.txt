@@ -14,7 +14,7 @@ ipython
 # logging
 tensorboard>=1.14.0
 tensorboardX
-crc32c>=1.7
+# crc32c>=1.7
 plotly>=4.1.0
 
 # Used in scripts  -> contrib (?)
