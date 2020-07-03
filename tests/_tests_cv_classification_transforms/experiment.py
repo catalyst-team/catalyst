@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Tuple
 from collections import OrderedDict
 
 from torch.utils.data import Dataset
@@ -10,7 +10,7 @@ from catalyst.dl.experiment import ConfigExperiment
 class MNIST(_MNIST):
     """`MNIST <http://yann.lecun.com/exdb/mnist/>`_ Dataset."""
 
-    def __getitem__(self, index: int) -> Dict:
+    def __getitem__(self, index: int) -> Tuple:
         """Fetches a sample for a given index from MNIST dataset.
 
         Args:
@@ -21,11 +21,10 @@ class MNIST(_MNIST):
         """
         image, target = self.data[index], self.targets[index]
 
-        dict_ = {"image": image, "targets": target}
         if self.transform is not None:
-            dict_ = self.transform(dict_)
+            image = self.transform({"image": image})["image"]
 
-        return dict_
+        return image, target
 
 
 class Experiment(ConfigExperiment):

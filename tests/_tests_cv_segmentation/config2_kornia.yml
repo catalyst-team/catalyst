@@ -51,12 +51,14 @@ stages:
 
     callbacks_params:
       train_augmentations:
+        _wrapper:
+          callback: ControlFlowCallback
+          loaders: train
         callback: BatchTransformCallback
         transform:
           - transform: kornia.RandomHorizontalFlip
         input_key: image
         additional_input_key: mask
-        loader: train
       loss_dice:
         callback: CriterionCallback
         input_key: mask

@@ -15,40 +15,69 @@ class BatchTransformCallback(Callback):
     Look at `Kornia: an Open Source Differentiable Computer Vision
     Library for PyTorch`_ for details.
 
+    To apply augmentations only during specific loader e.g. only during
+    training :class:`catalyst.core.callbacks.control_flow.ControlFlowCallback`
+    callback can be used. For config API it can look like this:
+
+    .. code-block:: yaml
+
+        callbacks_params:
+          ...
+          train_transforms:
+            _wrapper:
+              callback: ControlFlowCallback
+              loaders: train
+            callback: BatchTransformCallback
+            transforms:
+              - transform: kornia.RandomAffine
+                degrees: [-15, 20]
+                scale: [0.75, 1.25]
+                return_transform: true
+              - transform: kornia.ColorJitter
+                brightness: 0.1
+                contrast: 0.1
+                saturation: 0.1
+                return_transform: false
+            input_key: image
+            additional_input_key: mask
+          ...
+
     .. _`Kornia: an Open Source Differentiable Computer Vision Library
         for PyTorch`: https://arxiv.org/pdf/1910.02190.pdf
     """
 
     def __init__(
         self,
-        transform: Sequence[dict],
-        input_key: str,
-        output_key: Optional[str] = None,
+        transform: Sequence[Union[dict, AugmentationBase]],
+        input_key: str = "image",
         additional_input_key: Optional[str] = None,
+        output_key: Optional[str] = None,
         additional_output_key: Optional[str] = None,
-        loader: Optional[str] = None,
     ) -> None:
         """Constructor method for the :class:`BatchTransformCallback` callback.
 
         Args:
-            transform (Sequence[Union[dict, AugmentationBase]]): A sequence
-                of dits with params for each kornia transform or sequence of
-                transforms to apply. If sequence of params then must contain
-                `transform` key with augmentation name as a value
-                and if augmentation is custom, then you should add it
-                to the `TRANSFORMS` registry first.
-            input_key (str): Key in batch dict mapping to to tranform,
-                e.g. `'image'`.
-            output_key (Optional[str]): Key to use to store the result
-                of transform. Defaults to `input_key` if not provided.
-            additional_input_key (Optional[str]): Key of additional target
-                in batch dict mapping to to tranform, e.g. `'mask'`.
-            additional_output_key (Optional[str]): Key to use to store
-                the result of additional target transform.
-                Defaults to `additional_input_key` if not provided.
-            loader (Optional[str]): Name of the loader on which items
-                transform should be applied. If `None`, transform going to be
-                applied for each loader.
+            transform (Sequence[Union[dict, AugmentationBase]]): define
+                augmentations to apply on a batch
+
+                If a sequence of transforms passed, then each element
+                should be either ``kornia.augmentation.AugmentationBase`` or
+                ``nn.Module`` compatible with kornia interface.
+
+                If a sequence of params (``dict``) passed, then each
+                element of the sequence must contain ``'transform'`` key with
+                an augmentation name as a value. Please note that in this case
+                to use custom augmentation you should add it to the
+                `TRANSFORMS` registry first.
+            input_key (str): key in batch dict mapping to transform,
+                e.g. `'image'`
+            additional_input_key (Optional[str]): key of an additional target
+                in batch dict mapping to transform, e.g. `'mask'`
+            output_key (Optional[str]): key to use to store the result
+                of the transform, defaults to `input_key` if not provided
+            additional_output_key (Optional[str]): key to use to store
+                the result of additional target transformation,
+                defaults to `additional_input_key` if not provided
         """
         super().__init__(order=CallbackOrder.Internal, node=CallbackNode.all)
 
@@ -79,7 +108,6 @@ class BatchTransformCallback(Callback):
         ), "`kornia.AugmentationBase` should be a base class for transforms"
 
         self.transform = nn.Sequential(*transforms)
-        self.loader = loader
 
     def _process_input_tensor(self, input_: dict) -> torch.Tensor:
         return input_[self.input_key]
@@ -104,12 +132,11 @@ class BatchTransformCallback(Callback):
         """Apply transforms.
 
         Args:
-            runner (IRunner): Current runner.
+            runner (IRunner): сurrent runner
         """
-        if self.loader is None or runner.loader_name == self.loader:
-            in_batch = self._process_input(runner.input)
-            out_batch = self.transform(in_batch)
-            runner.input.update(self._process_output(out_batch))
+        in_batch = self._process_input(runner.input)
+        out_batch = self.transform(in_batch)
+        runner.input.update(self._process_output(out_batch))
 
 
 __all__ = ["BatchTransformCallback"]

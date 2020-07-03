@@ -48,6 +48,9 @@ stages:
 
     callbacks_params:
       train_augmentations:
+        _wrapper:
+          callback: ControlFlowCallback
+          loaders: train
         callback: BatchTransformCallback
         transform:
           - transform: kornia.RandomHorizontalFlip
@@ -55,8 +58,6 @@ stages:
           - transform: kornia.RandomVerticalFlip
             p: 1.0
         input_key: image
-        output_key: image
-        loader: train
       loss:
         callback: CriterionCallback
       optimizer:
