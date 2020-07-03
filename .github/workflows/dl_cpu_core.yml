@@ -35,6 +35,11 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      # https://github.com/pytorch/pytorch/issues/20030
+      - name: Setup macOS
+        if: startsWith(runner.os, 'macOS')
+        run: brew install libomp
+
       - name: set minimal dependencies
         if: matrix.requirements == 'minimal'
         run: |
