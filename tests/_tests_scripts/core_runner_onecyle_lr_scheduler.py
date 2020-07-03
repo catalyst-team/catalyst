@@ -12,13 +12,13 @@ class LRCheckerCallback(Callback):
         self.init_lr = init_lr_value
         self.final_lr = final_lr_value
 
-#   Check initial LR
+    # Check initial LR
     def on_batch_start(self, runner):
         step = getattr(runner, "global_batch_step")
         if step == 1:
             assert self.init_lr == runner.scheduler.get_lr()[0]
 
-#   Check final LR
+    # Check final LR
     def on_stage_end(self, runner):
         assert self.final_lr == runner.scheduler.get_lr()[0]
 
@@ -50,15 +50,17 @@ warmup_fraction = 0.5
 model = torch.nn.Linear(num_features, 5)
 criterion = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters())
-scheduler = OneCycleLRWithWarmup(optimizer, num_steps=num_steps,
-                                 lr_range=(max_lr, min_lr), init_lr=init_lr,
-                                 warmup_fraction=warmup_fraction)
+scheduler = OneCycleLRWithWarmup(
+    optimizer, 
+    num_steps=num_steps,
+    lr_range=(max_lr, min_lr), 
+    init_lr=init_lr,
+    warmup_fraction=warmup_fraction,
+)
 
 runner = SupervisedRunner()
 
-callbacks = [
-    LRCheckerCallback(init_lr, min_lr)
-]
+callbacks = [LRCheckerCallback(init_lr, min_lr)]
 
 # Single stage
 runner.train(
