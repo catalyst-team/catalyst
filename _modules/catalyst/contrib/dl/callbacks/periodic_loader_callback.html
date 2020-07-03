@@ -311,7 +311,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            kwargs: loader names and their run periods.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">external</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">validation</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">valid_loader</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">valid_metrics</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -405,12 +405,14 @@
 <span class="sd">            runner (IRunner): current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_loader</span> <span class="ow">in</span> <span class="n">runner</span><span class="o">.</span><span class="n">loaders</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">valid_metrics</span> <span class="o">=</span> <span class="p">{</span>
-                <span class="n">runner</span><span class="o">.</span><span class="n">main_metric</span><span class="p">:</span> <span class="n">runner</span><span class="o">.</span><span class="n">valid_metrics</span><span class="p">[</span><span class="n">runner</span><span class="o">.</span><span class="n">main_metric</span><span class="p">]</span>
-            <span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">valid_metrics</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">valid_metrics</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_metrics</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># use previous score on validation</span>
-            <span class="n">runner</span><span class="o">.</span><span class="n">valid_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_metrics</span></div></div>
+            <span class="n">runner</span><span class="o">.</span><span class="n">valid_metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_metrics</span>
+            <span class="n">runner</span><span class="o">.</span><span class="n">is_best_valid</span> <span class="o">=</span> <span class="kc">False</span></div></div>
+        <span class="c1"># else:</span>
+        <span class="c1">#     # store first loader while waiting for epoch with validation</span>
+        <span class="c1">#     self.valid_metrics = runner.valid_metrics.copy()</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;PeriodicLoaderCallback&quot;</span><span class="p">]</span>
