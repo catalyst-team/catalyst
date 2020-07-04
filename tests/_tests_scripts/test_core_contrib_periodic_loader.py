@@ -619,62 +619,6 @@ def test_loading_best_state_at_end():
     assert os.path.isfile(checkpoint + "/last_full.pth")
 
     shutil.rmtree(logdir, ignore_errors=True)
-<<<<<<< HEAD
-
-
-# def test_with_checkpoint_callback():
-#     logdir = "./logs/periodic_loader"
-
-#     period = 3
-#     callbacks = [
-#         ValidationManagerCallback(),
-#         PeriodicLoaderCallback(valid=period),
-#         CheckpointCallback(),
-#     ]
-#     callbacks = sorted(callbacks, key=lambda item: item.order)
-
-#     events = (
-#         "on_loader_start",
-#         "on_loader_end",
-#         "on_stage_start",
-#         "on_stage_end",
-#         "on_epoch_start",
-#         "on_epoch_end",
-#         "on_batch_start",
-#         "on_batch_end",
-#         "on_exception",
-#     )
-#     n_epochs = 10
-#     epochs = list(range(n_epochs))
-#     metrics = [.05, .1, .15, .15, .2, .18, .22, .11, .13, .12]
-#     exp_bfl = [  1,  1,   1,   0,  0,   1,   0,   0,   0,   0]
-#     metrics = [{"metric": num, "valid_metric": num} for num in metrics]
-
-#     for ep in epochs:
-#         for loader in ("train", "valid"):
-#             runner = Mock(
-#                 resume_dir=None,
-#                 checkpoint=logdir,
-#                 epoch=ep + 1,
-#                 minimize_metric=False,
-#                 loaders={
-#                     "train": Mock(),
-#                     "valid": Mock(),
-#                 },
-#                 loader_name=loader,
-#                 is_train_loader=(loader == "train"),
-#                 is_valid_loader=(loader == "valid"),
-#                 main_metric="metric",
-#                 valid_loader="valid",
-#                 valid_metrics=metrics[ep],
-#                 best_valid_metrics=metrics[ep],
-#             )
-#             for ev in events:
-#                 for cb in callbacks:
-#                     getattr(cb, ev)(runner)
-#             print(">>", ep, runner.is_best_valid)
-#         assert runner.is_best_valid == bool(exp_bfl[ep])
-#     # shutil.rmtree(logdir, ignore_errors=True)
 
 
 def test_loading_best_state_at_end_with_custom_scores():
@@ -828,5 +772,3 @@ def test_loaders_validation_with_period_0():
     assert os.path.isfile(checkpoint + "/last_full.pth")
 
     shutil.rmtree(logdir, ignore_errors=True)
-=======
->>>>>>> master
