@@ -25,7 +25,9 @@ def test_epoch_increasing():
             value = getattr(runner, self.attr)
             if self.prev is not None:
                 print(
-                    f">>> '{self.attr}': previous - {self.prev}, current - {value}"
+                    f">>> '{self.attr}': "
+                    f"previous - {self.prev}, "
+                    f"current - {value}"
                 )
                 assert self.prev < value
             self.prev = value

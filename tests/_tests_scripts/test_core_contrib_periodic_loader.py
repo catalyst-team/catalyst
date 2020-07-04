@@ -42,9 +42,9 @@ def test_multiple_stages_with_magic_callback():
                 and runner.epoch > 1
                 and self._after_first_validation
             ):
-                assert (
-                    not runner.is_best_valid
-                ), f"Epochs (epoch={runner.epoch}) without valid loader can't be best!"
+                msg = f"Epochs (epoch={runner.epoch}) "
+                "without valid loader can't be best!"
+                assert not runner.is_best_valid, msg
             else:
                 assert runner.valid_metrics[runner.main_metric] is not None
             if self.valid_loader in runner.loaders:
