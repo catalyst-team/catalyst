@@ -55,6 +55,7 @@ class PeriodicLoaderCallback(Callback):
 
         self.valid_loader: str = None
         self.valid_metrics: Mapping[str, float] = None
+        self.best_valid_metrics: Mapping[str, float] = None
         self.loaders: Mapping[str, DataLoader] = OrderedDict()
 
         self.loader_periods = {}
@@ -102,6 +103,10 @@ class PeriodicLoaderCallback(Callback):
                 raise ValueError(
                     f"There will be no loaders in epoch {epoch_with_err}!"
                 )
+        # use first loader as validation
+        loaders = list(runner.loaders.keys())
+        while self.loader_periods.get(self.valid_loader, 1) == 0:
+            self.valid_loader = loaders.pop(0)
 
     def on_epoch_start(self, runner: IRunner) -> None:
         """
@@ -146,13 +151,32 @@ class PeriodicLoaderCallback(Callback):
         """
         if self.valid_loader in runner.loaders:
             self.valid_metrics = runner.valid_metrics.copy()
-        elif self.valid_metrics is not None:
-            # use previous score on validation
-            runner.valid_metrics = self.valid_metrics
+            if self.best_valid_metrics is None:
+                # use validation metrics as best on
+                # first epoch with validation
+                self.best_valid_metrics = runner.valid_metrics.copy()
+                # ignore previous best metrics and
+                # set validation metrics as best
+                runner.best_valid_metrics = self.best_valid_metrics.copy()
+                runner.is_best_valid = True
+            else:
+                self.best_valid_metrics = runner.best_valid_metrics.copy()
+        else:
             runner.is_best_valid = False
-        # else:
-        #     # store first loader while waiting for epoch with validation
-        #     self.valid_metrics = runner.valid_metrics.copy()
+            if self.valid_metrics is not None:
+                # use validation metrics for epochs without validation
+                runner.valid_metrics = self.valid_metrics
+                runner.best_valid_metrics = self.best_valid_metrics
+            else:
+                # if no validation scores then mark metrics
+                # based on train as infinity
+                # (handle cases with high scores of main metric
+                #  before first validation, and this scores higher than
+                #  any validation score)
+                value = (
+                    float("+inf") if runner.minimize_metric else float("-inf")
+                )
+                runner.valid_metrics[runner.main_metric] = value
 
 
 __all__ = ["PeriodicLoaderCallback"]
