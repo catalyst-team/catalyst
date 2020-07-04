@@ -234,7 +234,11 @@ def test_validation_with_period_0():
     assert os.path.isfile(checkpoint + "/last.pth")
     assert os.path.isfile(checkpoint + "/last_full.pth")
 
+<<<<<<< HEAD
     shutil.rmtree(logdir, ignore_errors=True)
+=======
+    # shutil.rmtree(logdir, ignore_errors=True)
+>>>>>>> master
 
 
 def test_multiple_loaders():
@@ -619,6 +623,7 @@ def test_loading_best_state_at_end():
     assert os.path.isfile(checkpoint + "/last_full.pth")
 
     shutil.rmtree(logdir, ignore_errors=True)
+<<<<<<< HEAD
 
 
 # def test_with_checkpoint_callback():
@@ -827,3 +832,5 @@ def test_loaders_validation_with_period_0():
     assert os.path.isfile(checkpoint + "/last_full.pth")
 
     shutil.rmtree(logdir, ignore_errors=True)
+=======
+>>>>>>> master

@@ -806,7 +806,9 @@ best practices for your deep learning research.
 
 ### Guides
 
+- [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff)
 - [Distributed training best practices](https://catalyst-team.github.io/catalyst/info/distributed.html)
+- [BERT Distillation with Catalyst](https://medium.com/pytorch/bert-distillation-with-catalyst-c6f30c985854?source=friends_link&sk=1a28469ac8c0e6e6ad35bd26dfd95dd9)
 
 
 ### Projects
@@ -853,7 +855,7 @@ best practices for your deep learning research.
 - [MLComp](https://github.com/catalyst-team/mlcomp) – distributed DAG framework for machine learning with UI by [Lightforever](https://github.com/lightforever)
 - [Pytorch toolbelt](https://github.com/BloodAxe/pytorch-toolbelt) - PyTorch extensions for fast R&D prototyping and Kaggle farming by [BloodAxe](https://github.com/BloodAxe)
 - [Helper functions](https://github.com/ternaus/iglovikov_helper_functions) - An unstructured set of helper functions by [Ternaus](https://github.com/ternaus)
-
+- [BERT Distillation with Catalyst](https://github.com/elephantmipt/bert-distillation) by [elephantmipt](https://github.com/elephantmipt)
 
 ### Talks and videos
 - [Catalyst-team YouTube channel](https://www.youtube.com/channel/UC39Z1Cwr9n8DVpuXcsyi9FQ)

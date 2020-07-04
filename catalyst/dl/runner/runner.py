@@ -274,7 +274,10 @@ class Runner(IStageBasedRunner):
     ) -> Generator:
         """
         Runs model inference on PyTorch Dataloader and returns
-        python Generator with model predictions from `runner.predict_batch`
+        python generator with model predictions from `runner.predict_batch`.
+        Cleans up the experiment info to avoid possible collisions.
+        Sets `is_train_loader` and `is_valid_loader` to `False` while
+        keeping `is_infer_loader` as True. Moves model to evaluation mode.
 
         Args:
             loader (DataLoader): loader to predict
@@ -297,15 +300,20 @@ class Runner(IStageBasedRunner):
             checkpoint = utils.load_checkpoint(resume)
             utils.unpack_checkpoint(checkpoint, model=self.model)
 
-        (  # noqa: WPS122
-            self.model,
-            _,
-            _,
-            _,
-            self.device,
-        ) = utils.process_components(
+        self.experiment = None
+        utils.set_global_seed(initial_seed)
+        (model, _, _, _, device) = utils.process_components(  # noqa: WPS122
             model=self.model, distributed_params=fp16, device=self.device,
         )
+        self._prepare_inner_state(
+            stage="infer",
+            model=model,
+            device=device,
+            is_train_loader=False,
+            is_valid_loader=False,
+            is_infer_loader=True,
+        )
+        utils.maybe_recursive_call(self.model, "train", mode=False)
 
         utils.set_global_seed(initial_seed)
         for batch in loader:

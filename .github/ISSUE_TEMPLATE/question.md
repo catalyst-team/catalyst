@@ -2,8 +2,8 @@
 name: How to question
 about: Asking how-to questions
 title: ''
-labels: question, help wanted
-assignees:
+labels: help wanted, question
+assignees: Scitator, bagxi
 
 ---
 

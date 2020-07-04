@@ -61,6 +61,13 @@ Checkpoint
     :undoc-members:
     :show-inheritance:
 
+Control Flow
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.core.callbacks.control_flow
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Criterion
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.core.callbacks.criterion
@@ -129,12 +136,6 @@ Validation
     :undoc-members:
     :show-inheritance:
 
-Control Flow
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.control_flow
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 Registry
 ----------------------
