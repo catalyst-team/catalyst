@@ -26,6 +26,17 @@ from catalyst.tools.typing import (
 )
 
 
+class RunnerException(Exception):
+    """ Exception clas for all runner errors. """
+
+    def __init__(self, message: str):
+        """
+        Args:
+            message: exception message
+        """
+        super().__init__(message)
+
+
 class IRunner(ABC, IRunnerLegacy, FrozenClass):
     """
     An abstraction that knows how to run an experiment.
@@ -826,7 +837,10 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         Args:
             loader (DataLoader): dataloader to iterate
         """
-        assert loader, f"DataLoader with name {self.loader_name} is empty."
+        if not loader:
+            raise RunnerException(
+                f"DataLoader with name {self.loader_name} is empty."
+            )
 
         self.loader_batch_size = (
             loader.batch_sampler.batch_size
@@ -997,4 +1011,4 @@ class IStageBasedRunner(IRunner):
         self.loaders = loaders
 
 
-__all__ = ["IRunner", "IStageBasedRunner"]
+__all__ = ["IRunner", "IStageBasedRunner", "RunnerException"]

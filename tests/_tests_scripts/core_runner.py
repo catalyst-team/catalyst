@@ -4,6 +4,7 @@ import torch
 from torch import nn, Tensor
 from torch.utils.data import DataLoader, Dataset
 
+from catalyst.core.runner import RunnerException
 from catalyst.dl import SupervisedRunner
 
 
@@ -62,5 +63,5 @@ def test_cathing_empty_loader() -> None:
     """
     try:
         run_train_with_empty_loader()
-    except AssertionError:
+    except RunnerException:
         pass
