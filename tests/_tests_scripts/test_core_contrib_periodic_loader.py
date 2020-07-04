@@ -234,11 +234,7 @@ def test_validation_with_period_0():
     assert os.path.isfile(checkpoint + "/last.pth")
     assert os.path.isfile(checkpoint + "/last_full.pth")
 
-<<<<<<< HEAD
     shutil.rmtree(logdir, ignore_errors=True)
-=======
-    # shutil.rmtree(logdir, ignore_errors=True)
->>>>>>> master
 
 
 def test_multiple_loaders():
