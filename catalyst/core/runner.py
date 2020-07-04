@@ -837,7 +837,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         Args:
             loader (DataLoader): dataloader to iterate
         """
-        if not loader:
+        if len(loader) == 0:
             raise RunnerException(
                 f"DataLoader with name {self.loader_name} is empty."
             )
