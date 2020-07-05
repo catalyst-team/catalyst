@@ -10,7 +10,9 @@ from catalyst.core.runner import IRunner
 
 class PeriodicLoaderCallback(Callback):
     """Callback for runing loaders with specified period.
-    To disable loader use ``0`` as period.
+    To disable loader use ``0`` as period (if specified 
+    ``0`` for validation loader then will be raised an
+    error).
 
     For example, if you have ``train``, ``train_additional``,
     ``valid`` and ``valid_additional`` loaders and wan't to
@@ -63,7 +65,12 @@ class PeriodicLoaderCallback(Callback):
             if not isinstance(period, (int, float)):
                 raise TypeError(
                     "Expected loader period type is int/float "
-                    f"but got {type(period)}"
+                    f"but got {type(period)}!"
+                )
+            period_ = int(period)
+            if period_ < 0:
+                raise ValueError(
+                    f"Period should be >= 0, but got - {period_}!"
                 )
             self.loader_periods[loader] = int(period)
 
@@ -103,10 +110,12 @@ class PeriodicLoaderCallback(Callback):
                 raise ValueError(
                     f"There will be no loaders in epoch {epoch_with_err}!"
                 )
-        # use first loader as validation
-        loaders = list(runner.loaders.keys())
-        while self.loader_periods.get(self.valid_loader, 1) == 0:
-            self.valid_loader = loaders.pop(0)
+
+        if self.loader_periods.get(runner.valid_loader, 1) < 1:
+            raise ValueError(
+                f"Period for a validation loader ('{runner.valid_loader}') "
+                "should be > 0!"
+            )
 
     def on_epoch_start(self, runner: IRunner) -> None:
         """
