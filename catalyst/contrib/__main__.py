@@ -27,7 +27,11 @@ except ImportError as ex:
 
 
 def build_parser() -> ArgumentParser:
-    """@TODO: Docs. Contribution is welcome."""
+    """Builds parser.
+
+    Returns:
+        parser
+    """
     parser = ArgumentParser(
         "catalyst-contrib", formatter_class=RawTextHelpFormatter
     )

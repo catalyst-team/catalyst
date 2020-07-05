@@ -706,8 +706,10 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         return result
 
     def process_metrics(self) -> Dict:
-        """
-        Update metrics with last ``save_n_last`` checkpoints.
+        """Update metrics with last ``save_n_last`` checkpoints.
+
+        Returns:
+            updated metrics
         """
         n_last_checkpoints = [
             (Path(filepath).stem, batch_values)
@@ -723,8 +725,10 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         return self.metrics
 
     def truncate_checkpoints(self, **kwargs) -> None:
-        """
-        Keep ``save_n_best`` checkpoints based on main metric.
+        """Keep ``save_n_best`` checkpoints based on main metric.
+
+        Args:
+            **kwargs: extra params
         """
         if len(self.last_checkpoints) > self.save_n_last:
             item = self.last_checkpoints.pop(0)

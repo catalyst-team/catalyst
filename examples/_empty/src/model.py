@@ -6,18 +6,27 @@ from catalyst.contrib import registry
 @registry.Model
 class Model(torch.nn.Module):
     """
-    @TODO: Docs. Contribution is welcome
+    Your model
     """
 
     def __init__(self, **kwargs):
         """
-        @TODO: Docs. Contribution is welcome
+        Model init.
+
+        Args:
+            **kwargs: model params
         """
         super().__init__()
 
     def forward(self, x):
         """
-        @TODO: Docs. Contribution is welcome
+        Model forward pass.
+
+        Args:
+            x: features
+
+        Returns:
+            features
         """
         # CHANGE ME
         return x
@@ -25,7 +34,13 @@ class Model(torch.nn.Module):
     @classmethod
     def get_from_params(cls, **model_params) -> "Model":
         """
-        @TODO: Docs. Contribution is welcome
+        Model init from config.
+
+        Args:
+            **model_params: model params
+
+        Returns:
+            model
         """
         # CHANGE ME
         model = cls(**model_params)
