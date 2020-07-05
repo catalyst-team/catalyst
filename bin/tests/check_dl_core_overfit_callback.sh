@@ -83,10 +83,10 @@ check_num_files ${CHECKPOINTS} 7  # 3x2 checkpoints + metrics.json
 python -c """
 from catalyst import utils
 metrics = utils.load_config('$LOGFILE')
-assert metrics['stage1.1']['loss'] < 1.8
-assert metrics['stage1.1']['accuracy01'] > 0.67
-assert metrics['stage1.1']['accuracy03'] > 0.81
-assert metrics['stage1.1']['accuracy05'] > 0.94
+assert metrics['stage1.1']['loss'] < 2.0
+assert metrics['stage1.1']['accuracy01'] > 0.65
+assert metrics['stage1.1']['accuracy03'] > 0.8
+assert metrics['stage1.1']['accuracy05'] > 0.9
 """
 
 rm -rf ${LOGDIR} ${EXP_OUTPUT}
