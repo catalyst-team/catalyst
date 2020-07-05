@@ -45,7 +45,9 @@ jobs:
       # https://github.com/pytorch/pytorch/issues/20030
       - name: Setup macOS
         if: startsWith(runner.os, 'macOS')
-        run: brew install libomp
+        run: |
+          brew install libomp
+          brew install gnu-sed
 
       - name: set minimal dependencies
         if: matrix.requirements == 'minimal'
