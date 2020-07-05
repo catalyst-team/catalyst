@@ -1316,8 +1316,10 @@ be turned off. It is useful for debugging</p></li>
 <dt id="catalyst.contrib.dl.callbacks.periodic_loader_callback.PeriodicLoaderCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.callbacks.periodic_loader_callback.</code><code class="sig-name descname">PeriodicLoaderCallback</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/periodic_loader_callback.html#PeriodicLoaderCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.periodic_loader_callback.PeriodicLoaderCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
-<p>Callback for running loaders with specified period.
-To disable loader use <code class="docutils literal notranslate"><span class="pre">0</span></code> as period.</p>
+<p>Callback for runing loaders with specified period.
+To disable loader use <code class="docutils literal notranslate"><span class="pre">0</span></code> as period (if specified
+<code class="docutils literal notranslate"><span class="pre">0</span></code> for validation loader then will be raised an
+error).</p>
 <p>For example, if you have <code class="docutils literal notranslate"><span class="pre">train</span></code>, <code class="docutils literal notranslate"><span class="pre">train_additional</span></code>,
 <code class="docutils literal notranslate"><span class="pre">valid</span></code> and <code class="docutils literal notranslate"><span class="pre">valid_additional</span></code> loaders and wan’t to
 use <code class="docutils literal notranslate"><span class="pre">train_additional</span></code> every 2 epochs, <code class="docutils literal notranslate"><span class="pre">valid</span></code> - every
@@ -1361,8 +1363,8 @@ use <code class="docutils literal notranslate"><span class="pre">train_additiona
 <dl class="method">
 <dt id="catalyst.contrib.dl.callbacks.periodic_loader_callback.PeriodicLoaderCallback.on_epoch_end">
 <code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/periodic_loader_callback.html#PeriodicLoaderCallback.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.periodic_loader_callback.PeriodicLoaderCallback.on_epoch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Store validation metrics and use latest validation score
-when validation loader is not required.</p>
+<dd><p>Check if validation metric should be
+dropped for current epoch.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="core.html#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
