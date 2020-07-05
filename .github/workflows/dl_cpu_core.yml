@@ -69,7 +69,7 @@ jobs:
 
       - name: install dependencies
         run: |
-          python -m pip install --upgrade --user pip
+          # python -m pip install --upgrade --user pip
           pip install -r ./requirements/requirements.txt -r ./tests/requirements.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
           python --version
           pip --version
@@ -99,7 +99,7 @@ jobs:
           path: data/MNIST
           key: MNIST-data
 
-      - name: data - isbi
+      - name: data - MNIST
         if: steps.cache-mnist.outputs.cache-hit != 'true'
         run: |
           mkdir -p data
