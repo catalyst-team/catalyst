@@ -286,6 +286,17 @@
 <span class="p">)</span>
 
 
+<div class="viewcode-block" id="RunnerException"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.runner.RunnerException">[docs]</a><span class="k">class</span> <span class="nc">RunnerException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Exception clas for all runner errors.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="RunnerException.__init__"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.runner.RunnerException.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            message: exception message</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div></div>
+
+
 <div class="viewcode-block" id="IRunner"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.runner.IRunner">[docs]</a><span class="k">class</span> <span class="nc">IRunner</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">IRunnerLegacy</span><span class="p">,</span> <span class="n">FrozenClass</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An abstraction that knows how to run an experiment.</span>
@@ -1086,6 +1097,11 @@
 <span class="sd">        Args:</span>
 <span class="sd">            loader (DataLoader): dataloader to iterate</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">RunnerException</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;DataLoader with name </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_name</span><span class="si">}</span><span class="s2"> is empty.&quot;</span>
+            <span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">loader_batch_size</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">loader</span><span class="o">.</span><span class="n">batch_sampler</span><span class="o">.</span><span class="n">batch_size</span>
             <span class="k">if</span> <span class="n">loader</span><span class="o">.</span><span class="n">batch_sampler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -1113,6 +1129,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_for_epoch</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">)</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaders</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">loader_name</span><span class="p">,</span> <span class="n">loader</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaders</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">RunnerException</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;DataLoader with name </span><span class="si">{</span><span class="n">loader_name</span><span class="si">}</span><span class="s2"> is empty.&quot;</span>
+                <span class="p">)</span>
 
         <span class="c1"># @TODO: better solution with train/inference handling ?</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_infer_stage</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">)</span>
@@ -1255,7 +1277,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">loaders</span> <span class="o">=</span> <span class="n">loaders</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;IRunner&quot;</span><span class="p">,</span> <span class="s2">&quot;IStageBasedRunner&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;IRunner&quot;</span><span class="p">,</span> <span class="s2">&quot;IStageBasedRunner&quot;</span><span class="p">,</span> <span class="s2">&quot;RunnerException&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>
