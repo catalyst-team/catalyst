@@ -70,9 +70,7 @@ class PeriodicLoaderCallback(Callback):
                 )
             period = int(period)
             if period < 0:
-                raise ValueError(
-                    f"Period should be >= 0, but got - {period}!"
-                )
+                raise ValueError(f"Period should be >= 0, but got - {period}!")
             self.loader_periods[loader] = period
 
     def on_stage_start(self, runner: IRunner) -> None:
