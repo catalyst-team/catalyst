@@ -158,6 +158,7 @@ def run_ml_train() -> None:
     optimizer = Adam(model.parameters(), lr=1e-3)
 
     # criterion
+    # todo: normalisation
     # sampler_inbatch = si.AllTripletsSampler(max_output_triplets=512)
     sampler_inbatch = si.HardTripletsSampler(need_norm=False)
     criterion = TripletMarginLossWithSampling(
