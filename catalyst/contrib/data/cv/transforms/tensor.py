@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 import numpy as np
 
 from albumentations import ImageOnlyTransform
