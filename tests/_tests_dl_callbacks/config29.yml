@@ -32,13 +32,6 @@ stages:
     stage_params:
       num_epochs: &num_epochs 4
 
-    scheduler_params:
-      scheduler: OneCycleLRWithWarmup
-      num_steps: *num_epochs
-      warmup_steps: 1
-      lr_range: [0.005, 0.00005]
-      momentum_range: [0.85, 0.95]
-
     callbacks_params:
       loss:
         callback: CriterionCallback
@@ -51,22 +44,12 @@ stages:
             use_global_epochs: False
         callback: AccuracyCallback
         accuracy_args: [1, 3, 5]
-      scheduler:
-        callback: SchedulerCallback
-        reduced_metric: *reduced_metric
       saver:
         callback: CheckpointCallback
 
   stage2:
     stage_params:
       num_epochs: *num_epochs
-
-    scheduler_params:
-      scheduler: OneCycleLRWithWarmup
-      num_steps: *num_epochs
-      warmup_steps: 1
-      lr_range: [0.005, 0.00005]
-      momentum_range: [0.85, 0.95]
 
     callbacks_params:
       loss:
@@ -80,8 +63,5 @@ stages:
             use_global_epochs: True
         callback: AccuracyCallback
         accuracy_args: [1, 3, 5]
-      scheduler:
-        callback: SchedulerCallback
-        reduced_metric: *reduced_metric
       saver:
         callback: CheckpointCallback
