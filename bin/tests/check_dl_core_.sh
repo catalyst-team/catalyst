@@ -13,7 +13,6 @@ rm -rf ./tests/logs
 # (set -e; for f in tests/_tests_scripts/*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
 (set -e; for f in tests/_tests_scripts/core_*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
 (set -e; for f in tests/_tests_scripts/dl_*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
-(set -e; for f in tests/_tests_scripts/z_*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
 
 
 ################################  pipeline 99  ################################
