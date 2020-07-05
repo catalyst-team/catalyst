@@ -9,7 +9,7 @@ from catalyst.core.runner import IRunner
 
 
 class PeriodicLoaderCallback(Callback):
-    """Callback for runing loaders with specified period.
+    """Callback for running loaders with specified period.
     To disable loader use ``0`` as period.
 
     For example, if you have ``train``, ``train_additional``,
@@ -51,7 +51,7 @@ class PeriodicLoaderCallback(Callback):
         Args:
             kwargs: loader names and their run periods.
         """
-        super().__init__(order=CallbackOrder.external)
+        super().__init__(order=CallbackOrder.validation + 1)
 
         self.valid_loader: str = None
         self.valid_metrics: Mapping[str, float] = None
@@ -69,7 +69,7 @@ class PeriodicLoaderCallback(Callback):
     def on_stage_start(self, runner: IRunner) -> None:
         """Collect information about loaders.
 
-        Arguments:
+        Args:
             runner (IRunner): current runner
 
         Raises:
@@ -113,7 +113,7 @@ class PeriodicLoaderCallback(Callback):
         validation loader will be used
         in the epochs where this loader is missing.
 
-        Arguments:
+        Args:
             runner (IRunner): current runner
 
         Raises:
@@ -141,16 +141,18 @@ class PeriodicLoaderCallback(Callback):
         """Store validation metrics and use latest validation score
         when validation loader is not required.
 
-        Arguments:
+        Args:
             runner (IRunner): current runner
         """
         if self.valid_loader in runner.loaders:
-            self.valid_metrics = {
-                runner.main_metric: runner.valid_metrics[runner.main_metric]
-            }
+            self.valid_metrics = runner.valid_metrics.copy()
         elif self.valid_metrics is not None:
             # use previous score on validation
             runner.valid_metrics = self.valid_metrics
+            runner.is_best_valid = False
+        # else:
+        #     # store first loader while waiting for epoch with validation
+        #     self.valid_metrics = runner.valid_metrics.copy()
 
 
 __all__ = ["PeriodicLoaderCallback"]

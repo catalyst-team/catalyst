@@ -230,7 +230,7 @@ class WrapperCallback(Callback):
             scope=base_callback.scope,
         )
         self.callback = base_callback
-        self._is_active = enable_callback
+        self._is_enabled = enable_callback
 
     def on_loader_start(self, runner: "IRunner") -> None:
         """
@@ -239,7 +239,7 @@ class WrapperCallback(Callback):
         Args:
             runner (IRunner): current runner
         """
-        if self._is_active:
+        if self._is_enabled:
             self.callback.on_loader_start(runner)
 
     def on_loader_end(self, runner: "IRunner") -> None:
@@ -249,7 +249,7 @@ class WrapperCallback(Callback):
         Args:
             runner (IRunner): current runner
         """
-        if self._is_active:
+        if self._is_enabled:
             self.callback.on_loader_end(runner)
 
     def on_stage_start(self, runner: "IRunner") -> None:
@@ -258,7 +258,7 @@ class WrapperCallback(Callback):
         Args:
             runner (IRunner): current runner
         """
-        if self._is_active:
+        if self._is_enabled:
             self.callback.on_stage_start(runner)
 
     def on_stage_end(self, runner: "IRunner") -> None:
@@ -267,7 +267,7 @@ class WrapperCallback(Callback):
         Args:
             runner (IRunner): current runner
         """
-        if self._is_active:
+        if self._is_enabled:
             self.callback.on_stage_end(runner)
 
     def on_epoch_start(self, runner: "IRunner") -> None:
@@ -276,7 +276,7 @@ class WrapperCallback(Callback):
         Args:
             runner (IRunner): current runner
         """
-        if self._is_active:
+        if self._is_enabled:
             self.callback.on_epoch_start(runner)
 
     def on_epoch_end(self, runner: "IRunner") -> None:
@@ -285,7 +285,7 @@ class WrapperCallback(Callback):
         Args:
             runner (IRunner): current runner
         """
-        if self._is_active:
+        if self._is_enabled:
             self.callback.on_epoch_end(runner)
 
     def on_batch_start(self, runner: "IRunner") -> None:
@@ -294,7 +294,7 @@ class WrapperCallback(Callback):
         Args:
             runner (IRunner): current runner
         """
-        if self._is_active:
+        if self._is_enabled:
             self.callback.on_batch_start(runner)
 
     def on_batch_end(self, runner: "IRunner") -> None:
@@ -303,7 +303,7 @@ class WrapperCallback(Callback):
         Args:
             runner (IRunner): current runner
         """
-        if self._is_active:
+        if self._is_enabled:
             self.callback.on_batch_end(runner)
 
     def on_exception(self, runner: "IRunner") -> None:
@@ -312,7 +312,7 @@ class WrapperCallback(Callback):
         Args:
             runner (IRunner): current runner
         """
-        if self._is_active:
+        if self._is_enabled:
             self.callback.on_exception(runner)
 
 

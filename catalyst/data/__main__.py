@@ -118,8 +118,10 @@ except ImportError as ex:  # noqa: WPS440
 
 
 def build_parser() -> ArgumentParser:
-    """
-    @TODO: Docs. Contribution is welcome
+    """Builds parser.
+
+    Returns:
+        parser
     """
     parser = ArgumentParser(
         "catalyst-data", formatter_class=RawTextHelpFormatter

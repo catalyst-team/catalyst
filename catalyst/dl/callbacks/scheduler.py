@@ -58,7 +58,11 @@ class LRFinder(LRUpdater):
         return self.init_lr + self.lr_step * self.find_iter
 
     def calc_lr(self):
-        """@TODO: Docs. Contribution is welcome."""
+        """Calculates learning reate.
+
+        Returns:
+            learning rate.
+        """
         res = self._calc_lr()
         self.find_iter += 1
         return res
