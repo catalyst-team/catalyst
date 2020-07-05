@@ -51,7 +51,7 @@ class PeriodicLoaderCallback(Callback):
         Args:
             kwargs: loader names and their run periods.
         """
-        super().__init__(order=CallbackOrder.external)
+        super().__init__(order=CallbackOrder.validation + 1)
 
         self.valid_loader: str = None
         self.valid_metrics: Mapping[str, float] = None
@@ -145,12 +145,14 @@ class PeriodicLoaderCallback(Callback):
             runner (IRunner): current runner
         """
         if self.valid_loader in runner.loaders:
-            self.valid_metrics = {
-                runner.main_metric: runner.valid_metrics[runner.main_metric]
-            }
+            self.valid_metrics = runner.valid_metrics.copy()
         elif self.valid_metrics is not None:
             # use previous score on validation
             runner.valid_metrics = self.valid_metrics
+            runner.is_best_valid = False
+        # else:
+        #     # store first loader while waiting for epoch with validation
+        #     self.valid_metrics = runner.valid_metrics.copy()
 
 
 __all__ = ["PeriodicLoaderCallback"]
