@@ -57,7 +57,6 @@ class PeriodicLoaderCallback(Callback):
         super().__init__(order=CallbackOrder.validation - 1)
 
         self.valid_loader: str = None
-        self.valid_metric: float = None
         self.loaders: Mapping[str, DataLoader] = OrderedDict()
 
         self.loader_periods = {}
@@ -150,23 +149,17 @@ class PeriodicLoaderCallback(Callback):
         runner.loaders = epoch_loaders
 
     def on_epoch_end(self, runner: IRunner) -> None:
-        """Store validation metrics and use latest validation score
-        when validation loader is not required.
+        """Check if validation metric should be
+        dropped for current epoch.
 
         Args:
             runner (IRunner): current runner
         """
-        default_value = (
-            float("+inf") if runner.minimize_metric else float("-inf")
-        )
         valid_metric_name = f"{runner.valid_loader}_{runner.main_metric}"
-        if self.valid_loader in runner.loaders:
-            # save latest validation metric
-            self.valid_metric = runner.epoch_metrics[valid_metric_name]
-        # replace with expected metric
-        runner.epoch_metrics[valid_metric_name] = (
-            self.valid_metric or default_value
-        )
+        if self.valid_loader not in runner.loaders:
+            runner.epoch_metrics[valid_metric_name] = (
+                float("+inf") if runner.minimize_metric else float("-inf")
+            )
 
 
 __all__ = ["PeriodicLoaderCallback"]
