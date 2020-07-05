@@ -308,6 +308,8 @@
         <li><a href="api/data.html#catalyst.data.reader.ScalarReader.__call__">(catalyst.data.reader.ScalarReader method)</a>
 </li>
       </ul></li>
+      <li><a href="api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper.__getattr__">__getattr__() (catalyst.data.loader.BatchLimitLoaderWrapper method)</a>
+</li>
       <li><a href="api/data.html#catalyst.data.dataset.DatasetFromSampler.__getitem__">__getitem__() (catalyst.data.dataset.DatasetFromSampler method)</a>
 
       <ul>
@@ -465,6 +467,8 @@
 </li>
         <li><a href="api/core.html#catalyst.core.callback.WrapperCallback.__init__">(catalyst.core.callback.WrapperCallback method)</a>
 </li>
+        <li><a href="api/core.html#catalyst.core.callbacks.batch_overfit.BatchOverfitCallback.__init__">(catalyst.core.callbacks.batch_overfit.BatchOverfitCallback method)</a>
+</li>
         <li><a href="api/core.html#catalyst.core.callbacks.checkpoint.CheckpointCallback.__init__">(catalyst.core.callbacks.checkpoint.CheckpointCallback method)</a>
 </li>
         <li><a href="api/core.html#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.__init__">(catalyst.core.callbacks.checkpoint.IterationCheckpointCallback method)</a>
@@ -527,6 +531,8 @@
 </li>
         <li><a href="api/data.html#catalyst.data.dataset.PathsDataset.__init__">(catalyst.data.dataset.PathsDataset method)</a>
 </li>
+        <li><a href="api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper.__init__">(catalyst.data.loader.BatchLimitLoaderWrapper method)</a>
+</li>
         <li><a href="api/data.html#catalyst.data.reader.LambdaReader.__init__">(catalyst.data.reader.LambdaReader method)</a>
 </li>
         <li><a href="api/data.html#catalyst.data.reader.ReaderCompose.__init__">(catalyst.data.reader.ReaderCompose method)</a>
@@ -542,6 +548,10 @@
         <li><a href="api/data.html#catalyst.data.sampler.DistributedSamplerWrapper.__init__">(catalyst.data.sampler.DistributedSamplerWrapper method)</a>
 </li>
         <li><a href="api/data.html#catalyst.data.sampler.MiniEpochSampler.__init__">(catalyst.data.sampler.MiniEpochSampler method)</a>
+</li>
+        <li><a href="api/data.html#catalyst.data.sampler_inbatch.AllTripletsSampler.__init__">(catalyst.data.sampler_inbatch.AllTripletsSampler method)</a>
+</li>
+        <li><a href="api/data.html#catalyst.data.sampler_inbatch.HardTripletsSampler.__init__">(catalyst.data.sampler_inbatch.HardTripletsSampler method)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.callbacks.confusion_matrix.ConfusionMatrixCallback.__init__">(catalyst.dl.callbacks.confusion_matrix.ConfusionMatrixCallback method)</a>
 </li>
@@ -604,9 +614,11 @@
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/data.html#catalyst.data.sampler.BalanceBatchSampler.__iter__">__iter__() (catalyst.data.sampler.BalanceBatchSampler method)</a>
+      <li><a href="api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper.__iter__">__iter__() (catalyst.data.loader.BatchLimitLoaderWrapper method)</a>
 
       <ul>
+        <li><a href="api/data.html#catalyst.data.sampler.BalanceBatchSampler.__iter__">(catalyst.data.sampler.BalanceBatchSampler method)</a>
+</li>
         <li><a href="api/data.html#catalyst.data.sampler.BalanceClassSampler.__iter__">(catalyst.data.sampler.BalanceClassSampler method)</a>
 </li>
         <li><a href="api/data.html#catalyst.data.sampler.DistributedSamplerWrapper.__iter__">(catalyst.data.sampler.DistributedSamplerWrapper method)</a>
@@ -625,6 +637,8 @@
 </li>
         <li><a href="api/data.html#catalyst.data.dataset.NumpyDataset.__len__">(catalyst.data.dataset.NumpyDataset method)</a>
 </li>
+        <li><a href="api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper.__len__">(catalyst.data.loader.BatchLimitLoaderWrapper method)</a>
+</li>
         <li><a href="api/data.html#catalyst.data.sampler.BalanceBatchSampler.__len__">(catalyst.data.sampler.BalanceBatchSampler method)</a>
 </li>
         <li><a href="api/data.html#catalyst.data.sampler.BalanceClassSampler.__len__">(catalyst.data.sampler.BalanceClassSampler method)</a>
@@ -632,6 +646,10 @@
         <li><a href="api/data.html#catalyst.data.sampler.MiniEpochSampler.__len__">(catalyst.data.sampler.MiniEpochSampler method)</a>
 </li>
       </ul></li>
+      <li><a href="api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper.__next__">__next__() (catalyst.data.loader.BatchLimitLoaderWrapper method)</a>
+</li>
+      <li><a href="api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper.__weakref__">__weakref__ (catalyst.data.loader.BatchLimitLoaderWrapper attribute)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -676,13 +694,15 @@
       </ul></li>
       <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.alchemy_logger.AlchemyLogger">AlchemyLogger (class in catalyst.contrib.dl.callbacks.alchemy_logger)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/core.html#catalyst.core.callback.CallbackNode.All">All (catalyst.core.callback.CallbackNode attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/core.html#catalyst.core.callback.CallbackNode.all">all (catalyst.core.callback.CallbackNode attribute)</a>
 </li>
       <li><a href="api/utils.html#catalyst.tools.registry.Registry.all">all() (catalyst.tools.registry.Registry method)</a>
+</li>
+      <li><a href="api/data.html#catalyst.data.sampler_inbatch.AllTripletsSampler">AllTripletsSampler (class in catalyst.data.sampler_inbatch)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.torch.any2device">any2device() (in module catalyst.utils.torch)</a>
 </li>
@@ -734,11 +754,15 @@
 </li>
       <li><a href="api/core.html#catalyst.core.legacy.IRunnerLegacy.batch_out">batch_out() (catalyst.core.legacy.IRunnerLegacy property)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data.html#catalyst.data.sampler.BalanceBatchSampler.batch_size">batch_size() (catalyst.data.sampler.BalanceBatchSampler property)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data.html#catalyst.data.sampler.BalanceBatchSampler.batches_in_epoch">batches_in_epoch() (catalyst.data.sampler.BalanceBatchSampler property)</a>
+</li>
+      <li><a href="api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper">BatchLimitLoaderWrapper (class in catalyst.data.loader)</a>
+</li>
+      <li><a href="api/core.html#catalyst.core.callbacks.batch_overfit.BatchOverfitCallback">BatchOverfitCallback (class in catalyst.core.callbacks.batch_overfit)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.schedulers.base.BatchScheduler">BatchScheduler (class in catalyst.contrib.nn.schedulers.base)</a>
 </li>
@@ -926,6 +950,8 @@
 </li>
       <li><a href="api/core.html#module-catalyst.core.callback">catalyst.core.callback (module)</a>
 </li>
+      <li><a href="api/core.html#module-catalyst.core.callbacks.batch_overfit">catalyst.core.callbacks.batch_overfit (module)</a>
+</li>
       <li><a href="api/core.html#module-catalyst.core.callbacks.checkpoint">catalyst.core.callbacks.checkpoint (module)</a>
 </li>
       <li><a href="api/core.html#module-catalyst.core.callbacks.control_flow">catalyst.core.callbacks.control_flow (module)</a>
@@ -970,9 +996,13 @@
 </li>
       <li><a href="api/data.html#module-catalyst.data.dataset">catalyst.data.dataset (module)</a>
 </li>
+      <li><a href="api/data.html#module-catalyst.data.loader">catalyst.data.loader (module)</a>
+</li>
       <li><a href="api/data.html#module-catalyst.data.reader">catalyst.data.reader (module)</a>
 </li>
       <li><a href="api/data.html#module-catalyst.data.sampler">catalyst.data.sampler (module)</a>
+</li>
+      <li><a href="api/data.html#module-catalyst.data.sampler_inbatch">catalyst.data.sampler_inbatch (module)</a>
 </li>
       <li><a href="api/dl.html#module-catalyst.dl.callbacks">catalyst.dl.callbacks (module)</a>
 </li>
@@ -1554,6 +1584,8 @@
 <h2 id="H">H</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/data.html#catalyst.data.sampler_inbatch.HardTripletsSampler">HardTripletsSampler (class in catalyst.data.sampler_inbatch)</a>
+</li>
       <li><a href="api/contrib.html#catalyst.contrib.utils.cv.image.has_image_extension">has_image_extension() (in module catalyst.contrib.utils.cv.image)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.experiment.IExperiment.hparams">hparams() (catalyst.core.experiment.IExperiment property)</a>, <a href="api/core.html#catalyst.core.experiment.IExperiment.hparams">[1]</a>
@@ -1589,6 +1621,8 @@
       <li><a href="api/contrib.html#catalyst.contrib.utils.cv.image.imsave">imsave() (in module catalyst.contrib.utils.cv.image)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.utils.cv.image.imwrite">imwrite() (in module catalyst.contrib.utils.cv.image)</a>
+</li>
+      <li><a href="api/data.html#catalyst.data.sampler_inbatch.InBatchTripletsSampler">InBatchTripletsSampler (class in catalyst.data.sampler_inbatch)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.runner.runner.Runner.infer">infer() (catalyst.dl.runner.runner.Runner method)</a>
 </li>
@@ -1945,6 +1979,8 @@
 </li>
         <li><a href="api/core.html#catalyst.core.callback.WrapperCallback.on_epoch_end">(catalyst.core.callback.WrapperCallback method)</a>
 </li>
+        <li><a href="api/core.html#catalyst.core.callbacks.batch_overfit.BatchOverfitCallback.on_epoch_end">(catalyst.core.callbacks.batch_overfit.BatchOverfitCallback method)</a>
+</li>
         <li><a href="api/core.html#catalyst.core.callbacks.checkpoint.CheckpointCallback.on_epoch_end">(catalyst.core.callbacks.checkpoint.CheckpointCallback method)</a>
 </li>
         <li><a href="api/core.html#catalyst.core.callbacks.early_stop.CheckRunCallback.on_epoch_end">(catalyst.core.callbacks.early_stop.CheckRunCallback method)</a>
@@ -1968,6 +2004,8 @@
         <li><a href="api/core.html#catalyst.core.callback.Callback.on_epoch_start">(catalyst.core.callback.Callback method)</a>
 </li>
         <li><a href="api/core.html#catalyst.core.callback.WrapperCallback.on_epoch_start">(catalyst.core.callback.WrapperCallback method)</a>
+</li>
+        <li><a href="api/core.html#catalyst.core.callbacks.batch_overfit.BatchOverfitCallback.on_epoch_start">(catalyst.core.callbacks.batch_overfit.BatchOverfitCallback method)</a>
 </li>
         <li><a href="api/core.html#catalyst.core.callbacks.metrics.MetricManagerCallback.on_epoch_start">(catalyst.core.callbacks.metrics.MetricManagerCallback method)</a>
 </li>
@@ -2320,6 +2358,8 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/data.html#catalyst.data.sampler_inbatch.InBatchTripletsSampler.sample">sample() (catalyst.data.sampler_inbatch.InBatchTripletsSampler method)</a>
+</li>
       <li><a href="api/contrib.html#catalyst.contrib.registry.Sampler">Sampler() (in module catalyst.contrib.registry)</a>
 
       <ul>
@@ -2378,10 +2418,10 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.utils.pandas.split_dataframe_on_stratified_folds">split_dataframe_on_stratified_folds() (in module catalyst.contrib.utils.pandas)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.utils.pandas.split_dataframe_train_test">split_dataframe_train_test() (in module catalyst.contrib.utils.pandas)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/contrib.html#catalyst.contrib.utils.pandas.split_dataframe_train_test">split_dataframe_train_test() (in module catalyst.contrib.utils.pandas)</a>
+</li>
       <li><a href="api/contrib.html#catalyst.contrib.utils.dataset.split_dataset_train_test">split_dataset_train_test() (in module catalyst.contrib.utils.dataset)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.modules.se.sSE">sSE (class in catalyst.contrib.nn.modules.se)</a>

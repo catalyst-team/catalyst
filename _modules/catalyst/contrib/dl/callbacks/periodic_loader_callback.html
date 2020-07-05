@@ -269,7 +269,7 @@
 
 
 <div class="viewcode-block" id="PeriodicLoaderCallback"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.dl.callbacks.periodic_loader_callback.PeriodicLoaderCallback">[docs]</a><span class="k">class</span> <span class="nc">PeriodicLoaderCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Callback for runing loaders with specified period.</span>
+    <span class="sd">&quot;&quot;&quot;Callback for running loaders with specified period.</span>
 <span class="sd">    To disable loader use ``0`` as period.</span>
 
 <span class="sd">    For example, if you have ``train``, ``train_additional``,</span>
@@ -329,7 +329,7 @@
 <div class="viewcode-block" id="PeriodicLoaderCallback.on_stage_start"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.dl.callbacks.periodic_loader_callback.PeriodicLoaderCallback.on_stage_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Collect information about loaders.</span>
 
-<span class="sd">        Arguments:</span>
+<span class="sd">        Args:</span>
 <span class="sd">            runner (IRunner): current runner</span>
 
 <span class="sd">        Raises:</span>
@@ -373,7 +373,7 @@
 <span class="sd">        validation loader will be used</span>
 <span class="sd">        in the epochs where this loader is missing.</span>
 
-<span class="sd">        Arguments:</span>
+<span class="sd">        Args:</span>
 <span class="sd">            runner (IRunner): current runner</span>
 
 <span class="sd">        Raises:</span>
@@ -401,7 +401,7 @@
         <span class="sd">&quot;&quot;&quot;Store validation metrics and use latest validation score</span>
 <span class="sd">        when validation loader is not required.</span>
 
-<span class="sd">        Arguments:</span>
+<span class="sd">        Args:</span>
 <span class="sd">            runner (IRunner): current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_loader</span> <span class="ow">in</span> <span class="n">runner</span><span class="o">.</span><span class="n">loaders</span><span class="p">:</span>

@@ -614,9 +614,9 @@
         <span class="n">epoch</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">global_epoch</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_global_epochs</span> <span class="k">else</span> <span class="n">runner</span><span class="o">.</span><span class="n">epoch</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_is_active</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">loader</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">loader</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_active</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_loader_start</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ControlFlowCallback.on_loader_end"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.control_flow.ControlFlowCallback.on_loader_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -626,9 +626,9 @@
 <span class="sd">        Args:</span>
 <span class="sd">            runner (IRunner): current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_active</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_loader_end</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_is_active</span> <span class="o">=</span> <span class="kc">True</span></div></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span> <span class="o">=</span> <span class="kc">True</span></div></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ControlFlowCallback&quot;</span><span class="p">]</span>

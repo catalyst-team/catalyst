@@ -318,7 +318,11 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">init_lr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr_step</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_iter</span>
 
 <div class="viewcode-block" id="LRFinder.calc_lr"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.callbacks.scheduler.LRFinder.calc_lr">[docs]</a>    <span class="k">def</span> <span class="nf">calc_lr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Calculates learning reate.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            learning rate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_lr</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">find_iter</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">res</span></div>

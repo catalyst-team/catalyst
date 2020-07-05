@@ -258,7 +258,9 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.dl.experiment.config</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="c1"># flake8: noqa</span>
+<span class="c1"># @TODO: code formatting issue for 20.07 release</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 
@@ -269,6 +271,7 @@
 <span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">IExperiment</span>
 <span class="kn">from</span> <span class="nn">catalyst.data</span> <span class="kn">import</span> <span class="n">Augmentor</span><span class="p">,</span> <span class="n">AugmentorCompose</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BatchOverfitCallback</span><span class="p">,</span>
     <span class="n">Callback</span><span class="p">,</span>
     <span class="n">CheckpointCallback</span><span class="p">,</span>
     <span class="n">CheckRunCallback</span><span class="p">,</span>
@@ -314,19 +317,23 @@
 <div class="viewcode-block" id="ConfigExperiment.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            config (dict): dictionary of parameters</span>
+<span class="sd">            config (dict): dictionary with parameters</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initial_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
             <span class="s2">&quot;verbose&quot;</span><span class="p">,</span> <span class="kc">False</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_check_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-            <span class="s2">&quot;check&quot;</span><span class="p">,</span> <span class="kc">False</span>
-        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_time</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
             <span class="s2">&quot;timeit&quot;</span><span class="p">,</span> <span class="kc">False</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;check&quot;</span><span class="p">,</span> <span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_overfit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s2">&quot;overfit&quot;</span><span class="p">,</span> <span class="kc">False</span>
+        <span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">__prepare_logdir</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s2">&quot;stages&quot;</span><span class="p">][</span><span class="s2">&quot;stage_params&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge_dicts</span><span class="p">(</span>
@@ -357,7 +364,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">hparams</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Returns hyper params&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Returns hyperparameters&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_stages_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stages_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
@@ -758,6 +765,8 @@
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_timer&quot;</span><span class="p">,</span> <span class="n">TimerCallback</span><span class="p">))</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_run</span><span class="p">:</span>
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_check&quot;</span><span class="p">,</span> <span class="n">CheckRunCallback</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_overfit</span><span class="p">:</span>
+            <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_overfit&quot;</span><span class="p">,</span> <span class="n">BatchOverfitCallback</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">stage</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">):</span>
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_metrics&quot;</span><span class="p">,</span> <span class="n">MetricManagerCallback</span><span class="p">))</span>

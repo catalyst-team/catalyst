@@ -297,7 +297,15 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="PerplexityMetricCallback.metric_fn"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.dl.callbacks.perplexity_metric.PerplexityMetricCallback.metric_fn">[docs]</a>    <span class="k">def</span> <span class="nf">metric_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Calculate perplexity&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Calculate perplexity</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            outputs: model output</span>
+<span class="sd">            targets: model targets</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            computed perplexity metric</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cross_entropy</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">cross_entropy_loss</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
         <span class="p">)</span>

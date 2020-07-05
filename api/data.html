@@ -274,8 +274,10 @@
 <li><p><a class="reference internal" href="#module-catalyst.data.augmentor" id="id2">Augmentor</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.data.collate_fn" id="id3">Collate Functions</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.data.dataset" id="id4">Dataset</a></p></li>
-<li><p><a class="reference internal" href="#reader" id="id5">Reader</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.data.sampler" id="id6">Sampler</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.data.sampler_inbatch" id="id5">In-batch Samplers</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.data.loader" id="id6">Loader</a></p></li>
+<li><p><a class="reference internal" href="#reader" id="id7">Reader</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.data.sampler" id="id8">Sampler</a></p></li>
 </ul>
 </div>
 <span class="target" id="module-catalyst.data"></span><div class="section" id="scripts">
@@ -691,8 +693,198 @@ parameters.</p></li>
 </dd></dl>
 
 </div>
+<div class="section" id="module-catalyst.data.sampler_inbatch">
+<span id="in-batch-samplers"></span><h2><a class="toc-backref" href="#id5">In-batch Samplers</a><a class="headerlink" href="#module-catalyst.data.sampler_inbatch" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.data.sampler_inbatch.AllTripletsSampler">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler_inbatch.</code><code class="sig-name descname">AllTripletsSampler</code><span class="sig-paren">(</span><em class="sig-param">max_output_triplets: int = 9223372036854775807</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#AllTripletsSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler_inbatch.AllTripletsSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This sampler selects all the possible triplets for the given labels</p>
+<dl class="method">
+<dt id="catalyst.data.sampler_inbatch.AllTripletsSampler.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">max_output_triplets: int = 9223372036854775807</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#AllTripletsSampler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler_inbatch.AllTripletsSampler.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>max_output_triplets</strong> – with the strategy of choosing all
+the triplets, their number in the batch can be very large,
+because of it we can sample only random part of them,
+determined by this parameter.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.data.sampler_inbatch.HardTripletsSampler">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler_inbatch.</code><code class="sig-name descname">HardTripletsSampler</code><span class="sig-paren">(</span><em class="sig-param">need_norm: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#HardTripletsSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler_inbatch.HardTripletsSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This sampler selects hardest triplets based on distances between features:
+the hardest positive sample has the maximal distance to the anchor sample,
+the hardest negative sample has the minimal distance to the anchor sample.</p>
+<dl class="method">
+<dt id="catalyst.data.sampler_inbatch.HardTripletsSampler.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">need_norm: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#HardTripletsSampler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler_inbatch.HardTripletsSampler.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>need_norm</strong> – set True if features normalisation is needed</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.data.sampler_inbatch.InBatchTripletsSampler">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler_inbatch.</code><code class="sig-name descname">InBatchTripletsSampler</code><a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#InBatchTripletsSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler_inbatch.InBatchTripletsSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for a triplets samplers.
+We expect that the child instances of this class
+will be used to forming triplets inside the batches.
+The batches must contain at least 2 samples for
+each class and at least 2 different classes,
+such behaviour can be garantee via using
+catalyst.data.sampler.BalanceBatchSampler</p>
+<p>But you are not limited to using it in any other way.</p>
+<dl class="method">
+<dt id="catalyst.data.sampler_inbatch.InBatchTripletsSampler.sample">
+<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param">features: torch.Tensor, labels: List[int]</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#InBatchTripletsSampler.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler_inbatch.InBatchTripletsSampler.sample" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> – has the shape of [batch_size, feature_size]</p></li>
+<li><p><strong>labels</strong> – labels of the samples in the batch</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(anchor, positive, negative)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>the batch of the triplets in the order below</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.data.loader">
+<span id="loader"></span><h2><a class="toc-backref" href="#id6">Loader</a><a class="headerlink" href="#module-catalyst.data.loader" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.data.loader.BatchLimitLoaderWrapper">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.loader.</code><code class="sig-name descname">BatchLimitLoaderWrapper</code><span class="sig-paren">(</span><em class="sig-param">loader: torch.utils.data.dataloader.DataLoader, num_batches: Union[int, float]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/loader.html#BatchLimitLoaderWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.loader.BatchLimitLoaderWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Loader wrapper. Limits number of batches used per each iteration.</p>
+<p>For example, if you have some loader and want to use only first 5 bathes:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
+<span class="kn">from</span> <span class="nn">catalyst.data.loader</span> <span class="kn">import</span> <span class="n">BatchLimitLoaderWrapper</span>
+
+<span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">BatchLimitLoaderWrapper</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">num_batches</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or if you would like to use only some portion of Dataloader
+(we use 30% in the example below):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
+<span class="kn">from</span> <span class="nn">catalyst.data.loader</span> <span class="kn">import</span> <span class="n">BatchLimitLoaderWrapper</span>
+
+<span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">BatchLimitLoaderWrapper</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">num_batches</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Generally speaking, this wrapper could be used with any iterator-like
+object. No <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code>-specific code used.</p>
+</div>
+<dl class="method">
+<dt id="catalyst.data.loader.BatchLimitLoaderWrapper.__getattr__">
+<code class="sig-name descname">__getattr__</code><span class="sig-paren">(</span><em class="sig-param">key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/loader.html#BatchLimitLoaderWrapper.__getattr__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.loader.BatchLimitLoaderWrapper.__getattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets attribute by <code class="docutils literal notranslate"><span class="pre">key</span></code>.
+Firstly, looks at the <code class="docutils literal notranslate"><span class="pre">origin</span></code> for the appropriate <code class="docutils literal notranslate"><span class="pre">key</span></code>.
+If none founds - looks at the wrappers attributes.
+If could not found anything - raises <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>key</strong> – attribute key</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>attribute value</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>NotImplementedError</strong> – if could not find attribute in <code class="docutils literal notranslate"><span class="pre">origin</span></code>
+    or <code class="docutils literal notranslate"><span class="pre">wrapper</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.data.loader.BatchLimitLoaderWrapper.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">loader: torch.utils.data.dataloader.DataLoader, num_batches: Union[int, float]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/loader.html#BatchLimitLoaderWrapper.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.loader.BatchLimitLoaderWrapper.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loader wrapper. Limits number of batches used per each iteration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loader</strong> (<em>DataLoader</em>) – torch dataloader.</p></li>
+<li><p><strong>num_batches</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>]</em>) – number of batches to use (int),
+or portion of iterator (float, should be in [0;1] range)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.data.loader.BatchLimitLoaderWrapper.__iter__">
+<code class="sig-name descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/loader.html#BatchLimitLoaderWrapper.__iter__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.loader.BatchLimitLoaderWrapper.__iter__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>iterator object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.data.loader.BatchLimitLoaderWrapper.__len__">
+<code class="sig-name descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/catalyst/data/loader.html#BatchLimitLoaderWrapper.__len__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.loader.BatchLimitLoaderWrapper.__len__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns length of the wrapper loader.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>length of the wrapper loader</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.data.loader.BatchLimitLoaderWrapper.__next__">
+<code class="sig-name descname">__next__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/loader.html#BatchLimitLoaderWrapper.__next__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.loader.BatchLimitLoaderWrapper.__next__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Next batch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>next batch</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.data.loader.BatchLimitLoaderWrapper.__weakref__">
+<code class="sig-name descname">__weakref__</code><a class="headerlink" href="#catalyst.data.loader.BatchLimitLoaderWrapper.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="reader">
-<h2><a class="toc-backref" href="#id5">Reader</a><a class="headerlink" href="#reader" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id7">Reader</a><a class="headerlink" href="#reader" title="Permalink to this headline">¶</a></h2>
 <p>Readers are the abstraction for your dataset. They can open an elem from the dataset and transform it to data, needed by your network.
 For example open image by path, or read string and tokenize it.</p>
 <span class="target" id="module-catalyst.data.reader"></span><dl class="class">
@@ -850,7 +1042,7 @@ and applies all readers and mixins</p>
 
 </div>
 <div class="section" id="module-catalyst.data.sampler">
-<span id="sampler"></span><h2><a class="toc-backref" href="#id6">Sampler</a><a class="headerlink" href="#module-catalyst.data.sampler" title="Permalink to this headline">¶</a></h2>
+<span id="sampler"></span><h2><a class="toc-backref" href="#id8">Sampler</a><a class="headerlink" href="#module-catalyst.data.sampler" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.data.sampler.BalanceClassSampler">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler.</code><code class="sig-name descname">BalanceClassSampler</code><span class="sig-paren">(</span><em class="sig-param">labels: List[int], mode: Union[str, int] = 'downsampling'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceClassSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceClassSampler" title="Permalink to this definition">¶</a></dt>
@@ -1163,6 +1355,8 @@ Should be used with <cite>catalyst.utils.trim_tensors</cite>.</p>
 <li><a class="reference internal" href="#module-catalyst.data.augmentor">Augmentor</a></li>
 <li><a class="reference internal" href="#module-catalyst.data.collate_fn">Collate Functions</a></li>
 <li><a class="reference internal" href="#module-catalyst.data.dataset">Dataset</a></li>
+<li><a class="reference internal" href="#module-catalyst.data.sampler_inbatch">In-batch Samplers</a></li>
+<li><a class="reference internal" href="#module-catalyst.data.loader">Loader</a></li>
 <li><a class="reference internal" href="#reader">Reader</a></li>
 <li><a class="reference internal" href="#module-catalyst.data.sampler">Sampler</a></li>
 </ul>

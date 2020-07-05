@@ -490,7 +490,7 @@
             <span class="n">scope</span><span class="o">=</span><span class="n">base_callback</span><span class="o">.</span><span class="n">scope</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">callback</span> <span class="o">=</span> <span class="n">base_callback</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_is_active</span> <span class="o">=</span> <span class="n">enable_callback</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span> <span class="o">=</span> <span class="n">enable_callback</span></div>
 
 <div class="viewcode-block" id="WrapperCallback.on_loader_start"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.WrapperCallback.on_loader_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -499,7 +499,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            runner (IRunner): current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_active</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_loader_start</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="WrapperCallback.on_loader_end"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.WrapperCallback.on_loader_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -509,7 +509,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            runner (IRunner): current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_active</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_loader_end</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="WrapperCallback.on_stage_start"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.WrapperCallback.on_stage_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -518,7 +518,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            runner (IRunner): current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_active</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_stage_start</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="WrapperCallback.on_stage_end"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.WrapperCallback.on_stage_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -527,7 +527,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            runner (IRunner): current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_active</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_stage_end</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="WrapperCallback.on_epoch_start"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.WrapperCallback.on_epoch_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -536,7 +536,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            runner (IRunner): current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_active</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_epoch_start</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="WrapperCallback.on_epoch_end"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.WrapperCallback.on_epoch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -545,7 +545,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            runner (IRunner): current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_active</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_epoch_end</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="WrapperCallback.on_batch_start"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.WrapperCallback.on_batch_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -554,7 +554,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            runner (IRunner): current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_active</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_batch_start</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="WrapperCallback.on_batch_end"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.WrapperCallback.on_batch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -563,7 +563,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            runner (IRunner): current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_active</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_batch_end</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="WrapperCallback.on_exception"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.WrapperCallback.on_exception">[docs]</a>    <span class="k">def</span> <span class="nf">on_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -572,7 +572,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            runner (IRunner): current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_active</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_exception</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div></div>
 
 

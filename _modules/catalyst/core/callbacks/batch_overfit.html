@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.core.callbacks.criterion &mdash; Catalyst 20.07 documentation</title>
+  <title>catalyst.core.callbacks.batch_overfit &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -231,7 +231,7 @@
         
           <li><a href="../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.core.callbacks.criterion</li>
+      <li>catalyst.core.callbacks.batch_overfit</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -257,70 +257,142 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.core.callbacks.criterion</h1><div class="highlight"><pre>
-<span></span><span class="c1"># flake8: noqa</span>
-<span class="c1"># @TODO: code formatting issue for 20.07 release</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+  <h1>Source code for catalyst.core.callbacks.batch_overfit</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.core.callbacks.metrics</span> <span class="kn">import</span> <span class="n">IMetricCallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackOrder</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>
+<span class="kn">from</span> <span class="nn">catalyst.data.loader</span> <span class="kn">import</span> <span class="n">BatchLimitLoaderWrapper</span>
 
 
-<div class="viewcode-block" id="CriterionCallback"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.criterion.CriterionCallback">[docs]</a><span class="k">class</span> <span class="nc">CriterionCallback</span><span class="p">(</span><span class="n">IMetricCallback</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Callback for that measures loss with specified criterion.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="BatchOverfitCallback"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.batch_overfit.BatchOverfitCallback">[docs]</a><span class="k">class</span> <span class="nc">BatchOverfitCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Callback for ovefitting loaders with specified number of batches.</span>
+<span class="sd">    By default we use ``1`` batch for loader.</span>
 
-<div class="viewcode-block" id="CriterionCallback.__init__"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.criterion.CriterionCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">input_key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;targets&quot;</span><span class="p">,</span>
-        <span class="n">output_key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="s2">&quot;logits&quot;</span><span class="p">,</span>
-        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
-        <span class="n">criterion_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">multiplier</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">metric_kwargs</span><span class="p">,</span>
-    <span class="p">):</span>
+<span class="sd">    For example, if you have ``train``, ``train_additional``,</span>
+<span class="sd">    ``valid`` and ``valid_additional`` loaders and wan&#39;t to overfit</span>
+<span class="sd">    ``train`` on first 1 batch,</span>
+<span class="sd">    ``train_additional`` on first 2 batches,</span>
+<span class="sd">    ``valid`` - on first 20% of batches</span>
+<span class="sd">    and ``valid_additional`` - on 50% batches:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst.dl import (</span>
+<span class="sd">            SupervisedRunner, BatchOverfitCallback,</span>
+<span class="sd">        )</span>
+<span class="sd">        runner = SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            ...</span>
+<span class="sd">            loaders={</span>
+<span class="sd">                &quot;train&quot;: ...,</span>
+<span class="sd">                &quot;train_additional&quot;: ...,</span>
+<span class="sd">                &quot;valid&quot;: ...,</span>
+<span class="sd">                &quot;valid_additional&quot;:...</span>
+<span class="sd">            }</span>
+<span class="sd">            ...</span>
+<span class="sd">            callbacks=[</span>
+<span class="sd">                ...</span>
+<span class="sd">                BatchOverfitCallback(</span>
+<span class="sd">                    train_additional=2,</span>
+<span class="sd">                    valid=0.2,</span>
+<span class="sd">                    valid_additional=0.5</span>
+<span class="sd">                ),</span>
+<span class="sd">                ...</span>
+<span class="sd">            ]</span>
+<span class="sd">            ...</span>
+<span class="sd">        )</span>
+
+<span class="sd">    Minimal working example</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        # data</span>
+<span class="sd">        num_samples, num_features = int(1e4), int(1e1)</span>
+<span class="sd">        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
+
+<span class="sd">        # model, criterion, optimizer, scheduler</span>
+<span class="sd">        model = torch.nn.Linear(num_features, 1)</span>
+<span class="sd">        criterion = torch.nn.MSELoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
+<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])</span>
+
+<span class="sd">        # model training</span>
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            scheduler=scheduler,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            logdir=&quot;./logdir&quot;,</span>
+<span class="sd">            num_epochs=8,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">            callbacks=[dl.BatchOverfitCallback(train=10, valid=0.5)]</span>
+<span class="sd">        )</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BatchOverfitCallback.__init__"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.batch_overfit.BatchOverfitCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            input_key (Union[str, List[str], Dict[str, str]]): key/list/dict</span>
-<span class="sd">                of keys that takes values from the input dictionary</span>
-<span class="sd">                If &#39;__all__&#39;, the whole input will be passed to the criterion</span>
-<span class="sd">                If None, empty dict will be passed to the criterion.</span>
-<span class="sd">            output_key (Union[str, List[str], Dict[str, str]]): key/list/dict</span>
-<span class="sd">                of keys that takes values from the input dictionary</span>
-<span class="sd">                If &#39;__all__&#39;, the whole output will be passed to the criterion</span>
-<span class="sd">                If None, empty dict will be passed to the criterion.</span>
-<span class="sd">            prefix (str): prefix for metrics and output key for loss</span>
-<span class="sd">                in ``runner.batch_metrics`` dictionary</span>
-<span class="sd">            criterion_key (str): A key to take a criterion in case</span>
-<span class="sd">                there are several of them and they are in a dictionary format.</span>
-<span class="sd">            multiplier (float): scale factor for the output loss.</span>
+<span class="sd">            kwargs: loader names and their number of batches to overfit.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
-            <span class="n">input_key</span><span class="o">=</span><span class="n">input_key</span><span class="p">,</span>
-            <span class="n">output_key</span><span class="o">=</span><span class="n">output_key</span><span class="p">,</span>
-            <span class="n">multiplier</span><span class="o">=</span><span class="n">multiplier</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">metric_kwargs</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">criterion_key</span> <span class="o">=</span> <span class="n">criterion_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span> <span class="o">=</span> <span class="kc">None</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">internal</span><span class="p">)</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">metric_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_batches</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">loader</span><span class="p">,</span> <span class="n">num_batches</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_batches</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="s2">&quot;Expected loader num_batches type is int/float &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">num_batches</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loader_batches</span><span class="p">[</span><span class="n">loader</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_batches</span></div>
 
-<div class="viewcode-block" id="CriterionCallback.on_stage_start"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.criterion.CriterionCallback.on_stage_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Checks that the current stage has correct criterion.&quot;&quot;&quot;</span>
-        <span class="n">criterion</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span>
-            <span class="n">key</span><span class="o">=</span><span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="n">inner_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">criterion_key</span>
-        <span class="p">)</span>
-        <span class="k">assert</span> <span class="n">criterion</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span> <span class="o">=</span> <span class="n">criterion</span></div></div>
+<div class="viewcode-block" id="BatchOverfitCallback.on_epoch_start"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.batch_overfit.BatchOverfitCallback.on_epoch_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Wraps loaders for current epoch.</span>
+<span class="sd">        If number-of-batches for loader is not provided then the first batch</span>
+<span class="sd">        from loader will be used for overfitting.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">epoch_loaders</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">loader</span> <span class="ow">in</span> <span class="n">runner</span><span class="o">.</span><span class="n">loaders</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">num_batches</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_batches</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_batches</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="n">num_batches</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span> <span class="o">*</span> <span class="n">num_batches</span><span class="p">)</span>
+            <span class="n">epoch_loaders</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">BatchLimitLoaderWrapper</span><span class="p">(</span>
+                <span class="n">loader</span><span class="o">=</span><span class="n">loader</span><span class="p">,</span> <span class="n">num_batches</span><span class="o">=</span><span class="n">num_batches</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">runner</span><span class="o">.</span><span class="n">loaders</span> <span class="o">=</span> <span class="n">epoch_loaders</span></div>
+
+<div class="viewcode-block" id="BatchOverfitCallback.on_epoch_end"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.batch_overfit.BatchOverfitCallback.on_epoch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Unwraps loaders for current epoch.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">runner</span><span class="o">.</span><span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">origin</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">BatchLimitLoaderWrapper</span><span class="p">)</span>
+            <span class="k">else</span> <span class="n">value</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">runner</span><span class="o">.</span><span class="n">loaders</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span></div></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;CriterionCallback&quot;</span><span class="p">,</span>
-<span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;BatchOverfitCallback&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

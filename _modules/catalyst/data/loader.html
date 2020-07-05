@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.hash &mdash; Catalyst 20.07 documentation</title>
+  <title>catalyst.data.loader &mdash; Catalyst 20.07 documentation</title>
   
 
   
@@ -231,7 +231,7 @@
         
           <li><a href="../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.utils.hash</li>
+      <li>catalyst.data.loader</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -257,55 +257,131 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.utils.hash</h1><div class="highlight"><pre>
-<span></span><span class="c1"># flake8: noqa</span>
-<span class="c1"># @TODO: code formatting issue for 20.07 release</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">base64</span> <span class="kn">import</span> <span class="n">urlsafe_b64encode</span>
-<span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">sha256</span>
+  <h1>Source code for catalyst.data.loader</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 
 
-<span class="k">def</span> <span class="nf">_make_hashable</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
-        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(((</span><span class="nb">type</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">_make_hashable</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">o</span><span class="p">))</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
-            <span class="nb">sorted</span><span class="p">(</span>
-                <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">_make_hashable</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">o</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-            <span class="p">)</span>
+<div class="viewcode-block" id="BatchLimitLoaderWrapper"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper">[docs]</a><span class="k">class</span> <span class="nc">BatchLimitLoaderWrapper</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loader wrapper. Limits number of batches used per each iteration.</span>
+
+<span class="sd">    For example, if you have some loader and want to use only first 5 bathes:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst.data.loader import BatchLimitLoaderWrapper</span>
+
+<span class="sd">        num_samples, num_features = int(1e4), int(1e1)</span>
+<span class="sd">        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loader = BatchLimitLoaderWrapper(loader, num_batches=5)</span>
+
+<span class="sd">    or if you would like to use only some portion of Dataloader</span>
+<span class="sd">    (we use 30% in the example below):</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst.data.loader import BatchLimitLoaderWrapper</span>
+
+<span class="sd">        num_samples, num_features = int(1e4), int(1e1)</span>
+<span class="sd">        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loader = BatchLimitLoaderWrapper(loader, num_batches=0.3)</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Generally speaking, this wrapper could be used with any iterator-like</span>
+<span class="sd">        object. No ``DataLoader``-specific code used.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="BatchLimitLoaderWrapper.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">num_batches</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loader wrapper. Limits number of batches used per each iteration.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            loader (DataLoader): torch dataloader.</span>
+<span class="sd">            num_batches (Union[int, float]): number of batches to use (int),</span>
+<span class="sd">                or portion of iterator (float, should be in [0;1] range)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_batches</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)),</span> <span class="p">(</span>
+            <span class="s2">&quot;Expected ``num_batches`` type is int/float&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">num_batches</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="p">(</span><span class="nb">set</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">)):</span>
-        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">((</span><span class="nb">type</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">_make_hashable</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">o</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">o</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_batches</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">num_batches</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span>
+                <span class="s2">&quot;Expected ``num_batches`` to be in range [0; 1]&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;but got </span><span class="si">{</span><span class="n">num_batches</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="n">num_batches</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span> <span class="o">*</span> <span class="n">num_batches</span><span class="p">)</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">origin</span> <span class="o">=</span> <span class="n">loader</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iteration_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_batches</span> <span class="o">=</span> <span class="n">num_batches</span></div>
 
-<div class="viewcode-block" id="get_hash"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.hash.get_hash">[docs]</a><span class="k">def</span> <span class="nf">get_hash</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Creates unique hash from object following way:</span>
-<span class="sd">    - Represent obj as sting recursively</span>
-<span class="sd">    - Hash this string with sha256 hash function</span>
-<span class="sd">    - encode hash with url-safe base64 encoding</span>
+<div class="viewcode-block" id="BatchLimitLoaderWrapper.__getattr__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper.__getattr__">[docs]</a>    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets attribute by ``key``.</span>
+<span class="sd">        Firstly, looks at the ``origin`` for the appropriate ``key``.</span>
+<span class="sd">        If none founds - looks at the wrappers attributes.</span>
+<span class="sd">        If could not found anything - raises ``NotImplementedError``.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        obj: object to hash</span>
+<span class="sd">        Args:</span>
+<span class="sd">            key: attribute key</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        base64-encoded string</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">bytes_to_hash</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">_make_hashable</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
-    <span class="n">hash_bytes</span> <span class="o">=</span> <span class="n">sha256</span><span class="p">(</span><span class="n">bytes_to_hash</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">urlsafe_b64encode</span><span class="p">(</span><span class="n">hash_bytes</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span></div>
+<span class="sd">        Returns:</span>
+<span class="sd">            attribute value</span>
 
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: if could not find attribute in ``origin``</span>
+<span class="sd">                or ``wrapper``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">value</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">value</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="get_short_hash"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.hash.get_short_hash">[docs]</a><span class="k">def</span> <span class="nf">get_short_hash</span><span class="p">(</span><span class="n">o</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    @TODO: Docs. Contribution is welcome.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">hash_</span> <span class="o">=</span> <span class="n">get_hash</span><span class="p">(</span><span class="n">o</span><span class="p">)[:</span><span class="mi">6</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">hash_</span></div>
+<div class="viewcode-block" id="BatchLimitLoaderWrapper.__iter__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper.__iter__">[docs]</a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Iterator.</span>
 
+<span class="sd">        Returns:</span>
+<span class="sd">            iterator object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iteration_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;get_hash&quot;</span><span class="p">,</span> <span class="s2">&quot;get_short_hash&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="BatchLimitLoaderWrapper.__next__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper.__next__">[docs]</a>    <span class="k">def</span> <span class="fm">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Next batch.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            next batch</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration_index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">StopIteration</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iteration_index</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration_index</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_batches</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">)</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">batch</span></div>
+
+<div class="viewcode-block" id="BatchLimitLoaderWrapper.__len__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper.__len__">[docs]</a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns length of the wrapper loader.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: length of the wrapper loader</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">)</span></div></div>
 </pre></div>
 
              </article>

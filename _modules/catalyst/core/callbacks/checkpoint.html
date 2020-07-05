@@ -966,8 +966,10 @@
         <span class="k">return</span> <span class="n">result</span></div>
 
 <div class="viewcode-block" id="IterationCheckpointCallback.process_metrics"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.process_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">process_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update metrics with last ``save_n_last`` checkpoints.</span>
+        <span class="sd">&quot;&quot;&quot;Update metrics with last ``save_n_last`` checkpoints.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            updated metrics</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">n_last_checkpoints</span> <span class="o">=</span> <span class="p">[</span>
             <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span><span class="p">,</span> <span class="n">batch_values</span><span class="p">)</span>
@@ -983,8 +985,10 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span></div>
 
 <div class="viewcode-block" id="IterationCheckpointCallback.truncate_checkpoints"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.truncate_checkpoints">[docs]</a>    <span class="k">def</span> <span class="nf">truncate_checkpoints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Keep ``save_n_best`` checkpoints based on main metric.</span>
+        <span class="sd">&quot;&quot;&quot;Keep ``save_n_best`` checkpoints based on main metric.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            **kwargs: extra params</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_checkpoints</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_n_last</span><span class="p">:</span>
             <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_checkpoints</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>

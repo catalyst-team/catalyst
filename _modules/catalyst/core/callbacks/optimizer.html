@@ -339,7 +339,11 @@
         <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="OptimizerCallback.on_stage_start"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.optimizer.OptimizerCallback.on_stage_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Checks that the current stage has correct optimizer.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Checks that the current stage has correct optimizer.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner(IRunner): current runner</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span>
             <span class="n">key</span><span class="o">=</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="n">inner_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer_key</span>
         <span class="p">)</span>

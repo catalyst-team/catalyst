@@ -54,6 +54,13 @@ Callback
 Callbacks
 ----------------------
 
+BatchOverfitCallback
+~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.core.callbacks.batch_overfit
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Checkpoint
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.core.callbacks.checkpoint
