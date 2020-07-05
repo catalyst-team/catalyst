@@ -68,12 +68,12 @@ class PeriodicLoaderCallback(Callback):
                     "Expected loader period type is int/float "
                     f"but got {type(period)}!"
                 )
-            period_ = int(period)
-            if period_ < 0:
+            period = int(period)
+            if period < 0:
                 raise ValueError(
-                    f"Period should be >= 0, but got - {period_}!"
+                    f"Period should be >= 0, but got - {period}!"
                 )
-            self.loader_periods[loader] = int(period)
+            self.loader_periods[loader] = period
 
     def on_stage_start(self, runner: IRunner) -> None:
         """Collect information about loaders.
