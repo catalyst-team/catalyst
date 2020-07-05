@@ -29,7 +29,6 @@ jobs:
           # pypi problems 2
           - python-version: 3.7
             requirements: 'minimal'
-            os: ubuntu-18.04
           # pickle problems
           - python-version: 3.8
             os: macOS-10.15
