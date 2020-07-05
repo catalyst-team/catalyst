@@ -870,6 +870,12 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         self._prepare_for_epoch(stage=stage, epoch=epoch)
         assert self.loaders is not None
 
+        for loader_name, loader in self.loaders.items():
+            if len(loader) == 0:
+                raise RunnerException(
+                    f"DataLoader with name {loader_name} is empty."
+                )
+
         # @TODO: better solution with train/inference handling ?
         self.is_infer_stage = self.stage_name.startswith("infer")
         if not self.is_infer_stage:
