@@ -24,7 +24,7 @@ jobs:
         requirements: ['minimal', 'latest']
         exclude:
           # pypi problems
-          - python-version: 3.8
+          - python-version: [3.7, 3.8]
             requirements: 'minimal'
           # pickle problems
           - python-version: 3.8
