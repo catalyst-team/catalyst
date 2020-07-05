@@ -24,10 +24,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `LRUpdater` become abstract class ([#837](https://github.com/catalyst-team/catalyst/pull/837))
 - `calculate_confusion_matrix_from_arrays` changed params order ([#837](https://github.com/catalyst-team/catalyst/pull/837))
 - `dl.Runner.predict_loader` uses `_prepare_inner_state` and cleans `experiment` ([#863](https://github.com/catalyst-team/catalyst/pull/863))
+- `toml` to the dependencies ([#872](https://github.com/catalyst-team/catalyst/pull/872))
 
 ### Removed
 
-- 
+- `crc32c` dependency ([#872](https://github.com/catalyst-team/catalyst/pull/872))
 
 ### Fixed
 
