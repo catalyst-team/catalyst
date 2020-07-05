@@ -82,8 +82,8 @@ jobs:
         id: cache-isbi
         uses: actions/cache@v2
         with:
-          path: data
-          key: isbi
+          path: data/isbi
+          key: isbi-data
 
       - name: data - isbi
         if: steps.cache-isbi.outputs.cache-hit != 'true'
@@ -96,8 +96,8 @@ jobs:
         id: cache-mnist
         uses: actions/cache@v2
         with:
-          path: data
-          key: MNIST
+          path: data/MNIST
+          key: MNIST-data
 
       - name: data - isbi
         if: steps.cache-mnist.outputs.cache-hit != 'true'
