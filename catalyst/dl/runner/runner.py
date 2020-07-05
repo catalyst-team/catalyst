@@ -49,6 +49,7 @@ class Runner(IStageBasedRunner):
         fp16: Union[Dict, bool] = None,
         distributed: bool = False,
         check: bool = False,
+        overfit: bool = False,
         timeit: bool = False,
         load_best_on_end: bool = False,
         initial_seed: int = 42,
@@ -95,7 +96,10 @@ class Runner(IStageBasedRunner):
                 in distributed mode.
                 Note: Works only with python scripts. No jupyter support.
             check (bool): if True, then only checks that pipeline is working
-                (3 epochs only)
+                (3 epochs only with 3 batches per loader)
+            overfit (bool): if True, then takes only one batch per loader
+                for model overfitting, for advance usage please check
+                ``BatchOverfitCallback``
             timeit (bool): if True, computes the execution time
                 of training process and displays it to the console.
             load_best_on_end (bool): if True, Runner will load
@@ -126,7 +130,7 @@ class Runner(IStageBasedRunner):
                 isinstance(x, CheckpointCallback) for x in callbacks.values()
             )
             if not checkpoint_callback_flag:
-                callbacks["loader"] = CheckpointCallback(
+                callbacks["_loader"] = CheckpointCallback(
                     resume=resume, load_on_stage_end=load_on_stage_end,
                 )
             else:
@@ -149,6 +153,7 @@ class Runner(IStageBasedRunner):
             verbose=verbose,
             check_time=timeit,
             check_run=check,
+            overfit=overfit,
             stage_kwargs=stage_kwargs or state_kwargs,
             checkpoint_data=checkpoint_data,
             distributed_params=fp16,
