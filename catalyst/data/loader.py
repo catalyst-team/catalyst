@@ -116,7 +116,7 @@ class BatchLimitLoaderWrapper:
         return batch
 
     def __len__(self) -> int:
-        """ Returns length of the wrapper loader.
+        """Returns length of the wrapper loader.
 
         Returns:
             int: length of the wrapper loader
