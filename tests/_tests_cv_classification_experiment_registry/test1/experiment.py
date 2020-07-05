@@ -1,3 +1,4 @@
+# flake8: noqa
 from collections import OrderedDict
 
 from catalyst.contrib.data.transforms import Compose, Normalize, ToTensor

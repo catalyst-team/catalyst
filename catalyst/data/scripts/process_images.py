@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 #!/usr/bin/env python
 # usage:
 # catalyst-data process-images \

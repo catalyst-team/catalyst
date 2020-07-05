@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from typing import Any, Callable, Dict, List, Mapping, Union
 from collections import OrderedDict
 from copy import deepcopy
@@ -9,6 +11,7 @@ from torch.utils.data import DataLoader
 from catalyst.core import IExperiment
 from catalyst.data import Augmentor, AugmentorCompose
 from catalyst.dl import (
+    BatchOverfitCallback,
     Callback,
     CheckpointCallback,
     CheckRunCallback,
@@ -54,19 +57,23 @@ class ConfigExperiment(IExperiment):
     def __init__(self, config: Dict):
         """
         Args:
-            config (dict): dictionary of parameters
+            config (dict): dictionary with parameters
         """
         self._config: Dict = deepcopy(config)
         self._initial_seed: int = self._config.get("args", {}).get("seed", 42)
         self._verbose: bool = self._config.get("args", {}).get(
             "verbose", False
         )
-        self._check_run: bool = self._config.get("args", {}).get(
-            "check", False
-        )
         self._check_time: bool = self._config.get("args", {}).get(
             "timeit", False
         )
+        self._check_run: bool = self._config.get("args", {}).get(
+            "check", False
+        )
+        self._overfit: bool = self._config.get("args", {}).get(
+            "overfit", False
+        )
+
         self.__prepare_logdir()
 
         self._config["stages"]["stage_params"] = utils.merge_dicts(
@@ -97,7 +104,7 @@ class ConfigExperiment(IExperiment):
 
     @property
     def hparams(self) -> OrderedDict:
-        """Returns hyper params"""
+        """Returns hyperparameters"""
         return OrderedDict(self._config)
 
     def _get_stages_config(self, stages_config: Dict):
@@ -498,6 +505,8 @@ class ConfigExperiment(IExperiment):
             default_callbacks.append(("_timer", TimerCallback))
         if self._check_run:
             default_callbacks.append(("_check", CheckRunCallback))
+        if self._overfit:
+            default_callbacks.append(("_overfit", BatchOverfitCallback))
 
         if not stage.startswith("infer"):
             default_callbacks.append(("_metrics", MetricManagerCallback))

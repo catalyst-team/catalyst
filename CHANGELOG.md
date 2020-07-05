@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - hparams experiment property ([#839](https://github.com/catalyst-team/catalyst/pull/839))
 - add docs build on push to master branch ([#844](https://github.com/catalyst-team/catalyst/pull/844))
 - `WrapperCallback` and `ControlFlowCallback` ([#842](https://github.com/catalyst-team/catalyst/pull/842))
+- `BatchOverfitCallback` ([#869](https://github.com/catalyst-team/catalyst/pull/869))
+- `overfit` flag for Config API ([#869](https://github.com/catalyst-team/catalyst/pull/869))
 
 ### Changed
 

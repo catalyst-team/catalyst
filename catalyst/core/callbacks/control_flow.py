@@ -354,9 +354,9 @@ class ControlFlowCallback(WrapperCallback):
         epoch = runner.global_epoch if self.use_global_epochs else runner.epoch
 
         if self.filter_fn is not None:
-            self._is_active = not self.filter_fn(stage, epoch, loader)
+            self._is_enabled = not self.filter_fn(stage, epoch, loader)
 
-        if self._is_active:
+        if self._is_enabled:
             self.callback.on_loader_start(runner)
 
     def on_loader_end(self, runner: IRunner) -> None:
@@ -366,9 +366,9 @@ class ControlFlowCallback(WrapperCallback):
         Args:
             runner (IRunner): current runner
         """
-        if self._is_active:
+        if self._is_enabled:
             self.callback.on_loader_end(runner)
-        self._is_active = True
+        self._is_enabled = True
 
 
 __all__ = ["ControlFlowCallback"]
