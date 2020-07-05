@@ -69,7 +69,7 @@ class PeriodicLoaderCallback(Callback):
     def on_stage_start(self, runner: IRunner) -> None:
         """Collect information about loaders.
 
-        Arguments:
+        Args:
             runner (IRunner): current runner
 
         Raises:
@@ -113,7 +113,7 @@ class PeriodicLoaderCallback(Callback):
         validation loader will be used
         in the epochs where this loader is missing.
 
-        Arguments:
+        Args:
             runner (IRunner): current runner
 
         Raises:
@@ -141,7 +141,7 @@ class PeriodicLoaderCallback(Callback):
         """Store validation metrics and use latest validation score
         when validation loader is not required.
 
-        Arguments:
+        Args:
             runner (IRunner): current runner
         """
         if self.valid_loader in runner.loaders:

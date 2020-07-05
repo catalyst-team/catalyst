@@ -1,5 +1,4 @@
 from collections import OrderedDict
-import copy
 
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
@@ -84,7 +83,7 @@ class BatchOverfitCallback(Callback):
     def __init__(self, **kwargs):
         """
         Args:
-            kwargs: loader names and their run periods.
+            kwargs: loader names and their number of batches to overfit.
         """
         super().__init__(order=CallbackOrder.internal)
 
@@ -99,19 +98,12 @@ class BatchOverfitCallback(Callback):
 
     def on_epoch_start(self, runner: IRunner) -> None:
         """
-        Set loaders for current epoch.
-        If validation is not required then the first loader
-        from loaders used in current epoch will be used
-        as validation loader.
-        Metrics from the latest epoch with true
-        validation loader will be used
-        in the epochs where this loader is missing.
+        Wraps loaders for current epoch.
+        If number-of-batches for loader is not provided then the first batch
+        from loader will be used for overfitting.
 
-        Arguments:
+        Args:
             runner (IRunner): current runner
-
-        Raises:
-            ValueError: if there are no loaders in epoch
         """
         epoch_loaders = OrderedDict()
 
@@ -126,8 +118,17 @@ class BatchOverfitCallback(Callback):
         runner.loaders = epoch_loaders
 
     def on_epoch_end(self, runner: IRunner):
+        """
+        Unwraps loaders for current epoch.
+
+        Args:
+            runner (IRunner): current runner
+        """
         runner.loaders = {
-            key: value.loader for key, value in runner.loaders.items()
+            key: value.origin
+            if isinstance(value, BatchLimitLoaderWrapper)
+            else value
+            for key, value in runner.loaders.items()
         }
 
 

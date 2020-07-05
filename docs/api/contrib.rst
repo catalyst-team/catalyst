@@ -111,7 +111,7 @@ AlchemyLogger
     :show-inheritance:
 
 BatchOverfitCallback
-"""""""""""""
+""""""""""""""""""""
 .. automodule:: catalyst.contrib.dl.callbacks.batch_overfit_callback
     :members:
     :undoc-members:

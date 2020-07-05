@@ -70,7 +70,7 @@ Loader
 .. automodule:: catalyst.data.loader
     :show-inheritance:
     :members:
-    :special-members: 
+    :special-members:
 
 
 Reader
