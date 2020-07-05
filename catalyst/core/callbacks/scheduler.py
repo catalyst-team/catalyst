@@ -119,7 +119,7 @@ class SchedulerCallback(Callback):
             and self.mode == "batch"
         ):
             self._scheduler.recalculate(
-                loader_len=runner.loader_len, current_step=runner.epoch
+                loader_len=runner.loader_len, current_step=runner.epoch - 1
             )
 
     def on_batch_end(self, runner: IRunner) -> None:
