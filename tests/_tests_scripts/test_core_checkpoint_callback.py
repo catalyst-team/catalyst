@@ -1,15 +1,16 @@
 # flake8: noqa
+from io import StringIO
 import os
 import re
-import sys
 import shutil
-from io import StringIO
+import sys
 
 import pytest
-import catalyst.dl as dl
 
 import torch
 from torch.utils.data import DataLoader, TensorDataset
+
+import catalyst.dl as dl
 
 
 def test_load_best_on_stage_end():
@@ -27,7 +28,7 @@ def test_load_best_on_stage_end():
     y = torch.randint(0, 5, size=[num_samples])
     dataset = TensorDataset(X, y)
     loader = DataLoader(dataset, batch_size=32, num_workers=1)
-    loaders = {'train': loader, 'valid': loader}
+    loaders = {"train": loader, "valid": loader}
 
     # model, criterion, optimizer, scheduler
     model = torch.nn.Linear(num_features, 5)
@@ -46,12 +47,9 @@ def test_load_best_on_stage_end():
         num_epochs=n_epochs,
         verbose=False,
         callbacks=[
-            dl.CheckpointCallback(
-                save_n_best=2,
-                load_on_stage_end='best'
-            ),
+            dl.CheckpointCallback(save_n_best=2, load_on_stage_end="best"),
             dl.CheckRunCallback(num_epoch_steps=n_epochs),
-        ]
+        ],
     )
 
     sys.stdout = old_stdout
@@ -89,7 +87,7 @@ def test_multiple_stages_and_different_checkpoints_to_load():
     y = torch.randint(0, 5, size=[num_samples])
     dataset = TensorDataset(X, y)
     loader = DataLoader(dataset, batch_size=32, num_workers=1)
-    loaders = {'train': loader, 'valid': loader}
+    loaders = {"train": loader, "valid": loader}
 
     # model, criterion, optimizer, scheduler
     model = torch.nn.Linear(num_features, 5)
@@ -110,13 +108,13 @@ def test_multiple_stages_and_different_checkpoints_to_load():
             dl.CheckpointCallback(
                 save_n_best=2,
                 load_on_stage_end={
-                    'model': 'best',
-                    'criterion': 'best',
-                    'optimizer': 'last',
-                }
+                    "model": "best",
+                    "criterion": "best",
+                    "optimizer": "last",
+                },
             ),
             dl.CheckRunCallback(num_epoch_steps=num_epochs),
-        ]
+        ],
     )
     # second stage
     runner.train(
@@ -131,13 +129,13 @@ def test_multiple_stages_and_different_checkpoints_to_load():
             dl.CheckpointCallback(
                 save_n_best=3,
                 load_on_stage_start={
-                    'model': 'last',
-                    'criterion': 'last',
-                    'optimizer': 'best',
-                }
+                    "model": "last",
+                    "criterion": "last",
+                    "optimizer": "best",
+                },
             ),
             dl.CheckRunCallback(num_epoch_steps=num_epochs),
-        ]
+        ],
     )
 
     sys.stdout = old_stdout
@@ -178,7 +176,7 @@ def test_resume_with_missing_file():
     y = torch.randint(0, 5, size=[num_samples])
     dataset = TensorDataset(X, y)
     loader = DataLoader(dataset, batch_size=32, num_workers=1)
-    loaders = {'train': loader, 'valid': loader}
+    loaders = {"train": loader, "valid": loader}
 
     # model, criterion, optimizer, scheduler
     model = torch.nn.Linear(num_features, 5)
@@ -199,14 +197,14 @@ def test_resume_with_missing_file():
                 dl.CheckpointCallback(
                     save_n_best=2,
                     load_on_stage_end={
-                        'model': 'best',
-                        'criterion': 'best',
-                        'optimizer': 'last',
+                        "model": "best",
+                        "criterion": "best",
+                        "optimizer": "last",
                     },
-                    resume='not_existing_file.pth'
+                    resume="not_existing_file.pth",
                 ),
                 dl.CheckRunCallback(num_epoch_steps=num_epochs),
-            ]
+            ],
         )
 
     sys.stdout = old_stdout
@@ -231,7 +229,7 @@ def test_load_on_stage_start_with_empty_dict():
     y = torch.randint(0, 5, size=[num_samples])
     dataset = TensorDataset(X, y)
     loader = DataLoader(dataset, batch_size=32, num_workers=1)
-    loaders = {'train': loader, 'valid': loader}
+    loaders = {"train": loader, "valid": loader}
 
     # model, criterion, optimizer, scheduler
     model = torch.nn.Linear(num_features, 5)
@@ -251,7 +249,7 @@ def test_load_on_stage_start_with_empty_dict():
         callbacks=[
             dl.CheckpointCallback(save_n_best=2),
             dl.CheckRunCallback(num_epoch_steps=num_epochs),
-        ]
+        ],
     )
     # second stage
     runner.train(
@@ -263,12 +261,9 @@ def test_load_on_stage_start_with_empty_dict():
         num_epochs=num_epochs,
         verbose=False,
         callbacks=[
-            dl.CheckpointCallback(
-                save_n_best=3,
-                load_on_stage_start={}
-            ),
+            dl.CheckpointCallback(save_n_best=3, load_on_stage_start={}),
             dl.CheckRunCallback(num_epoch_steps=num_epochs),
-        ]
+        ],
     )
 
     sys.stdout = old_stdout
