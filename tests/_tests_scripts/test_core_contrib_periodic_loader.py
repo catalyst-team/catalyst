@@ -168,8 +168,6 @@ def test_validation_with_period_3():
     sys.stdout = old_stdout
     exp_output = str_stdout.getvalue()
 
-    print(exp_output)
-
     assert len(re.findall(r"\(train\)", exp_output)) == 10
     assert len(re.findall(r"\(valid\)", exp_output)) == 3
     assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 1
@@ -229,8 +227,6 @@ def test_validation_with_period_0():
 
     sys.stdout = old_stdout
     exp_output = str_stdout.getvalue()
-
-    print(exp_output)
 
     assert len(re.findall(r"\(train\)", exp_output)) == 5
     assert len(re.findall(r"\(valid\)", exp_output)) == 0
@@ -294,8 +290,6 @@ def test_multiple_loaders():
 
     sys.stdout = old_stdout
     exp_output = str_stdout.getvalue()
-
-    print(exp_output)
 
     assert len(re.findall(r"\(train\)", exp_output)) == 10
     assert len(re.findall(r"\(train_additional\)", exp_output)) == 5
@@ -378,8 +372,6 @@ def test_multiple_loaders_and_multiple_stages():
 
     sys.stdout = old_stdout
     exp_output = str_stdout.getvalue()
-
-    print(exp_output)
 
     assert len(re.findall(r"\(train\)", exp_output)) == 15
     assert len(re.findall(r"\(train_additional\)", exp_output)) == 7
@@ -662,8 +654,6 @@ def test_ignoring_unknown_loaders():
     sys.stdout = old_stdout
     exp_output = str_stdout.getvalue()
 
-    print(exp_output)
-
     assert len(re.findall(r"\(train\)", exp_output)) == 10
     assert len(re.findall(r"\(train_additional\)", exp_output)) == 5
     assert len(re.findall(r"\(train_not_exists\)", exp_output)) == 0
@@ -727,8 +717,6 @@ def test_loading_best_state_at_end():
 
     sys.stdout = old_stdout
     exp_output = str_stdout.getvalue()
-
-    print(exp_output)
 
     assert len(re.findall(r"\(train\)", exp_output)) == 5
     assert len(re.findall(r"\(valid\)", exp_output)) == 1
@@ -820,8 +808,6 @@ def test_loading_best_state_at_end_with_custom_scores():
     sys.stdout = old_stdout
     exp_output = str_stdout.getvalue()
 
-    print(exp_output)
-
     assert len(re.findall(r"\(train\)", exp_output)) == n_epochs
     assert len(re.findall(r"\(valid\)", exp_output)) == (n_epochs // period)
     assert (
@@ -889,8 +875,6 @@ def test_multiple_best_checkpoints():
 
     sys.stdout = old_stdout
     exp_output = str_stdout.getvalue()
-
-    print(exp_output)
 
     assert len(re.findall(r"\(train\)", exp_output)) == n_epochs
     assert len(re.findall(r"\(valid\)", exp_output)) == (n_epochs // period)
