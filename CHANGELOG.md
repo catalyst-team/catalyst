@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `log` parameter to `WandbLogger` ([#836](https://github.com/catalyst-team/catalyst/pull/836))
 - hparams experiment property ([#839](https://github.com/catalyst-team/catalyst/pull/839))
 - add docs build on push to master branch ([#844](https://github.com/catalyst-team/catalyst/pull/844))
-- `WrapperCallback` ([#842](https://github.com/catalyst-team/catalyst/pull/842))
+- `WrapperCallback` and `ControlFlowCallback` ([#842](https://github.com/catalyst-team/catalyst/pull/842))
 
 ### Changed
 
@@ -38,6 +38,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `global_*` counters in `Runner` ([#858](https://github.com/catalyst-team/catalyst/pull/858))
 - EarlyStoppingCallback considers first epoch as bad ([#854](https://github.com/catalyst-team/catalyst/issues/854))
 - annoying numpy warning ([#860](https://github.com/catalyst-team/catalyst/pull/860))
+- `PeriodicLoaderCallback` overwrites best state ([#867](https://github.com/catalyst-team/catalyst/pull/867))
 
 
 ## [20.06] - 2020-06-04
@@ -64,7 +65,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - added missed dashes in docker perfixes ([#828](https://github.com/catalyst-team/catalyst/issues/828))
-
+- handle empty loader in Runner ([#873](https://github.com/catalyst-team/catalyst/pull/873))
 
 ## [20.05.1] - 2020-05-23
 
