@@ -11,8 +11,11 @@ We train a number of different models for various of tasks:
 During the tests, we compare their convergence metrics in order to verify 
 the correctness of the training procedure and its reproducibility.
 
-[Catalyst CI](http://66.248.205.49:8111/project.html?projectId=Catalyst&tab=projectOverview&guest=1) 
-performs tests under various trainer conditions:
+Our Continuous Integration pipelines
+perform tests under various training conditions:
+- Python 3.6, 3.7, 3.8
+- PyTorch 1.1, 1.2, 1.3, 1.4, 1.5
+- Linux, OSX
 - CPU only
 - 1 GPU
 - 2 GPUs
@@ -38,11 +41,11 @@ pytest .
 
 # run deep learning tests
 ## CPU
-bash ./teamcity/dl_cpu.sh
+bash ./bin/teamcity/dl_cpu.sh
 ## GPU
-bash ./teamcity/dl_gpu.sh
+bash ./bin/teamcity/dl_gpu.sh
 ## GPUs
-bash ./teamcity/dl_gpu2.sh
+bash ./bin/teamcity/dl_gpu2.sh
 ```
 
 To test models that require GPU make sure to run the above command on a GPU machine.
