@@ -2,6 +2,7 @@ from typing import List
 
 import torch
 
+from catalyst.core.callback import CallbackOrder
 from catalyst.dl import Callback
 from catalyst.utils.metrics.cmc_score import cmc_score
 
@@ -11,7 +12,7 @@ class CMCScoreCallback(Callback):
 
     def __init__(
         self,
-        embeddings_key: str = "features",
+        embeddings_key: str = "embeddings",
         labels_key: str = "labels",
         is_query_key: str = "query",
         prefix: str = "cmc",
@@ -45,10 +46,11 @@ class CMCScoreCallback(Callback):
         self._queries_embeddings: torch.Tensor = None
         self._gallery_labels: torch.Tensor = None
         self._query_labels: torch.Tensor = None
+        self.order = CallbackOrder.Metric
 
     def on_batch_end(self, runner: "IRunner"):
         """On batch end action"""
-        current_query_mask = runner.output[self.is_query_key]
+        current_query_mask = runner.input[self.is_query_key]
         # bool mask
         current_gallery_mask = ~current_query_mask
         current_query_embeddings = runner.output[self.embeddings_key][
@@ -57,10 +59,10 @@ class CMCScoreCallback(Callback):
         current_gallery_embeddings = runner.output[self.embeddings_key][
             current_gallery_mask
         ]
-        current_query_labels = runner.output[self.labels_key][
+        current_query_labels = runner.input[self.labels_key][
             current_query_mask
         ]
-        current_gallery_labels = runner.output[self.labels_key][
+        current_gallery_labels = runner.input[self.labels_key][
             current_gallery_mask
         ]
 
@@ -72,7 +74,7 @@ class CMCScoreCallback(Callback):
                 (self._queries_embeddings, current_query_embeddings), dim=0
             )
             self._query_labels = torch.cat(
-                (self._queries_embeddings, current_query_labels), dim=0
+                (self._query_labels, current_query_labels), dim=0
             )
 
         if self._gallery_embeddings is None:
@@ -82,13 +84,13 @@ class CMCScoreCallback(Callback):
             self._gallery_embeddings = torch.cat(
                 (self._gallery_embeddings, current_gallery_embeddings), dim=0
             )
-            self._query_labels = torch.cat(
-                (self._gallery_embeddings, current_gallery_labels), dim=0
+            self._gallery_labels = torch.cat(
+                (self._gallery_labels, current_gallery_labels), dim=0
             )
 
     def on_loader_end(self, runner: "IRunner"):
         """On loader end action"""
-        conformity_matrix = self._query_labels == self._gallery_labels.T
+        conformity_matrix = self._query_labels.T == self._gallery_labels
         for k in self.list_args:
             metric = self._metric_fn(
                 self._gallery_embeddings,

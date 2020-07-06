@@ -3,7 +3,33 @@ import torch
 from catalyst.contrib.dl.callbacks.cmc_callback import (  # noqa: F401
     CMCScoreCallback,
 )
+from catalyst.dl import Runner
+from catalyst.utils import set_global_seed
 from catalyst.utils.metrics.cmc_score import _cmc_score_count
+
+
+class MetricRunner(Runner):
+    def _handle_batch(self, batch):
+        output = self.model(batch["features"])
+        self.output = {"embeddings": output}
+
+
+class QueryGalleryDataset(torch.utils.data.Dataset):
+    def __init__(self):
+        set_global_seed(42)
+        self.embeddings = torch.randn((10, 10))
+        dist = torch.distributions.bernoulli.Bernoulli(probs=0.5)
+        self.labels = dist.sample((10, 1))
+
+    def __getitem__(self, item):
+        output_dict = {}
+        output_dict["features"] = self.embeddings[item]
+        output_dict["labels"] = self.labels[item]
+        output_dict["query"] = item > 4
+        return output_dict
+
+    def __len__(self):
+        return self.embeddings.shape[0]
 
 
 def test_metric_simple_0():
@@ -48,3 +74,17 @@ def test_metric_simple_1_k_2():
     )
     expected = 1.0
     assert out == expected
+
+
+def test_pipeline():
+    net = torch.nn.Linear(10, 4)
+    dataset = QueryGalleryDataset()
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=2)
+    runner = MetricRunner()
+    runner.train(
+        model=net,
+        loaders={"valid": dataloader},
+        main_metric="cmc_1",
+        callbacks={"cmc": CMCScoreCallback(topk_args=(1, 2))},
+        check=True,
+    )
