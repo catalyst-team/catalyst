@@ -19,6 +19,14 @@
 ![catalyst-cv](https://github.com/catalyst-team/catalyst/workflows/catalyst-cv/badge.svg?branch=master&event=push)
 ![catalyst-nlp](https://github.com/catalyst-team/catalyst/workflows/catalyst-nlp/badge.svg?branch=master&event=push)
 [![Build Status](http://66.248.205.49:8111/app/rest/builds/buildType:id:Catalyst_Deploy/statusIcon.svg)](http://66.248.205.49:8111/project.html?projectId=Catalyst&tab=projectOverview&guest=1)
+
+[![python](https://img.shields.io/badge/python_3.6-passing-success)](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
+[![python](https://img.shields.io/badge/python_3.7-passing-success)](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
+[![python](https://img.shields.io/badge/python_3.8-passing-success)](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
+
+[![os](https://img.shields.io/badge/Linux-passing-success)](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
+[![os](https://img.shields.io/badge/OSX-passing-success)](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
+[![os](https://img.shields.io/badge/WSL-passing-success)](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
 </div>
 
 PyTorch framework for Deep Learning research and development.
@@ -161,7 +169,8 @@ pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 </p>
 </details>
 
-Catalyst is compatible with: Python 3.6+. PyTorch 1.0.0+.
+Catalyst is compatible with: Python 3.6+. PyTorch 1.1+. <br/>
+Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10 and Windows Subsystem for Linux.
 
 
 ### Minimal Examples
@@ -799,6 +808,7 @@ best practices for your deep learning research.
 ### Docs
 
 - [master](https://catalyst-team.github.io/catalyst/)
+- [20.07](https://catalyst-team.github.io/catalyst/v20.07/index.html)
 - [20.06](https://catalyst-team.github.io/catalyst/v20.06/index.html)
 - [20.05](https://catalyst-team.github.io/catalyst/v20.05/index.html), [20.05.1](https://catalyst-team.github.io/catalyst/v20.05.1/index.html)
 - [20.04](https://catalyst-team.github.io/catalyst/v20.04/index.html), [20.04.1](https://catalyst-team.github.io/catalyst/v20.04.1/index.html), [20.04.2](https://catalyst-team.github.io/catalyst/v20.04.2/index.html)
