@@ -4,7 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [20.07] - YYYY-MM-DD
+## [20.07.1] - YYYY-MM-DD
+
+### Added
+
+- 
+
+### Changed
+
+- 
+
+### Removed
+
+- 
+
+### Fixed
+
+- 
+
+
+## [20.07] - 2020-07-06
 
 ### Added
 
@@ -43,6 +62,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `PeriodicLoaderCallback` overwrites best state ([#867](https://github.com/catalyst-team/catalyst/pull/867))
 - `OneCycleLRWithWarmup` ([#851](https://github.com/catalyst-team/catalyst/issues/851))
 
+
 ## [20.06] - 2020-06-04
 
 ### Added
@@ -68,6 +88,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - added missed dashes in docker perfixes ([#828](https://github.com/catalyst-team/catalyst/issues/828))
 - handle empty loader in Runner ([#873](https://github.com/catalyst-team/catalyst/pull/873))
+
 
 ## [20.05.1] - 2020-05-23
 
