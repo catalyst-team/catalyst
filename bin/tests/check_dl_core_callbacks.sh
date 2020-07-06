@@ -740,7 +740,7 @@ rm -rf ./tests/logs/_tests_dl_callbacks ${EXP_OUTPUT}
 #  python catalyst/dl/scripts/run.py \
 #  --expdir=${EXPDIR} \
 #  --config=${EXPDIR}/config20.yml \
-#  --logdir=${LOGDIR}
+#  --logdir=${LOGDIR} > ${EXP_OUTPUT}
 #
 #cat ${EXP_OUTPUT}
 #
