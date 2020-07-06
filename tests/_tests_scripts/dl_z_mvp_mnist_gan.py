@@ -96,9 +96,7 @@ def main():
     }
     loaders = {
         "train": DataLoader(
-            MNIST(
-                os.getcwd(), train=True, download=True, transform=ToTensor(),
-            ),
+            MNIST("./data", train=True, download=True, transform=ToTensor(),),
             batch_size=32,
         ),
     }

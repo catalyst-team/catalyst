@@ -15,7 +15,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
 loaders = {
     "train": DataLoader(
-        MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
+        MNIST("./data", train=True, download=True, transform=ToTensor()),
         batch_size=32,
     ),
 }

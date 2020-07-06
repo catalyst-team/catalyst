@@ -123,7 +123,7 @@ def test_save_model_grads():
     Tests a feature of `OptimizerCallback` for saving model gradients
     """
     logdir = "./logs"
-    dataset_root = "./dataset"
+    dataset_root = "./data"
     loaders = _get_loaders(root=dataset_root, batch_size=4, num_workers=1)
     images, _ = next(iter(loaders["train"]))
     _, c, h, w = images.shape
@@ -159,4 +159,4 @@ def test_save_model_grads():
     )
 
     shutil.rmtree(logdir)
-    shutil.rmtree(dataset_root)
+    # shutil.rmtree(dataset_root)

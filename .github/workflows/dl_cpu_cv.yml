@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - develop
   pull_request:
     branches:
       - develop
@@ -19,18 +18,19 @@ jobs:
       fail-fast: false
       # max-parallel: 6
       matrix:
-        os: [ubuntu-18.04] # , macOS-10.15]  # windows-2019,
-        python-version: [3.6] # , 3.7, 3.8]
+        os: [ubuntu-18.04, macOS-10.15]  # windows-2019,
+        python-version: [3.6, 3.7, 3.8]
         requirements: ['minimal', 'latest']
         exclude:
           # pypi problems
           - python-version: 3.8
             requirements: 'minimal'
-          # pypi problems 2
           - python-version: 3.7
             requirements: 'minimal'
           # pickle problems
           - python-version: 3.8
+            os: macOS-10.15
+          - python-version: 3.6
             os: macOS-10.15
 
     timeout-minutes: 30

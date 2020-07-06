@@ -78,7 +78,7 @@ def datasets_fn():
     Docs.
     """
     dataset = MNIST(
-        os.getcwd(), train=False, download=True, transform=ToTensor(),
+        "./data", train=False, download=True, transform=ToTensor(),
     )
     return {"train": dataset, "valid": dataset}
 
