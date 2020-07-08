@@ -41,7 +41,8 @@ def cmc_score_count(
     Returns:
         cmc score
     """
-    position_matrix = torch.argsort(distances, dim=1)
+    perm_matrix = torch.argsort(distances)
+    position_matrix = torch.argsort(perm_matrix)
     conformity_matrix = conformity_matrix.type(torch.bool)
     position_matrix[~conformity_matrix] = (
         topk + 1

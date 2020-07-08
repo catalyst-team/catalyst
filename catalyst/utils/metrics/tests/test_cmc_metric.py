@@ -1,3 +1,5 @@
+from itertools import chain
+
 import numpy as np
 import pytest
 
@@ -8,7 +10,7 @@ from catalyst.contrib.dl.callbacks.cmc_callback import (  # noqa: F401
 )
 from catalyst.utils.metrics.cmc_score import cmc_score_count
 
-TEST_DATA = (
+TEST_DATA_SIMPLE = (
     # (distance_matrix, conformity_matrix,
     #  topk, expected_value)
     (torch.tensor([[1, 2], [2, 1]]), torch.tensor([[0, 1], [1, 0]]), 1, 0.0),
@@ -24,11 +26,38 @@ TEST_DATA = (
         2,
         1,
     ),
+    (
+        torch.tensor([[1, 0.5, 0.2], [2, 3, 4], [0.4, 3, 4]]),
+        torch.tensor([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+        2,
+        1 / 3,
+    ),
+    (torch.randn((10, 10)), torch.ones((10, 10)), 1, 1),
+)
+
+TEST_DATA_LESS_SMALL = (
+    (
+        torch.rand((10, 10)) + torch.tril(torch.ones((10, 10))),
+        torch.eye(10),
+        i,
+        i / 10,
+    )
+    for i in range(1, 10)
+)
+
+TEST_DATA_LESS_BIG = (
+    (
+        torch.rand((100, 100)) + torch.tril(torch.ones((100, 100))),
+        torch.eye(100),
+        i,
+        i / 100,
+    )
+    for i in range(1, 101, 10)
 )
 
 
 @pytest.mark.parametrize(
-    "distance_matrix,conformity_matrix,topk,expected", TEST_DATA
+    "distance_matrix,conformity_matrix,topk,expected", TEST_DATA_SIMPLE
 )
 def test_metric_count(distance_matrix, conformity_matrix, topk, expected):
     """Simple test"""
@@ -38,3 +67,17 @@ def test_metric_count(distance_matrix, conformity_matrix, topk, expected):
         topk=topk,
     )
     assert np.isclose(out, expected)
+
+
+@pytest.mark.parametrize(
+    "distance_matrix,conformity_matrix,topk,expected",
+    chain(TEST_DATA_LESS_SMALL, TEST_DATA_LESS_BIG),
+)
+def test_metric_less(distance_matrix, conformity_matrix, topk, expected):
+    """Simple test"""
+    out = cmc_score_count(
+        distances=distance_matrix,
+        conformity_matrix=conformity_matrix,
+        topk=topk,
+    )
+    assert out - 0.001 <= expected
