@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import torch
 
 from catalyst.contrib.dl.callbacks.cmc_callback import CMCScoreCallback
@@ -36,9 +38,8 @@ def test_pipeline():
     runner = SupervisedRunner(output_key="embeddings")
     runner.train(
         model=net,
-        loaders={"valid": dataloader},
+        loaders=OrderedDict({"valid": dataloader}),
         main_metric="cmc_1",
-        callbacks={"cmc": CMCScoreCallback(topk_args=(1, 2))},
+        callbacks=OrderedDict({"cmc": CMCScoreCallback(topk_args=[1, 2])}),
         check=True,
     )
-    assert True

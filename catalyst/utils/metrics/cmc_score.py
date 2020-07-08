@@ -8,6 +8,7 @@ def cmc_score(
     topk: int = 1,
 ) -> float:
     """
+    Function to count CMC
 
     Args:
         query_embeddings: tensor shape of (n_embeddings, embedding_dim)
@@ -22,14 +23,15 @@ def cmc_score(
         cmc score
     """
     distances = torch.cdist(query_embeddings, gallery_embeddings)
-    return _cmc_score_count(distances, conformity_matrix, topk)
+    return cmc_score_count(distances, conformity_matrix, topk)
 
 
-def _cmc_score_count(
+def cmc_score_count(
     distances: torch.Tensor, conformity_matrix: torch.Tensor, topk: int = 1,
 ) -> float:
     """
     More convenient to write tests with distance_matrix
+
     Args:
         distances: distance matrix shape of (n_embeddings_x, n_embeddings_y)
         conformity_matrix: binary matrix with 1 on same label pos

@@ -2,6 +2,7 @@ from typing import List
 
 import torch
 
+from catalyst.core import IRunner
 from catalyst.core.callback import CallbackOrder
 from catalyst.dl import Callback
 from catalyst.utils.metrics.cmc_score import cmc_score
@@ -23,7 +24,8 @@ class CMCScoreCallback(Callback):
         topk_args: List[int] = None,
     ):
         """
-        This callback was designed to count cumulative matching characteristics.
+        This callback was designed to count
+        cumulative matching characteristics.
         If current object is from query your dataset
         should output `True` in `is_query_key`
         and false if current object is from gallery.
