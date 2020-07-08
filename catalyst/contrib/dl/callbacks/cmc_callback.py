@@ -8,7 +8,11 @@ from catalyst.utils.metrics.cmc_score import cmc_score
 
 
 class CMCScoreCallback(Callback):
-    """Cumulative Matching Characteristics"""
+    """
+    Cumulative Matching Characteristics
+
+
+    """
 
     def __init__(
         self,
@@ -65,7 +69,6 @@ class CMCScoreCallback(Callback):
         current_gallery_labels = runner.input[self.labels_key][
             current_gallery_mask
         ]
-
         if self._queries_embeddings is None:
             self._queries_embeddings = current_query_embeddings
             self._query_labels = current_query_labels
