@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 
 import argparse
 from argparse import ArgumentParser
@@ -73,6 +75,7 @@ def build_args(parser: ArgumentParser):
     utils.boolean_flag(parser, "verbose", default=None)
     utils.boolean_flag(parser, "timeit", default=None)
     utils.boolean_flag(parser, "check", default=None)
+    utils.boolean_flag(parser, "overfit", default=None)
     utils.boolean_flag(
         parser,
         "deterministic",

@@ -4,8 +4,8 @@
 set -eo pipefail -v
 
 
-bash ./teamcity/dl_.sh
-# bash ./teamcity/dl_apex.sh
+bash ./bin/teamcity/dl_.sh
+# bash ./bin/teamcity/dl_apex.sh
 
 ###################################  CPU ######################################
 USE_APEX="0" CUDA_VISIBLE_DEVICES="" bash ./bin/tests/check_dl_all.sh

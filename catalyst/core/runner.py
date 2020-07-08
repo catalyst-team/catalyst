@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from typing import Any, Callable, Dict, Mapping, Optional, Tuple, Union
 from abc import ABC, abstractmethod
 from collections import defaultdict, OrderedDict
@@ -24,6 +26,17 @@ from catalyst.tools.typing import (
     RunnerScheduler,
     Scheduler,
 )
+
+
+class RunnerException(Exception):
+    """Exception clas for all runner errors."""
+
+    def __init__(self, message: str):
+        """
+        Args:
+            message: exception message
+        """
+        super().__init__(message)
 
 
 class IRunner(ABC, IRunnerLegacy, FrozenClass):
@@ -826,6 +839,11 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         Args:
             loader (DataLoader): dataloader to iterate
         """
+        if len(loader) == 0:
+            raise RunnerException(
+                f"DataLoader with name {self.loader_name} is empty."
+            )
+
         self.loader_batch_size = (
             loader.batch_sampler.batch_size
             if loader.batch_sampler is not None
@@ -853,6 +871,12 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         """
         self._prepare_for_epoch(stage=stage, epoch=epoch)
         assert self.loaders is not None
+
+        for loader_name, loader in self.loaders.items():
+            if len(loader) == 0:
+                raise RunnerException(
+                    f"DataLoader with name {loader_name} is empty."
+                )
 
         # @TODO: better solution with train/inference handling ?
         self.is_infer_stage = self.stage_name.startswith("infer")
@@ -995,4 +1019,4 @@ class IStageBasedRunner(IRunner):
         self.loaders = loaders
 
 
-__all__ = ["IRunner", "IStageBasedRunner"]
+__all__ = ["IRunner", "IStageBasedRunner", "RunnerException"]

@@ -79,7 +79,11 @@ class OptimizerCallback(Callback):
         optimizer.step()
 
     def on_stage_start(self, runner: IRunner) -> None:
-        """Checks that the current stage has correct optimizer."""
+        """Checks that the current stage has correct optimizer.
+
+        Args:
+            runner(IRunner): current runner
+        """
         self._optimizer = runner.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )

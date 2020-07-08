@@ -4,14 +4,35 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [20.07] - YYYY-MM-DD
+## [20.07.1] - YYYY-MM-DD
+
+### Added
+
+- 
+
+### Changed
+
+- 
+
+### Removed
+
+- 
+
+### Fixed
+
+- 
+
+
+## [20.07] - 2020-07-06
 
 ### Added
 
 - `log` parameter to `WandbLogger` ([#836](https://github.com/catalyst-team/catalyst/pull/836))
 - hparams experiment property ([#839](https://github.com/catalyst-team/catalyst/pull/839))
 - add docs build on push to master branch ([#844](https://github.com/catalyst-team/catalyst/pull/844))
-- `WrapperCallback` ([#842](https://github.com/catalyst-team/catalyst/pull/842))
+- `WrapperCallback` and `ControlFlowCallback` ([#842](https://github.com/catalyst-team/catalyst/pull/842))
+- `BatchOverfitCallback` ([#869](https://github.com/catalyst-team/catalyst/pull/869))
+- `overfit` flag for Config API ([#869](https://github.com/catalyst-team/catalyst/pull/869))
 
 ### Changed
 
@@ -24,10 +45,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `LRUpdater` become abstract class ([#837](https://github.com/catalyst-team/catalyst/pull/837))
 - `calculate_confusion_matrix_from_arrays` changed params order ([#837](https://github.com/catalyst-team/catalyst/pull/837))
 - `dl.Runner.predict_loader` uses `_prepare_inner_state` and cleans `experiment` ([#863](https://github.com/catalyst-team/catalyst/pull/863))
+- `toml` to the dependencies ([#872](https://github.com/catalyst-team/catalyst/pull/872))
 
 ### Removed
 
-- 
+- `crc32c` dependency ([#872](https://github.com/catalyst-team/catalyst/pull/872))
 
 ### Fixed
 
@@ -37,6 +59,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `global_*` counters in `Runner` ([#858](https://github.com/catalyst-team/catalyst/pull/858))
 - EarlyStoppingCallback considers first epoch as bad ([#854](https://github.com/catalyst-team/catalyst/issues/854))
 - annoying numpy warning ([#860](https://github.com/catalyst-team/catalyst/pull/860))
+- `PeriodicLoaderCallback` overwrites best state ([#867](https://github.com/catalyst-team/catalyst/pull/867))
+- `OneCycleLRWithWarmup` ([#851](https://github.com/catalyst-team/catalyst/issues/851))
 
 
 ## [20.06] - 2020-06-04
@@ -63,6 +87,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - added missed dashes in docker perfixes ([#828](https://github.com/catalyst-team/catalyst/issues/828))
+- handle empty loader in Runner ([#873](https://github.com/catalyst-team/catalyst/pull/873))
 
 
 ## [20.05.1] - 2020-05-23

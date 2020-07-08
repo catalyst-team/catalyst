@@ -166,7 +166,7 @@ def test_tracer_callback():
     Tests a feature of `TracerCallback` for model tracing during training
     """
     logdir = "./logs"
-    dataset_root = "./dataset"
+    dataset_root = "./data"
     loaders = _get_loaders(root=dataset_root, batch_size=4, num_workers=1)
     images, targets = next(iter(loaders["train"]))
     _, c, h, w = images.shape
@@ -225,4 +225,4 @@ def test_tracer_callback():
     )
 
     shutil.rmtree(logdir)
-    shutil.rmtree(dataset_root)
+    # shutil.rmtree(dataset_root)

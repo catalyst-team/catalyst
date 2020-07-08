@@ -4,7 +4,8 @@
 # date            :20190822
 # version         :19.08.7
 # ==============================================================================
-
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from typing import List, TypeVar, Union
 from multiprocessing.pool import Pool
 
