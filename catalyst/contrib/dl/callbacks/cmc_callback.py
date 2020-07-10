@@ -56,41 +56,35 @@ class CMCScoreCallback(Callback):
 
     def on_batch_end(self, runner: "IRunner"):
         """On batch end action"""
-        current_query_mask = runner.input[self.is_query_key]
+        query_mask = runner.input[self.is_query_key]
         # bool mask
-        current_gallery_mask = ~current_query_mask
-        current_query_embeddings = runner.output[self.embeddings_key][
-            current_query_mask
-        ]
-        current_gallery_embeddings = runner.output[self.embeddings_key][
-            current_gallery_mask
-        ]
-        current_query_labels = runner.input[self.labels_key][
-            current_query_mask
-        ]
-        current_gallery_labels = runner.input[self.labels_key][
-            current_gallery_mask
-        ]
+        gallery_mask = ~query_mask
+        query_embeddings = runner.output[self.embeddings_key][query_mask].cpu()
+        gallery_embeddings = runner.output[self.embeddings_key][
+            gallery_mask
+        ].cpu()
+        query_labels = runner.input[self.labels_key][query_mask].cpu()
+        gallery_labels = runner.input[self.labels_key][gallery_mask].cpu()
         if self._queries_embeddings is None:
-            self._queries_embeddings = current_query_embeddings
-            self._query_labels = current_query_labels
+            self._queries_embeddings = query_embeddings
+            self._query_labels = query_labels
         else:
             self._queries_embeddings = torch.cat(
-                (self._queries_embeddings, current_query_embeddings), dim=0
+                (self._queries_embeddings, query_embeddings), dim=0
             )
             self._query_labels = torch.cat(
-                (self._query_labels, current_query_labels), dim=0
+                (self._query_labels, query_labels), dim=0
             )
 
         if self._gallery_embeddings is None:
-            self._gallery_embeddings = current_gallery_embeddings
-            self._gallery_labels = current_gallery_labels
+            self._gallery_embeddings = gallery_embeddings
+            self._gallery_labels = gallery_labels
         else:
             self._gallery_embeddings = torch.cat(
-                (self._gallery_embeddings, current_gallery_embeddings), dim=0
+                (self._gallery_embeddings, gallery_embeddings), dim=0
             )
             self._gallery_labels = torch.cat(
-                (self._gallery_labels, current_gallery_labels), dim=0
+                (self._gallery_labels, gallery_labels), dim=0
             )
 
     def on_loader_end(self, runner: "IRunner"):
