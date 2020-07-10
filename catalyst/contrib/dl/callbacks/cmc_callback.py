@@ -49,10 +49,13 @@ class CMCScoreCallback(Callback):
         self.labels_key = labels_key
         self.is_query_key = is_query_key
         self._gallery_embeddings: torch.Tensor = None
-        self._queries_embeddings: torch.Tensor = None
+        self._query_embeddings: torch.Tensor = None
         self._gallery_labels: torch.Tensor = None
         self._query_labels: torch.Tensor = None
-        self.order = CallbackOrder.Metric
+        super().__init__(order=CallbackOrder.Metric)
+        self.first_batch = True
+        self._gallery_idx = None
+        self._query_idx = None
 
     def on_batch_end(self, runner: "IRunner"):
         """On batch end action"""
@@ -65,12 +68,34 @@ class CMCScoreCallback(Callback):
         ].cpu()
         query_labels = runner.input[self.labels_key][query_mask].cpu()
         gallery_labels = runner.input[self.labels_key][gallery_mask].cpu()
-        if self._queries_embeddings is None:
-            self._queries_embeddings = query_embeddings
+        if self.first_batch:
+            self._accumulate_first_batch(
+                query_embeddings,
+                gallery_embeddings,
+                query_labels,
+                gallery_labels
+            )
+        else:
+            self._accumulate(
+                query_embeddings,
+                gallery_embeddings,
+                query_labels,
+                gallery_labels
+            )
+
+    def _accumulate_first_batch(
+            self,
+            query_embeddings: torch.Tensor,
+            gallery_embeddings: torch.Tensor,
+            query_labels: torch.LongTensor,
+            gallery_labels: torch.LongTensor,
+    ) -> None:
+        if self._query_embeddings is None:
+            self._query_embeddings = query_embeddings
             self._query_labels = query_labels
         else:
-            self._queries_embeddings = torch.cat(
-                (self._queries_embeddings, query_embeddings), dim=0
+            self._query_embeddings = torch.cat(
+                (self._query_embeddings, query_embeddings), dim=0
             )
             self._query_labels = torch.cat(
                 (self._query_labels, query_labels), dim=0
@@ -87,14 +112,35 @@ class CMCScoreCallback(Callback):
                 (self._gallery_labels, gallery_labels), dim=0
             )
 
+    def _accumulate(
+            self,
+            query_embeddings: torch.Tensor,
+            gallery_embeddings: torch.Tensor,
+            query_labels: torch.LongTensor,
+            gallery_labels: torch.LongTensor,
+    ):
+        if query_embeddings.shape[0] > 0:
+            add_mask = self._query_idx + torch.arange(query_embeddings.shape[0])
+            self._query_embeddings[add_mask] = query_embeddings
+            self._query_labels[add_mask] = query_labels
+            self._query_idx += query_embeddings.shape[0]
+        if gallery_embeddings.shape[0] > 0:
+            add_mask = self._gallery_idx + torch.arange(gallery_embeddings.shape[0])
+            self._gallery_embeddings[add_mask] = gallery_embeddings
+            self._gallery_labels[add_mask] = gallery_labels
+            self._gallery_idx += gallery_embeddings.shape[0]
+
     def on_loader_end(self, runner: "IRunner"):
         """On loader end action"""
         conformity_matrix = self._query_labels.T == self._gallery_labels
         for k in self.list_args:
             metric = self._metric_fn(
                 self._gallery_embeddings,
-                self._queries_embeddings,
+                self._query_embeddings,
                 conformity_matrix,
                 k,
             )
             runner.loader_metrics[f"{self._prefix}_{k}"] = metric
+        self.first_batch = False
+        self._gallery_idx = 0
+        self._query_idx = 0
