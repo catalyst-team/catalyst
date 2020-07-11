@@ -1,9 +1,13 @@
 # flake8: noqa
 # @TODO: code formatting issue for 20.07 release
+from typing import Union, List
+
 import torch
-from torch import nn
+from torch import nn, Tensor, short, int as tint, long
+from torch.nn import TripletMarginLoss
 
 from catalyst.contrib.nn.criterion.functional import triplet_loss
+from catalyst.data import sampler_inbatch as si
 
 
 class TripletLoss(nn.Module):
@@ -253,4 +257,75 @@ class TripletPairwiseEmbeddingLoss(nn.Module):
         return loss
 
 
-__all__ = ["TripletLoss", "TripletPairwiseEmbeddingLoss"]
+class TripletMarginLossWithSampling(nn.Module):
+    """
+    This class combains in-batch sampling of triplets and
+    default TripletMargingLoss from PyTorch.
+    """
+
+    def __init__(
+        self, margin: float, sampler_inbatch: si.InBatchTripletsSampler
+    ):
+        """
+        Args:
+            margin: margin value
+            sampler_inbatch: sampler for forming triplets inside the batch
+        """
+        super().__init__()
+        self._sampler_inbatch = sampler_inbatch
+        self._triplet_margin_loss = TripletMarginLoss(margin=margin)
+
+    @staticmethod
+    def _prepate_labels(labels: Union[Tensor, List[int]]) -> List[int]:
+        """
+        This function allows to work with 2 types of indexing:
+        using a integer tensor and a list of indices.
+
+        Args:
+            labels: labels of batch samples
+
+        Returns:
+            labels of batch samples in the aligned format
+        """
+        if isinstance(labels, Tensor):
+            labels = labels.squeeze()
+            assert (labels.ndim == 1) and (
+                labels.dtype in [short, tint, long]
+            ), "Labels cannot be interpreted as indices."
+            labels_list = labels.tolist()
+
+        elif isinstance(labels, list):
+            labels_list = labels.copy()
+
+        else:
+            raise TypeError(f"Unexpected type of labels: {type(labels)}).")
+
+        return labels_list
+
+    def forward(
+        self, features: Tensor, labels: Union[Tensor, List[int]]
+    ) -> Tensor:
+        """
+        Args:
+            features: features with the shape of [batch_size, features_dim]
+            labels: labels of samples having batch_size elements
+
+        Returns: loss value
+
+        """
+        labels_list = self._prepate_labels(labels)
+
+        features_a, features_p, features_n = self._sampler_inbatch.sample(
+            features=features, labels=labels_list
+        )
+        loss = self._triplet_margin_loss(
+            anchor=features_a, positive=features_p, negative=features_n
+        )
+        return loss
+
+
+__all__ = [
+    "TripletLoss",
+    "TripletPairwiseEmbeddingLoss",
+    "TripletMarginLossWithSampling",
+]

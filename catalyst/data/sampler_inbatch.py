@@ -72,9 +72,7 @@ class InBatchTripletsSampler(ABC):
         """
         self._check_input_labels(labels=labels)
 
-        ids_anchor, ids_pos, ids_neg = self._sample(
-            features=features, labels=labels
-        )
+        ids_anchor, ids_pos, ids_neg = self._sample(features, labels=labels)
 
         return features[ids_anchor], features[ids_pos], features[ids_neg]
 
