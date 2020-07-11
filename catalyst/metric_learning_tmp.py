@@ -34,8 +34,8 @@ def metric_learning_minimal_example() -> None:
     # model
     model = nn.Sequential(*[nn.Flatten(), nn.Linear(28 * 28, 32), Normalize()])
     # from torchvision.models import resnet18
-    # from catalyst.contrib.models.cv.encoders.resnet import adopt_resnet_for_1channel
-    # model = adopt_resnet_for_1channel(resnet18())
+    # import catalyst.contrib.models.cv.encoders.resnet as r
+    # model = r.adopt_resnet_for_1channel(resnet18())
     optimizer = Adam(model.parameters(), lr=1e-2)
 
     # criterion

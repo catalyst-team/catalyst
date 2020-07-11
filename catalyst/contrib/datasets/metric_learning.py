@@ -23,7 +23,7 @@ class MetricLearningTrainDataset(Dataset, ABC):
         Returns:
             labels of samples
         """
-        raise NotImplemented
+        raise NotImplementedError
 
 
 class OmniglotML(MetricLearningTrainDataset, Omniglot):
