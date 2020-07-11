@@ -9,8 +9,11 @@ from catalyst.core.runner import IRunner
 
 
 class PeriodicLoaderCallback(Callback):
-    """Callback for running loaders with specified period.
-    To disable loader use ``0`` as period.
+    """Callback for runing loaders with specified period.
+    To disable loader use ``0`` as period (if specified
+    ``0`` for validation loader then will be raised an
+    error).
+
 
     For example, if you have ``train``, ``train_additional``,
     ``valid`` and ``valid_additional`` loaders and wan't to
@@ -51,10 +54,9 @@ class PeriodicLoaderCallback(Callback):
         Args:
             kwargs: loader names and their run periods.
         """
-        super().__init__(order=CallbackOrder.validation + 1)
+        super().__init__(order=CallbackOrder.validation - 1)
 
         self.valid_loader: str = None
-        self.valid_metrics: Mapping[str, float] = None
         self.loaders: Mapping[str, DataLoader] = OrderedDict()
 
         self.loader_periods = {}
@@ -62,9 +64,12 @@ class PeriodicLoaderCallback(Callback):
             if not isinstance(period, (int, float)):
                 raise TypeError(
                     "Expected loader period type is int/float "
-                    f"but got {type(period)}"
+                    f"but got {type(period)}!"
                 )
-            self.loader_periods[loader] = int(period)
+            period = int(period)
+            if period < 0:
+                raise ValueError(f"Period should be >= 0, but got - {period}!")
+            self.loader_periods[loader] = period
 
     def on_stage_start(self, runner: IRunner) -> None:
         """Collect information about loaders.
@@ -103,6 +108,12 @@ class PeriodicLoaderCallback(Callback):
                     f"There will be no loaders in epoch {epoch_with_err}!"
                 )
 
+        if self.loader_periods.get(runner.valid_loader, 1) < 1:
+            raise ValueError(
+                f"Period for a validation loader ('{runner.valid_loader}') "
+                "should be > 0!"
+            )
+
     def on_epoch_start(self, runner: IRunner) -> None:
         """
         Set loaders for current epoch.
@@ -138,21 +149,17 @@ class PeriodicLoaderCallback(Callback):
         runner.loaders = epoch_loaders
 
     def on_epoch_end(self, runner: IRunner) -> None:
-        """Store validation metrics and use latest validation score
-        when validation loader is not required.
+        """Check if validation metric should be
+        dropped for current epoch.
 
         Args:
             runner (IRunner): current runner
         """
-        if self.valid_loader in runner.loaders:
-            self.valid_metrics = runner.valid_metrics.copy()
-        elif self.valid_metrics is not None:
-            # use previous score on validation
-            runner.valid_metrics = self.valid_metrics
-            runner.is_best_valid = False
-        # else:
-        #     # store first loader while waiting for epoch with validation
-        #     self.valid_metrics = runner.valid_metrics.copy()
+        valid_metric_name = f"{runner.valid_loader}_{runner.main_metric}"
+        if self.valid_loader not in runner.loaders:
+            runner.epoch_metrics[valid_metric_name] = (
+                float("+inf") if runner.minimize_metric else float("-inf")
+            )
 
 
 __all__ = ["PeriodicLoaderCallback"]

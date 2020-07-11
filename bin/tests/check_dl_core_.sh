@@ -9,8 +9,6 @@ rm -rf ./tests/logs
 
 
 ################################  pipeline 01  ################################
-# imports check
-# (set -e; for f in tests/_tests_scripts/*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
 (set -e; for f in tests/_tests_scripts/core_*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
 (set -e; for f in tests/_tests_scripts/dl_*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
 

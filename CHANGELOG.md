@@ -4,7 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [20.07] - YYYY-MM-DD
+## [20.07.1] - YYYY-MM-DD
+
+### Added
+
+- 
+
+### Changed
+
+- 
+
+### Removed
+
+- 
+
+### Fixed
+
+- `utils.tokenize_text` typo with punctuation ([#880](https://github.com/catalyst-team/catalyst/pull/880))
+
+
+## [20.07] - 2020-07-06
 
 ### Added
 
@@ -14,6 +33,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `WrapperCallback` and `ControlFlowCallback` ([#842](https://github.com/catalyst-team/catalyst/pull/842))
 - `BatchOverfitCallback` ([#869](https://github.com/catalyst-team/catalyst/pull/869))
 - `overfit` flag for Config API ([#869](https://github.com/catalyst-team/catalyst/pull/869))
+- `InBatchSamplers`: `AllTripletsSampler` and `HardTripletsSampler` ([#825](https://github.com/catalyst-team/catalyst/pull/825))
 
 ### Changed
 
@@ -41,6 +61,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - EarlyStoppingCallback considers first epoch as bad ([#854](https://github.com/catalyst-team/catalyst/issues/854))
 - annoying numpy warning ([#860](https://github.com/catalyst-team/catalyst/pull/860))
 - `PeriodicLoaderCallback` overwrites best state ([#867](https://github.com/catalyst-team/catalyst/pull/867))
+- `OneCycleLRWithWarmup` ([#851](https://github.com/catalyst-team/catalyst/issues/851))
 
 
 ## [20.06] - 2020-06-04
@@ -50,7 +71,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `Mergify` ([#831](https://github.com/catalyst-team/catalyst/pull/831))
 - `PerplexityMetricCallback` ([#819](https://github.com/catalyst-team/catalyst/pull/819))
 - `PeriodicLoaderRunnerCallback` ([#818](https://github.com/catalyst-team/catalyst/pull/818))
-- `InBatchSamplers`: `AllTripletsSampler` and `HardTripletsSampler` ([#825](https://github.com/catalyst-team/catalyst/pull/825))
 
 ### Changed
 
@@ -68,6 +88,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - added missed dashes in docker perfixes ([#828](https://github.com/catalyst-team/catalyst/issues/828))
 - handle empty loader in Runner ([#873](https://github.com/catalyst-team/catalyst/pull/873))
+
 
 ## [20.05.1] - 2020-05-23
 

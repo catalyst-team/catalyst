@@ -88,29 +88,26 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 
 
 ################################  pipeline 01  ################################
-# setup: never run validation
+# setup: never run validation will raise an error
 LOG_MSG='pipeline 01'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+{
+  # try
+  PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config1.yml \
   --logdir=${LOGDIR} > ${EXP_OUTPUT}
+} || {  # catch
+    echo "Successfully raised error caused by validation period 0!"
+}
 
 cat ${EXP_OUTPUT}
-check_line_counts ${EXP_OUTPUT} "(train):" 5
-check_line_counts ${EXP_OUTPUT} "(valid):" 0
-check_line_counts ${EXP_OUTPUT} ".*/stage1\.[[:digit:]]\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
 echo ${LOG_MSG}
-
-check_checkpoints "${CHECKPOINTS}/best" 1
-check_checkpoints "${CHECKPOINTS}/last" 1
-check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
-check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR} ${EXP_OUTPUT}
 
@@ -184,14 +181,14 @@ LOG_MSG='pipeline 04'
 echo ${LOG_MSG}
 
 {
-    # try
-    PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  # try
+  PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config4.yml \
   --logdir=${LOGDIR} > ${EXP_OUTPUT}
 } || {  # catch
-    echo "Successfully handled error for epoch with no loaders!"
+    echo "Successfully raised error for epoch with no loaders!"
 }
 
 cat ${EXP_OUTPUT}

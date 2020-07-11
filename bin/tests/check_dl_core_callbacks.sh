@@ -585,300 +585,11 @@ check_num_files ${CHECKPOINTS} 17   # 8x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR} ${EXP_OUTPUT}
 
+
 ################################  pipeline 17  ################################
-
-LOG_MSG='pipeline 17'
-echo ${LOG_MSG}
-
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-  USE_DDP=0 \
-  USE_APEX=0 \
-  python3 -c "
-import torch
-from torch.utils.data import DataLoader, TensorDataset
-from catalyst.dl import SupervisedRunner, CheckpointCallback
-
-# experiment_setup
-logdir = '${LOGDIR}'
-num_epochs = 5
-
-# data
-num_samples, num_features = int(1e4), int(1e1)
-X = torch.rand(num_samples, num_features)
-y = torch.randint(0, 5, size=[num_samples])
-dataset = TensorDataset(X, y)
-loader = DataLoader(dataset, batch_size=32, num_workers=1)
-loaders = {'train': loader, 'valid': loader}
-
-# model, criterion, optimizer, scheduler
-model = torch.nn.Linear(num_features, 5)
-criterion = torch.nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters())
-runner = SupervisedRunner()
-
-# first stage
-runner.train(
-    model=model,
-    criterion=criterion,
-    optimizer=optimizer,
-    loaders=loaders,
-    logdir=logdir,
-    num_epochs=num_epochs,
-    verbose=False,
-    callbacks=[
-        CheckpointCallback(
-            save_n_best=2,
-            load_on_stage_end='best'
-        ),
-    ]
-)
-" > ${EXP_OUTPUT}
-
-cat ${EXP_OUTPUT}
-check_line_counts ${EXP_OUTPUT} "=> Loading" 1
-check_line_counts ${EXP_OUTPUT} "=> Loading .*best\.pth" 1
-
-check_file_existence ${LOGFILE}
-cat ${LOGFILE}
-echo ${LOG_MSG}
-
-check_checkpoints "${CHECKPOINTS}/best" 1
-check_checkpoints "${CHECKPOINTS}/last" 1
-check_checkpoints "${CHECKPOINTS}/train\.[[:digit:]]" 2
-check_num_files ${CHECKPOINTS} 9   # 4x2 checkpoints + metrics.json
-
-rm -rf ${LOGDIR}
-
-
-################################  pipeline 18  ################################
-
-LOG_MSG='pipeline 18'
-echo ${LOG_MSG}
-
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-  USE_DDP=0 \
-  USE_APEX=0 \
-  python3 -c "
-import torch
-from torch.utils.data import DataLoader, TensorDataset
-from catalyst.dl import SupervisedRunner, CheckpointCallback
-
-# experiment_setup
-logdir = '${LOGDIR}'
-num_epochs = 5
-
-# data
-num_samples, num_features = int(1e4), int(1e1)
-X = torch.rand(num_samples, num_features)
-y = torch.randint(0, 5, size=[num_samples])
-dataset = TensorDataset(X, y)
-loader = DataLoader(dataset, batch_size=32, num_workers=1)
-loaders = {'train': loader, 'valid': loader}
-
-# model, criterion, optimizer, scheduler
-model = torch.nn.Linear(num_features, 5)
-criterion = torch.nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters())
-runner = SupervisedRunner()
-
-# first stage
-runner.train(
-    model=model,
-    criterion=criterion,
-    optimizer=optimizer,
-    loaders=loaders,
-    logdir=logdir,
-    num_epochs=num_epochs,
-    verbose=False,
-    callbacks=[
-        CheckpointCallback(
-            save_n_best=2,
-            load_on_stage_end={
-                'model': 'best',
-                'criterion': 'best',
-                'optimizer': 'last',
-            }
-        ),
-    ]
-)
-# second stage
-runner.train(
-    model=model,
-    criterion=criterion,
-    optimizer=optimizer,
-    loaders=loaders,
-    logdir=logdir,
-    num_epochs=num_epochs,
-    verbose=False,
-    callbacks=[
-        CheckpointCallback(
-            save_n_best=3,
-            load_on_stage_start={
-                'model': 'last',
-                'criterion': 'last',
-                'optimizer': 'best',
-            }
-        ),
-    ]
-)
-" > ${EXP_OUTPUT}
-
-cat ${EXP_OUTPUT}
-check_line_counts ${EXP_OUTPUT} "=> Loading" 3
-check_line_counts ${EXP_OUTPUT} "=> Loading .*best_full\.pth" 2
-check_line_counts ${EXP_OUTPUT} "=> Loading .*last_full\.pth" 1
-
-check_file_existence ${LOGFILE}
-cat ${LOGFILE}
-echo ${LOG_MSG}
-
-check_checkpoints "${CHECKPOINTS}/best" 1
-check_checkpoints "${CHECKPOINTS}/last" 1
-check_checkpoints "${CHECKPOINTS}/train\.[[:digit:]]" 3
-check_num_files ${CHECKPOINTS} 11   # 5x2 checkpoints + metrics.json
-
-rm -rf ${LOGDIR} ${EXP_OUTPUT}
-
-
-################################  pipeline 19  ################################
-
-LOG_MSG='pipeline 19'
-echo ${LOG_MSG}
-
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} python3 -c "
-import torch
-from torch.utils.data import DataLoader, TensorDataset
-from catalyst.dl import SupervisedRunner, CheckpointCallback
-
-# experiment_setup
-logdir = '${LOGDIR}'
-num_epochs = 5
-
-# data
-num_samples, num_features = int(1e4), int(1e1)
-X = torch.rand(num_samples, num_features)
-y = torch.randint(0, 5, size=[num_samples])
-dataset = TensorDataset(X, y)
-loader = DataLoader(dataset, batch_size=32, num_workers=1)
-loaders = {'train': loader, 'valid': loader}
-
-# model, criterion, optimizer, scheduler
-model = torch.nn.Linear(num_features, 5)
-criterion = torch.nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters())
-runner = SupervisedRunner()
-
-# first stage
-try:
-    runner.train(
-        model=model,
-        criterion=criterion,
-        optimizer=optimizer,
-        loaders=loaders,
-        logdir=logdir,
-        num_epochs=num_epochs,
-        verbose=False,
-        callbacks=[
-            CheckpointCallback(
-                save_n_best=2,
-                load_on_stage_end={
-                    'model': 'best',
-                    'criterion': 'best',
-                    'optimizer': 'last',
-                },
-                resume='not_existing_file.pth'
-            ),
-        ]
-    )
-# TODO: switch to pytest and handle there FileNotFoundError
-except FileNotFoundError as e:
-    print('Successfully handled FileNotFoundError!')
-"
-
-rm -rf ${LOGDIR}
-
-
-################################  pipeline 20  ################################
-# test with an empty dict
-
-LOG_MSG='pipeline 19'
-echo ${LOG_MSG}
-
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-  USE_DDP=0 \
-  USE_APEX=0 \
-  python3 -c "
-import torch
-from torch.utils.data import DataLoader, TensorDataset
-from catalyst.dl import SupervisedRunner, CheckpointCallback
-
-# experiment_setup
-logdir = '${LOGDIR}'
-num_epochs = 5
-
-# data
-num_samples, num_features = int(1e4), int(1e1)
-X = torch.rand(num_samples, num_features)
-y = torch.randint(0, 5, size=[num_samples])
-dataset = TensorDataset(X, y)
-loader = DataLoader(dataset, batch_size=32, num_workers=1)
-loaders = {'train': loader, 'valid': loader}
-
-# model, criterion, optimizer, scheduler
-model = torch.nn.Linear(num_features, 5)
-criterion = torch.nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters())
-runner = SupervisedRunner()
-
-# first stage
-runner.train(
-    model=model,
-    criterion=criterion,
-    optimizer=optimizer,
-    loaders=loaders,
-    logdir=logdir,
-    num_epochs=num_epochs,
-    verbose=False,
-    callbacks=[
-        CheckpointCallback(save_n_best=2),
-    ]
-)
-# second stage
-runner.train(
-    model=model,
-    criterion=criterion,
-    optimizer=optimizer,
-    loaders=loaders,
-    logdir=logdir,
-    num_epochs=num_epochs,
-    verbose=False,
-    callbacks=[
-        CheckpointCallback(
-            save_n_best=3,
-            load_on_stage_start={}
-        ),
-    ]
-)
-" > ${EXP_OUTPUT}
-
-cat ${EXP_OUTPUT}
-check_line_counts ${EXP_OUTPUT} "=> Loading" 0
-
-check_file_existence ${LOGFILE}
-cat ${LOGFILE}
-echo ${LOG_MSG}
-
-check_checkpoints "${CHECKPOINTS}/best" 1
-check_checkpoints "${CHECKPOINTS}/last" 1
-check_checkpoints "${CHECKPOINTS}/train\.[[:digit:]]" 3
-check_num_files ${CHECKPOINTS} 11   # 5x2 checkpoints + metrics.json
-
-rm -rf ${LOGDIR} ${EXP_OUTPUT}
-
-################################  pipeline 21  ################################
 # testing on_stage_start option with missing on_stage_start and with
 # dict with random key (test for ignoring random keys)
-LOG_MSG='pipeline 21'
+LOG_MSG='pipeline 17'
 echo ${LOG_MSG}
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
@@ -904,9 +615,9 @@ check_num_files ${CHECKPOINTS} 11   # 5x2 checkpoints + metrics.json
 rm -rf ${LOGDIR} ${EXP_OUTPUT}
 
 
-################################  pipeline 22  ################################
+################################  pipeline 18  ################################
 # testing loading from checkpoint specified by path
-LOG_MSG='pipeline 22'
+LOG_MSG='pipeline 18'
 echo ${LOG_MSG}
 
 LOGDIR=./tests/logs/_tests_dl_callbacks/for_resume
@@ -958,9 +669,9 @@ check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
 rm -rf ./tests/logs/_tests_dl_callbacks ${EXP_OUTPUT}
 
 
-################################  pipeline 23  ################################
+################################  pipeline 19  ################################
 # testing loading from checkpoint specified by path in combination with other
-LOG_MSG='pipeline 23'
+LOG_MSG='pipeline 19'
 echo ${LOG_MSG}
 
 LOGDIR=./tests/logs/_tests_dl_callbacks/for_resume
@@ -1015,32 +726,32 @@ check_num_files ${CHECKPOINTS} 9   # 4x2 checkpoints + metrics.json
 rm -rf ./tests/logs/_tests_dl_callbacks ${EXP_OUTPUT}
 
 
-################################  pipeline 24  ################################
+################################  pipeline 20  ################################
 # testing loading from checkpoint specified by path in combination with other
-LOG_MSG='pipeline 24'
-echo ${LOG_MSG}
-
-LOGDIR=./tests/logs/_tests_dl_callbacks/trace
-CHECKPOINTS=${LOGDIR}/checkpoints
-TRACE=${LOGDIR}/trace
-LOGFILE=${CHECKPOINTS}/_metrics.json
-
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
-  python catalyst/dl/scripts/run.py \
-  --expdir=${EXPDIR} \
-  --config=${EXPDIR}/config20.yml \
-  --logdir=${LOGDIR} > ${EXP_OUTPUT}
-
-cat ${EXP_OUTPUT}
-
-check_file_existence ${LOGFILE}
-cat ${LOGFILE}
-echo ${LOG_MSG}
-
-check_checkpoints "${CHECKPOINTS}/best" 1
-check_checkpoints "${CHECKPOINTS}/last" 1
-check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
-check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + _metrics.json
-check_num_files ${TRACE} 1
+#LOG_MSG='pipeline 20'
+#echo ${LOG_MSG}
+#
+#LOGDIR=./tests/logs/_tests_dl_callbacks/trace
+#CHECKPOINTS=${LOGDIR}/checkpoints
+#TRACE=${LOGDIR}/trace
+#LOGFILE=${CHECKPOINTS}/_metrics.json
+#
+#PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+#  python catalyst/dl/scripts/run.py \
+#  --expdir=${EXPDIR} \
+#  --config=${EXPDIR}/config20.yml \
+#  --logdir=${LOGDIR} > ${EXP_OUTPUT}
+#
+#cat ${EXP_OUTPUT}
+#
+#check_file_existence ${LOGFILE}
+#cat ${LOGFILE}
+#echo ${LOG_MSG}
+#
+#check_checkpoints "${CHECKPOINTS}/best" 1
+#check_checkpoints "${CHECKPOINTS}/last" 1
+#check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
+#check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + _metrics.json
+#check_num_files ${TRACE} 1
 
 rm -rf ./tests/logs/_tests_dl_callbacks ${EXP_OUTPUT}

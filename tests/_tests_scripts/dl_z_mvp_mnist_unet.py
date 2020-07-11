@@ -65,15 +65,11 @@ def main():
 
     loaders = {
         "train": DataLoader(
-            MNIST(
-                os.getcwd(), train=False, download=True, transform=ToTensor(),
-            ),
+            MNIST("./data", train=False, download=True, transform=ToTensor(),),
             batch_size=32,
         ),
         "valid": DataLoader(
-            MNIST(
-                os.getcwd(), train=False, download=True, transform=ToTensor(),
-            ),
+            MNIST("./data", train=False, download=True, transform=ToTensor(),),
             batch_size=32,
         ),
     }

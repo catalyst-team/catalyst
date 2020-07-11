@@ -4,8 +4,8 @@
 set -eo pipefail -v
 
 
-bash ./teamcity/dl_.sh
-bash ./teamcity/dl_apex.sh
+bash ./bin/teamcity/dl_.sh
+bash ./bin/teamcity/dl_apex.sh
 
 ###################################  GPU2  ####################################
 USE_APEX="0" USE_DDP="0" CUDA_VISIBLE_DEVICES="0,1" \
