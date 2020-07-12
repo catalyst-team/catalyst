@@ -73,7 +73,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
 cat ${EXP_OUTPUT}
 check_line_counts ${EXP_OUTPUT} "(train):" 5
 check_line_counts ${EXP_OUTPUT} "(valid):" 2
-check_line_counts ${EXP_OUTPUT} ".*/stage1\..*\.pth" 1
+check_line_counts ${EXP_OUTPUT} ".*/stage1\.[[:digit:]]\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -128,7 +128,7 @@ check_line_counts ${EXP_OUTPUT} "(train):" 10
 check_line_counts ${EXP_OUTPUT} "(train_additional):" 5
 check_line_counts ${EXP_OUTPUT} "(valid):" 3
 check_line_counts ${EXP_OUTPUT} "(valid_additional):" 0
-check_line_counts ${EXP_OUTPUT} ".*/stage1\..*\.pth" 1
+check_line_counts ${EXP_OUTPUT} ".*/stage1\.[[:digit:]]\{1,2\}\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -158,8 +158,8 @@ check_line_counts ${EXP_OUTPUT} "(train):" 15
 check_line_counts ${EXP_OUTPUT} "(train_additional):" 5
 check_line_counts ${EXP_OUTPUT} "(valid):" 6
 check_line_counts ${EXP_OUTPUT} "(valid_additional):" 0
-check_line_counts ${EXP_OUTPUT} ".*/stage1\..*\.pth" 1
-check_line_counts ${EXP_OUTPUT} ".*/stage2\..*\.pth" 1
+check_line_counts ${EXP_OUTPUT} ".*/stage1\.[[:digit:]]\.pth" 1
+check_line_counts ${EXP_OUTPUT} ".*/stage2\.[[:digit:]]\{1,2\}\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
@@ -219,7 +219,7 @@ check_line_counts ${EXP_OUTPUT} "(train_not_exists):" 0
 check_line_counts ${EXP_OUTPUT} "(valid):" 3
 check_line_counts ${EXP_OUTPUT} "(valid_additional):" 0
 check_line_counts ${EXP_OUTPUT} "(valid_not_exist):" 0
-check_line_counts ${EXP_OUTPUT} ".*/stage1\..*\.pth" 1
+check_line_counts ${EXP_OUTPUT} ".*/stage1\.[[:digit:]]\{1,2\}\.pth" 1
 
 check_file_existence ${LOGFILE}
 cat ${LOGFILE}
