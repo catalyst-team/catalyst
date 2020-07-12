@@ -45,6 +45,16 @@ TEST_DATA_LESS_SMALL = (
     for i in range(1, 10)
 )
 
+TEST_DATA_GREATER_SMALL = (
+    (
+        torch.rand((10, 10)) + torch.triu(torch.ones((10, 10)), diagonal=1),
+        torch.eye(10),
+        i,
+        i / 10,
+    )
+    for i in range(1, 10)
+)
+
 TEST_DATA_LESS_BIG = (
     (
         torch.rand((100, 100)) + torch.tril(torch.ones((100, 100))),
@@ -81,3 +91,17 @@ def test_metric_less(distance_matrix, conformity_matrix, topk, expected):
         topk=topk,
     )
     assert out - 0.001 <= expected
+
+
+@pytest.mark.parametrize(
+    "distance_matrix,conformity_matrix,topk,expected",
+    chain(TEST_DATA_GREATER_SMALL),
+)
+def test_metric_greater(distance_matrix, conformity_matrix, topk, expected):
+    """Simple test"""
+    out = cmc_score_count(
+        distances=distance_matrix,
+        conformity_matrix=conformity_matrix,
+        topk=topk,
+    )
+    assert out + 0.001 >= expected

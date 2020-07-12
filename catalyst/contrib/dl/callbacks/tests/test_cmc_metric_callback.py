@@ -42,4 +42,5 @@ def test_pipeline():
         main_metric="cmc_1",
         callbacks=OrderedDict({"cmc": CMCScoreCallback(topk_args=[1, 2])}),
         check=True,
+        num_epochs=2,
     )
