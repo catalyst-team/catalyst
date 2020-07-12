@@ -11,8 +11,7 @@ from catalyst.utils.metrics.cmc_score import cmc_score
 class CMCScoreCallback(Callback):
     """
     Cumulative Matching Characteristics
-
-
+    callback
     """
 
     def __init__(
@@ -69,7 +68,7 @@ class CMCScoreCallback(Callback):
         query_labels = runner.input[self.labels_key][query_mask].cpu()
         gallery_labels = runner.input[self.labels_key][gallery_mask].cpu()
         if self._first_epoch:
-            self._accumulate_first_batch(
+            self._accumulate_first_epoch(
                 query_embeddings,
                 gallery_embeddings,
                 query_labels,
@@ -83,7 +82,7 @@ class CMCScoreCallback(Callback):
                 gallery_labels,
             )
 
-    def _accumulate_first_batch(
+    def _accumulate_first_epoch(
         self,
         query_embeddings: torch.Tensor,
         gallery_embeddings: torch.Tensor,
