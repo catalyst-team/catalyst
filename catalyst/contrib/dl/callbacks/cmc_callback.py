@@ -13,7 +13,8 @@ class CMCScoreCallback(Callback):
     Cumulative Matching Characteristics callback
 
     You should use it with `ControlFlowCallback`
-    and add all query/gallery sets to loaders
+    and add all query/gallery sets to loaders.
+    Loaders should contain "is_query" and "label" key.
 
     .. code-block:: python
 
