@@ -440,6 +440,7 @@ echo 'pipeline 18'
 python -c """
 from catalyst import utils
 metrics = utils.load_config('$LOGFILE')
+# assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
 assert metrics['stage1.1']['loss'] < 3.3
 assert metrics['stage1.2']['loss'] < 3.3
 """
@@ -470,8 +471,8 @@ echo 'pipeline 19'
 python -c """
 from catalyst import utils
 metrics = utils.load_config('$LOGFILE')
-# assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
-assert metrics['stage1.2']['loss'] < 2.33
+assert metrics['stage1.1']['loss'] < 3.3
+assert metrics['stage1.2']['loss'] < 3.3
 """
 
 rm -rf ${LOGDIR}
