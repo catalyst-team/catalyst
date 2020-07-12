@@ -55,3 +55,6 @@ stages:
       loaders:
         callback: PeriodicLoaderCallback
         valid: 2
+      fast_run:
+        callback: CheckRunCallback
+        num_epoch_steps: *num_epochs
