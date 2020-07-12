@@ -156,6 +156,14 @@ class CMCScoreCallback(Callback):
             self._gallery_labels[add_mask] = gallery_labels
             self._gallery_idx += gallery_embeddings.shape[0]
 
+    def on_epoch_end(self, runner: "IRunner"):
+        """On loader enf action"""
+        self._first_epoch = True
+        self._gallery_embeddings: torch.Tensor = None
+        self._query_embeddings: torch.Tensor = None
+        self._gallery_labels: torch.Tensor = None
+        self._query_labels: torch.Tensor = None
+
     def on_loader_end(self, runner: "IRunner"):
         """On loader end action"""
         conformity_matrix = self._query_labels.T == self._gallery_labels
