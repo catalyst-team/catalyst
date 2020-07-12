@@ -1,15 +1,16 @@
-import catalyst.data.sampler_inbatch as si
+import torch
+from torch import nn
+from torch.nn.functional import avg_pool2d, log_softmax, max_pool2d, relu
+from torch.optim import Adam
+from torch.utils.data import DataLoader
 import torchvision.transforms as t
+
 from catalyst.contrib.datasets.metric_learning import MnistML
 from catalyst.contrib.nn.criterion.triplet import TripletMarginLossWithSampling
 from catalyst.contrib.nn.modules.common import Normalize
 from catalyst.data.sampler import BalanceBatchSampler
+import catalyst.data.sampler_inbatch as si
 from catalyst.dl.runner import SupervisedRunner
-from torch import nn
-from torch.nn.functional import relu, avg_pool2d, max_pool2d, log_softmax
-from torch.optim import Adam
-from torch.utils.data import DataLoader
-import torch
 
 
 class Net(nn.Module):
@@ -45,10 +46,7 @@ def metric_learning_minimal_example() -> None:
         root="/Users/alexeyshab/Downloads/",
         train=True,
         download=True,
-        transform=t.Compose([
-            t.ToTensor(),
-            t.Normalize((0.1307,), (0.3081,))
-        ]),
+        transform=t.Compose([t.ToTensor(), t.Normalize((0.1307,), (0.3081,))]),
     )
     sampler = BalanceBatchSampler(labels=dataset.get_labels(), p=10, k=10)
     train_loader = DataLoader(
