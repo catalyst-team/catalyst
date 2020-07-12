@@ -27,7 +27,7 @@ function check_file_existence {
 function check_num_files {
     # $1 - ls directory
     # $2 - expected count
-    NFILES=$( ls -l | egrep "$1" | wc -l )
+    NFILES=$( ls -l | grep -E "$1" | wc -l )
     if [[ $NFILES -ne $2 ]]
     then
         echo "Different number of files in '$1' - "`
