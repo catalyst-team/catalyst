@@ -78,7 +78,7 @@ echo ${LOG_MSG}
 
 check_checkpoints "${CHECKPOINTS}/best" 1
 check_checkpoints "${CHECKPOINTS}/last" 1
-check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]\{1,2\}" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
 check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
 
 rm -rf ${LOGDIR} ${EXP_OUTPUT}
