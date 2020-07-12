@@ -37,7 +37,7 @@ def tokenize_text(
     if lowercase:
         text = text.lower()
     if remove_punctuation:
-        text.replace(string.punctuation, "")
+        text = text.replace(string.punctuation, "")
 
     inputs = tokenizer.encode_plus(
         text, "", add_special_tokens=True, max_length=max_length
