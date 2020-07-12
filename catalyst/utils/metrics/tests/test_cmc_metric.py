@@ -10,6 +10,8 @@ from catalyst.contrib.dl.callbacks.cmc_callback import (  # noqa: F401
 )
 from catalyst.utils.metrics.cmc_score import cmc_score_count
 
+EPS = 1e-4
+
 TEST_DATA_SIMPLE = (
     # (distance_matrix, conformity_matrix,
     #  topk, expected_value)
@@ -90,7 +92,7 @@ def test_metric_less(distance_matrix, conformity_matrix, topk, expected):
         conformity_matrix=conformity_matrix,
         topk=topk,
     )
-    assert out - 0.001 <= expected
+    assert out - EPS <= expected
 
 
 @pytest.mark.parametrize(
@@ -104,4 +106,4 @@ def test_metric_greater(distance_matrix, conformity_matrix, topk, expected):
         conformity_matrix=conformity_matrix,
         topk=topk,
     )
-    assert out + 0.001 >= expected
+    assert out + EPS >= expected
