@@ -72,6 +72,16 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requirements }}-pip-
 
+      - name: miniconda
+        if: matrix.requirements == 'minimal'
+        uses: goanpeca/setup-miniconda@v1
+        with:
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
+      - name: install dependencies (cudatoolkit)
+        if: matrix.requirements == 'minimal'
+        run: |
+          conda install cudatoolkit==9.0
       - name: install dependencies
         run: |
           # python -m pip install --upgrade --user pip
