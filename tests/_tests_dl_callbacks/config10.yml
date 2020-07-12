@@ -45,6 +45,9 @@ stages:
         callback: CheckpointCallback
         save_n_best: 3
         load_on_stage_end: best
+      fast_run:
+        callback: CheckRunCallback
+        num_epoch_steps: *num_epochs
 
   stage2:
     stage_params:
@@ -62,3 +65,6 @@ stages:
         callback: CheckpointCallback
         save_n_best: 3
         load_on_stage_end: last
+      fast_run:
+        callback: CheckRunCallback
+        num_epoch_steps: *num_epochs

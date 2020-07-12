@@ -48,3 +48,6 @@ stages:
         accuracy_args: [1, 3, 5]
       saver:
         callback: CheckpointCallback
+      fast_run:
+        callback: CheckRunCallback
+        num_epoch_steps: *num_epochs
