@@ -10,8 +10,30 @@ from catalyst.utils.metrics.cmc_score import cmc_score
 
 class CMCScoreCallback(Callback):
     """
-    Cumulative Matching Characteristics
-    callback
+    Cumulative Matching Characteristics callback
+
+    You should use it with `ControlFlowCallback`
+    and add all query/gallery sets to loaders
+
+    .. code-block:: python
+
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            loaders=loaders,
+            logdir="./logdir",
+            num_epochs=5,
+            callbacks=[
+                ControlFlowCallback(
+                    base_callback=CMCScoreCallback(
+                        topk_args=[1, 5]
+                    ),
+                    loaders=["split_1", "split_2"]
+                )
+            ]
+        )
     """
 
     def __init__(
