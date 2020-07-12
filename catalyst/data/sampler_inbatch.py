@@ -150,7 +150,8 @@ class HardTripletsSampler(InBatchTripletsSampler):
         if self._need_norm:
             features = normalize(samples=features)
 
-        dist_mat = torch.cdist(x1=features, x2=features, p=2)
+        features_cp = features.detach()
+        dist_mat = torch.cdist(x1=features_cp, x2=features_cp, p=2)
 
         ids_anchor, ids_pos, ids_neg = self._sample_from_distmat(
             distmat=dist_mat, labels=labels
