@@ -14,3 +14,6 @@ set -eo pipefail -v
 
 ####################################  NLP  ####################################
 (set -e; for f in ./bin/tests/check_dl_nlp*.sh; do bash "$f"; done)
+
+################################  Metric Learning  #############################
+(set -e; for f in ./bin/tests/check_dl_ml*.sh; do bash "$f"; done)
