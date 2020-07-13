@@ -51,6 +51,8 @@ class CMCScoreCallback(Callback):
         If current object is from query your dataset
         should output `True` in `is_query_key`
         and false if current object is from gallery.
+        You can see `QueryGalleryDataset` in
+        `catalyst.contrib.data.ml` for more information.
         On batch end callback accumulate all embeddings
         Args:
             embeddings_key (str): embeddings key in output dict
