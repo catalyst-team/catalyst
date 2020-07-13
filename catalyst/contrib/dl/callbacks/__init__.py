@@ -1,6 +1,8 @@
 # flake8: noqa
 import logging
 
+from torch.jit.frontend import UnsupportedNodeError
+
 from catalyst.tools import settings
 
 from .cutmix_callback import CutmixCallback
@@ -33,6 +35,13 @@ except ImportError as ex:
             "some of catalyst-cv dependencies not available,"
             " to install dependencies, run `pip install catalyst[cv]`."
         )
+        raise ex
+except UnsupportedNodeError as ex:
+    logger.warning(
+        "kornia has requirement torch>=1.5.0,"
+        " probably you have an old version of torch which is incompatible."
+    )
+    if settings.kornia_required:
         raise ex
 
 try:

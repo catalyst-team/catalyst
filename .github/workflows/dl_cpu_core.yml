@@ -68,14 +68,14 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requirements }}-pip-${{ hashFiles('./requirements/requirements.txt') }}
+          key: ${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requirements }}-pip-${{ hashFiles('./requirements/requirements.txt') }}-${{ hashFiles('./tests/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requirements }}-pip-
 
       - name: install dependencies
         run: |
           # python -m pip install --upgrade --user pip
-          pip install -r ./requirements/requirements.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+          pip install -r ./requirements/requirements.txt -r ./tests/requirements.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
           python --version
           pip --version
           pip list
@@ -112,4 +112,6 @@ jobs:
           unzip -qqo ./data/MNIST.zip -d ./data
 
       - name: check examples
+        env:
+          REQUIREMENTS: ${{ matrix.requirements }}
         run: (set -e; for f in ./bin/tests/check_dl_core*.sh; do USE_APEX="0" CUDA_VISIBLE_DEVICES="" bash "$f"; done)

@@ -10,6 +10,8 @@ logger = logging.getLogger(__name__)
 
 
 def _transforms_loader(r: Registry):
+    from torch.jit.frontend import UnsupportedNodeError
+
     try:
         import albumentations as m
 
@@ -40,6 +42,13 @@ def _transforms_loader(r: Registry):
                 "kornia not available, to install kornia, "
                 "run `pip install kornia`."
             )
+            raise ex
+    except UnsupportedNodeError as ex:
+        logger.warning(
+            "kornia has requirement torch>=1.5.0,"
+            " probably you have an old version of torch which is incompatible."
+        )
+        if settings.kornia_required:
             raise ex
 
 
