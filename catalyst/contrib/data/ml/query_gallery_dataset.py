@@ -11,6 +11,10 @@ from torchvision import transforms
 
 
 class QueryGalleryDataset(Dataset, ABC):
+    """
+    QueryGallleryDataset for CMCScoreCallback
+    """
+
     @abstractmethod
     def __getitem__(self, item) -> Dict[str, torch.Tensor]:
         """
@@ -19,6 +23,8 @@ class QueryGalleryDataset(Dataset, ABC):
         `is_query` key. Value by key `is_query` should
         be boolean and indicate whether current object
         is in query or in gallery.
+        Raises:
+            NotImplementedError:
         """
         raise NotImplementedError
 
@@ -30,6 +36,8 @@ class QueryGalleryDataset(Dataset, ABC):
         query size
         Returns:
             query size
+        Raises:
+            NotImplementedError:
         """
         raise NotImplementedError
 
@@ -41,6 +49,8 @@ class QueryGalleryDataset(Dataset, ABC):
         gallery size
         Returns:
             gallery size
+        Raises:
+            NotImplementedError:
         """
         raise NotImplementedError
 
@@ -92,6 +102,7 @@ class QueryGalleryFolderDataset(QueryGalleryDataset):
         self.transform = transform
 
     def __len__(self):
+        """sum of query and gallery sizes"""
         return len(self.query_labels) + len(self.gallery_labels)
 
     @property
@@ -114,7 +125,15 @@ class QueryGalleryFolderDataset(QueryGalleryDataset):
         """
         return len(self.gallery_labels)
 
-    def __getitem__(self, index):
+    def __getitem__(self, index) -> Dict[str, torch.Tensor]:
+        """
+        Getitem method
+        Args:
+            index:
+
+        Returns:
+            Dict of tensors
+        """
         if index >= self.query_size:
             index -= self.query_size
             return {
