@@ -27,8 +27,8 @@ def dcg(
     Raises:
         ValueError: If `gains` not in ["linear", "exp"].
     """
-    targets, _ = targets.topk(k, -1)
-    outputs, _ = outputs.topk(k, -1)
+    order = torch.argsort(outputs, descending=True)
+    targets = torch.take(targets, order[:k])
 
     if gains == "linear":
         gains = targets
