@@ -46,6 +46,7 @@ def test_disabling_loss_for_validation_loader():
         logdir=logdir,
         num_epochs=n_epochs,
         verbose=False,
+        main_metric="accuracy01",
         callbacks=[
             dl.ControlFlowCallback(
                 dl.CriterionCallback(), ignore_loaders=["valid"]
@@ -58,17 +59,36 @@ def test_disabling_loss_for_validation_loader():
     sys.stdout = old_stdout
     exp_output = str_stdout.getvalue()
 
-    assert len(re.findall(r"\(train\).* loss", exp_output)) == 5
-    assert len(re.findall(r"\(valid\).* loss", exp_output)) == 0
-    assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 1
+    assert (
+        len(
+            re.findall(
+                r"\(train\).* loss=\d+\.\d+$", exp_output, flags=re.MULTILINE
+            )
+        )
+        == 5
+    )
+    assert (
+        len(
+            re.findall(
+                r"\(valid\).* loss=\d+\.\d+$", exp_output, flags=re.MULTILINE
+            )
+        )
+        == 0
+    )
+    assert (
+        len(re.findall(r".*/train\.\d\.pth", exp_output, flags=re.MULTILINE))
+        == 1
+    )
 
     assert os.path.isfile(logfile)
-    assert os.path.isfile(checkpoint + "/train.5.pth")
-    assert os.path.isfile(checkpoint + "/train.5_full.pth")
     assert os.path.isfile(checkpoint + "/best.pth")
     assert os.path.isfile(checkpoint + "/best_full.pth")
     assert os.path.isfile(checkpoint + "/last.pth")
     assert os.path.isfile(checkpoint + "/last_full.pth")
+    pth_files = [
+        file for file in os.listdir(checkpoint) if file.endswith(".pth")
+    ]
+    assert len(pth_files) == 6
 
     shutil.rmtree(logdir, ignore_errors=True)
 
@@ -118,21 +138,41 @@ def test_disabling_metric_for_validation():
     sys.stdout = old_stdout
     exp_output = str_stdout.getvalue()
 
-    assert len(re.findall(r"\(train\).* loss", exp_output)) == 5
-    assert len(re.findall(r"\(valid\).* loss", exp_output)) == 0
-    assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 1
+    assert (
+        len(
+            re.findall(
+                r"\(train\).*loss=\d+\.\d+$", exp_output, flags=re.MULTILINE
+            )
+        )
+        == 5
+    )
+    assert (
+        len(
+            re.findall(
+                r"\(valid\): loss=\d+\.\d+$", exp_output, flags=re.MULTILINE
+            )
+        )
+        == 5
+    )
+    assert (
+        len(re.findall(r".*/train\.\d\.pth", exp_output, flags=re.MULTILINE))
+        == 1
+    )
 
     assert os.path.isfile(logfile)
-    assert os.path.isfile(checkpoint + "/train.5.pth")
-    assert os.path.isfile(checkpoint + "/train.5_full.pth")
     assert os.path.isfile(checkpoint + "/best.pth")
     assert os.path.isfile(checkpoint + "/best_full.pth")
     assert os.path.isfile(checkpoint + "/last.pth")
     assert os.path.isfile(checkpoint + "/last_full.pth")
+    pth_files = [
+        file for file in os.listdir(checkpoint) if file.endswith(".pth")
+    ]
+    assert len(pth_files) == 6
 
     shutil.rmtree(logdir, ignore_errors=True)
 
 
+@pytest.mark.skip("loss should be specified for train loader")
 def test_disabling_loss_for_train():
     old_stdout = sys.stdout
     sys.stdout = str_stdout = StringIO()
@@ -166,6 +206,7 @@ def test_disabling_loss_for_train():
         logdir=logdir,
         num_epochs=n_epochs,
         verbose=False,
+        main_metric="accuracy01",
         callbacks=[
             dl.ControlFlowCallback(
                 dl.CriterionCallback(), ignore_loaders=["train"]
@@ -178,17 +219,19 @@ def test_disabling_loss_for_train():
     sys.stdout = old_stdout
     exp_output = str_stdout.getvalue()
 
-    assert len(re.findall(r"\(train\).* loss", exp_output)) == 5
-    assert len(re.findall(r"\(valid\).* loss", exp_output)) == 0
+    assert len(re.findall(r"\(train\): loss", exp_output)) == 5
+    assert len(re.findall(r"\(valid\): loss", exp_output)) == 0
     assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 1
 
     assert os.path.isfile(logfile)
-    assert os.path.isfile(checkpoint + "/train.5.pth")
-    assert os.path.isfile(checkpoint + "/train.5_full.pth")
     assert os.path.isfile(checkpoint + "/best.pth")
     assert os.path.isfile(checkpoint + "/best_full.pth")
     assert os.path.isfile(checkpoint + "/last.pth")
     assert os.path.isfile(checkpoint + "/last_full.pth")
+    pth_files = [
+        file for file in os.listdir(checkpoint) if file.endswith(".pth")
+    ]
+    assert len(pth_files) == 6
 
     shutil.rmtree(logdir, ignore_errors=True)
 
@@ -238,16 +281,35 @@ def test_ignoring_metric_on_train_dataset():
     sys.stdout = old_stdout
     exp_output = str_stdout.getvalue()
 
-    assert len(re.findall(r"\(train\).* loss", exp_output)) == 5
-    assert len(re.findall(r"\(valid\).* loss", exp_output)) == 0
-    assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 1
+    assert (
+        len(
+            re.findall(
+                r"\(train\): loss=\d+\.\d+$", exp_output, flags=re.MULTILINE
+            )
+        )
+        == 5
+    )
+    assert (
+        len(
+            re.findall(
+                r"\(valid\): .*loss=\d+\.\d+$", exp_output, flags=re.MULTILINE
+            )
+        )
+        == 5
+    )
+    assert (
+        len(re.findall(r".*/train\.\d\.pth", exp_output, flags=re.MULTILINE))
+        == 1
+    )
 
     assert os.path.isfile(logfile)
-    assert os.path.isfile(checkpoint + "/train.5.pth")
-    assert os.path.isfile(checkpoint + "/train.5_full.pth")
     assert os.path.isfile(checkpoint + "/best.pth")
     assert os.path.isfile(checkpoint + "/best_full.pth")
     assert os.path.isfile(checkpoint + "/last.pth")
     assert os.path.isfile(checkpoint + "/last_full.pth")
+    pth_files = [
+        file for file in os.listdir(checkpoint) if file.endswith(".pth")
+    ]
+    assert len(pth_files) == 6
 
     shutil.rmtree(logdir, ignore_errors=True)
