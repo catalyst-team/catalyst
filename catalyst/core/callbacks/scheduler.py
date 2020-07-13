@@ -10,7 +10,7 @@ from catalyst.core.runner import IRunner
 
 
 class SchedulerCallback(Callback):
-    """@TODO: Docs. Contribution is welcome."""
+    """Callback for executing scheduler scheduler."""
 
     def __init__(
         self,
@@ -18,7 +18,15 @@ class SchedulerCallback(Callback):
         mode: str = None,
         reduced_metric: str = None,
     ):
-        """@TODO: Docs. Contribution is welcome."""
+        """
+        Args:
+            scheduler_key (str): scheduler name, default is ``None``.
+            mode (str): scheduler mode, should be one of
+                ``"epoch"`` or ``"batch"``, default is ``None``.
+            reduced_metric (str): metric name to forward to scheduler
+                object, if ``None`` then will be used main metric
+                specified in experiment.
+        """
         super().__init__(order=CallbackOrder.scheduler, node=CallbackNode.all)
         self.scheduler_key = scheduler_key
         self.mode = mode

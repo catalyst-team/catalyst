@@ -5,10 +5,14 @@ from catalyst.core.runner import IRunner
 
 
 class CheckRunCallback(Callback):
-    """@TODO: Docs. Contribution is welcome."""
+    """Execute exeperiment not fully."""
 
     def __init__(self, num_batch_steps: int = 3, num_epoch_steps: int = 2):
-        """@TODO: Docs. Contribution is welcome."""
+        """
+        Args:
+            num_batch_steps (int): number of batches to iterate in epoch
+            num_epoch_steps (int): number of epoch to perform in a stage
+        """
         super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         self.num_batch_steps = num_batch_steps
         self.num_epoch_steps = num_epoch_steps
@@ -25,7 +29,7 @@ class CheckRunCallback(Callback):
 
 
 class EarlyStoppingCallback(Callback):
-    """@TODO: Docs. Contribution is welcome."""
+    """Early exit based on metric."""
 
     def __init__(
         self,
@@ -34,7 +38,21 @@ class EarlyStoppingCallback(Callback):
         minimize: bool = True,
         min_delta: float = 1e-6,
     ):
-        """@TODO: Docs. Contribution is welcome."""
+        """
+        Args:
+            patience (int): number of epochs with no improvement
+                after which training will be stopped.
+            metric (str): metric name to use for early stopping, default
+                is ``"loss"``
+            minimize (bool): if ``True`` then expected that metric should
+                decrease and early stopping will be performed only when metric
+                stops decreasing. If ``False`` then expected
+                that metric should increase. Default value ``True``.
+            min_delta (float): minimum change in the monitored metric
+                to qualify as an improvement, i.e. an absolute change
+                of less than min_delta, will count as no improvement,
+                default value is ``1e-6``
+        """
         super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         self.best_score = None
         self.metric = metric
