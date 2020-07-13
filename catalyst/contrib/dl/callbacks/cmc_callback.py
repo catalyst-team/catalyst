@@ -129,7 +129,9 @@ class CMCScoreCallback(Callback):
         self._query_size = loader.dataset.query_size
         self._gallery_size = loader.dataset.gallery_size
         self._query_labels = torch.empty(self._query_size, dtype=torch.long)
-        self._gallery_labels = torch.empty(self._gallery_size, dtype=torch.long)
+        self._gallery_labels = torch.empty(
+            self._gallery_size, dtype=torch.long
+        )
         self._gallery_idx = 0
         self._query_idx = 0
 
