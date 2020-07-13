@@ -40,7 +40,7 @@ class CMCScoreCallback(Callback):
     def __init__(
         self,
         embeddings_key: str = "embeddings",
-        labels_key: str = "labels",
+        labels_key: str = "targets",
         is_query_key: str = "is_query",
         prefix: str = "cmc",
         topk_args: List[int] = None,
@@ -130,6 +130,8 @@ class CMCScoreCallback(Callback):
         self._gallery_size = loader.dataset.gallery_size
         self._query_labels = torch.empty(self._query_size)
         self._gallery_labels = torch.empty(self._gallery_size)
+        self._gallery_idx = 0
+        self._query_idx = 0
 
     def on_loader_end(self, runner: "IRunner"):
         """On loader end action"""
@@ -144,5 +146,3 @@ class CMCScoreCallback(Callback):
             runner.loader_metrics[f"{self._prefix}_{k}"] = metric
         self._gallery_embeddings = None
         self._query_embeddings = None
-        self._gallery_idx = 0
-        self._query_idx = 0
