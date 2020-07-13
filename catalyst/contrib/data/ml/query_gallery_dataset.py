@@ -1,0 +1,40 @@
+import torch
+from abc import ABC, abstractmethod
+from typing import Dict
+
+from torch.utils.data import Dataset
+
+
+class QueryGalleryDataset(Dataset, ABC):
+    @abstractmethod
+    def __getitem__(self, item) -> Dict[str, torch.Tensor]:
+        """
+        Dataset for query/gallery split should
+        return dict with `embeddings`, `labels` and
+        `is_query` key. Value by key `is_query` should
+        be boolean and indicate whether current object
+        is in query or in gallery.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    @property
+    def query_size(self) -> int:
+        """
+        Query/Gallery dataset should have property
+        query size
+        Returns:
+            query size
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    @property
+    def gallery_size(self) -> int:
+        """
+        Query/Gallery dataset should have property
+        gallery size
+        Returns:
+            gallery size
+        """
+        raise NotImplementedError

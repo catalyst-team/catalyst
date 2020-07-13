@@ -64,6 +64,7 @@ class CMCScoreCallback(Callback):
                 [1, 3, 5] - cmc@1, cmc@3 and cmc@5
 
         """
+
         self.list_args = topk_args or [1]
         self._metric_fn = cmc_score
         self._prefix = prefix
@@ -75,9 +76,10 @@ class CMCScoreCallback(Callback):
         self._gallery_labels: torch.Tensor = None
         self._query_labels: torch.Tensor = None
         super().__init__(order=CallbackOrder.Metric)
-        self._first_epoch = True
         self._gallery_idx = None
         self._query_idx = None
+        self._query_size = None
+        self._gallery_size = None
 
     def on_batch_end(self, runner: "IRunner"):
         """On batch end action"""
@@ -90,49 +92,17 @@ class CMCScoreCallback(Callback):
         ].cpu()
         query_labels = runner.input[self.labels_key][query_mask].cpu()
         gallery_labels = runner.input[self.labels_key][gallery_mask].cpu()
-        if self._first_epoch:
-            self._accumulate_first_epoch(
-                query_embeddings,
-                gallery_embeddings,
-                query_labels,
-                gallery_labels,
-            )
-        else:
-            self._accumulate(
-                query_embeddings,
-                gallery_embeddings,
-                query_labels,
-                gallery_labels,
-            )
 
-    def _accumulate_first_epoch(
-        self,
-        query_embeddings: torch.Tensor,
-        gallery_embeddings: torch.Tensor,
-        query_labels: torch.LongTensor,
-        gallery_labels: torch.LongTensor,
-    ) -> None:
         if self._query_embeddings is None:
-            self._query_embeddings = query_embeddings
-            self._query_labels = query_labels
-        else:
-            self._query_embeddings = torch.cat(
-                (self._query_embeddings, query_embeddings), dim=0
-            )
-            self._query_labels = torch.cat(
-                (self._query_labels, query_labels), dim=0
-            )
-
-        if self._gallery_embeddings is None:
-            self._gallery_embeddings = gallery_embeddings
-            self._gallery_labels = gallery_labels
-        else:
-            self._gallery_embeddings = torch.cat(
-                (self._gallery_embeddings, gallery_embeddings), dim=0
-            )
-            self._gallery_labels = torch.cat(
-                (self._gallery_labels, gallery_labels), dim=0
-            )
+            emb_dim = query_embeddings.shape[1]
+            self._query_embeddings = torch.empty(self._query_size, emb_dim)
+            self._gallery_embeddings = torch.empty(self._query_size, emb_dim)
+        self._accumulate(
+            query_embeddings,
+            gallery_embeddings,
+            query_labels,
+            gallery_labels,
+        )
 
     def _accumulate(
         self,
@@ -156,13 +126,13 @@ class CMCScoreCallback(Callback):
             self._gallery_labels[add_mask] = gallery_labels
             self._gallery_idx += gallery_embeddings.shape[0]
 
-    def on_epoch_end(self, runner: "IRunner"):
-        """On loader enf action"""
-        self._first_epoch = True
-        self._gallery_embeddings: torch.Tensor = None
-        self._query_embeddings: torch.Tensor = None
-        self._gallery_labels: torch.Tensor = None
-        self._query_labels: torch.Tensor = None
+    def on_loader_start(self, runner: "IRunner"):
+        """On loader start action"""
+        loader = runner.loaders[runner.loader_name]
+        self._query_size = loader.dataset.query_size
+        self._gallery_size = loader.dataset.gallery_size
+        self._query_labels = torch.empty(self._query_size)
+        self._gallery_labels = torch.empty(self._gallery_size)
 
     def on_loader_end(self, runner: "IRunner"):
         """On loader end action"""
@@ -175,6 +145,7 @@ class CMCScoreCallback(Callback):
                 k,
             )
             runner.loader_metrics[f"{self._prefix}_{k}"] = metric
-        self._first_epoch = False
+        self._gallery_embeddings = None
+        self._query_embeddings = None
         self._gallery_idx = 0
         self._query_idx = 0
