@@ -63,12 +63,12 @@ class QueryGalleryFolderDataset(QueryGalleryDataset):
     Expecting input: ::
 
         path/query/class_x/xxx.ext
-        path/query/class_x/xxy.ext
-        path/query/class_x/xxz.ext
+        path/query/class_y/xxy.ext
+        path/query/class_z/xxz.ext
 
-        path/gallery/class_y/123.ext
+        path/gallery/class_x/123.ext
         path/gallery/class_y/nsdf3.ext
-        path/gallery/class_y/asd932_.ext
+        path/gallery/class_z/asd932_.ext
     """
 
     def __init__(self, path: str, transform=None):
