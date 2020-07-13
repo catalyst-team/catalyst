@@ -62,10 +62,10 @@ def ndcg(
     """
     ideal = dcg(targets, targets, k, gains)
     actual = dcg(outputs, targets, k, gains)
-    if best == 0:
-        ndcg_score = 0
-    else:
-        ndcg_score = actual / best
+
+    ndcg_score = 0.0
+    if ideal != 0:
+        ndcg_score = actual / ideal
     return ndcg_score
 
 
