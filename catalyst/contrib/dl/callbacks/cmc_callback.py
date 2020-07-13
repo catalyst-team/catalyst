@@ -39,7 +39,7 @@ class CMCScoreCallback(Callback):
 
     def __init__(
         self,
-        embeddings_key: str = "embeddings",
+        embeddings_key: str = "logits",
         labels_key: str = "targets",
         is_query_key: str = "is_query",
         prefix: str = "cmc",
