@@ -1,6 +1,6 @@
 import torch
 
-from catalyst.contrib import registry
+from catalyst.registry import registry
 
 
 @registry.Model

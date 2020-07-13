@@ -2,7 +2,7 @@
 from torch import nn
 from torch.nn import functional as F
 
-from catalyst.contrib import registry
+from catalyst.registry import registry
 
 
 @registry.Model

@@ -9,7 +9,7 @@ import torchvision
 
 from catalyst import utils
 from catalyst.contrib.nn.modules import Flatten
-from catalyst.contrib.registry import MODULES
+from catalyst.registry.registry import MODULES
 
 
 class ResnetEncoder(nn.Module):

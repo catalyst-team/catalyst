@@ -9,7 +9,7 @@ import torch
 from torch import nn
 
 from catalyst import utils
-from catalyst.contrib.registry import MODULES
+from catalyst.registry.registry import MODULES
 
 
 def _process_additional_params(params, layers):

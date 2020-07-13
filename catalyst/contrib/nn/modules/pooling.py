@@ -4,7 +4,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from catalyst.contrib.registry import MODULES
+from catalyst.registry.registry import MODULES
 
 
 class GlobalAvgPool2d(nn.Module):

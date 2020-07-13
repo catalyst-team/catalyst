@@ -142,12 +142,31 @@ SCHEDULERS = Registry("scheduler")
 SCHEDULERS.late_add(_schedulers_loader)
 Scheduler = SCHEDULERS.add
 
-
 EXPERIMENTS = Registry("experiment")
 Experiment = EXPERIMENTS.add
 
+RUNNERS = Registry("runner")
+Runner = RUNNERS.add
+
+
+def _callbacks_loader(r: Registry):
+    from catalyst.core import callbacks as m
+    r.add_from_module(m)
+
+    from catalyst.dl import callbacks as m  # noqa: WPS347
+    r.add_from_module(m)
+
+    from catalyst.contrib.dl import callbacks as m  # noqa: WPS347
+    r.add_from_module(m)
+
+
+CALLBACKS = Registry("callback")
+CALLBACKS.late_add(_callbacks_loader)
+Callback = CALLBACKS.add
+
 
 __all__ = [
+    "Callback",
     "Criterion",
     "Optimizer",
     "Scheduler",
@@ -156,6 +175,7 @@ __all__ = [
     "Sampler",
     "Transform",
     "Experiment",
+    "CALLBACKS",
     "CRITERIONS",
     "GRAD_CLIPPERS",
     "MODELS",
