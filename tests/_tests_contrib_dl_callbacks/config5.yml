@@ -60,3 +60,6 @@ stages:
         valid: 3
         valid_additional: 0
         valid_not_exists: 2
+      fast_run:
+        callback: CheckRunCallback
+        num_epoch_steps: *num_epochs
