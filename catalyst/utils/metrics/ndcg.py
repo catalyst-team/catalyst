@@ -57,6 +57,7 @@ def ndcg(
     Returns:
         list with computed ndcg@topk
     """
+<<<<<<< HEAD
     ideal_dcgs = dcg(targets, targets, topk)
     actual_dcgs = dcg(outputs, targets, topk)
 
@@ -67,6 +68,15 @@ def ndcg(
         else:
             ndcg_scores.append(torch.tensor(0.0))
     return ndcg_scores
+=======
+    ideal = dcg(targets, targets, k, gains)
+    actual = dcg(outputs, targets, k, gains)
+
+    ndcg_score = 0.0
+    if ideal != 0:
+        ndcg_score = actual / ideal
+    return ndcg_score
+>>>>>>> 8ddd5ae6... Fix tiny mistake in ndcg
 
 
 __all__ = ["dcg", "ndcg"]
