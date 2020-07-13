@@ -46,3 +46,6 @@ stages:
         load_on_stage_start:
           model: ./tests/logs/_tests_dl_callbacks/for_resume/checkpoints/best.pth
           optimizer: ./tests/logs/_tests_dl_callbacks/for_resume/checkpoints/last_full.pth
+      fast_run:
+        callback: CheckRunCallback
+        num_epoch_steps: *num_epochs
