@@ -41,7 +41,7 @@ class CMCScoreCallback(Callback):
         self,
         embeddings_key: str = "embeddings",
         labels_key: str = "labels",
-        is_query_key: str = "query",
+        is_query_key: str = "is_query",
         prefix: str = "cmc",
         topk_args: List[int] = None,
     ):
@@ -98,10 +98,7 @@ class CMCScoreCallback(Callback):
             self._query_embeddings = torch.empty(self._query_size, emb_dim)
             self._gallery_embeddings = torch.empty(self._query_size, emb_dim)
         self._accumulate(
-            query_embeddings,
-            gallery_embeddings,
-            query_labels,
-            gallery_labels,
+            query_embeddings, gallery_embeddings, query_labels, gallery_labels,
         )
 
     def _accumulate(

@@ -17,8 +17,8 @@ class QueryGalleryDataset(Dataset, ABC):
         """
         raise NotImplementedError
 
-    @abstractmethod
     @property
+    @abstractmethod
     def query_size(self) -> int:
         """
         Query/Gallery dataset should have property
@@ -28,8 +28,8 @@ class QueryGalleryDataset(Dataset, ABC):
         """
         raise NotImplementedError
 
-    @abstractmethod
     @property
+    @abstractmethod
     def gallery_size(self) -> int:
         """
         Query/Gallery dataset should have property
