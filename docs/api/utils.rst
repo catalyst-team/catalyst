@@ -258,3 +258,10 @@ IoU
     :members:
     :undoc-members:
     :show-inheritance:
+
+nDCG
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.metrics.ndcg
+    :members:
+    :undoc-members:
+    :show-inheritance:
