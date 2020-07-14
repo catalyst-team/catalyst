@@ -265,27 +265,78 @@
 
 
 <div class="viewcode-block" id="CheckRunCallback"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.early_stop.CheckRunCallback">[docs]</a><span class="k">class</span> <span class="nc">CheckRunCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Execute exeperiment not fully.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="CheckRunCallback.__init__"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.early_stop.CheckRunCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_batch_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">num_epoch_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            num_batch_steps (int): number of batches to iterate in epoch</span>
+<span class="sd">            num_epoch_steps (int): number of epoch to perform in a stage</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">external</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">all</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_batch_steps</span> <span class="o">=</span> <span class="n">num_batch_steps</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_epoch_steps</span> <span class="o">=</span> <span class="n">num_epoch_steps</span></div>
 
 <div class="viewcode-block" id="CheckRunCallback.on_epoch_end"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.early_stop.CheckRunCallback.on_epoch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Check if iterated specified number of epochs.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">epoch</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_epoch_steps</span><span class="p">:</span>
             <span class="n">runner</span><span class="o">.</span><span class="n">need_early_stop</span> <span class="o">=</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="CheckRunCallback.on_batch_end"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.early_stop.CheckRunCallback.on_batch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Check if iterated specified number of batches.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_batch_step</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_batch_steps</span><span class="p">:</span>
             <span class="n">runner</span><span class="o">.</span><span class="n">need_early_stop</span> <span class="o">=</span> <span class="kc">True</span></div></div>
 
 
 <div class="viewcode-block" id="EarlyStoppingCallback"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.early_stop.EarlyStoppingCallback">[docs]</a><span class="k">class</span> <span class="nc">EarlyStoppingCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Early exit based on metric.</span>
+
+<span class="sd">    Example of usage in notebook API:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        runner = SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            ...</span>
+<span class="sd">            callbacks=[</span>
+<span class="sd">                ...</span>
+<span class="sd">                EarlyStoppingCallback(</span>
+<span class="sd">                    patience=5,</span>
+<span class="sd">                    metric=&quot;my_metric&quot;,</span>
+<span class="sd">                    minimize=True,</span>
+<span class="sd">                )</span>
+<span class="sd">                ...</span>
+<span class="sd">            ]</span>
+<span class="sd">        )</span>
+<span class="sd">        ...</span>
+
+<span class="sd">    Example of usage in config API:</span>
+
+<span class="sd">    .. code-block:: yaml</span>
+
+<span class="sd">        stages:</span>
+<span class="sd">          ...</span>
+<span class="sd">          stage_N:</span>
+<span class="sd">            ...</span>
+<span class="sd">            callbacks_params:</span>
+<span class="sd">              ...</span>
+<span class="sd">              early_stopping:</span>
+<span class="sd">                callback: EarlyStoppingCallback</span>
+<span class="sd">                # arguments for EarlyStoppingCallback</span>
+<span class="sd">                patience: 5</span>
+<span class="sd">                metric: my_metric</span>
+<span class="sd">                minimize: true</span>
+<span class="sd">          ...</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="EarlyStoppingCallback.__init__"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.early_stop.EarlyStoppingCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -294,7 +345,21 @@
         <span class="n">minimize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">min_delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            patience (int): number of epochs with no improvement</span>
+<span class="sd">                after which training will be stopped.</span>
+<span class="sd">            metric (str): metric name to use for early stopping, default</span>
+<span class="sd">                is ``&quot;loss&quot;``.</span>
+<span class="sd">            minimize (bool): if ``True`` then expected that metric should</span>
+<span class="sd">                decrease and early stopping will be performed only when metric</span>
+<span class="sd">                stops decreasing. If ``False`` then expected</span>
+<span class="sd">                that metric should increase. Default value ``True``.</span>
+<span class="sd">            min_delta (float): minimum change in the monitored metric</span>
+<span class="sd">                to qualify as an improvement, i.e. an absolute change</span>
+<span class="sd">                of less than min_delta, will count as no improvement,</span>
+<span class="sd">                default value is ``1e-6``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">external</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">all</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">=</span> <span class="n">metric</span>
@@ -308,7 +373,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">is_better</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">score</span><span class="p">,</span> <span class="n">best</span><span class="p">:</span> <span class="n">score</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="n">best</span> <span class="o">+</span> <span class="n">min_delta</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="EarlyStoppingCallback.on_epoch_end"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.early_stop.EarlyStoppingCallback.on_epoch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Check if should be performed early stopping.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">stage_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">):</span>
             <span class="k">return</span>
 

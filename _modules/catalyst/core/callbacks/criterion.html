@@ -306,11 +306,15 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">metric_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Criterion function.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span>
 
 <div class="viewcode-block" id="CriterionCallback.on_stage_start"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.criterion.CriterionCallback.on_stage_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Checks that the current stage has correct criterion.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Checks that the current stage has correct criterion.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">criterion</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span>
             <span class="n">key</span><span class="o">=</span><span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="n">inner_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">criterion_key</span>
         <span class="p">)</span>
