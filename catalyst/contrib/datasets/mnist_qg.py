@@ -3,7 +3,7 @@ from typing import Callable, Optional
 import torch
 
 from catalyst.contrib.datasets import MNIST
-from .query_gallery_dataset import QueryGalleryDataset
+from catalyst.data.dataset import QueryGalleryDataset
 
 
 class MnistQGDataset(QueryGalleryDataset):

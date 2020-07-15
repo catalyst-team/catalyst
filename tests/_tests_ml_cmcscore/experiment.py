@@ -1,7 +1,7 @@
 # flake8: noqa
 from collections import OrderedDict
 
-from catalyst.contrib.data.ml import MnistQGDataset
+from catalyst.contrib.datasets import MnistQGDataset
 from catalyst.contrib.data.transforms import Compose, Normalize, ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.dl import ConfigExperiment
