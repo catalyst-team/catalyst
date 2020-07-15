@@ -5,7 +5,7 @@ import torch
 from catalyst.core import IRunner
 from catalyst.core.callback import CallbackOrder
 from catalyst.dl import Callback
-from catalyst.dl.callbacks.metrics.accuracy import _get_default_accuracy_args
+from catalyst.dl.callbacks.metrics.accuracy import get_default_accuracy_args
 from catalyst.utils.metrics.cmc_score import cmc_score
 
 
@@ -28,8 +28,18 @@ class CMCScoreCallback(Callback):
         from catalyst.contrib.datasets import MNIST, MnistQGDataset
         from catalyst.contrib.data.transforms import ToTensor
 
-        train = MNIST(os.getcwd(), download=True, train=True, transform=ToTensor())
-        valid = MNIST(os.getcwd(), download=True, train=False, transform=ToTensor())
+        train = MNIST(
+            os.getcwd(),
+            download=True,
+            train=True,
+            transform=ToTensor()
+        )
+        valid = MNIST(
+            os.getcwd(),
+            download=True,
+            train=False,
+            transform=ToTensor()
+        )
         query_gallery = MnistQGDataset(os.getcwd(), transform=ToTensor())
 
         train_loader = DataLoader(train, batch_size=32, shuffle=True)
@@ -76,7 +86,6 @@ class CMCScoreCallback(Callback):
             num_epochs=1,
         )
     """
-
     def __init__(
         self,
         embeddings_key: str = "logits",
@@ -110,7 +119,7 @@ class CMCScoreCallback(Callback):
 
         """
 
-        self.list_args = topk_args or _get_default_accuracy_args(num_classes)
+        self.list_args = topk_args or get_default_accuracy_args(num_classes)
         self._metric_fn = cmc_score
         self._prefix = prefix
         self.embeddings_key = embeddings_key
