@@ -5,6 +5,7 @@ import torch
 from catalyst.core import IRunner
 from catalyst.core.callback import CallbackOrder
 from catalyst.dl import Callback
+from catalyst.dl.callbacks.metrics.accuracy import _get_default_accuracy_args
 from catalyst.utils.metrics.cmc_score import cmc_score
 
 
@@ -17,23 +18,62 @@ class CMCScoreCallback(Callback):
     Loaders should contain "is_query" and "label" key.
 
     .. code-block:: python
+        import os
+        import torch
+        from torch.utils.data import DataLoader
+
+        from catalyst.contrib.nn.criterion import TripletLoss
+        from catalyst.core.callbacks import ControlFlowCallback
+        from catalyst.dl import CMCScoreCallback, SupervisedRunner
+        from catalyst.contrib.datasets import MNIST, MnistQGDataset
+        from catalyst.contrib.data.transforms import ToTensor
+
+        train = MNIST(os.getcwd(), download=True, train=True, transform=ToTensor())
+        valid = MNIST(os.getcwd(), download=True, train=False, transform=ToTensor())
+        query_gallery = MnistQGDataset(os.getcwd(), transform=ToTensor())
+
+        train_loader = DataLoader(train, batch_size=32, shuffle=True)
+        valid_loader = DataLoader(valid, batch_size=32)
+        query_gallery = DataLoader(query_gallery, batch_size=64)
+
+        loaders = {
+            "train": train_loader,
+            "valid": valid_loader,
+            "valid_qg": query_gallery
+        }
+
+        callbacks = [
+            ControlFlowCallback(
+                base_callback=CMCScoreCallback(
+                    topk_args=[1, 3, 5]
+                ),
+                loaders="valid_qg"
+            )
+        ]
+
+        criterion = TripletLoss()
+
+        class Flatten(torch.nn.Module):
+            def forward(self, x):
+                return x.view(x.size(0), -1)
+
+        model = torch.nn.Sequential(
+            Flatten(),
+            torch.nn.Linear(28*28, 2)
+        )
+
+        optimizer = torch.optim.Adam(model.parameters())
+
+        runner = SupervisedRunner()
 
         runner.train(
             model=model,
+            loaders=loaders,
             criterion=criterion,
             optimizer=optimizer,
-            scheduler=scheduler,
-            loaders=loaders,
-            logdir="./logdir",
-            num_epochs=5,
-            callbacks=[
-                ControlFlowCallback(
-                    base_callback=CMCScoreCallback(
-                        topk_args=[1, 5]
-                    ),
-                    loaders=["split_1", "split_2"]
-                )
-            ]
+            callbacks=callbacks,
+            check=False,
+            num_epochs=1,
         )
     """
 
@@ -44,6 +84,7 @@ class CMCScoreCallback(Callback):
         is_query_key: str = "is_query",
         prefix: str = "cmc",
         topk_args: List[int] = None,
+        num_classes: int = None,
     ):
         """
         This callback was designed to count
@@ -64,10 +105,12 @@ class CMCScoreCallback(Callback):
                 [1] - cmc@1
                 [1, 3] - cmc@1 and cmc@3
                 [1, 3, 5] - cmc@1, cmc@3 and cmc@5
+            num_classes (int): number of classes to calculate ``accuracy_args``
+                if ``topk_args`` is None
 
         """
 
-        self.list_args = topk_args or [1]
+        self.list_args = topk_args or _get_default_accuracy_args(num_classes)
         self._metric_fn = cmc_score
         self._prefix = prefix
         self.embeddings_key = embeddings_key
@@ -149,6 +192,7 @@ class CMCScoreCallback(Callback):
                 conformity_matrix,
                 k,
             )
+            runner.loader_metrics[f"{self._prefix}_{k}"] = metric
             runner.epoch_metrics[
                 f"{runner.loader_name}_{self._prefix}_{k}"
             ] = metric

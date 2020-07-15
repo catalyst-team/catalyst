@@ -1,9 +1,8 @@
 # flake8: noqa
 from collections import OrderedDict
 
-from catalyst.contrib.datasets import MnistQGDataset
 from catalyst.contrib.data.transforms import Compose, Normalize, ToTensor
-from catalyst.contrib.datasets import MNIST
+from catalyst.contrib.datasets import MNIST, MnistQGDataset
 from catalyst.dl import ConfigExperiment
 
 
@@ -40,7 +39,7 @@ class Experiment(ConfigExperiment):
 
         datasets["train"] = trainset
         datasets["valid"] = testset
-        datasets["query_gallery"] = MnistQGDataset(
+        datasets["valid_query_gallery"] = MnistQGDataset(
             "./data",
             transform=Experiment.get_transforms(stage=stage, mode="valid"),
         )

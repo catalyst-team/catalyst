@@ -10,7 +10,7 @@ stages:
   trian:
     stage_params:
       main_metric: cmc_1
-      valid_loader: query_gallery
+      valid_loader: valid_query_gallery
       minimize_metric: false
 
     data_params:
@@ -28,7 +28,7 @@ stages:
       cmc:
         _wrapper:
           callback: ControlFlowCallback
-          loaders: query_gallery
+          loaders: valid_query_gallery
         callback: CMCScoreCallback
         topk_args:
           - 1
