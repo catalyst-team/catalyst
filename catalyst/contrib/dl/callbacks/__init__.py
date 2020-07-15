@@ -10,7 +10,6 @@ from .periodic_loader_callback import PeriodicLoaderCallback
 from .perplexity_metric import PerplexityMetricCallback
 from .telegram_logger import TelegramLogger
 from .tracer_callback import TracerCallback
-from .cmc_callback import CMCScoreCallback
 
 logger = logging.getLogger(__name__)
 
