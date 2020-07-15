@@ -46,11 +46,15 @@ class CriterionCallback(IMetricCallback):
 
     @property
     def metric_fn(self):
-        """@TODO: Docs. Contribution is welcome."""
+        """Criterion function."""
         return self._criterion
 
     def on_stage_start(self, runner: IRunner):
-        """Checks that the current stage has correct criterion."""
+        """Checks that the current stage has correct criterion.
+
+        Args:
+            runner (IRunner): current runner
+        """
         criterion = runner.get_attr(
             key="criterion", inner_key=self.criterion_key
         )

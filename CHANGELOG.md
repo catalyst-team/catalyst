@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - `CMCScoreCallback` ([#880](https://github.com/catalyst-team/catalyst/pull/880))
 
+- kornia augmentations `BatchTransformCallback` ([#862](https://github.com/catalyst-team/catalyst/issues/862))
+
 ### Changed
 
 - 
@@ -62,7 +64,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - annoying numpy warning ([#860](https://github.com/catalyst-team/catalyst/pull/860))
 - `PeriodicLoaderCallback` overwrites best state ([#867](https://github.com/catalyst-team/catalyst/pull/867))
 - `OneCycleLRWithWarmup` ([#851](https://github.com/catalyst-team/catalyst/issues/851))
-
 
 ## [20.06] - 2020-06-04
 
