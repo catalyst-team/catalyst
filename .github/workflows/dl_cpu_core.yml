@@ -114,6 +114,4 @@ jobs:
       - name: check examples
         env:
           REQUIREMENTS: ${{ matrix.requirements }}
-        run: |
-          (set -e; for f in ./bin/tests/check_dl_core*.sh; do USE_APEX="0" CUDA_VISIBLE_DEVICES="" bash "$f"; done)
-          (set -e; for f in ./bin/tests/check_dl_ml*.sh; do USE_APEX="0" CUDA_VISIBLE_DEVICES="" bash "$f"; done)
+        run: (set -e; for f in ./bin/tests/check_dl_core*.sh; do USE_APEX="0" CUDA_VISIBLE_DEVICES="" bash "$f"; done)
