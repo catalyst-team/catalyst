@@ -6,7 +6,7 @@ import pytest
 
 import torch
 
-from catalyst.core.callbacks.cmc_callback import (  # noqa: F401
+from catalyst.dl.callbacks.cmc_callback import (  # noqa: F401
     CMCScoreCallback,
 )
 from catalyst.utils.metrics.cmc_score import cmc_score_count
