@@ -1,9 +1,7 @@
 import torch
 
-def mrr(
-    outputs: torch.Tensor,
-    targets: torch.Tensor
-):
+
+def mrr(outputs: torch.Tensor, targets: torch.Tensor):
 
     """
     Calculate the MRR score given model ouptputs and targets
@@ -21,7 +19,9 @@ def mrr(
     true_sorted_by_preds = torch.gather(targets, dim=0, index=indices)
     values, indices = torch.max(true_sorted_by_preds, dim=0)
     indices = indices.type_as(values).unsqueeze(dim=0).t()
-    ats_rep = torch.tensor(data=max_rank, device=indices.device, dtype=torch.float32)
+    ats_rep = torch.tensor(
+        data=max_rank, device=indices.device, dtype=torch.float32
+    )
     within_at_mask = (indices < ats_rep).type(torch.float32)
 
     result = torch.tensor(1.0) / (indices + torch.tensor(1.0))
@@ -32,4 +32,5 @@ def mrr(
     mrr = result * within_at_mask
     return mrr[0]
 
-__all__ = ['mrr']
+
+__all__ = ["mrr"]

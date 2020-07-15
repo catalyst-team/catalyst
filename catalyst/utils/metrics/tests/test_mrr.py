@@ -2,6 +2,7 @@ import torch
 
 from catalyst.utils import metrics
 
+
 def test_mrr():
     """
     Tests for catalyst.utils.metrics.mrr metric.
