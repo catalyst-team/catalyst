@@ -8,7 +8,6 @@ from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
-from catalyst.registry import registry
 from catalyst.contrib.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.dl.callbacks.tracer_callback import TracerCallback
@@ -17,6 +16,7 @@ from catalyst.core.callbacks import CriterionCallback, OptimizerCallback
 from catalyst.core.runner import IRunner
 from catalyst.dl import SupervisedRunner
 from catalyst.dl.utils import get_device, get_trace_name
+from catalyst.registry import registry
 
 
 @registry.Model

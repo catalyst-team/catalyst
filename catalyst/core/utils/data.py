@@ -6,8 +6,8 @@ import warnings
 import torch
 from torch.utils.data import DataLoader, Dataset, DistributedSampler
 
-from catalyst.registry.registry import SAMPLERS
 from catalyst.data import DistributedSamplerWrapper
+from catalyst.registry.registry import SAMPLERS
 from catalyst.utils import get_rank, merge_dicts, set_global_seed
 
 

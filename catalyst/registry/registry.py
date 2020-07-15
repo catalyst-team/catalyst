@@ -151,12 +151,15 @@ Runner = RUNNERS.add
 
 def _callbacks_loader(r: Registry):
     from catalyst.core import callbacks as m
+
     r.add_from_module(m)
 
     from catalyst.dl import callbacks as m  # noqa: WPS347
+
     r.add_from_module(m)
 
     from catalyst.contrib.dl import callbacks as m  # noqa: WPS347
+
     r.add_from_module(m)
 
 

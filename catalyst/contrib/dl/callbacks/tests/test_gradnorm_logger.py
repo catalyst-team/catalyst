@@ -8,7 +8,6 @@ from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
-from catalyst.registry import registry
 from catalyst.contrib.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.dl.callbacks.gradnorm_logger import GradNormLogger
@@ -16,6 +15,7 @@ from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.callbacks import CriterionCallback, OptimizerCallback
 from catalyst.core.runner import IRunner
 from catalyst.dl import SupervisedRunner
+from catalyst.registry import registry
 
 
 @registry.Model
