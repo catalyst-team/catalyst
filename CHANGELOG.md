@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [20.07.1] - YYYY-MM-DD
 
 ### Added
-- MRR metrics calculation 
+- MRR metrics calculation ([#886](https://github.com/catalyst-team/catalyst/pull/886))
 - 
 
 ### Changed
