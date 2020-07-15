@@ -126,26 +126,6 @@ class CMCScoreCallback(Callback):
         self._query_size = None
         self._gallery_size = None
 
-    def on_batch_end(self, runner: "IRunner"):
-        """On batch end action"""
-        query_mask = runner.input[self.is_query_key]
-        # bool mask
-        gallery_mask = ~query_mask
-        query_embeddings = runner.output[self.embeddings_key][query_mask].cpu()
-        gallery_embeddings = runner.output[self.embeddings_key][
-            gallery_mask
-        ].cpu()
-        query_labels = runner.input[self.labels_key][query_mask].cpu()
-        gallery_labels = runner.input[self.labels_key][gallery_mask].cpu()
-
-        if self._query_embeddings is None:
-            emb_dim = query_embeddings.shape[1]
-            self._query_embeddings = torch.empty(self._query_size, emb_dim)
-            self._gallery_embeddings = torch.empty(self._gallery_size, emb_dim)
-        self._accumulate(
-            query_embeddings, gallery_embeddings, query_labels, gallery_labels,
-        )
-
     def _accumulate(
         self,
         query_embeddings: torch.Tensor,
@@ -167,6 +147,26 @@ class CMCScoreCallback(Callback):
             self._gallery_embeddings[add_indices] = gallery_embeddings
             self._gallery_labels[add_indices] = gallery_labels
             self._gallery_idx += gallery_embeddings.shape[0]
+
+    def on_batch_end(self, runner: "IRunner"):
+        """On batch end action"""
+        query_mask = runner.input[self.is_query_key]
+        # bool mask
+        gallery_mask = ~query_mask
+        query_embeddings = runner.output[self.embeddings_key][query_mask].cpu()
+        gallery_embeddings = runner.output[self.embeddings_key][
+            gallery_mask
+        ].cpu()
+        query_labels = runner.input[self.labels_key][query_mask].cpu()
+        gallery_labels = runner.input[self.labels_key][gallery_mask].cpu()
+
+        if self._query_embeddings is None:
+            emb_dim = query_embeddings.shape[1]
+            self._query_embeddings = torch.empty(self._query_size, emb_dim)
+            self._gallery_embeddings = torch.empty(self._gallery_size, emb_dim)
+        self._accumulate(
+            query_embeddings, gallery_embeddings, query_labels, gallery_labels,
+        )
 
     def on_loader_start(self, runner: "IRunner"):
         """On loader start action"""
