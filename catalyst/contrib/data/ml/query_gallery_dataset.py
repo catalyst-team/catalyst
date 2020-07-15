@@ -19,7 +19,7 @@ class QueryGalleryDataset(Dataset, ABC):
     def __getitem__(self, item) -> Dict[str, torch.Tensor]:
         """
         Dataset for query/gallery split should
-        return dict with `embeddings`, `labels` and
+        return dict with `feature`, `targets` and
         `is_query` key. Value by key `is_query` should
         be boolean and indicate whether current object
         is in query or in gallery.
