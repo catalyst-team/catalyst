@@ -154,18 +154,18 @@ class CMCScoreCallback(Callback):
         gallery_labels: torch.LongTensor,
     ) -> None:
         if query_embeddings.shape[0] > 0:
-            add_mask = self._query_idx + torch.arange(
+            add_indices = self._query_idx + torch.arange(
                 query_embeddings.shape[0]
             )
-            self._query_embeddings[add_mask] = query_embeddings
-            self._query_labels[add_mask] = query_labels
+            self._query_embeddings[add_indices] = query_embeddings
+            self._query_labels[add_indices] = query_labels
             self._query_idx += query_embeddings.shape[0]
         if gallery_embeddings.shape[0] > 0:
-            add_mask = self._gallery_idx + torch.arange(
+            add_indices = self._gallery_idx + torch.arange(
                 gallery_embeddings.shape[0]
             )
-            self._gallery_embeddings[add_mask] = gallery_embeddings
-            self._gallery_labels[add_mask] = gallery_labels
+            self._gallery_embeddings[add_indices] = gallery_embeddings
+            self._gallery_labels[add_indices] = gallery_labels
             self._gallery_idx += gallery_embeddings.shape[0]
 
     def on_loader_start(self, runner: "IRunner"):
