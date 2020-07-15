@@ -45,8 +45,9 @@ def _transforms_loader(r: Registry):
             raise ex
     except UnsupportedNodeError as ex:
         logger.warning(
-            "kornia has requirement torch>=1.5.0,"
-            " probably you have an old version of torch which is incompatible."
+            "kornia has requirement torch>=1.5.0, probably you have"
+            " an old version of torch which is incompatible.\n"
+            "To update pytorch, run `pip install -U 'torch>=1.5.0'`."
         )
         if settings.kornia_required:
             raise ex
