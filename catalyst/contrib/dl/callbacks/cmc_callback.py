@@ -98,7 +98,7 @@ class CMCScoreCallback(Callback):
         if self._query_embeddings is None:
             emb_dim = query_embeddings.shape[1]
             self._query_embeddings = torch.empty(self._query_size, emb_dim)
-            self._gallery_embeddings = torch.empty(self._query_size, emb_dim)
+            self._gallery_embeddings = torch.empty(self._gallery_size, emb_dim)
         self._accumulate(
             query_embeddings, gallery_embeddings, query_labels, gallery_labels,
         )
@@ -139,7 +139,9 @@ class CMCScoreCallback(Callback):
 
     def on_loader_end(self, runner: "IRunner"):
         """On loader end action"""
-        conformity_matrix = self._query_labels.T == self._gallery_labels
+        conformity_matrix = self._query_labels == self._gallery_labels.reshape(
+            -1, 1
+        )
         for k in self.list_args:
             metric = self._metric_fn(
                 self._gallery_embeddings,
@@ -147,6 +149,8 @@ class CMCScoreCallback(Callback):
                 conformity_matrix,
                 k,
             )
-            runner.loader_metrics[f"{self._prefix}_{k}"] = metric
+            runner.epoch_metrics[
+                f"{runner.loader_name}_{self._prefix}_{k}"
+            ] = metric
         self._gallery_embeddings = None
         self._query_embeddings = None

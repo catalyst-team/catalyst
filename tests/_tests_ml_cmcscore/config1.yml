@@ -7,22 +7,23 @@ args:
 
 
 stages:
-  runner_params:
-    main_metric: cmc_score_1
-    minimize_metric: false
-  data_params:
-    batch_size: 32
-    num_workers: 0
-
-  criterion_params:
-    criterion: TripletLoss
-  optimizer_params:
-    optimizer: Adam
-    lr: 0.001
-    weight_decay: 0.0001
-  corrupted:
+  trian:
     stage_params:
-      num_epochs: 1
+      main_metric: cmc_1
+      valid_loader: query_gallery
+      minimize_metric: false
+
+    data_params:
+      batch_size: 32
+      num_workers: 0
+
+    criterion_params:
+      criterion: TripletLoss
+    optimizer_params:
+      optimizer: Adam
+      lr: 0.001
+      weight_decay: 0.0001
+
     callbacks_params:
       cmc:
         _wrapper:

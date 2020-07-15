@@ -1,9 +1,7 @@
-from .query_gallery_dataset import (
-    QueryGalleryDataset,
-    QueryGalleryFolderDataset,
-)
+from .query_gallery_dataset import QueryGalleryDataset
+from .mnist_qg import MnistQGDataset
 
 __all__ = [
     "QueryGalleryDataset",
-    "QueryGalleryFolderDataset",
+    "MnistQGDataset",
 ]
