@@ -242,7 +242,7 @@ class QueryGalleryDataset(Dataset, ABC):
         be boolean and indicate whether current object
         is in query or in gallery.
         Raises:
-            NotImplementedError:
+            NotImplementedError: You should implement it  # noqa: DAR402
         """
         raise NotImplementedError
 
@@ -255,7 +255,7 @@ class QueryGalleryDataset(Dataset, ABC):
         Returns:
             query size
         Raises:
-            NotImplementedError:
+            NotImplementedError: You should implement it  # noqa: DAR402
         """
         raise NotImplementedError
 
@@ -268,7 +268,7 @@ class QueryGalleryDataset(Dataset, ABC):
         Returns:
             gallery size
         Raises:
-            NotImplementedError:
+            NotImplementedError: You should implement it  # noqa: DAR402
         """
         raise NotImplementedError
 

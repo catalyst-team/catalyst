@@ -18,11 +18,13 @@ class CMCScoreCallback(Callback):
     Loaders should contain "is_query" and "label" key.
 
     .. code-block:: python
+
         import os
         import torch
         from torch.utils.data import DataLoader
 
-        from catalyst.contrib.nn.criterion.triplet import TripletMarginLossWithSampling
+        from catalyst.contrib.nn.criterion.triplet import \
+            TripletMarginLossWithSampling
         from catalyst.core.callbacks import ControlFlowCallback
         from catalyst.dl import CMCScoreCallback, SupervisedRunner
         from catalyst.contrib.datasets import MNIST, MnistQGDataset
