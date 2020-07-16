@@ -241,10 +241,11 @@ class QueryGalleryDataset(Dataset, ABC):
         `is_query` key. Value by key `is_query` should
         be boolean and indicate whether current object
         is in query or in gallery.
+
         Raises:
             NotImplementedError: You should implement it  # noqa: DAR402
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @property
     @abstractmethod
@@ -254,12 +255,11 @@ class QueryGalleryDataset(Dataset, ABC):
         query size.
 
         Raises:
-            NotImplementedError: You should implement it
-
+            NotImplementedError: You should implement it  # noqa: DAR402
         Returns:
             query size
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @property
     @abstractmethod
@@ -273,7 +273,7 @@ class QueryGalleryDataset(Dataset, ABC):
         Returns:
             gallery size
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
 __all__ = [
