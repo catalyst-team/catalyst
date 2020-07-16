@@ -1,3 +1,7 @@
+"""
+MRR metric.
+"""
+
 import torch
 
 
