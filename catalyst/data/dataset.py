@@ -251,9 +251,11 @@ class QueryGalleryDataset(Dataset, ABC):
     def query_size(self) -> int:
         """
         Query/Gallery dataset should have property
-        query size
+        query size.
+
         Raises:
-            NotImplementedError: You should implement it  # noqa: DAR402
+            NotImplementedError: You should implement it
+
         Returns:
             query size
         """
@@ -264,7 +266,8 @@ class QueryGalleryDataset(Dataset, ABC):
     def gallery_size(self) -> int:
         """
         Query/Gallery dataset should have property
-        gallery size
+        gallery size.
+
         Raises:
             NotImplementedError: You should implement it  # noqa: DAR402
         Returns:
