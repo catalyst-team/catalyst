@@ -252,10 +252,10 @@ class QueryGalleryDataset(Dataset, ABC):
         """
         Query/Gallery dataset should have property
         query size
-        Returns:
-            query size
         Raises:
             NotImplementedError: You should implement it  # noqa: DAR402
+        Returns:
+            query size
         """
         raise NotImplementedError
 
@@ -265,10 +265,10 @@ class QueryGalleryDataset(Dataset, ABC):
         """
         Query/Gallery dataset should have property
         gallery size
-        Returns:
-            gallery size
         Raises:
             NotImplementedError: You should implement it  # noqa: DAR402
+        Returns:
+            gallery size
         """
         raise NotImplementedError
 
