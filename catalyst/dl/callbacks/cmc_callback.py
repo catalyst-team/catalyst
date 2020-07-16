@@ -5,7 +5,7 @@ import torch
 from catalyst.core import IRunner
 from catalyst.core.callback import CallbackOrder
 from catalyst.dl import Callback
-from catalyst.dl.callbacks.metrics.accuracy import get_default_accuracy_args
+from catalyst.dl.callbacks.metrics.functional import get_default_topk_args
 from catalyst.utils.metrics.cmc_score import cmc_score
 
 
@@ -22,11 +22,13 @@ class CMCScoreCallback(Callback):
         import torch
         from torch.utils.data import DataLoader
 
-        from catalyst.contrib.nn.criterion import TripletLoss
+        from catalyst.contrib.nn.criterion.triplet import TripletMarginLossWithSampling
         from catalyst.core.callbacks import ControlFlowCallback
         from catalyst.dl import CMCScoreCallback, SupervisedRunner
         from catalyst.contrib.datasets import MNIST, MnistQGDataset
         from catalyst.contrib.data.transforms import ToTensor
+        from catalyst.contrib.nn.modules import Flatten
+        from catalyst.data.sampler_inbatch import HardTripletsSampler
 
         train = MNIST(
             os.getcwd(),
@@ -61,11 +63,10 @@ class CMCScoreCallback(Callback):
             )
         ]
 
-        criterion = TripletLoss()
-
-        class Flatten(torch.nn.Module):
-            def forward(self, x):
-                return x.view(x.size(0), -1)
+        sampler_inbatch = HardTripletsSampler(False)
+        criterion = TripletMarginLossWithSampling(
+            margin=0.5, sampler_inbatch=sampler_inbatch
+        )
 
         model = torch.nn.Sequential(
             Flatten(),
@@ -118,8 +119,8 @@ class CMCScoreCallback(Callback):
                 if ``topk_args`` is None
 
         """
-
-        self.list_args = topk_args or get_default_accuracy_args(num_classes)
+        super().__init__(order=CallbackOrder.Metric)
+        self.list_args = topk_args or get_default_topk_args(num_classes)
         self._metric_fn = cmc_score
         self._prefix = prefix
         self.embeddings_key = embeddings_key
@@ -129,7 +130,6 @@ class CMCScoreCallback(Callback):
         self._query_embeddings: torch.Tensor = None
         self._gallery_labels: torch.Tensor = None
         self._query_labels: torch.Tensor = None
-        super().__init__(order=CallbackOrder.Metric)
         self._gallery_idx = None
         self._query_idx = None
         self._query_size = None
