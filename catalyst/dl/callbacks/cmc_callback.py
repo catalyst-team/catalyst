@@ -87,6 +87,7 @@ class CMCScoreCallback(Callback):
             num_epochs=1,
         )
     """
+
     def __init__(
         self,
         embeddings_key: str = "logits",

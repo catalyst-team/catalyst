@@ -72,7 +72,7 @@ class TripletLoss(nn.Module):
         Returns:
             torch.Tensor: mask with shape [batch_size, batch_size]
         """
-        indices_equal = torch.eye(labels.size(0)).bool()
+        indices_equal = torch.eye(labels.size(0)).type(torch.bool)
 
         # labels and indices should be on
         # the same device, otherwise - exception
