@@ -5,7 +5,7 @@ from torch import nn
 
 from catalyst.contrib.nn.criterion.functional import triplet_loss
 
-TORCH_BOOL = torch.bool if torch.__version__ <= "1.1.0" else torch.ByteTensor
+TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
 
 
 class TripletLoss(nn.Module):

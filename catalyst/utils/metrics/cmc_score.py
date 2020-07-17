@@ -1,6 +1,6 @@
 import torch
 
-TORCH_BOOL = torch.bool if torch.__version__ <= "1.1.0" else torch.ByteTensor
+TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
 
 
 def cmc_score(
