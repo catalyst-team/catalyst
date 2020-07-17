@@ -79,7 +79,7 @@ class TripletLoss(nn.Module):
         indices_equal = indices_equal.to("cuda" if labels.is_cuda else "cpu")
 
         # Check that i and j are distinct
-        if torch.__version__.startswith("1.1"):
+        if torch.__version__ <= "1.1.0":
             indices_equal = indices_equal.type(torch.ByteTensor)
             indices_not_equal = ~indices_equal
         else:
