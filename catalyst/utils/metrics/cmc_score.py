@@ -43,7 +43,10 @@ def cmc_score_count(
     """
     perm_matrix = torch.argsort(distances)
     position_matrix = torch.argsort(perm_matrix)
-    conformity_matrix = conformity_matrix.type(torch.bool)
+    if torch.__version__ <= "1.1.0":
+        conformity_matrix = conformity_matrix.type(torch.ByteTensor)
+    else:
+        conformity_matrix = conformity_matrix.type(torch.bool)
     position_matrix[~conformity_matrix] = (
         topk + 1
     )  # value large enough not to be counted
