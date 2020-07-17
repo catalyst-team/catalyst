@@ -5,6 +5,8 @@ from torch import nn
 
 from catalyst.contrib.nn.criterion.functional import triplet_loss
 
+TORCH_BOOL = torch.bool if torch.__version__ <= "1.1.0" else torch.ByteTensor
+
 
 class TripletLoss(nn.Module):
     """Triplet loss with hard positive/negative mining.
@@ -79,11 +81,9 @@ class TripletLoss(nn.Module):
         indices_equal = indices_equal.to("cuda" if labels.is_cuda else "cpu")
 
         # Check that i and j are distinct
-        if torch.__version__ <= "1.1.0":
-            indices_equal = indices_equal.type(torch.ByteTensor)
-            indices_not_equal = ~indices_equal
-        else:
-            indices_not_equal = torch.logical_not(indices_equal)
+
+        indices_equal = indices_equal.type(TORCH_BOOL)
+        indices_not_equal = ~indices_equal
 
         # Check if labels[i] == labels[j]
         # Uses broadcasting where the 1st argument

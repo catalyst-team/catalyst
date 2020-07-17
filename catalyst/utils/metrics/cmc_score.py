@@ -1,5 +1,7 @@
 import torch
 
+TORCH_BOOL = torch.bool if torch.__version__ <= "1.1.0" else torch.ByteTensor
+
 
 def cmc_score(
     query_embeddings: torch.Tensor,
@@ -43,10 +45,8 @@ def cmc_score_count(
     """
     perm_matrix = torch.argsort(distances)
     position_matrix = torch.argsort(perm_matrix)
-    if torch.__version__ <= "1.1.0":
-        conformity_matrix = conformity_matrix.type(torch.ByteTensor)
-    else:
-        conformity_matrix = conformity_matrix.type(torch.bool)
+    conformity_matrix = conformity_matrix.type(TORCH_BOOL)
+
     position_matrix[~conformity_matrix] = (
         topk + 1
     )  # value large enough not to be counted

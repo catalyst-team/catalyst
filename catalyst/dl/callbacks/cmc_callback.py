@@ -8,6 +8,8 @@ from catalyst.dl import Callback
 from catalyst.dl.callbacks.metrics.functional import get_default_topk_args
 from catalyst.utils.metrics.cmc_score import cmc_score
 
+TORCH_BOOL = torch.bool if torch.__version__ <= "1.1.0" else torch.ByteTensor
+
 
 class CMCScoreCallback(Callback):
     """
@@ -164,11 +166,8 @@ class CMCScoreCallback(Callback):
         """On batch end action"""
         query_mask = runner.input[self.is_query_key]
         # bool mask
-        if torch.__version__ <= "1.1.0":
-            query_mask = query_mask.type(torch.ByteTensor)
-            gallery_mask = ~query_mask
-        else:
-            gallery_mask = ~query_mask
+        query_mask = query_mask.type(TORCH_BOOL)
+        gallery_mask = ~query_mask
         query_embeddings = runner.output[self.embeddings_key][query_mask].cpu()
         gallery_embeddings = runner.output[self.embeddings_key][
             gallery_mask
