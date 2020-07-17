@@ -1,20 +1,19 @@
 """
-Hitrate metric:
+Hitrate metric
     * :func:`hitrate`
 """
 import torch
 
-def hitrate(
-    outputs: torch.Tensor,
-    targets: torch.Tensor
-):
+
+def hitrate(outputs: torch.Tensor, targets: torch.Tensor):
     """
-    Calculate the hit rate score given model outputs and targets
+    Calculate the hit rate score given model outputs and targets.
+
     Args:
-        outputs (torch.Tensor): model outputs, logits
-        targets (torch.Tensor): ground truth, labels
+        outputs (torch.Tensor): Model outputs, logits
+        targets (torch.Tensor): Ground truth, labels
     Returns:
-        hitrate (torch.Tensor): the hit rate score
+        hit rate (torch.Tensor): The hit rate
     """
     outputs = outputs.clone()
     targets = targets.clone()

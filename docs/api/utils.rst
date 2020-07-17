@@ -252,6 +252,13 @@ Focal
     :undoc-members:
     :show-inheritance:
 
+Hit rate
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.metrics.hitrate
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 IoU
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.metrics.iou
