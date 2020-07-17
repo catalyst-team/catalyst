@@ -79,7 +79,11 @@ class TripletLoss(nn.Module):
         indices_equal = indices_equal.to("cuda" if labels.is_cuda else "cpu")
 
         # Check that i and j are distinct
-        indices_not_equal = torch.logical_not(indices_equal)
+        if torch.__version__.starts_with("1.1"):
+            indices_equal = indices_equal.type(torch.ByteTensor)
+            indices_not_equal = ~ indices_equal
+        else:
+            indices_not_equal = torch.logical_not(indices_equal)
 
         # Check if labels[i] == labels[j]
         # Uses broadcasting where the 1st argument
