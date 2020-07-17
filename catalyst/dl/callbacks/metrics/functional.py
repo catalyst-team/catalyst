@@ -1,3 +1,5 @@
+from typing import List
+
 import numpy as np
 
 
@@ -33,3 +35,31 @@ def calculate_dice(
         raise ValueError("Dice index should be more than 1")
 
     return dice
+
+
+def get_default_topk_args(num_classes: int) -> List[int]:
+    """Calculate list params for ``Accuracy@k`` and ``mAP@k``.
+
+    Examples:
+        >>> get_default_topk_args(num_classes=4)
+        >>> [1, 3]
+        >>> get_default_topk_args(num_classes=8)
+        >>> [1, 3, 5]
+
+    Args:
+        num_classes (int): number of classes
+
+    Returns:
+        iterable: array of accuracy arguments
+    """
+    result = [1]
+
+    if num_classes is None:
+        return result
+
+    if num_classes > 3:
+        result.append(3)
+    if num_classes > 5:
+        result.append(5)
+
+    return result

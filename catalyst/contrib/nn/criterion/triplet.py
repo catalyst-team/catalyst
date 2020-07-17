@@ -9,6 +9,8 @@ from torch.nn import TripletMarginLoss
 from catalyst.contrib.nn.criterion.functional import triplet_loss
 from catalyst.data import sampler_inbatch as si
 
+TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
+
 
 class TripletLoss(nn.Module):
     """Triplet loss with hard positive/negative mining.
@@ -76,13 +78,15 @@ class TripletLoss(nn.Module):
         Returns:
             torch.Tensor: mask with shape [batch_size, batch_size]
         """
-        indices_equal = torch.eye(labels.size(0)).bool()
+        indices_equal = torch.eye(labels.size(0)).type(torch.bool)
 
         # labels and indices should be on
         # the same device, otherwise - exception
         indices_equal = indices_equal.to("cuda" if labels.is_cuda else "cpu")
 
         # Check that i and j are distinct
+
+        indices_equal = indices_equal.type(TORCH_BOOL)
         indices_not_equal = ~indices_equal
 
         # Check if labels[i] == labels[j]

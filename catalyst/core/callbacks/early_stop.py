@@ -5,27 +5,78 @@ from catalyst.core.runner import IRunner
 
 
 class CheckRunCallback(Callback):
-    """@TODO: Docs. Contribution is welcome."""
+    """Execute exeperiment not fully."""
 
     def __init__(self, num_batch_steps: int = 3, num_epoch_steps: int = 2):
-        """@TODO: Docs. Contribution is welcome."""
+        """
+        Args:
+            num_batch_steps (int): number of batches to iterate in epoch
+            num_epoch_steps (int): number of epoch to perform in a stage
+        """
         super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         self.num_batch_steps = num_batch_steps
         self.num_epoch_steps = num_epoch_steps
 
     def on_epoch_end(self, runner: IRunner):
-        """@TODO: Docs. Contribution is welcome."""
+        """Check if iterated specified number of epochs.
+
+        Args:
+            runner (IRunner): current runner
+        """
         if runner.epoch >= self.num_epoch_steps:
             runner.need_early_stop = True
 
     def on_batch_end(self, runner: IRunner):
-        """@TODO: Docs. Contribution is welcome."""
+        """Check if iterated specified number of batches.
+
+        Args:
+            runner (IRunner): current runner
+        """
         if runner.loader_batch_step >= self.num_batch_steps:
             runner.need_early_stop = True
 
 
 class EarlyStoppingCallback(Callback):
-    """@TODO: Docs. Contribution is welcome."""
+    """Early exit based on metric.
+
+    Example of usage in notebook API:
+
+    .. code-block:: python
+
+        runner = SupervisedRunner()
+        runner.train(
+            ...
+            callbacks=[
+                ...
+                EarlyStoppingCallback(
+                    patience=5,
+                    metric="my_metric",
+                    minimize=True,
+                )
+                ...
+            ]
+        )
+        ...
+
+    Example of usage in config API:
+
+    .. code-block:: yaml
+
+        stages:
+          ...
+          stage_N:
+            ...
+            callbacks_params:
+              ...
+              early_stopping:
+                callback: EarlyStoppingCallback
+                # arguments for EarlyStoppingCallback
+                patience: 5
+                metric: my_metric
+                minimize: true
+          ...
+
+    """
 
     def __init__(
         self,
@@ -34,7 +85,21 @@ class EarlyStoppingCallback(Callback):
         minimize: bool = True,
         min_delta: float = 1e-6,
     ):
-        """@TODO: Docs. Contribution is welcome."""
+        """
+        Args:
+            patience (int): number of epochs with no improvement
+                after which training will be stopped.
+            metric (str): metric name to use for early stopping, default
+                is ``"loss"``.
+            minimize (bool): if ``True`` then expected that metric should
+                decrease and early stopping will be performed only when metric
+                stops decreasing. If ``False`` then expected
+                that metric should increase. Default value ``True``.
+            min_delta (float): minimum change in the monitored metric
+                to qualify as an improvement, i.e. an absolute change
+                of less than min_delta, will count as no improvement,
+                default value is ``1e-6``.
+        """
         super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         self.best_score = None
         self.metric = metric
@@ -48,7 +113,11 @@ class EarlyStoppingCallback(Callback):
             self.is_better = lambda score, best: score >= (best + min_delta)
 
     def on_epoch_end(self, runner: IRunner) -> None:
-        """@TODO: Docs. Contribution is welcome."""
+        """Check if should be performed early stopping.
+
+        Args:
+            runner (IRunner): current runner
+        """
         if runner.stage_name.startswith("infer"):
             return
 
