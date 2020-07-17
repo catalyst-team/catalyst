@@ -261,35 +261,8 @@
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">MultiMetricCallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.callbacks.metrics.functional</span> <span class="kn">import</span> <span class="n">get_default_topk_args</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="n">metrics</span>
-
-
-<span class="k">def</span> <span class="nf">_get_default_accuracy_args</span><span class="p">(</span><span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Calculate list params for ``Accuracy@k`` and ``mAP@k``.</span>
-
-<span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; _get_default_accuracy_args(num_classes=4)</span>
-<span class="sd">        &gt;&gt;&gt; [1, 3]</span>
-<span class="sd">        &gt;&gt;&gt; _get_default_accuracy_args(num_classes=8)</span>
-<span class="sd">        &gt;&gt;&gt; [1, 3, 5]</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        num_classes (int): number of classes</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        iterable: array of accuracy arguments</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
-    <span class="k">if</span> <span class="n">num_classes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">result</span>
-
-    <span class="k">if</span> <span class="n">num_classes</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">num_classes</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">:</span>
-        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">result</span>
 
 
 <div class="viewcode-block" id="AccuracyCallback"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback">[docs]</a><span class="k">class</span> <span class="nc">AccuracyCallback</span><span class="p">(</span><span class="n">MultiMetricCallback</span><span class="p">):</span>
@@ -341,7 +314,7 @@
 <span class="sd">            activation (str): An torch.nn activation applied to the outputs.</span>
 <span class="sd">                Must be one of ``&quot;none&quot;``, ``&quot;Sigmoid&quot;``, or ``&quot;Softmax&quot;``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">list_args</span> <span class="o">=</span> <span class="n">accuracy_args</span> <span class="ow">or</span> <span class="n">_get_default_accuracy_args</span><span class="p">(</span><span class="n">num_classes</span><span class="p">)</span>
+        <span class="n">list_args</span> <span class="o">=</span> <span class="n">accuracy_args</span> <span class="ow">or</span> <span class="n">get_default_topk_args</span><span class="p">(</span><span class="n">num_classes</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
@@ -382,7 +355,7 @@
 <span class="sd">            num_classes (int): number of classes to calculate ``map_args``</span>
 <span class="sd">                if ``map_args`` is None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">list_args</span> <span class="o">=</span> <span class="n">map_args</span> <span class="ow">or</span> <span class="n">_get_default_accuracy_args</span><span class="p">(</span><span class="n">num_classes</span><span class="p">)</span>
+        <span class="n">list_args</span> <span class="o">=</span> <span class="n">map_args</span> <span class="ow">or</span> <span class="n">get_default_topk_args</span><span class="p">(</span><span class="n">num_classes</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
