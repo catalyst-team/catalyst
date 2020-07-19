@@ -39,7 +39,6 @@ class OptimizerCallback(Callback):
             grad_clip_params (dict): params for gradient clipping
             decouple_weight_decay (bool): If True - decouple weight decay
                 regularization.
-            loss_key (str):
             use_xla_barrier (bool): use barrier option if used xla,
                 default ``True``.
         """
