@@ -151,3 +151,6 @@ class ClusterLoss(nn.Module):
             cluster loss for the batch
         """
         return self._batch_hard_cluster_loss(embeddings, targets)
+
+
+__all__ = ["ClusterLoss"]
