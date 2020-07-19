@@ -24,7 +24,7 @@ class ClusterLoss(nn.Module):
         Generate matrix of bool of shape (n_unique_labels, batch_size),
         where n_unique_labels is a number of unique labels
         in the batch; matrix[i, j] is True if j-th element of
-        dataset relates to i-th class and False otherwise.
+        the batch relates to i-th class and False otherwise.
         Args:
             labels: labels of the batch, shape (batch_size,)
         Returns:
@@ -69,7 +69,6 @@ class ClusterLoss(nn.Module):
         Returns:
             tensor of shape (p, p) -- matrix of distances between mean vectors
         """
-        p, _ = mean_vectors.shape
         distance = euclidean_distance(mean_vectors, mean_vectors)
         return distance
 
@@ -135,7 +134,7 @@ class ClusterLoss(nn.Module):
         d_inter = d_inter.min(1).values
 
         # Count batch loss. For each class i:
-        # loss_i = max(d_intra - d_inter + alpha, 0)
+        # loss_i = max(d_intra - d_inter + margin, 0)
         # loss = loss_1 + loss_2 + ... + loss_p
         loss = torch.mean(torch.relu(d_intra - d_inter + self.margin))
         return loss
