@@ -27,7 +27,7 @@ from catalyst.dl import (
     ValidationManagerCallback,
     VerboseLogger,
 )
-from catalyst.dl.registry import (
+from catalyst.registry import (
     CALLBACKS,
     CRITERIONS,
     MODELS,
