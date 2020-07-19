@@ -20,6 +20,7 @@ from .metrics import (
     PrecisionRecallF1ScoreCallback,
 )
 from .mixup import MixupCallback
+from .cmc_callback import CMCScoreCallback
 from .scheduler import LRFinder
 
 from catalyst.contrib.dl.callbacks import *  # isort:skip

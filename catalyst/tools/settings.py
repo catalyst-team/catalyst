@@ -27,6 +27,7 @@ class Settings(FrozenClass):
         use_lz4: bool = False,
         use_pyarrow: bool = False,
         albumentations_required: Optional[bool] = None,
+        kornia_required: Optional[bool] = None,
         segmentation_models_required: Optional[bool] = None,
         use_libjpeg_turbo: bool = False,
         nmslib_required: Optional[bool] = None,
@@ -72,6 +73,9 @@ class Settings(FrozenClass):
         # [catalyst-cv]
         self.albumentations_required: bool = self._optional_value(
             albumentations_required, default=cv_required
+        )
+        self.kornia_required: bool = self._optional_value(
+            kornia_required, default=cv_required
         )
         self.segmentation_models_required: bool = self._optional_value(
             segmentation_models_required, default=cv_required

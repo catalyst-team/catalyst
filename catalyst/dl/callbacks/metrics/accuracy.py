@@ -1,35 +1,8 @@
 from typing import List
 
 from catalyst.core import MultiMetricCallback
+from catalyst.dl.callbacks.metrics.functional import get_default_topk_args
 from catalyst.utils import metrics
-
-
-def _get_default_accuracy_args(num_classes: int) -> List[int]:
-    """Calculate list params for ``Accuracy@k`` and ``mAP@k``.
-
-    Examples:
-        >>> _get_default_accuracy_args(num_classes=4)
-        >>> [1, 3]
-        >>> _get_default_accuracy_args(num_classes=8)
-        >>> [1, 3, 5]
-
-    Args:
-        num_classes (int): number of classes
-
-    Returns:
-        iterable: array of accuracy arguments
-    """
-    result = [1]
-
-    if num_classes is None:
-        return result
-
-    if num_classes > 3:
-        result.append(3)
-    if num_classes > 5:
-        result.append(5)
-
-    return result
 
 
 class AccuracyCallback(MultiMetricCallback):
@@ -81,7 +54,7 @@ class AccuracyCallback(MultiMetricCallback):
             activation (str): An torch.nn activation applied to the outputs.
                 Must be one of ``"none"``, ``"Sigmoid"``, or ``"Softmax"``
         """
-        list_args = accuracy_args or _get_default_accuracy_args(num_classes)
+        list_args = accuracy_args or get_default_topk_args(num_classes)
 
         super().__init__(
             prefix=prefix,
@@ -122,7 +95,7 @@ class MapKCallback(MultiMetricCallback):
             num_classes (int): number of classes to calculate ``map_args``
                 if ``map_args`` is None
         """
-        list_args = map_args or _get_default_accuracy_args(num_classes)
+        list_args = map_args or get_default_topk_args(num_classes)
 
         super().__init__(
             prefix=prefix,
