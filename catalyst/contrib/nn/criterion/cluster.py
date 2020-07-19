@@ -6,12 +6,15 @@ from catalyst.contrib.nn.criterion.functional import euclidean_distance
 
 class ClusterLoss(nn.Module):
     """
+    Cluster loss
     .. _Cluster Loss for Person Re-Identification
     https://arxiv.org/pdf/1812.10325.pdf
     """
 
     def __init__(self, margin: float = 1) -> None:
         """
+        Set margin for the cluster loss
+
         Args:
             margin: margin in cluster loss with hard sampling
             strategy.
@@ -25,6 +28,7 @@ class ClusterLoss(nn.Module):
         where n_unique_labels is a number of unique labels
         in the batch; matrix[i, j] is True if j-th element of
         the batch relates to i-th class and False otherwise.
+
         Args:
             labels: labels of the batch, shape (batch_size,)
         Returns:
@@ -42,6 +46,7 @@ class ClusterLoss(nn.Module):
         """
         Count matrix of distances from mean vector of each class to it's
         samples embeddings.
+
         Args:
             embeddings: tensor of shape (p, k, embed_dim) where p is a number
             of classes in the batch, k is a number of samples for each class
@@ -63,6 +68,7 @@ class ClusterLoss(nn.Module):
     ) -> torch.Tensor:
         """
         Count matrix of distances from mean vectors of classes to each other
+
         Args:
             mean_vectors: tensor of shape (p, embed_dim) -- mean vectors
             of classes
@@ -75,6 +81,7 @@ class ClusterLoss(nn.Module):
     def _skip_diagonal(self, matrix: torch.Tensor) -> torch.Tensor:
         """
         Get all elements from matrix except diagonal ones.
+
         Args:
             matrix: tensor of shape (p, p)
         Returns:
@@ -92,6 +99,7 @@ class ClusterLoss(nn.Module):
         """
         Count cluster loss with hard sampling over the batch.
         Each batch should contains k samples for p classes.
+
         Args:
             embeddings: tensor of shape (batch_size; embed_dim)
             where batch_size = k * p
@@ -142,11 +150,13 @@ class ClusterLoss(nn.Module):
     ) -> torch.Tensor:
         """
         Forward propagation method for cluster loss.
+
         Args:
-            embeddings: tensor of shape (batch_size, embed_dim)
+            embeddings (torch.Tensor): tensor of shape (batch_size, embed_dim)
             targets: labels of the batch, shape (batch_size,)
+
         Returns:
-            cluster loss for the batch
+            torch.Tensor: cluster loss for the batch
         """
         return self._batch_hard_cluster_loss(embeddings, targets)
 
