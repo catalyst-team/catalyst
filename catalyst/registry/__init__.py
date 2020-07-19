@@ -194,50 +194,50 @@ Callback = CALLBACK.add
 # backward compatibility
 CALLBACKS = CALLBACK
 CRITERIONS = CRITERION
+EXPERIMENTS = EXPERIMENT
 GRAD_CLIPPERS = GRAD_CLIPPER
 MODELS = MODEL
 MODULES = MODULE
 OPTIMIZERS = OPTIMIZER
+RUNNERS = RUNNER
 SAMPLERS = SAMPLER
 SCHEDULERS = SCHEDULER
 TRANSFORMS = TRANSFORM
-EXPERIMENTS = EXPERIMENT
-RUNNERS = RUNNER
 
 
 __all__ = [
     "Callback",
-    "Criterion",
-    "Optimizer",
-    "Scheduler",
-    "Module",
-    "Model",
-    "Sampler",
-    "Transform",
-    "Experiment",
-    "Runner",
     "CALLBACK",
-    "CRITERION",
-    "GRAD_CLIPPER",
-    "MODEL",
-    "MODULE",
-    "OPTIMIZER",
-    "SAMPLER",
-    "SCHEDULER",
-    "TRANSFORM",
-    "EXPERIMENT",
-    "RUNNER",
     "CALLBACKS",
+    "Criterion",
+    "CRITERION",
     "CRITERIONS",
-    "GRAD_CLIPPERS",
-    "MODELS",
-    "MODULES",
-    "OPTIMIZERS",
-    "SAMPLERS",
-    "SCHEDULERS",
-    "TRANSFORMS",
+    "Experiment",
+    "EXPERIMENT",
     "EXPERIMENTS",
-    "RUNNERS",
+    "GRAD_CLIPPER",
+    "GRAD_CLIPPERS",
+    "Model",
+    "MODEL",
+    "MODELS",
+    "Module",
+    "MODULE",
+    "MODULES",
+    "Optimizer",
+    "OPTIMIZER",
+    "OPTIMIZERS",
     "Registry",
     "RegistryException",
+    "Runner",
+    "RUNNER",
+    "RUNNERS",
+    "Sampler",
+    "SAMPLER",
+    "SAMPLERS",
+    "Scheduler",
+    "SCHEDULER",
+    "SCHEDULERS",
+    "Transform",
+    "TRANSFORM",
+    "TRANSFORMS",
 ]
