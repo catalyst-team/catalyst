@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Mapping, Any
 import logging
 import warnings
 
@@ -8,6 +8,12 @@ from catalyst.core.runner import IRunner
 from catalyst.tools.typing import Optimizer
 
 logger = logging.getLogger(__name__)
+
+try:
+    from torch_xla.core.xla_model import optimizer_step as xla_optimizer_step
+except ModuleNotFoundError:
+    def xla_optimizer_step(optimizer, *args, **kwargs):
+        optimizer.step()
 
 
 class OptimizerCallback(Callback):
@@ -21,6 +27,7 @@ class OptimizerCallback(Callback):
         grad_clip_params: Dict = None,
         decouple_weight_decay: bool = True,
         loss_key: str = None,
+        use_xla_barrier: bool = True
     ):
         """
         Args:
@@ -32,6 +39,9 @@ class OptimizerCallback(Callback):
             grad_clip_params (dict): params for gradient clipping
             decouple_weight_decay (bool): If True - decouple weight decay
                 regularization.
+            loss_key (str):
+            use_xla_barrier (bool): use barrier option if used xla,
+                default ``True``.
         """
         super().__init__(order=CallbackOrder.optimizer, node=CallbackNode.all)
         assert metric_key is None or loss_key is None
@@ -54,6 +64,8 @@ class OptimizerCallback(Callback):
 
         self.decouple_weight_decay = decouple_weight_decay
         self._optimizer_wd: List[float] = [0.0]
+        self.is_xla = False
+        self.use_xla_barrier = use_xla_barrier
 
     @staticmethod
     def grad_step(
@@ -61,6 +73,7 @@ class OptimizerCallback(Callback):
         optimizer: Optimizer,
         optimizer_wds: List[float] = 0,
         grad_clip_fn: Callable = None,
+        xla_args: Mapping[str, Any] = None,
     ) -> None:
         """Makes a gradient step for a given optimizer.
 
@@ -69,6 +82,9 @@ class OptimizerCallback(Callback):
             optimizer_wds (List[float]): list of weight decay parameters
                 for each param group
             grad_clip_fn (Callable): function for gradient clipping
+            xla_args (Mapping[str, Any]): arguments to use in xla mode,
+                if not ``None`` then will be used xla optimization
+                function, default is ``None``
         """
         for group, wd in zip(optimizer.param_groups, optimizer_wds):
             if wd > 0:
@@ -76,7 +92,10 @@ class OptimizerCallback(Callback):
                     param.data = param.data.add(-wd * group["lr"], param.data)
             if grad_clip_fn is not None:
                 grad_clip_fn(group["params"])
-        optimizer.step()
+        if xla_args is not None:
+            xla_optimizer_step(optimizer, **xla_args)
+        else:
+            optimizer.step()
 
     def on_stage_start(self, runner: IRunner) -> None:
         """Checks that the current stage has correct optimizer.
@@ -87,6 +106,7 @@ class OptimizerCallback(Callback):
         self._optimizer = runner.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
+        self.is_xla = (runner.device.type == "xla")
         assert self._optimizer is not None
 
     def on_epoch_start(self, runner: IRunner) -> None:
@@ -167,10 +187,12 @@ class OptimizerCallback(Callback):
             loss.backward()
 
         if need_gradient_step:
+            xla_args = {"barrier": self.use_xla_barrier} if self.is_xla else None
             self.grad_step(
                 optimizer=self._optimizer,
                 optimizer_wds=self._optimizer_wd,
                 grad_clip_fn=self.grad_clip_fn,
+                xla_args=xla_args
             )
 
             utils.maybe_recursive_call(self._optimizer, "zero_grad")
