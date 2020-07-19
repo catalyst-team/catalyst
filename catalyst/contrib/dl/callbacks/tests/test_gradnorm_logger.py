@@ -15,10 +15,10 @@ from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.callbacks import CriterionCallback, OptimizerCallback
 from catalyst.core.runner import IRunner
 from catalyst.dl import SupervisedRunner
-from catalyst.registry import registry
+from catalyst.registry import Model
 
 
-@registry.Model
+@Model
 class _SimpleNet(nn.Module):
     def __init__(self, input_shape: Tuple[int]):
         super().__init__()

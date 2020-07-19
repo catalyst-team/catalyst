@@ -1,9 +1,9 @@
 import torch
 
-from catalyst.registry import registry
+from catalyst.registry import Model
 
 
-@registry.Model
+@Model
 class Model(torch.nn.Module):
     """
     Your model

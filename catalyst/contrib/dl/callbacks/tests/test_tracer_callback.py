@@ -16,10 +16,10 @@ from catalyst.core.callbacks import CriterionCallback, OptimizerCallback
 from catalyst.core.runner import IRunner
 from catalyst.dl import SupervisedRunner
 from catalyst.dl.utils import get_device, get_trace_name
-from catalyst.registry import registry
+from catalyst.registry import Model
 
 
-@registry.Model
+@Model
 class _TracedNet(nn.Module):
     """
     Simple model for the testing.

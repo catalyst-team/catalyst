@@ -2,10 +2,10 @@
 from torch import nn
 from torch.nn import functional as F
 
-from catalyst.registry import registry
+from catalyst.registry import Model
 
 
-@registry.Model
+@Model
 class SimpleNet(nn.Module):
     """
     @TODO: Docs. Contribution is welcome
