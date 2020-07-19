@@ -4,7 +4,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from catalyst.registry.registry import MODULES
+from catalyst.registry import MODULE
 
 
 class GlobalAvgPool2d(nn.Module):
@@ -98,7 +98,7 @@ class GlobalAttnPool2d(nn.Module):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__()
 
-        activation_fn = MODULES.get_if_str(activation_fn)
+        activation_fn = MODULE.get_if_str(activation_fn)
         self.attn = nn.Sequential(
             nn.Conv2d(
                 in_features, 1, kernel_size=1, stride=1, padding=0, bias=False

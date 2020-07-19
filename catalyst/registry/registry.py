@@ -53,9 +53,9 @@ def _transforms_loader(r: Registry):
             raise ex
 
 
-TRANSFORMS = Registry("transform")
-TRANSFORMS.late_add(_transforms_loader)
-Transform = TRANSFORMS.add
+TRANSFORM = Registry("transform")
+TRANSFORM.late_add(_transforms_loader)
+Transform = TRANSFORM.add
 
 
 def _samplers_loader(r: Registry):
@@ -72,9 +72,9 @@ def _samplers_loader(r: Registry):
     r.add_from_module(sampler)
 
 
-SAMPLERS = Registry("sampler")
-SAMPLERS.late_add(_samplers_loader)
-Sampler = SAMPLERS.add
+SAMPLER = Registry("sampler")
+SAMPLER.late_add(_samplers_loader)
+Sampler = SAMPLER.add
 
 
 class _GradClipperWrap:
@@ -93,8 +93,8 @@ def _grad_clip_loader(r: Registry):
     r.add_from_module(m)
 
 
-GRAD_CLIPPERS = Registry("func", default_meta_factory=_GradClipperWrap)
-GRAD_CLIPPERS.late_add(_grad_clip_loader)
+GRAD_CLIPPER = Registry("func", default_meta_factory=_GradClipperWrap)
+GRAD_CLIPPER.late_add(_grad_clip_loader)
 
 
 def _modules_loader(r: Registry):
@@ -103,9 +103,9 @@ def _modules_loader(r: Registry):
     r.add_from_module(m)
 
 
-MODULES = Registry("module")
-MODULES.late_add(_modules_loader)
-Module = MODULES.add
+MODULE = Registry("module")
+MODULE.late_add(_modules_loader)
+Module = MODULE.add
 
 
 def _model_loader(r: Registry):
@@ -127,9 +127,9 @@ def _model_loader(r: Registry):
             raise ex
 
 
-MODELS = Registry("model")
-MODELS.late_add(_model_loader)
-Model = MODELS.add
+MODEL = Registry("model")
+MODEL.late_add(_model_loader)
+Model = MODEL.add
 
 
 def _criterion_loader(r: Registry):
@@ -138,9 +138,9 @@ def _criterion_loader(r: Registry):
     r.add_from_module(m)
 
 
-CRITERIONS = Registry("criterion")
-CRITERIONS.late_add(_criterion_loader)
-Criterion = CRITERIONS.add
+CRITERION = Registry("criterion")
+CRITERION.late_add(_criterion_loader)
+Criterion = CRITERION.add
 
 
 def _optimizers_loader(r: Registry):
@@ -149,9 +149,9 @@ def _optimizers_loader(r: Registry):
     r.add_from_module(m)
 
 
-OPTIMIZERS = Registry("optimizer")
-OPTIMIZERS.late_add(_optimizers_loader)
-Optimizer = OPTIMIZERS.add
+OPTIMIZER = Registry("optimizer")
+OPTIMIZER.late_add(_optimizers_loader)
+Optimizer = OPTIMIZER.add
 
 
 def _schedulers_loader(r: Registry):
@@ -160,15 +160,16 @@ def _schedulers_loader(r: Registry):
     r.add_from_module(m)
 
 
-SCHEDULERS = Registry("scheduler")
-SCHEDULERS.late_add(_schedulers_loader)
-Scheduler = SCHEDULERS.add
+SCHEDULER = Registry("scheduler")
+SCHEDULER.late_add(_schedulers_loader)
+Scheduler = SCHEDULER.add
 
-EXPERIMENTS = Registry("experiment")
-Experiment = EXPERIMENTS.add
 
-RUNNERS = Registry("runner")
-Runner = RUNNERS.add
+EXPERIMENT = Registry("experiment")
+Experiment = EXPERIMENT.add
+
+RUNNER = Registry("runner")
+Runner = RUNNER.add
 
 
 def _callbacks_loader(r: Registry):
@@ -185,9 +186,23 @@ def _callbacks_loader(r: Registry):
     r.add_from_module(m)
 
 
-CALLBACKS = Registry("callback")
-CALLBACKS.late_add(_callbacks_loader)
-Callback = CALLBACKS.add
+CALLBACK = Registry("callback")
+CALLBACK.late_add(_callbacks_loader)
+Callback = CALLBACK.add
+
+
+# backward compatibility
+CALLBACKS = CALLBACK
+CRITERIONS = CRITERION
+GRAD_CLIPPERS = GRAD_CLIPPER
+MODELS = MODEL
+MODULES = MODULE
+OPTIMIZERS = OPTIMIZER
+SAMPLERS = SAMPLER
+SCHEDULERS = SCHEDULER
+TRANSFORMS = TRANSFORM
+EXPERIMENTS = EXPERIMENT
+RUNNERS = RUNNER
 
 
 __all__ = [
@@ -200,6 +215,18 @@ __all__ = [
     "Sampler",
     "Transform",
     "Experiment",
+    "Runner",
+    "CALLBACK",
+    "CRITERION",
+    "GRAD_CLIPPER",
+    "MODEL",
+    "MODULE",
+    "OPTIMIZER",
+    "SAMPLER",
+    "SCHEDULER",
+    "TRANSFORM",
+    "EXPERIMENT",
+    "RUNNER",
     "CALLBACKS",
     "CRITERIONS",
     "GRAD_CLIPPERS",
@@ -210,4 +237,5 @@ __all__ = [
     "SCHEDULERS",
     "TRANSFORMS",
     "EXPERIMENTS",
+    "RUNNERS",
 ]

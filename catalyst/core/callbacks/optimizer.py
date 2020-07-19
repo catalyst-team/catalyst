@@ -48,7 +48,7 @@ class OptimizerCallback(Callback):
         self._accumulation_counter: int = 0
 
         grad_clip_params: dict = grad_clip_params or {}
-        self.grad_clip_fn = registry.GRAD_CLIPPERS.get_from_params(
+        self.grad_clip_fn = registry.GRAD_CLIPPER.get_from_params(
             **grad_clip_params
         )
 
