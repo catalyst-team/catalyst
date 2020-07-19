@@ -15,6 +15,12 @@ from torch.backends import cudnn
 from catalyst.tools.typing import Device, Model, Optimizer
 from catalyst.utils.dict import merge_dicts
 
+try:
+    import torch_xla.core.xla_model as xm
+    XLA_DEVICE = xm.xla_device()
+except ModuleNotFoundError:
+    XLA_DEVICE = None
+
 
 def get_optimizable_params(model_or_params):
     """Returns all the parameters that requires gradients."""
@@ -60,7 +66,14 @@ def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
 
 def get_device() -> torch.device:
     """Simple returning the best available device (GPU or CPU)."""
-    return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    is_available_xla = (XLA_DEVICE is not None)
+    is_available_gpu = torch.cuda.is_available()
+    device = "cpu"
+    if is_available_xla:
+        device = XLA_DEVICE
+    elif is_available_gpu:
+        device = "cuda"
+    return torch.device(device)
 
 
 def get_available_gpus():
