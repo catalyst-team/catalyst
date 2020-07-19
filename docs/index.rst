@@ -91,11 +91,11 @@ Getting started
     traced_model = runner.trace(loader=loaders["valid"])
 
 - `Customizing what happens in train`_
-- `Demo with minimal examples for ML, CV, NLP, GANs and RecSys`_
+- `Colab with ML, CV, NLP, GANs and RecSys demos`_
 - For Catalyst.RL introduction, please follow `Catalyst.RL repo`_.
 
 .. _`Customizing what happens in train`: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb
-.. _Demo with minimal examples for ML, CV, NLP, GANs and RecSys: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb
+.. _Colab with ML, CV, NLP, GANs and RecSys demos: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb
 .. _Catalyst.RL repo: https://github.com/catalyst-team/catalyst-rl
 
 Overview
@@ -119,17 +119,17 @@ More specific with additional requirements:
 
 .. code:: bash
 
-    pip install catalyst[ml]         # installs DL+ML based catalyst
-    pip install catalyst[cv]         # installs DL+CV based catalyst
-    pip install catalyst[nlp]        # installs DL+NLP based catalyst
+    pip install catalyst[cv]         # installs CV-based catalyst
+    pip install catalyst[nlp]        # installs NLP-based catalyst
     pip install catalyst[ecosystem]  # installs Catalyst.Ecosystem
-    pip install catalyst[contrib]    # installs DL+contrib based catalyst
-    pip install catalyst[all]        # installs everything
     # and master version installation
     pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 
 
-Catalyst is compatible with: Python 3.6+. PyTorch 1.0.0+.
+Catalyst is compatible with: Python 3.6+. PyTorch 1.1+.
+
+Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10 and Windows Subsystem for Linux.
+
 
 Features
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -141,6 +141,7 @@ Features
 - Deep Learning best practices - SWA, AdamW, Ranger optimizer, OneCycle, and more.
 - Developments best practices - fp16 support, distributed training, slurm support.
 
+
 Structure
 ~~~~~~~~~~~~~~~~~~~~~~
 - **core** - framework core with main abstractions - Experiment, Runner and Callback.
@@ -150,19 +151,23 @@ Structure
 - **utils** - typical utils for Deep Learning research, function-based helpers.
 - **contrib** - additional modules contributed by Catalyst users.
 
+
 Tests
 ~~~~~~~~~~~~~~~~~~~~~~
-All the Catalyst code is `tested rigorously with every new PR`_.
+All Catalyst code, features and pipelines `are fully tested`_
+with our own `catalyst-codestyle`_.
 
 In fact, we train a number of different models for various of tasks -
-image classification, image segmentation, text classification, GAN training.
+image classification, image segmentation, text classification, GANs training
+and much more.
 During the tests, we compare their convergence metrics in order to verify
 the correctness of the training procedure and its reproducibility.
 
-Overall, Catalyst guarantees fully tested, correct and reproducible
-best practices for the automated parts.
+As a result, Catalyst provides fully tested and reproducible
+best practices for your deep learning research.
 
-.. _tested rigorously with every new PR: https://github.com/catalyst-team/catalyst/tree/master/tests
+.. _are fully tested: https://github.com/catalyst-team/catalyst/tree/master/tests
+.. _catalyst-codestyle: https://github.com/catalyst-team/codestyle
 
 
 Tutorials
@@ -212,7 +217,7 @@ By participating in this project, you agree to abide by its `Code of Conduct`_.
 User feedback
 ~~~~~~~~~~~~~~~~~~~~~~
 
-We have created catalyst.team.core@gmail.com for "user feedback".
+We have created ``catalyst.team.core@gmail.com`` for "user feedback".
     - If you like the project and want to say thanks, this the right place.
     - If you would like to start a collaboration between your team and Catalyst team to do better Deep Learning R&D - you are always welcome.
     - If you just don't like Github issues and this ways suits you better - feel free to email us.

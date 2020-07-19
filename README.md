@@ -157,12 +157,9 @@ pip install -U catalyst
 <p>
 
 ```bash
-pip install catalyst[ml]         # installs DL+ML based catalyst
-pip install catalyst[cv]         # installs DL+CV based catalyst
-pip install catalyst[nlp]        # installs DL+NLP based catalyst
+pip install catalyst[cv]         # installs CV-based catalyst
+pip install catalyst[nlp]        # installs NLP-based catalyst
 pip install catalyst[ecosystem]  # installs Catalyst.Ecosystem
-pip install catalyst[contrib]    # installs DL+contrib based catalyst
-pip install catalyst[all]        # installs everything
 # and master version installation
 pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 ```
@@ -913,7 +910,7 @@ a lot of people have influenced it in a lot of different ways.
 
 #### Catalyst.Team
 - [Eugene Kachan](https://www.linkedin.com/in/yauheni-kachan/) ([bagxi](https://github.com/bagxi)) - Config API improvements and CV pipelines
-- [Artem Zolkin](https://www.linkedin.com/in/artem-zolkin-b5155571/) ([arquestro](https://github.com/Arquestro)) - best ever documentation
+- [Artem Zolkin](https://www.linkedin.com/in/artem-zolkin-b5155571/) ([arquestro](https://github.com/Arquestro)) - documentation grandmaster
 - [David Kuryakin](https://www.linkedin.com/in/dkuryakin/) ([dkuryakin](https://github.com/dkuryakin)) - Reaction design
 
 #### Catalyst.Contributors
