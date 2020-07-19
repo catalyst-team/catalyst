@@ -1,7 +1,6 @@
 # flake8: noqa
 from .accuracy import (
     accuracy,
-    multi_class_accuracy,
     multi_label_accuracy,
 )
 from .dice import dice

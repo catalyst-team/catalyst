@@ -1,21 +1,41 @@
 """
 Various accuracy metrics:
     * :func:`accuracy`
-    * :func:`average_accuracy`
-    * :func:`mean_average_accuracy`
+    * :func:`multi_label_accuracy`
 """
-from typing import List, Tuple
+from typing import List, Optional, Sequence
 
 import numpy as np
 
 import torch
 
+from catalyst.utils.metrics.functional import preprocess_multi_label_metrics
 from catalyst.utils.torch import get_activation_fn
 
 
-def multi_class_accuracy(
-    outputs: torch.Tensor, targets: torch.Tensor, topk: Tuple = (1,),
-) -> List:
+def accuracy(
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    activation: Optional[str] = None,
+    topk: Sequence[int] = (1,),
+) -> Sequence[torch.Tensor]:
+    """
+    Computes multi-class accuracy@topk for the specified values of `topk`.
+
+    Args:
+        outputs (torch.Tensor): model outputs, logits
+            with shape [bs; num_classes]
+        targets (torch.Tensor): ground truth, labels
+            with shape [bs; 1]
+        activation (str): activation to use for model output
+        topk (Sequence[int]): `topk` for accuracy@topk computing
+
+    Returns:
+        list with computed accuracy@topk
+    """
+    activation_fn = get_activation_fn(activation)
+    outputs = activation_fn(outputs)
+
     max_k = max(topk)
     batch_size = targets.size(0)
 
@@ -38,8 +58,32 @@ def multi_class_accuracy(
 def multi_label_accuracy(
     outputs: torch.Tensor,
     targets: torch.Tensor,
+    activation: Optional[str] = None,
     threshold: float = torch.Tensor,
 ) -> torch.Tensor:
+    """
+    Computes multi-label accuracy for the specified activation and threshold.
+
+    Args:
+        outputs (torch.Tensor): NxK tensor that for each of the N examples
+            indicates the probability of the example belonging to each of
+            the K classes, according to the model.
+        targets (torch.Tensor): binary NxK tensort that encodes which of the K
+            classes are associated with the N-th input
+            (eg: a row [0, 1, 0, 1] indicates that the example is
+            associated with classes 2 and 4)
+        activation (str): activation to use for model output
+        threshold (float): threshold for for model output
+
+    Returns:
+        computed multi-class accuracy
+    """
+    outputs, targets, _ = preprocess_multi_label_metrics(
+        outputs=outputs, targets=targets
+    )
+    activation_fn = get_activation_fn(activation)
+    outputs = activation_fn(outputs)
+
     outputs = (outputs > threshold).long()
     output = (targets.long() == outputs.long()).sum().float() / np.prod(
         targets.shape
@@ -47,59 +91,4 @@ def multi_label_accuracy(
     return output
 
 
-def accuracy(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    activation: str = None,
-    multi_label: bool = False,
-    topk: Tuple = (1,),
-    threshold: float = None,
-) -> List:
-    """
-    Computes the accuracy.
-
-    It can be used either for:
-
-    1. Multi-class task (`multi_label=False`), in this case:
-
-      - you can use topk.
-      - threshold and activation are not required.
-      - targets is a tensor: batch_size
-      - outputs is a tensor: batch_size x num_classes
-      - computes the accuracy@k for the specified values of k.
-
-    2. Multi-label task (`multi_label=True`), in this case:
-
-      - you must specify threshold and activation
-      - topk will not be used
-        (because of there is no method to apply top-k in
-        multi-label classification).
-      - outputs, targets are tensors with shape: batch_size x num_classes
-      - targets is a tensor with binary vectors
-
-    Args:
-        outputs (torch.Tensor): model outputs, logits
-        targets (torch.Tensor): ground truth, labels
-        activation (str): activation for outputs
-        multi_label (bool): boolean flag to compute multi-label case
-        topk (tuple): tuple with specified `N` for top`N` accuracy computing
-        threshold (float): threshold for outputs
-
-    Returns:
-        computed accuracy
-    """
-    activation_fn = get_activation_fn(activation)
-    outputs = activation_fn(outputs)
-
-    if multi_label:
-        output = multi_label_accuracy(
-            outputs=outputs, targets=targets, threshold=threshold
-        )
-        return [output]
-    else:
-        return multi_class_accuracy(
-            outputs=outputs, targets=targets, topk=topk
-        )
-
-
-__all__ = ["accuracy", "multi_label_accuracy", "multi_class_accuracy"]
+__all__ = ["accuracy", "multi_label_accuracy"]

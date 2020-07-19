@@ -23,13 +23,6 @@ def test_accuracy_top1():
         assert np.isclose(top3, 1)
         assert np.isclose(top5, 1)
 
-        top1, top3, top5 = metrics.multi_class_accuracy(
-            outputs, targets, topk=(1, 3, 5)
-        )
-        assert np.isclose(top1, 1)
-        assert np.isclose(top3, 1)
-        assert np.isclose(top5, 1)
-
 
 def test_accuracy_top3():
     """
@@ -46,13 +39,6 @@ def test_accuracy_top3():
         targets = torch.ones((BATCH_SIZE, 1)) * i
 
         top1, top3, top5 = metrics.accuracy(outputs, targets, topk=(1, 3, 5))
-        assert np.isclose(top1, 1 if i >= NUM_CLASSES - 1 else 0)
-        assert np.isclose(top3, 1 if i >= NUM_CLASSES - 3 else 0)
-        assert np.isclose(top5, 1 if i >= NUM_CLASSES - 5 else 0)
-
-        top1, top3, top5 = metrics.multi_class_accuracy(
-            outputs, targets, topk=(1, 3, 5)
-        )
         assert np.isclose(top1, 1 if i >= NUM_CLASSES - 1 else 0)
         assert np.isclose(top3, 1 if i >= NUM_CLASSES - 3 else 0)
         assert np.isclose(top5, 1 if i >= NUM_CLASSES - 5 else 0)

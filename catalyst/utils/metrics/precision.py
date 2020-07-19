@@ -1,74 +1,103 @@
-from typing import Tuple
-
-import numpy as np
+from typing import Optional, Sequence
 
 import torch
 
-
-def average_precision(outputs, targets, k: int = 10):
-    """Computes the average precision at k.
-
-    This function computes the average
-    precision at k between two lists of items.
-
-    Args:
-        outputs (list): A list of predicted elements
-        targets (list):  A list of elements that are to be predicted
-        k (int, optional): The maximum number of predicted elements
-
-    Returns:
-        float: The average precision at k over the input lists
-    """
-    if len(outputs) > k:
-        outputs = outputs[:k]
-
-    score = 0.0
-    num_hits = 0.0
-
-    for i, predict in enumerate(outputs):
-        if predict in targets and predict not in outputs[:i]:
-            num_hits += 1.0
-            score += num_hits / (i + 1.0)
-
-    if not targets:
-        return 0.0
-
-    return score / min(len(targets), k)
+from catalyst.utils.metrics.functional import preprocess_multi_label_metrics
 
 
-def mean_average_precision(
-    outputs: torch.Tensor, targets: torch.Tensor, topk: Tuple = (1,),
-):
-    """Computes the mean average precision at k.
-
-    This function computes the mean average precision at k between two lists
-    of lists of items.
+def average_precision(
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    weights: Optional[torch.Tensor] = None,
+    topk: Sequence[int] = (1,),
+) -> Sequence[torch.Tensor]:
+    """Computes the average precision at `topk`.
 
     Args:
-        outputs (list): A list of lists of predicted elements
-        targets (list): A list of lists of elements that are to be predicted
+        outputs (torch.Tensor): NxK tensor that for each of the N examples
+            indicates the probability of the example belonging to each of
+            the K classes, according to the model.
+        targets (torch.Tensor):  binary NxK tensort that encodes which of the K
+            classes are associated with the N-th input
+            (eg: a row [0, 1, 0, 1] indicates that the example is
+            associated with classes 2 and 4)
+        weights (torch.Tensor): importance for each sample
         topk (int, optional): The maximum number of predicted elements
 
     Returns:
-        float: The mean average precision at k over the input lists
+        Sequence[torch.Tensor]: list of 1xK tensor,
+        with average precision@topk_i for K classes
     """
-    max_k = max(topk)
-    _, pred = outputs.topk(max_k, 1, True, True)  # noqa: WPS425
+    assert topk == (1,), "@K logic is not implemented yet"
+    # outputs - [bs; num_classes] with scores
+    # targets - [bs; num_classes] with binary labels
+    outputs, targets, weights = preprocess_multi_label_metrics(
+        outputs=outputs, targets=targets, weights=weights,
+    )
+    if outputs.numel() == 0:
+        return torch.zeros(1)
 
-    targets = targets.cpu().detach().numpy().tolist()
-    actual_list = []
-    for a in targets:
-        actual_list.append([a])
-    targets = actual_list
-    pred = pred.tolist()
+    ap = torch.zeros(targets.size(1))
 
-    res = []
-    for k in topk:
-        ap = np.mean(
-            [average_precision(p, a, k) for a, p in zip(targets, pred)]
+    # compute average precision for each class
+    for class_i in range(targets.size(1)):
+        # sort scores
+        class_scores = outputs[:, class_i]
+        class_targets = targets[:, class_i]
+        _, sortind = torch.sort(class_scores, dim=0, descending=True)
+        correct = class_targets[sortind]
+
+        # compute true positive sums
+        if weights is not None:
+            class_weight = weights[sortind]
+            weighted_correct = correct.float() * class_weight
+
+            tp = weighted_correct.cumsum(0)
+            rg = class_weight.cumsum(0)
+        else:
+            tp = correct.float().cumsum(0)
+            rg = torch.arange(1, targets.size(0) + 1).float()
+
+        # compute precision curve
+        precision = tp.div(rg)
+
+        # compute average precision
+        ap[class_i] = precision[correct.bool()].sum() / max(
+            float(correct.sum()), 1
         )
-        res.append(ap)
-    return res
+
+    return ap
+
+
+def mean_average_precision(
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    weights: Optional[torch.Tensor] = None,
+    topk: Sequence[int] = (1,),
+) -> Sequence[torch.Tensor]:
+    """Computes the mean average precision at `topk`.
+
+    Args:
+        outputs (torch.Tensor): NxK tensor that for each of the N examples
+            indicates the probability of the example belonging to each of
+            the K classes, according to the model.
+        targets (torch.Tensor): binary NxK tensort that encodes which of the K
+            classes are associated with the N-th input
+            (eg: a row [0, 1, 0, 1] indicates that the example is
+            associated with classes 2 and 4)
+        weights (torch.Tensor): importance for each sample
+        topk (int, optional): The maximum number of predicted elements
+
+    Returns:
+        Sequence[torch.Tensor]: list of 1x1 tensor,
+        with mean average precision@topk_i for K classes
+    """
+    assert topk == (1,), "@K logic is not implemented yet"
+    output = average_precision(
+        outputs=outputs, targets=targets, weights=weights, topk=topk
+    )
+    output = [x.mean() for x in output]
+    return output
 
 
 __all__ = ["average_precision", "mean_average_precision"]
