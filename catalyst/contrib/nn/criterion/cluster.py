@@ -6,7 +6,7 @@ from catalyst.contrib.nn.criterion.functional import euclidean_distance
 
 class ClusterLoss(nn.Module):
     """
-    Cluster Loss for Person Re-Identification
+    .. _Cluster Loss for Person Re-Identification
     https://arxiv.org/pdf/1812.10325.pdf
     """
 
@@ -82,10 +82,8 @@ class ClusterLoss(nn.Module):
             deletion of diagonal elements
         """
         p, _ = matrix.shape
-        # Create matrix of indices with zero diagonal
-        indices = torch.ones(size=(p, p)) - torch.diag(torch.ones(p))
-        indices = indices.bool()
-        diagonal_free = matrix[indices].view((p, p - 1))
+        indices = torch.diag(torch.ones(p)).bool()
+        diagonal_free = matrix[~indices].view((p, p - 1))
         return diagonal_free
 
     def _batch_hard_cluster_loss(
