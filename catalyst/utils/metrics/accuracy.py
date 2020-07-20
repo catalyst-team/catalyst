@@ -3,7 +3,7 @@ Various accuracy metrics:
     * :func:`accuracy`
     * :func:`multi_label_accuracy`
 """
-from typing import List, Optional, Sequence
+from typing import Optional, Sequence
 
 import numpy as np
 
