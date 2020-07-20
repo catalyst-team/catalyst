@@ -12,7 +12,6 @@ def test_accuracy_top1():
     """
     Tests for catalyst.utils.metrics.accuracy metric.
     """
-
     for i in range(NUM_CLASSES):
         outputs = torch.zeros((BATCH_SIZE, NUM_CLASSES))
         outputs[:, i] = 1
@@ -28,7 +27,6 @@ def test_accuracy_top3():
     """
     Tests for catalyst.utils.metrics.accuracy metric.
     """
-
     outputs = (
         torch.linspace(0, NUM_CLASSES - 1, steps=NUM_CLASSES)
         .repeat(1, BATCH_SIZE)

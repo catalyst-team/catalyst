@@ -5,7 +5,10 @@ import torch
 from catalyst.utils.metrics import mean_average_precision
 
 
-def test_weighted():
+def test_mean_average_precision_weighted():
+    """
+    Tests for catalyst.utils.metrics.mean_average_precision metric.
+    """
     target = torch.Tensor([0, 1, 0, 1])
     output = torch.Tensor([0.1, 0.2, 0.3, 4])
     weight = torch.Tensor([0.5, 1.0, 2.0, 0.1])
@@ -50,7 +53,7 @@ def test_weighted():
             ).mean()
         )
         < 0.01
-    ), "mAP test2 failed"
+    ), "mAP test3 failed"
 
     ap = mean_average_precision(outputs=output, targets=target, weights=None)
     assert (
