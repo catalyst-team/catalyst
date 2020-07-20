@@ -66,7 +66,7 @@ def average_precision(
             float(correct.sum()), 1
         )
 
-    return ap
+    return [ap]
 
 
 def mean_average_precision(
@@ -92,7 +92,6 @@ def mean_average_precision(
         Sequence[torch.Tensor]: list of 1x1 tensor,
         with mean average precision@topk_i for K classes
     """
-    assert topk == (1,), "@K logic is not implemented yet"
     output = average_precision(
         outputs=outputs, targets=targets, weights=weights, topk=topk
     )

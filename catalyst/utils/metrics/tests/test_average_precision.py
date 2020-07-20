@@ -81,7 +81,7 @@ def test_weighted():
     ap = average_precision(outputs=output, targets=target, weights=weight)
     assert (
         math.fabs(
-            ap.sum()
+            ap[0].sum()
             - torch.Tensor(
                 [
                     (
@@ -107,7 +107,7 @@ def test_weighted():
     ap = average_precision(outputs=output, targets=target, weights=None)
     assert (
         math.fabs(
-            ap.sum()
+            ap[0].sum()
             - torch.Tensor(
                 [
                     (1 * 1.0 + 0 * 1.0 / 2.0 + 2 * 1.0 / 3 + 0 * 1.0 / 4.0)

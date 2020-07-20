@@ -10,26 +10,26 @@ def test_weighted():
     output = torch.Tensor([0.1, 0.2, 0.3, 4])
     weight = torch.Tensor([0.5, 1.0, 2.0, 0.1])
 
-    ap = mean_average_precision(outputs=output, targets=target, weights=weight)[0]
+    ap = mean_average_precision(outputs=output, targets=target, weights=weight)
     val = (1 * 0.1 / 0.1 + 0 * 2.0 / 2.1 + 1.1 * 1 / 3.1 + 0 * 1.0 / 4.0) / 2.0
 
-    assert math.fabs(ap - val) < 0.01, "mAP test1 failed"
+    assert math.fabs(ap[0] - val) < 0.01, "mAP test1 failed"
 
-    ap = mean_average_precision(outputs=output, targets=target, weights=None)[0]
+    ap = mean_average_precision(outputs=output, targets=target, weights=None)
     val = (
         1 * 1.0 / 1.0 + 0 * 1.0 / 2.0 + 2.0 * 1.0 / 3.0 + 0 * 1.0 / 4.0
     ) / 2.0
-    assert math.fabs(ap - val) < 0.01, "mAP test2 failed"
+    assert math.fabs(ap[0] - val) < 0.01, "mAP test2 failed"
 
     # Test multiple K's
     target = torch.Tensor([[0, 1, 0, 1], [0, 1, 0, 1]]).transpose(0, 1)
     output = torch.Tensor([[0.1, 0.2, 0.3, 4], [4, 3, 2, 1]]).transpose(0, 1)
     weight = torch.Tensor([[1.0, 0.5, 2.0, 3.0]]).transpose(0, 1)
-    ap = mean_average_precision(outputs=output, targets=target, weights=weight)[0]
+    ap = mean_average_precision(outputs=output, targets=target, weights=weight)
 
     assert (
         math.fabs(
-            ap
+            ap[0]
             - torch.Tensor(
                 [
                     (
@@ -52,10 +52,10 @@ def test_weighted():
         < 0.01
     ), "mAP test2 failed"
 
-    ap = mean_average_precision(outputs=output, targets=target, weights=None)[0]
+    ap = mean_average_precision(outputs=output, targets=target, weights=None)
     assert (
         math.fabs(
-            ap
+            ap[0]
             - torch.Tensor(
                 [
                     (1 * 1.0 + 0 * 1.0 / 2.0 + 2 * 1.0 / 3.0 + 0 * 1.0 / 4.0)
