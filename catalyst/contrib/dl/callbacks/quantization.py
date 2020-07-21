@@ -1,9 +1,10 @@
+from typing import Dict, Optional, Set, Union
+
 import torch
-from typing import Set, Optional, Dict, Union
+from torch import quantization
 
 from catalyst.core import IRunner
-from catalyst.core.callback import CallbackOrder, Callback
-from torch import quantization
+from catalyst.core.callback import Callback, CallbackOrder
 
 
 class DynamicQuantizationCallback(Callback):
@@ -16,16 +17,17 @@ class DynamicQuantizationCallback(Callback):
     >>> runner.model
     {"original": ..., "quantized": ...}
     """
+
     def __init__(
-            self,
-            qconfig_spec: Optional[Union[Set, Dict]] = None,
-            dtype: Optional[torch.dtype] = torch.qint8
+        self,
+        qconfig_spec: Optional[Union[Set, Dict]] = None,
+        dtype: Optional[torch.dtype] = torch.qint8,
     ):
         """
         Init method for callback
         Args:
-            qconfig_spec: torch.quantization.quantize_dynamic parameter
-                you can define layers to be quantize
+            qconfig_spec: torch.quantization.quantize_dynamic
+                parameter, you can define layers to be quantize
             dtype: type of the model parameters, default int8
         """
         super().__init__(CallbackOrder.External)
@@ -44,4 +46,7 @@ class DynamicQuantizationCallback(Callback):
             qconfig_spec=self.qconfig_spec,
             dtype=self.dtype,
         )
-        runner.model = {"original": runner.model.cpu(), "quantized": quantized_model}
+        runner.model = {
+            "original": runner.model.cpu(),
+            "quantized": quantized_model,
+        }
