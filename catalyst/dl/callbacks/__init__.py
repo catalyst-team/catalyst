@@ -7,3 +7,4 @@ from catalyst.dl.callbacks.meter import MeterMetricsCallback
 from catalyst.dl.callbacks.mixup import MixupCallback
 from catalyst.dl.callbacks.scheduler import LRFinder
 from catalyst.dl.callbacks.metrics import *
+from catalyst.contrib.dl.callbacks import *
