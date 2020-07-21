@@ -1,6 +1,3 @@
-"""
-catalyst subpackage registries
-"""
 import logging
 
 from catalyst.registry.registry import Registry

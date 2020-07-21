@@ -266,6 +266,7 @@ Indices and tables
 
     api/core
     api/dl
+    api/registry
 
     api/data
     api/utils

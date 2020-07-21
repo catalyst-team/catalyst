@@ -1,6 +1,5 @@
 """
-Registry.
-.. todo:: Representative docstring for this module
+Global Catalyst registries subpackage.
 """
 from typing import (
     Any,

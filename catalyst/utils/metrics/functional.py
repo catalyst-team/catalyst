@@ -15,10 +15,11 @@ def preprocess_multi_label_metrics(
         outputs (torch.Tensor): NxK tensor that for each of the N examples
             indicates the probability of the example belonging to each of
             the K classes, according to the model.
-        targets (torch.Tensor): binary NxK tensort that encodes which of the K
+        targets (torch.Tensor): binary NxK tensor that encodes which of the K
             classes are associated with the N-th input
             (eg: a row [0, 1, 0, 1] indicates that the example is
             associated with classes 2 and 4)
+        weights (torch.Tensor): importance for each sample
 
     Returns:
         processed ``outputs`` and ``targets``
