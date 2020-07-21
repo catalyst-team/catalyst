@@ -50,9 +50,9 @@ class AveragePrecisionCallback(MultiMetricCallback):
         Args:
             runner (IRunner): current runner
         """
-        metrics = self._compute_metric(runner)
+        topk_metrics = self._compute_metric(runner)
 
-        for arg, per_class_metrics in zip(self.list_args, metrics):
+        for arg, per_class_metrics in zip(self.list_args, topk_metrics):
             if isinstance(arg, int):
                 prefix = f"{self.prefix}{arg:02}"
             else:
