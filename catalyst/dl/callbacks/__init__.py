@@ -1,26 +1,24 @@
 # flake8: noqa
 
-from catalyst.core.callback import *
-from catalyst.core.callbacks import *
-
 from .confusion_matrix import ConfusionMatrixCallback
 from .inference import InferCallback
 from .meter import MeterMetricsCallback
 from .metrics import (
     AccuracyCallback,
     AUCCallback,
+    CMCScoreCallback,
     ClasswiseIouCallback,
     ClasswiseJaccardCallback,
     DiceCallback,
     F1ScoreCallback,
     IouCallback,
     JaccardCallback,
-    MapKCallback,
     MulticlassDiceMetricCallback,
+    MultiClassDiceMetricCallback,
+    MultiLabelAccuracyCallback,
     PrecisionRecallF1ScoreCallback,
+    AveragePrecisionCallback,
+    MeanAveragePrecisionCallback,
 )
 from .mixup import MixupCallback
-from .cmc_callback import CMCScoreCallback
 from .scheduler import LRFinder
-
-from catalyst.contrib.dl.callbacks import *  # isort:skip

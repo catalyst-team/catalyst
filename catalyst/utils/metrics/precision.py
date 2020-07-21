@@ -28,7 +28,7 @@ def average_precision(
         Sequence[torch.Tensor]: list of 1xK tensor,
         with average precision@topk_i for K classes
     """
-    assert topk == (1,), "@K logic is not implemented yet"
+    assert len(topk) == 1 and topk[0] == 1, "@K logic is not implemented yet"
     # outputs - [bs; num_classes] with scores
     # targets - [bs; num_classes] with binary labels
     outputs, targets, weights = preprocess_multi_label_metrics(

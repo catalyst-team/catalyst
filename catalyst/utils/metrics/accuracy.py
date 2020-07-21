@@ -3,7 +3,7 @@ Various accuracy metrics:
     * :func:`accuracy`
     * :func:`multi_label_accuracy`
 """
-from typing import Optional, Sequence
+from typing import Optional, Sequence, Union
 
 import numpy as np
 
@@ -16,8 +16,8 @@ from catalyst.utils.torch import get_activation_fn
 def accuracy(
     outputs: torch.Tensor,
     targets: torch.Tensor,
-    activation: Optional[str] = None,
     topk: Sequence[int] = (1,),
+    activation: Optional[str] = None,
 ) -> Sequence[torch.Tensor]:
     """
     Computes multi-class accuracy@topk for the specified values of `topk`.
@@ -58,8 +58,8 @@ def accuracy(
 def multi_label_accuracy(
     outputs: torch.Tensor,
     targets: torch.Tensor,
+    threshold: Union[float, torch.Tensor],
     activation: Optional[str] = None,
-    threshold: float = torch.Tensor,
 ) -> torch.Tensor:
     """
     Computes multi-label accuracy for the specified activation and threshold.
@@ -72,11 +72,11 @@ def multi_label_accuracy(
             classes are associated with the N-th input
             (eg: a row [0, 1, 0, 1] indicates that the example is
             associated with classes 2 and 4)
-        activation (str): activation to use for model output
         threshold (float): threshold for for model output
+        activation (str): activation to use for model output
 
     Returns:
-        computed multi-class accuracy
+        computed multi-label accuracy
     """
     outputs, targets, _ = preprocess_multi_label_metrics(
         outputs=outputs, targets=targets
