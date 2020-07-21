@@ -37,7 +37,7 @@ class DynamicQuantizationCallback(Callback):
         On stage end action.
         We are applying quantization here
         Args:
-            runner: runner of your exeriment
+            runner: runner of your experiment
         """
         quantized_model = quantization.quantize_dynamic(
             runner.model.cpu(),
