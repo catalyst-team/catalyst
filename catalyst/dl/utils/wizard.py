@@ -4,7 +4,7 @@ import pathlib
 from prompt_toolkit import prompt
 import yaml
 
-from catalyst.dl import registry
+from catalyst import registry
 from catalyst.utils import clone_pipeline, import_module
 from catalyst.utils.pipelines import URLS
 

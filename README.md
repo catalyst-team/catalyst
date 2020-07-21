@@ -157,12 +157,9 @@ pip install -U catalyst
 <p>
 
 ```bash
-pip install catalyst[ml]         # installs DL+ML based catalyst
-pip install catalyst[cv]         # installs DL+CV based catalyst
-pip install catalyst[nlp]        # installs DL+NLP based catalyst
+pip install catalyst[cv]         # installs CV-based catalyst
+pip install catalyst[nlp]        # installs NLP-based catalyst
 pip install catalyst[ecosystem]  # installs Catalyst.Ecosystem
-pip install catalyst[contrib]    # installs DL+contrib based catalyst
-pip install catalyst[all]        # installs everything
 # and master version installation
 pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 ```
@@ -176,7 +173,7 @@ Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10 and Windows Subsyste
 ### Minimal Examples
 
 <details>
-<summary>ML - Linear Regression is my profession</summary>
+<summary>ML - linear regression</summary>
 <p>
 
 ```python
@@ -213,8 +210,93 @@ runner.train(
 </p>
 </details>
 
+
 <details>
-<summary>CV - MNIST classification one more time</summary>
+<summary>ML - multi-class classification</summary>
+<p>
+
+```python
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst import dl
+
+# sample data
+num_samples, num_features, num_classes = int(1e4), int(1e1), 4
+X = torch.rand(num_samples, num_features)
+y = (torch.rand(num_samples, ) * num_classes).to(torch.int64)
+
+# pytorch loaders
+dataset = TensorDataset(X, y)
+loader = DataLoader(dataset, batch_size=32, num_workers=1)
+loaders = {"train": loader, "valid": loader}
+
+# model, criterion, optimizer, scheduler
+model = torch.nn.Linear(num_features, num_classes)
+criterion = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters())
+scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
+
+# model training
+runner = dl.SupervisedRunner()
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    scheduler=scheduler,
+    loaders=loaders,
+    logdir="./logdir",
+    num_epochs=3,
+    callbacks=[dl.AccuracyCallback(num_classes=num_classes)]
+)
+```
+</p>
+</details>
+
+
+<details>
+<summary>ML - multi-label classification</summary>
+<p>
+
+```python
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst import dl
+
+# sample data
+num_samples, num_features, num_classes = int(1e4), int(1e1), 4
+X = torch.rand(num_samples, num_features)
+y = (torch.rand(num_samples, num_classes) > 0.5).to(torch.float32)
+
+# pytorch loaders
+dataset = TensorDataset(X, y)
+loader = DataLoader(dataset, batch_size=32, num_workers=1)
+loaders = {"train": loader, "valid": loader}
+
+# model, criterion, optimizer, scheduler
+model = torch.nn.Linear(num_features, num_classes)
+criterion = torch.nn.BCEWithLogitsLoss()
+optimizer = torch.optim.Adam(model.parameters())
+scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
+
+# model training
+runner = dl.SupervisedRunner()
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    scheduler=scheduler,
+    loaders=loaders,
+    logdir="./logdir",
+    num_epochs=3,
+    callbacks=[dl.MultiLabelAccuracyCallback(threshold=0.5)]
+)
+```
+</p>
+</details>
+
+
+<details>
+<summary>CV - MNIST classification</summary>
 <p>
 
 ```python
@@ -913,7 +995,7 @@ a lot of people have influenced it in a lot of different ways.
 
 #### Catalyst.Team
 - [Eugene Kachan](https://www.linkedin.com/in/yauheni-kachan/) ([bagxi](https://github.com/bagxi)) - Config API improvements and CV pipelines
-- [Artem Zolkin](https://www.linkedin.com/in/artem-zolkin-b5155571/) ([arquestro](https://github.com/Arquestro)) - best ever documentation
+- [Artem Zolkin](https://www.linkedin.com/in/artem-zolkin-b5155571/) ([arquestro](https://github.com/Arquestro)) - documentation grandmaster
 - [David Kuryakin](https://www.linkedin.com/in/dkuryakin/) ([dkuryakin](https://github.com/dkuryakin)) - Reaction design
 
 #### Catalyst.Contributors

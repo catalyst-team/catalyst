@@ -1,13 +1,28 @@
 # flake8: noqa
 
-from .accuracy import AccuracyCallback, MapKCallback
-from .auc import AUCCallback
-from .dice import DiceCallback, MulticlassDiceMetricCallback
-from .f1_score import F1ScoreCallback
-from .iou import (
+from catalyst.dl.callbacks.metrics.accuracy import (
+    AccuracyCallback,
+    MultiLabelAccuracyCallback,
+)
+from catalyst.dl.callbacks.metrics.auc import AUCCallback
+from catalyst.dl.callbacks.metrics.cmc import CMCScoreCallback
+from catalyst.dl.callbacks.metrics.dice import (
+    DiceCallback,
+    MultiClassDiceMetricCallback,
+    MulticlassDiceMetricCallback,
+)
+from catalyst.dl.callbacks.metrics.f1_score import F1ScoreCallback
+from catalyst.dl.callbacks.metrics.iou import (
     ClasswiseIouCallback,
     ClasswiseJaccardCallback,
     IouCallback,
     JaccardCallback,
 )
-from .ppv_tpr_f1 import PrecisionRecallF1ScoreCallback
+from catalyst.dl.callbacks.metrics.ppv_tpr_f1 import (
+    PrecisionRecallF1ScoreCallback,
+)
+
+from catalyst.dl.callbacks.metrics.precision import (
+    AveragePrecisionCallback,
+    MeanAveragePrecisionCallback,
+)
