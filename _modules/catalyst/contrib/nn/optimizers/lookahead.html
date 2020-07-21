@@ -186,6 +186,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/core.html">Core</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/registry.html">Registry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/data.html">Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/utils.html">Tools and Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/contrib.html">Contrib</a></li>
@@ -366,7 +367,7 @@
         <span class="bp">cls</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">base_optimizer_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Lookahead&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">catalyst.dl.registry</span> <span class="kn">import</span> <span class="n">OPTIMIZERS</span>
+        <span class="kn">from</span> <span class="nn">catalyst.registry</span> <span class="kn">import</span> <span class="n">OPTIMIZERS</span>
 
         <span class="n">base_optimizer</span> <span class="o">=</span> <span class="n">OPTIMIZERS</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span>
             <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="o">**</span><span class="n">base_optimizer_params</span>

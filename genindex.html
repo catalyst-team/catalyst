@@ -187,6 +187,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api/core.html">Core</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/registry.html">Registry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/data.html">Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/utils.html">Tools and Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contrib</a></li>
@@ -559,13 +560,13 @@
 </li>
         <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback.__init__">(catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback method)</a>
 </li>
-        <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.accuracy.MapKCallback.__init__">(catalyst.dl.callbacks.metrics.accuracy.MapKCallback method)</a>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.accuracy.MultiLabelAccuracyCallback.__init__">(catalyst.dl.callbacks.metrics.accuracy.MultiLabelAccuracyCallback method)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.auc.AUCCallback.__init__">(catalyst.dl.callbacks.metrics.auc.AUCCallback method)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.dice.DiceCallback.__init__">(catalyst.dl.callbacks.metrics.dice.DiceCallback method)</a>
 </li>
-        <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback.__init__">(catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback method)</a>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback.__init__">(catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback method)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.f1_score.F1ScoreCallback.__init__">(catalyst.dl.callbacks.metrics.f1_score.F1ScoreCallback method)</a>
 </li>
@@ -587,6 +588,10 @@
 </li>
         <li><a href="api/dl.html#catalyst.dl.utils.wizard.Wizard.__init__">(catalyst.dl.utils.wizard.Wizard method)</a>
 </li>
+        <li><a href="api/registry.html#catalyst.registry.registry.Registry.__init__">(catalyst.registry.registry.Registry method)</a>
+</li>
+        <li><a href="api/registry.html#catalyst.registry.registry.RegistryException.__init__">(catalyst.registry.registry.RegistryException method)</a>
+</li>
         <li><a href="api/utils.html#catalyst.tools.meters.apmeter.APMeter.__init__">(catalyst.tools.meters.apmeter.APMeter method)</a>
 </li>
         <li><a href="api/utils.html#catalyst.tools.meters.aucmeter.AUCMeter.__init__">(catalyst.tools.meters.aucmeter.AUCMeter method)</a>
@@ -604,10 +609,6 @@
         <li><a href="api/utils.html#catalyst.tools.meters.msemeter.MSEMeter.__init__">(catalyst.tools.meters.msemeter.MSEMeter method)</a>
 </li>
         <li><a href="api/utils.html#catalyst.tools.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter.__init__">(catalyst.tools.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter method)</a>
-</li>
-        <li><a href="api/utils.html#catalyst.tools.registry.Registry.__init__">(catalyst.tools.registry.Registry method)</a>
-</li>
-        <li><a href="api/utils.html#catalyst.tools.registry.RegistryException.__init__">(catalyst.tools.registry.RegistryException method)</a>
 </li>
         <li><a href="api/utils.html#catalyst.tools.time_manager.TimeManager.__init__">(catalyst.tools.time_manager.TimeManager method)</a>
 </li>
@@ -660,9 +661,11 @@
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback">AccuracyCallback (class in catalyst.dl.callbacks.metrics.accuracy)</a>
 </li>
-      <li><a href="api/utils.html#catalyst.tools.meters.apmeter.APMeter.add">add() (catalyst.tools.meters.apmeter.APMeter method)</a>
+      <li><a href="api/registry.html#catalyst.registry.registry.Registry.add">add() (catalyst.registry.registry.Registry method)</a>
 
       <ul>
+        <li><a href="api/utils.html#catalyst.tools.meters.apmeter.APMeter.add">(catalyst.tools.meters.apmeter.APMeter method)</a>
+</li>
         <li><a href="api/utils.html#catalyst.tools.meters.aucmeter.AUCMeter.add">(catalyst.tools.meters.aucmeter.AUCMeter method)</a>
 </li>
         <li><a href="api/utils.html#catalyst.tools.meters.averagevaluemeter.AverageValueMeter.add">(catalyst.tools.meters.averagevaluemeter.AverageValueMeter method)</a>
@@ -681,10 +684,8 @@
 </li>
         <li><a href="api/utils.html#catalyst.tools.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter.add">(catalyst.tools.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter method)</a>
 </li>
-        <li><a href="api/utils.html#catalyst.tools.registry.Registry.add">(catalyst.tools.registry.Registry method)</a>
-</li>
       </ul></li>
-      <li><a href="api/utils.html#catalyst.tools.registry.Registry.add_from_module">add_from_module() (catalyst.tools.registry.Registry method)</a>
+      <li><a href="api/registry.html#catalyst.registry.registry.Registry.add_from_module">add_from_module() (catalyst.registry.registry.Registry method)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.optimizers.lookahead.Lookahead.add_param_group">add_param_group() (catalyst.contrib.nn.optimizers.lookahead.Lookahead method)</a>
 
@@ -694,13 +695,13 @@
       </ul></li>
       <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.alchemy_logger.AlchemyLogger">AlchemyLogger (class in catalyst.contrib.dl.callbacks.alchemy_logger)</a>
 </li>
-      <li><a href="api/core.html#catalyst.core.callback.CallbackNode.All">All (catalyst.core.callback.CallbackNode attribute)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/core.html#catalyst.core.callback.CallbackNode.All">All (catalyst.core.callback.CallbackNode attribute)</a>
+</li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackNode.all">all (catalyst.core.callback.CallbackNode attribute)</a>
 </li>
-      <li><a href="api/utils.html#catalyst.tools.registry.Registry.all">all() (catalyst.tools.registry.Registry method)</a>
+      <li><a href="api/registry.html#catalyst.registry.registry.Registry.all">all() (catalyst.registry.registry.Registry method)</a>
 </li>
       <li><a href="api/data.html#catalyst.data.sampler_inbatch.AllTripletsSampler">AllTripletsSampler (class in catalyst.data.sampler_inbatch)</a>
 </li>
@@ -731,8 +732,6 @@
       <li><a href="api/data.html#catalyst.data.augmentor.AugmentorKeys">AugmentorKeys (class in catalyst.data.augmentor)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.modules.lama.LamaPooling.available_groups">available_groups (catalyst.contrib.nn.modules.lama.LamaPooling attribute)</a>
-</li>
-      <li><a href="api/utils.html#catalyst.utils.metrics.accuracy.average_accuracy">average_accuracy() (in module catalyst.utils.metrics.accuracy)</a>
 </li>
       <li><a href="api/utils.html#catalyst.tools.meters.averagevaluemeter.AverageValueMeter">AverageValueMeter (class in catalyst.tools.meters.averagevaluemeter)</a>
 </li>
@@ -800,12 +799,8 @@
 </li>
       <li><a href="api/core.html#catalyst.core.callback.Callback">Callback (class in catalyst.core.callback)</a>
 </li>
-      <li><a href="api/core.html#catalyst.core.registry.Callback">Callback() (in module catalyst.core.registry)</a>
-
-      <ul>
-        <li><a href="api/dl.html#catalyst.dl.registry.Callback">(in module catalyst.dl.registry)</a>
+      <li><a href="api/registry.html#catalyst.registry.registries.Callback">Callback() (in module catalyst.registry.registries)</a>
 </li>
-      </ul></li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackNode">CallbackNode (class in catalyst.core.callback)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackOrder">CallbackOrder (class in catalyst.core.callback)</a>
@@ -980,8 +975,6 @@
 </li>
       <li><a href="api/core.html#module-catalyst.core.runner">catalyst.core.runner (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/core.html#module-catalyst.core.utils">catalyst.core.utils (module)</a>
 </li>
       <li><a href="api/core.html#module-catalyst.core.utils.callbacks">catalyst.core.utils.callbacks (module)</a>
@@ -990,6 +983,8 @@
 </li>
       <li><a href="api/data.html#module-catalyst.data.__main__">catalyst.data.__main__ (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data.html#module-catalyst.data.augmentor">catalyst.data.augmentor (module)</a>
 </li>
       <li><a href="api/data.html#module-catalyst.data.collate_fn">catalyst.data.collate_fn (module)</a>
@@ -1048,6 +1043,10 @@
 </li>
       <li><a href="api/dl.html#module-catalyst.dl.utils.wizard">catalyst.dl.utils.wizard (module)</a>
 </li>
+      <li><a href="api/registry.html#module-catalyst.registry.registries">catalyst.registry.registries (module)</a>
+</li>
+      <li><a href="api/registry.html#module-catalyst.registry.registry">catalyst.registry.registry (module)</a>
+</li>
       <li><a href="api/utils.html#module-catalyst.tools">catalyst.tools (module)</a>
 </li>
       <li><a href="api/utils.html#module-catalyst.tools.frozen_class">catalyst.tools.frozen_class (module)</a>
@@ -1072,8 +1071,6 @@
 </li>
       <li><a href="api/utils.html#module-catalyst.tools.meters.ppv_tpr_f1_meter">catalyst.tools.meters.ppv_tpr_f1_meter (module)</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.tools.registry">catalyst.tools.registry (module)</a>
-</li>
       <li><a href="api/utils.html#module-catalyst.tools.time_manager">catalyst.tools.time_manager (module)</a>
 </li>
       <li><a href="api/utils.html#module-catalyst.tools.typing">catalyst.tools.typing (module)</a>
@@ -1094,6 +1091,12 @@
 </li>
       <li><a href="api/utils.html#module-catalyst.utils.metrics.accuracy">catalyst.utils.metrics.accuracy (module)</a>
 </li>
+      <li><a href="api/utils.html#module-catalyst.utils.metrics.average_precision">catalyst.utils.metrics.average_precision (module)</a>
+</li>
+      <li><a href="api/utils.html#module-catalyst.utils.metrics.cmc_score">catalyst.utils.metrics.cmc_score (module)</a>
+</li>
+      <li><a href="api/utils.html#module-catalyst.utils.metrics.cmc_score_count">catalyst.utils.metrics.cmc_score_count (module)</a>
+</li>
       <li><a href="api/utils.html#module-catalyst.utils.metrics.dice">catalyst.utils.metrics.dice (module)</a>
 </li>
       <li><a href="api/utils.html#module-catalyst.utils.metrics.f1_score">catalyst.utils.metrics.f1_score (module)</a>
@@ -1101,6 +1104,10 @@
       <li><a href="api/utils.html#module-catalyst.utils.metrics.focal">catalyst.utils.metrics.focal (module)</a>
 </li>
       <li><a href="api/utils.html#module-catalyst.utils.metrics.iou">catalyst.utils.metrics.iou (module)</a>
+</li>
+      <li><a href="api/utils.html#module-catalyst.utils.metrics.mean_average_precision">catalyst.utils.metrics.mean_average_precision (module)</a>
+</li>
+      <li><a href="api/utils.html#module-catalyst.utils.metrics.multi_label_accuracy">catalyst.utils.metrics.multi_label_accuracy (module)</a>
 </li>
       <li><a href="api/utils.html#module-catalyst.utils.misc">catalyst.utils.misc (module)</a>
 </li>
@@ -1140,6 +1147,10 @@
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.iou.ClasswiseJaccardCallback">ClasswiseJaccardCallback (in module catalyst.dl.callbacks.metrics.iou)</a>
 </li>
+      <li><a href="api/utils.html#catalyst.utils.metrics.cmc_score.cmc_score">cmc_score() (in module catalyst.utils.metrics.cmc_score)</a>
+</li>
+      <li><a href="api/utils.html#catalyst.utils.metrics.cmc_score.cmc_score_count">cmc_score_count() (in module catalyst.utils.metrics.cmc_score)</a>
+</li>
       <li><a href="api/contrib.html#catalyst.contrib.data.transforms.Compose">Compose (class in catalyst.contrib.data.transforms)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment">ConfigExperiment (class in catalyst.dl.experiment.config)</a>
@@ -1166,14 +1177,8 @@
 </li>
       <li><a href="api/utils.html#catalyst.tools.typing.Criterion">Criterion (in module catalyst.tools.typing)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.registry.Criterion">Criterion() (in module catalyst.contrib.registry)</a>
-
-      <ul>
-        <li><a href="api/core.html#catalyst.core.registry.Criterion">(in module catalyst.core.registry)</a>
+      <li><a href="api/registry.html#catalyst.registry.registries.Criterion">Criterion() (in module catalyst.registry.registries)</a>
 </li>
-        <li><a href="api/dl.html#catalyst.dl.registry.Criterion">(in module catalyst.dl.registry)</a>
-</li>
-      </ul></li>
       <li><a href="api/core.html#catalyst.core.callbacks.criterion.CriterionCallback">CriterionCallback (class in catalyst.core.callbacks.criterion)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.modules.se.cSE">cSE (class in catalyst.contrib.nn.modules.se)</a>
@@ -1246,18 +1251,14 @@
 </li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackScope.Experiment">Experiment (catalyst.core.callback.CallbackScope attribute)</a>
 </li>
-      <li><a href="api/core.html#catalyst.core.callback.CallbackScope.experiment">experiment (catalyst.core.callback.CallbackScope attribute)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/core.html#catalyst.core.callback.CallbackScope.experiment">experiment (catalyst.core.callback.CallbackScope attribute)</a>
+</li>
       <li><a href="api/dl.html#catalyst.dl.experiment.experiment.Experiment">Experiment (class in catalyst.dl.experiment.experiment)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.registry.Experiment">Experiment() (in module catalyst.contrib.registry)</a>
-
-      <ul>
-        <li><a href="api/dl.html#catalyst.dl.registry.Experiment">(in module catalyst.dl.registry)</a>
+      <li><a href="api/registry.html#catalyst.registry.registries.Experiment">Experiment() (in module catalyst.registry.registries)</a>
 </li>
-      </ul></li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackOrder.External">External (catalyst.core.callback.CallbackOrder attribute)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackOrder.external">external (catalyst.core.callback.CallbackOrder attribute)</a>
@@ -1404,7 +1405,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/contrib.html#catalyst.contrib.nn.modules.common.GaussianNoise">GaussianNoise (class in catalyst.contrib.nn.modules.common)</a>
 </li>
-      <li><a href="api/utils.html#catalyst.tools.registry.Registry.get">get() (catalyst.tools.registry.Registry method)</a>
+      <li><a href="api/registry.html#catalyst.registry.registry.Registry.get">get() (catalyst.registry.registry.Registry method)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.torch.get_activation_fn">get_activation_fn() (in module catalyst.utils.torch)</a>
 </li>
@@ -1459,14 +1460,14 @@
       <li><a href="api/contrib.html#catalyst.contrib.nn.optimizers.lookahead.Lookahead.get_from_params">get_from_params() (catalyst.contrib.nn.optimizers.lookahead.Lookahead class method)</a>
 
       <ul>
-        <li><a href="api/utils.html#catalyst.tools.registry.Registry.get_from_params">(catalyst.tools.registry.Registry method)</a>
+        <li><a href="api/registry.html#catalyst.registry.registry.Registry.get_from_params">(catalyst.registry.registry.Registry method)</a>
 </li>
       </ul></li>
       <li><a href="api/utils.html#catalyst.utils.hash.get_hash">get_hash() (in module catalyst.utils.hash)</a>
 </li>
-      <li><a href="api/utils.html#catalyst.tools.registry.Registry.get_if_str">get_if_str() (catalyst.tools.registry.Registry method)</a>
+      <li><a href="api/registry.html#catalyst.registry.registry.Registry.get_if_str">get_if_str() (catalyst.registry.registry.Registry method)</a>
 </li>
-      <li><a href="api/utils.html#catalyst.tools.registry.Registry.get_instance">get_instance() (catalyst.tools.registry.Registry method)</a>
+      <li><a href="api/registry.html#catalyst.registry.registry.Registry.get_instance">get_instance() (catalyst.registry.registry.Registry method)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.datasets.mnist.get_int">get_int() (in module catalyst.contrib.datasets.mnist)</a>
 </li>
@@ -1706,9 +1707,9 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.data.nlp.dataset.language_modeling.LanguageModelingDataset">LanguageModelingDataset (class in catalyst.contrib.data.nlp.dataset.language_modeling)</a>
 </li>
-      <li><a href="api/utils.html#catalyst.tools.registry.Registry.late_add">late_add() (catalyst.tools.registry.Registry method)</a>
+      <li><a href="api/registry.html#catalyst.registry.registry.Registry.late_add">late_add() (catalyst.registry.registry.Registry method)</a>
 </li>
-      <li><a href="api/utils.html#catalyst.tools.registry.Registry.len">len() (catalyst.tools.registry.Registry method)</a>
+      <li><a href="api/registry.html#catalyst.registry.registry.Registry.len">len() (catalyst.registry.registry.Registry method)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.models.cv.segmentation.linknet.Linknet">Linknet (class in catalyst.contrib.models.cv.segmentation.linknet)</a>
 </li>
@@ -1768,8 +1769,6 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.utils.pandas.map_dataframe">map_dataframe() (in module catalyst.contrib.utils.pandas)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.accuracy.MapKCallback">MapKCallback (class in catalyst.dl.callbacks.metrics.accuracy)</a>
-</li>
       <li><a href="api/utils.html#catalyst.tools.meters.mapmeter.mAPMeter">mAPMeter (class in catalyst.tools.meters.mapmeter)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.margin.MarginLoss">MarginLoss (class in catalyst.contrib.nn.criterion.margin)</a>
@@ -1785,8 +1784,6 @@
       <li><a href="api/core.html#catalyst.core.callback.CallbackNode.master">master (catalyst.core.callback.CallbackNode attribute)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.misc.maybe_recursive_call">maybe_recursive_call() (in module catalyst.utils.misc)</a>
-</li>
-      <li><a href="api/utils.html#catalyst.utils.metrics.accuracy.mean_average_accuracy">mean_average_accuracy() (in module catalyst.utils.metrics.accuracy)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.gan.MeanOutputLoss">MeanOutputLoss (class in catalyst.contrib.nn.criterion.gan)</a>
 </li>
@@ -1836,27 +1833,21 @@
 </li>
       <li><a href="api/core.html#catalyst.core.runner.IRunner.model">model() (catalyst.core.runner.IRunner property)</a>, <a href="api/core.html#catalyst.core.runner.IRunner.model">[1]</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.registry.Model">Model() (in module catalyst.contrib.registry)</a>
-
-      <ul>
-        <li><a href="api/core.html#catalyst.core.registry.Model">(in module catalyst.core.registry)</a>
+      <li><a href="api/registry.html#catalyst.registry.registries.Model">Model() (in module catalyst.registry.registries)</a>
 </li>
-        <li><a href="api/dl.html#catalyst.dl.registry.Model">(in module catalyst.dl.registry)</a>
+      <li><a href="api/registry.html#catalyst.registry.registries.Module">Module() (in module catalyst.registry.registries)</a>
 </li>
-      </ul></li>
-      <li><a href="api/contrib.html#catalyst.contrib.registry.Module">Module() (in module catalyst.contrib.registry)</a>
-
-      <ul>
-        <li><a href="api/core.html#catalyst.core.registry.Module">(in module catalyst.core.registry)</a>
-</li>
-        <li><a href="api/dl.html#catalyst.dl.registry.Module">(in module catalyst.dl.registry)</a>
-</li>
-      </ul></li>
       <li><a href="api/utils.html#catalyst.tools.meters.movingaveragevaluemeter.MovingAverageValueMeter">MovingAverageValueMeter (class in catalyst.tools.meters.movingaveragevaluemeter)</a>
 </li>
       <li><a href="api/utils.html#catalyst.tools.meters.msemeter.MSEMeter">MSEMeter (class in catalyst.tools.meters.msemeter)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback">MulticlassDiceMetricCallback (class in catalyst.dl.callbacks.metrics.dice)</a>
+      <li><a href="api/utils.html#catalyst.utils.metrics.accuracy.multi_label_accuracy">multi_label_accuracy() (in module catalyst.utils.metrics.accuracy)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback">MultiClassDiceMetricCallback (class in catalyst.dl.callbacks.metrics.dice)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback">MulticlassDiceMetricCallback (in module catalyst.dl.callbacks.metrics.dice)</a>
+</li>
+      <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.accuracy.MultiLabelAccuracyCallback">MultiLabelAccuracyCallback (class in catalyst.dl.callbacks.metrics.accuracy)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.callbacks.metrics.MultiMetricCallback">MultiMetricCallback (class in catalyst.core.callbacks.metrics)</a>
 </li>
@@ -1943,7 +1934,7 @@
 </li>
         <li><a href="api/dl.html#catalyst.dl.callbacks.inference.InferCallback.on_batch_end">(catalyst.dl.callbacks.inference.InferCallback method)</a>
 </li>
-        <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback.on_batch_end">(catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback method)</a>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback.on_batch_end">(catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback method)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.callbacks.scheduler.LRFinder.on_batch_end">(catalyst.dl.callbacks.scheduler.LRFinder method)</a>
 </li>
@@ -2053,7 +2044,7 @@
 </li>
         <li><a href="api/dl.html#catalyst.dl.callbacks.inference.InferCallback.on_loader_end">(catalyst.dl.callbacks.inference.InferCallback method)</a>
 </li>
-        <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback.on_loader_end">(catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback method)</a>
+        <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback.on_loader_end">(catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -2154,14 +2145,8 @@
 </li>
       <li><a href="api/utils.html#catalyst.tools.typing.Optimizer">Optimizer (class in catalyst.tools.typing)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.registry.Optimizer">Optimizer() (in module catalyst.contrib.registry)</a>
-
-      <ul>
-        <li><a href="api/core.html#catalyst.core.registry.Optimizer">(in module catalyst.core.registry)</a>
+      <li><a href="api/registry.html#catalyst.registry.registries.Optimizer">Optimizer() (in module catalyst.registry.registries)</a>
 </li>
-        <li><a href="api/dl.html#catalyst.dl.registry.Optimizer">(in module catalyst.dl.registry)</a>
-</li>
-      </ul></li>
       <li><a href="api/core.html#catalyst.core.callbacks.optimizer.OptimizerCallback">OptimizerCallback (class in catalyst.core.callbacks.optimizer)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.modules.pooling.GlobalAttnPool2d.out_features">out_features() (catalyst.contrib.nn.modules.pooling.GlobalAttnPool2d static method)</a>
@@ -2294,9 +2279,9 @@
 </li>
       <li><a href="api/utils.html#catalyst.utils.metrics.focal.reduced_focal_loss">reduced_focal_loss() (in module catalyst.utils.metrics.focal)</a>
 </li>
-      <li><a href="api/utils.html#catalyst.tools.registry.Registry">Registry (class in catalyst.tools.registry)</a>
+      <li><a href="api/registry.html#catalyst.registry.registry.Registry">Registry (class in catalyst.registry.registry)</a>
 </li>
-      <li><a href="api/utils.html#catalyst.tools.registry.RegistryException">RegistryException</a>
+      <li><a href="api/registry.html#catalyst.registry.registry.RegistryException">RegistryException</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.utils.visualization.render_figure_to_tensor">render_figure_to_tensor() (in module catalyst.contrib.utils.visualization)</a>
 </li>
@@ -2350,6 +2335,8 @@
 </li>
       <li><a href="api/dl.html#catalyst.dl.runner.runner.Runner">Runner (class in catalyst.dl.runner.runner)</a>
 </li>
+      <li><a href="api/registry.html#catalyst.registry.registries.Runner">Runner() (in module catalyst.registry.registries)</a>
+</li>
       <li><a href="api/core.html#catalyst.core.runner.RunnerException">RunnerException</a>
 </li>
   </ul></td>
@@ -2360,14 +2347,8 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data.html#catalyst.data.sampler_inbatch.InBatchTripletsSampler.sample">sample() (catalyst.data.sampler_inbatch.InBatchTripletsSampler method)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.registry.Sampler">Sampler() (in module catalyst.contrib.registry)</a>
-
-      <ul>
-        <li><a href="api/core.html#catalyst.core.registry.Sampler">(in module catalyst.core.registry)</a>
+      <li><a href="api/registry.html#catalyst.registry.registries.Sampler">Sampler() (in module catalyst.registry.registries)</a>
 </li>
-        <li><a href="api/dl.html#catalyst.dl.registry.Sampler">(in module catalyst.dl.registry)</a>
-</li>
-      </ul></li>
       <li><a href="api/utils.html#catalyst.utils.checkpoint.save_checkpoint">save_checkpoint() (in module catalyst.utils.checkpoint)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.config.save_config">save_config() (in module catalyst.utils.config)</a>
@@ -2382,14 +2363,8 @@
 </li>
       <li><a href="api/utils.html#catalyst.tools.typing.Scheduler">Scheduler (in module catalyst.tools.typing)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.registry.Scheduler">Scheduler() (in module catalyst.contrib.registry)</a>
-
-      <ul>
-        <li><a href="api/core.html#catalyst.core.registry.Scheduler">(in module catalyst.core.registry)</a>
+      <li><a href="api/registry.html#catalyst.registry.registries.Scheduler">Scheduler() (in module catalyst.registry.registries)</a>
 </li>
-        <li><a href="api/dl.html#catalyst.dl.registry.Scheduler">(in module catalyst.dl.registry)</a>
-</li>
-      </ul></li>
       <li><a href="api/core.html#catalyst.core.callbacks.scheduler.SchedulerCallback">SchedulerCallback (class in catalyst.core.callbacks.scheduler)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.modules.se.scSE">scSE (class in catalyst.contrib.nn.modules.se)</a>
@@ -2418,12 +2393,12 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.utils.pandas.split_dataframe_on_stratified_folds">split_dataframe_on_stratified_folds() (in module catalyst.contrib.utils.pandas)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/contrib.html#catalyst.contrib.utils.pandas.split_dataframe_train_test">split_dataframe_train_test() (in module catalyst.contrib.utils.pandas)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.utils.dataset.split_dataset_train_test">split_dataset_train_test() (in module catalyst.contrib.utils.dataset)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/contrib.html#catalyst.contrib.nn.modules.se.sSE">sSE (class in catalyst.contrib.nn.modules.se)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackScope.Stage">Stage (catalyst.core.callback.CallbackScope attribute)</a>
@@ -2526,10 +2501,10 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.data.transforms.to_tensor">to_tensor() (in module catalyst.contrib.data.transforms)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.utils.nlp.text.tokenize_text">tokenize_text() (in module catalyst.contrib.utils.nlp.text)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/contrib.html#catalyst.contrib.utils.nlp.text.tokenize_text">tokenize_text() (in module catalyst.contrib.utils.nlp.text)</a>
+</li>
       <li><a href="api/contrib.html#catalyst.contrib.data.cv.transforms.tensor.ToTensor">ToTensor (class in catalyst.contrib.data.cv.transforms.tensor)</a>
 
       <ul>
@@ -2552,14 +2527,8 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.datasets.mnist.MNIST.training_file">training_file (catalyst.contrib.datasets.mnist.MNIST attribute)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.registry.Transform">Transform() (in module catalyst.contrib.registry)</a>
-
-      <ul>
-        <li><a href="api/core.html#catalyst.core.registry.Transform">(in module catalyst.core.registry)</a>
+      <li><a href="api/registry.html#catalyst.registry.registries.Transform">Transform() (in module catalyst.registry.registries)</a>
 </li>
-        <li><a href="api/dl.html#catalyst.dl.registry.Transform">(in module catalyst.dl.registry)</a>
-</li>
-      </ul></li>
       <li><a href="api/utils.html#catalyst.utils.torch.trim_tensors">trim_tensors() (in module catalyst.utils.torch)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletLoss">TripletLoss (class in catalyst.contrib.nn.criterion.triplet)</a>

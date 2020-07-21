@@ -186,6 +186,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/core.html">Core</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/registry.html">Registry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/data.html">Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/utils.html">Tools and Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/contrib.html">Contrib</a></li>
@@ -296,14 +297,14 @@
         <span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="MulticlassDiceMetricCallback"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback">[docs]</a><span class="k">class</span> <span class="nc">MulticlassDiceMetricCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+<div class="viewcode-block" id="MultiClassDiceMetricCallback"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback">[docs]</a><span class="k">class</span> <span class="nc">MultiClassDiceMetricCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Global Multi-Class Dice Metric Callback: calculates the exact</span>
 <span class="sd">    dice score across multiple batches. This callback is good for getting</span>
 <span class="sd">    the dice score with small batch sizes where the batchwise dice is noisier.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="MulticlassDiceMetricCallback.__init__"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="MultiClassDiceMetricCallback.__init__"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;targets&quot;</span><span class="p">,</span>
         <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;logits&quot;</span><span class="p">,</span>
@@ -333,7 +334,7 @@
         <span class="sd">&quot;&quot;&quot;Resets the confusion matrix holding the epoch-wise stats.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">confusion_matrix</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="MulticlassDiceMetricCallback.on_batch_end"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback.on_batch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">):</span>
+<div class="viewcode-block" id="MultiClassDiceMetricCallback.on_batch_end"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback.on_batch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Records the confusion matrix at the end of each batch.</span>
 
 <span class="sd">        Args:</span>
@@ -351,7 +352,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">confusion_matrix</span> <span class="o">+=</span> <span class="n">confusion_matrix</span></div>
 
-<div class="viewcode-block" id="MulticlassDiceMetricCallback.on_loader_end"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback.on_loader_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">):</span>
+<div class="viewcode-block" id="MultiClassDiceMetricCallback.on_loader_end"><a class="viewcode-back" href="../../../../../api/dl.html#catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback.on_loader_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.</span>
 
 <span class="sd">        Args:</span>
@@ -384,7 +385,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_reset_stats</span><span class="p">()</span></div></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;DiceCallback&quot;</span><span class="p">,</span> <span class="s2">&quot;MulticlassDiceMetricCallback&quot;</span><span class="p">]</span>
+<span class="c1"># backward compatibility</span>
+<span class="n">MulticlassDiceMetricCallback</span> <span class="o">=</span> <span class="n">MultiClassDiceMetricCallback</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;DiceCallback&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MultiClassDiceMetricCallback&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MulticlassDiceMetricCallback&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 </pre></div>
 
              </article>

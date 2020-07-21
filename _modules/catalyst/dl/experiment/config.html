@@ -186,6 +186,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/core.html">Core</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/registry.html">Registry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Tools and Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/contrib.html">Contrib</a></li>
@@ -287,7 +288,8 @@
     <span class="n">ValidationManagerCallback</span><span class="p">,</span>
     <span class="n">VerboseLogger</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.registry</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="kn">import</span> <span class="n">check_callback_isinstance</span>
+<span class="kn">from</span> <span class="nn">catalyst.registry</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">CALLBACKS</span><span class="p">,</span>
     <span class="n">CRITERIONS</span><span class="p">,</span>
     <span class="n">MODELS</span><span class="p">,</span>
@@ -295,7 +297,6 @@
     <span class="n">SCHEDULERS</span><span class="p">,</span>
     <span class="n">TRANSFORMS</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="kn">import</span> <span class="n">check_callback_isinstance</span>
 <span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
 
 

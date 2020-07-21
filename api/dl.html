@@ -29,7 +29,7 @@
   <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Data" href="data.html" />
+    <link rel="next" title="Registry" href="registry.html" />
     <link rel="prev" title="Core" href="core.html" /> 
 
   
@@ -188,6 +188,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="core.html">Core</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="registry.html">Registry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Tools and Utilities</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contrib.html">Contrib</a></li>
@@ -1161,40 +1162,18 @@ for learning rate scheduling</p></li>
 <span id="accuracy"></span><h3><a class="toc-backref" href="#id16">Accuracy</a><a class="headerlink" href="#module-catalyst.dl.callbacks.metrics.accuracy" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.metrics.accuracy.</code><code class="sig-name descname">AccuracyCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'accuracy'</em>, <em class="sig-param">accuracy_args: List[int] = None</em>, <em class="sig-param">num_classes: int = None</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/accuracy.html#AccuracyCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.metrics.accuracy.</code><code class="sig-name descname">AccuracyCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'accuracy'</em>, <em class="sig-param">accuracy_args: List[int] = None</em>, <em class="sig-param">num_classes: int = None</em>, <em class="sig-param">activation: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/accuracy.html#AccuracyCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.MultiMetricCallback" title="catalyst.core.callbacks.metrics.MultiMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.MultiMetricCallback</span></code></a></p>
-<p>Accuracy metric callback.</p>
-<dl class="simple">
-<dt>It can be used either for</dt><dd><ul class="simple">
-<li><dl class="simple">
-<dt>multi-class task:</dt><dd><p>-you can use accuracy_args.
--threshold and activation are not required.
--input_key point on tensor: batch_size.
--output_key point on tensor: batch_size x num_classes.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>OR multi-label task, in this case:</dt><dd><p>-you must specify threshold and activation.
--accuracy_args and num_classes will not be used
-(because of there is no method to apply top-k in
-multi-label classification).
--input_key, output_key point on tensor: batch_size x num_classes.
--output_key point on a tensor with binary vectors.</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
+<p>Accuracy metric callback.
+Computes multi-class <a class="reference external" href="mailto:accuracy&#37;&#52;&#48;topk">accuracy<span>&#64;</span>topk</a> for the specified values of <cite>topk</cite>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>There is no need to choose a type (multi-class/multi label).
-An appropriate type will be chosen automatically via shape of tensors.</p>
+<p>For multi-label accuracy please use
+<cite>catalyst.dl.callbacks.metrics.MultiLabelAccuracyCallback</cite></p>
 </div>
 <dl class="method">
 <dt id="catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'accuracy'</em>, <em class="sig-param">accuracy_args: List[int] = None</em>, <em class="sig-param">num_classes: int = None</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/accuracy.html#AccuracyCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'accuracy'</em>, <em class="sig-param">accuracy_args: List[int] = None</em>, <em class="sig-param">num_classes: int = None</em>, <em class="sig-param">activation: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/accuracy.html#AccuracyCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1209,7 +1188,6 @@ specifies our <cite>y_pred</cite></p></li>
 [1, 3, 5] - accuracy at 1, 3 and 5</p></li>
 <li><p><strong>num_classes</strong> (<em>int</em>) – number of classes to calculate <code class="docutils literal notranslate"><span class="pre">accuracy_args</span></code>
 if <code class="docutils literal notranslate"><span class="pre">accuracy_args</span></code> is None</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization.</p></li>
 <li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
 Must be one of <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Sigmoid&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;Softmax&quot;</span></code></p></li>
 </ul>
@@ -1220,29 +1198,30 @@ Must be one of <code class="docutils literal notranslate"><span class="pre">&quo
 </dd></dl>
 
 <dl class="class">
-<dt id="catalyst.dl.callbacks.metrics.accuracy.MapKCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.metrics.accuracy.</code><code class="sig-name descname">MapKCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'map'</em>, <em class="sig-param">map_args: List[int] = None</em>, <em class="sig-param">num_classes: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/accuracy.html#MapKCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.accuracy.MapKCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.MultiMetricCallback" title="catalyst.core.callbacks.metrics.MultiMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.MultiMetricCallback</span></code></a></p>
-<p>mAP&#64;k metric callback.</p>
+<dt id="catalyst.dl.callbacks.metrics.accuracy.MultiLabelAccuracyCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.metrics.accuracy.</code><code class="sig-name descname">MultiLabelAccuracyCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'multi_label_accuracy'</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/accuracy.html#MultiLabelAccuracyCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.accuracy.MultiLabelAccuracyCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.MetricCallback" title="catalyst.core.callbacks.metrics.MetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.MetricCallback</span></code></a></p>
+<p>Accuracy metric callback.
+Computes multi-class <a class="reference external" href="mailto:accuracy&#37;&#52;&#48;topk">accuracy<span>&#64;</span>topk</a> for the specified values of <cite>topk</cite>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For multi-label accuracy please use
+<cite>catalyst.dl.callbacks.metrics.MultiLabelAccuracyCallback</cite></p>
+</div>
 <dl class="method">
-<dt id="catalyst.dl.callbacks.metrics.accuracy.MapKCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'map'</em>, <em class="sig-param">map_args: List[int] = None</em>, <em class="sig-param">num_classes: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/accuracy.html#MapKCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.accuracy.MapKCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.dl.callbacks.metrics.accuracy.MultiLabelAccuracyCallback.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'multi_label_accuracy'</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/accuracy.html#MultiLabelAccuracyCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.accuracy.MultiLabelAccuracyCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – input key to use for
-calculation mean average accuracy at k;
+<li><p><strong>input_key</strong> (<em>str</em>) – input key to use for accuracy calculation;
 specifies our <cite>y_true</cite></p></li>
-<li><p><strong>output_key</strong> (<em>str</em>) – output key to use for
-calculation mean average accuracy at k;
+<li><p><strong>output_key</strong> (<em>str</em>) – output key to use for accuracy calculation;
 specifies our <cite>y_pred</cite></p></li>
 <li><p><strong>prefix</strong> (<em>str</em>) – key for the metric’s name</p></li>
-<li><p><strong>map_args</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – specifies which map&#64;K to log.
-[1] - map&#64;1
-[1, 3] - map&#64;1 and map&#64;3
-[1, 3, 5] - map&#64;1, map&#64;3 and map&#64;5</p></li>
-<li><p><strong>num_classes</strong> (<em>int</em>) – number of classes to calculate <code class="docutils literal notranslate"><span class="pre">map_args</span></code>
-if <code class="docutils literal notranslate"><span class="pre">map_args</span></code> is None</p></li>
+<li><p><strong>threshold</strong> (<em>float</em>) – threshold for for model output</p></li>
+<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
+Must be one of <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Sigmoid&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;Softmax&quot;</span></code></p></li>
 </ul>
 </dd>
 </dl>
@@ -1311,15 +1290,15 @@ specifies our <cite>y_pred</cite></p></li>
 </dd></dl>
 
 <dl class="class">
-<dt id="catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.metrics.dice.</code><code class="sig-name descname">MulticlassDiceMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'dice'</em>, <em class="sig-param">class_names=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/dice.html#MulticlassDiceMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.metrics.dice.</code><code class="sig-name descname">MultiClassDiceMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'dice'</em>, <em class="sig-param">class_names=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/dice.html#MultiClassDiceMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
 <p>Global Multi-Class Dice Metric Callback: calculates the exact
 dice score across multiple batches. This callback is good for getting
 the dice score with small batch sizes where the batchwise dice is noisier.</p>
 <dl class="method">
-<dt id="catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'dice'</em>, <em class="sig-param">class_names=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/dice.html#MulticlassDiceMetricCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'dice'</em>, <em class="sig-param">class_names=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/dice.html#MultiClassDiceMetricCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1338,8 +1317,8 @@ if list, make sure it corresponds to the number of classes</p></li>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback.on_batch_end">
-<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/dice.html#MulticlassDiceMetricCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback.on_batch_end">
+<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/dice.html#MultiClassDiceMetricCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>Records the confusion matrix at the end of each batch.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1349,8 +1328,8 @@ if list, make sure it corresponds to the number of classes</p></li>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback.on_loader_end">
-<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/dice.html#MulticlassDiceMetricCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback.on_loader_end">
+<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/dice.html#MultiClassDiceMetricCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1359,6 +1338,12 @@ if list, make sure it corresponds to the number of classes</p></li>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback">
+<code class="sig-prename descclassname">catalyst.dl.callbacks.metrics.dice.</code><code class="sig-name descname">MulticlassDiceMetricCallback</code><a class="headerlink" href="#catalyst.dl.callbacks.metrics.dice.MulticlassDiceMetricCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback" title="catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.callbacks.metrics.dice.MultiClassDiceMetricCallback</span></code></a></p>
 </dd></dl>
 
 </div>
@@ -1746,249 +1731,6 @@ lists to ease the choice.</p>
 </div>
 <div class="section" id="module-catalyst.dl.registry">
 <span id="registry"></span><h2><a class="toc-backref" href="#id26">Registry</a><a class="headerlink" href="#module-catalyst.dl.registry" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="catalyst.dl.registry.Callback">
-<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Callback</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.dl.registry.Callback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
-name. Signature is flexible.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>factory</strong> – Factory instance</p></li>
-<li><p><strong>factories</strong> – More instances</p></li>
-<li><p><strong>name</strong> – Provided name for first instance. Use only when pass
-single instance.</p></li>
-<li><p><strong>named_factories</strong> – Factory and their names as kwargs</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>First factory passed</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Factory</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.dl.registry.Criterion">
-<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Criterion</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.dl.registry.Criterion" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
-name. Signature is flexible.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>factory</strong> – Factory instance</p></li>
-<li><p><strong>factories</strong> – More instances</p></li>
-<li><p><strong>name</strong> – Provided name for first instance. Use only when pass
-single instance.</p></li>
-<li><p><strong>named_factories</strong> – Factory and their names as kwargs</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>First factory passed</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Factory</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.dl.registry.Optimizer">
-<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Optimizer</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.dl.registry.Optimizer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
-name. Signature is flexible.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>factory</strong> – Factory instance</p></li>
-<li><p><strong>factories</strong> – More instances</p></li>
-<li><p><strong>name</strong> – Provided name for first instance. Use only when pass
-single instance.</p></li>
-<li><p><strong>named_factories</strong> – Factory and their names as kwargs</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>First factory passed</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Factory</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.dl.registry.Scheduler">
-<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Scheduler</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.dl.registry.Scheduler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
-name. Signature is flexible.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>factory</strong> – Factory instance</p></li>
-<li><p><strong>factories</strong> – More instances</p></li>
-<li><p><strong>name</strong> – Provided name for first instance. Use only when pass
-single instance.</p></li>
-<li><p><strong>named_factories</strong> – Factory and their names as kwargs</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>First factory passed</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Factory</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.dl.registry.Module">
-<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Module</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.dl.registry.Module" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
-name. Signature is flexible.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>factory</strong> – Factory instance</p></li>
-<li><p><strong>factories</strong> – More instances</p></li>
-<li><p><strong>name</strong> – Provided name for first instance. Use only when pass
-single instance.</p></li>
-<li><p><strong>named_factories</strong> – Factory and their names as kwargs</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>First factory passed</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Factory</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.dl.registry.Model">
-<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Model</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.dl.registry.Model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
-name. Signature is flexible.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>factory</strong> – Factory instance</p></li>
-<li><p><strong>factories</strong> – More instances</p></li>
-<li><p><strong>name</strong> – Provided name for first instance. Use only when pass
-single instance.</p></li>
-<li><p><strong>named_factories</strong> – Factory and their names as kwargs</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>First factory passed</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Factory</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.dl.registry.Sampler">
-<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Sampler</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.dl.registry.Sampler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
-name. Signature is flexible.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>factory</strong> – Factory instance</p></li>
-<li><p><strong>factories</strong> – More instances</p></li>
-<li><p><strong>name</strong> – Provided name for first instance. Use only when pass
-single instance.</p></li>
-<li><p><strong>named_factories</strong> – Factory and their names as kwargs</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>First factory passed</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Factory</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.dl.registry.Transform">
-<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Transform</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.dl.registry.Transform" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
-name. Signature is flexible.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>factory</strong> – Factory instance</p></li>
-<li><p><strong>factories</strong> – More instances</p></li>
-<li><p><strong>name</strong> – Provided name for first instance. Use only when pass
-single instance.</p></li>
-<li><p><strong>named_factories</strong> – Factory and their names as kwargs</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>First factory passed</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Factory</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.dl.registry.Experiment">
-<code class="sig-prename descclassname">catalyst.dl.registry.</code><code class="sig-name descname">Experiment</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="headerlink" href="#catalyst.dl.registry.Experiment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
-name. Signature is flexible.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>factory</strong> – Factory instance</p></li>
-<li><p><strong>factories</strong> – More instances</p></li>
-<li><p><strong>name</strong> – Provided name for first instance. Use only when pass
-single instance.</p></li>
-<li><p><strong>named_factories</strong> – Factory and their names as kwargs</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>First factory passed</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Factory</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><a class="reference internal" href="utils.html#catalyst.tools.registry.RegistryException" title="catalyst.tools.registry.RegistryException"><strong>RegistryException</strong></a> – if factory with provided name is already present</p>
-</dd>
-</dl>
-</dd></dl>
-
 </div>
 </div>
 
@@ -2000,7 +1742,7 @@ single instance.</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="data.html" class="btn btn-neutral float-right" title="Data" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="registry.html" class="btn btn-neutral float-right" title="Registry" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
         <a href="core.html" class="btn btn-neutral" title="Core" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
