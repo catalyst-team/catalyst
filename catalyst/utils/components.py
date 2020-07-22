@@ -64,14 +64,11 @@ def process_components(
     )
 
     model: Model = maybe_recursive_call(model, "to", device=device)
-    optimizer: Optimizer = maybe_recursive_call(optimizer, "to", device=device)
-    # for param in model.parameters():
-    #     param = param["params"]
-    #     optimizer_state = optimizer.state[param]
-    #     for state_key, state_value in optimizer_state.items():
-    #         optimizer_state[state_key] = any2device(
-    #             state_value, device
-    #         )
+    # optimizer: Optimizer = maybe_recursive_call(optimizer, "to", device=device)
+    for state in optimizer.state.values():
+        for k, v in state.items():
+            if isinstance(v, torch.Tensor):
+                state[k] = v.to(device)
 
     if check_ddp_wrapped(model):
         pass
