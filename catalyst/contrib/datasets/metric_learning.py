@@ -46,10 +46,10 @@ class MnistQGDataset(QueryGalleryDataset):
     """MNIST for metric learning with query and gallery split"""
 
     def __init__(
-            self,
-            root: str,
-            transform: Optional[Callable] = None,
-            gallery_fraq: Optional[float] = 0.2,
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        gallery_fraq: Optional[float] = 0.2,
     ) -> None:
         """
         Args:
