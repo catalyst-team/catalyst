@@ -1,9 +1,9 @@
 # flake8: noqa
 # @TODO: code formatting issue for 20.07 release
-from typing import Union, List
+from typing import List, Union
 
 import torch
-from torch import nn, Tensor, short, int as tint, long
+from torch import int as tint, long, nn, short, Tensor
 from torch.nn import TripletMarginLoss
 
 from catalyst.contrib.nn.criterion.functional import triplet_loss

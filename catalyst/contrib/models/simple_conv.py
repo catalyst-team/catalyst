@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-from torch.nn.functional import relu, max_pool2d
+from torch.nn.functional import max_pool2d, relu
 
 from catalyst.contrib.nn import Normalize
 

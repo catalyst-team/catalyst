@@ -1,5 +1,5 @@
+from typing import Any, Callable, Dict, List, Optional
 from abc import ABC, abstractmethod
-from typing import Dict, Any, List, Optional, Callable
 
 import torch
 from torch.utils.data import Dataset
