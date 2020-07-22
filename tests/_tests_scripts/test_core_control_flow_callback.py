@@ -7,309 +7,239 @@ import sys
 
 import pytest
 
-import torch
-from torch.utils.data import DataLoader, TensorDataset
-
-import catalyst.dl as dl
+from catalyst.dl import Callback, CallbackOrder, ControlFlowCallback
 
 
-def test_disabling_loss_for_validation_loader():
-    old_stdout = sys.stdout
-    sys.stdout = str_stdout = StringIO()
+class _Runner:
+    def __init__(self, stage_name, loader_name, global_epoch, epoch):
+        self.stage_name = stage_name
+        self.loader_name = loader_name
+        self.global_epoch = global_epoch
+        self.epoch = epoch
 
-    # experiment_setup
-    logdir = "./logs/control_flow"
-    checkpoint = logdir + "/checkpoints"
-    logfile = checkpoint + "/_metrics.json"
 
-    # data
-    num_samples, num_features = int(1e4), int(1e1)
-    X = torch.rand(num_samples, num_features)
-    y = torch.randint(0, 5, size=[num_samples])
-    dataset = TensorDataset(X, y)
-    loader = DataLoader(dataset, batch_size=32, num_workers=1)
-    loaders = {"train": loader, "valid": loader}
+class DummyCallback(Callback):
+    def __init__(self):
+        super().__init__(CallbackOrder.Internal)
 
-    # model, criterion, optimizer, scheduler
-    model = torch.nn.Linear(num_features, 5)
-    criterion = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters())
-    runner = dl.SupervisedRunner()
 
-    n_epochs = 5
-    # first stage
-    runner.train(
-        model=model,
-        criterion=criterion,
-        optimizer=optimizer,
-        loaders=loaders,
-        logdir=logdir,
-        num_epochs=n_epochs,
-        verbose=False,
-        main_metric="accuracy01",
-        callbacks=[
-            dl.ControlFlowCallback(
-                dl.CriterionCallback(), ignore_loaders=["valid"]
-            ),
-            dl.AccuracyCallback(accuracy_args=[1, 3, 5]),
-            dl.CheckRunCallback(num_epoch_steps=n_epochs),
+def test_controll_flow_callback_filter_fn_periodical_epochs():
+    wraped = ControlFlowCallback(DummyCallback(), epochs=3)
+    expected = {
+        "train": [i % 3 == 0 for i in range(1, 10 + 1)],
+        "valid": [i % 3 == 0 for i in range(1, 10 + 1)],
+        "another_loader": [i % 3 == 0 for i in range(1, 10 + 1)],
+        "like_valid": [i % 3 == 0 for i in range(1, 10 + 1)],
+    }
+    actual = {loader: [] for loader in expected.keys()}
+    for epoch in range(1, 10 + 1):
+        for loader in expected.keys():
+            runner = _Runner("stage", loader, epoch, epoch)
+            wraped.on_loader_start(runner)
+            actual[loader].append(wraped._is_enabled)
+    assert actual == expected
+
+
+def test_controll_flow_callback_filter_fn_periodical_ignore_epochs():
+    wraped = ControlFlowCallback(DummyCallback(), ignore_epochs=4)
+    expected = {
+        "train": [i % 4 != 0 for i in range(1, 10 + 1)],
+        "valid": [i % 4 != 0 for i in range(1, 10 + 1)],
+        "another_loader": [i % 4 != 0 for i in range(1, 10 + 1)],
+        "like_valid": [i % 4 != 0 for i in range(1, 10 + 1)],
+    }
+    actual = {loader: [] for loader in expected.keys()}
+    for epoch in range(1, 10 + 1):
+        for loader in expected.keys():
+            runner = _Runner("stage", loader, epoch, epoch)
+            wraped.on_loader_start(runner)
+            actual[loader].append(wraped._is_enabled)
+    assert actual == expected
+
+
+def test_controll_flow_callback_filter_fn_epochs():
+    wraped = ControlFlowCallback(DummyCallback(), epochs=[3, 4, 6])
+    expected = {
+        "train": [
+            False,
+            False,
+            True,
+            True,
+            False,
+            True,
+            False,
+            False,
+            False,
+            False,
         ],
-    )
-
-    sys.stdout = old_stdout
-    exp_output = str_stdout.getvalue()
-
-    assert (
-        len(
-            re.findall(
-                r"\(train\).* loss=\d+\.\d+$", exp_output, flags=re.MULTILINE
-            )
-        )
-        == 5
-    )
-    assert (
-        len(
-            re.findall(
-                r"\(valid\).* loss=\d+\.\d+$", exp_output, flags=re.MULTILINE
-            )
-        )
-        == 0
-    )
-    assert (
-        len(re.findall(r".*/train\.\d\.pth", exp_output, flags=re.MULTILINE))
-        == 1
-    )
-
-    assert os.path.isfile(logfile)
-    assert os.path.isfile(checkpoint + "/best.pth")
-    assert os.path.isfile(checkpoint + "/best_full.pth")
-    assert os.path.isfile(checkpoint + "/last.pth")
-    assert os.path.isfile(checkpoint + "/last_full.pth")
-    pth_files = [
-        file for file in os.listdir(checkpoint) if file.endswith(".pth")
-    ]
-    assert len(pth_files) == 6
-
-    shutil.rmtree(logdir, ignore_errors=True)
-
-
-def test_disabling_metric_for_validation():
-    old_stdout = sys.stdout
-    sys.stdout = str_stdout = StringIO()
-
-    # experiment_setup
-    logdir = "./logs/control_flow"
-    checkpoint = logdir + "/checkpoints"
-    logfile = checkpoint + "/_metrics.json"
-
-    # data
-    num_samples, num_features = int(1e4), int(1e1)
-    X = torch.rand(num_samples, num_features)
-    y = torch.randint(0, 5, size=[num_samples])
-    dataset = TensorDataset(X, y)
-    loader = DataLoader(dataset, batch_size=32, num_workers=1)
-    loaders = {"train": loader, "valid": loader}
-
-    # model, criterion, optimizer, scheduler
-    model = torch.nn.Linear(num_features, 5)
-    criterion = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters())
-    runner = dl.SupervisedRunner()
-
-    n_epochs = 5
-    # first stage
-    runner.train(
-        model=model,
-        criterion=criterion,
-        optimizer=optimizer,
-        loaders=loaders,
-        logdir=logdir,
-        num_epochs=n_epochs,
-        verbose=False,
-        callbacks=[
-            dl.ControlFlowCallback(
-                dl.AccuracyCallback(accuracy_args=[1, 3, 5]),
-                ignore_loaders="valid",
-            ),
-            dl.CheckRunCallback(num_epoch_steps=n_epochs),
+        "valid": [
+            False,
+            False,
+            True,
+            True,
+            False,
+            True,
+            False,
+            False,
+            False,
+            False,
         ],
-    )
-
-    sys.stdout = old_stdout
-    exp_output = str_stdout.getvalue()
-
-    assert (
-        len(
-            re.findall(
-                r"\(train\).*loss=\d+\.\d+$", exp_output, flags=re.MULTILINE
-            )
-        )
-        == 5
-    )
-    assert (
-        len(
-            re.findall(
-                r"\(valid\): loss=\d+\.\d+$", exp_output, flags=re.MULTILINE
-            )
-        )
-        == 5
-    )
-    assert (
-        len(re.findall(r".*/train\.\d\.pth", exp_output, flags=re.MULTILINE))
-        == 1
-    )
-
-    assert os.path.isfile(logfile)
-    assert os.path.isfile(checkpoint + "/best.pth")
-    assert os.path.isfile(checkpoint + "/best_full.pth")
-    assert os.path.isfile(checkpoint + "/last.pth")
-    assert os.path.isfile(checkpoint + "/last_full.pth")
-    pth_files = [
-        file for file in os.listdir(checkpoint) if file.endswith(".pth")
-    ]
-    assert len(pth_files) == 6
-
-    shutil.rmtree(logdir, ignore_errors=True)
+    }
+    actual = {loader: [] for loader in expected.keys()}
+    for epoch in range(1, 10 + 1):
+        for loader in expected.keys():
+            runner = _Runner("stage", loader, epoch, epoch)
+            wraped.on_loader_start(runner)
+            actual[loader].append(wraped._is_enabled)
+    assert actual == expected
 
 
-@pytest.mark.skip("loss should be specified for train loader")
-def test_disabling_loss_for_train():
-    old_stdout = sys.stdout
-    sys.stdout = str_stdout = StringIO()
-
-    # experiment_setup
-    logdir = "./logs/control_flow"
-    checkpoint = logdir + "/checkpoints"
-    logfile = checkpoint + "/_metrics.json"
-
-    # data
-    num_samples, num_features = int(1e4), int(1e1)
-    X = torch.rand(num_samples, num_features)
-    y = torch.randint(0, 5, size=[num_samples])
-    dataset = TensorDataset(X, y)
-    loader = DataLoader(dataset, batch_size=32, num_workers=1)
-    loaders = {"train": loader, "valid": loader}
-
-    # model, criterion, optimizer, scheduler
-    model = torch.nn.Linear(num_features, 5)
-    criterion = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters())
-    runner = dl.SupervisedRunner()
-
-    n_epochs = 5
-    # first stage
-    runner.train(
-        model=model,
-        criterion=criterion,
-        optimizer=optimizer,
-        loaders=loaders,
-        logdir=logdir,
-        num_epochs=n_epochs,
-        verbose=False,
-        main_metric="accuracy01",
-        callbacks=[
-            dl.ControlFlowCallback(
-                dl.CriterionCallback(), ignore_loaders=["train"]
-            ),
-            dl.AccuracyCallback(accuracy_args=[1, 3, 5]),
-            dl.CheckRunCallback(num_epoch_steps=n_epochs),
+def test_controll_flow_callback_filter_fn_ignore_epochs():
+    wraped = ControlFlowCallback(DummyCallback(), ignore_epochs=[3, 4, 6, 8])
+    expected = {
+        "train": [
+            True,
+            True,
+            False,
+            False,
+            True,
+            False,
+            True,
+            False,
+            True,
+            True,
         ],
-    )
-
-    sys.stdout = old_stdout
-    exp_output = str_stdout.getvalue()
-
-    assert len(re.findall(r"\(train\): loss", exp_output)) == 5
-    assert len(re.findall(r"\(valid\): loss", exp_output)) == 0
-    assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 1
-
-    assert os.path.isfile(logfile)
-    assert os.path.isfile(checkpoint + "/best.pth")
-    assert os.path.isfile(checkpoint + "/best_full.pth")
-    assert os.path.isfile(checkpoint + "/last.pth")
-    assert os.path.isfile(checkpoint + "/last_full.pth")
-    pth_files = [
-        file for file in os.listdir(checkpoint) if file.endswith(".pth")
-    ]
-    assert len(pth_files) == 6
-
-    shutil.rmtree(logdir, ignore_errors=True)
-
-
-def test_ignoring_metric_on_train_dataset():
-    old_stdout = sys.stdout
-    sys.stdout = str_stdout = StringIO()
-
-    # experiment_setup
-    logdir = "./logs/control_flow"
-    checkpoint = logdir + "/checkpoints"
-    logfile = checkpoint + "/_metrics.json"
-
-    # data
-    num_samples, num_features = int(1e4), int(1e1)
-    X = torch.rand(num_samples, num_features)
-    y = torch.randint(0, 5, size=[num_samples])
-    dataset = TensorDataset(X, y)
-    loader = DataLoader(dataset, batch_size=32, num_workers=1)
-    loaders = {"train": loader, "valid": loader}
-
-    # model, criterion, optimizer, scheduler
-    model = torch.nn.Linear(num_features, 5)
-    criterion = torch.nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters())
-    runner = dl.SupervisedRunner()
-
-    n_epochs = 5
-    # first stage
-    runner.train(
-        model=model,
-        criterion=criterion,
-        optimizer=optimizer,
-        loaders=loaders,
-        logdir=logdir,
-        num_epochs=n_epochs,
-        verbose=False,
-        callbacks=[
-            dl.ControlFlowCallback(
-                dl.AccuracyCallback(accuracy_args=[1, 3, 5]),
-                ignore_loaders="train",
-            ),
-            dl.CheckRunCallback(num_epoch_steps=n_epochs),
+        "valid": [
+            True,
+            True,
+            False,
+            False,
+            True,
+            False,
+            True,
+            False,
+            True,
+            True,
         ],
-    )
+    }
+    actual = {loader: [] for loader in expected.keys()}
+    for epoch in range(1, 10 + 1):
+        for loader in expected.keys():
+            runner = _Runner("stage", loader, epoch, epoch)
+            wraped.on_loader_start(runner)
+            actual[loader].append(wraped._is_enabled)
+    assert actual == expected
 
-    sys.stdout = old_stdout
-    exp_output = str_stdout.getvalue()
 
-    assert (
-        len(
-            re.findall(
-                r"\(train\): loss=\d+\.\d+$", exp_output, flags=re.MULTILINE
-            )
-        )
-        == 5
-    )
-    assert (
-        len(
-            re.findall(
-                r"\(valid\): .*loss=\d+\.\d+$", exp_output, flags=re.MULTILINE
-            )
-        )
-        == 5
-    )
-    assert (
-        len(re.findall(r".*/train\.\d\.pth", exp_output, flags=re.MULTILINE))
-        == 1
-    )
+def test_control_flow_callback_filter_fn_loaders():
+    wraped = ControlFlowCallback(DummyCallback(), loaders=["valid"])
+    expected = {
+        "train": [False] * 5,
+        "valid": [True] * 5,
+        "another_loader": [False] * 5,
+        "like_valid": [False] * 5,
+    }
+    actual = {loader: [] for loader in expected.keys()}
+    for epoch in range(1, 5 + 1):
+        for loader in expected.keys():
+            runner = _Runner("stage", loader, epoch, epoch)
+            wraped.on_loader_start(runner)
+            actual[loader].append(wraped._is_enabled)
+    assert actual == expected
 
-    assert os.path.isfile(logfile)
-    assert os.path.isfile(checkpoint + "/best.pth")
-    assert os.path.isfile(checkpoint + "/best_full.pth")
-    assert os.path.isfile(checkpoint + "/last.pth")
-    assert os.path.isfile(checkpoint + "/last_full.pth")
-    pth_files = [
-        file for file in os.listdir(checkpoint) if file.endswith(".pth")
-    ]
-    assert len(pth_files) == 6
 
-    shutil.rmtree(logdir, ignore_errors=True)
+def test_control_flow_callback_filter_fn_ignore_loaders():
+    wraped = ControlFlowCallback(
+        DummyCallback(), ignore_loaders=["valid", "another_loader"]
+    )
+    expected = {
+        "train": [True] * 5,
+        "valid": [False] * 5,
+        "another_loader": [False] * 5,
+        "like_valid": [True] * 5,
+    }
+    actual = {loader: [] for loader in expected.keys()}
+    for epoch in range(1, 5 + 1):
+        for loader in expected.keys():
+            runner = _Runner("stage", loader, epoch, epoch)
+            wraped.on_loader_start(runner)
+            actual[loader].append(wraped._is_enabled)
+    assert actual == expected
+
+
+def test_control_flow_callback_filter_fn_multiple_epochs_loaders():
+    wraped = ControlFlowCallback(
+        DummyCallback(), loaders={"valid": 3, "another_loader": [2, 4]}
+    )
+    expected = {
+        "train": [False] * 5,
+        "valid": [False, False, True, False, False],
+        "another_loader": [False, True, False, True, False],
+        "like_valid": [False] * 5,
+    }
+    actual = {loader: [] for loader in expected.keys()}
+    for epoch in range(1, 5 + 1):
+        for loader in expected.keys():
+            runner = _Runner("stage", loader, epoch, epoch)
+            wraped.on_loader_start(runner)
+            actual[loader].append(wraped._is_enabled)
+    assert actual == expected
+
+
+def test_control_flow_callback_filter_fn_multiple_epochs_ignore_loaders():
+    wraped = ControlFlowCallback(
+        DummyCallback(), ignore_loaders={"valid": 3, "another_loader": [2, 4]}
+    )
+    expected = {
+        "train": [True] * 5,
+        "valid": [True, True, False, True, True],
+        "another_loader": [True, False, True, False, True],
+        "like_valid": [True] * 5,
+    }
+    actual = {loader: [] for loader in expected.keys()}
+    for epoch in range(1, 5 + 1):
+        for loader in expected.keys():
+            runner = _Runner("stage", loader, epoch, epoch)
+            wraped.on_loader_start(runner)
+            actual[loader].append(wraped._is_enabled)
+    assert actual == expected
+
+
+def test_control_flow_callback_filter_fn_string_lambda():
+    wraped = ControlFlowCallback(
+        DummyCallback(),
+        filter_fn="lambda stage, epoch, loader: 'valid' in loader",
+    )
+    expected = {
+        "train": [False] * 5,
+        "valid": [True] * 5,
+        "another_loader": [False] * 5,
+        "like_valid": [True] * 5,
+    }
+    actual = {loader: [] for loader in expected.keys()}
+    for epoch in range(1, 5 + 1):
+        for loader in expected.keys():
+            runner = _Runner("stage", loader, epoch, epoch)
+            wraped.on_loader_start(runner)
+            actual[loader].append(wraped._is_enabled)
+    assert actual == expected
+
+
+def test_control_flow_callback_filter_fn_lambda():
+    wraped = ControlFlowCallback(
+        DummyCallback(),
+        filter_fn=lambda stage, epoch, loader: "valid" not in loader,
+    )
+    expected = {
+        "train": [True] * 5,
+        "valid": [False] * 5,
+        "another_loader": [True] * 5,
+        "like_valid": [False] * 5,
+    }
+    actual = {loader: [] for loader in expected.keys()}
+    for epoch in range(1, 5 + 1):
+        for loader in expected.keys():
+            runner = _Runner("stage", loader, epoch, epoch)
+            wraped.on_loader_start(runner)
+            actual[loader].append(wraped._is_enabled)
+    assert actual == expected

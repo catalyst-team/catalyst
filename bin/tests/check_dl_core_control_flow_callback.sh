@@ -189,10 +189,10 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --logdir=${LOGDIR} > ${EXP_OUTPUT}
 
 cat ${EXP_OUTPUT}
-check_line_counts ${EXP_OUTPUT} "(train)\: accuracy" 5
-check_line_counts ${EXP_OUTPUT} "(valid)\: accuracy" 6
-check_line_counts ${EXP_OUTPUT} "Epoch [2468] (train): loss" 4
-check_line_counts ${EXP_OUTPUT} "Epoch [369] (valid): loss" 3
+check_line_counts ${EXP_OUTPUT} "(train)\: accuracy" 4
+check_line_counts ${EXP_OUTPUT} "(valid)\: accuracy" 3
+check_line_counts ${EXP_OUTPUT} "Epoch [13579] (train): loss" 5
+check_line_counts ${EXP_OUTPUT} "Epoch [124578] (valid): loss" 6
 
 
 check_file_existence ${LOGFILE}
