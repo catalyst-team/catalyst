@@ -357,7 +357,7 @@ def normalize(samples: Tensor) -> Tensor:
     Returns:
         normalized tensor with the same shape
     """
-    norms = torch.norm(samples, p=2, dim=1).unsqueeze(1).detach()
+    norms = torch.norm(samples, p=2, dim=1).unsqueeze(1)
     samples = samples / (norms + torch.finfo(torch.float32).eps)
     return samples
 
