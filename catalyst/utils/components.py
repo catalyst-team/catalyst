@@ -20,7 +20,7 @@ from catalyst.utils.distributed import (
     initialize_apex,
 )
 from catalyst.utils.misc import maybe_recursive_call
-from catalyst.utils.torch import get_device, any2device, process_model_params
+from catalyst.utils.torch import any2device, get_device, process_model_params
 
 
 def process_components(
@@ -64,7 +64,6 @@ def process_components(
     )
 
     model: Model = maybe_recursive_call(model, "to", device=device)
-    # optimizer: Optimizer = maybe_recursive_call(optimizer, "to", device=device)
     optimizer = type(optimizer)(model.parameters(), **optimizer.defaults)
 
     if check_ddp_wrapped(model):

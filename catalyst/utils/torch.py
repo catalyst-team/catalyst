@@ -17,6 +17,7 @@ from catalyst.utils.dict import merge_dicts
 
 try:
     import torch_xla.core.xla_model as xm
+
     XLA_DEVICE = xm.xla_device()
 except ModuleNotFoundError:
     XLA_DEVICE = None
@@ -66,7 +67,7 @@ def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
 
 def get_device() -> torch.device:
     """Simple returning the best available device (GPU or CPU)."""
-    is_available_xla = (XLA_DEVICE is not None)
+    is_available_xla = XLA_DEVICE is not None
     is_available_gpu = torch.cuda.is_available()
     device = "cpu"
     if is_available_xla:

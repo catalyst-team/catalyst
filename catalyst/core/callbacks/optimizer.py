@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List, Mapping, Any
+from typing import Any, Callable, Dict, List, Mapping
 import logging
 import warnings
 
@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 try:
     from torch_xla.core.xla_model import optimizer_step as xla_optimizer_step
 except ModuleNotFoundError:
+
     def xla_optimizer_step(optimizer, *args, **kwargs):
         optimizer.step()
 
@@ -28,7 +29,7 @@ class OptimizerCallback(Callback):
         grad_clip_params: Dict = None,
         decouple_weight_decay: bool = True,
         loss_key: str = None,
-        use_xla_barrier: bool = True
+        use_xla_barrier: bool = True,
     ):
         """
         Args:
@@ -106,7 +107,7 @@ class OptimizerCallback(Callback):
         self._optimizer = runner.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
-        self.is_xla = (runner.device.type == "xla")
+        self.is_xla = runner.device.type == "xla"
         assert self._optimizer is not None
 
     def on_epoch_start(self, runner: IRunner) -> None:
@@ -187,12 +188,14 @@ class OptimizerCallback(Callback):
             loss.backward()
 
         if need_gradient_step:
-            xla_args = {"barrier": self.use_xla_barrier} if self.is_xla else None
+            xla_args = (
+                {"barrier": self.use_xla_barrier} if self.is_xla else None
+            )
             self.grad_step(
                 optimizer=self._optimizer,
                 optimizer_wds=self._optimizer_wd,
                 grad_clip_fn=self.grad_clip_fn,
-                xla_args=xla_args
+                xla_args=xla_args,
             )
 
             utils.maybe_recursive_call(self._optimizer, "zero_grad")
