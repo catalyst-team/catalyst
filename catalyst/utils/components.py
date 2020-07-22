@@ -64,7 +64,9 @@ def process_components(
     )
 
     model: Model = maybe_recursive_call(model, "to", device=device)
-    optimizer = type(optimizer)(model.parameters(), **optimizer.defaults)
+
+    if optimizer is not None:
+        optimizer = type(optimizer)(model.parameters(), **optimizer.defaults)
 
     if check_ddp_wrapped(model):
         pass
