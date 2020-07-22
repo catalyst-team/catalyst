@@ -65,7 +65,7 @@ def process_components(
 
     model: Model = maybe_recursive_call(model, "to", device=device)
     # optimizer: Optimizer = maybe_recursive_call(optimizer, "to", device=device)
-    for group in optimizer.param_groups():
+    for group in optimizer.param_groups:
         if "prams" in group:
             group["params"] = list(model.parameters())
 
