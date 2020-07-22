@@ -197,15 +197,11 @@ class CMCScoreCallback(Callback):
 
     def on_loader_end(self, runner: "IRunner"):
         """On loader end action"""
-        assert self._gallery_idx == self._gallery_size, (
-            self._gallery_idx,
-            self._gallery_size,
-        )
+        assert self._gallery_idx == self._gallery_size, \
+            'An error occurred during the accumulation process.'
 
-        assert self._query_idx == self._query_size, (
-            self._query_idx,
-            self._query_size,
-        )
+        assert self._query_idx == self._query_size, \
+            'An error occurred during the accumulation process.'
 
         conformity_matrix = self._query_labels == self._gallery_labels.reshape(
             -1, 1
