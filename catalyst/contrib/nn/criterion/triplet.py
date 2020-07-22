@@ -293,7 +293,7 @@ class TripletMarginLossWithSampling(nn.Module):
         """
         if isinstance(labels, Tensor):
             labels = labels.squeeze()
-            assert (labels.ndim == 1) and (
+            assert (len(labels.shape) == 1) and (
                 labels.dtype in [short, tint, long]
             ), "Labels cannot be interpreted as indices."
             labels_list = labels.tolist()
