@@ -65,9 +65,7 @@ def process_components(
 
     model: Model = maybe_recursive_call(model, "to", device=device)
     # optimizer: Optimizer = maybe_recursive_call(optimizer, "to", device=device)
-    for group in optimizer.param_groups:
-        if "prams" in group:
-            group["params"] = list(model.parameters())
+    optimizer = type(optimizer)(model.parameters(), **optimizer.defaults)
 
     if check_ddp_wrapped(model):
         pass
