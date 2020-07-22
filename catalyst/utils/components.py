@@ -65,7 +65,7 @@ def process_components(
 
     model: Model = maybe_recursive_call(model, "to", device=device)
     # optimizer: Optimizer = maybe_recursive_call(optimizer, "to", device=device)
-    for param in process_model_params(model.parameters()):
+    for param in process_model_params(model):
         param = param["params"][0]
         optimizer_state = optimizer.state[param]
         for state_key, state_value in optimizer_state.items():
