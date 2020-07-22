@@ -36,7 +36,7 @@ class DiceCallback(MetricCallback):
         )
 
 
-class MulticlassDiceMetricCallback(Callback):
+class MultiClassDiceMetricCallback(Callback):
     """
     Global Multi-Class Dice Metric Callback: calculates the exact
     dice score across multiple batches. This callback is good for getting
@@ -124,4 +124,12 @@ class MulticlassDiceMetricCallback(Callback):
         self._reset_stats()
 
 
-__all__ = ["DiceCallback", "MulticlassDiceMetricCallback"]
+# backward compatibility
+MulticlassDiceMetricCallback = MultiClassDiceMetricCallback
+
+
+__all__ = [
+    "DiceCallback",
+    "MultiClassDiceMetricCallback",
+    "MulticlassDiceMetricCallback",
+]
