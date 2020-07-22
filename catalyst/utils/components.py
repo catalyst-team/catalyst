@@ -20,7 +20,7 @@ from catalyst.utils.distributed import (
     initialize_apex,
 )
 from catalyst.utils.misc import maybe_recursive_call
-from catalyst.utils.torch import any2device, get_device, process_model_params
+from catalyst.utils.torch import get_device
 
 
 def process_components(
