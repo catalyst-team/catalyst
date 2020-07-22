@@ -9,7 +9,7 @@ from catalyst.contrib.datasets.metric_learning import (
     MnistQGDataset,
 )
 from catalyst.contrib.dl.callbacks import PeriodicLoaderCallback
-from catalyst.contrib.models.cv.encoders.simple_conv import SimpleConv
+from catalyst.contrib.models.simple_conv import SimpleConv
 from catalyst.contrib.nn.criterion.triplet import TripletMarginLossWithSampling
 from catalyst.core.callbacks import ControlFlowCallback
 from catalyst.data.sampler import BalanceBatchSampler
