@@ -6,8 +6,8 @@ import warnings
 import torch
 from torch.utils.data import DataLoader, Dataset, DistributedSampler
 
-from catalyst.contrib.registry import SAMPLERS
 from catalyst.data import DistributedSamplerWrapper
+from catalyst.registry import SAMPLER
 from catalyst.utils import get_rank, merge_dicts, set_global_seed
 
 
@@ -147,7 +147,7 @@ def get_loaders_from_params(
             else:
                 sampler = None
         else:
-            sampler = SAMPLERS.get_from_params(**sampler_params)
+            sampler = SAMPLER.get_from_params(**sampler_params)
             if isinstance(datasource, dict) and "sampler" in datasource:
                 datasource.pop("sampler", None)
 
