@@ -282,4 +282,5 @@ __all__ = [
     "NumpyDataset",
     "PathsDataset",
     "DatasetFromSampler",
+    "QueryGalleryDataset",
 ]
