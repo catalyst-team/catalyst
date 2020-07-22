@@ -57,7 +57,7 @@ def main() -> None:
     callbacks = [
         ControlFlowCallback(CriterionCallback(), loaders="train"),
         ControlFlowCallback(CMCScoreCallback(topk_args=[1]), loaders="valid"),
-        PeriodicLoaderCallback(valid=100),
+        PeriodicLoaderCallback(valid=10),
     ]
 
     runner = SupervisedRunner(device="cuda:0")
@@ -70,7 +70,7 @@ def main() -> None:
         minimize_metric=False,
         verbose=True,
         valid_loader="valid",
-        num_epochs=1000,
+        num_epochs=20,
         main_metric="cmc_1",
     )
 

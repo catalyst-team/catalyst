@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Dict
 from typing import List, Optional, Callable
 
 import torch
@@ -51,11 +52,10 @@ class MnistQGDataset(QueryGalleryDataset):
             gallery_fraq: Optional[float] = 0.2,
     ) -> None:
         """
-
         Args:
+            root: root directory for storing dataset
+            transform: transform
             gallery_fraq: gallery size
-            **mnist_args: args for MNIST dataset
-                (see catalyst.contrib.datasets.MNIST)
         """
         self._mnist = MNIST(
             root, train=False, download=True, transform=transform
@@ -67,7 +67,7 @@ class MnistQGDataset(QueryGalleryDataset):
         self._is_query = torch.zeros(len(self._mnist)).type(torch.bool)
         self._is_query[: self._query_size] = True
 
-    def __getitem__(self, idx):
+    def __getitem__(self, idx: int) -> Dict[str, Any]:
         """
         Get item method for dataset
 
@@ -85,16 +85,16 @@ class MnistQGDataset(QueryGalleryDataset):
             "is_query": self._is_query[idx],
         }
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Length"""
         return len(self._mnist)
 
     @property
-    def gallery_size(self):
+    def gallery_size(self) -> int:
         """Query Gallery dataset should have gallery_size property"""
         return self._gallery_size
 
     @property
-    def query_size(self):
+    def query_size(self) -> int:
         """Query Gallery dataset should have query_size property"""
         return self._query_size
