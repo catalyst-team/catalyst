@@ -152,12 +152,19 @@ def _filter_fn_from_arg(filter_fn: Union[str, FILTER_FN]) -> FILTER_FN:
 
 
 class ControlFlowCallback(WrapperCallback):
-    """Customize callback execution on different
+    """Enable/disable callback execution on different
     stages, loaders and epochs.
 
+    .. note::
+
+        Please run experiment with
+        :class:`check option <catalyst.core.callbacks.early_stop.CheckRunCallback>`
+        to check if everything works file with this callback.
+
     For example, if you don't want to compute loss on a validation
-    you can ignore ``CriterionCallback``, for **notebook API**
-    need to wrap callback:
+    you can ignore
+    :class:`CriterionCallback <catalyst.core.callbacks.criterion.CriterionCallback>`,
+    for **notebook API** need to wrap callback:
 
     .. code-block:: python
 
@@ -202,7 +209,6 @@ class ControlFlowCallback(WrapperCallback):
                 )
             ]
         )
-
 
     In **config API** need to use ``_wrapper`` argument:
 
