@@ -1,4 +1,4 @@
-from typing import Callable, Union, List
+from typing import Callable, List, Union
 
 from torch.nn.utils import prune
 
@@ -7,13 +7,13 @@ from catalyst.core import Callback, CallbackOrder, IRunner
 
 class PruningCallback(Callback):
     def __init__(
-            self,
-            pruner_fn: Callable,
-            prune_on_epoch_end: bool = False,
-            prune_on_stage_end: bool = True,
-            remove_reparametrization: bool = True,
-            key_to_prune: Union[str, List[str]] = "weight",
-            amount: Union[int, float] = 0.5,
+        self,
+        pruner_fn: Callable,
+        prune_on_epoch_end: bool = False,
+        prune_on_stage_end: bool = True,
+        remove_reparametrization: bool = True,
+        key_to_prune: Union[str, List[str]] = "weight",
+        amount: Union[int, float] = 0.5,
     ) -> None:
         """
         Init method for pruning callback
@@ -63,7 +63,9 @@ class PruningCallback(Callback):
                 pass
 
         if pruned_modules == 0:
-            raise Exception(f"There is no {self.key_to_prune} key in your model")
+            raise Exception(
+                f"There is no {self.key_to_prune} key in your model"
+            )
 
     def _remove_reparametrization(self, runner: "IRunner"):
         for module in runner.model:
