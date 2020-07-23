@@ -7,13 +7,14 @@ from catalyst.core import Callback, CallbackOrder, IRunner
 
 class PruningCallback(Callback):
     def __init__(
-        self,
-        pruner_fn: Callable,
-        prune_on_epoch_end: bool = False,
-        prune_on_stage_end: bool = True,
-        remove_reparametrization: bool = True,
-        key_to_prune: Union[str, List[str]] = "weight",
-        amount: Union[int, float] = 0.5,
+            self,
+            pruner_fn: Callable,
+            key_to_prune: Union[str, List[str]] = "weight",
+            amount: Union[int, float] = 0.5,
+            prune_on_epoch_end: bool = False,
+            prune_on_stage_end: bool = True,
+            remove_reparametrization: bool = True,
+            reinitialize_after_pruning: bool = False,
     ) -> None:
         """
         Init method for pruning callback
@@ -22,13 +23,6 @@ class PruningCallback(Callback):
             pruner_fn: function from torch.nn.utils.prune module
                 or your based on BasePruningMethod. See pytorch
                 docs for more details.
-            prune_on_epoch_end: bool flag determines call or not
-                to call pruning_fn on epoch end.
-            prune_on_stage_end: bool flag determines call or not
-                to call pruning_fn on stage end.
-            remove_reparametrization: if True then all reparametrization
-                pre-hooks and tensors with mask will be removed on
-                stage end.
             key_to_prune: can be string or list of strings. Determines
                 which tensor in modules will be pruned.
             amount: quantity of parameters to prune.
@@ -36,6 +30,16 @@ class PruningCallback(Callback):
                 represent the fraction of parameters to prune.
                 If int, it represents the absolute number
                 of parameters to prune.
+            prune_on_epoch_end: bool flag determines call or not
+                to call pruning_fn on epoch end.
+            prune_on_stage_end: bool flag determines call or not
+                to call pruning_fn on stage end.
+            remove_reparametrization: if True then all reparametrization
+                pre-hooks and tensors with mask will be removed on
+                stage end.
+            reinitialize_after_pruning: if True then will reinitialize model
+                after pruning. (Lottery Ticket Hypothesis)
+
         """
         super().__init__(CallbackOrder.External)
         self.pruner_fn = pruner_fn
@@ -44,6 +48,14 @@ class PruningCallback(Callback):
         self.remove_reparametrization = remove_reparametrization
         self.key_to_prune = key_to_prune
         self.amount = amount
+        self.reinitialize_after_pruning = reinitialize_after_pruning
+
+    @staticmethod
+    def _weight_reset(m):
+        try:
+            m.reset_parameters()
+        except AttributeError:
+            pass
 
     def _prune_module(self, module, key):
         self.pruner_fn(module, name=key, amount=self.amount)
@@ -66,6 +78,8 @@ class PruningCallback(Callback):
             raise Exception(
                 f"There is no {self.key_to_prune} key in your model"
             )
+        if self.reinitialize_after_pruning:
+            runner.model.apply(self._weight_reset)
 
     def _remove_reparametrization(self, runner: "IRunner"):
         for module in runner.model:
@@ -75,7 +89,7 @@ class PruningCallback(Callback):
                 elif isinstance(self.key_to_prune, list):
                     for key in self.key_to_prune:
                         prune.remove(module, key)
-            except AttributeError:
+            except ValueError:
                 pass
 
     def on_epoch_end(self, runner):
