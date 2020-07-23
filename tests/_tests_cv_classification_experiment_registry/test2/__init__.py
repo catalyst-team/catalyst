@@ -1,9 +1,10 @@
 # flake8: noqa
 import experiments as exp
 
-from catalyst.dl import registry, SupervisedRunner as Runner
+from catalyst import registry
+from catalyst.dl import SupervisedRunner as Runner
 
 from .model import SimpleNet
 
 registry.Model(SimpleNet)
-registry.EXPERIMENTS.add_from_module(exp)
+registry.EXPERIMENT.add_from_module(exp)
