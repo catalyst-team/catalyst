@@ -17,3 +17,8 @@ from .scheduler import LRUpdater, SchedulerCallback
 from .timer import TimerCallback
 from .validation import ValidationManagerCallback
 from .control_flow import ControlFlowCallback
+
+import torch
+
+if torch.__version__ > "1.4":
+    from .pruning import PruningCallback

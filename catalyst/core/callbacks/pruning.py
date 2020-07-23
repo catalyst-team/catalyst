@@ -1,4 +1,5 @@
-from typing import Callable, List, Union
+from typing import Callable, List, Optional, Union
+import warnings
 
 from torch.nn.utils import prune
 
@@ -12,15 +13,17 @@ class PruningCallback(Callback):
     This callback is designed to prune network parameters
     during and/or after training.
     """
+
     def __init__(
-            self,
-            pruner_fn: Callable,
-            key_to_prune: Union[str, List[str]] = "weight",
-            amount: Union[int, float] = 0.5,
-            prune_on_epoch_end: bool = False,
-            prune_on_stage_end: bool = True,
-            remove_reparametrization: bool = True,
-            reinitialize_after_pruning: bool = False,
+        self,
+        pruner_fn: Callable,
+        key_to_prune: Union[str, List[str]] = "weight",
+        amount: Union[int, float] = 0.5,
+        prune_on_epoch_end: bool = False,
+        prune_on_stage_end: bool = True,
+        remove_reparametrization: bool = True,
+        reinitialize_after_pruning: bool = False,
+        layers_to_prune: Optional[List[str]] = None,
     ) -> None:
         """
         Init method for pruning callback
@@ -45,16 +48,26 @@ class PruningCallback(Callback):
                 stage end.
             reinitialize_after_pruning: if True then will reinitialize model
                 after pruning. (Lottery Ticket Hypothesis)
+            layers_to_prune: list of strings - module names to be pruned.
+                If None provided then will try to prune every module in
+                model.
 
         """
         super().__init__(CallbackOrder.External)
         self.pruner_fn = pruner_fn
         self.prune_on_epoch_end = prune_on_epoch_end
         self.prune_on_stage_end = prune_on_stage_end
+        if not (prune_on_stage_end or prune_on_epoch_end):
+            warnings.warn(
+                "Warning!"
+                "You disabled pruning pruning both on epoch and stage end."
+                "Model won't be pruned by this callback."
+            )
         self.remove_reparametrization = remove_reparametrization
         self.key_to_prune = key_to_prune
         self.amount = amount
         self.reinitialize_after_pruning = reinitialize_after_pruning
+        self.layers_to_prune = layers_to_prune
 
     @staticmethod
     def _weight_reset(m):
@@ -63,22 +76,28 @@ class PruningCallback(Callback):
         except AttributeError:
             pass
 
-    def _prune_module(self, module, key):
-        self.pruner_fn(module, name=key, amount=self.amount)
+    def _prune_module(self, module):
+        if isinstance(self.key_to_prune, str):
+            self.pruner_fn(module, name=self.key_to_prune, amount=self.amount)
+        elif isinstance(self.key_to_prune, list):
+            for key in self.key_to_prune:
+                self.pruner_fn(module, name=key, amount=self.amount)
+
+    def _to_be_pruned(self, layer_name):
+        if self.layers_to_prune is None:
+            return True
+        return layer_name in self.layers_to_prune
 
     def _run_pruning(self, runner: "IRunner"):
         pruned_modules = 0
-        for module in runner.model:
+        for name, module in runner.model.named_modules():
             try:
-                if isinstance(self.key_to_prune, str):
-                    self._prune_module(module, self.key_to_prune)
-                elif isinstance(self.key_to_prune, list):
-                    for key in self.key_to_prune:
-                        self._prune_module(module, key)
-                pruned_modules += 1
-
-            except AttributeError:
-                pass
+                if self._to_be_pruned(name):
+                    self._prune_module(module)
+                    pruned_modules += 1
+            except AttributeError as e:
+                if self.layers_to_prune is not None:
+                    raise e
 
         if pruned_modules == 0:
             raise Exception(
@@ -88,13 +107,14 @@ class PruningCallback(Callback):
             runner.model.apply(self._weight_reset)
 
     def _remove_reparametrization(self, runner: "IRunner"):
-        for module in runner.model:
+        for name, module in runner.model.named_modules():
             try:
-                if isinstance(self.key_to_prune, str):
-                    prune.remove(module, self.key_to_prune)
-                elif isinstance(self.key_to_prune, list):
-                    for key in self.key_to_prune:
-                        prune.remove(module, key)
+                if self._to_be_pruned(name):
+                    if isinstance(self.key_to_prune, str):
+                        prune.remove(module, self.key_to_prune)
+                    elif isinstance(self.key_to_prune, list):
+                        for key in self.key_to_prune:
+                            prune.remove(module, key)
             except ValueError:
                 pass
 
