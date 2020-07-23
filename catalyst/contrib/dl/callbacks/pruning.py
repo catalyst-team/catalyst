@@ -6,6 +6,12 @@ from catalyst.core import Callback, CallbackOrder, IRunner
 
 
 class PruningCallback(Callback):
+    """
+    Pruning Callback
+
+    This callback is designed to prune network parameters
+    during and/or after training.
+    """
     def __init__(
             self,
             pruner_fn: Callable,
@@ -92,21 +98,25 @@ class PruningCallback(Callback):
             except ValueError:
                 pass
 
-    def on_epoch_end(self, runner):
+    def on_epoch_end(self, runner) -> None:
         """
         On epoch end action.
 
         Active if prune_on_epoch_end is True.
+        Args:
+            runner: runner for your experiment
         """
         if self.prune_on_epoch_end and runner.num_epochs != runner.epoch:
             self._run_pruning(runner)
 
-    def on_stage_end(self, runner):
+    def on_stage_end(self, runner) -> None:
         """
         On stage end action.
 
         Active if prune_on_stage_end or
         remove_reparametrization is True.
+        Args:
+            runner: runner for your experiment
         """
         if self.prune_on_stage_end:
             self._run_pruning(runner)
