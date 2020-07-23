@@ -72,7 +72,9 @@ def process_components(
                 for k, opt in optimizer.items()
             }
         else:
-            optimizer = type(optimizer)(model.parameters(), **optimizer.defaults)
+            optimizer = type(optimizer)(
+                model.parameters(), **optimizer.defaults
+            )
 
     if check_ddp_wrapped(model):
         pass
