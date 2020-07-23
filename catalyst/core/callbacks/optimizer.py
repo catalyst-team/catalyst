@@ -1,6 +1,7 @@
 from typing import Any, Callable, Dict, List, Mapping
 import logging
 import warnings
+from functools import partial
 
 from catalyst import registry
 from catalyst.core import utils
@@ -65,6 +66,7 @@ class OptimizerCallback(Callback):
 
         self.decouple_weight_decay = decouple_weight_decay
         self._optimizer_wd: List[float] = [0.0]
+        self._optimizer_step_fn: Callable = None
         self.is_xla = False
         self.use_xla_barrier = use_xla_barrier
 
@@ -74,7 +76,7 @@ class OptimizerCallback(Callback):
         optimizer: Optimizer,
         optimizer_wds: List[float] = 0,
         grad_clip_fn: Callable = None,
-        xla_args: Mapping[str, Any] = None,
+        optimizer_step_fn: Callable = None,
     ) -> None:
         """Makes a gradient step for a given optimizer.
 
@@ -83,9 +85,7 @@ class OptimizerCallback(Callback):
             optimizer_wds (List[float]): list of weight decay parameters
                 for each param group
             grad_clip_fn (Callable): function for gradient clipping
-            xla_args (Mapping[str, Any]): arguments to use in xla mode,
-                if not ``None`` then will be used xla optimization
-                function, default is ``None``
+            optmizert_step_fn (Callable): optimizer step function
         """
         for group, wd in zip(optimizer.param_groups, optimizer_wds):
             if wd > 0:
@@ -93,10 +93,8 @@ class OptimizerCallback(Callback):
                     param.data = param.data.add(-wd * group["lr"], param.data)
             if grad_clip_fn is not None:
                 grad_clip_fn(group["params"])
-        if xla_args is not None:
-            xla_optimizer_step(optimizer, **xla_args)
-        else:
-            optimizer.step()
+        # optimize parameters
+        optimizer_step_fn(optimizer)
 
     def on_stage_start(self, runner: IRunner) -> None:
         """Checks that the current stage has correct optimizer.
@@ -107,7 +105,14 @@ class OptimizerCallback(Callback):
         self._optimizer = runner.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
-        self.is_xla = runner.device.type == "xla"
+        if runner.device.type == "xla":
+            if self.use_xla_barrier:
+                self._optimizer_step_fn = lambda optimizer: xla_optimizer_step(optimizer, barrier=True)
+            else:
+                self._optimizer_step_fn = xla_optimizer_step
+        else:
+            self._optimizer_step_fn = lambda optimizer: optimizer.step()
+
         assert self._optimizer is not None
 
     def on_epoch_start(self, runner: IRunner) -> None:
@@ -195,7 +200,7 @@ class OptimizerCallback(Callback):
                 optimizer=self._optimizer,
                 optimizer_wds=self._optimizer_wd,
                 grad_clip_fn=self.grad_clip_fn,
-                xla_args=xla_args,
+                optimizer_step_fn=self._optimizer_step_fn,
             )
 
             utils.maybe_recursive_call(self._optimizer, "zero_grad")
