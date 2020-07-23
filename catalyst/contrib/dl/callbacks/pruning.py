@@ -59,7 +59,7 @@ class PruningCallback(Callback):
                         self._prune_module(module, key)
                 pruned_modules += 1
 
-            except Exception as e:
+            except AttributeError:
                 pass
 
         if pruned_modules == 0:
@@ -75,7 +75,7 @@ class PruningCallback(Callback):
                 elif isinstance(self.key_to_prune, list):
                     for key in self.key_to_prune:
                         prune.remove(module, key)
-            except Exception as e:
+            except AttributeError:
                 pass
 
     def on_epoch_end(self, runner):
