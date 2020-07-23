@@ -68,7 +68,7 @@ def process_components(
     if optimizer is not None:
         if isinstance(optimizer, dict):
             optimizer = {
-                k: type(opt)(model[k], **opt.defaults)
+                k: type(opt)(model[k].parameters(), **opt.defaults)
                 for k, opt in optimizer.items()
             }
         else:
