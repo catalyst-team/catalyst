@@ -25,7 +25,7 @@ def pruning_factor(model):
             n_pruned = int(torch.sum(module.weight == 0))
             num_parameters_before += module.weight.nelement()
             num_parameters_after += module.weight.nelement() - n_pruned
-        except:
+        except AttributeError:
             pass
     return num_parameters_after / num_parameters_before
 
