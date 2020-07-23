@@ -158,12 +158,14 @@ class ControlFlowCallback(WrapperCallback):
     .. note::
 
         Please run experiment with
-        :class:`check option <catalyst.core.callbacks.early_stop.CheckRunCallback>`
+        :class:`check option
+        <catalyst.core.callbacks.early_stop.CheckRunCallback>`
         to check if everything works file with this callback.
 
     For example, if you don't want to compute loss on a validation
     you can ignore
-    :class:`CriterionCallback <catalyst.core.callbacks.criterion.CriterionCallback>`,
+    :class:`CriterionCallback
+    <catalyst.core.callbacks.criterion.CriterionCallback>`,
     for **notebook API** need to wrap callback:
 
     .. code-block:: python
