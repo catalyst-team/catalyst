@@ -220,7 +220,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 
 
 ################################  pipeline 06  ################################
-# checking with zepo checkpoints and one stage
+# checking with zepo checkpoints and three stages
 # spoiler - no loading at the end of a stage, only load last state at stage start
 # this means that will be default behaviour - loaded best state
 LOG_MSG='pipeline 06'
@@ -493,7 +493,7 @@ check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
 rm -rf ./tests/logs/_tests_dl_callbacks ${EXP_OUTPUT}
 
 ################################  pipeline 14  ################################
-# testing on_stage_start option
+# testing ''on_stage_start'' option
 LOG_MSG='pipeline 14'
 echo ${LOG_MSG}
 
@@ -755,3 +755,38 @@ rm -rf ./tests/logs/_tests_dl_callbacks ${EXP_OUTPUT}
 #check_num_files ${TRACE} 1
 
 rm -rf ./tests/logs/_tests_dl_callbacks ${EXP_OUTPUT}
+
+
+################################  pipeline 21  ################################
+# test CMCScoreCallback
+
+echo 'pipeline 21'
+rm -rf data/split_0
+EXPDIR=./tests/_tests_ml_cmcscore
+LOGDIR=./tests/logs/_tests_ml_cmcscore
+LOGFILE=${LOGDIR}/checkpoints/_metrics.json
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config1.yml \
+  --logdir=${LOGDIR}
+
+if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
+    echo "File $LOGFILE does not exist"
+    exit 1
+fi
+
+cat $LOGFILE
+echo 'pipeline 21'
+python -c """
+from catalyst import utils
+import numpy as np
+metrics = utils.load_config('$LOGFILE')
+
+EPS = 0.00001
+assert metrics['last']['cmc_1'] > 0.1  # slightly better then random
+assert metrics['last']['cmc_5'] > 0.5
+"""
+
+rm -rf {LOGDIR}

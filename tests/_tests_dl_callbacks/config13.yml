@@ -45,3 +45,6 @@ stages:
         callback: CheckpointCallback
         resume_dir: ./tests/logs/_tests_dl_callbacks/for_resume/checkpoints
         resume: best_full.pth
+      fast_run:
+        callback: CheckRunCallback
+        num_epoch_steps: *num_epochs

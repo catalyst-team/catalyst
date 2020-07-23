@@ -22,13 +22,6 @@ Frozen Class
     :undoc-members:
     :show-inheritance:
 
-Registry
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.registry
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Time Manager
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.tools.time_manager
@@ -231,6 +224,23 @@ Accuracy
     :undoc-members:
     :show-inheritance:
 
+.. automodule:: catalyst.utils.metrics.multi_label_accuracy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+CMC score
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.metrics.cmc_score_count
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.utils.metrics.cmc_score
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Dice
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.metrics.dice
@@ -265,3 +275,16 @@ nDCG
     :members:
     :undoc-members:
     :show-inheritance:
+
+Precision
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.metrics.average_precision
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.utils.metrics.mean_average_precision
+    :members:
+    :undoc-members:
+    :show-inheritance:
+

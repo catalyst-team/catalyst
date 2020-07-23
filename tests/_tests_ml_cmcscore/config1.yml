@@ -1,0 +1,35 @@
+model_params:
+  model: Net
+
+args:
+  expdir: "_tests_ml_cmcscore"
+  logdir: "./logs/cmc"
+
+
+stages:
+  trian:
+    stage_params:
+      main_metric: cmc_1
+      valid_loader: valid_query_gallery
+      minimize_metric: false
+
+    data_params:
+      batch_size: 32
+      num_workers: 0
+
+    criterion_params:
+      criterion: TripletLoss
+    optimizer_params:
+      optimizer: Adam
+      lr: 0.001
+      weight_decay: 0.0001
+
+    callbacks_params:
+      cmc:
+        _wrapper:
+          callback: ControlFlowCallback
+          loaders: valid_query_gallery
+        callback: CMCScoreCallback
+        topk_args:
+          - 1
+          - 5

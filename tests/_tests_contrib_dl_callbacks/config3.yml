@@ -58,6 +58,9 @@ stages:
         train_additional: 2
         valid: 3
         valid_additional: 0
+      fast_run:
+        callback: CheckRunCallback
+        num_epoch_steps: 5
 
   stage2:
     stage_params:
@@ -86,3 +89,6 @@ stages:
         train_additional: 3
         valid: 2
         valid_additional: 0
+      fast_run:
+        callback: CheckRunCallback
+        num_epoch_steps: 10

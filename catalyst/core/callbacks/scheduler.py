@@ -10,7 +10,72 @@ from catalyst.core.runner import IRunner
 
 
 class SchedulerCallback(Callback):
-    """@TODO: Docs. Contribution is welcome."""
+    """Callback for wrapping schedulers.
+
+    Notebook API example:
+
+    .. code-block:: python
+
+        import torch
+        from torch.utils.data import DataLoader, TensorDataset
+        from catalyst.dl import (
+            SupervisedRunner, AccuracyCallback,
+            CriterionCallback, SchedulerCallback,
+        )
+
+        num_samples, num_features = 10_000, 10
+        n_classes = 10
+        X = torch.rand(num_samples, num_features)
+        y = torch.randint(0, n_classes, [num_samples])
+        loader = DataLoader(TensorDataset(X, y), batch_size=32, num_workers=1)
+        loaders = {"train": loader, "valid": loader}
+
+        model = torch.nn.Linear(num_features, n_classes)
+        criterion = torch.nn.CrossEntropyLoss()
+        optimizer = torch.optim.Adam(model.parameters())
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+
+        runner = SupervisedRunner()
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            loaders=loaders,
+            logdir="./logdir",
+            num_epochs=5,
+            verbose=False,
+            main_metric="accuracy03",
+            minimize_metric=False,
+            callbacks=[
+                AccuracyCallback(
+                    accuracy_args=[1, 3, 5]
+                ),
+                SchedulerCallback(reduced_metric="loss")
+            ]
+        )
+
+    Config API usage example:
+
+    .. code-block:: yaml
+
+        stages:
+          ...
+          scheduler_params:
+            scheduler: MultiStepLR
+            milestones: [1]
+            gamma: 0.3
+          ...
+          stage_N:
+            ...
+            callbacks_params:
+              ...
+              scheduler:
+                callback: SchedulerCallback
+                # arguments for SchedulerCallback
+                reduced_metric: loss
+          ...
+    """
 
     def __init__(
         self,
@@ -18,7 +83,19 @@ class SchedulerCallback(Callback):
         mode: str = None,
         reduced_metric: str = None,
     ):
-        """@TODO: Docs. Contribution is welcome."""
+        """
+        Args:
+            scheduler_key (str): scheduler name, if ``None``,
+                default is ``None``.
+            mode (str): scheduler mode, should be one of
+                ``"epoch"`` or ``"batch"``, default is ``None``.
+                If ``None`` and object is instance of ``BatchScheduler``
+                or ``OneCycleLRWithWarmup`` then will be used ``"batch"``
+                otherwise - ``"epoch"``.
+            reduced_metric (str): metric name to forward to scheduler
+                object, if ``None`` then will be used main metric
+                specified in experiment.
+        """
         super().__init__(order=CallbackOrder.scheduler, node=CallbackNode.all)
         self.scheduler_key = scheduler_key
         self.mode = mode
@@ -40,7 +117,7 @@ class SchedulerCallback(Callback):
         return lr, momentum
 
     def step_batch(self, runner: IRunner) -> None:
-        """@TODO: Docs. Contribution is welcome.
+        """Update learning rate and momentum in runner.
 
         Args:
             runner (IRunner): current runner
@@ -59,7 +136,7 @@ class SchedulerCallback(Callback):
                 runner.batch_metrics["momentum"] = momentum
 
     def step_epoch(self, runner: IRunner) -> None:
-        """@TODO: Docs. Contribution is welcome.
+        """Update momentum in runner.
 
         Args:
             runner (IRunner): current runner
@@ -156,12 +233,12 @@ class LRUpdater(ABC, Callback):
 
     @abstractmethod
     def calc_lr(self):
-        """@TODO: Docs. Contribution is welcome."""
+        """Interface for calculating learning rate."""
         pass
 
     @abstractmethod
     def calc_momentum(self):
-        """@TODO: Docs. Contribution is welcome."""
+        """Interface for calculating momentum"""
         pass
 
     @staticmethod
@@ -192,7 +269,7 @@ class LRUpdater(ABC, Callback):
         return new_lr, new_momentum
 
     def update_optimizer(self, runner: IRunner) -> None:
-        """@TODO: Docs. Contribution is welcome.
+        """Update learning rate and momentum in runner.
 
         Args:
             runner (IRunner): current runner
