@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, Union
+from typing import Callable, Dict, Tuple, Union
 from collections import OrderedDict
 import os
 from pathlib import Path
@@ -199,6 +199,11 @@ class BaseCheckpointCallback(Callback):
         if not utils.is_exception(exception):
             return
 
+        if runner.device.type == "xla":
+            from torch_xla.core.xla_model import save
+        else:
+            from torch import save
+
         try:
             checkpoint = _pack_runner(runner)
             suffix = self.get_checkpoint_suffix(checkpoint)
@@ -209,6 +214,7 @@ class BaseCheckpointCallback(Callback):
                 suffix=suffix,
                 is_best=False,
                 is_last=False,
+                saver_fn=save,
             )
             metrics = self.metrics
             metrics[suffix] = runner.valid_metrics
@@ -335,6 +341,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         self.metrics_history = []
 
         self._keys_from_state = ["resume", "resume_dir"]
+        self._saver_fn: Callable = None
 
     def get_checkpoint_suffix(self, checkpoint: dict) -> str:
         """
@@ -435,6 +442,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             is_best=is_best,
             is_last=is_last,
             special_suffix="_full",
+            saver_fn=self._saver_fn,
         )
         exclude = ["criterion", "optimizer", "scheduler"]
         checkpoint_path = utils.save_checkpoint(
@@ -447,6 +455,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             suffix=suffix,
             is_best=is_best,
             is_last=is_last,
+            saver_fn=self._saver_fn,
         )
         return (full_checkpoint_path, checkpoint_path)
 
@@ -529,6 +538,13 @@ class CheckpointCallback(BaseCheckpointCallback):
         Args:
             runner (IRunner): current runner
         """
+
+        if runner.device.type == "xla":
+            from torch_xla.core.xla_model import save
+        else:
+            from torch import save
+        self._saver_fn = save
+
         for key in self._keys_from_state:
             value = getattr(runner, key, None)
             if value is not None:
@@ -685,6 +701,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         self.last_checkpoints = []
         self.metrics_history = []
         self.load_on_stage_end = load_on_stage_end
+        self._saver_fn = None
 
     def get_checkpoint_suffix(self, checkpoint: dict) -> str:
         """
@@ -755,6 +772,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
             suffix=self.get_checkpoint_suffix(checkpoint),
             is_best=False,
             is_last=False,
+            saver_fn=self._saver_fn,
         )
 
         self.last_checkpoints.append((filepath, batch_metrics))
@@ -775,6 +793,12 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         """
         if self.stage_restart:
             self._iteration_counter = 0
+
+        if runner.device.type == "xla":
+            from torch_xla.core.xla_model import save
+        else:
+            from torch import save
+        self._saver_fn = save
 
     def on_batch_end(self, runner: IRunner):
         """

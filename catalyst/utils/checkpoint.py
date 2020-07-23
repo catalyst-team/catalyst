@@ -1,6 +1,6 @@
 # flake8: noqa
 # @TODO: code formatting issue for 20.07 release
-from typing import Dict, Union
+from typing import Callable, Dict, Union
 from collections import OrderedDict
 import os
 from pathlib import Path
@@ -84,11 +84,27 @@ def save_checkpoint(
     is_best: bool = False,
     is_last: bool = False,
     special_suffix: str = "",
+    saver_fn: Callable = torch.save,
 ):
-    """@TODO: Docs. Contribution is welcome."""
+    """Saving checkpoint to a file.
+    
+    Args:
+        checkpoint (dict): data to save.
+        logdir (Path/str): directory where checkpoint
+            should be stored.
+        suffix (str): checkpoint file name.
+        is_best (bool): if ``True`` then also
+            will be generated best checkpoint file.
+        is_last (bool): if ``True`` then also
+            will be generated last checkpoint file.
+        special_suffix (str): suffix to use for
+            saving best/last checkpoints.
+        saver_fn (Callable): function to use for saving
+            data to file, default is ``torch.save``
+    """
     os.makedirs(logdir, exist_ok=True)
     filename = f"{logdir}/{suffix}.pth"
-    torch.save(checkpoint, filename)
+    saver_fn(checkpoint, filename)
     if is_best:
         shutil.copyfile(filename, f"{logdir}/best{special_suffix}.pth")
     if is_last:
