@@ -1,7 +1,7 @@
 from typing import Any, Callable, Dict, List, Mapping
+from functools import partial
 import logging
 import warnings
-from functools import partial
 
 from catalyst import registry
 from catalyst.core import utils
@@ -107,7 +107,9 @@ class OptimizerCallback(Callback):
         )
         if runner.device.type == "xla":
             if self.use_xla_barrier:
-                self._optimizer_step_fn = lambda optimizer: xla_optimizer_step(optimizer, barrier=True)
+                self._optimizer_step_fn = lambda optimizer: xla_optimizer_step(
+                    optimizer, barrier=True
+                )
             else:
                 self._optimizer_step_fn = xla_optimizer_step
         else:
