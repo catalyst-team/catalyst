@@ -2,7 +2,8 @@
 from collections import OrderedDict
 
 from catalyst.contrib.data.transforms import Compose, Normalize, ToTensor
-from catalyst.contrib.datasets import MNIST, MnistQGDataset
+from catalyst.contrib.datasets.metric_learning import MnistQGDataset
+from catalyst.contrib.datasets import MNIST
 from catalyst.dl import ConfigExperiment
 
 
