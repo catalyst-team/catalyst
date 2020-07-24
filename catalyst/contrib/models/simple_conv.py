@@ -19,7 +19,7 @@ class SimpleConv(nn.Module):
         """
         super(SimpleConv, self).__init__()
         self._net = nn.Sequential(
-            [
+            *[
                 nn.Conv2d(input_channels, 32, 3, 1),
                 nn.ReLU(),
                 nn.Conv2d(32, 64, 3, 1),
