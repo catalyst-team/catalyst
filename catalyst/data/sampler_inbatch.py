@@ -126,12 +126,12 @@ class HardTripletsSampler(InBatchTripletsSampler):
 
     """
 
-    def __init__(self, need_norm: bool = False):
+    def __init__(self, norm_required: bool = False):
         """
         Args:
-            need_norm: set True if features normalisation is needed
+            norm_required: set True if features normalisation is needed
         """
-        self._need_norm = need_norm
+        self._norm_required = norm_required
 
     def _sample(self, features: Tensor, labels: List[int]) -> TTripletsIds:
         """
@@ -147,7 +147,7 @@ class HardTripletsSampler(InBatchTripletsSampler):
         """
         assert features.shape[0] == len(labels)
 
-        if self._need_norm:
+        if self._norm_required:
             features = normalize(samples=features.detach())
 
         dist_mat = torch.cdist(x1=features, x2=features, p=2)
