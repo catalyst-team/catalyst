@@ -1,5 +1,4 @@
 # flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 from typing import List, Union
 
 import torch
@@ -319,11 +318,16 @@ class TripletMarginLossWithSampling(nn.Module):
         """
         labels_list = self._prepate_labels(labels)
 
-        features_a, features_p, features_n = self._sampler_inbatch.sample(
-            features=features, labels=labels_list
-        )
+        (
+            features_anchor,
+            features_positive,
+            features_negative,
+        ) = self._sampler_inbatch.sample(features=features, labels=labels_list)
+
         loss = self._triplet_margin_loss(
-            anchor=features_a, positive=features_p, negative=features_n
+            anchor=features_anchor,
+            positive=features_positive,
+            negative=features_negative,
         )
         return loss
 

@@ -9,7 +9,10 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 
-from catalyst.contrib.datasets.metric_learning import MetricLearningTrainDataset, QueryGalleryDataset
+from catalyst.contrib.datasets.metric_learning import (
+    MetricLearningTrainDataset,
+    QueryGalleryDataset,
+)
 from catalyst.contrib.datasets.utils import download_and_extract_archive
 
 

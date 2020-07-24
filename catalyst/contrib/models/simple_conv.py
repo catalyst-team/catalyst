@@ -18,18 +18,20 @@ class SimpleConv(nn.Module):
             features_dim: size of the output tensor
         """
         super(SimpleConv, self).__init__()
-        self._net = nn.Sequential([
-            nn.Conv2d(input_channels, 32, 3, 1),
-            nn.ReLU(),
-            nn.Conv2d(32, 64, 3, 1),
-            nn.ReLU(),
-            nn.MaxPool2d(2),
-            Flatten(),
-            nn.Linear(9216, 128),
-            nn.ReLU(),
-            nn.Linear(128, features_dim),
-            Normalize()
-        ])
+        self._net = nn.Sequential(
+            [
+                nn.Conv2d(input_channels, 32, 3, 1),
+                nn.ReLU(),
+                nn.Conv2d(32, 64, 3, 1),
+                nn.ReLU(),
+                nn.MaxPool2d(2),
+                Flatten(),
+                nn.Linear(9216, 128),
+                nn.ReLU(),
+                nn.Linear(128, features_dim),
+                Normalize(),
+            ]
+        )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
