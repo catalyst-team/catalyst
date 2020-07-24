@@ -4,10 +4,7 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 
 import catalyst.contrib.data.transforms as t
-from catalyst.contrib.datasets.metric_learning import (
-    MnistMLDataset,
-    MnistQGDataset,
-)
+from catalyst.contrib.datasets.mnist import MnistMLDataset, MnistQGDataset
 from catalyst.contrib.dl.callbacks import PeriodicLoaderCallback
 from catalyst.contrib.models.simple_conv import SimpleConv
 from catalyst.contrib.nn.criterion.triplet import TripletMarginLossWithSampling
