@@ -1,6 +1,5 @@
 import torch
 from torch import nn
-from torch.nn.functional import max_pool2d, relu
 
 from catalyst.contrib.nn import Normalize
 from catalyst.contrib.nn.modules import Flatten
