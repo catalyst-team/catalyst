@@ -3,6 +3,7 @@ from torch import nn
 from torch.nn.functional import max_pool2d, relu
 
 from catalyst.contrib.nn import Normalize
+from catalyst.contrib.nn.modules import Flatten
 
 
 class SimpleConv(nn.Module):
@@ -17,11 +18,18 @@ class SimpleConv(nn.Module):
             features_dim: size of the output tensor
         """
         super(SimpleConv, self).__init__()
-        self.conv1 = nn.Conv2d(input_channels, 32, 3, 1)
-        self.conv2 = nn.Conv2d(32, 64, 3, 1)
-        self.fc1 = nn.Linear(9216, 128)
-        self.fc2 = nn.Linear(128, features_dim)
-        self.norm = Normalize()
+        self._net = nn.Sequential([
+            nn.Conv2d(input_channels, 32, 3, 1),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, 3, 1),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            Flatten(),
+            nn.Linear(9216, 128),
+            nn.ReLU(),
+            nn.Linear(128, features_dim),
+            Normalize()
+        ])
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -31,11 +39,4 @@ class SimpleConv(nn.Module):
         Returns:
             extracted features
         """
-        x = relu(self.conv1(x))
-        x = relu(self.conv2(x))
-        x = max_pool2d(x, 2)
-        x = torch.flatten(x, 1)
-        x = relu(self.fc1(x))
-        x = self.fc2(x)
-        x = self.norm(x)
-        return x
+        return self._net(x)
