@@ -413,12 +413,21 @@
 
 
 <div class="viewcode-block" id="ControlFlowCallback"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.control_flow.ControlFlowCallback">[docs]</a><span class="k">class</span> <span class="nc">ControlFlowCallback</span><span class="p">(</span><span class="n">WrapperCallback</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Customize callback execution on different</span>
+    <span class="sd">&quot;&quot;&quot;Enable/disable callback execution on different</span>
 <span class="sd">    stages, loaders and epochs.</span>
 
+<span class="sd">    .. note::</span>
+
+<span class="sd">        Please run experiment with</span>
+<span class="sd">        :class:`check option</span>
+<span class="sd">        &lt;catalyst.core.callbacks.early_stop.CheckRunCallback&gt;`</span>
+<span class="sd">        to check if everything works file with this callback.</span>
+
 <span class="sd">    For example, if you don&#39;t want to compute loss on a validation</span>
-<span class="sd">    you can ignore ``CriterionCallback``, for notebook API</span>
-<span class="sd">    need to wrap callback:</span>
+<span class="sd">    you can ignore</span>
+<span class="sd">    :class:`CriterionCallback</span>
+<span class="sd">    &lt;catalyst.core.callbacks.criterion.CriterionCallback&gt;`,</span>
+<span class="sd">    for **notebook API** need to wrap callback:</span>
 
 <span class="sd">    .. code-block:: python</span>
 
@@ -464,8 +473,7 @@
 <span class="sd">            ]</span>
 <span class="sd">        )</span>
 
-
-<span class="sd">    In config API need to use ``_wrapper`` argument:</span>
+<span class="sd">    In **config API** need to use ``_wrapper`` argument:</span>
 
 <span class="sd">    .. code-block:: yaml</span>
 
@@ -493,26 +501,26 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            base_callback (Callback): callback to wrap</span>
-<span class="sd">            epochs (int/Sequence[int]): epochs numbers where</span>
-<span class="sd">                need to execute callback, on other epochs</span>
+<span class="sd">            epochs (int/Sequence[int]): epochs where</span>
+<span class="sd">                need to **enable** callback, on other epochs</span>
 <span class="sd">                callback will be disabled.</span>
 
 <span class="sd">                If passed int/float then callback will be enabled</span>
 <span class="sd">                with period specified as epochs value</span>
-<span class="sd">                (epochs expression ``epoch_number % epochs != 0``)</span>
+<span class="sd">                (epochs expression ``epoch_number % epochs == 0``)</span>
 <span class="sd">                and disabled on other epochs.</span>
 
 <span class="sd">                If passed list of epochs then will be executed callback</span>
 <span class="sd">                on specified epochs.</span>
 
 <span class="sd">                Default value is ``None``.</span>
-<span class="sd">            ignore_epochs: (int/Sequence[int]): epochs numbers where</span>
-<span class="sd">                need to disable callback, on other epochs</span>
+<span class="sd">            ignore_epochs: (int/Sequence[int]): epochs where</span>
+<span class="sd">                need to **disable** callback, on other epochs</span>
 <span class="sd">                callback will be enabled.</span>
 
 <span class="sd">                If passed int/float then callback will be disabled</span>
 <span class="sd">                with period specified as epochs value</span>
-<span class="sd">                (epochs expression ``epoch_number % epochs == 0``)</span>
+<span class="sd">                (epochs expression ``epoch_number % epochs != 0``)</span>
 <span class="sd">                and enabled on other epochs.</span>
 
 <span class="sd">                If passed list of epochs then will be disabled callback</span>
@@ -520,7 +528,7 @@
 
 <span class="sd">                Default value is ``None``.</span>
 <span class="sd">            loaders (str/Sequence[str]/Mapping[str, int/Sequence[str]]):</span>
-<span class="sd">                loader names where should be enabled callback, on</span>
+<span class="sd">                loaders where should be **enabled** callback, on</span>
 <span class="sd">                other loaders callback will be disabled.</span>
 
 <span class="sd">                If passed string object then will be disabled callback for</span>
@@ -536,7 +544,7 @@
 
 <span class="sd">                Default value is ``None``.</span>
 <span class="sd">            ignore_loaders (str/Sequence[str]/Mapping[str, int/Sequence[str]]):</span>
-<span class="sd">                loader names where should be disabled callback, on</span>
+<span class="sd">                loader names where should be **disabled** callback, on</span>
 <span class="sd">                other loaders callback will be enabled.</span>
 
 <span class="sd">                If passed string object then will be disabled callback for</span>
@@ -558,16 +566,35 @@
 <span class="sd">                then it will be interpreted as python code. Expected</span>
 <span class="sd">                lambda function with three arguments stage name (str),</span>
 <span class="sd">                epoch number (int), loader name (str) and this function</span>
-<span class="sd">                should return ``True`` if callback should be disabled</span>
+<span class="sd">                should return ``True`` if callback should be enabled</span>
 <span class="sd">                on some condition.</span>
 
 <span class="sd">                If passed callable object then it should accept</span>
 <span class="sd">                three arguments - stage name (str), epoch number (int),</span>
 <span class="sd">                loader name (str) and should return ``True`` if callback</span>
-<span class="sd">                should be disabled on some condition othervise should</span>
+<span class="sd">                should be enabled on some condition othervise should</span>
 <span class="sd">                return ``False``.</span>
 
 <span class="sd">                Default value is ``None``.</span>
+
+<span class="sd">                Examples:</span>
+
+<span class="sd">                .. code-block:: python</span>
+
+<span class="sd">                    # enable callback on all loaders</span>
+<span class="sd">                    # exept &quot;train&quot; loader every 2 epochs</span>
+<span class="sd">                    ControlFlowCallback(</span>
+<span class="sd">                        ...</span>
+<span class="sd">                        filter_fn=lambda s, e, l: l != &quot;train&quot; and e % 2 == 0</span>
+<span class="sd">                        ...</span>
+<span class="sd">                    )</span>
+<span class="sd">                    # or with string equivalent</span>
+<span class="sd">                    ControlFlowCallback(</span>
+<span class="sd">                        ...</span>
+<span class="sd">                        filter_fn=&quot;lambda s, e, l: l != &#39;train&#39; and e % 2 == 0&quot;</span>
+<span class="sd">                        ...</span>
+<span class="sd">                    )</span>
+
 <span class="sd">            use_global_epochs (bool): if ``True`` then</span>
 <span class="sd">                will be used global epochs instead of epochs in</span>
 <span class="sd">                a stage, the default value is ``False``</span>
@@ -593,13 +620,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">epochs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span> <span class="o">=</span> <span class="n">_filter_fn_from_epochs</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span> <span class="o">=</span> <span class="n">_filter_fn_from_epochs</span><span class="p">(</span><span class="n">epochs</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">ignore_epochs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span> <span class="o">=</span> <span class="n">_filter_fn_from_epochs</span><span class="p">(</span><span class="n">ignore_epochs</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span> <span class="o">=</span> <span class="n">_filter_fn_from_epochs</span><span class="p">(</span><span class="n">ignore_epochs</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">loaders</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span> <span class="o">=</span> <span class="n">_filter_fn_from_loaders</span><span class="p">(</span><span class="n">loaders</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span> <span class="o">=</span> <span class="n">_filter_fn_from_loaders</span><span class="p">(</span><span class="n">loaders</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">ignore_loaders</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span> <span class="o">=</span> <span class="n">_filter_fn_from_loaders</span><span class="p">(</span><span class="n">ignore_loaders</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span> <span class="o">=</span> <span class="n">_filter_fn_from_loaders</span><span class="p">(</span><span class="n">ignore_loaders</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">filter_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span> <span class="o">=</span> <span class="n">_filter_fn_from_arg</span><span class="p">(</span><span class="n">filter_fn</span><span class="p">)</span></div>
 
@@ -615,7 +642,7 @@
         <span class="n">epoch</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">global_epoch</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_global_epochs</span> <span class="k">else</span> <span class="n">runner</span><span class="o">.</span><span class="n">epoch</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">loader</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_fn</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">loader</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_loader_start</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>

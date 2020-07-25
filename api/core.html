@@ -2763,11 +2763,18 @@ should contain <code class="docutils literal notranslate"><span class="pre">stag
 <dt id="catalyst.core.callbacks.control_flow.ControlFlowCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.control_flow.</code><code class="sig-name descname">ControlFlowCallback</code><span class="sig-paren">(</span><em class="sig-param">base_callback: catalyst.core.callback.Callback, epochs: Union[int, Sequence[int]] = None, ignore_epochs: Union[int, Sequence[int]] = None, loaders: Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]] = None, ignore_loaders: Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]] = None, filter_fn: Union[str, Callable[[str, int, str], bool]] = None, use_global_epochs: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/control_flow.html#ControlFlowCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.control_flow.ControlFlowCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.WrapperCallback" title="catalyst.core.callback.WrapperCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.WrapperCallback</span></code></a></p>
-<p>Customize callback execution on different
+<p>Enable/disable callback execution on different
 stages, loaders and epochs.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Please run experiment with
+<a class="reference internal" href="#catalyst.core.callbacks.early_stop.CheckRunCallback" title="catalyst.core.callbacks.early_stop.CheckRunCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">check</span> <span class="pre">option</span></code></a>
+to check if everything works file with this callback.</p>
+</div>
 <p>For example, if you don’t want to compute loss on a validation
-you can ignore <code class="docutils literal notranslate"><span class="pre">CriterionCallback</span></code>, for notebook API
-need to wrap callback:</p>
+you can ignore
+<a class="reference internal" href="#catalyst.core.callbacks.criterion.CriterionCallback" title="catalyst.core.callbacks.criterion.CriterionCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">CriterionCallback</span></code></a>,
+for <strong>notebook API</strong> need to wrap callback:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
@@ -2811,7 +2818,7 @@ need to wrap callback:</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>In config API need to use <code class="docutils literal notranslate"><span class="pre">_wrapper</span></code> argument:</p>
+<p>In <strong>config API</strong> need to use <code class="docutils literal notranslate"><span class="pre">_wrapper</span></code> argument:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">callbacks_params</span><span class="p">:</span>
   <span class="l l-Scalar l-Scalar-Plain">...</span>
   <span class="l l-Scalar l-Scalar-Plain">loss</span><span class="p p-Indicator">:</span>
@@ -2829,29 +2836,29 @@ need to wrap callback:</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>base_callback</strong> (<a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a>) – callback to wrap</p></li>
-<li><p><strong>epochs</strong> (<em>int/Sequence</em><em>[</em><em>int</em><em>]</em>) – <p>epochs numbers where
-need to execute callback, on other epochs
+<li><p><strong>epochs</strong> (<em>int/Sequence</em><em>[</em><em>int</em><em>]</em>) – <p>epochs where
+need to <strong>enable</strong> callback, on other epochs
 callback will be disabled.</p>
 <p>If passed int/float then callback will be enabled
 with period specified as epochs value
-(epochs expression <code class="docutils literal notranslate"><span class="pre">epoch_number</span> <span class="pre">%</span> <span class="pre">epochs</span> <span class="pre">!=</span> <span class="pre">0</span></code>)
+(epochs expression <code class="docutils literal notranslate"><span class="pre">epoch_number</span> <span class="pre">%</span> <span class="pre">epochs</span> <span class="pre">==</span> <span class="pre">0</span></code>)
 and disabled on other epochs.</p>
 <p>If passed list of epochs then will be executed callback
 on specified epochs.</p>
 <p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </p></li>
-<li><p><strong>ignore_epochs</strong> – <p>(int/Sequence[int]): epochs numbers where
-need to disable callback, on other epochs
+<li><p><strong>ignore_epochs</strong> – <p>(int/Sequence[int]): epochs where
+need to <strong>disable</strong> callback, on other epochs
 callback will be enabled.</p>
 <p>If passed int/float then callback will be disabled
 with period specified as epochs value
-(epochs expression <code class="docutils literal notranslate"><span class="pre">epoch_number</span> <span class="pre">%</span> <span class="pre">epochs</span> <span class="pre">==</span> <span class="pre">0</span></code>)
+(epochs expression <code class="docutils literal notranslate"><span class="pre">epoch_number</span> <span class="pre">%</span> <span class="pre">epochs</span> <span class="pre">!=</span> <span class="pre">0</span></code>)
 and enabled on other epochs.</p>
 <p>If passed list of epochs then will be disabled callback
 on specified epochs.</p>
 <p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </p></li>
-<li><p><strong>loaders</strong> (<em>str/Sequence</em><em>[</em><em>str</em><em>]</em><em>/Mapping</em><em>[</em><em>str</em><em>, </em><em>int/Sequence</em><em>[</em><em>str</em><em>]</em><em>]</em>) – <p>loader names where should be enabled callback, on
+<li><p><strong>loaders</strong> (<em>str/Sequence</em><em>[</em><em>str</em><em>]</em><em>/Mapping</em><em>[</em><em>str</em><em>, </em><em>int/Sequence</em><em>[</em><em>str</em><em>]</em><em>]</em>) – <p>loaders where should be <strong>enabled</strong> callback, on
 other loaders callback will be disabled.</p>
 <p>If passed string object then will be disabled callback for
 loader with specified name.</p>
@@ -2863,7 +2870,7 @@ disabled on epochs (dictionary value) for specified
 loader (dictionary key).</p>
 <p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </p></li>
-<li><p><strong>ignore_loaders</strong> (<em>str/Sequence</em><em>[</em><em>str</em><em>]</em><em>/Mapping</em><em>[</em><em>str</em><em>, </em><em>int/Sequence</em><em>[</em><em>str</em><em>]</em><em>]</em>) – <p>loader names where should be disabled callback, on
+<li><p><strong>ignore_loaders</strong> (<em>str/Sequence</em><em>[</em><em>str</em><em>]</em><em>/Mapping</em><em>[</em><em>str</em><em>, </em><em>int/Sequence</em><em>[</em><em>str</em><em>]</em><em>]</em>) – <p>loader names where should be <strong>disabled</strong> callback, on
 other loaders callback will be enabled.</p>
 <p>If passed string object then will be disabled callback for
 loader with specified name.</p>
@@ -2880,14 +2887,30 @@ loader (dictionary key).</p>
 then it will be interpreted as python code. Expected
 lambda function with three arguments stage name (str),
 epoch number (int), loader name (str) and this function
-should return <code class="docutils literal notranslate"><span class="pre">True</span></code> if callback should be disabled
+should return <code class="docutils literal notranslate"><span class="pre">True</span></code> if callback should be enabled
 on some condition.</p>
 <p>If passed callable object then it should accept
 three arguments - stage name (str), epoch number (int),
 loader name (str) and should return <code class="docutils literal notranslate"><span class="pre">True</span></code> if callback
-should be disabled on some condition othervise should
+should be enabled on some condition othervise should
 return <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
 <p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># enable callback on all loaders</span>
+<span class="c1"># exept &quot;train&quot; loader every 2 epochs</span>
+<span class="n">ControlFlowCallback</span><span class="p">(</span>
+    <span class="o">...</span>
+    <span class="n">filter_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">s</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span> <span class="n">l</span> <span class="o">!=</span> <span class="s2">&quot;train&quot;</span> <span class="ow">and</span> <span class="n">e</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+<span class="c1"># or with string equivalent</span>
+<span class="n">ControlFlowCallback</span><span class="p">(</span>
+    <span class="o">...</span>
+    <span class="n">filter_fn</span><span class="o">=</span><span class="s2">&quot;lambda s, e, l: l != &#39;train&#39; and e % 2 == 0&quot;</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 </p></li>
 <li><p><strong>use_global_epochs</strong> (<em>bool</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> then
 will be used global epochs instead of epochs in
