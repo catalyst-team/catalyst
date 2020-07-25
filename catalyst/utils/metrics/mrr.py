@@ -23,10 +23,7 @@ def mrr(outputs: torch.Tensor,
 
     _, indices_for_sort = outputs.sort(descending=True, dim=-1)
     true_sorted_by_preds = torch.gather(targets, dim=-1, index=indices_for_sort)
-    print(true_sorted_by_preds)
     values, indices = torch.max(true_sorted_by_preds, dim=0)
-    # print(values)
-    # print(indices)
     indices = indices.type_as(values).unsqueeze(dim=0).t()
     max_rank_rep = torch.tensor(
         data=max_rank, device=indices.device, dtype=torch.float32
@@ -34,7 +31,6 @@ def mrr(outputs: torch.Tensor,
     within_at_mask = (indices < max_rank_rep).type(torch.float32)
 
     result = torch.tensor(1.0) / (indices + torch.tensor(1.0))
-    # print(result)
 
     zero_sum_mask = torch.sum(values) == 0.0
     result[zero_sum_mask] = 0.0

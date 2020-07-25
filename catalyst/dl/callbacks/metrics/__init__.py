@@ -26,3 +26,5 @@ from catalyst.dl.callbacks.metrics.precision import (
     AveragePrecisionCallback,
     MeanAveragePrecisionCallback,
 )
+
+from catalyst.dl.callbacks.metrics.mrr import MRRCallback
