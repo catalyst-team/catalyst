@@ -17,8 +17,6 @@ def mrr(outputs: torch.Tensor, targets: torch.Tensor):
     Returns:
         mrr (float): the mrr score
     """
-    outputs = outputs.clone()
-    targets = targets.clone()
     max_rank = targets.shape[0]
 
     _, indices = outputs.sort(descending=True, dim=-1)
