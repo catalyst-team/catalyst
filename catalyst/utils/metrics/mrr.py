@@ -5,7 +5,9 @@ MRR metric.
 import torch
 
 
-def mrr(outputs: torch.Tensor, targets: torch.Tensor):
+def mrr(outputs: torch.Tensor, 
+        targets: torch.Tensor
+    ) -> torch.Tensor:
 
     """
     Calculate the MRR score given model ouptputs and targets
@@ -15,26 +17,30 @@ def mrr(outputs: torch.Tensor, targets: torch.Tensor):
         targets [batch_szie, slate_length] (torch.Tensor): 
             ground truth, labels
     Returns:
-        mrr (float): the mrr score
+        mrr (float): the mrr score for each slate
     """
     max_rank = targets.shape[0]
 
-    _, indices = outputs.sort(descending=True, dim=-1)
-    true_sorted_by_preds = torch.gather(targets, dim=0, index=indices)
+    _, indices_for_sort = outputs.sort(descending=True, dim=-1)
+    true_sorted_by_preds = torch.gather(targets, dim=-1, index=indices_for_sort)
+    print(true_sorted_by_preds)
     values, indices = torch.max(true_sorted_by_preds, dim=0)
+    # print(values)
+    # print(indices)
     indices = indices.type_as(values).unsqueeze(dim=0).t()
-    ats_rep = torch.tensor(
+    max_rank_rep = torch.tensor(
         data=max_rank, device=indices.device, dtype=torch.float32
     )
-    within_at_mask = (indices < ats_rep).type(torch.float32)
+    within_at_mask = (indices < max_rank_rep).type(torch.float32)
 
     result = torch.tensor(1.0) / (indices + torch.tensor(1.0))
+    # print(result)
 
     zero_sum_mask = torch.sum(values) == 0.0
     result[zero_sum_mask] = 0.0
 
     mrr = result * within_at_mask
-    return mrr[0]
+    return mrr
 
 
 __all__ = ["mrr"]
