@@ -25,6 +25,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - `utils.tokenize_text` typo with punctuation ([#880](https://github.com/catalyst-team/catalyst/pull/880))
+- `ControlFlowCallback` logic ([#892](https://github.com/catalyst-team/catalyst/pull/892))
 
 
 ## [20.07] - 2020-07-06
