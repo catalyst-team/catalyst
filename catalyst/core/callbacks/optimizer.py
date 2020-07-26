@@ -195,7 +195,6 @@ class OptimizerCallback(Callback):
                 optimizer=self._optimizer,
                 optimizer_wds=self._optimizer_wd,
                 grad_clip_fn=self.grad_clip_fn,
-                optimizer_step_fn=self._optimizer_step_fn,
             )
 
             utils.maybe_recursive_call(self._optimizer, "zero_grad")
