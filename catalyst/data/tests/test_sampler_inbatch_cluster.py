@@ -43,7 +43,7 @@ sampler = HardClusterSampler()
         ],
     ],
 )
-def test_mask_generation_manual(
+def test_get_labels_mask(
     labels: List[int], expected: torch.Tensor
 ) -> None:
     """
@@ -87,8 +87,7 @@ def test_count_intra_class_distances(
     features: torch.Tensor, expected: torch.Tensor
 ) -> None:
     """
-    Test _count_intra_class_distances method of HardClusterSampler
-    with manual examples.
+    Test _count_intra_class_distances method of HardClusterSampler.
 
     Args:
         features: tensor of shape (p, k, embed_dim), where p is a number of
@@ -161,7 +160,7 @@ def test_sample(
     embed_dim: int, labels: List[int], expected_shape: List[Tuple[int]]
 ) -> None:
     """
-    Test output shapes in _get_labels_mask method of HardClusterSampler.
+    Test output shapes in sample method of HardClusterSampler.
 
     Args:
         embed_dim: size of embedding
