@@ -70,13 +70,12 @@ class OptimizerCallback(Callback):
         self.is_xla = False
         self.use_xla_barrier = use_xla_barrier
 
-    @staticmethod
     def grad_step(
+        self,
         *,
         optimizer: Optimizer,
         optimizer_wds: List[float] = 0,
         grad_clip_fn: Callable = None,
-        optimizer_step_fn: Callable = None,
     ) -> None:
         """Makes a gradient step for a given optimizer.
 
@@ -94,7 +93,7 @@ class OptimizerCallback(Callback):
             if grad_clip_fn is not None:
                 grad_clip_fn(group["params"])
         # optimize parameters
-        optimizer_step_fn(optimizer)
+        self._optimizer_step_fn(optimizer)
 
     def on_stage_start(self, runner: IRunner) -> None:
         """Checks that the current stage has correct optimizer.
@@ -195,9 +194,6 @@ class OptimizerCallback(Callback):
             loss.backward()
 
         if need_gradient_step:
-            xla_args = (
-                {"barrier": self.use_xla_barrier} if self.is_xla else None
-            )
             self.grad_step(
                 optimizer=self._optimizer,
                 optimizer_wds=self._optimizer_wd,
