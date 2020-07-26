@@ -82,7 +82,6 @@ class OptimizerCallback(Callback):
             optimizer_wds (List[float]): list of weight decay parameters
                 for each param group
             grad_clip_fn (Callable): function for gradient clipping
-            optmizert_step_fn (Callable): optimizer step function
         """
         for group, wd in zip(optimizer.param_groups, optimizer_wds):
             if wd > 0:
