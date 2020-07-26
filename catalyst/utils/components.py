@@ -69,7 +69,8 @@ def process_components(
         optimizer_device = optimizer.param_groups[0]["params"][0].device
         if device != optimizer_device:
             raise ValueError(
-                "Expected that model and optimizer will be already on TPU!"
+                "Expected that model and optimizer will be already on same device (TPU)! "
+                f"Got model on '{device}' and optimizer on '{optimizer_device}'."
             )
 
     # if optimizer is not None:
