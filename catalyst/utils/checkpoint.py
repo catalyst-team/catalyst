@@ -1,5 +1,4 @@
 # flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 from typing import Callable, Dict, Union
 from collections import OrderedDict
 import os
@@ -50,8 +49,18 @@ def pack_checkpoint(
 
 def unpack_checkpoint(
     checkpoint, model=None, criterion=None, optimizer=None, scheduler=None
-):
-    """@TODO: Docs. Contribution is welcome."""
+) -> None:
+    """Load checkpoint from file and unpack the content to a model
+    (if not None), criterion (if not None), optimizer (if not None),
+    scheduler (if not None).
+
+    Args:
+        checkpoint (str): checkpoint to load
+        model (torch.nn.Module): model where should be updated state
+        criterion: criterion where should be updated state
+        optimizer: optimizer where should be updated state
+        scheduler: scheduler where should be updated state
+    """
     if model is not None:
         model = get_nn_from_ddp_module(model)
         maybe_recursive_call(
@@ -87,7 +96,7 @@ def save_checkpoint(
     saver_fn: Callable = torch.save,
 ):
     """Saving checkpoint to a file.
-    
+
     Args:
         checkpoint (dict): data to save.
         logdir (Path/str): directory where checkpoint
@@ -112,8 +121,14 @@ def save_checkpoint(
     return filename
 
 
-def load_checkpoint(filepath):
-    """@TODO: Docs. Contribution is welcome."""
+def load_checkpoint(filepath: str):
+    """Load checkpoint from path.
+    Args:
+        filepath (str): checkpoint file to load
+
+    Returns:
+        checkpoint content
+    """
     checkpoint = torch.load(
         filepath, map_location=lambda storage, loc: storage
     )

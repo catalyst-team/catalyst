@@ -65,6 +65,13 @@ def process_components(
 
     model: Model = maybe_recursive_call(model, "to", device=device)
 
+    if optimizer is not None:
+        optimizer_device = optimizer.param_groups[0]["params"][0].device
+        if device != optimizer_device:
+            raise ValueError(
+                "Expected that model and optimizer will be already on TPU!"
+            )
+
     # if optimizer is not None:
     #     if isinstance(optimizer, dict):
     #         optimizer = {

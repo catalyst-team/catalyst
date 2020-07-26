@@ -12,11 +12,9 @@ from catalyst.tools.typing import Optimizer
 logger = logging.getLogger(__name__)
 
 try:
-    from torch_xla.core.xla_model import optimizer_step as xla_optimizer_step
+    from torch_xla.core.xla_model import optimizer_step
 except ModuleNotFoundError:
-
-    def xla_optimizer_step(optimizer, *args, **kwargs):
-        optimizer.step()
+    pass
 
 
 class OptimizerCallback(Callback):
@@ -106,11 +104,11 @@ class OptimizerCallback(Callback):
         )
         if runner.device.type == "xla":
             if self.use_xla_barrier:
-                self._optimizer_step_fn = lambda optimizer: xla_optimizer_step(
+                self._optimizer_step_fn = lambda optimizer: optimizer_step(
                     optimizer, barrier=True
                 )
             else:
-                self._optimizer_step_fn = xla_optimizer_step
+                self._optimizer_step_fn = optimizer_step
         else:
             self._optimizer_step_fn = lambda optimizer: optimizer.step()
 
