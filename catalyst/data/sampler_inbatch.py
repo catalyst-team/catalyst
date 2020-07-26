@@ -10,6 +10,7 @@ import numpy as np
 import torch
 from torch import Tensor
 
+from catalyst.contrib.nn.criterion.functional import euclidean_distance
 from catalyst.contrib.utils.misc import find_value_ids
 from catalyst.utils.torch import normalize
 
@@ -195,3 +196,146 @@ class HardTripletsSampler(InBatchTripletsSampler):
             ids_neg.append(i_neg)
 
         return ids_anchor, ids_pos, ids_neg
+
+
+class HardClusterSampler:
+    """
+    This sampler selects hardest triplets based on distance to mean vectors.
+    """
+
+    @staticmethod
+    def _get_labels_mask(labels: List[int]) -> Tensor:
+        """
+        Generate matrix of bool of shape (n_unique_labels, batch_size),
+        where n_unique_labels is a number of unique labels
+        in the batch; matrix[i, j] is True if j-th element of
+        the batch relates to i-th class and False otherwise.
+
+        Args:
+            labels: labels of the batch, shape (batch_size,)
+
+        Returns:
+            matrix of indices of classes in batch
+        """
+        unique_labels = sorted(np.unique(labels))
+        labels_number = len(unique_labels)
+        labels_mask = torch.zeros(size=(labels_number, len(labels)))
+        for label_idx, label in enumerate(unique_labels):
+            label_indices = find_value_ids(labels, label)
+            labels_mask[label_idx][label_indices] = 1
+        return labels_mask.bool()
+
+    @staticmethod
+    def _count_intra_class_distances(
+        embeddings: torch.Tensor, mean_vectors: torch.Tensor
+    ) -> torch.Tensor:
+        """
+        Count matrix of distances from mean vector of each class to it's
+        samples embeddings.
+
+        Args:
+            embeddings: tensor of shape (p, k, embed_dim) where p is a number
+            of classes in the batch, k is a number of samples for each class
+            mean_vectors: tensor of shape (p, embed_dim) -- mean vectors
+            of each class in the batch
+
+        Returns:
+            tensor of shape (p, k) -- matrix of distances from mean vectors to
+            related samples in the batch
+        """
+        p, k, embed_dim = embeddings.shape
+        # Create (p, k, embed_dim) tensor of mean vectors for each class
+        mean_vectors = mean_vectors.unsqueeze(1).repeat((1, k, 1))
+        # Count euclidean distance between embeddings and mean vectors
+        distances = torch.pow(embeddings - mean_vectors, 2).sum(2)
+        return distances
+
+    @staticmethod
+    def _count_inter_class_distances(
+        mean_vectors: torch.Tensor,
+    ) -> torch.Tensor:
+        """
+        Count matrix of distances from mean vectors of classes to each other
+
+        Args:
+            mean_vectors: tensor of shape (p, embed_dim) -- mean vectors
+            of classes
+
+        Returns:
+            tensor of shape (p, p) -- matrix of distances between mean vectors
+        """
+        distance = euclidean_distance(mean_vectors, mean_vectors)
+        return distance
+
+    @staticmethod
+    def _fill_diagonal(matrix: torch.Tensor, value: float) -> torch.Tensor:
+        """
+        Set diagonal elements with the value.
+
+        Args:
+            matrix: tensor of shape (p, p)
+            value: value that diagonal should be filled with
+
+        Returns:
+            modified matrix with inf on diagonal
+        """
+        p, _ = matrix.shape
+        indices = torch.diag(torch.ones(p)).bool()
+        matrix[indices] = value
+        return matrix
+
+    def sample(self, features: Tensor, labels: List[int]) -> TTriplets:
+        """
+        This method selects the hardest positive and negative example for
+        each label in the batch. It counts mean vectors for all the labels
+        and choose the hardest positive sample from the batch and the hardest
+        mean vector for it.
+
+        Args:
+            features: tensor of shape (batch_size; embed_dim)
+            where batch_size = k * p
+            labels: labels of the batch, of size (batch_size,)
+
+        Returns:
+            triplet of (mean_vector, positive, negative_mean_vector)
+
+        Raises:
+            ValueError: if there is a different number of samples for
+            labels in batch
+        """
+        # Get matrix of indices of labels in batch
+        labels_mask = self._get_labels_mask(labels)
+        p = labels_mask.shape[0]
+        k = len(labels) // p
+
+        # Validate batch: expected to get batch
+        # with k samples for p classes
+        if not (labels_mask.sum(1, keepdim=True) == k).all():
+            raise ValueError(
+                f"For batch of shape {labels_mask.shape} with "
+                f"{p} classes required {k} samples for ech class."
+            )
+
+        embed_dim = features.shape[-1]
+        # Reshape embeddings to groups of (p, k, embed_dim) ones,
+        # each i-th group contains embeddings of i-th class.
+        features = features.repeat((p, 1, 1))
+        features = features[labels_mask].view((p, -1, embed_dim))
+
+        # Count mean vectors for each class in batch
+        mean_vectors = features.mean(1)
+
+        d_intra = self._count_intra_class_distances(features, mean_vectors)
+        # Count the distances to the sample farthest from mean vector
+        # for each class.
+        pos_indices = d_intra.max(1).indices
+        # Count matrix of distances from mean vectors to each other
+        d_inter = self._count_inter_class_distances(mean_vectors)
+        # For each class mean vector get the closest mean vector
+        d_inter = self._fill_diagonal(d_inter, float("inf"))
+        neg_indices = d_inter.min(1).indices
+        positives = torch.stack(
+            [features[idx][pos_idx] for idx, pos_idx in enumerate(pos_indices)]
+        )
+
+        return mean_vectors, positives, mean_vectors[neg_indices]
