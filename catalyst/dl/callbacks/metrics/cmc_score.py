@@ -5,8 +5,8 @@ import torch
 from catalyst.core import IRunner
 from catalyst.core.callback import CallbackOrder
 from catalyst.dl import Callback
-from catalyst.dl.callbacks.metrics.functional import get_default_topk_args
 from catalyst.utils.metrics.cmc_score import cmc_score
+from catalyst.utils.metrics.functional import get_default_topk_args
 
 TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
 

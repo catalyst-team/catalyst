@@ -1,12 +1,12 @@
 from typing import List
 
-from catalyst.core import MultiMetricCallback
+from catalyst.core import BatchMetricCallback
 from catalyst.core.runner import IRunner
-from catalyst.dl.callbacks.metrics.functional import get_default_topk_args
 from catalyst.utils import metrics
+from catalyst.utils.metrics.functional import get_default_topk_args
 
 
-class AveragePrecisionCallback(MultiMetricCallback):
+class AveragePrecisionCallback(BatchMetricCallback):
     """AveragePrecision@k metric callback."""
 
     def __init__(
@@ -63,7 +63,7 @@ class AveragePrecisionCallback(MultiMetricCallback):
                 runner.batch_metrics[key] = class_metric * self.multiplier
 
 
-class MeanAveragePrecisionCallback(MultiMetricCallback):
+class MeanAveragePrecisionCallback(BatchMetricCallback):
     """MeanAveragePrecision@k metric callback."""
 
     def __init__(

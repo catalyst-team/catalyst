@@ -5,7 +5,7 @@ from catalyst.dl.callbacks.metrics.accuracy import (
     MultiLabelAccuracyCallback,
 )
 from catalyst.dl.callbacks.metrics.auc import AUCCallback
-from catalyst.dl.callbacks.metrics.cmc import CMCScoreCallback
+from catalyst.dl.callbacks.metrics.cmc_score import CMCScoreCallback
 from catalyst.dl.callbacks.metrics.dice import (
     DiceCallback,
     MultiClassDiceMetricCallback,

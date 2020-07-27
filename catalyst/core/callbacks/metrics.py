@@ -29,7 +29,6 @@ class IMetricCallback(ABC, Callback):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__(order=CallbackOrder.metric, node=CallbackNode.all)
         self.prefix = prefix
-        # self.metric_fn = partial(metric_fn, **metrics_kwargs)
         self.input_key = input_key
         self.output_key = output_key
         self.multiplier = multiplier
@@ -37,6 +36,7 @@ class IMetricCallback(ABC, Callback):
 
         self._get_input = utils.get_dictkey_auto_fn(self.input_key)
         self._get_output = utils.get_dictkey_auto_fn(self.output_key)
+
         kv_types = (dict, tuple, list, type(None))
 
         is_value_input = (
@@ -69,27 +69,77 @@ class IMetricCallback(ABC, Callback):
         """@TODO: Docs. Contribution is welcome."""
         pass
 
-    def _compute_metric_value(self, runner: IRunner):
-        output = self._get_output(runner.output, self.output_key)
-        input_ = self._get_input(runner.input, self.input_key)
+    def _compute_metric_value(self, output: Dict, input: Dict):
+        output = self._get_output(output, self.output_key)
+        input = self._get_input(input, self.input_key)
 
-        metric = self.metric_fn(output, input_, **self.metrics_kwargs)
+        metric = self.metric_fn(output, input, **self.metrics_kwargs)
         return metric
 
-    def _compute_metric_key_value(self, runner: IRunner):
-        output = self._get_output(runner.output, self.output_key)
-        input_ = self._get_input(runner.input, self.input_key)
+    def _compute_metric_key_value(self, output: Dict, input: Dict):
+        output = self._get_output(output, self.output_key)
+        input = self._get_input(input, self.input_key)
 
-        metric = self.metric_fn(**output, **input_, **self.metrics_kwargs)
+        metric = self.metric_fn(**output, **input, **self.metrics_kwargs)
         return metric
+
+    def _process_computed_metric(self, metric) -> Dict:
+        if isinstance(metric, dict):
+            metric = {
+                f"{self.prefix}{key}": value * self.multiplier
+                for key, value in metric.items()
+            }
+        elif isinstance(metric, (float, int, torch.Tensor)):
+            metric = {f"{self.prefix}": metric * self.multiplier}
+        else:
+            raise NotImplementedError()
+        return metric
+
+
+class IBatchMetricCallback(IMetricCallback):
+    def on_batch_end(self, runner: IRunner) -> None:
+        """Computes metrics and add them to batch metrics."""
+        metrics = self._compute_metric(runner.output, runner.input)
+        metrics = self._process_computed_metric(metrics)
+        runner.batch_metrics.update(**metrics)
+
+
+class ILoaderMetricCallback(IMetricCallback):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.input = None
+        self.output = None
+
+    def on_loader_start(self, runner: IRunner):
+        self.input = defaultdict(lambda: [])
+        self.output = defaultdict(lambda: [])
 
     def on_batch_end(self, runner: IRunner) -> None:
-        """Computes the metric and add it to batch metrics."""
-        metric = self._compute_metric(runner) * self.multiplier
-        runner.batch_metrics[self.prefix] = metric
+        """Computes metrics and add them to batch metrics."""
+        output = self._get_output(runner.output, self.output_key)
+        input = self._get_input(runner.input, self.input_key)
+
+        for data, storage in zip((input, output), (self.input, self.output)):
+            if isinstance(data, dict):
+                for key, value in data.items():
+                    storage[key].append(value)
+                else:
+                    storage["data"].append(data)
+
+    def on_loader_end(self, runner: IRunner):
+        input = {key: torch.cat(self.input[key]) for key in self.input}
+        output = {key: torch.cat(self.output[key]) for key in self.output}
+
+        input = input["data"] if len(input) == 1 else input
+        output = output["data"] if len(output) == 1 else output
+
+        metrics = self._compute_metric(output, input)
+        metrics = self._process_computed_metric(metrics)
+        runner.loader_metrics.update(**metrics)
 
 
-class MetricCallback(IMetricCallback):
+class BatchMetricCallback(IBatchMetricCallback):
     """A callback that returns single metric on `runner.on_batch_end`."""
 
     def __init__(
@@ -117,44 +167,32 @@ class MetricCallback(IMetricCallback):
         return self.metric
 
 
-class MultiMetricCallback(MetricCallback):
-    """A callback that returns multiple metrics on `runner.on_batch_end`."""
+class LoaderMetricCallback(ILoaderMetricCallback):
+    """A callback that returns single metric on `runner.on_batch_end`."""
 
     def __init__(
         self,
         prefix: str,
         metric_fn: Callable,
-        list_args: List,
         input_key: Union[str, List[str], Dict[str, str]] = "targets",
         output_key: Union[str, List[str], Dict[str, str]] = "logits",
         multiplier: float = 1.0,
-        **metrics_kwargs,
+        **metric_kwargs,
     ):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__(
             prefix=prefix,
-            metric_fn=metric_fn,
             input_key=input_key,
             output_key=output_key,
             multiplier=multiplier,
-            **metrics_kwargs,
+            **metric_kwargs,
         )
-        self.list_args = list_args
+        self.metric = metric_fn
 
-    def on_batch_end(self, runner: IRunner) -> None:
-        """Batch end hook.
-
-        Args:
-            runner (IRunner): current runner
-        """
-        metrics = self._compute_metric(runner)
-
-        for arg, metric in zip(self.list_args, metrics):
-            if isinstance(arg, int):
-                key = f"{self.prefix}{arg:02}"
-            else:
-                key = f"{self.prefix}_{arg}"
-            runner.batch_metrics[key] = metric * self.multiplier
+    @property
+    def metric_fn(self):
+        """@TODO: Docs. Contribution is welcome."""
+        return self.metric
 
 
 class MetricAggregationCallback(Callback):
@@ -165,6 +203,7 @@ class MetricAggregationCallback(Callback):
         prefix: str,
         metrics: Union[str, List[str], Dict[str, float]] = None,
         mode: str = "mean",
+        scope: str = "batch",
         multiplier: float = 1.0,
     ) -> None:
         """
@@ -203,12 +242,15 @@ class MetricAggregationCallback(Callback):
                 "or `weighted_sum` or `weighted_mean`"
             )
 
+        assert scope in ("batch", "loader", "epoch")
+
         if isinstance(metrics, str):
             metrics = [metrics]
 
         self.prefix = prefix
         self.metrics = metrics
         self.mode = mode
+        self.scope = scope
         self.multiplier = multiplier
 
         if mode in ("sum", "weighted_sum", "weighted_mean"):
@@ -238,15 +280,27 @@ class MetricAggregationCallback(Callback):
             result = list(metrics.values())
         return result
 
+    def _process_metrics(self, metrics: Dict):
+        metrics_ = self._preprocess(metrics)
+        metric_ = self.aggregation_fn(metrics_)
+        metrics[self.prefix] = metric_
+
     def on_batch_end(self, runner: IRunner) -> None:
         """Computes the metric and add it to the metrics.
 
         Args:
             runner (IRunner): current runner
         """
-        metrics = self._preprocess(runner.batch_metrics)
-        metric = self.aggregation_fn(metrics)
-        runner.batch_metrics[self.prefix] = metric
+        if self.scope == "batch":
+            self._process_metrics(runner.batch_metrics)
+
+    def on_loader_end(self, runner: IRunner):
+        if self.scope == "loader":
+            self._process_metrics(runner.loader_metrics)
+
+    def on_epoch_end(self, runner: IRunner):
+        if self.scope == "epoch":
+            self._process_metrics(runner.epoch_metrics)
 
 
 class MetricManagerCallback(Callback):
@@ -281,7 +335,6 @@ class MetricManagerCallback(Callback):
 
     def on_epoch_start(self, runner: IRunner) -> None:
         """Epoch start hook.
-
         Args:
             runner (IRunner): current runner
         """
@@ -289,7 +342,6 @@ class MetricManagerCallback(Callback):
 
     def on_loader_start(self, runner: IRunner) -> None:
         """Loader start hook.
-
         Args:
             runner (IRunner): current runner
         """
@@ -298,7 +350,6 @@ class MetricManagerCallback(Callback):
 
     def on_loader_end(self, runner: IRunner) -> None:
         """Loader end hook.
-
         Args:
             runner (IRunner): current runner
         """
@@ -310,7 +361,6 @@ class MetricManagerCallback(Callback):
 
     def on_batch_start(self, runner: IRunner) -> None:
         """Batch start hook.
-
         Args:
             runner (IRunner): current runner
         """
@@ -318,7 +368,6 @@ class MetricManagerCallback(Callback):
 
     def on_batch_end(self, runner: IRunner) -> None:
         """Batch end hook.
-
         Args:
             runner (IRunner): current runner
         """
@@ -329,8 +378,10 @@ class MetricManagerCallback(Callback):
 
 __all__ = [
     "IMetricCallback",
-    "MetricCallback",
-    "MultiMetricCallback",
+    "IBatchMetricCallback",
+    "ILoaderMetricCallback",
+    "BatchMetricCallback",
+    "LoaderMetricCallback",
     "MetricAggregationCallback",
     "MetricManagerCallback",
 ]
