@@ -1,12 +1,14 @@
 # flake8: noqa
-from typing import List, Union
+from typing import List, Union, TYPE_CHECKING
 
 import torch
 from torch import int as tint, long, nn, short, Tensor
 from torch.nn import TripletMarginLoss
 
 from catalyst.contrib.nn.criterion.functional import triplet_loss
-from catalyst.data.sampler_inbatch import InBatchTripletsSampler
+
+if TYPE_CHECKING:
+    from catalyst.data.sampler_inbatch import InBatchTripletsSampler
 
 TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
 
@@ -266,7 +268,9 @@ class TripletMarginLossWithSampling(nn.Module):
     default TripletMargingLoss from PyTorch.
     """
 
-    def __init__(self, margin: float, sampler_inbatch: InBatchTripletsSampler):
+    def __init__(
+        self, margin: float, sampler_inbatch: "InBatchTripletsSampler"
+    ):
         """
         Args:
             margin: margin value
