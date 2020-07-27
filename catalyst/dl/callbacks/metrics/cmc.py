@@ -2,12 +2,13 @@ from typing import List
 
 import torch
 
+from catalyst.contrib.datasets.metric_learning import QueryGalleryDataset
 from catalyst.core import IRunner
 from catalyst.core.callback import CallbackOrder
 from catalyst.dl import Callback
 from catalyst.dl.callbacks.metrics.functional import get_default_topk_args
 from catalyst.utils.metrics.cmc_score import cmc_score
-from catalyst.contrib.datasets.metric_learning import QueryGalleryDataset
+
 
 TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
 

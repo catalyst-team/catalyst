@@ -1,5 +1,8 @@
 import os
 
+from torch.optim import Adam
+from torch.utils.data import DataLoader
+
 import catalyst.contrib.data.transforms as t
 from catalyst.contrib.datasets.mnist import MnistMLDataset, MnistQGDataset
 from catalyst.contrib.dl.callbacks import PeriodicLoaderCallback
@@ -11,8 +14,6 @@ from catalyst.data.sampler_inbatch import AllTripletsSampler
 from catalyst.dl import CriterionCallback
 from catalyst.dl.callbacks.metrics.cmc import CMCScoreCallback
 from catalyst.dl.runner import SupervisedRunner
-from torch.optim import Adam
-from torch.utils.data import DataLoader
 
 
 def main() -> None:

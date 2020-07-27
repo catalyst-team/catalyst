@@ -1,5 +1,5 @@
 # flake8: noqa
-from typing import List, Union, TYPE_CHECKING
+from typing import List, TYPE_CHECKING, Union
 
 import torch
 from torch import int as tint, long, nn, short, Tensor

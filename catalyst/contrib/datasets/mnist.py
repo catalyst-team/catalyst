@@ -1,6 +1,6 @@
 # flake8: noqa
 # TODO: docs and refactor for datasets-contrib
-from typing import List, Optional, Callable, Dict, Any
+from typing import Any, Callable, Dict, List, Optional
 import codecs
 import os
 
