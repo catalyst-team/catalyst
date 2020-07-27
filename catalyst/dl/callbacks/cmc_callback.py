@@ -4,6 +4,7 @@ import torch
 
 from catalyst.core import IRunner
 from catalyst.core.callback import CallbackOrder
+from catalyst.data.dataset import QueryGalleryDataset
 from catalyst.dl import Callback
 from catalyst.dl.callbacks.metrics.functional import get_default_topk_args
 from catalyst.utils.metrics.cmc_score import cmc_score
@@ -16,7 +17,8 @@ class CMCScoreCallback(Callback):
     Cumulative Matching Characteristics callback
 
     You should use it with `ControlFlowCallback`
-    and add all query/gallery sets to loaders.
+    and add QueryGalleryDataset to loaders from
+    catalyst.data.dataset.
     Loaders should contain "is_query" and "label" key.
 
     .. code-block:: python
@@ -186,6 +188,11 @@ class CMCScoreCallback(Callback):
     def on_loader_start(self, runner: "IRunner"):
         """On loader start action"""
         loader = runner.loaders[runner.loader_name]
+        if not issubclass(loader.dataset, QueryGalleryDataset):
+            raise Exception(
+                "To use CMCScoreCallback you should use QueryGalleryDataset"
+                "from catalyst.data.dataset"
+            )
         self._query_size = loader.dataset.query_size
         self._gallery_size = loader.dataset.gallery_size
         self._query_labels = torch.empty(self._query_size, dtype=torch.long)
@@ -209,7 +216,7 @@ class CMCScoreCallback(Callback):
             )
             runner.loader_metrics[f"{self._prefix}_{k}"] = metric
             runner.epoch_metrics[
-                f"{runner.loader_name}_{self._prefix}_{k}"
+                f"{runner.loader_name}{self._prefix:02}_{k}"
             ] = metric
         self._gallery_embeddings = None
         self._query_embeddings = None
