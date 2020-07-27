@@ -1,4 +1,3 @@
-from typing import List, Tuple
 from abc import ABC, abstractmethod
 from collections import Counter
 from itertools import combinations, product
@@ -6,23 +5,24 @@ from random import sample
 from sys import maxsize
 
 import numpy as np
-
 import torch
-from torch import Tensor
-
 from catalyst.contrib.utils.misc import find_value_ids
 from catalyst.utils.torch import normalize
+from torch import Tensor
+from typing import List, Tuple
 
 # order in the triplets: (anchor, positive, negative)
 TTriplets = Tuple[Tensor, Tensor, Tensor]
 TTripletsIds = Tuple[List[int], List[int], List[int]]
 
 
-class InBatchTripletsSampler(ABC):
+class InBatchTripletsSampler(ABC, IIinBatchTriSampler):
     """
     Base class for a triplets samplers.
     We expect that the child instances of this class
     will be used to forming triplets inside the batches.
+    (Note. It is assumed that set of output features is a
+    subset of samples features inside the batch.)
     The batches must contain at least 2 samples for
     each class and at least 2 different classes,
     such behaviour can be garantee via using

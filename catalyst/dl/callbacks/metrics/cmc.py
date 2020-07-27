@@ -7,6 +7,7 @@ from catalyst.core.callback import CallbackOrder
 from catalyst.dl import Callback
 from catalyst.dl.callbacks.metrics.functional import get_default_topk_args
 from catalyst.utils.metrics.cmc_score import cmc_score
+from catalyst.contrib.datasets.metric_learning import QueryGalleryDataset
 
 TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
 
@@ -18,6 +19,11 @@ class CMCScoreCallback(Callback):
     You should use it with `ControlFlowCallback`
     and add all query/gallery sets to loaders.
     Loaders should contain "is_query" and "label" key.
+
+    An usage example can be found in Readme.md:
+    "CV - MNIST with Metric Learning".
+    Or you can also found full metric learning pipeline
+    :ref:`here <catalyst.test._tests_scripts.dl_z_mvp_mnist_metric_learning>`.
     """
 
     def __init__(
@@ -113,6 +119,9 @@ class CMCScoreCallback(Callback):
 
     def on_loader_start(self, runner: "IRunner"):
         """On loader start action"""
+        assert isinstance(
+            runner.loaders[runner.loader_name], QueryGalleryDataset
+        )
         loader = runner.loaders[runner.loader_name]
         self._query_size = loader.dataset.query_size
         self._gallery_size = loader.dataset.gallery_size
