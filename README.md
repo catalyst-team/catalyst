@@ -52,13 +52,22 @@ pip install -U catalyst
 ```
 
 ```python
+#!/usr/bin/env python
 import os
+
+import numpy as np
+
+#!/usr/bin/env python
 import torch
+from torch import nn
 from torch.nn import functional as F
-from torch.utils.data import DataLoader
-from catalyst import dl
+from torch.utils.data import DataLoader, TensorDataset
+
+from catalyst import dl, utils
 from catalyst.contrib.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
+from catalyst.contrib.nn.modules import Flatten, GlobalMaxPool2d, Lambda
+from catalyst.dl import SupervisedRunner, utils
 from catalyst.utils import metrics
 
 model = torch.nn.Linear(28 * 28, 10)
@@ -177,9 +186,6 @@ Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10 and Windows Subsyste
 <p>
 
 ```python
-import torch
-from torch.utils.data import DataLoader, TensorDataset
-from catalyst.dl import SupervisedRunner
 
 # data
 num_samples, num_features = int(1e4), int(1e1)
@@ -216,9 +222,6 @@ runner.train(
 <p>
 
 ```python
-import torch
-from torch.utils.data import DataLoader, TensorDataset
-from catalyst import dl
 
 # sample data
 num_samples, num_features, num_classes = int(1e4), int(1e1), 4
@@ -258,9 +261,6 @@ runner.train(
 <p>
 
 ```python
-import torch
-from torch.utils.data import DataLoader, TensorDataset
-from catalyst import dl
 
 # sample data
 num_samples, num_features, num_classes = int(1e4), int(1e1), 4
@@ -300,14 +300,6 @@ runner.train(
 <p>
 
 ```python
-import os
-import torch
-from torch.nn import functional as F
-from torch.utils.data import DataLoader
-from catalyst import dl
-from catalyst.contrib.data.transforms import ToTensor
-from catalyst.contrib.datasets import MNIST
-from catalyst.utils import metrics
 
 model = torch.nn.Linear(28 * 28, 10)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
@@ -353,15 +345,6 @@ runner.train(
 <p>
 
 ```python
-import os
-import torch
-from torch import nn
-from torch.nn import functional as F
-from torch.utils.data import DataLoader
-from catalyst import dl
-from catalyst.contrib.data.transforms import ToTensor
-from catalyst.contrib.datasets import MNIST
-from catalyst.utils import metrics
 
 class ClassifyAE(nn.Module):
 
@@ -426,16 +409,6 @@ runner.train(
 <p>
 
 ```python
-import os
-import numpy as np
-import torch
-from torch import nn
-from torch.nn import functional as F
-from torch.utils.data import DataLoader
-from catalyst import dl
-from catalyst.contrib.data.transforms import ToTensor
-from catalyst.contrib.datasets import MNIST
-from catalyst.utils import metrics
 
 LOG_SCALE_MAX = 2
 LOG_SCALE_MIN = -10
@@ -526,15 +499,6 @@ runner.train(
 <p>
 
 ```python
-import os
-import torch
-from torch import nn
-from torch.nn import functional as F
-from torch.utils.data import DataLoader
-from catalyst import dl
-from catalyst.contrib.data.transforms import ToTensor
-from catalyst.contrib.datasets import MNIST
-from catalyst.utils import metrics
 
 class ClassifyUnet(nn.Module):
 
@@ -602,15 +566,6 @@ runner.train(
 <p>
 
 ```python
-import os
-import torch
-from torch import nn
-from torch.nn import functional as F
-from torch.utils.data import DataLoader
-from catalyst import dl
-from catalyst.contrib.data.transforms import ToTensor
-from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.nn.modules import Flatten, GlobalMaxPool2d, Lambda
 
 latent_dim = 128
 generator = nn.Sequential(
@@ -713,10 +668,6 @@ runner.train(
 <p>
 
 ```python
-#!/usr/bin/env python
-import torch
-from torch.utils.data import TensorDataset
-from catalyst.dl import SupervisedRunner, utils
 
 def datasets_fn(num_features: int):
     X = torch.rand(int(1e4), num_features)
@@ -760,15 +711,6 @@ utils.distributed_cmd_run(train)
 <p>
 
 ```python
-#!/usr/bin/env python
-import os
-import torch
-from torch import nn
-from torch.nn import functional as F
-from catalyst import dl, utils
-from catalyst.contrib.data.transforms import ToTensor
-from catalyst.contrib.datasets import MNIST
-from catalyst.utils import metrics
 
 class ClassifyAE(nn.Module):
 

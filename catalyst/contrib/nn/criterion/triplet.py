@@ -266,9 +266,7 @@ class TripletMarginLossWithSampling(nn.Module):
     default TripletMargingLoss from PyTorch.
     """
 
-    def __init__(
-        self, margin: float, sampler_inbatch: InBatchTripletsSampler
-    ):
+    def __init__(self, margin: float, sampler_inbatch: InBatchTripletsSampler):
         """
         Args:
             margin: margin value
