@@ -10,15 +10,18 @@ from catalyst.contrib.models.simple_conv import SimpleConv
 from catalyst.contrib.nn.criterion.triplet import TripletMarginLossWithSampling
 from catalyst.core.callbacks import ControlFlowCallback
 from catalyst.data.sampler import BalanceBatchSampler
-from catalyst.data.sampler_inbatch import AllTripletsSampler
+from catalyst.data.sampler_inbatch import InBatchTripletsSampler, AllTripletsSampler, HardTripletsSampler
 from catalyst.dl import CriterionCallback
 from catalyst.dl.callbacks.metrics.cmc import CMCScoreCallback
 from catalyst.dl.runner import SupervisedRunner
 
 
-def main() -> None:
+def run_ml_pipeline(sampler_inbatch: InBatchTripletsSampler) -> float:
     """
     Full metric learning pipeline, including train and val.
+
+    This function is also used as minimal example in README.md, section name:
+    'CV - MNIST with Metric Learning'.
     """
     # 1. train and valid datasets
     dataset_root = "./data"
@@ -40,12 +43,10 @@ def main() -> None:
     val_loader = DataLoader(dataset=dataset_val, batch_size=1024)
 
     # 2. model and optimizer
-    model = SimpleConv(input_channels=1, features_dim=16)
-    optimizer = Adam(model.parameters(), lr=1e-3)
+    model = SimpleConv(features_dim=16)
+    optimizer = Adam(model.parameters(), lr=0.0005)
 
     # 3. criterion with triplets sampling
-    # you can also use HardTripletsSampler
-    sampler_inbatch = AllTripletsSampler(max_output_triplets=512)
     criterion = TripletMarginLossWithSampling(
         margin=0.5, sampler_inbatch=sampler_inbatch
     )
@@ -54,7 +55,7 @@ def main() -> None:
     callbacks = [
         ControlFlowCallback(CriterionCallback(), loaders="train"),
         ControlFlowCallback(CMCScoreCallback(topk_args=[1]), loaders="valid"),
-        PeriodicLoaderCallback(valid=10),
+        PeriodicLoaderCallback(valid=600),
     ]
 
     runner = SupervisedRunner(device="cuda:0")
@@ -67,9 +68,24 @@ def main() -> None:
         minimize_metric=False,
         verbose=True,
         valid_loader="valid",
-        num_epochs=20,
+        num_epochs=600,
         main_metric="cmc_1",
     )
+    return runner.best_valid_metrics["cmc_1"]
+
+
+def main() -> None:
+    """
+    This function checks metric learning pipeline with
+    different triplets samplers.
+    """
+    cmc_score_th = 0.97
+
+    all_sampler = AllTripletsSampler(max_output_triplets=512)
+    hard_sampler = HardTripletsSampler(norm_required=False)
+
+    assert run_ml_pipeline(all_sampler) > cmc_score_th
+    assert run_ml_pipeline(hard_sampler) > cmc_score_th
 
 
 if __name__ == "__main__":
