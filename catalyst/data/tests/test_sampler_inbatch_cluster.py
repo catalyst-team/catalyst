@@ -43,9 +43,7 @@ sampler = HardClusterSampler()
         ],
     ],
 )
-def test_get_labels_mask(
-    labels: List[int], expected: torch.Tensor
-) -> None:
+def test_get_labels_mask(labels: List[int], expected: torch.Tensor) -> None:
     """
     Test _get_labels_mask method of HardClusterSampler.
 

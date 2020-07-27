@@ -19,7 +19,39 @@ TTriplets = Tuple[Tensor, Tensor, Tensor]
 TTripletsIds = Tuple[List[int], List[int], List[int]]
 
 
-class InBatchTripletsSampler(ABC):
+class IInbatchTripletSampler(ABC):
+    """
+    An abstraction of inbatch triplet sampler.
+    """
+
+    @abstractmethod
+    def _check_input_labels(self, labels: List[int]) -> None:
+        """
+        Check if the batch labels list is valid for the sampler.
+
+        Args:
+            labels: labels of the samples in the batch
+        """
+        raise NotImplementedError()
+
+    @abstractmethod
+    def sample(self, features: Tensor, labels: List[int]) -> TTriplets:
+        """
+        This method includes the logic of sampling/selecting triplets.
+
+        Args:
+            features: tensor of features
+            labels: labels of the samples in the batch
+
+        Returns: the batch of triplets
+
+        Raises:
+            NotImplementedError: you should implement it
+        """
+        raise NotImplementedError()
+
+
+class InBatchTripletsSampler(IInbatchTripletSampler):
     """
     Base class for a triplets samplers.
     We expect that the child instances of this class
@@ -32,12 +64,10 @@ class InBatchTripletsSampler(ABC):
     But you are not limited to using it in any other way.
     """
 
-    @staticmethod
-    def _check_input_labels(labels: List[int]) -> None:
+    def _check_input_labels(self, labels: List[int]) -> None:
         """
         The input must satisfy the conditions described in
         the class documentation.
-
         Args:
             labels: labels of the samples in the batch
         """
@@ -198,10 +228,33 @@ class HardTripletsSampler(InBatchTripletsSampler):
         return ids_anchor, ids_pos, ids_neg
 
 
-class HardClusterSampler:
+class HardClusterSampler(IInbatchTripletSampler):
     """
     This sampler selects hardest triplets based on distance to mean vectors.
+    The batch must contain k samples for p classes in it, k > 1, p > 1.
     """
+
+    def _check_input_labels(self, labels: List[int]) -> None:
+        """
+        Check if the labels list is valid: contains k occurrences
+        for each of p classes.
+
+        Args:
+            labels: list of labels in the batch
+
+        Raises:
+            ValueError: if batch is invalid (contains different samples
+            for classes, contains only one class or only one sample for
+            each class)
+        """
+        labels_counter = Counter(labels)
+        k = labels_counter[labels[0]]
+        if not all(n == k for n in labels_counter.values()):
+            raise ValueError("Expected equal number of samples for each class")
+        if len(labels_counter) <= 1:
+            raise ValueError("Expected at least 2 classes in the batch")
+        if k == 1:
+            raise ValueError("Expected more than one sample for each class")
 
     @staticmethod
     def _get_labels_mask(labels: List[int]) -> Tensor:
@@ -298,23 +351,12 @@ class HardClusterSampler:
 
         Returns:
             triplet of (mean_vector, positive, negative_mean_vector)
-
-        Raises:
-            ValueError: if there is a different number of samples for
-            labels in batch
         """
+        self._check_input_labels(labels)
+
         # Get matrix of indices of labels in batch
         labels_mask = self._get_labels_mask(labels)
         p = labels_mask.shape[0]
-        k = len(labels) // p
-
-        # Validate batch: expected to get batch
-        # with k samples for p classes
-        if not (labels_mask.sum(1, keepdim=True) == k).all():
-            raise ValueError(
-                f"For batch of shape {labels_mask.shape} with "
-                f"{p} classes required {k} samples for ech class."
-            )
 
         embed_dim = features.shape[-1]
         # Reshape embeddings to groups of (p, k, embed_dim) ones,
