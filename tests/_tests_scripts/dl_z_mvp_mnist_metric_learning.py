@@ -26,6 +26,9 @@ def run_ml_pipeline(sampler_inbatch: InBatchTripletsSampler) -> float:
 
     This function is also used as minimal example in README.md, section name:
     'CV - MNIST with Metric Learning'.
+
+    Returns:
+        best metric value
     """
     # 1. train and valid datasets
     dataset_root = "./data"
