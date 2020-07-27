@@ -1,8 +1,8 @@
 # flake8: noqa
 # TODO: docs and refactor for datasets-contrib
+from typing import List, Optional, Callable, Dict, Any
 import codecs
 import os
-from typing import List, Optional, Callable, Dict, Any
 
 import numpy as np
 
