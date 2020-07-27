@@ -19,10 +19,10 @@ class MetricLearningTrainDataset(Dataset, ABC):
         and negative pairs during the training
         based on these labels.
 
-        Returns:
-            labels of samples
+        Raises:
+            NotImplementedError: You should implement it  # noqa: DAR402
         """
-        raise NotImplementedError
+        raise NotImplementedError()
 
 
 class QueryGalleryDataset(Dataset, ABC):
