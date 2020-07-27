@@ -10,7 +10,11 @@ from catalyst.contrib.models.simple_conv import SimpleConv
 from catalyst.contrib.nn.criterion.triplet import TripletMarginLossWithSampling
 from catalyst.core.callbacks import ControlFlowCallback
 from catalyst.data.sampler import BalanceBatchSampler
-from catalyst.data.sampler_inbatch import InBatchTripletsSampler, AllTripletsSampler, HardTripletsSampler
+from catalyst.data.sampler_inbatch import (
+    AllTripletsSampler,
+    HardTripletsSampler,
+    InBatchTripletsSampler,
+)
 from catalyst.dl import CriterionCallback
 from catalyst.dl.callbacks.metrics.cmc import CMCScoreCallback
 from catalyst.dl.runner import SupervisedRunner
