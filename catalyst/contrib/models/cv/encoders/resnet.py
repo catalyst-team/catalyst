@@ -91,7 +91,7 @@ class ResnetEncoder(nn.Module):
         return features
 
 
-def adopt_resnet_for_1channel(model: ResNet) -> ResNet:
+def get_resnet1d(model: ResNet) -> ResNet:
     """
     Args:
         model: ResNet model
