@@ -16,7 +16,7 @@ TTriplets = Tuple[Tensor, Tensor, Tensor]
 TTripletsIds = Tuple[List[int], List[int], List[int]]
 
 
-class InBatchTripletsSampler(ABC, IIinBatchTriSampler):
+class InBatchTripletsSampler(ABC):
     """
     Base class for a triplets samplers.
     We expect that the child instances of this class
