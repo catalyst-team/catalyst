@@ -6,7 +6,7 @@ from torch import int as tint, long, nn, short, Tensor
 from torch.nn import TripletMarginLoss
 
 from catalyst.contrib.nn.criterion.functional import triplet_loss
-from catalyst.data import sampler_inbatch as si
+from catalyst.data.sampler_inbatch import InBatchTripletsSampler
 
 TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
 
@@ -267,7 +267,7 @@ class TripletMarginLossWithSampling(nn.Module):
     """
 
     def __init__(
-        self, margin: float, sampler_inbatch: si.InBatchTripletsSampler
+        self, margin: float, sampler_inbatch: InBatchTripletsSampler
     ):
         """
         Args:
