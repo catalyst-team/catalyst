@@ -120,7 +120,7 @@ class CMCScoreCallback(Callback):
     def on_loader_start(self, runner: "IRunner"):
         """On loader start action"""
         assert isinstance(
-            runner.loaders[runner.loader_name], QueryGalleryDataset
+            runner.loaders[runner.loader_name].dataset, QueryGalleryDataset
         )
         loader = runner.loaders[runner.loader_name]
         self._query_size = loader.dataset.query_size
