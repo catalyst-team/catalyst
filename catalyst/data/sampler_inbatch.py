@@ -126,6 +126,11 @@ class HardTripletsSampler(InBatchTripletsSampler):
     the hardest positive sample has the maximal distance to the anchor sample,
     the hardest negative sample has the minimal distance to the anchor sample.
 
+    Note that a typical triplet loss chart is as follows:
+    1. Falling: loss decreases to a value equal to the margin.
+    2. Long plato: the loss oscillates near the margin.
+    3. Falling: loss decreases to zero.
+
     """
 
     def __init__(self, norm_required: bool = False):
