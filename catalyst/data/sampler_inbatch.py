@@ -13,7 +13,6 @@ from torch import Tensor
 from catalyst.contrib.utils.misc import find_value_ids
 from catalyst.utils.torch import normalize
 
-
 # order in the triplets: (anchor, positive, negative)
 TTriplets = Tuple[Tensor, Tensor, Tensor]
 TTripletsIds = Tuple[List[int], List[int], List[int]]
