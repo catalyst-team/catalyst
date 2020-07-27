@@ -10,15 +10,14 @@ class SimpleConv(nn.Module):
     Simple convolutional network.
     """
 
-    def __init__(self, input_channels: int, features_dim: int):
+    def __init__(self, features_dim: int):
         """
         Args:
-            input_channels: number of channels in the 1st layer
             features_dim: size of the output tensor
         """
         super(SimpleConv, self).__init__()
         self._net = nn.Sequential(
-            nn.Conv2d(input_channels, 32, 3, 1),
+            nn.Conv2d(1, 32, 3, 1),
             nn.ReLU(),
             nn.Conv2d(32, 64, 3, 1),
             nn.ReLU(),
@@ -33,7 +32,7 @@ class SimpleConv(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Args:
-            x: input image tensor
+            x: input 1d image tensor with the size of [28 x 28]
 
         Returns:
             extracted features
