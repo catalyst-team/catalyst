@@ -21,7 +21,7 @@ def main() -> None:
     Full metric learning pipeline, including train and val.
     """
     # 1. train and valid datasets
-    dataset_root = "."
+    dataset_root = "./data"
     transforms = t.Compose([t.ToTensor(), t.Normalize((0.1307,), (0.3081,))])
 
     dataset_train = MnistMLDataset(
