@@ -139,6 +139,13 @@ Global precision, recall and F1-score
     :undoc-members:
     :show-inheritance:
 
+MRR
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.dl.callbacks.metrics.mrr
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Utils
 --------------------

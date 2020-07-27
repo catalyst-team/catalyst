@@ -280,3 +280,10 @@ Precision
     :members:
     :undoc-members:
     :show-inheritance:
+
+MRR
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.metrics.mrr
+    :members:
+    :undoc-members:
+    :show-inheritance:
