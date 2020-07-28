@@ -843,46 +843,51 @@ utils.distributed_cmd_run(train)
 ```python
 from torch.optim import Adam
 from torch.utils.data import DataLoader
-import catalyst.contrib.data.transforms as t
-from catalyst.contrib.datasets.mnist import MnistMLDataset, MnistQGDataset
-from catalyst.contrib.dl.callbacks import PeriodicLoaderCallback
-from catalyst.contrib.models.simple_conv import SimpleConv
-from catalyst.contrib.nn.criterion.triplet import TripletMarginLossWithSampling
+
+from catalyst import contrib as ctb, data, dl
 from catalyst.core.callbacks import ControlFlowCallback
-from catalyst.data.sampler import BalanceBatchSampler
-from catalyst.data.sampler_inbatch import AllTripletsSampler
-from catalyst.dl import CriterionCallback
 from catalyst.dl.callbacks.metrics.cmc import CMCScoreCallback
-from catalyst.dl.runner import SupervisedRunner
 
 
 # 1. train and valid datasets
 dataset_root = "."
-transforms = t.Compose([t.ToTensor(), t.Normalize((0.1307,), (0.3081,))])
+transforms = ctb.data.transforms.Compose(
+    [t.ToTensor(), t.Normalize((0.1307,), (0.3081,))]
+)
 
-dataset_train = MnistMLDataset(root=dataset_root, train=True, download=True, transform=transforms)
-sampler = BalanceBatchSampler(labels=dataset_train.get_labels(), p=10, k=10)
-train_loader = DataLoader(dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size)
+dataset_train = ctb.datasets.mnist.MnistMLDataset(
+    root=dataset_root, train=True, download=True, transform=transforms,
+)
+sampler = data.sampler.BalanceBatchSampler(
+    labels=dataset_train.get_labels(), p=10, k=10
+)
+train_loader = DataLoader(
+    dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size
+)
 
-dataset_val = MnistQGDataset(root=dataset_root, transform=transforms, gallery_fraq=0.2)
+dataset_val = ctb.datasets.mnist.MnistQGDataset(
+    root=dataset_root, transform=transforms, gallery_fraq=0.2
+)
 val_loader = DataLoader(dataset=dataset_val, batch_size=1024)
 
 # 2. model and optimizer
-model = SimpleConv(features_dim=16)
+model = ctb.models.simple_conv.SimpleConv(features_dim=16)
 optimizer = Adam(model.parameters(), lr=0.001)
 
 # 3. criterion with triplets sampling
-sampler_inbatch=AllTripletsSampler(max_output_triplets=512)
-criterion = TripletMarginLossWithSampling(margin=0.5, sampler_inbatch=sampler_inbatch)
+sampler_inbatch = data.sampler_inbatch.AllTripletsSampler(max_output_triplets=512)
+criterion = ctb.nn.criterion.triplet.TripletMarginLossWithSampling(
+    margin=0.5, sampler_inbatch=sampler_inbatch
+)
 
 # 4. training with catalyst Runner
 callbacks = [
-    ControlFlowCallback(CriterionCallback(), loaders="train"),
+    ControlFlowCallback(dl.CriterionCallback(), loaders="train"),
     ControlFlowCallback(CMCScoreCallback(topk_args=[1]), loaders="valid"),
-    PeriodicLoaderCallback(valid=200),
+    dl.callbacks.PeriodicLoaderCallback(valid=600),
 ]
 
-runner = SupervisedRunner(device="cuda:0")
+runner = dl.runner.SupervisedRunner(device="cuda:0")
 runner.train(
     model=model,
     criterion=criterion,
@@ -892,9 +897,10 @@ runner.train(
     minimize_metric=False,
     verbose=True,
     valid_loader="valid",
-    num_epochs=600,
+    num_epochs=200,
     main_metric="cmc_1",
 )
+
 ```
 </p>
 </details>
