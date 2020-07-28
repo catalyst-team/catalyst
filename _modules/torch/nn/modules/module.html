@@ -262,12 +262,21 @@
 <span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">namedtuple</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">itertools</span>
-<span class="kn">import</span> <span class="nn">weakref</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">..parameter</span> <span class="kn">import</span> <span class="n">Parameter</span>
 <span class="kn">import</span> <span class="nn">torch.utils.hooks</span> <span class="k">as</span> <span class="nn">hooks</span>
+
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="n">dtype</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">overload</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">...utils.hooks</span> <span class="kn">import</span> <span class="n">RemovableHandle</span>
+
+<span class="n">_grad_t</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">Tensor</span><span class="p">]</span>
+<span class="c1"># See https://mypy.readthedocs.io/en/latest/generics.html#generic-methods-and-generic-self for the use</span>
+<span class="c1"># of `T` to annotate `self`. Many methods of `Module` return `self` and we want those return values to be</span>
+<span class="c1"># the type of the subclass, not the looser type of `Module`.</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="s1">&#39;Module&#39;</span><span class="p">)</span>
 
 <span class="k">class</span> <span class="nc">_IncompatibleKeys</span><span class="p">(</span><span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;IncompatibleKeys&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;missing_keys&#39;</span><span class="p">,</span> <span class="s1">&#39;unexpected_keys&#39;</span><span class="p">])):</span>
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -276,6 +285,14 @@
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">_IncompatibleKeys</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
 
     <span class="fm">__str__</span> <span class="o">=</span> <span class="fm">__repr__</span>
+
+
+<span class="k">class</span> <span class="nc">ModuleAttributeError</span><span class="p">(</span><span class="ne">AttributeError</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; When `__getattr__` raises AttributeError inside a property,</span>
+<span class="sd">    AttributeError is raised with the property name instead of the</span>
+<span class="sd">    attribute that initially raised AttributeError, making the error</span>
+<span class="sd">    message uninformative. Using `ModuleAttributeError` instead</span>
+<span class="sd">    fixes this issue.&quot;&quot;&quot;</span>
 
 
 <span class="k">def</span> <span class="nf">_addindent</span><span class="p">(</span><span class="n">s_</span><span class="p">,</span> <span class="n">numSpaces</span><span class="p">):</span>
@@ -290,7 +307,119 @@
     <span class="k">return</span> <span class="n">s</span>
 
 
-<span class="k">class</span> <span class="nc">Module</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;This tracks hooks common to all modules that are executed before/after</span>
+<span class="sd">calling forward and backward. This is global state used for debugging/profiling</span>
+<span class="sd">purposes&quot;&quot;&quot;</span>
+<span class="n">_global_backward_hooks</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="n">_global_forward_pre_hooks</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+<span class="n">_global_forward_hooks</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">register_module_forward_pre_hook</span><span class="p">(</span><span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">RemovableHandle</span><span class="p">:</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Registers a forward pre-hook common to all modules.</span>
+
+<span class="sd">    .. warning ::</span>
+
+<span class="sd">        This adds global state to the `nn.module` module</span>
+<span class="sd">        and it is only intended for debugging/profiling purposes. </span>
+
+<span class="sd">    The hook will be called every time before :func:`forward` is invoked.</span>
+<span class="sd">    It should have the following signature::</span>
+
+<span class="sd">        hook(module, input) -&gt; None or modified input</span>
+
+<span class="sd">    The input contains only the positional arguments given to the module.</span>
+<span class="sd">    Keyword arguments won&#39;t be passed to the hooks and only to the ``forward``.</span>
+<span class="sd">    The hook can modify the input. User can either return a tuple or a</span>
+<span class="sd">    single modified value in the hook. We will wrap the value into a tuple</span>
+<span class="sd">    if a single value is returned(unless that value is already a tuple).</span>
+
+<span class="sd">    This hook has precedence over the specific module hooks registered with</span>
+<span class="sd">    ``register_forward_pre_hook``.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`torch.utils.hooks.RemovableHandle`:</span>
+<span class="sd">            a handle that can be used to remove the added hook by calling</span>
+<span class="sd">            ``handle.remove()``</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">handle</span> <span class="o">=</span> <span class="n">hooks</span><span class="o">.</span><span class="n">RemovableHandle</span><span class="p">(</span><span class="n">_global_forward_pre_hooks</span><span class="p">)</span>
+    <span class="n">_global_forward_pre_hooks</span><span class="p">[</span><span class="n">handle</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">hook</span>
+    <span class="k">return</span> <span class="n">handle</span>
+
+
+<span class="k">def</span> <span class="nf">register_module_forward_hook</span><span class="p">(</span><span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">RemovableHandle</span><span class="p">:</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Registers a global forward hook for all the modules</span>
+
+<span class="sd">    .. warning ::</span>
+
+<span class="sd">        This adds global state to the `nn.module` module</span>
+<span class="sd">        and it is only intended for debugging/profiling purposes. </span>
+
+<span class="sd">    The hook will be called every time after :func:`forward` has computed an output.</span>
+<span class="sd">    It should have the following signature::</span>
+
+<span class="sd">        hook(module, input, output) -&gt; None or modified output</span>
+
+<span class="sd">    The input contains only the positional arguments given to the module.</span>
+<span class="sd">    Keyword arguments won&#39;t be passed to the hooks and only to the ``forward``.</span>
+<span class="sd">    The hook can modify the output. It can modify the input inplace but</span>
+<span class="sd">    it will not have effect on forward since this is called after</span>
+<span class="sd">    :func:`forward` is called.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`torch.utils.hooks.RemovableHandle`:</span>
+<span class="sd">            a handle that can be used to remove the added hook by calling</span>
+<span class="sd">            ``handle.remove()``</span>
+
+<span class="sd">    This hook will be executed before specific module hooks registered with</span>
+<span class="sd">    ``register_forward_hook``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">handle</span> <span class="o">=</span> <span class="n">hooks</span><span class="o">.</span><span class="n">RemovableHandle</span><span class="p">(</span><span class="n">_global_forward_hooks</span><span class="p">)</span>
+    <span class="n">_global_forward_hooks</span><span class="p">[</span><span class="n">handle</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">hook</span>
+    <span class="k">return</span> <span class="n">handle</span>
+
+<span class="k">def</span> <span class="nf">register_module_backward_hook</span><span class="p">(</span>
+    <span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="s1">&#39;Module&#39;</span><span class="p">,</span> <span class="n">_grad_t</span><span class="p">,</span> <span class="n">_grad_t</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RemovableHandle</span><span class="p">:</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Registers a backward hook common to all the modules.</span>
+
+<span class="sd">    .. warning ::</span>
+<span class="sd">        This adds global state to the `nn.module` module</span>
+<span class="sd">        and it is only intended for debugging/profiling purposes. </span>
+
+<span class="sd">        The current implementation will not have the presented behavior</span>
+<span class="sd">        for complex :class:`Module` that perform many operations.</span>
+<span class="sd">        In some failure cases, :attr:`grad_input` and :attr:`grad_output` will only</span>
+<span class="sd">        contain the gradients for a subset of the inputs and outputs.</span>
+<span class="sd">        For such :class:`Module`, you should use :func:`torch.Tensor.register_hook`</span>
+<span class="sd">        directly on a specific input or output to get the required gradients.</span>
+
+<span class="sd">    The hook will be called every time the gradients with respect to module</span>
+<span class="sd">    inputs are computed. The hook should have the following signature::</span>
+
+<span class="sd">        hook(module, grad_input, grad_output) -&gt; Tensor or None</span>
+
+<span class="sd">    The :attr:`grad_input` and :attr:`grad_output` may be tuples if the</span>
+<span class="sd">    module has multiple inputs or outputs. The hook should not modify its</span>
+<span class="sd">    arguments, but it can optionally return a new gradient with respect to</span>
+<span class="sd">    input that will be used in place of :attr:`grad_input` in subsequent</span>
+<span class="sd">    computations. :attr:`grad_input` will only correspond to the inputs given</span>
+<span class="sd">    as positional arguments.</span>
+
+<span class="sd">    Global hooks are called before hooks registered with `register_backward_hook`</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        :class:`torch.utils.hooks.RemovableHandle`:</span>
+<span class="sd">            a handle that can be used to remove the added hook by calling</span>
+<span class="sd">            ``handle.remove()``</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">handle</span> <span class="o">=</span> <span class="n">hooks</span><span class="o">.</span><span class="n">RemovableHandle</span><span class="p">(</span><span class="n">_global_backward_hooks</span><span class="p">)</span>
+    <span class="n">_global_backward_hooks</span><span class="p">[</span><span class="n">handle</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">hook</span>
+    <span class="k">return</span> <span class="n">handle</span>
+
+
+<span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Base class for all neural network modules.</span>
 
 <span class="sd">    Your models should also subclass this class.</span>
@@ -315,7 +444,7 @@
 <span class="sd">    parameters converted too when you call :meth:`to`, etc.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">dump_patches</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">dump_patches</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;This allows better BC support for :meth:`load_state_dict`. In</span>
 <span class="sd">    :meth:`state_dict`, the version number will be saved as in the attribute</span>
@@ -327,7 +456,9 @@
 <span class="sd">    be bumped, and the module&#39;s `_load_from_state_dict` method can compare the</span>
 <span class="sd">    version number and do appropriate changes if the state dict is from before</span>
 <span class="sd">    the change.&quot;&quot;&quot;</span>
-    <span class="n">_version</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">_version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">training</span><span class="p">:</span> <span class="nb">bool</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -338,6 +469,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">training</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_non_persistent_buffers_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_backward_hooks</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_forward_hooks</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_forward_pre_hooks</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
@@ -345,25 +477,35 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_load_state_dict_pre_hooks</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="nb">input</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Defines the computation performed at every call.</span>
-
-<span class="sd">        Should be overridden by all subclasses.</span>
-
-<span class="sd">        .. note::</span>
-<span class="sd">            Although the recipe for forward pass needs to be defined within</span>
-<span class="sd">            this function, one should call the :class:`Module` instance afterwards</span>
-<span class="sd">            instead of this since the former takes care of running the</span>
-<span class="sd">            registered hooks while the latter silently ignores them.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="c1"># Trick mypy into not applying contravariance rules to inputs by defining</span>
+    <span class="c1"># forward as a value, rather than a function.  See also</span>
+    <span class="c1"># https://github.com/python/mypy/issues/8795</span>
+    <span class="k">def</span> <span class="nf">_forward_unimplemented</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="nb">input</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-    <span class="k">def</span> <span class="nf">register_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">tensor</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Adds a persistent buffer to the module.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Defines the computation performed at every call.</span>
+
+<span class="sd">    Should be overridden by all subclasses.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Although the recipe for forward pass needs to be defined within</span>
+<span class="sd">        this function, one should call the :class:`Module` instance afterwards</span>
+<span class="sd">        instead of this since the former takes care of running the</span>
+<span class="sd">        registered hooks while the latter silently ignores them.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">forward</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">_forward_unimplemented</span>
+
+    <span class="k">def</span> <span class="nf">register_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tensor</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">persistent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Adds a buffer to the module.</span>
 
 <span class="sd">        This is typically used to register a buffer that should not to be</span>
 <span class="sd">        considered a model parameter. For example, BatchNorm&#39;s ``running_mean``</span>
-<span class="sd">        is not a parameter, but is part of the persistent state.</span>
+<span class="sd">        is not a parameter, but is part of the module&#39;s state. Buffers, by</span>
+<span class="sd">        default, are persistent and will be saved alongside parameters. This</span>
+<span class="sd">        behavior can be changed by setting :attr:`persistent` to ``False``. The</span>
+<span class="sd">        only difference between a persistent buffer and a non-persistent buffer</span>
+<span class="sd">        is that the latter will not be a part of this module&#39;s</span>
+<span class="sd">        :attr:`state_dict`.</span>
 
 <span class="sd">        Buffers can be accessed as attributes using given names.</span>
 
@@ -371,12 +513,17 @@
 <span class="sd">            name (string): name of the buffer. The buffer can be accessed</span>
 <span class="sd">                from this module using the given name</span>
 <span class="sd">            tensor (Tensor): buffer to be registered.</span>
+<span class="sd">            persistent (bool): whether the buffer is part of this module&#39;s</span>
+<span class="sd">                :attr:`state_dict`.</span>
 
 <span class="sd">        Example::</span>
 
 <span class="sd">            &gt;&gt;&gt; self.register_buffer(&#39;running_mean&#39;, torch.zeros(num_features))</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">persistent</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">ScriptModule</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;ScriptModule does not support non-persistent buffers&quot;</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="s1">&#39;_buffers&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
                 <span class="s2">&quot;cannot assign buffer before Module.__init__() call&quot;</span><span class="p">)</span>
@@ -395,8 +542,12 @@
                             <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">typename</span><span class="p">(</span><span class="n">tensor</span><span class="p">),</span> <span class="n">name</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">tensor</span>
+            <span class="k">if</span> <span class="n">persistent</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_non_persistent_buffers_set</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_non_persistent_buffers_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">register_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">register_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="n">Parameter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Adds a parameter to the module.</span>
 
 <span class="sd">        The parameter can be accessed as an attribute using given name.</span>
@@ -435,7 +586,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span>
 
-    <span class="k">def</span> <span class="nf">add_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">add_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s1">&#39;Module&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Adds a child module to the current module.</span>
 
 <span class="sd">        The module can be accessed as an attribute using the given name.</span>
@@ -508,7 +659,7 @@
 
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="s1">&#39;Module&#39;</span><span class="p">],</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Applies ``fn`` recursively to every submodule (as returned by ``.children()``)</span>
 <span class="sd">        as well as self. Typical use includes initializing the parameters of a model</span>
 <span class="sd">        (see also :ref:`nn-init-doc`).</span>
@@ -551,7 +702,7 @@
         <span class="n">fn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">cuda</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">cuda</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">device</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Moves all model parameters and buffers to the GPU.</span>
 
 <span class="sd">        This also makes associated parameters and buffers different objects. So</span>
@@ -567,7 +718,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">cpu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">cpu</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Moves all model parameters and buffers to the CPU.</span>
 
 <span class="sd">        Returns:</span>
@@ -575,7 +726,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">cpu</span><span class="p">())</span>
 
-    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dst_type</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">type</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">dst_type</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Casts all parameters and buffers to :attr:`dst_type`.</span>
 
 <span class="sd">        Arguments:</span>
@@ -586,7 +737,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">dst_type</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="nf">float</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">float</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Casts all floating point parameters and buffers to float datatype.</span>
 
 <span class="sd">        Returns:</span>
@@ -594,7 +745,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">float</span><span class="p">()</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">is_floating_point</span><span class="p">()</span> <span class="k">else</span> <span class="n">t</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">double</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">double</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Casts all floating point parameters and buffers to ``double`` datatype.</span>
 
 <span class="sd">        Returns:</span>
@@ -602,7 +753,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">double</span><span class="p">()</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">is_floating_point</span><span class="p">()</span> <span class="k">else</span> <span class="n">t</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">half</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">half</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Casts all floating point parameters and buffers to ``half`` datatype.</span>
 
 <span class="sd">        Returns:</span>
@@ -610,13 +761,26 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">half</span><span class="p">()</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">is_floating_point</span><span class="p">()</span> <span class="k">else</span> <span class="n">t</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">bfloat16</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">bfloat16</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Casts all floating point parameters and buffers to ``bfloat16`` datatype.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Module: self</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">bfloat16</span><span class="p">()</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">is_floating_point</span><span class="p">()</span> <span class="k">else</span> <span class="n">t</span><span class="p">)</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">to</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">device</span><span class="p">]]</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span>
+           <span class="n">non_blocking</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="o">...</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">to</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">non_blocking</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="o">...</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">to</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">tensor</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">non_blocking</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="o">...</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+        <span class="o">...</span>
 
     <span class="k">def</span> <span class="nf">to</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Moves and/or casts the parameters and buffers.</span>
@@ -703,24 +867,10 @@
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply</span><span class="p">(</span><span class="n">convert</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">register_backward_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">register_backward_hook</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="s1">&#39;Module&#39;</span><span class="p">,</span> <span class="n">_grad_t</span><span class="p">,</span> <span class="n">_grad_t</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RemovableHandle</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Registers a backward hook on the module.</span>
-
-<span class="sd">        The hook will be called every time the gradients with respect to module</span>
-<span class="sd">        inputs are computed. The hook should have the following signature::</span>
-
-<span class="sd">            hook(module, grad_input, grad_output) -&gt; Tensor or None</span>
-
-<span class="sd">        The :attr:`grad_input` and :attr:`grad_output` may be tuples if the</span>
-<span class="sd">        module has multiple inputs or outputs. The hook should not modify its</span>
-<span class="sd">        arguments, but it can optionally return a new gradient with respect to</span>
-<span class="sd">        input that will be used in place of :attr:`grad_input` in subsequent</span>
-<span class="sd">        computations.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            :class:`torch.utils.hooks.RemovableHandle`:</span>
-<span class="sd">                a handle that can be used to remove the added hook by calling</span>
-<span class="sd">                ``handle.remove()``</span>
 
 <span class="sd">        .. warning ::</span>
 
@@ -731,12 +881,29 @@
 <span class="sd">            For such :class:`Module`, you should use :func:`torch.Tensor.register_hook`</span>
 <span class="sd">            directly on a specific input or output to get the required gradients.</span>
 
+<span class="sd">        The hook will be called every time the gradients with respect to module</span>
+<span class="sd">        inputs are computed. The hook should have the following signature::</span>
+
+<span class="sd">            hook(module, grad_input, grad_output) -&gt; Tensor or None</span>
+
+<span class="sd">        The :attr:`grad_input` and :attr:`grad_output` may be tuples if the</span>
+<span class="sd">        module has multiple inputs or outputs. The hook should not modify its</span>
+<span class="sd">        arguments, but it can optionally return a new gradient with respect to</span>
+<span class="sd">        input that will be used in place of :attr:`grad_input` in subsequent</span>
+<span class="sd">        computations. :attr:`grad_input` will only correspond to the inputs given</span>
+<span class="sd">        as positional arguments.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`torch.utils.hooks.RemovableHandle`:</span>
+<span class="sd">                a handle that can be used to remove the added hook by calling</span>
+<span class="sd">                ``handle.remove()``</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">handle</span> <span class="o">=</span> <span class="n">hooks</span><span class="o">.</span><span class="n">RemovableHandle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_backward_hooks</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_backward_hooks</span><span class="p">[</span><span class="n">handle</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">hook</span>
         <span class="k">return</span> <span class="n">handle</span>
 
-    <span class="k">def</span> <span class="nf">register_forward_pre_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">register_forward_pre_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">RemovableHandle</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Registers a forward pre-hook on the module.</span>
 
 <span class="sd">        The hook will be called every time before :func:`forward` is invoked.</span>
@@ -744,6 +911,8 @@
 
 <span class="sd">            hook(module, input) -&gt; None or modified input</span>
 
+<span class="sd">        The input contains only the positional arguments given to the module.</span>
+<span class="sd">        Keyword arguments won&#39;t be passed to the hooks and only to the ``forward``.</span>
 <span class="sd">        The hook can modify the input. User can either return a tuple or a</span>
 <span class="sd">        single modified value in the hook. We will wrap the value into a tuple</span>
 <span class="sd">        if a single value is returned(unless that value is already a tuple).</span>
@@ -757,7 +926,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_forward_pre_hooks</span><span class="p">[</span><span class="n">handle</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">hook</span>
         <span class="k">return</span> <span class="n">handle</span>
 
-    <span class="k">def</span> <span class="nf">register_forward_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">register_forward_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hook</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">RemovableHandle</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Registers a forward hook on the module.</span>
 
 <span class="sd">        The hook will be called every time after :func:`forward` has computed an output.</span>
@@ -765,6 +934,8 @@
 
 <span class="sd">            hook(module, input, output) -&gt; None or modified output</span>
 
+<span class="sd">        The input contains only the positional arguments given to the module.</span>
+<span class="sd">        Keyword arguments won&#39;t be passed to the hooks and only to the ``forward``.</span>
 <span class="sd">        The hook can modify the output. It can modify the input inplace but</span>
 <span class="sd">        it will not have effect on forward since this is called after</span>
 <span class="sd">        :func:`forward` is called.</span>
@@ -777,7 +948,6 @@
         <span class="n">handle</span> <span class="o">=</span> <span class="n">hooks</span><span class="o">.</span><span class="n">RemovableHandle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_forward_hooks</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_forward_hooks</span><span class="p">[</span><span class="n">handle</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="o">=</span> <span class="n">hook</span>
         <span class="k">return</span> <span class="n">handle</span>
-
 
     <span class="k">def</span> <span class="nf">_slow_forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="nb">input</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">tracing_state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">_C</span><span class="o">.</span><span class="n">_get_tracing_state</span><span class="p">()</span>
@@ -798,8 +968,10 @@
                 <span class="n">tracing_state</span><span class="o">.</span><span class="n">pop_scope</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="nb">input</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_pre_hooks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+    <span class="k">def</span> <span class="nf">_call_impl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="nb">input</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span>
+                <span class="n">_global_forward_pre_hooks</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_forward_pre_hooks</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
             <span class="n">result</span> <span class="o">=</span> <span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
@@ -809,11 +981,13 @@
             <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_slow_forward</span><span class="p">(</span><span class="o">*</span><span class="nb">input</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="o">*</span><span class="nb">input</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_forward_hooks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span>
+                <span class="n">_global_forward_hooks</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_forward_hooks</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
             <span class="n">hook_result</span> <span class="o">=</span> <span class="n">hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">hook_result</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">result</span> <span class="o">=</span> <span class="n">hook_result</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_backward_hooks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_backward_hooks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">_global_backward_hooks</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
             <span class="n">var</span> <span class="o">=</span> <span class="n">result</span>
             <span class="k">while</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">var</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -822,11 +996,15 @@
                     <span class="n">var</span> <span class="o">=</span> <span class="n">var</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="n">grad_fn</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">grad_fn</span>
             <span class="k">if</span> <span class="n">grad_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_backward_hooks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span>
+                        <span class="n">_global_backward_hooks</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_backward_hooks</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
                     <span class="n">wrapper</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">hook</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
                     <span class="n">functools</span><span class="o">.</span><span class="n">update_wrapper</span><span class="p">(</span><span class="n">wrapper</span><span class="p">,</span> <span class="n">hook</span><span class="p">)</span>
                     <span class="n">grad_fn</span><span class="o">.</span><span class="n">register_hook</span><span class="p">(</span><span class="n">wrapper</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">result</span>
+
+    <span class="fm">__call__</span> <span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">_call_impl</span>
 
     <span class="k">def</span> <span class="nf">__setstate__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
@@ -838,7 +1016,7 @@
         <span class="k">if</span> <span class="s1">&#39;_load_state_dict_pre_hooks&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_load_state_dict_pre_hooks</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s1">&#39;Module&#39;</span><span class="p">]:</span>
         <span class="k">if</span> <span class="s1">&#39;_parameters&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="n">_parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;_parameters&#39;</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">_parameters</span><span class="p">:</span>
@@ -851,21 +1029,24 @@
             <span class="n">modules</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s1">&#39;_modules&#39;</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">modules</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">modules</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39; object has no attribute &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="k">raise</span> <span class="n">ModuleAttributeError</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">{}</span><span class="s2">&#39; object has no attribute &#39;</span><span class="si">{}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">name</span><span class="p">))</span>
 
-    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="k">def</span> <span class="nf">remove_from</span><span class="p">(</span><span class="o">*</span><span class="n">dicts</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dicts</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s1">&#39;Module&#39;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">remove_from</span><span class="p">(</span><span class="o">*</span><span class="n">dicts_or_sets</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dicts_or_sets</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
-                    <span class="k">del</span> <span class="n">d</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                        <span class="k">del</span> <span class="n">d</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">d</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
         <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;_parameters&#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Parameter</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
                     <span class="s2">&quot;cannot assign parameters before Module.__init__() call&quot;</span><span class="p">)</span>
-            <span class="n">remove_from</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="p">)</span>
+            <span class="n">remove_from</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_persistent_buffers_set</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">register_parameter</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -879,7 +1060,7 @@
                 <span class="k">if</span> <span class="n">modules</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
                         <span class="s2">&quot;cannot assign module before Module.__init__() call&quot;</span><span class="p">)</span>
-                <span class="n">remove_from</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="p">)</span>
+                <span class="n">remove_from</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_persistent_buffers_set</span><span class="p">)</span>
                 <span class="n">modules</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
             <span class="k">elif</span> <span class="n">modules</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">modules</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -903,6 +1084,7 @@
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="p">:</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_non_persistent_buffers_set</span><span class="o">.</span><span class="n">discard</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="p">:</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
@@ -936,8 +1118,22 @@
             <span class="k">if</span> <span class="n">param</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">destination</span><span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span> <span class="k">if</span> <span class="n">keep_vars</span> <span class="k">else</span> <span class="n">param</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">buf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">buf</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">buf</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_persistent_buffers_set</span><span class="p">:</span>
                 <span class="n">destination</span><span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">buf</span> <span class="k">if</span> <span class="n">keep_vars</span> <span class="k">else</span> <span class="n">buf</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span>
+
+    <span class="c1"># The user can pass an optional arbitrary mappable object to `state_dict`, in which case `state_dict` returns</span>
+    <span class="c1"># back that same object. But if they pass nothing, an `OrederedDict` is created and returned.</span>
+    <span class="n">T_destination</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s1">&#39;T_destination&#39;</span><span class="p">,</span> <span class="n">bound</span><span class="o">=</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">])</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">destination</span><span class="p">:</span> <span class="n">T_destination</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span> <span class="n">keep_vars</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="o">...</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T_destination</span><span class="p">:</span>
+        <span class="o">...</span>
+
+    <span class="c1"># TODO: annotate with OrderedDict not Dict, but there is a problem:</span>
+    <span class="c1"># https://docs.python.org/3/library/typing.html#typing.OrderedDict</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="o">...</span><span class="p">,</span> <span class="n">keep_vars</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="o">...</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]:</span>
+        <span class="o">...</span>
 
     <span class="k">def</span> <span class="nf">state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">destination</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">keep_vars</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns a dictionary containing a whole state of the module.</span>
@@ -1015,7 +1211,8 @@
         <span class="k">for</span> <span class="n">hook</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_state_dict_pre_hooks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">hook</span><span class="p">(</span><span class="n">state_dict</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">local_metadata</span><span class="p">,</span> <span class="n">strict</span><span class="p">,</span> <span class="n">missing_keys</span><span class="p">,</span> <span class="n">unexpected_keys</span><span class="p">,</span> <span class="n">error_msgs</span><span class="p">)</span>
 
-        <span class="n">local_name_params</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="n">persistent_buffers</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffers</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_non_persistent_buffers_set</span><span class="p">}</span>
+        <span class="n">local_name_params</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">chain</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">persistent_buffers</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
         <span class="n">local_state</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">local_name_params</span> <span class="k">if</span> <span class="n">v</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">}</span>
 
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">local_state</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -1054,7 +1251,8 @@
                     <span class="k">if</span> <span class="n">input_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span> <span class="ow">and</span> <span class="n">input_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">local_state</span><span class="p">:</span>
                         <span class="n">unexpected_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">load_state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">load_state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]],</span>
+                        <span class="n">strict</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Copies parameters and buffers from :attr:`state_dict` into</span>
 <span class="sd">        this module and its descendants. If :attr:`strict` is ``True``, then</span>
 <span class="sd">        the keys of :attr:`state_dict` must exactly match the keys returned</span>
@@ -1121,7 +1319,7 @@
                 <span class="n">name</span> <span class="o">=</span> <span class="n">module_prefix</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;.&#39;</span> <span class="k">if</span> <span class="n">module_prefix</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="n">k</span>
                 <span class="k">yield</span> <span class="n">name</span><span class="p">,</span> <span class="n">v</span>
 
-    <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recurse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recurse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Parameter</span><span class="p">]:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns an iterator over module parameters.</span>
 
 <span class="sd">        This is typically passed to an optimizer.</span>
@@ -1145,7 +1343,7 @@
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">named_parameters</span><span class="p">(</span><span class="n">recurse</span><span class="o">=</span><span class="n">recurse</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">param</span>
 
-    <span class="k">def</span> <span class="nf">named_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">recurse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">named_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">recurse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]]:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns an iterator over module parameters, yielding both the</span>
 <span class="sd">        name of the parameter as well as the parameter itself.</span>
 
@@ -1171,7 +1369,7 @@
         <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">gen</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">elem</span>
 
-    <span class="k">def</span> <span class="nf">buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recurse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">recurse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns an iterator over module buffers.</span>
 
 <span class="sd">        Args:</span>
@@ -1193,7 +1391,7 @@
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">buf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">named_buffers</span><span class="p">(</span><span class="n">recurse</span><span class="o">=</span><span class="n">recurse</span><span class="p">):</span>
             <span class="k">yield</span> <span class="n">buf</span>
 
-    <span class="k">def</span> <span class="nf">named_buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">recurse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">named_buffers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">recurse</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]]:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns an iterator over module buffers, yielding both the</span>
 <span class="sd">        name of the buffer as well as the buffer itself.</span>
 
@@ -1219,7 +1417,7 @@
         <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">gen</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">elem</span>
 
-    <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">children</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="s1">&#39;Module&#39;</span><span class="p">]:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns an iterator over immediate children modules.</span>
 
 <span class="sd">        Yields:</span>
@@ -1228,7 +1426,7 @@
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">module</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">named_children</span><span class="p">():</span>
             <span class="k">yield</span> <span class="n">module</span>
 
-    <span class="k">def</span> <span class="nf">named_children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">named_children</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s1">&#39;Module&#39;</span><span class="p">]]:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns an iterator over immediate children modules, yielding both</span>
 <span class="sd">        the name of the module as well as the module itself.</span>
 
@@ -1248,7 +1446,7 @@
                 <span class="n">memo</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
                 <span class="k">yield</span> <span class="n">name</span><span class="p">,</span> <span class="n">module</span>
 
-    <span class="k">def</span> <span class="nf">modules</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">modules</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="s1">&#39;Module&#39;</span><span class="p">]:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns an iterator over all modules in the network.</span>
 
 <span class="sd">        Yields:</span>
@@ -1275,7 +1473,7 @@
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">module</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">named_modules</span><span class="p">():</span>
             <span class="k">yield</span> <span class="n">module</span>
 
-    <span class="k">def</span> <span class="nf">named_modules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">named_modules</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">memo</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="s1">&#39;Module&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns an iterator over all modules in the network, yielding</span>
 <span class="sd">        both the name of the module as well as the module itself.</span>
 
@@ -1313,7 +1511,7 @@
                 <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="n">named_modules</span><span class="p">(</span><span class="n">memo</span><span class="p">,</span> <span class="n">submodule_prefix</span><span class="p">):</span>
                     <span class="k">yield</span> <span class="n">m</span>
 
-    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Sets the module in training mode.</span>
 
 <span class="sd">        This has any effect only on certain modules. See documentations of</span>
@@ -1333,7 +1531,7 @@
             <span class="n">module</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Sets the module in evaluation mode.</span>
 
 <span class="sd">        This has any effect only on certain modules. See documentations of</span>
@@ -1348,7 +1546,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">requires_grad_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">requires_grad_</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">T</span><span class="p">,</span> <span class="n">requires_grad</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Change if autograd should record operations on parameters in this</span>
 <span class="sd">        module.</span>
 
@@ -1369,20 +1567,27 @@
             <span class="n">p</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="n">requires_grad</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Sets gradients of all model parameters to zero.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_is_replica&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Calling .zero_grad() from a module created with nn.DataParallel() has no effect. &quot;</span>
+                <span class="s2">&quot;The parameters are copied (in a differentiable manner) from the original module. &quot;</span>
+                <span class="s2">&quot;This means they are not leaf nodes in autograd and so don&#39;t accumulate gradients. &quot;</span>
+                <span class="s2">&quot;If you need gradients in your forward method, consider using autograd.grad instead.&quot;</span><span class="p">)</span>
+
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">detach_</span><span class="p">()</span>
                 <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">share_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">share_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">share_memory_</span><span class="p">())</span>
 
     <span class="k">def</span> <span class="nf">_get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
 
-    <span class="k">def</span> <span class="nf">extra_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">extra_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Set the extra representation of the module</span>
 
 <span class="sd">        To print customized extra information, you should reimplement</span>
@@ -1432,25 +1637,13 @@
     <span class="k">def</span> <span class="nf">_replicate_for_data_parallel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">replica</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
         <span class="n">replica</span><span class="o">.</span><span class="vm">__dict__</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">replica</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">replica</span><span class="o">.</span><span class="n">_parameters</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># replicas do not have parameters themselves, the replicas reference the original</span>
+        <span class="c1"># module.</span>
+        <span class="n">replica</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="n">replica</span><span class="o">.</span><span class="n">_buffers</span> <span class="o">=</span> <span class="n">replica</span><span class="o">.</span><span class="n">_buffers</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">replica</span><span class="o">.</span><span class="n">_modules</span> <span class="o">=</span> <span class="n">replica</span><span class="o">.</span><span class="n">_modules</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-        <span class="c1"># Warn users that gradients don&#39;t behave as expected on replica modules</span>
-        <span class="n">old_zero_grad</span> <span class="o">=</span> <span class="n">replica</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">zero_grad</span>
-        <span class="n">weak_self</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">replica</span><span class="p">)</span>
-
-        <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">():</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;Calling .zero_grad() from a module that was passed to a nn.DataParallel() has no effect. &quot;</span>
-                <span class="s2">&quot;The parameters are copied (in a differentiable manner) from the original module. &quot;</span>
-                <span class="s2">&quot;This means they are not leaf nodes in autograd and so don&#39;t accumulate gradients. &quot;</span>
-                <span class="s2">&quot;If you need gradients in your forward method, consider using autograd.grad instead.&quot;</span><span class="p">)</span>
-            <span class="n">replica</span> <span class="o">=</span> <span class="n">weak_self</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">replica</span><span class="p">:</span>
-                <span class="n">old_zero_grad</span><span class="p">(</span><span class="n">replica</span><span class="p">)</span>
-
-        <span class="n">replica</span><span class="o">.</span><span class="n">zero_grad</span> <span class="o">=</span> <span class="n">zero_grad</span>
+        <span class="n">replica</span><span class="o">.</span><span class="n">_is_replica</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">return</span> <span class="n">replica</span>
 </pre></div>
