@@ -1,5 +1,6 @@
 # flake8: noqa
 # TODO: docs and refactor for datasets-contrib
+from typing import Any, Callable, Dict, List, Optional
 import codecs
 import os
 
@@ -8,6 +9,10 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 
+from catalyst.contrib.datasets.metric_learning import (
+    MetricLearningTrainDataset,
+    QueryGalleryDataset,
+)
 from catalyst.contrib.datasets.utils import download_and_extract_archive
 
 
@@ -271,3 +276,74 @@ def read_image_file(path):
     assert x.dtype == torch.uint8
     assert x.ndimension() == 3
     return x
+
+
+class MnistMLDataset(MetricLearningTrainDataset, MNIST):
+    """
+    Simple wrapper for MNIST dataset
+    """
+
+    def get_labels(self) -> List[int]:
+        """
+        Returns:
+            labels of digits
+        """
+        return self.targets.tolist()
+
+
+class MnistQGDataset(QueryGalleryDataset):
+    """MNIST for metric learning with query and gallery split"""
+
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        gallery_fraq: Optional[float] = 0.2,
+    ) -> None:
+        """
+        Args:
+            root: root directory for storing dataset
+            transform: transform
+            gallery_fraq: gallery size
+        """
+        self._mnist = MNIST(
+            root, train=False, download=True, transform=transform
+        )
+
+        self._gallery_size = int(gallery_fraq * len(self._mnist))
+        self._query_size = len(self._mnist) - self._gallery_size
+
+        self._is_query = torch.zeros(len(self._mnist)).type(torch.bool)
+        self._is_query[: self._query_size] = True
+
+    def __getitem__(self, idx: int) -> Dict[str, Any]:
+        """
+        Get item method for dataset
+
+
+        Args:
+            idx: index of the object
+
+        Returns:
+            Dict with features, targets and is_query flag
+        """
+        image, label = self._mnist[idx]
+        return {
+            "features": image,
+            "targets": label,
+            "is_query": self._is_query[idx],
+        }
+
+    def __len__(self) -> int:
+        """Length"""
+        return len(self._mnist)
+
+    @property
+    def gallery_size(self) -> int:
+        """Query Gallery dataset should have gallery_size property"""
+        return self._gallery_size
+
+    @property
+    def query_size(self) -> int:
+        """Query Gallery dataset should have query_size property"""
+        return self._query_size
