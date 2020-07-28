@@ -52,22 +52,13 @@ pip install -U catalyst
 ```
 
 ```python
-#!/usr/bin/env python
 import os
-
-import numpy as np
-
-#!/usr/bin/env python
 import torch
-from torch import nn
 from torch.nn import functional as F
-from torch.utils.data import DataLoader, TensorDataset
-
-from catalyst import dl, utils
+from torch.utils.data import DataLoader
+from catalyst import dl
 from catalyst.contrib.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.nn.modules import Flatten, GlobalMaxPool2d, Lambda
-from catalyst.dl import SupervisedRunner, utils
 from catalyst.utils import metrics
 
 model = torch.nn.Linear(28 * 28, 10)
@@ -186,6 +177,9 @@ Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10 and Windows Subsyste
 <p>
 
 ```python
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst.dl import SupervisedRunner
 
 # data
 num_samples, num_features = int(1e4), int(1e1)
@@ -222,6 +216,9 @@ runner.train(
 <p>
 
 ```python
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst import dl
 
 # sample data
 num_samples, num_features, num_classes = int(1e4), int(1e1), 4
@@ -261,6 +258,9 @@ runner.train(
 <p>
 
 ```python
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst import dl
 
 # sample data
 num_samples, num_features, num_classes = int(1e4), int(1e1), 4
@@ -300,6 +300,14 @@ runner.train(
 <p>
 
 ```python
+import os
+import torch
+from torch.nn import functional as F
+from torch.utils.data import DataLoader
+from catalyst import dl
+from catalyst.contrib.data.transforms import ToTensor
+from catalyst.contrib.datasets import MNIST
+from catalyst.utils import metrics
 
 model = torch.nn.Linear(28 * 28, 10)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
@@ -345,6 +353,15 @@ runner.train(
 <p>
 
 ```python
+import os
+import torch
+from torch import nn
+from torch.nn import functional as F
+from torch.utils.data import DataLoader
+from catalyst import dl
+from catalyst.contrib.data.transforms import ToTensor
+from catalyst.contrib.datasets import MNIST
+from catalyst.utils import metrics
 
 class ClassifyAE(nn.Module):
 
@@ -409,6 +426,16 @@ runner.train(
 <p>
 
 ```python
+import os
+import numpy as np
+import torch
+from torch import nn
+from torch.nn import functional as F
+from torch.utils.data import DataLoader
+from catalyst import dl
+from catalyst.contrib.data.transforms import ToTensor
+from catalyst.contrib.datasets import MNIST
+from catalyst.utils import metrics
 
 LOG_SCALE_MAX = 2
 LOG_SCALE_MIN = -10
@@ -499,6 +526,15 @@ runner.train(
 <p>
 
 ```python
+import os
+import torch
+from torch import nn
+from torch.nn import functional as F
+from torch.utils.data import DataLoader
+from catalyst import dl
+from catalyst.contrib.data.transforms import ToTensor
+from catalyst.contrib.datasets import MNIST
+from catalyst.utils import metrics
 
 class ClassifyUnet(nn.Module):
 
@@ -566,6 +602,15 @@ runner.train(
 <p>
 
 ```python
+import os
+import torch
+from torch import nn
+from torch.nn import functional as F
+from torch.utils.data import DataLoader
+from catalyst import dl
+from catalyst.contrib.data.transforms import ToTensor
+from catalyst.contrib.datasets import MNIST
+from catalyst.contrib.nn.modules import Flatten, GlobalMaxPool2d, Lambda
 
 latent_dim = 128
 generator = nn.Sequential(
@@ -668,6 +713,10 @@ runner.train(
 <p>
 
 ```python
+#!/usr/bin/env python
+import torch
+from torch.utils.data import TensorDataset
+from catalyst.dl import SupervisedRunner, utils
 
 def datasets_fn(num_features: int):
     X = torch.rand(int(1e4), num_features)
@@ -711,6 +760,15 @@ utils.distributed_cmd_run(train)
 <p>
 
 ```python
+#!/usr/bin/env python
+import os
+import torch
+from torch import nn
+from torch.nn import functional as F
+from catalyst import dl, utils
+from catalyst.contrib.data.transforms import ToTensor
+from catalyst.contrib.datasets import MNIST
+from catalyst.utils import metrics
 
 class ClassifyAE(nn.Module):
 
@@ -774,70 +832,6 @@ def train():
     )
 
 utils.distributed_cmd_run(train)
-```
-</p>
-</details>
-
-<details>
-<summary>CV - MNIST with Metric Learning</summary>
-<p>
-
-```python
-from torch.optim import Adam
-from torch.utils.data import DataLoader
-
-import catalyst.contrib.data.transforms as t
-from catalyst.contrib.datasets.mnist import MnistMLDataset, MnistQGDataset
-from catalyst.contrib.dl.callbacks import PeriodicLoaderCallback
-from catalyst.contrib.models.simple_conv import SimpleConv
-from catalyst.contrib.nn.criterion.triplet import TripletMarginLossWithSampling
-from catalyst.core.callbacks import ControlFlowCallback
-from catalyst.data.sampler import BalanceBatchSampler
-from catalyst.data.sampler_inbatch import AllTripletsSampler
-from catalyst.dl import CriterionCallback
-from catalyst.dl.callbacks.metrics.cmc import CMCScoreCallback
-from catalyst.dl.runner import SupervisedRunner
-
-
-# 1. train and valid datasets
-dataset_root = "."
-transforms = t.Compose([t.ToTensor(), t.Normalize((0.1307,), (0.3081,))])
-
-dataset_train = MnistMLDataset(root=dataset_root, train=True, download=True, transform=transforms)
-sampler = BalanceBatchSampler(labels=dataset_train.get_labels(), p=10, k=10)
-train_loader = DataLoader(dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size)
-
-dataset_val = MnistQGDataset(root=dataset_root, transform=transforms, gallery_fraq=0.2)
-val_loader = DataLoader(dataset=dataset_val, batch_size=1024)
-
-# 2. model and optimizer
-model = SimpleConv(features_dim=16)
-optimizer = Adam(model.parameters(), lr=0.001)
-
-# 3. criterion with triplets sampling
-sampler_inbatch=AllTripletsSampler(max_output_triplets=512)
-criterion = TripletMarginLossWithSampling(margin=0.5, sampler_inbatch=sampler_inbatch)
-
-# 4. training with catalyst Runner
-callbacks = [
-    ControlFlowCallback(CriterionCallback(), loaders="train"),
-    ControlFlowCallback(CMCScoreCallback(topk_args=[1]), loaders="valid"),
-    PeriodicLoaderCallback(valid=200),
-]
-
-runner = SupervisedRunner(device="cuda:0")
-runner.train(
-    model=model,
-    criterion=criterion,
-    optimizer=optimizer,
-    callbacks=callbacks,
-    loaders={"train": train_loader, "valid": val_loader},
-    minimize_metric=False,
-    verbose=True,
-    valid_loader="valid",
-    num_epochs=600,
-    main_metric="cmc_1",
-)
 ```
 </p>
 </details>
