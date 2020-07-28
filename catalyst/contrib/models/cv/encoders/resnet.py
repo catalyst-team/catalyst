@@ -6,7 +6,6 @@ from pathlib import Path
 import torch
 from torch import nn
 import torchvision
-from torchvision.models import ResNet
 
 from catalyst import utils
 from catalyst.contrib.nn.modules import Flatten
@@ -89,23 +88,3 @@ class ResnetEncoder(nn.Module):
         """Extract the image feature vectors."""
         features = self.encoder(image)
         return features
-
-
-def get_resnet1d(model: ResNet) -> ResNet:
-    """
-    Args:
-        model: ResNet model
-
-    Returns:
-        ResNet model with changed 1st conv layer
-    """
-    conv_old = model.conv1
-    model.conv1 = nn.Conv2d(
-        in_channels=1,
-        out_channels=conv_old.out_channels,
-        kernel_size=conv_old.kernel_size,
-        stride=conv_old.stride,
-        padding=conv_old.padding,
-        bias=conv_old.bias,
-    )
-    return model

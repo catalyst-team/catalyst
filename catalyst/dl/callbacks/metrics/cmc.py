@@ -2,7 +2,6 @@ from typing import List
 
 import torch
 
-from catalyst.contrib.datasets.metric_learning import QueryGalleryDataset
 from catalyst.core import IRunner
 from catalyst.core.callback import CallbackOrder
 from catalyst.dl import Callback
@@ -20,10 +19,77 @@ class CMCScoreCallback(Callback):
     and add all query/gallery sets to loaders.
     Loaders should contain "is_query" and "label" key.
 
-    An usage example can be found in Readme.md:
-    "CV - MNIST with Metric Learning".
-    Or you can also found full metric learning pipeline
-    :ref:`here <catalyst.test._tests_scripts.dl_z_mvp_mnist_metric_learning>`.
+    .. code-block:: python
+
+        import os
+        import torch
+        from torch.utils.data import DataLoader
+
+        from catalyst.contrib.nn.criterion.triplet import \
+            TripletMarginLossWithSampling
+        from catalyst.core.callbacks import ControlFlowCallback
+        from catalyst.dl import CMCScoreCallback, SupervisedRunner
+        from catalyst.contrib.datasets import MNIST, MnistQGDataset
+        from catalyst.contrib.data.transforms import ToTensor
+        from catalyst.contrib.nn.modules import Flatten
+        from catalyst.data.sampler_inbatch import HardTripletsSampler
+
+        train = MNIST(
+            os.getcwd(),
+            download=True,
+            train=True,
+            transform=ToTensor()
+        )
+        valid = MNIST(
+            os.getcwd(),
+            download=True,
+            train=False,
+            transform=ToTensor()
+        )
+        query_gallery = MnistQGDataset(os.getcwd(), transform=ToTensor())
+
+        train_loader = DataLoader(train, batch_size=32, shuffle=True)
+        valid_loader = DataLoader(valid, batch_size=32)
+        query_gallery = DataLoader(query_gallery, batch_size=64)
+
+        loaders = {
+            "train": train_loader,
+            "valid": valid_loader,
+            "valid_qg": query_gallery
+        }
+
+        callbacks = [
+            ControlFlowCallback(
+                base_callback=CMCScoreCallback(
+                    topk_args=[1, 3, 5]
+                ),
+                loaders="valid_qg"
+            )
+        ]
+
+        sampler_inbatch = HardTripletsSampler(False)
+        criterion = TripletMarginLossWithSampling(
+            margin=0.5, sampler_inbatch=sampler_inbatch
+        )
+
+        model = torch.nn.Sequential(
+            Flatten(),
+            torch.nn.Linear(28*28, 2)
+        )
+
+        optimizer = torch.optim.Adam(model.parameters())
+
+        runner = SupervisedRunner()
+
+        runner.train(
+            model=model,
+            loaders=loaders,
+            criterion=criterion,
+            optimizer=optimizer,
+            callbacks=callbacks,
+            check=False,
+            num_epochs=1,
+        )
     """
 
     def __init__(
@@ -119,9 +185,6 @@ class CMCScoreCallback(Callback):
 
     def on_loader_start(self, runner: "IRunner"):
         """On loader start action"""
-        assert isinstance(
-            runner.loaders[runner.loader_name].dataset, QueryGalleryDataset
-        )
         loader = runner.loaders[runner.loader_name]
         self._query_size = loader.dataset.query_size
         self._gallery_size = loader.dataset.gallery_size
@@ -134,14 +197,6 @@ class CMCScoreCallback(Callback):
 
     def on_loader_end(self, runner: "IRunner"):
         """On loader end action"""
-        assert (
-            self._gallery_idx == self._gallery_size
-        ), "An error occurred during the accumulation process."
-
-        assert (
-            self._query_idx == self._query_size
-        ), "An error occurred during the accumulation process."
-
         conformity_matrix = self._query_labels == self._gallery_labels.reshape(
             -1, 1
         )

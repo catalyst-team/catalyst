@@ -164,7 +164,7 @@ def test_hard_sampler_from_features(
     Args:
         features_and_labels: features and valid labels
     """
-    sampler = HardTripletsSampler(norm_required=True)
+    sampler = HardTripletsSampler(need_norm=True)
 
     for features, labels in features_and_labels:
         ids_a, ids_p, ids_n = sampler._sample(  # noqa: WPS437
@@ -184,7 +184,7 @@ def test_hard_sampler_from_dist(distmats_and_labels) -> None:  # noqa: WPS442
         distmats_and_labels:
             list of distance matrices and valid labels
     """
-    sampler = HardTripletsSampler(norm_required=True)
+    sampler = HardTripletsSampler(need_norm=True)
 
     for distmat, labels in distmats_and_labels:
         ids_a, ids_p, ids_n = sampler._sample_from_distmat(  # noqa: WPS437
@@ -223,7 +223,7 @@ def test_hard_sampler_manual() -> None:
 
     gt = {(0, 1, 2), (1, 0, 2), (2, 3, 0), (3, 2, 0)}
 
-    sampler = HardTripletsSampler(norm_required=True)
+    sampler = HardTripletsSampler(need_norm=True)
 
     ids_a, ids_p, ids_n = sampler._sample_from_distmat(  # noqa: WPS437
         distmat=dist_mat, labels=labels
