@@ -4,13 +4,13 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 
 from catalyst import contrib as ctb, data, dl
+import catalyst.contrib.data.transforms as t
+from catalyst.contrib.models import SimpleConv
 from catalyst.core.callbacks import ControlFlowCallback
 from catalyst.dl.callbacks.metrics.cmc import CMCScoreCallback
 
 
-def run_ml_pipeline(
-    sampler_inbatch: data.sampler_inbatch.InBatchTripletsSampler,
-) -> float:
+def run_ml_pipeline(sampler_inbatch: data.InBatchTripletsSampler) -> float:
     """
     Full metric learning pipeline, including train and val.
 
@@ -25,9 +25,7 @@ def run_ml_pipeline(
     """
     # 1. train and valid datasets
     dataset_root = "./data"
-    transforms = ctb.data.transforms.Compose(
-        [t.ToTensor(), t.Normalize((0.1307,), (0.3081,))]
-    )
+    transforms = t.Compose([t.ToTensor(), t.Normalize((0.1307,), (0.3081,))])
 
     dataset_train = ctb.datasets.mnist.MnistMLDataset(
         root=dataset_root, train=True, download=True, transform=transforms,
@@ -45,7 +43,7 @@ def run_ml_pipeline(
     val_loader = DataLoader(dataset=dataset_val, batch_size=1024)
 
     # 2. model and optimizer
-    model = ctb.models.simple_conv.SimpleConv(features_dim=16)
+    model = SimpleConv(features_dim=16)
     optimizer = Adam(model.parameters(), lr=0.0005)
 
     # 3. criterion with triplets sampling
@@ -60,7 +58,7 @@ def run_ml_pipeline(
         dl.callbacks.PeriodicLoaderCallback(valid=600),
     ]
 
-    runner = dl.runner.SupervisedRunner(device="cuda:0")
+    runner = dl.SupervisedRunner(device="cuda:0")
     runner.train(
         model=model,
         criterion=criterion,
@@ -83,8 +81,8 @@ def main() -> None:
     """
     cmc_score_th = 0.97
 
-    all_sampler = data.sampler_inbatch.AllTripletsSampler(512)
-    hard_sampler = data.sampler_inbatch.HardTripletsSampler(False)
+    all_sampler = data.AllTripletsSampler(512)
+    hard_sampler = data.HardTripletsSampler(False)
 
     assert run_ml_pipeline(all_sampler) > cmc_score_th
     assert run_ml_pipeline(hard_sampler) > cmc_score_th
