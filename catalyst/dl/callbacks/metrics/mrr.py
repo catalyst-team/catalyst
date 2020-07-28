@@ -1,5 +1,3 @@
-from typing import List
-
 from catalyst.core import MetricCallback
 from catalyst.utils import metrics
 

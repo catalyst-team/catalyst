@@ -14,6 +14,7 @@ def mrr(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
             model outputs, logits
         targets [batch_szie, slate_length] (torch.Tensor):
             ground truth, labels
+    
     Returns:
         mrr (float): the mrr score for each slate
     """
