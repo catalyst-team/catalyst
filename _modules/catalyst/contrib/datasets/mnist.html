@@ -261,7 +261,6 @@
   <h1>Source code for catalyst.contrib.datasets.mnist</h1><div class="highlight"><pre>
 <span></span><span class="c1"># flake8: noqa</span>
 <span class="c1"># TODO: docs and refactor for datasets-contrib</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">import</span> <span class="nn">codecs</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
@@ -270,10 +269,6 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.contrib.datasets.metric_learning</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">MetricLearningTrainDataset</span><span class="p">,</span>
-    <span class="n">QueryGalleryDataset</span><span class="p">,</span>
-<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.contrib.datasets.utils</span> <span class="kn">import</span> <span class="n">download_and_extract_archive</span>
 
 
@@ -537,77 +532,6 @@
     <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">uint8</span>
     <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">ndimension</span><span class="p">()</span> <span class="o">==</span> <span class="mi">3</span>
     <span class="k">return</span> <span class="n">x</span></div>
-
-
-<div class="viewcode-block" id="MnistMLDataset"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.datasets.mnist.MnistMLDataset">[docs]</a><span class="k">class</span> <span class="nc">MnistMLDataset</span><span class="p">(</span><span class="n">MetricLearningTrainDataset</span><span class="p">,</span> <span class="n">MNIST</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Simple wrapper for MNIST dataset</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="MnistMLDataset.get_labels"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.datasets.mnist.MnistMLDataset.get_labels">[docs]</a>    <span class="k">def</span> <span class="nf">get_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns:</span>
-<span class="sd">            labels of digits</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span></div></div>
-
-
-<div class="viewcode-block" id="MnistQGDataset"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.datasets.mnist.MnistQGDataset">[docs]</a><span class="k">class</span> <span class="nc">MnistQGDataset</span><span class="p">(</span><span class="n">QueryGalleryDataset</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;MNIST for metric learning with query and gallery split&quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="MnistQGDataset.__init__"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.datasets.mnist.MnistQGDataset.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">root</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">transform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">gallery_fraq</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Args:</span>
-<span class="sd">            root: root directory for storing dataset</span>
-<span class="sd">            transform: transform</span>
-<span class="sd">            gallery_fraq: gallery size</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_mnist</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span>
-            <span class="n">root</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span>
-        <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_gallery_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">gallery_fraq</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mnist</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_query_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mnist</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gallery_size</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_is_query</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mnist</span><span class="p">))</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_is_query</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_size</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span></div>
-
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get item method for dataset</span>
-
-
-<span class="sd">        Args:</span>
-<span class="sd">            idx: index of the object</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Dict with features, targets and is_query flag</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">image</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mnist</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="n">image</span><span class="p">,</span>
-            <span class="s2">&quot;targets&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">,</span>
-            <span class="s2">&quot;is_query&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_query</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span>
-        <span class="p">}</span>
-
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Length&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mnist</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">gallery_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Query Gallery dataset should have gallery_size property&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gallery_size</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">query_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Query Gallery dataset should have query_size property&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_size</span></div>
 </pre></div>
 
              </article>

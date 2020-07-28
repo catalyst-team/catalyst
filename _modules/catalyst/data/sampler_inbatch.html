@@ -284,8 +284,6 @@
 <span class="sd">    Base class for a triplets samplers.</span>
 <span class="sd">    We expect that the child instances of this class</span>
 <span class="sd">    will be used to forming triplets inside the batches.</span>
-<span class="sd">    (Note. It is assumed that set of output features is a</span>
-<span class="sd">    subset of samples features inside the batch.)</span>
 <span class="sd">    The batches must contain at least 2 samples for</span>
 <span class="sd">    each class and at least 2 different classes,</span>
 <span class="sd">    such behaviour can be garantee via using</span>
@@ -335,7 +333,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_input_labels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
 
-        <span class="n">ids_anchor</span><span class="p">,</span> <span class="n">ids_pos</span><span class="p">,</span> <span class="n">ids_neg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
+        <span class="n">ids_anchor</span><span class="p">,</span> <span class="n">ids_pos</span><span class="p">,</span> <span class="n">ids_neg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="p">(</span>
+            <span class="n">features</span><span class="o">=</span><span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">features</span><span class="p">[</span><span class="n">ids_anchor</span><span class="p">],</span> <span class="n">features</span><span class="p">[</span><span class="n">ids_pos</span><span class="p">],</span> <span class="n">features</span><span class="p">[</span><span class="n">ids_neg</span><span class="p">]</span></div></div>
 
@@ -387,19 +387,14 @@
 <span class="sd">    the hardest positive sample has the maximal distance to the anchor sample,</span>
 <span class="sd">    the hardest negative sample has the minimal distance to the anchor sample.</span>
 
-<span class="sd">    Note that a typical triplet loss chart is as follows:</span>
-<span class="sd">    1. Falling: loss decreases to a value equal to the margin.</span>
-<span class="sd">    2. Long plato: the loss oscillates near the margin.</span>
-<span class="sd">    3. Falling: loss decreases to zero.</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="HardTripletsSampler.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.HardTripletsSampler.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">norm_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="HardTripletsSampler.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.HardTripletsSampler.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">need_norm</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            norm_required: set True if features normalisation is needed</span>
+<span class="sd">            need_norm: set True if features normalisation is needed</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_norm_required</span> <span class="o">=</span> <span class="n">norm_required</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_need_norm</span> <span class="o">=</span> <span class="n">need_norm</span></div>
 
     <span class="k">def</span> <span class="nf">_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TTripletsIds</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -415,8 +410,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="n">features</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_norm_required</span><span class="p">:</span>
-            <span class="n">features</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">samples</span><span class="o">=</span><span class="n">features</span><span class="o">.</span><span class="n">detach</span><span class="p">())</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_need_norm</span><span class="p">:</span>
+            <span class="n">features</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">samples</span><span class="o">=</span><span class="n">features</span><span class="p">)</span>
 
         <span class="n">dist_mat</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cdist</span><span class="p">(</span><span class="n">x1</span><span class="o">=</span><span class="n">features</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="n">features</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 

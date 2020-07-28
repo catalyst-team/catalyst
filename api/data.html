@@ -717,20 +717,16 @@ determined by this parameter.</p>
 
 <dl class="class">
 <dt id="catalyst.data.sampler_inbatch.HardTripletsSampler">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler_inbatch.</code><code class="sig-name descname">HardTripletsSampler</code><span class="sig-paren">(</span><em class="sig-param">norm_required: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#HardTripletsSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler_inbatch.HardTripletsSampler" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler_inbatch.</code><code class="sig-name descname">HardTripletsSampler</code><span class="sig-paren">(</span><em class="sig-param">need_norm: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#HardTripletsSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler_inbatch.HardTripletsSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>This sampler selects hardest triplets based on distances between features:
 the hardest positive sample has the maximal distance to the anchor sample,
 the hardest negative sample has the minimal distance to the anchor sample.</p>
-<p>Note that a typical triplet loss chart is as follows:
-1. Falling: loss decreases to a value equal to the margin.
-2. Long plato: the loss oscillates near the margin.
-3. Falling: loss decreases to zero.</p>
 <dl class="method">
 <dt id="catalyst.data.sampler_inbatch.HardTripletsSampler.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">norm_required: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#HardTripletsSampler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler_inbatch.HardTripletsSampler.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">need_norm: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#HardTripletsSampler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler_inbatch.HardTripletsSampler.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>norm_required</strong> – set True if features normalisation is needed</p>
+<dd class="field-odd"><p><strong>need_norm</strong> – set True if features normalisation is needed</p>
 </dd>
 </dl>
 </dd></dl>
@@ -743,8 +739,6 @@ the hardest negative sample has the minimal distance to the anchor sample.</p>
 <dd><p>Base class for a triplets samplers.
 We expect that the child instances of this class
 will be used to forming triplets inside the batches.
-(Note. It is assumed that set of output features is a
-subset of samples features inside the batch.)
 The batches must contain at least 2 samples for
 each class and at least 2 different classes,
 such behaviour can be garantee via using
