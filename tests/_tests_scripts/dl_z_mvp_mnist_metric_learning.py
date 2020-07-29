@@ -5,12 +5,13 @@ from torch.utils.data import DataLoader
 
 from catalyst import contrib as ctb, data, dl
 import catalyst.contrib.data.transforms as t
-from catalyst.contrib.models import SimpleConv
+from catalyst.contrib.models.simple_conv import SimpleConv
 from catalyst.core.callbacks import ControlFlowCallback
+import catalyst.data.sampler_inbatch as si
 from catalyst.dl.callbacks.metrics.cmc import CMCScoreCallback
 
 
-def run_ml_pipeline(sampler_inbatch: data.InBatchTripletsSampler) -> float:
+def run_ml_pipeline(sampler_inbatch: si.InBatchTripletsSampler) -> float:
     """
     Full metric learning pipeline, including train and val.
 
@@ -81,8 +82,8 @@ def main() -> None:
     """
     cmc_score_th = 0.97
 
-    all_sampler = data.AllTripletsSampler(max_output_triplets=512)
-    hard_sampler = data.HardTripletsSampler(norm_required=False)
+    all_sampler = si.AllTripletsSampler(max_output_triplets=512)
+    hard_sampler = si.HardTripletsSampler(norm_required=False)
 
     assert run_ml_pipeline(all_sampler) > cmc_score_th
     assert run_ml_pipeline(hard_sampler) > cmc_score_th

@@ -16,8 +16,3 @@ from .sampler import (
     DynamicLenBatchSampler,
     MiniEpochSampler,
 )
-from .sampler_inbatch import (
-    InBatchTripletsSampler,
-    AllTripletsSampler,
-    HardTripletsSampler,
-)
