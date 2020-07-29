@@ -65,25 +65,6 @@ def process_components(
 
     model: Model = maybe_recursive_call(model, "to", device=device)
 
-    if optimizer is not None:
-        optimizer_device = optimizer.param_groups[0]["params"][0].device
-        if device != optimizer_device:
-            raise ValueError(
-                "Expected that model and optimizer will be already on same device (TPU)! "
-                f"Got model on '{device}' and optimizer on '{optimizer_device}'."
-            )
-
-    # if optimizer is not None:
-    #     if isinstance(optimizer, dict):
-    #         optimizer = {
-    #             k: type(opt)(model[k].parameters(), **opt.defaults)
-    #             for k, opt in optimizer.items()
-    #         }
-    #     else:
-    #         optimizer = type(optimizer)(
-    #             model.parameters(), **optimizer.defaults
-    #         )
-
     if check_ddp_wrapped(model):
         pass
     # distributed data parallel run (ddp) (with apex support)
