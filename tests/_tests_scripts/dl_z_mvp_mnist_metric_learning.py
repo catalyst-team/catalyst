@@ -81,8 +81,8 @@ def main() -> None:
     """
     cmc_score_th = 0.97
 
-    all_sampler = data.AllTripletsSampler(512)
-    hard_sampler = data.HardTripletsSampler(False)
+    all_sampler = data.AllTripletsSampler(max_output_triplets=512)
+    hard_sampler = data.HardTripletsSampler(norm_required=False)
 
     assert run_ml_pipeline(all_sampler) > cmc_score_th
     assert run_ml_pipeline(hard_sampler) > cmc_score_th
