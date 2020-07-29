@@ -527,8 +527,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             )
 
     def on_stage_start(self, runner: IRunner) -> None:
-        """
-        Setup model for stage.
+        """Setup model for stage.
 
         **NOTE:** If CheckpointCallback initialized with ``resume``
         (as path to checkpoint file) or ``resume`` (as filename)

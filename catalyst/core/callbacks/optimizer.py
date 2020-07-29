@@ -1,5 +1,4 @@
-from typing import Any, Callable, Dict, List, Mapping
-from functools import partial
+from typing import Callable, Dict, List
 import logging
 import warnings
 
