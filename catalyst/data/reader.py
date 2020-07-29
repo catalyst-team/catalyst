@@ -1,4 +1,4 @@
-from typing import Callable, List, Type
+from typing import Callable, List, Type, Optional
 import functools
 
 import numpy as np
@@ -15,14 +15,14 @@ class ReaderSpec:
     All inherited classes have to implement `__call__`.
     """
 
-    def __init__(self, input_key: str, output_key: str):
+    def __init__(self, input_key: str, output_key: Optional[str] = None):
         """
         Args:
             input_key (str): input key to use from annotation dict
-            output_key (str): output key to use to store the result
+            output_key (Optional[str]): output key to use to store the result
         """
         self.input_key = input_key
-        self.output_key = output_key
+        self.output_key = output_key or input_key
 
     def __call__(self, element):
         """
@@ -50,7 +50,7 @@ class ScalarReader(ReaderSpec):
     def __init__(
         self,
         input_key: str,
-        output_key: str,
+        output_key: Optional[str],
         dtype: Type = np.float32,
         default_value: float = None,
         one_hot_classes: int = None,
@@ -59,7 +59,7 @@ class ScalarReader(ReaderSpec):
         """
         Args:
             input_key (str): input key to use from annotation dict
-            output_key (str): output key to use to store the result
+            output_key (Optional[str]): output key to use to store the result
             dtype (type): datatype of scalar values to use
             default_value: default value to use if something goes wrong
             one_hot_classes (int): number of one-hot classes
@@ -106,14 +106,14 @@ class LambdaReader(ReaderSpec):
     def __init__(
         self,
         input_key: str,
-        output_key: str,
+        output_key: Optional[str],
         lambda_fn: Callable = None,
         **kwargs,
     ):
         """
         Args:
             input_key (str): input key to use from annotation dict
-            output_key (str): output key to use to store the result
+            output_key (Optional[str]): output key to use to store the result
             lambda_fn (callable): encode function to use to prepare your data
               (for example convert chars/words/tokens to indices, etc)
             kwargs: kwargs for encode function

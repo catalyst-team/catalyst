@@ -23,7 +23,7 @@ class ImageReader(ReaderSpec):
             grayscale (bool): flag if you need to work only
                 with grayscale images
         """
-        super().__init__(input_key, output_key or input_key)
+        super().__init__(input_key, output_key)
         self.rootpath = rootpath
         self.grayscale = grayscale
 
@@ -52,7 +52,7 @@ class MaskReader(ReaderSpec):
     def __init__(
         self,
         input_key: str,
-        output_key: str,
+        output_key: Optional[str],
         rootpath: str = None,
         clip_range: Tuple[Union[int, float], Union[int, float]] = (0, 1),
     ):

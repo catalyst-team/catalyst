@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Union
+from typing import Any, Callable, Dict, List, Union, Optional
 from abc import ABC, abstractmethod
 from pathlib import Path
 
@@ -19,7 +19,7 @@ class ListDataset(Dataset):
         self,
         list_data: List[Dict],
         open_fn: Callable,
-        dict_transform: Callable = None,
+        dict_transform: Optional[Callable] = None,
     ):
         """
         Args:
@@ -65,7 +65,9 @@ class ListDataset(Dataset):
 class MergeDataset(Dataset):
     """Abstraction to merge several datasets into one dataset."""
 
-    def __init__(self, *datasets: Dataset, dict_transform: Callable = None):
+    def __init__(
+        self, *datasets: Dataset, dict_transform: Optional[Callable] = None
+    ):
         """
         Args:
             datasets (List[Dataset]): params count of datasets to merge
@@ -109,7 +111,7 @@ class NumpyDataset(Dataset):
         self,
         numpy_data: np.ndarray,
         numpy_key: str = "features",
-        dict_transform: Callable = None,
+        dict_transform: Optional[Callable] = None,
     ):
         """
         General purpose dataset class to use with `numpy_data`.
