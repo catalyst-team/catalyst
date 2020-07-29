@@ -2,6 +2,9 @@ from catalyst.contrib.datasets.cv.fastai import ImageClassificationDataset
 
 
 class Imagewoof(ImageClassificationDataset):
+    """
+    `Imagewoof <https://github.com/fastai/imagenette#imagewoof>`_ Dataset.
+    """
     name = "imagewoof2"
     resources = [
         (
@@ -12,6 +15,10 @@ class Imagewoof(ImageClassificationDataset):
 
 
 class Imagewoof160(ImageClassificationDataset):
+    """
+    `Imagewoof <https://github.com/fastai/imagenette#imagewoof>`_ Dataset
+    with images resized so that the shortest size is 160 px.
+    """
     name = "imagewoof2-160"
     resources = [
         (
@@ -22,6 +29,10 @@ class Imagewoof160(ImageClassificationDataset):
 
 
 class Imagewoof320(ImageClassificationDataset):
+    """
+    `Imagewoof <https://github.com/fastai/imagenette#imagewoof>`_ Dataset
+    with images resized so that the shortest size is 320 px.
+    """
     name = "imagewoof2-320"
     resources = [
         (
