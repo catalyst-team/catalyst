@@ -1,4 +1,4 @@
-from typing import Tuple, Union
+from typing import Tuple, Union, Optional
 
 from catalyst import utils
 from catalyst.data.reader import ReaderSpec
@@ -10,8 +10,8 @@ class ImageReader(ReaderSpec):
     def __init__(
         self,
         input_key: str,
-        output_key: str,
-        rootpath: str = None,
+        output_key: Optional[str] = None,
+        rootpath: Optional[str] = None,
         grayscale: bool = False,
     ):
         """
@@ -23,7 +23,7 @@ class ImageReader(ReaderSpec):
             grayscale (bool): flag if you need to work only
                 with grayscale images
         """
-        super().__init__(input_key, output_key)
+        super().__init__(input_key, output_key or input_key)
         self.rootpath = rootpath
         self.grayscale = grayscale
 
