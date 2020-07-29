@@ -5,6 +5,8 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 import logging
 
+import numpy as np
+
 import torch
 
 from catalyst.core import utils
@@ -123,16 +125,24 @@ class ILoaderMetricCallback(IMetricCallback):
         for data, storage in zip((input, output), (self.input, self.output)):
             if isinstance(data, dict):
                 for key, value in data.items():
-                    storage[key].append(value)
-                else:
-                    storage["data"].append(data)
+                    storage[key].append(value.detach().cpu().numpy())
+            else:
+                storage["data"].append(data.detach().cpu().numpy())
 
     def on_loader_end(self, runner: IRunner):
-        input = {key: torch.cat(self.input[key]) for key in self.input}
-        output = {key: torch.cat(self.output[key]) for key in self.output}
+        input = {
+            key: torch.from_numpy(np.concatenate(self.input[key], axis=0))
+            for key in self.input
+        }
+        output = {
+            key: torch.from_numpy(np.concatenate(self.output[key], axis=0))
+            for key in self.output
+        }
 
-        input = input["data"] if len(input) == 1 else input
-        output = output["data"] if len(output) == 1 else output
+        input = {self.input_key: input["data"]} if len(input) == 1 else input
+        output = (
+            {self.output_key: output["data"]} if len(output) == 1 else output
+        )
 
         metrics = self._compute_metric(output, input)
         metrics = self._process_computed_metric(metrics)
