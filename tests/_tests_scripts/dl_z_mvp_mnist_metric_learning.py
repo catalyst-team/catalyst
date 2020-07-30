@@ -2,8 +2,8 @@ import os
 
 from torch.optim import Adam
 from torch.utils.data import DataLoader
-import torchvision.transforms as t
 
+import catalyst.catalyst.contrib.data.transforms as t
 from catalyst import contrib as ctb, data, dl
 from catalyst.contrib.models.simple_conv import SimpleConv
 from catalyst.core.callbacks import ControlFlowCallback
