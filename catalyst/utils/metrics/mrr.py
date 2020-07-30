@@ -10,11 +10,13 @@ def mrr(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
     """
     Calculate the MRR score given model ouptputs and targets
     Args:
-        outputs [batch_size, slate_length] (torch.Tensor):
+        outputs (torch.Tensor):
+            size: [batch_size, slate_length] 
             model outputs, logits
-        targets [batch_szie, slate_length] (torch.Tensor):
+        targets (torch.Tensor):
+            size: [batch_szie, slate_length]
             ground truth, labels
-    
+
     Returns:
         mrr (float): the mrr score for each slate
     """
@@ -36,8 +38,7 @@ def mrr(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
     zero_sum_mask = torch.sum(values) == 0.0
     result[zero_sum_mask] = 0.0
 
-    mrr = result * within_at_mask
-    return mrr
+    return result * within_at_mask
 
 
 __all__ = ["mrr"]
