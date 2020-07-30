@@ -1,12 +1,13 @@
 import os
 import zipfile
+import logging
 
 import numpy as np
 
 import torch
 from torch.utils.data import Dataset
 
-from catalyst.contrib.datasets.utils import download_and_extract_archive
+from catalyst.contrib.datasets.utils import download_and_extract_archive, download_url
 
 
 class MovieLens(Dataset):
@@ -53,13 +54,17 @@ class MovieLens(Dataset):
     """
 
     resources = (
-        "http://files.grouplens.org/datasets/movielens/ml-100k.zip",
-        "6f5ca7e518b6970ec2265ce66a80ffdc",
+        "http://files.grouplens.org/datasets/movielens/ml-100k.zip.md5",
+        "6f5ca7e518b6970ec2265ce66a80ffdc"
     )
     filename = "ml-100k"
+    training_file = "training.pt"
+    test_file = "test.pt"
 
-    def __init__(self):
-        pass
+    def __init__(self, root):
+        if isinstance(root, torch._six.string_classes):  # noqa: WPS437
+            root = os.path.expanduser(root)
+        self.root = root
 
     @property
     def raw_folder(self):
@@ -73,6 +78,7 @@ class MovieLens(Dataset):
         """@TODO: Docs. Contribution is welcome."""
         return os.path.join(self.root, self.__class__.__name__, "processed")
 
+
     def _check_exists(self):
 
         return os.path.exists(
@@ -81,33 +87,105 @@ class MovieLens(Dataset):
             os.path.join(self.processed_folder, self.test_file)
         )
 
-    def _downlaod(self):
+    def _download(self):
         if self._check_exists():
             return
 
         os.makedirs(self.raw_folder, exist_ok=True)
         os.makedirs(self.processed_folder, exist_ok=True)
+        print(self.resources)
+        url = self.resources[0]
+        md5 = self.resources[1]
 
-    def _get_raw_movielens_data(self):
+        download_url(
+            url=url,
+            root=self.raw_folder,
+            filename=self.filename,
+            md5=md5,
+        )
+        
+        print("Processing")
+
+        
+
+    def _get_raw_movielens_data(self, path):
         """
-            Download movielens data if it doesn't exsit
+        Return the raw lines of the train and test files
         """
 
-        path = self._get_movielens_path()
+        base = path+"/ml-100k /ua.base"
+        with zipfile.ZipFile(base) as datafile:
+            return datafile.read().decode.split("\n")
 
-        if not os.path.isfile(path):
-            download_and_extract_archive(
-                url=self.resources[0],
-                download_root=self.raw_folder,
-                filename=self.filename,
-                md5=self.resources[1],
+        # with zipfile.ZipFile(path) as datafile:
+        #     return (
+        #         datafile.read("ml-100k/ua.base").decode().split("\n"),
+        #         datafile.read("ml-100k/ua.test").decode().split("\n"),
+        #         datafile.read("ml-100k/u.item").decode(errors="ignore").split("\n"),
+        #         datafile.read("ml-100k/u.genre").decode(errors="ignore").split("\n"),
+        #     )
+
+    def _parse(self, data):
+        """
+        Parse the raw data
+        """
+
+        for line in data:
+
+            if not line:
+                continue
+
+            uid, iid, rating, timestamp = [int(x) for x in line.split("\t")]
+
+            # Subtract one from ids to shift
+            # to zero-based indexing
+            yield uid - 1, iid - 1, rating, timestamp
+
+    def _get_dimensions(self, train_data, test_data):
+        """
+        Get the dimensions of the raw dataset
+        """
+
+        uids = set()
+        iids = set()
+
+        for uid, iid, _, _ in itertools.chain(train_data, test_data):
+            uids.add(uid)
+            iids.add(iid)
+
+        rows = max(uids) + 1
+        cols = max(iids) + 1
+
+        return rows, cols
+
+
+    def fetch_movies(self):
+        try:
+            (train_raw, test_raw, item_metadata_raw, genres_raw) = self._get_raw_movielens_data(self.raw_folder)
+        except zipfile.BadZipFile:
+            # Download was corrupted, get rid of the partially
+            # downloaded file so that we re-download on the
+            # next try.
+            os.unlink(self.raw_folder)
+            raise ValueError(
+                "Corrupted Movielens download. Check your "
+                "internet connection and try again."
             )
 
-        with zipfile.ZipFile(path) as datafile:
-            return (
-                datafile.read("ml-100k/ua.base").decode().split("\n"),
-                datafile.read("ml-100k/ua.test").decode().split("\n"),
-            )
+        parsed_train = self._parse(train_raw)
+        parsed_test = self._parse(test_raw)
 
-        if self._check_exist():
-            return
+        print(parsed_test)
+
+
+def main():
+    root = "./data"
+    movielens = MovieLens(root)
+    # movielens._download()
+    print(movielens.raw_folder)
+    movielens._get_raw_movielens_data(movielens.raw_folder)
+
+
+if  __name__ == "__main__":
+    main()
+        
