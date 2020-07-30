@@ -10,4 +10,3 @@ from .focal import reduced_focal_loss, sigmoid_focal_loss
 from .iou import iou, jaccard
 from .ndcg import dcg, ndcg
 from .precision import average_precision, mean_average_precision
-
