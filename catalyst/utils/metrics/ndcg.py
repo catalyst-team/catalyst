@@ -1,72 +1,72 @@
 """
-Cumulative Gain metrics:
+Discounted Cumulative Gain metrics:
     * :func:`dcg`
     * :func:`ndcg`
 """
+from typing import Sequence
+
 import torch
 
 
 def dcg(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    k: int = 10,
-    gains: str = "linear",
-):
+    outputs: torch.Tensor, targets: torch.Tensor, topk: Sequence[int] = (10,)
+) -> Sequence[torch.Tensor]:
     """
-    Computes the discounted cumulative gain (DCG) at k.
+    Computes DCG@topk for the specified values of `topk`.
 
     Args:
         outputs (torch.Tensor): model outputs, logits
+            with shape [batch_size; slate_length]
         targets (torch.Tensor): ground truth, labels
-        k (int, optional): the maximum number of predicted elements
-        gains (str): indicates whether gains are "linear" (default) or "exp"
+            with shape [batch_size; slate_length]
+        topk (Sequence[int]): `topk` for dcg@topk computing
 
-    Returns: # noqa: DAR201
-        float: computed DCG@k
-
-    Raises:
-        ValueError: If `gains` not in ["linear", "exp"].
+    Returns:
+        list with computed dcg@topk
     """
-    order = torch.argsort(outputs, descending=True)
-    targets = torch.take(targets, order[:k])
+    order = torch.argsort(outputs, descending=True, dim=-1)
 
-    if gains == "linear":
-        gains = targets
-    elif gains == "exp":
-        gains = 2 ** targets - 1
-    else:
-        raise ValueError("No such gains option.")
+    dcg_scores = []
+    for k in topk:
+        if len(outputs.shape) == 1:
+            targets_at_k = torch.take(targets, order[:k])
+        else:
+            targets_at_k = torch.take(
+                targets, order.narrow(-1, 0, min(k, order.shape[1]))
+            )
 
-    discounts = torch.log2(torch.arange(len(targets)) + 2.0)
-    dcg_score = float(torch.sum(gains / discounts))
-    return dcg_score
+        discounts_at_k = torch.log2(torch.arange(targets_at_k.shape[-1]) + 2.0)
+        dcg_scores.append(torch.sum(targets_at_k / discounts_at_k).mean())
+
+    return dcg_scores
 
 
 def ndcg(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    k: int = 10,
-    gains: str = "linear",
-):
+    outputs: torch.Tensor, targets: torch.Tensor, topk: Sequence[int] = (10,),
+) -> Sequence[torch.Tensor]:
     """
-    Computes the normalized discounted cumulative gain (DCG) at k.
+    Computes nDCG@topk for the specified values of `topk`.
 
     Args:
         outputs (torch.Tensor): model outputs, logits
+            with shape [batch_size; slate_size]
         targets (torch.Tensor): ground truth, labels
-        k (int, optional): The maximum number of predicted elements
-        gains (str): indicates whether gains are "exp" (default) or "linear"
+            with shape [batch_size; slate_size]
+        topk (Sequence[int]): `topk` for ndcg@topk computing
 
-    Returns: # noqa: DAR201
-        float: computed nDCG@k
+    Returns:
+        list with computed ndcg@topk
     """
-    ideal = dcg(targets, targets, k, gains)
-    actual = dcg(outputs, targets, k, gains)
+    ideal_dcgs = dcg(targets, targets, topk)
+    actual_dcgs = dcg(outputs, targets, topk)
 
-    ndcg_score = 0.0
-    if ideal != 0:
-        ndcg_score = actual / ideal
-    return ndcg_score
+    ndcg_scores = []
+    for actual, ideal in zip(ideal_dcgs, actual_dcgs):
+        if ideal != 0:
+            ndcg_scores.append(actual / ideal)
+        else:
+            ndcg_scores.append(torch.tensor(0.0))
+    return ndcg_scores
 
 
 __all__ = ["dcg", "ndcg"]
