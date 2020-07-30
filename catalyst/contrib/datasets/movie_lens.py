@@ -1,5 +1,5 @@
-import zipfile
 import os
+import zipfile
 
 import numpy as np
 
@@ -8,8 +8,9 @@ from torch.utils.data import Dataset
 
 from catalyst.contrib.datasets.utils import download_and_extract_archive
 
+
 class MovieLens(Dataset):
-    '''
+    """
         MovieLens data sets were collected by the GroupLens Research Project
         at the University of Minnesota.
         
@@ -49,14 +50,13 @@ class MovieLens(Dataset):
         If you have any further questions or comments, please contact GroupLens
         <grouplens-info@cs.umn.edu>. 
         http://files.grouplens.org/datasets/movielens/ml-100k-README.txt
-    '''
+    """
 
     resources = (
-            "http://files.grouplens.org/datasets/movielens/ml-100k.zip",
-            "6f5ca7e518b6970ec2265ce66a80ffdc"
-            )
-    filename = 'ml-100k'
-
+        "http://files.grouplens.org/datasets/movielens/ml-100k.zip",
+        "6f5ca7e518b6970ec2265ce66a80ffdc",
+    )
+    filename = "ml-100k"
 
     def __init__(self):
         pass
@@ -80,7 +80,7 @@ class MovieLens(Dataset):
         ) and os.path.exists(
             os.path.join(self.processed_folder, self.test_file)
         )
-    
+
     def _downlaod(self):
         if self._check_exists():
             return
@@ -97,14 +97,17 @@ class MovieLens(Dataset):
 
         if not os.path.isfile(path):
             download_and_extract_archive(
-                url = self.resources[0]
-                download_root = 
+                url=self.resources[0],
+                download_root=self.raw_folder,
+                filename=self.filename,
+                md5=self.resources[1],
             )
 
         with zipfile.ZipFile(path) as datafile:
-            return (datafile.read('ml-100k/ua.base').decode().split('\n'),
-                datafile.read('ml-100k/ua.test').decode().split('\n'))
+            return (
+                datafile.read("ml-100k/ua.base").decode().split("\n"),
+                datafile.read("ml-100k/ua.test").decode().split("\n"),
+            )
 
         if self._check_exist():
             return
-            
