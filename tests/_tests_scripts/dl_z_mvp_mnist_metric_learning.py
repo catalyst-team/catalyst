@@ -3,8 +3,8 @@ import os
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
-import catalyst.catalyst.contrib.data.transforms as t
 from catalyst import contrib as ctb, data, dl
+import catalyst.contrib.data.transforms as t
 from catalyst.contrib.models.simple_conv import SimpleConv
 from catalyst.core.callbacks import ControlFlowCallback
 import catalyst.data.sampler_inbatch as si
@@ -55,8 +55,11 @@ def run_ml_pipeline(sampler_inbatch: si.InBatchTripletsSampler) -> float:
     # 4. training with catalyst Runner
     callbacks = [
         ControlFlowCallback(dl.CriterionCallback(), loaders="train"),
-        ControlFlowCallback(CMCScoreCallback(topk_args=[1]), loaders="valid"),
-        dl.callbacks.PeriodicLoaderCallback(valid=600),
+        ControlFlowCallback(
+            dl.callbacks.metrics.cmc.CMCScoreCallback(topk_args=[1]),
+            loaders="valid",
+        ),
+        dl.callbacks.PeriodicLoaderCallback(valid=10),
     ]
 
     runner = dl.SupervisedRunner(device="cuda:0")
