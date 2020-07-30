@@ -5,6 +5,7 @@ import torch
 from torch import nn
 import torch.distributed
 
+from catalyst.tools.settings import IS_XLA_AVAILABLE
 from catalyst.tools.typing import (
     Criterion,
     Device,
@@ -53,6 +54,14 @@ def process_components(
     distributed_params = distributed_params or {}
     distributed_params = copy.deepcopy(distributed_params)
     distributed_params.update(get_distributed_params())
+
+    if device is None and IS_XLA_AVAILABLE:
+        raise ValueError(
+            "TPU device is available. "
+            "Please move model, optimizer and scheduler (if present) "
+            "to TPU device manualy and specify a device or "
+            "use CPU device."
+        )
 
     if device is None:
         device = get_device()
