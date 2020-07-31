@@ -33,6 +33,7 @@ class ImageFolderDataset(PathsDataset):
     def __init__(
         self,
         rootpath: str,
+        target_key: str = "targets",
         dir2class: Optional[Mapping[str, int]] = None,
         dict_transform: Optional[Callable[[Dict], Dict]] = None,
     ) -> None:
@@ -40,6 +41,7 @@ class ImageFolderDataset(PathsDataset):
 
         Args:
             rootpath (str): root directory of dataset
+            target_key (str): key to use to store target label
             dir2class (Mapping[str, int], optional): mapping from folder name
                 to class index
             dict_transform (Callable[[Dict], Dict]], optional): transforms
@@ -58,8 +60,8 @@ class ImageFolderDataset(PathsDataset):
                 [
                     ImageReader(input_key="image", rootpath=rootpath),
                     ScalarReader(
-                        input_key="targets",
-                        output_key="targets",
+                        input_key=target_key,
+                        output_key=target_key,
                         dtype=int,
                         default_value=-1,
                     ),
@@ -67,6 +69,7 @@ class ImageFolderDataset(PathsDataset):
             ),
             label_fn=lambda fn: dir2class[Path(fn).parent.name],
             features_key="image",
+            target_key=target_key,
             dict_transform=dict_transform,
         )
 

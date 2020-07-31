@@ -2,12 +2,12 @@
 
 import logging
 
-logger = logging.getLogger(__name__)
-
 from catalyst.tools import settings
 
 from catalyst.contrib.datasets.mnist import MNIST
 from catalyst.contrib.datasets.mnist_qg import MnistQGDataset
+
+logger = logging.getLogger(__name__)
 
 try:
     from catalyst.contrib.data.cv import *

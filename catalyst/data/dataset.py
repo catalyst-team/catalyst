@@ -170,6 +170,7 @@ class PathsDataset(ListDataset):
         open_fn: Callable[[dict], dict],
         label_fn: Callable[[_Path], Any],
         features_key: str = "features",
+        target_key: str = "targets",
         **list_dataset_params
     ):
         """
@@ -186,11 +187,13 @@ class PathsDataset(ListDataset):
                 (for example, your sample could be an image file like
                 ``/path/to/your/image_1.png`` where the target is encoded as
                 a part of file path)
+            features_key (str): key to use to store sample features
+            target_key (str): key to use to store target label
             list_dataset_params (dict): base class initialization
                 parameters.
         """
         list_data = [
-            {features_key: filename, "targets": label_fn(filename)}
+            {features_key: filename, target_key: label_fn(filename)}
             for filename in filenames
         ]
 

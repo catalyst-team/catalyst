@@ -15,14 +15,15 @@ class ReaderSpec:
     All inherited classes have to implement `__call__`.
     """
 
-    def __init__(self, input_key: str, output_key: Optional[str] = None):
+    def __init__(self, input_key: str, output_key: str):
         """
         Args:
             input_key (str): input key to use from annotation dict
-            output_key (Optional[str]): output key to use to store the result
+            output_key (Optional[str]): output key to use to store the result,
+                default: ``input_key``
         """
         self.input_key = input_key
-        self.output_key = output_key or input_key
+        self.output_key = output_key
 
     def __call__(self, element):
         """
@@ -50,7 +51,7 @@ class ScalarReader(ReaderSpec):
     def __init__(
         self,
         input_key: str,
-        output_key: Optional[str],
+        output_key: Optional[str] = None,
         dtype: Type = np.float32,
         default_value: float = None,
         one_hot_classes: int = None,
@@ -59,14 +60,15 @@ class ScalarReader(ReaderSpec):
         """
         Args:
             input_key (str): input key to use from annotation dict
-            output_key (Optional[str]): output key to use to store the result
+            output_key (Optional[str]): output key to use to store the result,
+                default: ``input_key``
             dtype (type): datatype of scalar values to use
             default_value: default value to use if something goes wrong
             one_hot_classes (int): number of one-hot classes
             smoothing (float, optional): if specified applies label smoothing
                 to one_hot classes
         """
-        super().__init__(input_key, output_key)
+        super().__init__(input_key, output_key or input_key)
         self.dtype = dtype
         self.default_value = default_value
         self.one_hot_classes = one_hot_classes
@@ -106,8 +108,8 @@ class LambdaReader(ReaderSpec):
     def __init__(
         self,
         input_key: str,
-        output_key: Optional[str],
-        lambda_fn: Callable = None,
+        output_key: Optional[str] = None,
+        lambda_fn: Optional[Callable] = None,
         **kwargs,
     ):
         """
