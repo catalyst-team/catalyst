@@ -511,7 +511,6 @@ class CheckpointCallback(BaseCheckpointCallback):
             mapping (str or dict): mapping to use for loading
             load_full (bool): load a full model, used only
                 when mapping type is string
-
         """
         if isinstance(mapping, str):
             if mapping in {"best", "best_full", "last", "last_full"}:
@@ -529,10 +528,13 @@ class CheckpointCallback(BaseCheckpointCallback):
     def on_stage_start(self, runner: IRunner) -> None:
         """Setup model for stage.
 
-        **NOTE:** If CheckpointCallback initialized with ``resume``
-        (as path to checkpoint file) or ``resume`` (as filename)
-        and ``resume_dir`` (as directory with file)
-        then will be performed loading checkpoint.
+        .. note::
+
+            If CheckpointCallback initialized with
+            ``resume`` (as path to checkpoint file)
+            or ``resume`` (as filename)
+            and ``resume_dir`` (as directory with file)
+            then will be performed loading checkpoint.
 
         Args:
             runner (IRunner): current runner

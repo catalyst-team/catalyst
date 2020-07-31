@@ -48,6 +48,9 @@ def process_components(
         tuple with processed model, criterion, optimizer, scheduler and device.
 
     Raises:
+        ValueError: if device is None and TPU available,
+            for using TPU need to manualy move model/optimizer/scheduler
+            to a TPU device and pass device to a function.
         NotImplementedError: if model is not nn.Module or dict for multi-gpu,
             nn.ModuleDict for DataParallel not implemented yet
     """
