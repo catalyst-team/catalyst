@@ -539,7 +539,6 @@ class CheckpointCallback(BaseCheckpointCallback):
         Args:
             runner (IRunner): current runner
         """
-
         if runner.device.type == "xla":
             from torch_xla.core.xla_model import save
         else:
