@@ -5,6 +5,7 @@ class Imagenette(ImageClassificationDataset):
     """
     `Imagenette <https://github.com/fastai/imagenette#imagenette-1>`_ Dataset.
     """
+
     name = "imagenette2"
     resources = [
         (
@@ -19,6 +20,7 @@ class Imagenette160(ImageClassificationDataset):
     `Imagenette <https://github.com/fastai/imagenette#imagenette-1>`_ Dataset
     with images resized so that the shortest size is 160 px.
     """
+
     name = "imagenette2-160"
     resources = [
         (
@@ -33,6 +35,7 @@ class Imagenette320(ImageClassificationDataset):
     `Imagenette <https://github.com/fastai/imagenette#imagenette-1>`_ Dataset
     with images resized so that the shortest size is 320 px.
     """
+
     name = "imagenette2-320"
     resources = [
         (

@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Optional, Mapping
+from typing import Callable, Dict, Mapping, Optional
 import glob
 from pathlib import Path
 
@@ -9,6 +9,27 @@ from catalyst.data.reader import ReaderCompose, ScalarReader
 
 
 class ImageFolderDataset(PathsDataset):
+    """
+    Dataset class that derives targets from samples filesystem paths.
+    Dataset structure should be the following:
+
+    .. code-block:: bash
+
+        rootpat/
+        |-- class1/  # folder of N images
+        |   |-- image11
+        |   |-- image12
+        |   ...
+        |   `-- image1N
+        ...
+        `-- classM/  # folder of K images
+            |-- imageM1
+            |-- imageM2
+            ...
+            `-- imageMK
+
+    """
+
     def __init__(
         self,
         rootpath: str,
@@ -18,9 +39,11 @@ class ImageFolderDataset(PathsDataset):
         """Constructor method for the :class:`ImageFolderDataset` class.
 
         Args:
-            rootpath (str):
-            dir2class (Mapping[str, int], optional):
-            dict_transform (Callable[[Dict], Dict]], optional):
+            rootpath (str): root directory of dataset
+            dir2class (Mapping[str, int], optional): mapping from folder name
+                to class index
+            dict_transform (Callable[[Dict], Dict]], optional): transforms
+                to use on dict
         """
         files = glob.iglob(f"{rootpath}/**/*")
         images = sorted(filter(utils.has_image_extension, files))

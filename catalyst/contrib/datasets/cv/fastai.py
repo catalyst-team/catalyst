@@ -6,7 +6,43 @@ from catalyst.contrib.datasets.utils import download_and_extract_archive
 
 
 class ImageClassificationDataset(ImageFolderDataset):
+    """
+    Base class for datasets with the following structure:
+
+    .. code-block:: bash
+
+        path/to/dataset/
+        |-- train/
+        |   |-- class1/  # folder of N images
+        |   |   |-- train_image11
+        |   |   |-- train_image12
+        |   |   ...
+        |   |   `-- train_image1N
+        |   ...
+        |   `-- classM/  # folder of K images
+        |       |-- train_imageM1
+        |       |-- train_imageM2
+        |       ...
+        |       `-- train_imageMK
+        `-- val/
+            |-- class1/  # folder of P images
+            |   |-- val_image11
+            |   |-- val_image12
+            |   ...
+            |   `-- val_image1P
+            ...
+            `-- classM/  # folder of T images
+                |-- val_imageT1
+                |-- val_imageT2
+                ...
+                `-- val_imageMT
+
+    """
+
+    # name of dataset folder
     name: str
+
+    # list of (url, md5 hash) tuples representing files to download
     resources: Iterable[Tuple[str, str]] = None
 
     def __init__(
@@ -15,12 +51,12 @@ class ImageClassificationDataset(ImageFolderDataset):
         """Constructor method for the ``ImageClassificationDataset`` class.
 
         Args:
-            root (str): Root directory of dataset.
-            train (bool): If True, creates dataset from ``train/`` subfolder,
-                otherwise from ``val/``.
-            download (bool): f true, downloads the dataset from
+            root (str): root directory of dataset
+            train (bool): if ``True``, creates dataset from ``train/``
+                subfolder, otherwise from ``val/``
+            download (bool): if ``True``, downloads the dataset from
                 the internet and puts it in root directory. If dataset
-                is already downloaded, it is not downloaded again.
+                is already downloaded, it is not downloaded again
             **kwargs:
         """
         # downlad dataset if needed

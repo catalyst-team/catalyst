@@ -5,6 +5,7 @@ class Imagewang(ImageClassificationDataset):
     """
     `Imagewang <https://github.com/fastai/imagenette#image%E7%BD%91>`_ Dataset.
     """
+
     name = "imagewang"
     resources = [
         (
@@ -19,6 +20,7 @@ class Imagewang160(ImageClassificationDataset):
     `Imagewang <https://github.com/fastai/imagenette#image%E7%BD%91>`_ Dataset
     with images resized so that the shortest size is 160 px.
     """
+
     name = "imagewang-160"
     resources = [
         (
@@ -33,6 +35,7 @@ class Imagewang320(ImageClassificationDataset):
     `Imagewang <https://github.com/fastai/imagenette#image%E7%BD%91>`_ Dataset
     with images resized so that the shortest size is 320 px.
     """
+
     name = "imagewang-320"
     resources = [
         (
