@@ -8,7 +8,7 @@ pip uninstall -r requirements/requirements-cv.txt -y
 pip uninstall -r requirements/requirements-ecosystem.txt -y
 pip uninstall -r requirements/requirements-ml.txt -y
 pip uninstall -r requirements/requirements-nlp.txt -y
-pip install -r requirements/requirements.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+pip install -r requirements/requirements.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
 
 ################################  pipeline 00  ################################
 # checking catalyst-core loading (default)
@@ -57,8 +57,8 @@ else:
     raise AssertionError('\'ImportError\' expected')
 """
 
-pip install -r requirements/requirements-contrib.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
-pip install -r requirements/requirements-ecosystem.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+pip install -r requirements/requirements-contrib.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+pip install -r requirements/requirements-ecosystem.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
 
 python -c """
 from catalyst.contrib.dl.callbacks import AlchemyLogger, VisdomLogger
@@ -99,7 +99,7 @@ else:
     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
 """
 
-pip install -r requirements/requirements-cv.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+pip install -r requirements/requirements-cv.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
 
 python -c """
 from catalyst.contrib.data import cv as cv_data
@@ -140,7 +140,7 @@ else:
     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
 """
 
-pip install -r requirements/requirements-ml.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+pip install -r requirements/requirements-ml.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
 
 python -c """
 from catalyst.contrib.__main__ import COMMANDS
@@ -175,7 +175,7 @@ else:
     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
 """
 
-pip install -r requirements/requirements-nlp.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html
+pip install -r requirements/requirements-nlp.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
 
 python -c """
 from catalyst.contrib.data import nlp as nlp_data
