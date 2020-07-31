@@ -341,7 +341,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         self.metrics_history = []
 
         self._keys_from_state = ["resume", "resume_dir"]
-        self._saver_fn: Callable = None
+        self._save_fn: Callable = None
 
     def get_checkpoint_suffix(self, checkpoint: dict) -> str:
         """
@@ -442,7 +442,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             is_best=is_best,
             is_last=is_last,
             special_suffix="_full",
-            saver_fn=self._saver_fn,
+            saver_fn=self._save_fn,
         )
         exclude = ["criterion", "optimizer", "scheduler"]
         checkpoint_path = utils.save_checkpoint(
@@ -455,7 +455,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             suffix=suffix,
             is_best=is_best,
             is_last=is_last,
-            saver_fn=self._saver_fn,
+            saver_fn=self._save_fn,
         )
         return (full_checkpoint_path, checkpoint_path)
 
@@ -543,7 +543,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             from torch_xla.core.xla_model import save
         else:
             from torch import save
-        self._saver_fn = save
+        self._save_fn = save
 
         for key in self._keys_from_state:
             value = getattr(runner, key, None)
@@ -701,7 +701,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         self.last_checkpoints = []
         self.metrics_history = []
         self.load_on_stage_end = load_on_stage_end
-        self._saver_fn = None
+        self._save_fn = None
 
     def get_checkpoint_suffix(self, checkpoint: dict) -> str:
         """
@@ -772,7 +772,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
             suffix=self.get_checkpoint_suffix(checkpoint),
             is_best=False,
             is_last=False,
-            saver_fn=self._saver_fn,
+            saver_fn=self._save_fn,
         )
 
         self.last_checkpoints.append((filepath, batch_metrics))
@@ -798,7 +798,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
             from torch_xla.core.xla_model import save
         else:
             from torch import save
-        self._saver_fn = save
+        self._save_fn = save
 
     def on_batch_end(self, runner: IRunner):
         """

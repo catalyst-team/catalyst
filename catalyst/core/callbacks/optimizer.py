@@ -11,7 +11,7 @@ from catalyst.tools.typing import Optimizer
 logger = logging.getLogger(__name__)
 
 try:
-    from torch_xla.core.xla_model import optimizer_step
+    import torch_xla.core.xla_model as xm
 except ModuleNotFoundError:
     pass
 
@@ -27,7 +27,7 @@ class OptimizerCallback(Callback):
         grad_clip_params: Dict = None,
         decouple_weight_decay: bool = True,
         loss_key: str = None,
-        use_xla_barrier: bool = True,
+        xla_barrier: bool = True,
     ):
         """
         Args:
@@ -39,8 +39,15 @@ class OptimizerCallback(Callback):
             grad_clip_params (dict): params for gradient clipping
             decouple_weight_decay (bool): If True - decouple weight decay
                 regularization.
-            use_xla_barrier (bool): use barrier option if used xla,
-                default ``True``.
+            xla_barrier (bool): barrier option for xla. Here you can find
+                more about usage of `barrier flag
+                <https://pytorch.org/xla/release/1.5/index.html?
+                highlight=optimizer_step#torch_xla.core.xla_model.optimizer_step>`_
+                and `examples
+                <https://pytorch.org/xla/release/1.5/index.html#
+                running-on-a-single-xla-device>`_.
+
+                Default is ``True``.
         """
         super().__init__(order=CallbackOrder.optimizer, node=CallbackNode.all)
         assert metric_key is None or loss_key is None
@@ -65,7 +72,7 @@ class OptimizerCallback(Callback):
         self._optimizer_wd: List[float] = [0.0]
         self._optimizer_step_fn: Callable = None
         self.is_xla = False
-        self.use_xla_barrier = use_xla_barrier
+        self.use_xla_barrier = xla_barrier
 
     def grad_step(
         self,
@@ -91,6 +98,25 @@ class OptimizerCallback(Callback):
         # optimize parameters
         self._optimizer_step_fn(optimizer)
 
+    def _optimizer_step(self, optimizer: Optimizer) -> None:
+        """CPU and GPU optimization step.
+
+        Args:
+            optimizer (Optimizer): optimizer object
+        """
+        optimizer.step()
+
+    def _optimizer_step_tpu(self, optimizer: Optimizer) -> None:
+        """TPU optimization step.
+
+        Args:
+            optimizer (Optimizer): optimizer object
+        """
+        if self.use_xla_barrier:
+            xm.optimizer_step(optimizer, barrier=True)
+        else:
+            xm.optimizer_step(optimizer)
+
     def on_stage_start(self, runner: IRunner) -> None:
         """Checks that the current stage has correct optimizer.
 
@@ -100,15 +126,11 @@ class OptimizerCallback(Callback):
         self._optimizer = runner.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
+        # device based optimization step
         if runner.device.type == "xla":
-            if self.use_xla_barrier:
-                self._optimizer_step_fn = lambda optimizer: optimizer_step(
-                    optimizer, barrier=True
-                )
-            else:
-                self._optimizer_step_fn = optimizer_step
+            self._optimizer_step_fn = self._optimizer_step_tpu
         else:
-            self._optimizer_step_fn = lambda optimizer: optimizer.step()
+            self._optimizer_step_fn = self._optimizer_step
 
         assert self._optimizer is not None
 
