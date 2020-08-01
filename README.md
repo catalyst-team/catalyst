@@ -841,66 +841,7 @@ utils.distributed_cmd_run(train)
 <p>
 
 ```python
-from torch.optim import Adam
-from torch.utils.data import DataLoader
-
-from catalyst import contrib as ctb, data, dl
-from catalyst.core.callbacks import ControlFlowCallback
-from catalyst.dl.callbacks.metrics.cmc import CMCScoreCallback
-
-
-# 1. train and valid datasets
-dataset_root = "."
-transforms = ctb.data.transforms.Compose(
-    [t.ToTensor(), t.Normalize((0.1307,), (0.3081,))]
-)
-
-dataset_train = ctb.datasets.mnist.MnistMLDataset(
-    root=dataset_root, train=True, download=True, transform=transforms,
-)
-sampler = data.sampler.BalanceBatchSampler(
-    labels=dataset_train.get_labels(), p=10, k=10
-)
-train_loader = DataLoader(
-    dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size
-)
-
-dataset_val = ctb.datasets.mnist.MnistQGDataset(
-    root=dataset_root, transform=transforms, gallery_fraq=0.2
-)
-val_loader = DataLoader(dataset=dataset_val, batch_size=1024)
-
-# 2. model and optimizer
-model = ctb.models.simple_conv.SimpleConv(features_dim=16)
-optimizer = Adam(model.parameters(), lr=0.001)
-
-# 3. criterion with triplets sampling
-sampler_inbatch = data.sampler_inbatch.AllTripletsSampler(max_output_triplets=512)
-criterion = ctb.nn.criterion.triplet.TripletMarginLossWithSampling(
-    margin=0.5, sampler_inbatch=sampler_inbatch
-)
-
-# 4. training with catalyst Runner
-callbacks = [
-    ControlFlowCallback(dl.CriterionCallback(), loaders="train"),
-    ControlFlowCallback(CMCScoreCallback(topk_args=[1]), loaders="valid"),
-    dl.callbacks.PeriodicLoaderCallback(valid=600),
-]
-
-runner = dl.runner.SupervisedRunner(device="cuda:0")
-runner.train(
-    model=model,
-    criterion=criterion,
-    optimizer=optimizer,
-    callbacks=callbacks,
-    loaders={"train": train_loader, "valid": val_loader},
-    minimize_metric=False,
-    verbose=True,
-    valid_loader="valid",
-    num_epochs=200,
-    main_metric="cmc_1",
-)
-
+TODO: after green tests
 ```
 </p>
 </details>
