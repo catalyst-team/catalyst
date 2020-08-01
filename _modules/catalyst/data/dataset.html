@@ -259,7 +259,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.data.dataset</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
@@ -280,7 +280,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">list_data</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">],</span>
         <span class="n">open_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
-        <span class="n">dict_transform</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dict_transform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
@@ -326,7 +326,9 @@
 <div class="viewcode-block" id="MergeDataset"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.dataset.MergeDataset">[docs]</a><span class="k">class</span> <span class="nc">MergeDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Abstraction to merge several datasets into one dataset.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="MergeDataset.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.dataset.MergeDataset.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">datasets</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">dict_transform</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="MergeDataset.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.dataset.MergeDataset.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">datasets</span><span class="p">:</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">dict_transform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            datasets (List[Dataset]): params count of datasets to merge</span>
@@ -370,7 +372,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">numpy_data</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
         <span class="n">numpy_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;features&quot;</span><span class="p">,</span>
-        <span class="n">dict_transform</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dict_transform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        General purpose dataset class to use with `numpy_data`.</span>
@@ -428,6 +430,8 @@
         <span class="n">filenames</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">_Path</span><span class="p">],</span>
         <span class="n">open_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="nb">dict</span><span class="p">],</span>
         <span class="n">label_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">_Path</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span>
+        <span class="n">features_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;features&quot;</span><span class="p">,</span>
+        <span class="n">target_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;targets&quot;</span><span class="p">,</span>
         <span class="o">**</span><span class="n">list_dataset_params</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -444,11 +448,13 @@
 <span class="sd">                (for example, your sample could be an image file like</span>
 <span class="sd">                ``/path/to/your/image_1.png`` where the target is encoded as</span>
 <span class="sd">                a part of file path)</span>
+<span class="sd">            features_key (str): key to use to store sample features</span>
+<span class="sd">            target_key (str): key to use to store target label</span>
 <span class="sd">            list_dataset_params (dict): base class initialization</span>
 <span class="sd">                parameters.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">list_data</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">{</span><span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;targets&quot;</span><span class="p">:</span> <span class="n">label_fn</span><span class="p">(</span><span class="n">filename</span><span class="p">)}</span>
+            <span class="p">{</span><span class="n">features_key</span><span class="p">:</span> <span class="n">filename</span><span class="p">,</span> <span class="n">target_key</span><span class="p">:</span> <span class="n">label_fn</span><span class="p">(</span><span class="n">filename</span><span class="p">)}</span>
             <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">filenames</span>
         <span class="p">]</span>
 
