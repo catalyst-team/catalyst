@@ -27,6 +27,6 @@ from .triplet import (
     TripletLoss,
     TripletLossV2,
     TripletPairwiseEmbeddingLoss,
-    TripletMarginLossWithSampling
+    TripletMarginLossWithSampling,
 )
 from .wing import WingLoss

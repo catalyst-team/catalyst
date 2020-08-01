@@ -3,15 +3,8 @@ import logging
 
 from catalyst.tools import settings
 
-from .metric_learning import (
-    MetricLearningTrainDataset,
-    QueryGalleryDataset
-)
-from .mnist import (
-    MnistMLDataset,
-    MnistQGDataset,
-    MNIST
-)
+from .metric_learning import MetricLearningTrainDataset, QueryGalleryDataset
+from .mnist import MnistMLDataset, MnistQGDataset, MNIST
 
 logger = logging.getLogger(__name__)
 
