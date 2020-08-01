@@ -3,9 +3,9 @@ import os
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
-import catalyst.contrib.data.transforms as t
 from catalyst import data, dl
 from catalyst.contrib import datasets, models, nn
+import catalyst.contrib.data.transforms as t
 
 
 def run_ml_pipeline(sampler_inbatch: data.InBatchTripletsSampler) -> float:
