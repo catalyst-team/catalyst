@@ -1,8 +1,8 @@
 import os
 
+from torch.cuda import is_available
 from torch.optim import Adam
 from torch.utils.data import DataLoader
-from torch.cuda import is_available
 
 from catalyst import data, dl
 from catalyst.contrib import datasets, models, nn
@@ -53,7 +53,9 @@ def run_ml_pipeline(sampler_inbatch: data.InBatchTripletsSampler) -> float:
     # 4. training with catalyst Runner
     callbacks = [
         dl.ControlFlowCallback(dl.CriterionCallback(), loaders="train"),
-        dl.ControlFlowCallback(dl.CMCScoreCallback(topk_args=[1]), loaders="valid"),
+        dl.ControlFlowCallback(
+            dl.CMCScoreCallback(topk_args=[1]), loaders="valid"
+        ),
         dl.PeriodicLoaderCallback(valid=10),
     ]
 
