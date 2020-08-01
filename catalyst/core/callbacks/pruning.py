@@ -1,9 +1,18 @@
 from typing import Callable, List, Optional, Union
 import warnings
 
+import torch
 from torch.nn.utils import prune
 
 from catalyst.core import Callback, CallbackOrder, IRunner
+from catalyst.utils.initialization import weight_reset
+
+PRUNING_FN = {
+    "l1_unstructured": prune.l1_unstructured,
+    "random_unstructured": prune.random_unstructured,
+    "ln_structured": prune.ln_structured,
+    "random_structured": prune.random_structured,
+}
 
 
 class PruningCallback(Callback):
@@ -15,24 +24,27 @@ class PruningCallback(Callback):
     """
 
     def __init__(
-        self,
-        pruner_fn: Callable,
-        key_to_prune: Union[str, List[str]] = "weight",
-        amount: Union[int, float] = 0.5,
-        prune_on_epoch_end: bool = False,
-        prune_on_stage_end: bool = True,
-        remove_reparametrization: bool = True,
-        reinitialize_after_pruning: bool = False,
-        layers_to_prune: Optional[List[str]] = None,
+            self,
+            pruning_fn: Union[Callable, str],
+            keys_to_prune: Optional[List[str]] = ["weight"],
+            amount: Optional[Union[int, float]] = 0.5,
+            prune_on_epoch_end: Optional[bool] = False,
+            prune_on_stage_end: Optional[bool] = True,
+            remove_reparametrization: Optional[bool] = True,
+            reinitialize_after_pruning: Optional[bool] = False,
+            layers_to_prune: Optional[List[str]] = None,
+            dim: Optional[int] = None,
+            n: Optional[int] = None,
     ) -> None:
         """
         Init method for pruning callback
 
         Args:
-            pruner_fn: function from torch.nn.utils.prune module
-                or your based on BasePruningMethod. See pytorch
-                docs for more details.
-            key_to_prune: can be string or list of strings. Determines
+            pruning_fn: function from torch.nn.utils.prune module
+                or your based on BasePruningMethod. Can be string e.g.
+                 `"l1_unstructured"`.
+                 See pytorch docs for more details.
+            keys_to_prune: list of strings. Determines
                 which tensor in modules will be pruned.
             amount: quantity of parameters to prune.
                 If float, should be between 0.0 and 1.0 and
@@ -51,10 +63,40 @@ class PruningCallback(Callback):
             layers_to_prune: list of strings - module names to be pruned.
                 If None provided then will try to prune every module in
                 model.
+            dim: if you are using structured pruning method you need
+                to specify dimension.
+            n: if you are using ln_structured you need to specify l_n
+                norm.
 
         """
         super().__init__(CallbackOrder.External)
-        self.pruner_fn = pruner_fn
+        if isinstance(pruning_fn, str):
+            if pruning_fn not in PRUNING_FN.keys():
+                raise Exception(
+                    f"Pruning function should be in {PRUNING_FN.keys()}, "
+                    "global pruning is not currently support."
+                )
+            if "unstructured" not in pruning_fn:
+                if dim is None:
+                    raise Exception(
+                        "If you are using structured pruning you"
+                        "need to specify dim in callback args"
+                    )
+                if pruning_fn == "ln_structured":
+                    if n is None:
+                        raise Exception(
+                            "If you are using ln_unstructured you"
+                            "need to specify n in callback args"
+                        )
+                    self.pruning_fn = \
+                        self._wrap_pruning_fn(prune.ln_structured, dim=dim, n=n)
+                else:
+                    self.pruning_fn = \
+                        self._wrap_pruning_fn(PRUNING_FN[pruning_fn], dim=dim)
+            else:  # unstructured
+                self.pruning_fn = PRUNING_FN[pruning_fn]
+        else:
+            self.pruning_fn = pruning_fn
         self.prune_on_epoch_end = prune_on_epoch_end
         self.prune_on_stage_end = prune_on_stage_end
         if not (prune_on_stage_end or prune_on_epoch_end):
@@ -64,33 +106,33 @@ class PruningCallback(Callback):
                 "Model won't be pruned by this callback."
             )
         self.remove_reparametrization = remove_reparametrization
-        self.key_to_prune = key_to_prune
+        self.key_to_prune = keys_to_prune
         self.amount = amount
         self.reinitialize_after_pruning = reinitialize_after_pruning
         self.layers_to_prune = layers_to_prune
 
     @staticmethod
-    def _weight_reset(m):
-        try:
-            m.reset_parameters()
-        except AttributeError:
-            pass
+    def _wrap_pruning_fn(pruning_fn, *args, **kwargs):
+        return \
+            lambda module, name, amount: pruning_fn(
+                module,
+                name,
+                amount,
+                *args,
+                **kwargs
+            )
 
     def _prune_module(self, module):
-        if isinstance(self.key_to_prune, str):
-            self.pruner_fn(module, name=self.key_to_prune, amount=self.amount)
-        elif isinstance(self.key_to_prune, list):
-            for key in self.key_to_prune:
-                self.pruner_fn(module, name=key, amount=self.amount)
+        for key in self.key_to_prune:
+            self.pruning_fn(module, name=key, amount=self.amount)
 
     def _to_be_pruned(self, layer_name):
-        if self.layers_to_prune is None:
-            return True
-        return layer_name in self.layers_to_prune
+        return self.layers_to_prune is None or \
+               layer_name in self.layers_to_prune
 
-    def _run_pruning(self, runner: "IRunner"):
+    def _run_pruning(self, model: torch.nn.Module):
         pruned_modules = 0
-        for name, module in runner.model.named_modules():
+        for name, module in model.named_modules():
             try:
                 if self._to_be_pruned(name):
                     self._prune_module(module)
@@ -104,7 +146,7 @@ class PruningCallback(Callback):
                 f"There is no {self.key_to_prune} key in your model"
             )
         if self.reinitialize_after_pruning:
-            runner.model.apply(self._weight_reset)
+            model.apply(weight_reset)
 
     def _remove_reparametrization(self, runner: "IRunner"):
         for name, module in runner.model.named_modules():
@@ -118,7 +160,7 @@ class PruningCallback(Callback):
             except ValueError:
                 pass
 
-    def on_epoch_end(self, runner) -> None:
+    def on_epoch_end(self, runner: "IRunner") -> None:
         """
         On epoch end action.
 
@@ -127,9 +169,9 @@ class PruningCallback(Callback):
             runner: runner for your experiment
         """
         if self.prune_on_epoch_end and runner.num_epochs != runner.epoch:
-            self._run_pruning(runner)
+            self._run_pruning(runner.model)
 
-    def on_stage_end(self, runner) -> None:
+    def on_stage_end(self, runner: "IRunner") -> None:
         """
         On stage end action.
 
@@ -139,6 +181,6 @@ class PruningCallback(Callback):
             runner: runner for your experiment
         """
         if self.prune_on_stage_end:
-            self._run_pruning(runner)
+            self._run_pruning(runner.model)
         if self.remove_reparametrization:
             self._remove_reparametrization(runner)

@@ -1,4 +1,7 @@
 # flake8: noqa
+import logging
+
+from catalyst.tools import settings
 
 from catalyst.core.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.core.callbacks.checkpoint import (
@@ -6,10 +9,18 @@ from catalyst.core.callbacks.checkpoint import (
     IterationCheckpointCallback,
 )
 
-import torch
+logger = logging.getLogger(__name__)
 
-if torch.__version__ > "1.4":
+try:
     from .pruning import PruningCallback
+except ImportError as ex:
+    logger.warning(
+        "Quantization and pruning are not available,"
+        "run `pip install torch>=1.4` to enable them."
+    )
+    if settings.pytorch_14:
+        raise ex
+
 from catalyst.core.callbacks.criterion import CriterionCallback
 from catalyst.core.callbacks.early_stop import (
     CheckRunCallback,

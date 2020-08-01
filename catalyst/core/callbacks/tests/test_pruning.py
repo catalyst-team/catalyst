@@ -80,3 +80,73 @@ def test_parametrization():
     except AttributeError:
         mask_applied = False
     assert mask_applied
+
+
+@pytest.mark.skipif(not PRUNING_AVAILABLE, reason="torch version too low")
+def test_pruning_str_unstructured():
+    dataloader = prepare_experiment()
+    model = nn.Linear(100, 10, bias=False)
+    runner = dl.SupervisedRunner()
+    criterion = nn.CrossEntropyLoss()
+    runner.train(
+        model=model,
+        optimizer=torch.optim.Adam(model.parameters()),
+        criterion=criterion,
+        loaders={"train": dataloader},
+        callbacks=[PruningCallback("l1_unstructured")],
+        num_epochs=1,
+    )
+    assert np.isclose(pruning_factor(model), 0.5)
+
+
+@pytest.mark.skipif(not PRUNING_AVAILABLE, reason="torch version too low")
+def test_pruning_str_structured():
+    dataloader = prepare_experiment()
+    model = nn.Linear(100, 10, bias=False)
+    runner = dl.SupervisedRunner()
+    criterion = nn.CrossEntropyLoss()
+    runner.train(
+        model=model,
+        optimizer=torch.optim.Adam(model.parameters()),
+        criterion=criterion,
+        loaders={"train": dataloader},
+        callbacks=[PruningCallback("ln_structured", dim=1, n=2)],
+        num_epochs=1,
+    )
+    assert np.isclose(pruning_factor(model), 0.5)
+
+
+@pytest.mark.skipif(not PRUNING_AVAILABLE, reason="torch version too low")
+@pytest.mark.xfail(raises=Exception)
+def test_pruning_str_structured_f():
+    dataloader = prepare_experiment()
+    model = nn.Linear(100, 10, bias=False)
+    runner = dl.SupervisedRunner()
+    criterion = nn.CrossEntropyLoss()
+    runner.train(
+        model=model,
+        optimizer=torch.optim.Adam(model.parameters()),
+        criterion=criterion,
+        loaders={"train": dataloader},
+        callbacks=[PruningCallback("ln_structured", dim=1)],
+        num_epochs=1,
+    )
+    assert np.isclose(pruning_factor(model), 0.5)
+
+
+@pytest.mark.skipif(not PRUNING_AVAILABLE, reason="torch version too low")
+@pytest.mark.xfail(raises=Exception)
+def test_pruning_str_random_structured_f():
+    dataloader = prepare_experiment()
+    model = nn.Linear(100, 10, bias=False)
+    runner = dl.SupervisedRunner()
+    criterion = nn.CrossEntropyLoss()
+    runner.train(
+        model=model,
+        optimizer=torch.optim.Adam(model.parameters()),
+        criterion=criterion,
+        loaders={"train": dataloader},
+        callbacks=[PruningCallback("random_structured")],
+        num_epochs=1,
+    )
+    assert np.isclose(pruning_factor(model), 0.5)
