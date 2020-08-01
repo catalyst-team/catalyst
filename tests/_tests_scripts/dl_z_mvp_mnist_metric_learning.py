@@ -1,12 +1,12 @@
 import os
 
-from torch.cuda import is_available
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
 from catalyst import data, dl
 from catalyst.contrib import datasets, models, nn
 import catalyst.contrib.data.transforms as t
+from catalyst.utils import get_device
 
 
 def run_ml_pipeline(sampler_inbatch: data.InBatchTripletsSampler) -> float:
@@ -59,7 +59,7 @@ def run_ml_pipeline(sampler_inbatch: data.InBatchTripletsSampler) -> float:
         dl.PeriodicLoaderCallback(valid=10),
     ]
 
-    runner = dl.SupervisedRunner(device="cuda:0" if is_available() else "cpu")
+    runner = dl.SupervisedRunner(device=get_device())
     runner.train(
         model=model,
         criterion=criterion,
