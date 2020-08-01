@@ -841,7 +841,7 @@ utils.distributed_cmd_run(train)
 <p>
 
 ```python
-TODO: after green tests
+@TODO: after green tests
 ```
 </p>
 </details>
