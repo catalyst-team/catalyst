@@ -266,6 +266,7 @@
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 <span class="kn">import</span> <span class="nn">torch.distributed</span>
 
+<span class="kn">from</span> <span class="nn">catalyst.tools.settings</span> <span class="kn">import</span> <span class="n">IS_XLA_AVAILABLE</span>
 <span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Criterion</span><span class="p">,</span>
     <span class="n">Device</span><span class="p">,</span>
@@ -308,12 +309,23 @@
 <span class="sd">        tuple with processed model, criterion, optimizer, scheduler and device.</span>
 
 <span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if device is None and TPU available,</span>
+<span class="sd">            for using TPU need to manualy move model/optimizer/scheduler</span>
+<span class="sd">            to a TPU device and pass device to a function.</span>
 <span class="sd">        NotImplementedError: if model is not nn.Module or dict for multi-gpu,</span>
 <span class="sd">            nn.ModuleDict for DataParallel not implemented yet</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">distributed_params</span> <span class="o">=</span> <span class="n">distributed_params</span> <span class="ow">or</span> <span class="p">{}</span>
     <span class="n">distributed_params</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">distributed_params</span><span class="p">)</span>
     <span class="n">distributed_params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">get_distributed_params</span><span class="p">())</span>
+
+    <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">IS_XLA_AVAILABLE</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;TPU device is available. &quot;</span>
+            <span class="s2">&quot;Please move model, optimizer and scheduler (if present) &quot;</span>
+            <span class="s2">&quot;to TPU device manualy and specify a device or &quot;</span>
+            <span class="s2">&quot;use CPU device.&quot;</span>
+        <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">device</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">device</span> <span class="o">=</span> <span class="n">get_device</span><span class="p">()</span>

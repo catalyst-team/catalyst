@@ -259,7 +259,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.core.callbacks.checkpoint</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
@@ -460,6 +460,11 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">is_exception</span><span class="p">(</span><span class="n">exception</span><span class="p">):</span>
             <span class="k">return</span>
 
+        <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;xla&quot;</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">torch_xla.core.xla_model</span> <span class="kn">import</span> <span class="n">save</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">save</span>
+
         <span class="k">try</span><span class="p">:</span>
             <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">_pack_runner</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
             <span class="n">suffix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_checkpoint_suffix</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span>
@@ -470,6 +475,7 @@
                 <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
                 <span class="n">is_best</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="n">is_last</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">saver_fn</span><span class="o">=</span><span class="n">save</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span>
             <span class="n">metrics</span><span class="p">[</span><span class="n">suffix</span><span class="p">]</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">valid_metrics</span>
@@ -595,7 +601,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">top_best_metrics</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics_history</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_keys_from_state</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;resume&quot;</span><span class="p">,</span> <span class="s2">&quot;resume_dir&quot;</span><span class="p">]</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_keys_from_state</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;resume&quot;</span><span class="p">,</span> <span class="s2">&quot;resume_dir&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="CheckpointCallback.get_checkpoint_suffix"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.checkpoint.CheckpointCallback.get_checkpoint_suffix">[docs]</a>    <span class="k">def</span> <span class="nf">get_checkpoint_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -696,6 +703,7 @@
             <span class="n">is_best</span><span class="o">=</span><span class="n">is_best</span><span class="p">,</span>
             <span class="n">is_last</span><span class="o">=</span><span class="n">is_last</span><span class="p">,</span>
             <span class="n">special_suffix</span><span class="o">=</span><span class="s2">&quot;_full&quot;</span><span class="p">,</span>
+            <span class="n">saver_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_fn</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">exclude</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">]</span>
         <span class="n">checkpoint_path</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span>
@@ -708,6 +716,7 @@
             <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
             <span class="n">is_best</span><span class="o">=</span><span class="n">is_best</span><span class="p">,</span>
             <span class="n">is_last</span><span class="o">=</span><span class="n">is_last</span><span class="p">,</span>
+            <span class="n">saver_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_fn</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">full_checkpoint_path</span><span class="p">,</span> <span class="n">checkpoint_path</span><span class="p">)</span>
 
@@ -763,7 +772,6 @@
 <span class="sd">            mapping (str or dict): mapping to use for loading</span>
 <span class="sd">            load_full (bool): load a full model, used only</span>
 <span class="sd">                when mapping type is string</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">mapping</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="s2">&quot;best_full&quot;</span><span class="p">,</span> <span class="s2">&quot;last&quot;</span><span class="p">,</span> <span class="s2">&quot;last_full&quot;</span><span class="p">}:</span>
@@ -779,17 +787,25 @@
             <span class="p">)</span>
 
 <div class="viewcode-block" id="CheckpointCallback.on_stage_start"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.checkpoint.CheckpointCallback.on_stage_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Setup model for stage.</span>
+        <span class="sd">&quot;&quot;&quot;Setup model for stage.</span>
 
-<span class="sd">        **NOTE:** If CheckpointCallback initialized with ``resume``</span>
-<span class="sd">        (as path to checkpoint file) or ``resume`` (as filename)</span>
-<span class="sd">        and ``resume_dir`` (as directory with file)</span>
-<span class="sd">        then will be performed loading checkpoint.</span>
+<span class="sd">        .. note::</span>
+
+<span class="sd">            If CheckpointCallback initialized with</span>
+<span class="sd">            ``resume`` (as path to checkpoint file)</span>
+<span class="sd">            or ``resume`` (as filename)</span>
+<span class="sd">            and ``resume_dir`` (as directory with file)</span>
+<span class="sd">            then will be performed loading checkpoint.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            runner (IRunner): current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;xla&quot;</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">torch_xla.core.xla_model</span> <span class="kn">import</span> <span class="n">save</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">save</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_fn</span> <span class="o">=</span> <span class="n">save</span>
+
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys_from_state</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">runner</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -945,7 +961,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_counter</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last_checkpoints</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics_history</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_end</span> <span class="o">=</span> <span class="n">load_on_stage_end</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_end</span> <span class="o">=</span> <span class="n">load_on_stage_end</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_fn</span> <span class="o">=</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="IterationCheckpointCallback.get_checkpoint_suffix"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.get_checkpoint_suffix">[docs]</a>    <span class="k">def</span> <span class="nf">get_checkpoint_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1016,6 +1033,7 @@
             <span class="n">suffix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_checkpoint_suffix</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">),</span>
             <span class="n">is_best</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">is_last</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">saver_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_fn</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">last_checkpoints</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">filepath</span><span class="p">,</span> <span class="n">batch_metrics</span><span class="p">))</span>
@@ -1035,7 +1053,13 @@
 <span class="sd">            runner (IRunner): current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage_restart</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_counter</span> <span class="o">=</span> <span class="mi">0</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_counter</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;xla&quot;</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">torch_xla.core.xla_model</span> <span class="kn">import</span> <span class="n">save</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">save</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_fn</span> <span class="o">=</span> <span class="n">save</span></div>
 
 <div class="viewcode-block" id="IterationCheckpointCallback.on_batch_end"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.on_batch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

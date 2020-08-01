@@ -2574,10 +2574,14 @@ load model specified in <code class="docutils literal notranslate"><span class="
 <dt id="catalyst.core.callbacks.checkpoint.CheckpointCallback.on_stage_start">
 <code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#CheckpointCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.CheckpointCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Setup model for stage.</p>
-<p><strong>NOTE:</strong> If CheckpointCallback initialized with <code class="docutils literal notranslate"><span class="pre">resume</span></code>
-(as path to checkpoint file) or <code class="docutils literal notranslate"><span class="pre">resume</span></code> (as filename)
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If CheckpointCallback initialized with
+<code class="docutils literal notranslate"><span class="pre">resume</span></code> (as path to checkpoint file)
+or <code class="docutils literal notranslate"><span class="pre">resume</span></code> (as filename)
 and <code class="docutils literal notranslate"><span class="pre">resume_dir</span></code> (as directory with file)
 then will be performed loading checkpoint.</p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
@@ -2769,7 +2773,7 @@ stages, loaders and epochs.</p>
 <p class="admonition-title">Note</p>
 <p>Please run experiment with
 <a class="reference internal" href="#catalyst.core.callbacks.early_stop.CheckRunCallback" title="catalyst.core.callbacks.early_stop.CheckRunCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">check</span> <span class="pre">option</span></code></a>
-to check if everything works file with this callback.</p>
+to check if everything works as expected with this callback.</p>
 </div>
 <p>For example, if you don’t want to compute loss on a validation
 you can ignore
@@ -3501,12 +3505,12 @@ Must be either <code class="docutils literal notranslate"><span class="pre">sum<
 <span id="optimizer"></span><h3><a class="toc-backref" href="#id18">Optimizer</a><a class="headerlink" href="#module-catalyst.core.callbacks.optimizer" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.core.callbacks.optimizer.OptimizerCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.optimizer.</code><code class="sig-name descname">OptimizerCallback</code><span class="sig-paren">(</span><em class="sig-param">metric_key: str = None</em>, <em class="sig-param">optimizer_key: str = None</em>, <em class="sig-param">accumulation_steps: int = 1</em>, <em class="sig-param">grad_clip_params: Dict = None</em>, <em class="sig-param">decouple_weight_decay: bool = True</em>, <em class="sig-param">loss_key: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/optimizer.html#OptimizerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.optimizer.OptimizerCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.optimizer.</code><code class="sig-name descname">OptimizerCallback</code><span class="sig-paren">(</span><em class="sig-param">metric_key: str = None</em>, <em class="sig-param">optimizer_key: str = None</em>, <em class="sig-param">accumulation_steps: int = 1</em>, <em class="sig-param">grad_clip_params: Dict = None</em>, <em class="sig-param">decouple_weight_decay: bool = True</em>, <em class="sig-param">loss_key: str = None</em>, <em class="sig-param">xla_barrier: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/optimizer.html#OptimizerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.optimizer.OptimizerCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
 <p>Optimizer callback, abstraction over optimizer step.</p>
 <dl class="method">
 <dt id="catalyst.core.callbacks.optimizer.OptimizerCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">metric_key: str = None</em>, <em class="sig-param">optimizer_key: str = None</em>, <em class="sig-param">accumulation_steps: int = 1</em>, <em class="sig-param">grad_clip_params: Dict = None</em>, <em class="sig-param">decouple_weight_decay: bool = True</em>, <em class="sig-param">loss_key: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/optimizer.html#OptimizerCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.optimizer.OptimizerCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">metric_key: str = None</em>, <em class="sig-param">optimizer_key: str = None</em>, <em class="sig-param">accumulation_steps: int = 1</em>, <em class="sig-param">grad_clip_params: Dict = None</em>, <em class="sig-param">decouple_weight_decay: bool = True</em>, <em class="sig-param">loss_key: str = None</em>, <em class="sig-param">xla_barrier: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/optimizer.html#OptimizerCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.optimizer.OptimizerCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -3518,6 +3522,11 @@ there are several of them and they are in a dictionary format.</p></li>
 <li><p><strong>grad_clip_params</strong> (<em>dict</em>) – params for gradient clipping</p></li>
 <li><p><strong>decouple_weight_decay</strong> (<em>bool</em>) – If True - decouple weight decay
 regularization.</p></li>
+<li><p><strong>xla_barrier</strong> (<em>bool</em>) – <p>barrier option for xla. Here you can find
+more about usage of <a class="reference external" href="https://pytorch.org/xla/release/1.5/index.html?highlight=optimizer_step#torch_xla.core.xla_model.optimizer_step">barrier flag</a>
+and <a class="reference external" href="https://pytorch.org/xla/release/1.5/index.html#running-on-a-single-xla-device">examples</a>.</p>
+<p>Default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</p></li>
 </ul>
 </dd>
 </dl>
@@ -3525,7 +3534,7 @@ regularization.</p></li>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.optimizer.OptimizerCallback.grad_step">
-<em class="property">static </em><code class="sig-name descname">grad_step</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em>, <em class="sig-param">optimizer_wds: List[float] = 0</em>, <em class="sig-param">grad_clip_fn: Callable = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/optimizer.html#OptimizerCallback.grad_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.optimizer.OptimizerCallback.grad_step" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">grad_step</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em>, <em class="sig-param">optimizer_wds: List[float] = 0</em>, <em class="sig-param">grad_clip_fn: Callable = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/optimizer.html#OptimizerCallback.grad_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.optimizer.OptimizerCallback.grad_step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes a gradient step for a given optimizer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
