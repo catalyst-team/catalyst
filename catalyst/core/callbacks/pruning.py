@@ -26,7 +26,7 @@ class PruningCallback(Callback):
     def __init__(
         self,
         pruning_fn: Union[Callable, str],
-        keys_to_prune: Optional[List[str]] = ["weight"],
+        keys_to_prune: Optional[List[str]] = None,
         amount: Optional[Union[int, float]] = 0.5,
         prune_on_epoch_end: Optional[bool] = False,
         prune_on_stage_end: Optional[bool] = True,
@@ -99,6 +99,8 @@ class PruningCallback(Callback):
                 self.pruning_fn = PRUNING_FN[pruning_fn]
         else:
             self.pruning_fn = pruning_fn
+        if keys_to_prune is None:
+            keys_to_prune = ["weight"]
         self.prune_on_epoch_end = prune_on_epoch_end
         self.prune_on_stage_end = prune_on_stage_end
         if not (prune_on_stage_end or prune_on_epoch_end):
