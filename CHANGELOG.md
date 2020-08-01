@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `average_precision` and `mean_average_precision` metrics ([#883](https://github.com/catalyst-team/catalyst/pull/883))
 - `MultiLabelAccuracyCallback`, `AveragePrecisionCallback` and `MeanAveragePrecisionCallback` callbacks ([#883](https://github.com/catalyst-team/catalyst/pull/883))
 - minimal examples for multi-class and milti-label classification ([#883](https://github.com/catalyst-team/catalyst/pull/883))
+- experimental TPU support ([#893](https://github.com/catalyst-team/catalyst/pull/893))
+- add `Imagenette`, `Imagewoof`, and `Imagewang` datasets ([#902](https://github.com/catalyst-team/catalyst/pull/902))
 
 ### Changed
 
@@ -25,6 +27,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - `utils.tokenize_text` typo with punctuation ([#880](https://github.com/catalyst-team/catalyst/pull/880))
+- `ControlFlowCallback` logic ([#892](https://github.com/catalyst-team/catalyst/pull/892))
 
 
 ## [20.07] - 2020-07-06
@@ -178,7 +181,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 
--
+- 
 
 ### Fixed
 

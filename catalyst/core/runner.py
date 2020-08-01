@@ -709,7 +709,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
             scheduler,
             device,
         ) = self._get_experiment_components(
-            experiment=self.experiment, stage=stage,
+            experiment=self.experiment, stage=stage, device=self.device
         )
 
         utils.set_global_seed(self.experiment.initial_seed)
