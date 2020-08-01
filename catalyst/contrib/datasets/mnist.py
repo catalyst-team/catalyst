@@ -1,3 +1,4 @@
+# flake8: noqa
 from typing import Any, Callable, Dict, List, Optional
 import codecs
 import os
