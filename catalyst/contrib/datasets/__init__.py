@@ -1,2 +1,10 @@
 # flake8: noqa
-from catalyst.contrib.datasets.mnist import MNIST
+from .metric_learning import (
+    MetricLearningTrainDataset,
+    QueryGalleryDataset
+)
+from .mnist import (
+    MnistMLDataset,
+    MnistQGDataset,
+    MNIST
+)

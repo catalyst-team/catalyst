@@ -12,7 +12,13 @@ from .dataset import (
 from .reader import LambdaReader, ReaderCompose, ReaderSpec, ScalarReader
 from .sampler import (
     BalanceClassSampler,
+    BalanceBatchSampler,
     DistributedSamplerWrapper,
     DynamicLenBatchSampler,
     MiniEpochSampler,
+)
+from .sampler_inbatch import (
+    InBatchTripletsSampler,
+    AllTripletsSampler,
+    HardTripletsSampler
 )

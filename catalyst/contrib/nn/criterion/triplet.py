@@ -336,6 +336,7 @@ class TripletMarginLossWithSampling(nn.Module):
 
 __all__ = [
     "TripletLoss",
+    "TripletLossV2",
     "TripletPairwiseEmbeddingLoss",
     "TripletMarginLossWithSampling",
 ]
