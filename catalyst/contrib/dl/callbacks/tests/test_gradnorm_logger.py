@@ -71,7 +71,7 @@ class _SimpleNet(nn.Module):
             lambda x: torch.tensor(x, dtype=torch.int32),
             (size, kernel_size, stride),
         )
-        output_size = (size - (kernel_size - 1) - 1) / stride + 1
+        output_size = (size - (kernel_size - 1) - 1) // stride + 1
         h, w = map(lambda x: x.item(), output_size)
 
         return h, w
