@@ -24,17 +24,17 @@ class PruningCallback(Callback):
     """
 
     def __init__(
-            self,
-            pruning_fn: Union[Callable, str],
-            keys_to_prune: Optional[List[str]] = ["weight"],
-            amount: Optional[Union[int, float]] = 0.5,
-            prune_on_epoch_end: Optional[bool] = False,
-            prune_on_stage_end: Optional[bool] = True,
-            remove_reparametrization: Optional[bool] = True,
-            reinitialize_after_pruning: Optional[bool] = False,
-            layers_to_prune: Optional[List[str]] = None,
-            dim: Optional[int] = None,
-            n: Optional[int] = None,
+        self,
+        pruning_fn: Union[Callable, str],
+        keys_to_prune: Optional[List[str]] = ["weight"],
+        amount: Optional[Union[int, float]] = 0.5,
+        prune_on_epoch_end: Optional[bool] = False,
+        prune_on_stage_end: Optional[bool] = True,
+        remove_reparametrization: Optional[bool] = True,
+        reinitialize_after_pruning: Optional[bool] = False,
+        layers_to_prune: Optional[List[str]] = None,
+        dim: Optional[int] = None,
+        n: Optional[int] = None,
     ) -> None:
         """
         Init method for pruning callback
@@ -88,11 +88,13 @@ class PruningCallback(Callback):
                             "If you are using ln_unstructured you"
                             "need to specify n in callback args"
                         )
-                    self.pruning_fn = \
-                        self._wrap_pruning_fn(prune.ln_structured, dim=dim, n=n)
+                    self.pruning_fn = self._wrap_pruning_fn(
+                        prune.ln_structured, dim=dim, n=n
+                    )
                 else:
-                    self.pruning_fn = \
-                        self._wrap_pruning_fn(PRUNING_FN[pruning_fn], dim=dim)
+                    self.pruning_fn = self._wrap_pruning_fn(
+                        PRUNING_FN[pruning_fn], dim=dim
+                    )
             else:  # unstructured
                 self.pruning_fn = PRUNING_FN[pruning_fn]
         else:
@@ -106,29 +108,25 @@ class PruningCallback(Callback):
                 "Model won't be pruned by this callback."
             )
         self.remove_reparametrization = remove_reparametrization
-        self.key_to_prune = keys_to_prune
+        self.keys_to_prune = keys_to_prune
         self.amount = amount
         self.reinitialize_after_pruning = reinitialize_after_pruning
         self.layers_to_prune = layers_to_prune
 
     @staticmethod
     def _wrap_pruning_fn(pruning_fn, *args, **kwargs):
-        return \
-            lambda module, name, amount: pruning_fn(
-                module,
-                name,
-                amount,
-                *args,
-                **kwargs
-            )
+        return lambda module, name, amount: pruning_fn(
+            module, name, amount, *args, **kwargs
+        )
 
     def _prune_module(self, module):
-        for key in self.key_to_prune:
+        for key in self.keys_to_prune:
             self.pruning_fn(module, name=key, amount=self.amount)
 
     def _to_be_pruned(self, layer_name):
-        return self.layers_to_prune is None or \
-               layer_name in self.layers_to_prune
+        return (
+            self.layers_to_prune is None or layer_name in self.layers_to_prune
+        )
 
     def _run_pruning(self, model: torch.nn.Module):
         pruned_modules = 0
@@ -143,7 +141,7 @@ class PruningCallback(Callback):
 
         if pruned_modules == 0:
             raise Exception(
-                f"There is no {self.key_to_prune} key in your model"
+                f"There is no {self.keys_to_prune} key in your model"
             )
         if self.reinitialize_after_pruning:
             model.apply(weight_reset)
@@ -152,10 +150,10 @@ class PruningCallback(Callback):
         for name, module in runner.model.named_modules():
             try:
                 if self._to_be_pruned(name):
-                    if isinstance(self.key_to_prune, str):
-                        prune.remove(module, self.key_to_prune)
-                    elif isinstance(self.key_to_prune, list):
-                        for key in self.key_to_prune:
+                    if isinstance(self.keys_to_prune, str):
+                        prune.remove(module, self.keys_to_prune)
+                    elif isinstance(self.keys_to_prune, list):
+                        for key in self.keys_to_prune:
                             prune.remove(module, key)
             except ValueError:
                 pass
