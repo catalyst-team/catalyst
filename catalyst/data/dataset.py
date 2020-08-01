@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 from abc import ABC, abstractmethod
 from pathlib import Path
 
@@ -19,7 +19,7 @@ class ListDataset(Dataset):
         self,
         list_data: List[Dict],
         open_fn: Callable,
-        dict_transform: Callable = None,
+        dict_transform: Optional[Callable] = None,
     ):
         """
         Args:
@@ -65,7 +65,9 @@ class ListDataset(Dataset):
 class MergeDataset(Dataset):
     """Abstraction to merge several datasets into one dataset."""
 
-    def __init__(self, *datasets: Dataset, dict_transform: Callable = None):
+    def __init__(
+        self, *datasets: Dataset, dict_transform: Optional[Callable] = None
+    ):
         """
         Args:
             datasets (List[Dataset]): params count of datasets to merge
@@ -109,7 +111,7 @@ class NumpyDataset(Dataset):
         self,
         numpy_data: np.ndarray,
         numpy_key: str = "features",
-        dict_transform: Callable = None,
+        dict_transform: Optional[Callable] = None,
     ):
         """
         General purpose dataset class to use with `numpy_data`.
@@ -167,6 +169,8 @@ class PathsDataset(ListDataset):
         filenames: List[_Path],
         open_fn: Callable[[dict], dict],
         label_fn: Callable[[_Path], Any],
+        features_key: str = "features",
+        target_key: str = "targets",
         **list_dataset_params
     ):
         """
@@ -183,11 +187,13 @@ class PathsDataset(ListDataset):
                 (for example, your sample could be an image file like
                 ``/path/to/your/image_1.png`` where the target is encoded as
                 a part of file path)
+            features_key (str): key to use to store sample features
+            target_key (str): key to use to store target label
             list_dataset_params (dict): base class initialization
                 parameters.
         """
         list_data = [
-            {"features": filename, "targets": label_fn(filename)}
+            {features_key: filename, target_key: label_fn(filename)}
             for filename in filenames
         ]
 
