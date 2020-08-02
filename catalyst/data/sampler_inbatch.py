@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Tuple, Union
 from abc import ABC, abstractmethod
 from collections import Counter
 from itertools import combinations, product
@@ -30,7 +30,8 @@ class IInbatchTripletSampler(ABC):
         Check if the batch labels list is valid for the sampler.
 
         Args:
-            labels: labels of the samples in the batch
+            labels: labels of the samples in the batch,
+            list or Tensor of shape (batch_size;)
         """
         raise NotImplementedError()
 
@@ -245,7 +246,7 @@ class HardClusterSampler(IInbatchTripletSampler):
         for each of p classes.
 
         Args:
-            labels: list of labels in the batch
+            labels: labels in the batch
 
         Raises:
             ValueError: if batch is invalid (contains different samples
@@ -285,8 +286,8 @@ class HardClusterSampler(IInbatchTripletSampler):
 
     @staticmethod
     def _count_intra_class_distances(
-        embeddings: torch.Tensor, mean_vectors: torch.Tensor
-    ) -> torch.Tensor:
+        embeddings: Tensor, mean_vectors: Tensor
+    ) -> Tensor:
         """
         Count matrix of distances from mean vector of each class to it's
         samples embeddings.
@@ -309,9 +310,7 @@ class HardClusterSampler(IInbatchTripletSampler):
         return distances
 
     @staticmethod
-    def _count_inter_class_distances(
-        mean_vectors: torch.Tensor,
-    ) -> torch.Tensor:
+    def _count_inter_class_distances(mean_vectors: Tensor) -> Tensor:
         """
         Count matrix of distances from mean vectors of classes to each other
 
@@ -326,7 +325,7 @@ class HardClusterSampler(IInbatchTripletSampler):
         return distance
 
     @staticmethod
-    def _fill_diagonal(matrix: torch.Tensor, value: float) -> torch.Tensor:
+    def _fill_diagonal(matrix: Tensor, value: float) -> Tensor:
         """
         Set diagonal elements with the value.
 

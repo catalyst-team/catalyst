@@ -8,7 +8,7 @@ from catalyst.contrib import datasets, models, nn
 import catalyst.contrib.data.transforms as t
 
 
-def run_ml_pipeline(sampler_inbatch: data.InBatchTripletsSampler) -> float:
+def run_ml_pipeline(sampler_inbatch: data.IInbatchTripletSampler) -> float:
     """
     Full metric learning pipeline, including train and val.
 
@@ -87,9 +87,11 @@ def main() -> None:
 
     all_sampler = data.AllTripletsSampler(max_output_triplets=512)
     hard_sampler = data.HardTripletsSampler(norm_required=False)
+    cluster_sampler = data.HardClusterSampler()
 
     assert run_ml_pipeline(all_sampler) > cmc_score_th
     assert run_ml_pipeline(hard_sampler) > cmc_score_th
+    assert run_ml_pipeline(cluster_sampler) > cmc_score_th
 
 
 if __name__ == "__main__":
