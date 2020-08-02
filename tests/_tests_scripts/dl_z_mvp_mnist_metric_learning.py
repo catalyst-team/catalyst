@@ -56,7 +56,7 @@ def run_ml_pipeline(sampler_inbatch: data.InBatchTripletsSampler) -> float:
         dl.ControlFlowCallback(
             dl.CMCScoreCallback(topk_args=[1]), loaders="valid"
         ),
-        dl.PeriodicLoaderCallback(valid=10),
+        dl.PeriodicLoaderCallback(valid=600),
     ]
 
     runner = dl.SupervisedRunner(device=get_device())
