@@ -1,16 +1,18 @@
+import itertools
+import logging
 import os
 import zipfile
-import logging
-import itertools
 
 import numpy as np
-
 import scipy.sparse as sp
 
 import torch
 from torch.utils.data import Dataset
 
-from catalyst.contrib.datasets.utils import download_and_extract_archive, download_url
+from catalyst.contrib.datasets.utils import (
+    download_and_extract_archive,
+    download_url,
+)
 
 
 class MovieLens(Dataset):
@@ -58,19 +60,13 @@ class MovieLens(Dataset):
 
     resources = (
         "http://files.grouplens.org/datasets/movielens/ml-100k.zip",
-        "0e33842e24a9c977be4e0107933c0723"
+        "0e33842e24a9c977be4e0107933c0723",
     )
     filename = "ml-100k.zip"
     training_file = "training.pt"
     test_file = "test.pt"
 
-    def __init__(
-        self, 
-        root,
-        train=True,
-        download=False,
-        min_rating = 0.0
-    ):
+    def __init__(self, root, train=True, download=False, min_rating=0.0):
         """
         Args:
             root (string): Root directory of dataset where
@@ -87,7 +83,7 @@ class MovieLens(Dataset):
 
         if isinstance(root, torch._six.string_classes):  # noqa: WPS437
             root = os.path.expanduser(root)
-        
+
         self.root = root
         self.train = train
         self.min_rating = min_rating
@@ -99,15 +95,13 @@ class MovieLens(Dataset):
             raise RuntimeError(
                 "Dataset not found. You can use download=True to download it"
             )
-        
+
         if self.train:
             data_file = self.training_file
         else:
             data_file = self.test_file
-        
-        self.data = torch.load(
-            os.path.join(self.processed_folder, data_file)
-        )
+
+        self.data = torch.load(os.path.join(self.processed_folder, data_file))
 
     def __getitem__(self, item_index):
         """
@@ -117,7 +111,7 @@ class MovieLens(Dataset):
             tuple: (image, target) where target is index of the target class.
 
         !!! WIP - research TensorDataset since multiople indexing is disabled
-        """ 
+        """
         return self.data.tocsr()[item_index, item_index]
 
     def __len__(self):
@@ -137,7 +131,6 @@ class MovieLens(Dataset):
     def processed_folder(self):
         """@TODO: Docs. Contribution is welcome."""
         return os.path.join(self.root, self.__class__.__name__, "processed")
-
 
     def _check_exists(self):
 
@@ -164,11 +157,9 @@ class MovieLens(Dataset):
             remove_finished=True,
         )
 
-        self.fetch_movies()
-        
-        print("Processing")
+        self._fetch_movies()
 
-        
+        print("Processing")
 
     def _read_raw_movielens_data(self):
         """
@@ -177,24 +168,19 @@ class MovieLens(Dataset):
 
         path = self.raw_folder
 
-        with open(path+"/ml-100k/ua.base") as datafile:
+        with open(path + "/ml-100k/ua.base") as datafile:
             ua_base = datafile.read().split("\n")
 
-        with open(path+"/ml-100k/ua.test") as datafile:
+        with open(path + "/ml-100k/ua.test") as datafile:
             ua_test = datafile.read().split("\n")
-        
-        with open(path+"/ml-100k/u.item", encoding = "ISO-8859-1") as datafile:
+
+        with open(path + "/ml-100k/u.item", encoding="ISO-8859-1") as datafile:
             u_item = datafile.read().split("\n")
 
-        with open(path+"/ml-100k/u.genre") as datafile:
+        with open(path + "/ml-100k/u.genre") as datafile:
             u_genre = datafile.read().split("\n")
 
-        return (
-            ua_base,
-            ua_test,
-            u_item,
-            u_genre
-        )
+        return (ua_base, ua_test, u_item, u_genre)
 
     def _build_interaction_matrix(self, rows, cols, data):
 
@@ -220,7 +206,6 @@ class MovieLens(Dataset):
             uid, iid, rating, timestamp = [int(x) for x in line.split("\t")]
             yield uid - 1, iid - 1, rating, timestamp
 
-
     def _get_dimensions(self, train_data, test_data):
         """
         Get the dimensions of the raw dataset
@@ -240,13 +225,22 @@ class MovieLens(Dataset):
 
         return rows, cols
 
-    def fetch_movies(self):
-        train_raw, test_raw, item_metadata_raw, genres_raw = self._read_raw_movielens_data()
+    def _fetch_movies(self):
+        (
+            train_raw,
+            test_raw,
+            item_metadata_raw,
+            genres_raw,
+        ) = self._read_raw_movielens_data()
         parsed_train = self._parse(train_raw)
         parsed_test = self._parse(test_raw)
         num_users, num_items = self._get_dimensions(parsed_train, parsed_test)
-        train = self._build_interaction_matrix(num_users, num_items, parsed_train)
-        test = self._build_interaction_matrix(num_users, num_items, parsed_test)
+        train = self._build_interaction_matrix(
+            num_users, num_items, parsed_train
+        )
+        test = self._build_interaction_matrix(
+            num_users, num_items, parsed_test
+        )
         assert train.shape == test.shape
 
         with open(
