@@ -7,3 +7,4 @@ from .sequential import (
     ResidualWrapper,
     SequentialNet,
 )
+from .simple_conv import SimpleConv
