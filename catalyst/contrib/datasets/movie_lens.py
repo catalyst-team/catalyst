@@ -115,11 +115,15 @@ class MovieLens(Dataset):
             index (int): Index
         Returns:
             tuple: (image, target) where target is index of the target class.
+
+        !!! WIP - research TensorDataset since multiople indexing is disabled
         """ 
         return self.data.tocsr()[item_index, item_index]
 
     def __len__(self):
-        """@TODO: Docs. Contribution is welcome."""
+        """@TODO: Docs. Contribution is welcome.
+         !!! WIP - research TensorDataset since multiople indexing is disabled
+        """
         return self.dimensions[0]
 
     @property
@@ -159,6 +163,8 @@ class MovieLens(Dataset):
             md5=md5,
             remove_finished=True,
         )
+
+        self.fetch_movies()
         
         print("Processing")
 
@@ -234,50 +240,6 @@ class MovieLens(Dataset):
 
         return rows, cols
 
-    
-    def _parse_item_metadata(self, num_items, item_metadata_raw, genres_raw):
-        """
-        Get item metadata
-        """
-        genres = []
-
-        for line in genres_raw:
-            if line:
-                genre, gid = line.split("|")
-                genres.append("genre:{}".format(genre))
-
-        id_feature_labels = np.empty(num_items, dtype=np.object)
-        genre_feature_labels = np.array(genres)
-
-        id_features = sp.identity(num_items, format="csr", dtype=np.float32)
-        genre_features = sp.lil_matrix((num_items, len(genres)), dtype=np.float32)
-
-        for line in item_metadata_raw:
-
-            if not line:
-                continue
-
-            splt = line.split("|")
-
-            # Zero-based indexing
-            iid = int(splt[0]) - 1
-            title = splt[1]
-
-            id_feature_labels[iid] = title
-
-            item_genres = [idx for idx, val in enumerate(splt[5:]) if int(val) > 0]
-
-            for gid in item_genres:
-                genre_features[iid, gid] = 1.0
-
-        return (
-            id_features,
-            id_feature_labels,
-            genre_features.tocsr(),
-            genre_feature_labels,
-        )
-
-
     def fetch_movies(self):
         train_raw, test_raw, item_metadata_raw, genres_raw = self._read_raw_movielens_data()
         parsed_train = self._parse(train_raw)
@@ -296,28 +258,3 @@ class MovieLens(Dataset):
             os.path.join(self.processed_folder, self.test_file), "wb"
         ) as f:
             torch.save(test, f)
-
-
-
-        # with open(
-        #     os.path.join(self.processed_folder, self.training_file), "wb"
-        # ) as f:
-        #     torch.save(parsed_train, f)
-        
-        # with open(
-        #     os.path.join(self.processed_folder, self.training_file), "wb"
-        # ) as f:
-        #     torch.save(parsed_test, f)
-
-
-def main():
-    root = "./data"
-    movielens = MovieLens(root, download=False)
-    movielens.fetch_movies()
-    print(len(movielens))
-    print(movielens[4])
-
-
-if  __name__ == "__main__":
-    main()
-        
