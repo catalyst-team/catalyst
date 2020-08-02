@@ -94,12 +94,19 @@ class TiledInferenceCallback(Callback):
         self.image_idx = []
         self.allocated = {}
         self.margins = {}
+        self.probs = None
+        self.masks = None
+
+        self.probs_path = self.save_dir / f"probs.npy"
+        self.masks_path = self.save_dir / f"masks.npy"
 
     def on_stage_start(self, state: State):
         """
         On stage start hook.
         """
         self.save_dir.mkdir(parents=True, exist_ok=True)
+        self.probs_path.unlink(missing_ok=True)
+        self.masks_path.unlink(missing_ok=True)
 
     def on_loader_start(self, state: State):
         """
@@ -108,6 +115,8 @@ class TiledInferenceCallback(Callback):
         self.image_idx = []
         self.allocated = {}
         self.margins = {}
+        self.probs = None
+        self.masks = None
 
     def on_batch_end(self, state: State):
         """
@@ -132,6 +141,13 @@ class TiledInferenceCallback(Callback):
             state.input["margins"],
             state.input["tile_size"],
         ):
+            idx = idx.item()
+            x_min = x_min.item()
+            y_min = y_min.item()
+            storage_size = storage_size.cpu().numpy().tolist()
+            margins = margins.cpu().numpy().tolist()
+            tile_size = tile_size.cpu().numpy().tolist()
+
             num_classes, *_ = predictions.shape
             storage_size = Shape(*storage_size)
             margins = Edges(*margins)
@@ -168,43 +184,61 @@ class TiledInferenceCallback(Callback):
             storage[crop_slice] += predictions * weights
             norm_mask[crop_slice] += weights
 
+            self.allocated[idx] = Allocated(
+                storage=storage, norm_mask=norm_mask, weights=weights,
+            )
+
+            if (norm_mask != 0.0).all().item():
+                self._store_ready(idx)
+                self.allocated.pop(idx)
+
+    def _store_ready(self, idx: int):
+        allocated = self.allocated[idx]
+        margins = self.margins[idx]
+        eps = torch.finfo(allocated.norm_mask.dtype).eps
+        norm_mask = torch.clamp_min(allocated.norm_mask, eps)
+        logits = allocated.storage / norm_mask
+        num_classes, h, w = logits.shape
+        crop_slice = (
+            slice(None),
+            slice(margins.top, h - margins.bottom),
+            slice(margins.left, w - margins.right),
+        )
+        logits = logits[crop_slice]
+
+        if num_classes == 1:
+            probs = torch.sigmoid(logits)
+        else:
+            probs = F.softmax(logits, dim=0)
+
+        masks = torch.zeros_like(probs[0], dtype=torch.int32)
+
+        for i, channel in enumerate(probs):
+            masks[channel >= self.threshold] = i + 1
+
+        if not self.class_first:
+            probs = probs.permute(1, 2, 0)
+            masks = masks.permute(1, 2, 0)
+
+        probs = probs.detach().cpu().unsqueeze(dim=0).numpy()
+        masks = masks.detach().cpu().unsqueeze(dim=0).numpy()
+
+        if self.probs is None:
+            self.probs = probs
+        else:
+            self.probs = np.vstack([self.probs, probs])
+
+        if self.masks is None:
+            self.masks = masks
+        else:
+            self.masks = np.vstack([self.masks, masks])
+
     def on_loader_end(self, state: State):
         """
         On loader end post-processing of resulting tensor, then saving it.
         """
-        for idx in self.image_idx:
-            allocated = self.allocated[idx]
-            margins = self.margins[idx]
-            eps = torch.finfo(allocated.norm_mask.dtype).eps
-            allocated.norm_mask = torch.clamp_min(allocated.norm_mask, eps)
-            logits = allocated.storage / allocated.norm_mask
-            num_classes, h, w = logits.shape
-            crop_slice = (
-                slice(None),
-                slice(margins.top, h - margins.bottom),
-                slice(margins.left, w - margins.right),
-            )
-            logits = logits[crop_slice]
-
-            if num_classes == 1:
-                probs = torch.sigmoid(logits)
-            else:
-                probs = F.softmax(logits, dim=0)
-
-            masks = torch.zeros_like(probs[0], dtype=torch.int32)
-
-            for i, channel in enumerate(probs):
-                masks[channel >= self.threshold] = i + 1
-
-            if not self.class_first:
-                probs = probs.permute(1, 2, 0)
-                masks = masks.permute(1, 2, 0)
-
-            probs = probs.detach().cpu().numpy()
-            masks = masks.detach().cpu().numpy()
-
-            np.save(self.save_dir / f"probs.npy", probs)
-            np.save(self.save_dir / f"masks.npy", masks)
+        np.save(self.probs_path, self.probs)
+        np.save(self.masks_path, self.masks)
 
 
 class InferMaskCallback(Callback):
