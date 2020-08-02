@@ -13,8 +13,7 @@ class MRRCallback(MetricCallback):
         self,
         input_key: str = "targets",
         output_key: str = "logits",
-        prefix: str = "mrr",
-        activation: str = "none",
+        prefix: str = "mrr"
     ):
         """
         Args:
@@ -23,15 +22,12 @@ class MRRCallback(MetricCallback):
             output_key (str): output key to use for auc calculation;
                 specifies our ``y_pred``
             prefix (str): name to display for mrr when printing
-            activation (str): An torch.nn activation applied to the outputs.
-                Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax2d'``
         """
         super().__init__(
             prefix=prefix,
             metric_fn=metrics.mrr,
             input_key=input_key,
-            output_key=output_key,
-            activation=activation,
+            output_key=output_key
         )
 
 
