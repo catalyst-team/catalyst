@@ -107,7 +107,7 @@ class TiledImageDataset(Dataset):
             tile_step: tile step
             input_key: input key in State for obtaining image tiles
             output_key: output key in State for obtaining masks
-            transform: optional callable of transforms
+            transform: transform for tile
         """
         super().__init__()
 
