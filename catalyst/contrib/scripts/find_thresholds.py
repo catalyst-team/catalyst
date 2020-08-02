@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from typing import Any, Callable, Dict, List, Tuple
 import argparse
 from itertools import repeat
@@ -13,7 +15,7 @@ from sklearn.model_selection import RepeatedStratifiedKFold
 
 from catalyst import utils
 
-BINARY_PER_CLASS_METRICS = [
+_BINARY_PER_CLASS_METRICS = [  # noqa: WPS407
     "accuracy_score",
     "precision_score",
     "recall_score",
@@ -21,7 +23,7 @@ BINARY_PER_CLASS_METRICS = [
     "roc_auc_score",
 ]
 
-RANK_METRICS = [
+_RANK_METRICS = [  # noqa: WPS407
     "ndcg_score",
     "coverage_error",
     "label_ranking_loss",
@@ -62,7 +64,7 @@ def build_args(parser):
         type=str,
         help="Metric to use",
         required=False,
-        choices=BINARY_PER_CLASS_METRICS,
+        choices=_BINARY_PER_CLASS_METRICS,
         default="roc_auc_score",
     )
     # parser.add_argument(
@@ -140,7 +142,7 @@ def find_best_threshold(
         n_splits=num_splits, n_repeats=num_repeats, random_state=random_state
     )
     fold_thresholds = []
-    fold_metrics = {k: [] for k in BINARY_PER_CLASS_METRICS}
+    fold_metrics = {k: [] for k in _BINARY_PER_CLASS_METRICS.copy()}
 
     for train_index, test_index in rkf.split(y_true, y_true):
         y_pred_train, y_pred_test = y_pred[train_index], y_pred[test_index]
@@ -151,7 +153,7 @@ def find_best_threshold(
         )
         best_predictions = (y_pred_test >= best_threshold).astype(int)
 
-        for metric_name in BINARY_PER_CLASS_METRICS:
+        for metric_name in fold_metrics.keys():
             try:
                 metric_value = metrics.__dict__[metric_name](
                     y_true_test, best_predictions
@@ -169,11 +171,11 @@ def find_best_threshold(
     return fold_best_threshold, fold_metrics
 
 
-def wrap_find_best_threshold(args: Tuple[Any]):
+def find_best_threshold_wrapper(args: Tuple[Any]):
     """@TODO: Docs. Contribution is welcome."""
     class_id, function_args = args[0], args[1:]
-    threshold, metrics = find_best_threshold(*function_args)
-    return class_id, threshold, metrics
+    fold_best_threshold, fold_metrics = find_best_threshold(*function_args)
+    return class_id, fold_best_threshold, fold_metrics
 
 
 def optimize_thresholds(
@@ -189,17 +191,17 @@ def optimize_thresholds(
     """@TODO: Docs. Contribution is welcome."""
     pool = utils.get_pool(num_workers)
 
-    predictions_ = predictions.copy()
+    predictions_copy = predictions.copy()
 
     predictions_list, labels_list = [], []
-    for cls in classes:
-        predictions_list.append(predictions_[:, cls])
+    for class_index in classes:
+        predictions_list.append(predictions_copy[:, class_index])
         labels_list.append(
-            get_binary_labels(labels, cls, ignore_label=ignore_label)
+            get_binary_labels(labels, class_index, ignore_label=ignore_label)
         )
 
     results = utils.tqdm_parallel_imap(
-        wrap_find_best_threshold,
+        find_best_threshold_wrapper,
         zip(
             classes,
             predictions_list,
@@ -223,7 +225,7 @@ def get_model_confidences(
     confidences: np.ndarray,
     thresholds: Dict[int, float] = None,
     classes: List[int] = None,
-):
+) -> np.ndarray:
     """
     @TODO: Docs (add description). Contribution is welcome
 
@@ -232,6 +234,9 @@ def get_model_confidences(
             [dataset_len; class_confidences]
         thresholds (Dict[int, float]): thresholds for each class
         classes (List[int]): classes of interest for evaluation
+
+    Returns:
+        thresholded confidences
     """
     if classes is not None:
         classes = np.array(classes)
@@ -307,7 +312,7 @@ def main(args, _=None):
                 for key_class in class_metrics.keys()
             ]
         )
-        for key_metric in BINARY_PER_CLASS_METRICS
+        for key_metric in _BINARY_PER_CLASS_METRICS
     }
 
     _save_json(class_metrics, args.out_thresholds, suffix=".class.metrics")
@@ -320,18 +325,18 @@ def main(args, _=None):
 
     labels_scores = np.zeros(predictions.shape)
     labels_scores[:, labels] = 1.0
-    for class_thresholds_ in [None, class_thresholds]:
-        thresholds_used = class_thresholds_ is not None
+    for class_thresholds_option in [None, class_thresholds]:
+        thresholds_used = class_thresholds_option is not None
 
         confidences = get_model_confidences(
             confidences=predictions,
-            thresholds=class_thresholds_,
+            thresholds=class_thresholds_option,
             classes=classes,
         )
 
         rank_metrics = {
             key: metrics.__dict__[key](labels_scores, confidences)
-            for key in RANK_METRICS
+            for key in _RANK_METRICS.copy()
         }
         postfix = (
             ".rank.metrics"

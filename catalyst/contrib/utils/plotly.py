@@ -1,3 +1,5 @@
+# flake8: noqa
+# TODO: add docs and move to pure contrib
 from typing import Dict, List, Optional, Union
 from collections import defaultdict
 from pathlib import Path
@@ -64,9 +66,9 @@ def plot_tensorboard_log(
         metric_data = []
         for key, value in metric_logs.items():
             try:
-                data_ = _get_scatter(value, f"{key}/{metric_name}")
-                metric_data.append(data_)
-            except:  # noqa: E722
+                scatter_data = _get_scatter(value, f"{key}/{metric_name}")
+                metric_data.append(scatter_data)
+            except:  # noqa: E722, S110
                 pass
 
         layout = go.Layout(

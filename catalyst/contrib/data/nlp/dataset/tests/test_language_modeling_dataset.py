@@ -6,8 +6,8 @@ from transformers import AutoTokenizer
 from catalyst.contrib.data.nlp.dataset import LanguageModelingDataset
 
 texts = [
-    """Bonaparte Crossing the Alps is an oil-on-canvas painting by French artist""",  # noqa: E501
-    """Bhaskara's Lemma is an identity used as a lemma during the chakravala method. """,  # noqa: E501
+    "Bonaparte Crossing the Alps is an oil-on-canvas painting by French artist",  # noqa: E501
+    "Bhaskara's Lemma is an identity used as a lemma during the chakravala method. ",  # noqa: E501
 ]
 
 

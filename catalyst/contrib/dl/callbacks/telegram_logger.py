@@ -1,16 +1,19 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from typing import List
 import logging
 from urllib.parse import quote_plus
 from urllib.request import Request, urlopen
 
 from catalyst import utils
-from catalyst.core import Callback, CallbackNode, CallbackOrder, State
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.runner import IRunner
 from catalyst.tools import settings
 
 
 class TelegramLogger(Callback):
     """
-    Logger callback, translates ``state.metric_manager`` to telegram channel.
+    Logger callback, translates ``runner.metric_manager`` to telegram channel.
     """
 
     def __init__(
@@ -37,7 +40,7 @@ class TelegramLogger(Callback):
             log_on_stage_end (bool): send notification on stage end
             log_on_exception (bool): send notification on exception
         """
-        super().__init__(order=CallbackOrder.Logging, node=CallbackNode.Master)
+        super().__init__(order=CallbackOrder.logging, node=CallbackNode.master)
         # @TODO: replace this logic with global catalyst config at ~/.catalyst
         self._token = token or settings.telegram_logger_token
         self._chat_id = chat_id or settings.telegram_logger_chat_id
@@ -64,30 +67,30 @@ class TelegramLogger(Callback):
             )
 
             request = Request(url)
-            urlopen(request)
+            urlopen(request)  # noqa: S310
         except Exception as e:
             logging.getLogger(__name__).warning(f"telegram.send.error:{e}")
 
-    def on_stage_start(self, state: State):
+    def on_stage_start(self, runner: IRunner):
         """Notify about starting a new stage."""
         if self.log_on_stage_start:
-            text = f"{state.stage_name} stage was started"
+            text = f"{runner.stage_name} stage was started"
 
             self._send_text(text)
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, runner: IRunner):
         """Notify about starting running the new loader."""
         if self.log_on_loader_start:
             text = (
-                f"{state.loader_name} {state.global_epoch} epoch has started"
+                f"{runner.loader_name} {runner.global_epoch} epoch has started"
             )
 
             self._send_text(text)
 
-    def on_loader_end(self, state: State):
-        """Translate ``state.metric_manager`` to telegram channel."""
+    def on_loader_end(self, runner: IRunner):
+        """Translate ``runner.metric_manager`` to telegram channel."""
         if self.log_on_loader_end:
-            metrics = state.loader_metrics
+            metrics = runner.loader_metrics
 
             if self.metrics_to_log is None:
                 metrics_to_log = sorted(metrics.keys())
@@ -95,7 +98,8 @@ class TelegramLogger(Callback):
                 metrics_to_log = self.metrics_to_log
 
             rows: List[str] = [
-                f"{state.loader_name} {state.global_epoch} epoch was finished:"
+                f"{runner.loader_name} {runner.global_epoch}"
+                f" epoch was finished:"
             ]
 
             for name in metrics_to_log:
@@ -106,17 +110,17 @@ class TelegramLogger(Callback):
 
             self._send_text(text)
 
-    def on_stage_end(self, state: State):
+    def on_stage_end(self, runner: IRunner):
         """Notify about finishing a stage."""
         if self.log_on_stage_end:
-            text = f"{state.stage_name} stage was finished"
+            text = f"{runner.stage_name} stage was finished"
 
             self._send_text(text)
 
-    def on_exception(self, state: State):
+    def on_exception(self, runner: IRunner):
         """Notify about raised ``Exception``."""
         if self.log_on_exception:
-            exception = state.exception
+            exception = runner.exception
             if utils.is_exception(exception) and not isinstance(
                 exception, KeyboardInterrupt
             ):

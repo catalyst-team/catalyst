@@ -59,7 +59,7 @@ class CustomRunner(dl.Runner):
             predictions, misleading_labels
         )
 
-        self.state.batch_metrics.update(**batch_metrics)
+        self.batch_metrics.update(**batch_metrics)
 
 
 def main():
@@ -96,9 +96,7 @@ def main():
     }
     loaders = {
         "train": DataLoader(
-            MNIST(
-                os.getcwd(), train=True, download=True, transform=ToTensor(),
-            ),
+            MNIST("./data", train=True, download=True, transform=ToTensor(),),
             batch_size=32,
         ),
     }

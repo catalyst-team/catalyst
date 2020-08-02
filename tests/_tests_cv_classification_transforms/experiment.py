@@ -1,6 +1,8 @@
 from typing import Tuple
 from collections import OrderedDict
 
+from torch.utils.data import Dataset
+
 from catalyst.contrib.datasets import MNIST as _MNIST
 from catalyst.dl.experiment import ConfigExperiment
 
@@ -28,11 +30,17 @@ class MNIST(_MNIST):
 class Experiment(ConfigExperiment):
     """``ConfigExperiment`` with MNIST dataset."""
 
-    def get_datasets(self, stage: str, **kwargs):
+    def get_datasets(
+        self, stage: str, **kwargs
+    ) -> "OrderedDict[str, Dataset]":
         """Provides train/validation subsets from MNIST dataset.
 
         Args:
             stage (str): stage name e.g. ``'stage1'`` or ``'infer'``
+            **kwargs: extra params
+
+        Returns:
+            ordered dict with datasets
         """
         datasets = OrderedDict()
         for mode in ("train", "valid"):

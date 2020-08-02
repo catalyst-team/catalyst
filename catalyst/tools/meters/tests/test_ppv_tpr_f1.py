@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 import torch
 
 from catalyst.tools import meters
@@ -72,6 +74,10 @@ def runs_tests_on_meter_counts_and_value(meter, num_tp_check=16):
     """
     Tests the meter's counts and values (ppv, tpr, f1). Assumes there are no
     fp and fn (everything is tp).
+
+    Args:
+        meter:  meter instance
+        num_tp_check: number of tp checks
     """
     counts_dict = meter.tp_fp_fn_counts
     assert counts_dict["tp"] == num_tp_check

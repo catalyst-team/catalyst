@@ -5,6 +5,7 @@ import torch
 from torch import nn
 import torch.distributed
 
+from catalyst.tools.settings import IS_XLA_AVAILABLE
 from catalyst.tools.typing import (
     Criterion,
     Device,
@@ -42,10 +43,28 @@ def process_components(
         distributed_params (dict, optional): dict with the parameters
             for distributed and FP16 method
         device (Device, optional): device
+
+    Returns:
+        tuple with processed model, criterion, optimizer, scheduler and device.
+
+    Raises:
+        ValueError: if device is None and TPU available,
+            for using TPU need to manualy move model/optimizer/scheduler
+            to a TPU device and pass device to a function.
+        NotImplementedError: if model is not nn.Module or dict for multi-gpu,
+            nn.ModuleDict for DataParallel not implemented yet
     """
     distributed_params = distributed_params or {}
     distributed_params = copy.deepcopy(distributed_params)
     distributed_params.update(get_distributed_params())
+
+    if device is None and IS_XLA_AVAILABLE:
+        raise ValueError(
+            "TPU device is available. "
+            "Please move model, optimizer and scheduler (if present) "
+            "to TPU device manualy and specify a device or "
+            "use CPU device."
+        )
 
     if device is None:
         device = get_device()

@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from typing import Any, Callable, Dict, List, Union
 from abc import ABC, abstractmethod
 from collections import defaultdict
@@ -5,13 +7,15 @@ import logging
 
 import torch
 
-from catalyst.core import Callback, CallbackNode, CallbackOrder, State, utils
+from catalyst.core import utils
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.runner import IRunner
 from catalyst.tools import meters
 
 logger = logging.getLogger(__name__)
 
 
-class _MetricCallback(ABC, Callback):
+class IMetricCallback(ABC, Callback):
     """@TODO: Docs. Contribution is welcome."""
 
     def __init__(
@@ -23,7 +27,7 @@ class _MetricCallback(ABC, Callback):
         **metrics_kwargs,
     ):
         """@TODO: Docs. Contribution is welcome."""
-        super().__init__(order=CallbackOrder.Metric, node=CallbackNode.All)
+        super().__init__(order=CallbackOrder.metric, node=CallbackNode.all)
         self.prefix = prefix
         # self.metric_fn = partial(metric_fn, **metrics_kwargs)
         self.input_key = input_key
@@ -65,28 +69,28 @@ class _MetricCallback(ABC, Callback):
         """@TODO: Docs. Contribution is welcome."""
         pass
 
-    def _compute_metric_value(self, state: State):
-        output = self._get_output(state.output, self.output_key)
-        input = self._get_input(state.input, self.input_key)
+    def _compute_metric_value(self, runner: IRunner):
+        output = self._get_output(runner.output, self.output_key)
+        input_ = self._get_input(runner.input, self.input_key)
 
-        metric = self.metric_fn(output, input, **self.metrics_kwargs)
+        metric = self.metric_fn(output, input_, **self.metrics_kwargs)
         return metric
 
-    def _compute_metric_key_value(self, state: State):
-        output = self._get_output(state.output, self.output_key)
-        input = self._get_input(state.input, self.input_key)
+    def _compute_metric_key_value(self, runner: IRunner):
+        output = self._get_output(runner.output, self.output_key)
+        input_ = self._get_input(runner.input, self.input_key)
 
-        metric = self.metric_fn(**output, **input, **self.metrics_kwargs)
+        metric = self.metric_fn(**output, **input_, **self.metrics_kwargs)
         return metric
 
-    def on_batch_end(self, state: State) -> None:
+    def on_batch_end(self, runner: IRunner) -> None:
         """Computes the metric and add it to batch metrics."""
-        metric = self._compute_metric(state) * self.multiplier
-        state.batch_metrics[self.prefix] = metric
+        metric = self._compute_metric(runner) * self.multiplier
+        runner.batch_metrics[self.prefix] = metric
 
 
-class MetricCallback(_MetricCallback):
-    """A callback that returns single metric on `state.on_batch_end`."""
+class MetricCallback(IMetricCallback):
+    """A callback that returns single metric on `runner.on_batch_end`."""
 
     def __init__(
         self,
@@ -114,7 +118,7 @@ class MetricCallback(_MetricCallback):
 
 
 class MultiMetricCallback(MetricCallback):
-    """A callback that returns multiple metrics on `state.on_batch_end`."""
+    """A callback that returns multiple metrics on `runner.on_batch_end`."""
 
     def __init__(
         self,
@@ -137,20 +141,20 @@ class MultiMetricCallback(MetricCallback):
         )
         self.list_args = list_args
 
-    def on_batch_end(self, state: State) -> None:
+    def on_batch_end(self, runner: IRunner) -> None:
         """Batch end hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
-        metrics_ = self._compute_metric(state)
+        metrics = self._compute_metric(runner)
 
-        for arg, metric in zip(self.list_args, metrics_):
+        for arg, metric in zip(self.list_args, metrics):
             if isinstance(arg, int):
                 key = f"{self.prefix}{arg:02}"
             else:
                 key = f"{self.prefix}_{arg}"
-            state.batch_metrics[key] = metric * self.multiplier
+            runner.batch_metrics[key] = metric * self.multiplier
 
 
 class MetricAggregationCallback(Callback):
@@ -174,7 +178,7 @@ class MetricAggregationCallback(Callback):
             multiplier (float): scale factor for the aggregated metric.
         """
         super().__init__(
-            order=CallbackOrder.MetricAggregation, node=CallbackNode.All
+            order=CallbackOrder.metric_aggregation, node=CallbackNode.all
         )
 
         if prefix is None or not isinstance(prefix, str):
@@ -234,15 +238,15 @@ class MetricAggregationCallback(Callback):
             result = list(metrics.values())
         return result
 
-    def on_batch_end(self, state: State) -> None:
+    def on_batch_end(self, runner: IRunner) -> None:
         """Computes the metric and add it to the metrics.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
-        metrics = self._preprocess(state.batch_metrics)
+        metrics = self._preprocess(runner.batch_metrics)
         metric = self.aggregation_fn(metrics)
-        state.batch_metrics[self.prefix] = metric
+        runner.batch_metrics[self.prefix] = metric
 
 
 class MetricManagerCallback(Callback):
@@ -253,12 +257,13 @@ class MetricManagerCallback(Callback):
     def __init__(self):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__(
-            order=CallbackOrder.Logging - 1, node=CallbackNode.All,
+            order=CallbackOrder.logging - 1, node=CallbackNode.all,
         )
         self.meters: Dict[str, meters.AverageValueMeter] = None
 
     @staticmethod
-    def _to_single_value(value: Any) -> float:
+    def to_single_value(value: Any) -> float:
+        """@TODO: Docs. Contribution is welcome."""
         if hasattr(value, "item"):
             value = value.item()
 
@@ -270,60 +275,60 @@ class MetricManagerCallback(Callback):
         output = {}
         for key, value in metrics.items():
             value = utils.get_distributed_mean(value)
-            value = MetricManagerCallback._to_single_value(value)
+            value = MetricManagerCallback.to_single_value(value)
             output[key] = value
         return output
 
-    def on_epoch_start(self, state: State) -> None:
+    def on_epoch_start(self, runner: IRunner) -> None:
         """Epoch start hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
-        state.epoch_metrics = defaultdict(None)
+        runner.epoch_metrics = defaultdict(None)
 
-    def on_loader_start(self, state: State) -> None:
+    def on_loader_start(self, runner: IRunner) -> None:
         """Loader start hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
-        state.loader_metrics = defaultdict(None)
+        runner.loader_metrics = defaultdict(None)
         self.meters = defaultdict(meters.AverageValueMeter)
 
-    def on_loader_end(self, state: State) -> None:
+    def on_loader_end(self, runner: IRunner) -> None:
         """Loader end hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
         for key, value in self.meters.items():
             value = value.mean
-            state.loader_metrics[key] = value
-        for key, value in state.loader_metrics.items():
-            state.epoch_metrics[f"{state.loader_name}_{key}"] = value
+            runner.loader_metrics[key] = value
+        for key, value in runner.loader_metrics.items():
+            runner.epoch_metrics[f"{runner.loader_name}_{key}"] = value
 
-    def on_batch_start(self, state: State) -> None:
+    def on_batch_start(self, runner: IRunner) -> None:
         """Batch start hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
-        state.batch_metrics = defaultdict(None)
+        runner.batch_metrics = defaultdict(None)
 
-    def on_batch_end(self, state: State) -> None:
+    def on_batch_end(self, runner: IRunner) -> None:
         """Batch end hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
-        state.batch_metrics = self._process_metrics(state.batch_metrics)
-        for key, value in state.batch_metrics.items():
-            self.meters[key].add(value, state.batch_size)
+        runner.batch_metrics = self._process_metrics(runner.batch_metrics)
+        for key, value in runner.batch_metrics.items():
+            self.meters[key].add(value, runner.batch_size)
 
 
 __all__ = [
-    "_MetricCallback",
+    "IMetricCallback",
     "MetricCallback",
     "MultiMetricCallback",
     "MetricAggregationCallback",

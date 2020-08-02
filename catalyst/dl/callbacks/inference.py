@@ -3,7 +3,7 @@ import os
 
 import numpy as np
 
-from catalyst.dl import Callback, CallbackOrder, State
+from catalyst.core import Callback, CallbackOrder, IRunner
 
 
 # @TODO: refactor
@@ -15,52 +15,52 @@ class InferCallback(Callback):
         Args:
             @TODO: Docs. Contribution is welcome
         """
-        super().__init__(CallbackOrder.Internal)
+        super().__init__(CallbackOrder.internal)
         self.out_dir = out_dir
         self.out_prefix = out_prefix
         self.predictions = defaultdict(lambda: [])
-        self._keys_from_state = ["out_dir", "out_prefix"]
+        self._keys_from_runner = ["out_dir", "out_prefix"]
 
-    def on_stage_start(self, state: State):
+    def on_stage_start(self, runner: IRunner):
         """Stage start hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
-        for key in self._keys_from_state:
-            value = getattr(state, key, None)
+        for key in self._keys_from_runner:
+            value = getattr(runner, key, None)
             if value is not None:
                 setattr(self, key, value)
         # assert self.out_prefix is not None
         if self.out_dir is not None:
-            self.out_prefix = str(self.out_dir) + "/" + str(self.out_prefix)
+            self.out_prefix = f"{str(self.out_dir)}/{str(self.out_prefix)}"
         if self.out_prefix is not None:
             os.makedirs(os.path.dirname(self.out_prefix), exist_ok=True)
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, runner: IRunner):
         """Loader start hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
         self.predictions = defaultdict(lambda: [])
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, runner: IRunner):
         """Batch end hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
-        dct = state.output
+        dct = runner.output
         dct = {key: value.detach().cpu().numpy() for key, value in dct.items()}
         for key, value in dct.items():
             self.predictions[key].append(value)
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, runner: IRunner):
         """Loader end hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
         self.predictions = {
             key: np.concatenate(value, axis=0)
@@ -68,7 +68,7 @@ class InferCallback(Callback):
         }
         if self.out_prefix is not None:
             for key, value in self.predictions.items():
-                suffix = ".".join([state.loader_name, key])
+                suffix = ".".join([runner.loader_name, key])
                 np.save(f"{self.out_prefix}/{suffix}.npy", value)
 
 

@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 import argparse
 import json
 from pathlib import Path
@@ -8,8 +10,15 @@ from catalyst import utils
 
 
 def build_args(parser):
-    """Constructs the command-line arguments for
+    """
+    Constructs the command-line arguments for
     ``catalyst-data split-dataframe``.
+
+    Args:
+        parser: parser
+
+    Returns:
+        modified parser
     """
     parser.add_argument(
         "--in-csv",
@@ -75,7 +84,10 @@ def build_args(parser):
     )
 
     parser.add_argument(
-        "--seed", type=int, default=42, help="Random seed for split folds"
+        "--seed",
+        type=int,
+        default=42,  # noqa: WPS432
+        help="Random seed for split folds",
     )
 
     return parser

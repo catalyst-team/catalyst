@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 import numpy as np
 
 import torch
@@ -16,20 +18,22 @@ def calculate_tp_fp_fn(confusion_matrix: np.ndarray) -> np.ndarray:
 
 
 def calculate_confusion_matrix_from_arrays(
-    ground_truth: np.ndarray, prediction: np.ndarray, num_classes: int
+    predictions: np.ndarray, labels: np.ndarray, num_classes: int
 ) -> np.ndarray:
     """Calculate confusion matrix for a given set of classes.
-    If GT value is outside of the [0, num_classes) it is excluded.
+    If labels value is outside of the [0, num_classes) it is excluded.
 
     Args:
-        ground_truth (np.ndarray):
-        prediction (np.ndarray):
-        num_classes (int):
+        predictions (np.ndarray): model predictions
+        labels (np.ndarray): ground truth labels
+        num_classes (int): number of classes
 
-    @TODO: Docs . Contribution is welcome
+    Returns:
+        np.ndarray: confusion matrix
     """
+    # @TODO: add `num_class`=None handling
     # a long 2xn array with each column being a pixel pair
-    replace_indices = np.vstack((ground_truth.flatten(), prediction.flatten()))
+    replace_indices = np.vstack((labels.flatten(), predictions.flatten()))
 
     valid_index = replace_indices[0, :] < num_classes
     replace_indices = replace_indices[:, valid_index].T
@@ -46,14 +50,23 @@ def calculate_confusion_matrix_from_arrays(
 def calculate_confusion_matrix_from_tensors(
     y_pred_logits: torch.Tensor, y_true: torch.Tensor
 ) -> np.ndarray:
-    """@TODO: Docs. Contribution is welcome."""
+    """
+    Calculate confusion matrix from tensors.
+
+    Args:
+        y_pred_logits: model logits
+        y_true: true labels
+
+    Returns:
+        np.ndarray: confusion matrix
+    """
     num_classes = y_pred_logits.shape[1]
     y_pred = torch.argmax(y_pred_logits, dim=1)
-    ground_truth = y_true.cpu().numpy()
-    prediction = y_pred.cpu().numpy()
+    predictions = y_pred.cpu().numpy()
+    labels = y_true.cpu().numpy()
 
     return calculate_confusion_matrix_from_arrays(
-        ground_truth, prediction, num_classes
+        predictions, labels, num_classes
     )
 
 

@@ -1,4 +1,4 @@
-from typing import Dict, Union
+from typing import Dict, List, Union
 from collections import OrderedDict
 
 from catalyst.core.callback import CallbackNode
@@ -6,7 +6,7 @@ from catalyst.core.utils import get_rank
 
 
 def sort_callbacks_by_order(
-    callbacks: Union[list, OrderedDict]
+    callbacks: Union[List, Dict, OrderedDict]
 ) -> OrderedDict:
     """Creates an sequence of callbacks and sort them.
 
@@ -15,10 +15,14 @@ def sort_callbacks_by_order(
 
     Returns:
         sequence of callbacks sorted by ``callback order``
+
+    Raises:
+        TypeError: if `callbacks` is out of
+            `None`, `dict`, `OrderedDict`, `list`
     """
     if callbacks is None:
         output = OrderedDict()
-    elif isinstance(callbacks, (Dict, OrderedDict)):
+    elif isinstance(callbacks, (dict, OrderedDict)):
         output = [(k, v) for k, v in callbacks.items()]
         output = sorted(output, key=lambda x: x[1].order)
         output = OrderedDict(output)
@@ -54,13 +58,13 @@ def filter_callbacks_by_node(
     if rank == 0:  # master node
         # remove worker-only callbacks on master node
         for k in list(
-            filter(lambda c: output[c].node == CallbackNode.Worker, output,)
+            filter(lambda c: output[c].node == CallbackNode.worker, output)
         ):
             del output[k]
     elif rank > 0:  # worker node
         # remove master-only callbacks on worker nodes
         for k in list(
-            filter(lambda c: output[c].node == CallbackNode.Master, output,)
+            filter(lambda c: output[c].node == CallbackNode.master, output)
         ):
             del output[k]
     return output

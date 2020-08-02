@@ -1,17 +1,24 @@
 # flake8: noqa
 
-from .checkpoint import CheckpointCallback, IterationCheckpointCallback
-from .criterion import CriterionCallback
-from .early_stop import CheckRunCallback, EarlyStoppingCallback
-from .exception import ExceptionCallback
-from .logging import ConsoleLogger, TensorboardLogger, VerboseLogger
-from .metrics import (
-    MetricAggregationCallback,
-    MetricCallback,
-    MetricManagerCallback,
-    MultiMetricCallback,
+from catalyst.core.callbacks.batch_overfit import BatchOverfitCallback
+from catalyst.core.callbacks.checkpoint import (
+    CheckpointCallback,
+    IterationCheckpointCallback,
 )
-from .optimizer import OptimizerCallback
-from .scheduler import LRUpdater, SchedulerCallback
-from .timer import TimerCallback
-from .validation import ValidationManagerCallback
+from catalyst.core.callbacks.criterion import CriterionCallback
+from catalyst.core.callbacks.early_stop import (
+    CheckRunCallback,
+    EarlyStoppingCallback,
+)
+from catalyst.core.callbacks.exception import ExceptionCallback
+from catalyst.core.callbacks.logging import (
+    ConsoleLogger,
+    TensorboardLogger,
+    VerboseLogger,
+)
+from catalyst.core.callbacks.metrics import *
+from catalyst.core.callbacks.optimizer import OptimizerCallback
+from catalyst.core.callbacks.scheduler import LRUpdater, SchedulerCallback
+from catalyst.core.callbacks.timer import TimerCallback
+from catalyst.core.callbacks.validation import ValidationManagerCallback
+from catalyst.core.callbacks.control_flow import ControlFlowCallback

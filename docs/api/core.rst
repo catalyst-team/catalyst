@@ -17,7 +17,7 @@ Core
 
 Experiment
 ~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.core.experiment._Experiment
+.. autoclass:: catalyst.core.experiment.IExperiment
     :members:
     :undoc-members:
     :show-inheritance:
@@ -29,12 +29,12 @@ Experiment
 
 Runner
 ~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.core.runner._Runner
+.. autoclass:: catalyst.core.runner.IRunner
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. autoclass:: catalyst.core.runner._StageBasedRunner
+.. autoclass:: catalyst.core.runner.IStageBasedRunner
     :members:
     :undoc-members:
     :show-inheritance:
@@ -51,19 +51,26 @@ Callback
     :undoc-members:
     :show-inheritance:
 
-State
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.state
+Callbacks
+----------------------
+
+BatchOverfitCallback
+~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.core.callbacks.batch_overfit
     :members:
     :undoc-members:
     :show-inheritance:
 
-Callbacks
-----------------------
-
 Checkpoint
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.core.callbacks.checkpoint
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Control Flow
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.core.callbacks.control_flow
     :members:
     :undoc-members:
     :show-inheritance:
@@ -98,7 +105,7 @@ Logging
 
 Metrics
 ~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.core.callbacks.metrics._MetricCallback
+.. autoclass:: catalyst.core.callbacks.metrics.IMetricCallback
     :members:
     :undoc-members:
     :show-inheritance:
@@ -155,6 +162,17 @@ Utils
     :show-inheritance:
 
 .. automodule:: catalyst.core.utils.callbacks
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Legacy
+----------------------
+
+Runner
+~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.core.legacy.IRunnerLegacy
     :members:
     :undoc-members:
     :show-inheritance:

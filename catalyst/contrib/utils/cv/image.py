@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from typing import List, Tuple, Union
 import logging
 import os
@@ -17,10 +19,10 @@ if settings.use_libjpeg_turbo:
         import jpeg4py as jpeg
 
         # check libjpeg-turbo availability through image reading
-        img = np.zeros((1, 1, 3), dtype=np.uint8)
+        _test_img = np.zeros((1, 1, 3), dtype=np.uint8)
         with tempfile.NamedTemporaryFile(suffix=".jpg") as fp:
-            imageio.imwrite(fp.name, img)
-            img = jpeg.JPEG(fp.name).decode()
+            imageio.imwrite(fp.name, _test_img)
+            _test_img = jpeg.JPEG(fp.name).decode()
 
     except ImportError as ex:
         logger.warning(
@@ -50,10 +52,13 @@ def imread(
         uri (str, pathlib.Path, bytes, file): the resource to load the image
           from, e.g. a filename, ``pathlib.Path``, http address or file object,
           see ``imageio.imread`` docs for more info
-        grayscale (bool):
-        expand_dims (bool):
+        grayscale (bool): if True, make all images grayscale
+        expand_dims (bool): if True, append channel axis to grayscale images
+          rootpath (Union[str, pathlib.Path]): path to the resource with image
+          (allows to use relative path)
         rootpath (Union[str, pathlib.Path]): path to the resource with image
             (allows to use relative path)
+        **kwargs: extra params for image read
 
     Returns:
         np.ndarray: image
@@ -71,6 +76,7 @@ def imread(
     else:
         # @TODO: add tiff support, currently – jpg and png
         img = imageio.imread(uri, as_gray=grayscale, pilmode="RGB", **kwargs)
+
     if grayscale:
         img = rgb2gray(img)
 
@@ -89,6 +95,9 @@ def imwrite(**kwargs):
 
     Args:
         **kwargs: parameters for ``imageio.imwrite``
+
+    Returns:
+        image save result
     """
     return imageio.imwrite(**kwargs)
 
@@ -102,6 +111,9 @@ def imsave(**kwargs):
 
     Args:
         **kwargs: parameters for ``imageio.imsave``
+
+    Returns:
+        image save result
     """
     return imageio.imsave(**kwargs)
 
@@ -124,7 +136,10 @@ def mimread(
           image values outside the interval are clipped to the interval edges
         expand_dims (bool): if True, append channel axis to grayscale images
           rootpath (Union[str, pathlib.Path]): path to the resource with image
-          (allows to use relative path),
+          (allows to use relative path)
+        rootpath (Union[str, pathlib.Path]): path to the resource with image
+            (allows to use relative path)
+        **kwargs: extra params for image read
 
     Returns:
         np.ndarray: image

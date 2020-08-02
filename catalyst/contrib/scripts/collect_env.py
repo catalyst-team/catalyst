@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 """
 This script outputs relevant system environment info.
 Diagnose your system and show basic information.
@@ -12,7 +14,7 @@ from collections import namedtuple
 import locale
 import os
 import re
-import subprocess
+import subprocess  # noqa: S404
 import sys
 
 try:
@@ -85,7 +87,10 @@ def parse_args():
 def run(command):
     """Returns (return-code, stdout, stderr)"""
     p = subprocess.Popen(
-        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        shell=True,  # noqa: S602
     )
     output, err = p.communicate()
     rc = p.returncode
@@ -190,7 +195,7 @@ def get_cudnn_version(run_lambda):
     it"s hard to tell which one is being used
     """
     if get_platform() == "win32":
-        cudnn_cmd = "where /R '%CUDA_PATH%\\bin' cudnn*.dll"
+        cudnn_cmd = "where /R '%CUDA_PATH%\\bin' cudnn*.dll"  # noqa: WPS342
     elif get_platform() == "darwin":
         # CUDA libraries and drivers can be found in /usr/local/cuda/. See
         # https://docs.nvidia.com/cuda/cuda-installation-guide-mac-os-x/index.html#install
@@ -226,7 +231,10 @@ def get_nvidia_smi():
     # Note: nvidia-smi is currently available only on Windows and Linux
     smi = "nvidia-smi"
     if get_platform() == "win32":
-        smi = "'C:\\Program Files\\NVIDIA Corporation\\NVSMI\\%s'" % smi
+        smi = (
+            "'C:\\Program Files\\NVIDIA Corporation\\NVSMI\\%s'"  # noqa: WPS342, W505, E501
+            % smi
+        )
     return smi
 
 
@@ -445,7 +453,7 @@ def pretty_str(envinfo):  # noqa: C901
             return "\n{}\n".format(string)
         return string
 
-    mutable_dict = envinfo._asdict()
+    mutable_dict = envinfo._asdict()  # noqa: WPS437
 
     # If nvidia_gpu_models is multiline, start on the next line
     mutable_dict["nvidia_gpu_models"] = maybe_start_on_next_line(

@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from typing import Any, Dict, List, Optional, Tuple
 import configparser
 import logging
@@ -6,6 +8,13 @@ import os
 from catalyst.tools.frozen_class import FrozenClass
 
 logger = logging.getLogger(__name__)
+
+try:
+    import torch_xla.core.xla_model as xm
+
+    IS_XLA_AVAILABLE = True
+except ModuleNotFoundError:
+    IS_XLA_AVAILABLE = False
 
 
 class Settings(FrozenClass):
@@ -25,6 +34,7 @@ class Settings(FrozenClass):
         use_lz4: bool = False,
         use_pyarrow: bool = False,
         albumentations_required: Optional[bool] = None,
+        kornia_required: Optional[bool] = None,
         segmentation_models_required: Optional[bool] = None,
         use_libjpeg_turbo: bool = False,
         nmslib_required: Optional[bool] = None,
@@ -70,6 +80,9 @@ class Settings(FrozenClass):
         # [catalyst-cv]
         self.albumentations_required: bool = self._optional_value(
             albumentations_required, default=cv_required
+        )
+        self.kornia_required: bool = self._optional_value(
+            kornia_required, default=cv_required
         )
         self.segmentation_models_required: bool = self._optional_value(
             segmentation_models_required, default=cv_required
@@ -163,6 +176,25 @@ class ConfigFileFinder:
 
         return config, found_files
 
+    def generate_possible_local_files(self):
+        """Find and generate all local config files.
+
+        Yields:
+            str: Path to config file.
+        """
+        parent = tail = os.getcwd()
+        found_config_files = False
+        while tail and not found_config_files:
+            for project_filename in self.project_filenames:
+                filename = os.path.abspath(
+                    os.path.join(parent, project_filename)
+                )
+                if os.path.exists(filename):
+                    yield filename
+                    found_config_files = True
+                    self.local_directory = parent
+            (parent, tail) = os.path.split(parent)
+
     def local_config_files(self) -> List[str]:  # noqa: D202
         """
         Find all local config files which actually exist.
@@ -172,23 +204,7 @@ class ConfigFileFinder:
             local project config  files with extra config files
             appended to that list (which also exist).
         """
-
-        def generate_possible_local_files():
-            """Find and generate all local config files."""
-            parent = tail = os.getcwd()
-            found_config_files = False
-            while tail and not found_config_files:
-                for project_filename in self.project_filenames:
-                    filename = os.path.abspath(
-                        os.path.join(parent, project_filename)
-                    )
-                    if os.path.exists(filename):
-                        yield filename
-                        found_config_files = True
-                        self.local_directory = parent
-                (parent, tail) = os.path.split(parent)
-
-        return list(generate_possible_local_files())
+        return list(self.generate_possible_local_files())
 
     def local_configs(self):
         """Parse all local config files into one config object."""
@@ -220,7 +236,7 @@ class MergedConfigParser:
 
     #: Set of actions that should use the
     #: :meth:`~configparser.RawConfigParser.getbool` method.
-    GETBOOL_ACTIONS = {"store_true", "store_false"}
+    GETBOOL_ACTIONS = {"store_true", "store_false"}  # noqa: WPS115
 
     def __init__(self, config_finder: ConfigFileFinder):
         """Initialize the MergedConfigParser instance.

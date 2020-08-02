@@ -1,8 +1,10 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 import torch
 from torch import nn
 from torch.nn import functional as F
 
-from .core import DecoderBlock
+from catalyst.contrib.models.cv.segmentation.blocks.core import DecoderBlock
 
 
 class DecoderFPNBlock(DecoderBlock):
@@ -114,7 +116,7 @@ class SegmentationBlock(nn.Module):
         ]
 
         if num_upsamples > 1:
-            for _ in range(1, num_upsamples):
+            for _ in range(1, num_upsamples):  # noqa: WPS122
                 blocks.append(
                     Conv3x3GNReLU(out_channels, out_channels, upsample=True)
                 )

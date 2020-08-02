@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 import argparse
 import collections
 
@@ -62,8 +64,8 @@ def main(args, _=None):
 
     res = collections.defaultdict(lambda: [])
     for i in tqdm.tqdm(range(0, len(test_features), args.batch_size)):
-        features_ = test_features[i : i + args.batch_size, :]
-        pred_ind_dist = index.knnQueryBatch(features_, k=max(recalls))
+        batch_features = test_features[i : i + args.batch_size, :]
+        pred_ind_dist = index.knnQueryBatch(batch_features, k=max(recalls))
         pred_inds = [x[0] for x in pred_ind_dist]
         pred_labels = [
             [knn_df.iloc[x_i][args.label_column] for x_i in x]
@@ -73,16 +75,18 @@ def main(args, _=None):
         true_labels = test_df[args.label_column].values[
             i : i + args.batch_size, None
         ]
-        for r_ in recalls:
-            res_ = pred_labels[:, :r_] == true_labels
-            res_ = (res_.sum(axis=1) > 0).astype(np.int32).tolist()
-            res[r_].extend(res_)
+        for recall_i in recalls:
+            batch_ration = pred_labels[:, :recall_i] == true_labels
+            batch_ration = (
+                (batch_ration.sum(axis=1) > 0).astype(np.int32).tolist()
+            )
+            res[recall_i].extend(batch_ration)
 
-    for r_ in recalls:
-        res_ = sum(res[r_]) / len(res[r_]) * 100.0
+    for recall_i2 in recalls:
+        ratio = sum(res[recall_i2]) / len(res[recall_i2]) * 100.0
         print(
             "[==      Recall@{recall_at:2}: {ratio:.4}%      ==]".format(
-                recall_at=r_, ratio=res_
+                recall_at=recall_i2, ratio=ratio
             )
         )
 

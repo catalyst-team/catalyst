@@ -1,11 +1,15 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from typing import List
 
 import torch
 from torch import nn
 
-from ..blocks.core import DecoderBlock
-from ..blocks.unet import DecoderConcatBlock
-from .core import DecoderSpec
+from catalyst.contrib.models.cv.segmentation.blocks.core import DecoderBlock
+from catalyst.contrib.models.cv.segmentation.blocks.unet import (
+    DecoderConcatBlock,
+)
+from catalyst.contrib.models.cv.segmentation.decoder.core import DecoderSpec
 
 
 class UNetDecoder(DecoderSpec):
@@ -22,28 +26,28 @@ class UNetDecoder(DecoderSpec):
         super().__init__(in_channels, in_strides)
 
         # features from center block
-        out_channels_ = [in_channels[-1]]
-        out_strides_ = [in_strides[-1]]
+        out_channels_list = [in_channels[-1]]
+        out_strides_list = [in_strides[-1]]
         # features from encoders blocks
         reversed_channels = list(reversed(in_channels[:-1]))
 
         blocks: List[DecoderBlock] = []
         for encoder_channels in reversed_channels:
-            out_channels_.append(encoder_channels)
+            out_channels_list.append(encoder_channels)
             blocks.append(
                 block_fn(
-                    in_channels=out_channels_[-2],
+                    in_channels=out_channels_list[-2],
                     enc_channels=encoder_channels,
-                    out_channels=out_channels_[-1],
-                    in_strides=out_strides_[-1],
+                    out_channels=out_channels_list[-1],
+                    in_strides=out_strides_list[-1],
                     **kwargs
                 )
             )
-            out_strides_.append(blocks[-1].out_strides)
+            out_strides_list.append(blocks[-1].out_strides)
 
         self.blocks = nn.ModuleList(blocks)
-        self._out_channels = out_channels_
-        self._out_strides = out_strides_
+        self._out_channels = out_channels_list
+        self._out_strides = out_strides_list
 
     @property
     def out_channels(self) -> List[int]:

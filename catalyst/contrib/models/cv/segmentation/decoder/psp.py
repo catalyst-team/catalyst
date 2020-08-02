@@ -1,12 +1,16 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from typing import List
 from functools import partial
 
 import torch
 
-from ..abn import ABN
-from ..blocks.core import _get_block
-from ..blocks.psp import PSPBlock
-from .core import DecoderSpec
+from catalyst.contrib.models.cv.segmentation.abn import ABN
+from catalyst.contrib.models.cv.segmentation.blocks.core import (  # noqa: WPS450, E501
+    _get_block,
+)
+from catalyst.contrib.models.cv.segmentation.blocks.psp import PSPBlock
+from catalyst.contrib.models.cv.segmentation.decoder.core import DecoderSpec
 
 
 class PSPDecoder(DecoderSpec):

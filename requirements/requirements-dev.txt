@@ -4,5 +4,5 @@ sphinx==2.2.1
 # git+https://github.com/bitprophet/releases/#egg=releases
 # git+https://github.com/readthedocs/sphinx_rtd_theme
 mock==3.0.5
-catalyst-codestyle==20.04
+catalyst-codestyle==20.06.1
 catalyst-sphinx-theme

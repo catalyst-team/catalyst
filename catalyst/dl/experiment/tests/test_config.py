@@ -18,7 +18,7 @@ from catalyst.dl import (
 )
 from catalyst.dl.experiment.config import ConfigExperiment
 
-DEFAULT_MINIMAL_CONFIG = {
+DEFAULT_MINIMAL_CONFIG = {  # noqa: WPS407
     "model_params": {"model": "SomeModel"},
     "stages": {"data_params": {"num_workers": 0}, "train": {}},
     "args": {"logdir": "./logdir"},
@@ -58,9 +58,9 @@ class SomeScheduler(torch.nn.Module):
         super().__init__()
 
 
-registry.MODELS.add(SomeModel)
-registry.OPTIMIZERS.add(SomeOptimizer)
-registry.SCHEDULERS.add(SomeScheduler)
+registry.MODEL.add(SomeModel)
+registry.OPTIMIZER.add(SomeOptimizer)
+registry.SCHEDULER.add(SomeScheduler)
 
 
 def _test_callbacks(test_callbacks, exp, stage="train"):
@@ -88,13 +88,13 @@ def test_defaults():
     inherit from different parent classes.
     Also very important to check which callbacks are added by default
     """
-    exp = ConfigExperiment(config=DEFAULT_MINIMAL_CONFIG)
+    exp = ConfigExperiment(config=DEFAULT_MINIMAL_CONFIG.copy())
 
     assert exp.initial_seed == 42
     assert exp.logdir == "./logdir"
     assert exp.stages == ["train"]
     assert exp.distributed_params == {}
-    assert exp.get_state_params("train") == {
+    assert exp.get_stage_params("train") == {
         "logdir": "./logdir",
     }
     assert isinstance(exp.get_model("train"), SomeModel)
@@ -126,7 +126,7 @@ def test_defaults_criterion_optimizer_scheduler():
     assert exp.logdir == "./logdir"
     assert exp.stages == ["train"]
     assert exp.distributed_params == {}
-    assert exp.get_state_params("train") == {
+    assert exp.get_stage_params("train") == {
         "logdir": "./logdir",
     }
     assert isinstance(exp.get_model("train"), SomeModel)
@@ -165,7 +165,7 @@ def test_not_implemented_datasets():
     Test on ``get_datasets`` method, which should be implememnted by user.
     Method ``get_loaders`` will call ``get_dataset``.
     """
-    exp = ConfigExperiment(config=DEFAULT_MINIMAL_CONFIG)
+    exp = ConfigExperiment(config=DEFAULT_MINIMAL_CONFIG.copy())
 
     with pytest.raises(NotImplementedError):
         exp.get_loaders("train")

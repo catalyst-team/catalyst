@@ -1,4 +1,4 @@
-from typing import Callable, List, Type
+from typing import Callable, List, Optional, Type
 import functools
 
 import numpy as np
@@ -19,7 +19,8 @@ class ReaderSpec:
         """
         Args:
             input_key (str): input key to use from annotation dict
-            output_key (str): output key to use to store the result
+            output_key (Optional[str]): output key to use to store the result,
+                default: ``input_key``
         """
         self.input_key = input_key
         self.output_key = output_key
@@ -50,7 +51,7 @@ class ScalarReader(ReaderSpec):
     def __init__(
         self,
         input_key: str,
-        output_key: str,
+        output_key: Optional[str] = None,
         dtype: Type = np.float32,
         default_value: float = None,
         one_hot_classes: int = None,
@@ -59,22 +60,23 @@ class ScalarReader(ReaderSpec):
         """
         Args:
             input_key (str): input key to use from annotation dict
-            output_key (str): output key to use to store the result
+            output_key (Optional[str]): output key to use to store the result,
+                default: ``input_key``
             dtype (type): datatype of scalar values to use
             default_value: default value to use if something goes wrong
             one_hot_classes (int): number of one-hot classes
             smoothing (float, optional): if specified applies label smoothing
                 to one_hot classes
         """
-        super().__init__(input_key, output_key)
+        super().__init__(input_key, output_key or input_key)
         self.dtype = dtype
         self.default_value = default_value
         self.one_hot_classes = one_hot_classes
         self.smoothing = smoothing
         if self.one_hot_classes is not None and self.smoothing is not None:
             assert 0.0 < smoothing < 1.0, (
-                f"If smoothing is specified it must be in (0; 1), "
-                f"got {smoothing}"
+                "If smoothing is specified it must be in (0; 1), "
+                + f"got {smoothing}"
             )
 
     def __call__(self, element):
@@ -106,19 +108,20 @@ class LambdaReader(ReaderSpec):
     def __init__(
         self,
         input_key: str,
-        output_key: str,
-        lambda_fn: Callable = lambda x: x,
+        output_key: Optional[str] = None,
+        lambda_fn: Optional[Callable] = None,
         **kwargs,
     ):
         """
         Args:
             input_key (str): input key to use from annotation dict
-            output_key (str): output key to use to store the result
+            output_key (Optional[str]): output key to use to store the result
             lambda_fn (callable): encode function to use to prepare your data
-                (for example convert chars/words/tokens to indices, etc)
+              (for example convert chars/words/tokens to indices, etc)
             kwargs: kwargs for encode function
         """
         super().__init__(input_key, output_key)
+        lambda_fn = lambda_fn or (lambda x: x)
         self.lambda_fn = functools.partial(lambda_fn, **kwargs)
 
     def __call__(self, element):
@@ -164,10 +167,10 @@ class ReaderCompose(object):
             Value after applying all readers and mixins
         """
         result = {}
-        for fn in self.readers:
-            result = {**result, **fn(element)}
-        for fn in self.mixins:
-            result = {**result, **fn(result)}
+        for reader_fn in self.readers:
+            result = {**result, **reader_fn(element)}
+        for mixin_fn in self.mixins:
+            result = {**result, **mixin_fn(result)}
         return result
 
 

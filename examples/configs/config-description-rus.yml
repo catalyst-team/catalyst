@@ -87,7 +87,7 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
     infer: *transform  # трансформация только для infer датасета
 
 
-  state_params:  # REQUIRED KEYWORD, параметры для State (для всех стейджей)
+  stage_params:  # REQUIRED KEYWORD, параметры для всех стейджей
     main_metric: &main_metric accuracy01  # REQUIRED KEYWORD, имя метрики, по которой будут отбираться чекпоинты
     minimize_metric: False  # REQUIRED KEYWORD, флаг, нужно ли минимизировать `main_metric`
     num_epochs: 2  # KEYWORD, Количество эпох во всех стейджах
@@ -130,7 +130,7 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
     gamma: 0.3
 
   stage1:  # Все, что не ключевое слово, расценивается, как имя стейджа. Для тренировки в Catalyst требуется хотябы один стейдж. Имя может быть произвольным
-    state_params:  # Вы можете переопределить любые параметры, для конкретного стейджа, например
+    stage_params:  # Вы можете переопределить любые параметры, для конкретного стейджа, например
       num_epochs: 3
 
     callbacks_params:  # REQUIRED KEYWORD, самая важная часть, тут записываются все коллбеки для данного стейджа
@@ -148,7 +148,7 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
         save_n_best: 3
 
   finetune:  # Пример второго стейджа обучения, тут мы можем изменить наши параметры
-    state_params:  # Вы можете переопределить любые параметры, для конкретного стейджа, например
+    stage_params:  # Вы можете переопределить любые параметры, для конкретного стейджа, например
       num_epochs: 1
 
     optimizer_params:  # Пример, переопределенного оптимизатора

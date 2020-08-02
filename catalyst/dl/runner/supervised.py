@@ -3,10 +3,9 @@ import logging
 
 import torch
 
-from catalyst.dl import State, SupervisedExperiment
-from catalyst.tools.typing import Device, Model
-
-from .core import Runner
+from catalyst.dl.experiment.supervised import SupervisedExperiment
+from catalyst.dl.runner.runner import Runner
+from catalyst.tools.typing import Device, RunnerModel
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +17,7 @@ class SupervisedRunner(Runner):
 
     def __init__(
         self,
-        model: Model = None,
+        model: RunnerModel = None,
         device: Device = None,
         input_key: Any = "features",
         output_key: Any = "logits",
@@ -26,14 +25,36 @@ class SupervisedRunner(Runner):
     ):
         """
         Args:
-            model (Module): Torch model object
+            model (RunnerModel): Torch model object
             device (Device): Torch device
             input_key (Any): Key in batch dict mapping for model input
             output_key (Any): Key in output dict model output
                 will be stored under
             input_target_key (str): Key in batch dict mapping for target
         """
-        super().__init__(model=model, device=device)
+        super().__init__(
+            model=model,
+            device=device,
+            input_key=input_key,
+            output_key=output_key,
+            input_target_key=input_target_key,
+        )
+
+    def _init(
+        self,
+        input_key: Any = "features",
+        output_key: Any = "logits",
+        input_target_key: str = "targets",
+    ):
+        """
+        Args:
+            input_key (Any): Key in batch dict mapping for model input
+            output_key (Any): Key in output dict model output
+                will be stored under
+            input_target_key (str): Key in batch dict mapping for target
+        """
+        self.experiment: SupervisedExperiment = None
+
         self.input_key = input_key
         self.output_key = output_key
         self.target_key = input_target_key
@@ -62,10 +83,6 @@ class SupervisedRunner(Runner):
         else:
             raise NotImplementedError()
 
-    def _init(self):
-        self.experiment: SupervisedExperiment = None
-        self.state: State = None
-
     def _batch2device(self, batch: Mapping[str, Any], device: Device):
         if isinstance(batch, (tuple, list)):
             assert len(batch) == 2
@@ -78,7 +95,7 @@ class SupervisedRunner(Runner):
         return output
 
     def _process_input_list(self, batch: Mapping[str, Any], **kwargs):
-        input = {key: batch[key] for key in self.input_key}
+        input = {key: batch[key] for key in self.input_key}  # noqa: WPS125
         output = self.model(**input, **kwargs)
         return output
 
@@ -107,6 +124,9 @@ class SupervisedRunner(Runner):
             batch (Mapping[str, Any]): dictionary with data batches
                 from DataLoaders.
             **kwargs: additional parameters to pass to the model
+
+        Returns:
+            dict with model output batch
         """
         output = self._process_input(batch, **kwargs)
         output = self._process_output(output)
@@ -121,7 +141,7 @@ class SupervisedRunner(Runner):
             batch (Mapping[str, Any]): dictionary with data batches
                 from DataLoader.
         """
-        self.state.output = self.forward(batch)
+        self.output = self.forward(batch)
 
     @torch.no_grad()
     def predict_batch(

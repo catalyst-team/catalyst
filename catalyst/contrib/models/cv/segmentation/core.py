@@ -1,13 +1,19 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from typing import Dict, List, Union
 from pathlib import Path
 
 import torch
 from torch import nn
 
-from .bridge import BridgeSpec
-from .decoder import DecoderSpec
-from .encoder import EncoderSpec, ResnetEncoder, UnetEncoder
-from .head import HeadSpec
+from catalyst.contrib.models.cv.segmentation.bridge import BridgeSpec
+from catalyst.contrib.models.cv.segmentation.decoder import DecoderSpec
+from catalyst.contrib.models.cv.segmentation.encoder import (
+    EncoderSpec,
+    ResnetEncoder,
+    UnetEncoder,
+)
+from catalyst.contrib.models.cv.segmentation.head import HeadSpec
 
 
 class UnetMetaSpec(nn.Module):

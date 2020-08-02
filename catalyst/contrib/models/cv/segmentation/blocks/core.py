@@ -1,10 +1,12 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from abc import ABC, abstractmethod
 
 import torch
 from torch import nn
 from torch.nn import functional as F
 
-from ..abn import ABN
+from catalyst.contrib.models.cv.segmentation.abn import ABN
 
 
 def _get_block(
@@ -32,7 +34,7 @@ def _get_block(
         abn_block(out_channels, activation=activation),
     ]
     if complexity > 0:
-        layers_ = [
+        layers_list = [
             nn.Conv2d(
                 out_channels,
                 out_channels,
@@ -44,7 +46,7 @@ def _get_block(
             ),
             abn_block(out_channels, activation=activation),
         ] * complexity
-        layers = layers + layers_
+        layers = layers + layers_list
     block = nn.Sequential(*layers)
     return block
 

@@ -1,9 +1,14 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from typing import List
 
 import torch
 
-from ..blocks import EncoderBlock, EncoderDownsampleBlock
-from .core import BridgeSpec
+from catalyst.contrib.models.cv.segmentation.blocks import (
+    EncoderBlock,
+    EncoderDownsampleBlock,
+)
+from catalyst.contrib.models.cv.segmentation.bridge.core import BridgeSpec
 
 
 class UnetBridge(BridgeSpec):
@@ -42,7 +47,7 @@ class UnetBridge(BridgeSpec):
 
     def forward(self, x: List[torch.Tensor]) -> List[torch.Tensor]:
         """Forward call."""
-        x_: torch.Tensor = x[-1]
-        x_: torch.Tensor = self.block(x_)
-        output = x + [x_]
+        x_last: torch.Tensor = x[-1]
+        x_last: torch.Tensor = self.block(x_last)
+        output = x + [x_last]
         return output

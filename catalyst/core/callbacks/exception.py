@@ -1,4 +1,8 @@
-from catalyst.core import Callback, CallbackNode, CallbackOrder, State, utils
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
+from catalyst.core import utils
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.runner import IRunner
 
 
 class ExceptionCallback(Callback):
@@ -7,14 +11,14 @@ class ExceptionCallback(Callback):
     def __init__(self):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__(
-            order=CallbackOrder.External + 1, node=CallbackNode.All
+            order=CallbackOrder.external + 1, node=CallbackNode.all
         )
 
-    def on_exception(self, state: State):
+    def on_exception(self, runner: IRunner):
         """@TODO: Docs. Contribution is welcome."""
-        exception = state.exception
+        exception = runner.exception
         if not utils.is_exception(exception):
             return
 
-        if state.need_exception_reraise:
+        if runner.need_exception_reraise:
             raise exception

@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from typing import Any
 from base64 import urlsafe_b64encode
 from hashlib import sha256
@@ -39,8 +41,8 @@ def get_short_hash(o) -> str:
     """
     @TODO: Docs. Contribution is welcome.
     """
-    hash = get_hash(o)[:6]
-    return hash
+    hash_ = get_hash(o)[:6]
+    return hash_
 
 
 __all__ = ["get_hash", "get_short_hash"]

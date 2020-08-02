@@ -4,7 +4,9 @@ from catalyst.utils import metrics
 
 
 def test_iou():
-    """@TODO: Docs. Contribution is welcome."""
+    """
+    Tests for catalyst.utils.metrics.iou metric.
+    """
     size = 4
     half_size = size // 2
     shape = (1, 1, size, size)

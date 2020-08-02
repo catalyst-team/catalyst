@@ -28,7 +28,7 @@ stages:
     label_field: "label"
     max_sequence_length: 512
 
-  state_params:
+  stage_params:
     main_metric: &reduced_metric loss
     minimize_metric: True
 
@@ -59,7 +59,7 @@ stages:
   # params specific for stage 1 called "train_val"
   train_val:
     # overriding state params and specifying that we train for 2 epochs
-    state_params:
+    stage_params:
       num_epochs: 2
     # optimizer params are specific only for this stage
     # in principle, we can define another stage with other optim params

@@ -1,6 +1,6 @@
 """
 Frozen class.
-Example of usage can be found in :py:class:`catalyst.core.state.State`.
+Example of usage can be found in :py:class:`catalyst.core.runner.IRunner`.
 """
 
 
@@ -8,16 +8,19 @@ class FrozenClass:
     """Class which prohibit ``__setattr__`` on existing attributes.
 
     Examples:
-        >>> class State(FrozenClass):
+        >>> class IRunner(FrozenClass):
     """
 
-    __isfrozen = False
+    __is_frozen = False
 
     def __setattr__(self, key, value):
         """@TODO: Docs. Contribution is welcome."""
-        if self.__isfrozen and not hasattr(self, key):
-            raise TypeError("%r is a frozen class" % self)
+        if self.__is_frozen and not hasattr(self, key):
+            raise TypeError("%r is a frozen class for key %s" % (self, key))
         object.__setattr__(self, key, value)
 
     def _freeze(self):
-        self.__isfrozen = True
+        self.__is_frozen = True
+
+    def _unfreeze(self):
+        self.__is_frozen = False

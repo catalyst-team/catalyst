@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from functools import partial
 
 import torch
@@ -25,7 +27,12 @@ class DiceLoss(nn.Module):
     def forward(self, logits: torch.Tensor, targets: torch.Tensor):
         """Calculates loss between ``logits`` and ``target`` tensors.
 
-        @TODO: Docs. Contribution is welcome
+        Args:
+            logits: model logits
+            targets: ground truth labels
+
+        Returns:
+            computed loss
         """
         dice = self.loss_fn(logits, targets)
         return 1 - dice

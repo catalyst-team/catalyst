@@ -4,17 +4,87 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [20.06] - YYYY-MM-DD
+## [20.07.1] - YYYY-MM-DD
 
 ### Added
 
+- `CMCScoreCallback` ([#880](https://github.com/catalyst-team/catalyst/pull/880))
+- kornia augmentations `BatchTransformCallback` ([#862](https://github.com/catalyst-team/catalyst/issues/862))
+- `average_precision` and `mean_average_precision` metrics ([#883](https://github.com/catalyst-team/catalyst/pull/883))
+- `MultiLabelAccuracyCallback`, `AveragePrecisionCallback` and `MeanAveragePrecisionCallback` callbacks ([#883](https://github.com/catalyst-team/catalyst/pull/883))
+- minimal examples for multi-class and milti-label classification ([#883](https://github.com/catalyst-team/catalyst/pull/883))
+- experimental TPU support ([#893](https://github.com/catalyst-team/catalyst/pull/893))
+- add `Imagenette`, `Imagewoof`, and `Imagewang` datasets ([#902](https://github.com/catalyst-team/catalyst/pull/902))
+
+### Changed
+
+- all registries merged to one `catalyst.registry` ([#883](https://github.com/catalyst-team/catalyst/pull/883))
+
+### Removed
+
+- `average_accuracy` and `mean_average_accuracy` metrics ([#883](https://github.com/catalyst-team/catalyst/pull/883))
+
+### Fixed
+
+- `utils.tokenize_text` typo with punctuation ([#880](https://github.com/catalyst-team/catalyst/pull/880))
+- `ControlFlowCallback` logic ([#892](https://github.com/catalyst-team/catalyst/pull/892))
+
+
+## [20.07] - 2020-07-06
+
+### Added
+
+- `log` parameter to `WandbLogger` ([#836](https://github.com/catalyst-team/catalyst/pull/836))
+- hparams experiment property ([#839](https://github.com/catalyst-team/catalyst/pull/839))
+- add docs build on push to master branch ([#844](https://github.com/catalyst-team/catalyst/pull/844))
+- `WrapperCallback` and `ControlFlowCallback` ([#842](https://github.com/catalyst-team/catalyst/pull/842))
+- `BatchOverfitCallback` ([#869](https://github.com/catalyst-team/catalyst/pull/869))
+- `overfit` flag for Config API ([#869](https://github.com/catalyst-team/catalyst/pull/869))
+- `InBatchSamplers`: `AllTripletsSampler` and `HardTripletsSampler` ([#825](https://github.com/catalyst-team/catalyst/pull/825))
+
+### Changed
+
+- Renaming ([#837](https://github.com/catalyst-team/catalyst/pull/837))
+    - `SqueezeAndExcitation` -> `cSE`
+    - `ChannelSqueezeAndSpatialExcitation` -> `sSE`
+    - `ConcurrentSpatialAndChannelSqueezeAndChannelExcitation` -> `scSE`
+    - `_MetricCallback` -> `IMetricCallback`
+    - `dl.Experiment.process_loaders` -> `dl.Experiment._get_loaders`
+- `LRUpdater` become abstract class ([#837](https://github.com/catalyst-team/catalyst/pull/837))
+- `calculate_confusion_matrix_from_arrays` changed params order ([#837](https://github.com/catalyst-team/catalyst/pull/837))
+- `dl.Runner.predict_loader` uses `_prepare_inner_state` and cleans `experiment` ([#863](https://github.com/catalyst-team/catalyst/pull/863))
+- `toml` to the dependencies ([#872](https://github.com/catalyst-team/catalyst/pull/872))
+
+### Removed
+
+- `crc32c` dependency ([#872](https://github.com/catalyst-team/catalyst/pull/872))
+
+### Fixed
+
+- `workflows/deploy_push.yml` failed to push some refs ([#864](https://github.com/catalyst-team/catalyst/pull/864))
+- `.dependabot/config.yml` contained invalid details ([#781](https://github.com/catalyst-team/catalyst/issues/781))
+- `LanguageModelingDataset` ([#841](https://github.com/catalyst-team/catalyst/pull/841))
+- `global_*` counters in `Runner` ([#858](https://github.com/catalyst-team/catalyst/pull/858))
+- EarlyStoppingCallback considers first epoch as bad ([#854](https://github.com/catalyst-team/catalyst/issues/854))
+- annoying numpy warning ([#860](https://github.com/catalyst-team/catalyst/pull/860))
+- `PeriodicLoaderCallback` overwrites best state ([#867](https://github.com/catalyst-team/catalyst/pull/867))
+- `OneCycleLRWithWarmup` ([#851](https://github.com/catalyst-team/catalyst/issues/851))
+
+## [20.06] - 2020-06-04
+
+### Added
+
+- `Mergify` ([#831](https://github.com/catalyst-team/catalyst/pull/831))
 - `PerplexityMetricCallback` ([#819](https://github.com/catalyst-team/catalyst/pull/819))
 - `PeriodicLoaderRunnerCallback` ([#818](https://github.com/catalyst-team/catalyst/pull/818))
 
 ### Changed
 
 - docs structure were updated during ([#822](https://github.com/catalyst-team/catalyst/pull/822))
-- `utils.process_components` moved from `utils.distributed` to `utils.components` ([#822](https://github.com/catalyst-team/catalyst/pull/822)) 
+- `utils.process_components` moved from `utils.distributed` to `utils.components` ([#822](https://github.com/catalyst-team/catalyst/pull/822))
+- `catalyst.core.state.State` merged to `catalyst.core.runner._Runner` ([#823](https://github.com/catalyst-team/catalyst/pull/823)) (backward compatibility included)
+    - `catalyst.core.callback.Callback` now works directly with `catalyst.core.runner._Runner`
+    - `state_kwargs` renamed to `stage_kwargs`
 
 ### Removed
 
@@ -23,6 +93,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - added missed dashes in docker perfixes ([#828](https://github.com/catalyst-team/catalyst/issues/828))
+- handle empty loader in Runner ([#873](https://github.com/catalyst-team/catalyst/pull/873))
 
 
 ## [20.05.1] - 2020-05-23
@@ -35,8 +106,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - LanguageModelingDataset to catalyst\[nlp\] ([#808](https://github.com/catalyst-team/catalyst/pull/808))
 - Extra counters for batches, loaders and epochs ([#809](https://github.com/catalyst-team/catalyst/pull/809))
 - `TracerCallback` ([#789](https://github.com/catalyst-team/catalyst/pull/789))
-
-
 
 ### Changed
 
@@ -104,7 +173,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--
+- 
 
 ### Changed
 
@@ -123,7 +192,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--
+- 
 
 ### Changed
 

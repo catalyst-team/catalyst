@@ -25,9 +25,8 @@ def _convert_label_to_similarity(
 
 class CircleLoss(nn.Module):
     """
-    CircleLoss from
-    "Circle Loss: A Unified Perspective of Pair Similarity Optimization"
-    https://arxiv.org/abs/2002.10857
+    CircleLoss from `Circle Loss: A Unified Perspective
+    of Pair Similarity Optimization`_ paper.
 
     Adapter from:
     https://github.com/TinyZeaMays/CircleLoss
@@ -41,6 +40,9 @@ class CircleLoss(nn.Module):
         >>> labels = torch.randint(high=10, size=(256,))
         >>> criterion = CircleLoss(margin=0.25, gamma=256)
         >>> criterion(features, labels)
+
+    .. _`Circle Loss: A Unified Perspective of Pair Similarity Optimization`:
+        https://arxiv.org/abs/2002.10857
     """
 
     def __init__(self, margin: float, gamma: float) -> None:
@@ -64,7 +66,7 @@ class CircleLoss(nn.Module):
             labels: batch with samples correct labels of shape [bs; ]
 
         Returns:
-            (Tensor): circle loss
+            torch.Tensor: circle loss
         """
         sp, sn = _convert_label_to_similarity(normed_features, labels)
 

@@ -11,7 +11,7 @@ stages:
     batch_size: 64
     num_workers: 0
 
-  state_params:
+  stage_params:
     main_metric: &reduced_metric accuracy01
     minimize_metric: False
 
@@ -29,7 +29,7 @@ stages:
     gamma: 0.3
 
   stage1:
-    state_params:
+    stage_params:
       num_epochs: 100
 
     callbacks_params:

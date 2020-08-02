@@ -6,8 +6,8 @@ import warnings
 import torch
 from torch.utils.data import DataLoader, Dataset, DistributedSampler
 
-from catalyst.contrib.registry import SAMPLERS
 from catalyst.data import DistributedSamplerWrapper
+from catalyst.registry import SAMPLER
 from catalyst.utils import get_rank, merge_dicts, set_global_seed
 
 
@@ -19,7 +19,7 @@ def _force_make_distributed_loader(loader: DataLoader) -> DataLoader:
         loader (DataLoader): pytorch dataloder
 
     Returns:
-        (DataLoader): pytorch dataloder with distributed sampler.
+        DataLoader: pytorch dataloder with distributed sampler.
     """
     sampler = (
         DistributedSampler(dataset=loader.dataset)
@@ -50,7 +50,7 @@ def validate_loaders(loaders: Dict[str, DataLoader]) -> Dict[str, DataLoader]:
         loaders (Dict[str, DataLoader]): dictionery with pytorch dataloaders
 
     Returns:
-        (Dict[str, DataLoader]): dictionery
+        Dict[str, DataLoader]: dictionery
             with pytorch dataloaders (with distributed samplers if necessary)
     """
     rank = get_rank()
@@ -104,6 +104,11 @@ def get_loaders_from_params(
     Returns:
         OrderedDict[str, DataLoader]: dictionary with
             ``torch.utils.data.DataLoader``
+
+    Raises:
+        NotImplementedError: if datasource is out of `Dataset` or dict
+        ValueError: if batch_sampler option is mutually
+            exclusive with distributed
     """
     default_batch_size = batch_size
     default_num_workers = num_workers
@@ -125,7 +130,7 @@ def get_loaders_from_params(
         datasets = dict(**data_params)
 
     loaders = OrderedDict()
-    for name, datasource in datasets.items():
+    for name, datasource in datasets.items():  # noqa: WPS426
         assert isinstance(
             datasource, (Dataset, dict)
         ), f"{datasource} should be Dataset or Dict. Got: {datasource}"
@@ -142,7 +147,7 @@ def get_loaders_from_params(
             else:
                 sampler = None
         else:
-            sampler = SAMPLERS.get_from_params(**sampler_params)
+            sampler = SAMPLER.get_from_params(**sampler_params)
             if isinstance(datasource, dict) and "sampler" in datasource:
                 datasource.pop("sampler", None)
 

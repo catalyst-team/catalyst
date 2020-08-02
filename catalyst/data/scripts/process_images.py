@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 #!/usr/bin/env python
 # usage:
 # catalyst-data process-images \
@@ -90,7 +92,7 @@ def parse_args():
 def py3round(number):
     """Unified rounding in all python versions."""
     if abs(round(number) - number) == 0.5:
-        return int(2.0 * round(number / 2.0))
+        return int(2.0 * round(number / 2.0))  # noqa: WPS432
 
     return int(round(number))
 
@@ -174,7 +176,7 @@ class Preprocessor:
         target_path = self.out_dir / image_path.relative_to(self.in_dir)
         target_path.parent.mkdir(parents=True, exist_ok=True)
 
-        image = image.clip(0, 255).round().astype(np.uint8)
+        image = image.clip(0, 255).round().astype(np.uint8)  # noqa: WPS432
         utils.imwrite(target_path, image)
 
     def process_all(self, pool: Pool):

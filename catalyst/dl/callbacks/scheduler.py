@@ -1,7 +1,7 @@
 from typing import Optional
 
+from catalyst.core import IRunner
 from catalyst.core.callbacks import LRUpdater
-from catalyst.dl import State
 
 
 class LRFinder(LRUpdater):
@@ -58,32 +58,43 @@ class LRFinder(LRUpdater):
         return self.init_lr + self.lr_step * self.find_iter
 
     def calc_lr(self):
-        """@TODO: Docs. Contribution is welcome."""
+        """Calculates learning reate.
+
+        Returns:
+            learning rate.
+        """
         res = self._calc_lr()
         self.find_iter += 1
         return res
 
-    def on_loader_start(self, state: State):
+    def calc_momentum(self):
+        """@TODO: Docs. Contribution is welcome."""
+        pass
+
+    def on_loader_start(self, runner: IRunner):
         """@TODO: Docs. Contribution is welcome.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
-        if state.is_train_loader:
-            lr_ = self.final_lr / self.init_lr
-            self.num_steps = self.num_steps or state.loader_len
-            self.multiplier = lr_ ** (1 / self.num_steps)
+        if runner.is_train_loader:
+            lr_step = self.final_lr / self.init_lr
+            self.num_steps = self.num_steps or runner.loader_len
+            self.multiplier = lr_step ** (1 / self.num_steps)
             self.lr_step = (self.final_lr - self.init_lr) / self.num_steps
 
-        super().on_loader_start(state=state)
+        super().on_loader_start(runner=runner)
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, runner: IRunner):
         """@TODO: Docs. Contribution is welcome.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
+
+        Raises:
+            NotImplementedError: at the end of LRFinder
         """
-        super().on_batch_end(state=state)
+        super().on_batch_end(runner=runner)
         if self.find_iter > self.num_steps:
             raise NotImplementedError("End of LRFinder")
 

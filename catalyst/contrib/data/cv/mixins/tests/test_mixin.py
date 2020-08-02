@@ -12,15 +12,15 @@ image = utils.imread(jpg_rgb_uri)
 def test_blur_mixin():
     """@TODO: Docs. Contribution is welcome."""
     global image
-    image_ = image.copy()
+    image_dump = image.copy()
 
     mixin = BlurMixin()
-    input = {"image": image_}
+    input = {"image": image_dump}  # noqa: WPS125
     output = mixin(input)
 
     assert mixin.input_key in output
     assert mixin.output_key in output
-    assert output[mixin.input_key].shape == image_.shape
+    assert output[mixin.input_key].shape == image_dump.shape
 
     assert 0 <= output[mixin.output_key] < mixin.blur_max
 
@@ -28,15 +28,15 @@ def test_blur_mixin():
 def test_flare_mixin():
     """@TODO: Docs. Contribution is welcome."""
     global image
-    image_ = image.copy()
+    image_dump = image.copy()
 
     mixin = FlareMixin()
-    input = {"image": image_}
+    input = {"image": image_dump}  # noqa: WPS125
     output = mixin(input)
 
     assert mixin.input_key in output
     assert mixin.output_key in output
-    assert output[mixin.input_key].shape == image_.shape
+    assert output[mixin.input_key].shape == image_dump.shape
 
     assert 0 <= output[mixin.output_key]
 
@@ -44,14 +44,14 @@ def test_flare_mixin():
 def test_rotate_mixin():
     """@TODO: Docs. Contribution is welcome."""
     global image
-    image_ = image.copy()
+    image_dump = image.copy()
 
     mixin = RotateMixin()
-    input = {"image": image_}
+    input = {"image": image_dump}  # noqa: WPS125
     output = mixin(input)
 
     assert mixin.input_key in output
     assert mixin.output_key in output
-    assert output[mixin.input_key].shape == image_.shape
+    assert output[mixin.input_key].shape == image_dump.shape
 
     assert 0 <= output[mixin.output_key] < 8

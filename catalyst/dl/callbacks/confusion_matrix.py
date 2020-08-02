@@ -4,9 +4,10 @@ import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 
 import torch
-import torch.distributed
+import torch.distributed  # noqa: WPS301
 
-from catalyst.dl import Callback, CallbackNode, CallbackOrder, State, utils
+from catalyst.core import Callback, CallbackNode, CallbackOrder, IRunner
+from catalyst.dl import utils
 from catalyst.tools import meters
 
 
@@ -28,7 +29,7 @@ class ConfusionMatrixCallback(Callback):
         Args:
             @TODO: Docs. Contribution is welcome
         """
-        super().__init__(CallbackOrder.Metric, CallbackNode.All)
+        super().__init__(CallbackOrder.metric, CallbackNode.all)
         self.prefix = prefix
         self.output_key = output_key
         self.input_key = input_key
@@ -89,47 +90,47 @@ class ConfusionMatrixCallback(Callback):
         fig = utils.render_figure_to_tensor(fig)
         logger.add_image(f"{self.prefix}/epoch", fig, global_step=epoch)
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, runner: IRunner):
         """Loader start hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
         self._reset_stats()
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, runner: IRunner):
         """Batch end hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
         self._add_to_stats(
-            state.output[self.output_key].detach(),
-            state.input[self.input_key].detach(),
+            runner.output[self.output_key].detach(),
+            runner.input[self.input_key].detach(),
         )
 
-    def on_loader_end(self, state: State):
+    def on_loader_end(self, runner: IRunner):
         """Loader end hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
         class_names = self.class_names or [
             str(i) for i in range(self.num_classes)
         ]
         confusion_matrix = self._compute_confusion_matrix()
 
-        if state.distributed_rank >= 0:
+        if runner.distributed_rank >= 0:
             confusion_matrix = torch.from_numpy(confusion_matrix)
             confusion_matrix = confusion_matrix.to(utils.get_device())
             torch.distributed.reduce(confusion_matrix, 0)
             confusion_matrix = confusion_matrix.cpu().numpy()
 
-        if state.distributed_rank <= 0:
-            tb_callback = state.callbacks[self.tensorboard_callback_name]
+        if runner.distributed_rank <= 0:
+            tb_callback = runner.callbacks[self.tensorboard_callback_name]
             self._plot_confusion_matrix(
-                logger=tb_callback.loggers[state.loader_name],
-                epoch=state.global_epoch,
+                logger=tb_callback.loggers[runner.loader_name],
+                epoch=runner.global_epoch,
                 confusion_matrix=confusion_matrix,
                 class_names=class_names,
             )

@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from typing import Dict, List, Union
 from collections import Counter
 import logging
@@ -8,17 +10,17 @@ import time
 from alchemy.logger import Logger
 import visdom
 
-from catalyst.core import (
+from catalyst.core.callback import (
     Callback,
     CallbackNode,
     CallbackOrder,
     CallbackScope,
-    State,
 )
+from catalyst.core.runner import IRunner
 
 
 class Visdom(Logger):
-    """Logger, translates ``state.*_metrics`` to Visdom.
+    """Logger, translates ``runner.*_metrics`` to Visdom.
     Read about Visdom here https://github.com/facebookresearch/visdom
 
     Example:
@@ -76,10 +78,10 @@ class Visdom(Logger):
             assert (
                 self.viz.check_connection()
             ), "No connection could be formed quickly"
-        except BaseException as e:
+        except Exception as e:
             logging.error(
                 "The visdom experienced an exception while"
-                + "running: {}".format(repr(e))
+                + "running: {}".format(repr(e))  # noqa: P101
             )
 
     def _run_worker(self):
@@ -149,7 +151,7 @@ class Visdom(Logger):
 
 
 class VisdomLogger(Callback):
-    """Logger callback, translates ``state.*_metrics`` to Visdom.
+    """Logger callback, translates ``runner.*_metrics`` to Visdom.
     Read about Visdom here https://github.com/facebookresearch/visdom
 
     Example:
@@ -192,9 +194,9 @@ class VisdomLogger(Callback):
             log_on_epoch_end (bool): logs per-epoch metrics if set True
         """
         super().__init__(
-            order=CallbackOrder.Logging,
-            node=CallbackNode.Master,
-            scope=CallbackScope.Experiment,
+            order=CallbackOrder.logging,
+            node=CallbackNode.master,
+            scope=CallbackScope.experiment,
         )
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
@@ -246,25 +248,25 @@ class VisdomLogger(Callback):
         """@TODO: Docs. Contribution is welcome."""
         self.logger.close()
 
-    def on_batch_end(self, state: State):
+    def on_batch_end(self, runner: IRunner):
         """Translate batch metrics to Visdom."""
         if self.log_on_batch_end:
-            mode = state.loader_name
-            metrics_ = state.batch_metrics
+            mode = runner.loader_name
+            metrics = runner.batch_metrics
             self._log_metrics(
-                metrics=metrics_,
-                step=state.global_sample_step,
+                metrics=metrics,
+                step=runner.global_sample_step,
                 mode=mode,
                 suffix=self.batch_log_suffix,
             )
 
-    def on_epoch_end(self, state: State):
+    def on_epoch_end(self, runner: IRunner):
         """Translate epoch metrics to Visdom."""
         if self.log_on_epoch_end:
             self._log_metrics(
-                metrics=state.epoch_metrics,
-                step=state.global_epoch,
-                mode=state.loader_name,
+                metrics=runner.epoch_metrics,
+                step=runner.global_epoch,
+                mode=runner.loader_name,
                 suffix=self.epoch_log_suffix,
             )
 

@@ -28,12 +28,12 @@ stages:
         shuffle: per_epoch
 
   transform_params:
-    transform: A.Compose
+    transform: albumentations.Compose
     transforms:
-      - transform: A.Normalize
+      - transform: albumentations.Normalize
       - transform: catalyst.ToTensor
 
-  state_params:
+  stage_params:
     num_epochs: 3
     main_metric: &reduced_metric accuracy01
     minimize_metric: False
@@ -47,6 +47,15 @@ stages:
     gamma: 0.3
 
   callbacks_params:
+    train_augmentaions:
+      callback: BatchTransformCallback
+      transform:
+        - transform: kornia.RandomMotionBlur
+          kernel_size: 3
+          angle: 5.0
+          direction: 0.5
+      input_key: image
+      loader: train
     loss:
       callback: CriterionCallback
     optimizer:
@@ -79,7 +88,7 @@ stages:
 
   # tune
   stage2:
-    state_params:
+    stage_params:
       num_epochs: 3
 
     optimizer_params:

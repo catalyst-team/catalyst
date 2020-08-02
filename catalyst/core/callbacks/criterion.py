@@ -1,11 +1,12 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from typing import Dict, List, Union
 
-from catalyst.core import State
+from catalyst.core.callbacks.metrics import IMetricCallback
+from catalyst.core.runner import IRunner
 
-from .metrics import _MetricCallback
 
-
-class CriterionCallback(_MetricCallback):
+class CriterionCallback(IMetricCallback):
     """Callback for that measures loss with specified criterion."""
 
     def __init__(
@@ -28,7 +29,7 @@ class CriterionCallback(_MetricCallback):
                 If '__all__', the whole output will be passed to the criterion
                 If None, empty dict will be passed to the criterion.
             prefix (str): prefix for metrics and output key for loss
-                in ``state.batch_metrics`` dictionary
+                in ``runner.batch_metrics`` dictionary
             criterion_key (str): A key to take a criterion in case
                 there are several of them and they are in a dictionary format.
             multiplier (float): scale factor for the output loss.
@@ -45,12 +46,16 @@ class CriterionCallback(_MetricCallback):
 
     @property
     def metric_fn(self):
-        """@TODO: Docs. Contribution is welcome."""
+        """Criterion function."""
         return self._criterion
 
-    def on_stage_start(self, state: State):
-        """Checks that the current stage has correct criterion."""
-        criterion = state.get_attr(
+    def on_stage_start(self, runner: IRunner):
+        """Checks that the current stage has correct criterion.
+
+        Args:
+            runner (IRunner): current runner
+        """
+        criterion = runner.get_attr(
             key="criterion", inner_key=self.criterion_key
         )
         assert criterion is not None

@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 
 import argparse
 from argparse import ArgumentParser
@@ -6,7 +8,7 @@ import os
 from pathlib import Path
 
 from catalyst.dl import utils
-from catalyst.dl.registry import EXPERIMENTS
+from catalyst.registry import EXPERIMENTS
 from catalyst.utils import distributed_cmd_run, get_rank
 
 
@@ -73,6 +75,7 @@ def build_args(parser: ArgumentParser):
     utils.boolean_flag(parser, "verbose", default=None)
     utils.boolean_flag(parser, "timeit", default=None)
     utils.boolean_flag(parser, "check", default=None)
+    utils.boolean_flag(parser, "overfit", default=None)
     utils.boolean_flag(
         parser,
         "deterministic",
@@ -102,15 +105,17 @@ def main_worker(args, unknown_args):
 
     config.setdefault("distributed_params", {})["apex"] = args.apex
 
-    Experiment, Runner = utils.import_experiment_and_runner(Path(args.expdir))
-    if Experiment is None:
+    experiment_fn, runner_fn = utils.import_experiment_and_runner(
+        Path(args.expdir)
+    )
+    if experiment_fn is None:
         experiment_params = config.get("experiment_params", {})
         experiment = experiment_params.get("experiment", "Experiment")
-        Experiment = EXPERIMENTS.get(experiment)
+        experiment_fn = EXPERIMENTS.get(experiment)
 
     runner_params = config.get("runner_params", {})
-    experiment = Experiment(config)
-    runner = Runner(**runner_params)
+    experiment = experiment_fn(config)
+    runner = runner_fn(**runner_params)
 
     if experiment.logdir is not None and get_rank() <= 0:
         utils.dump_environment(config, experiment.logdir, args.configs)

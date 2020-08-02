@@ -1,6 +1,6 @@
 import pytest
 
-from .. import __main__ as main
+from catalyst.dl import __main__ as main
 
 
 def test_arg_parser_run():

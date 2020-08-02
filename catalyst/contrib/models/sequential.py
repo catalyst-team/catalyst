@@ -1,3 +1,6 @@
+# Author: Sergey Kolesnikov, scitator@gmail.com
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from typing import Dict, List, Union
 from collections import OrderedDict
 from copy import deepcopy
@@ -6,7 +9,7 @@ import torch
 from torch import nn
 
 from catalyst import utils
-from catalyst.contrib.registry import MODULES
+from catalyst.registry import MODULE
 
 
 def _process_additional_params(params, layers):
@@ -15,6 +18,36 @@ def _process_additional_params(params, layers):
     else:
         params = [params] * len(layers)
     return params
+
+
+def _layer_fn(layer_fn, f_in, f_out, **kwargs):
+    layer_fn = MODULE.get_if_str(layer_fn)
+    layer_fn = layer_fn(f_in, f_out, **kwargs)
+    return layer_fn
+
+
+def _normalization_fn(normalization_fn, f_in, f_out, **kwargs):
+    normalization_fn = MODULE.get_if_str(normalization_fn)
+    normalization_fn = (
+        normalization_fn(f_out, **kwargs)
+        if normalization_fn is not None
+        else None
+    )
+    return normalization_fn
+
+
+def _dropout_fn(dropout_fn, f_in, f_out, **kwargs):
+    dropout_fn = MODULE.get_if_str(dropout_fn)
+    dropout_fn = dropout_fn(**kwargs) if dropout_fn is not None else None
+    return dropout_fn
+
+
+def _activation_fn(activation_fn, f_in, f_out, **kwargs):
+    activation_fn = MODULE.get_if_str(activation_fn)
+    activation_fn = (
+        activation_fn(**kwargs) if activation_fn is not None else None
+    )
+    return activation_fn
 
 
 class ResidualWrapper(nn.Module):
@@ -62,34 +95,6 @@ class SequentialNet(nn.Module):
 
         layer_order = layer_order or ["layer", "norm", "drop", "act"]
 
-        def _layer_fn(layer_fn, f_in, f_out, **kwargs):
-            layer_fn = MODULES.get_if_str(layer_fn)
-            layer_fn = layer_fn(f_in, f_out, **kwargs)
-            return layer_fn
-
-        def _normalization_fn(normalization_fn, f_in, f_out, **kwargs):
-            normalization_fn = MODULES.get_if_str(normalization_fn)
-            normalization_fn = (
-                normalization_fn(f_out, **kwargs)
-                if normalization_fn is not None
-                else None
-            )
-            return normalization_fn
-
-        def _dropout_fn(dropout_fn, f_in, f_out, **kwargs):
-            dropout_fn = MODULES.get_if_str(dropout_fn)
-            dropout_fn = (
-                dropout_fn(**kwargs) if dropout_fn is not None else None
-            )
-            return dropout_fn
-
-        def _activation_fn(activation_fn, f_in, f_out, **kwargs):
-            activation_fn = MODULES.get_if_str(activation_fn)
-            activation_fn = (
-                activation_fn(**kwargs) if activation_fn is not None else None
-            )
-            return activation_fn
-
         name2fn = {
             "layer": _layer_fn,
             "norm": _normalization_fn,
@@ -105,7 +110,7 @@ class SequentialNet(nn.Module):
 
         net = []
         for i, (f_in, f_out) in enumerate(utils.pairwise(hiddens)):
-            block = []
+            block_list = []
             for key in layer_order:
                 sub_fn = name2fn[key]
                 sub_params = deepcopy(name2params[key][i])
@@ -118,21 +123,21 @@ class SequentialNet(nn.Module):
 
                 sub_block = sub_fn(sub_module, f_in, f_out, **sub_params)
                 if sub_block is not None:
-                    block.append((f"{key}", sub_block))
+                    block_list.append((f"{key}", sub_block))
 
-            block_ = OrderedDict(block)
-            block = torch.nn.Sequential(block_)
+            block_dict = OrderedDict(block_list)
+            block_net = torch.nn.Sequential(block_dict)
 
-            if block_.get("act", None) is not None:
-                activation = block_["act"]
+            if block_dict.get("act", None) is not None:
+                activation = block_dict["act"]
                 activation_init = utils.get_optimal_inner_init(
                     nonlinearity=activation
                 )
-                block.apply(activation_init)
+                block_net.apply(activation_init)
 
             if residual == "hard" or (residual == "soft" and f_in == f_out):
-                block = ResidualWrapper(net=block)
-            net.append((f"block_{i}", block))
+                block_net = ResidualWrapper(net=block_net)
+            net.append((f"block_{i}", block_net))
 
         self.net = torch.nn.Sequential(OrderedDict(net))
 

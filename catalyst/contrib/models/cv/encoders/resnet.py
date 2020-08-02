@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from typing import Union
 from pathlib import Path
 
@@ -7,7 +9,7 @@ import torchvision
 
 from catalyst import utils
 from catalyst.contrib.nn.modules import Flatten
-from catalyst.contrib.registry import MODULES
+from catalyst.registry import MODULE
 
 
 class ResnetEncoder(nn.Module):
@@ -58,7 +60,7 @@ class ResnetEncoder(nn.Module):
 
         if pooling is not None:
             pooling_kwargs = pooling_kwargs or {}
-            pooling_layer_fn = MODULES.get(pooling)
+            pooling_layer_fn = MODULE.get(pooling)
             pooling_layer = (
                 pooling_layer_fn(
                     in_features=resnet.fc.in_features, **pooling_kwargs

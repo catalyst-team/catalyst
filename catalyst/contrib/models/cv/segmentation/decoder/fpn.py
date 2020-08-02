@@ -1,10 +1,12 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from typing import List
 
 import torch
 from torch import nn
 
-from ..blocks.fpn import DecoderFPNBlock
-from .core import DecoderSpec
+from catalyst.contrib.models.cv.segmentation.blocks.fpn import DecoderFPNBlock
+from catalyst.contrib.models.cv.segmentation.decoder.core import DecoderSpec
 
 
 class FPNDecoder(DecoderSpec):
@@ -19,7 +21,7 @@ class FPNDecoder(DecoderSpec):
     ):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__(in_channels, in_strides)
-        out_strides_ = [in_strides[-1]]
+        out_strides_list = [in_strides[-1]]
 
         self.center_conv = nn.Conv2d(
             in_channels[-1], pyramid_channels, kernel_size=1
@@ -35,14 +37,14 @@ class FPNDecoder(DecoderSpec):
                     in_channels=pyramid_channels,
                     enc_channels=encoder_features,
                     out_channels=pyramid_channels,
-                    in_strides=out_strides_[-1],
+                    in_strides=out_strides_list[-1],
                     **kwargs
                 )
             )
-            out_strides_.append(blocks[-1].out_strides)
+            out_strides_list.append(blocks[-1].out_strides)
         self.blocks = nn.ModuleList(blocks)
         self._out_channels = [pyramid_channels] * len(in_channels)
-        self._out_strides = out_strides_
+        self._out_strides = out_strides_list
 
     @property
     def out_channels(self) -> List[int]:

@@ -1,6 +1,6 @@
 import random
 
-import albumentations as A
+import albumentations as albu
 
 from catalyst import utils
 
@@ -27,8 +27,8 @@ class RotateMixin:
         self.targets_key = targets_key
         self.rotate_probability = rotate_probability
         self.hflip_probability = hflip_probability
-        self.rotate = A.RandomRotate90()
-        self.hflip = A.HorizontalFlip()
+        self.rotate = albu.RandomRotate90()
+        self.hflip = albu.HorizontalFlip()
         self.one_hot_classes = (
             one_hot_classes * 8 if one_hot_classes is not None else None
         )

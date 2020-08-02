@@ -1,9 +1,16 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 import torch
 from torch import nn
 from torch.nn import functional as F
 
-from ..abn import ABN
-from .core import _get_block, _upsample, DecoderBlock, EncoderBlock
+from catalyst.contrib.models.cv.segmentation.abn import ABN
+from catalyst.contrib.models.cv.segmentation.blocks.core import (  # noqa: WPS450, E501
+    _get_block,
+    _upsample,
+    DecoderBlock,
+    EncoderBlock,
+)
 
 
 class EncoderDownsampleBlock(EncoderBlock):

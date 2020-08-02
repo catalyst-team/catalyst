@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 import argparse
 from functools import partial
 from pathlib import Path
@@ -16,8 +18,15 @@ from catalyst.dl import utils
 
 
 def build_args(parser):
-    """Constructs the command-line arguments for
+    """
+    Constructs the command-line arguments for
     ``catalyst-data text2embeddings``.
+
+    Args:
+        parser: parser
+
+    Returns:
+        modified parser
     """
     parser.add_argument(
         "--in-csv", type=str, help="Path to csv with text", required=True
@@ -51,7 +60,7 @@ def build_args(parser):
     parser.add_argument(
         "--out-prefix", type=str, required=True,
     )
-    parser.add_argument("--max-length", type=int, default=512)
+    parser.add_argument("--max-length", type=int, default=512)  # noqa: WPS432
     utils.boolean_flag(parser, "mask-for-max-length", default=False)
     utils.boolean_flag(parser, "output-hidden-states", default=False)
     utils.boolean_flag(parser, "strip", default=True)
@@ -70,7 +79,7 @@ def build_args(parser):
         type=int,
         dest="batch_size",
         help="Dataloader batch size",
-        default=32,
+        default=32,  # noqa: WPS432
     )
     parser.add_argument(
         "--verbose",
@@ -79,7 +88,7 @@ def build_args(parser):
         default=False,
         help="Print additional information",
     )
-    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--seed", type=int, default=42)  # noqa: WPS432
     utils.boolean_flag(
         parser,
         "deterministic",
@@ -116,7 +125,7 @@ def main(args, _=None):
     utils.set_global_seed(args.seed)
     utils.prepare_cudnn(args.deterministic, args.benchmark)
 
-    if hasattr(args, "in_huggingface"):
+    if getattr(args, "in_huggingface", False):
         model_config = BertConfig.from_pretrained(args.in_huggingface)
         model_config.output_hidden_states = args.output_hidden_states
         model = BertModel.from_pretrained(
@@ -128,7 +137,7 @@ def main(args, _=None):
         model_config.output_hidden_states = args.output_hidden_states
         model = BertModel(config=model_config)
         tokenizer = BertTokenizer.from_pretrained(args.in_vocab)
-    if hasattr(args, "in_model"):
+    if getattr(args, "in_model", None) is not None:
         checkpoint = utils.load_checkpoint(args.in_model)
         checkpoint = {"model_state_dict": checkpoint}
         utils.unpack_checkpoint(checkpoint=checkpoint, model=model)
@@ -163,11 +172,11 @@ def main(args, _=None):
     features = {}
     dataloader = tqdm(dataloader) if args.verbose else dataloader
     with torch.no_grad():
-        for idx, batch in enumerate(dataloader):
-            batch = utils.any2device(batch, device)
-            bert_output = model(**batch)
+        for idx, batch_input in enumerate(dataloader):
+            batch_input = utils.any2device(batch_input, device)
+            batch_output = model(**batch_input)
             mask = (
-                batch["attention_mask"].unsqueeze(-1)
+                batch_input["attention_mask"].unsqueeze(-1)
                 if args.mask_for_max_length
                 else None
             )
@@ -182,8 +191,8 @@ def main(args, _=None):
                 hidden_size = model.config.hidden_size
                 hidden_states = model.config.output_hidden_states
 
-            features_ = process_bert_output(
-                bert_output=bert_output,
+            batch_features = process_bert_output(
+                bert_output=batch_output,
                 hidden_size=hidden_size,
                 output_hidden_states=hidden_states,
                 pooling_groups=pooling_groups,
@@ -192,11 +201,15 @@ def main(args, _=None):
 
             # create storage based on network output
             if idx == 0:
-                for key, value in features_.items():
-                    name_ = key if isinstance(key, str) else f"{key:02d}"
-                    _, embedding_size = value.shape
-                    features[name_] = np.memmap(
-                        f"{args.out_prefix}.{name_}.npy",
+                for layer_name, layer_value in batch_features.items():
+                    layer_name = (
+                        layer_name
+                        if isinstance(layer_name, str)
+                        else f"{layer_name:02d}"
+                    )
+                    _, embedding_size = layer_value.shape
+                    features[layer_name] = np.memmap(
+                        f"{args.out_prefix}.{layer_name}.npy",
                         dtype=np.float32,
                         mode="w+",
                         shape=(num_samples, embedding_size),
@@ -205,9 +218,13 @@ def main(args, _=None):
             indices = np.arange(
                 idx * batch_size, min((idx + 1) * batch_size, num_samples)
             )
-            for key, value in features_.items():
-                name_ = key if isinstance(key, str) else f"{key:02d}"
-                features[name_][indices] = _detach(value)
+            for layer_name2, layer_value2 in batch_features.items():
+                layer_name2 = (
+                    layer_name2
+                    if isinstance(layer_name2, str)
+                    else f"{layer_name2:02d}"
+                )
+                features[layer_name2][indices] = _detach(layer_value2)
 
 
 if __name__ == "__main__":

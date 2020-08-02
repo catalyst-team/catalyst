@@ -4,7 +4,8 @@ import numpy as np
 
 import torch
 
-from catalyst.dl import CriterionCallback, State
+from catalyst.core import IRunner
+from catalyst.dl import CriterionCallback
 
 
 class MixupCallback(CriterionCallback):
@@ -14,11 +15,11 @@ class MixupCallback(CriterionCallback):
     `mixup: Beyond Empirical Risk Minimization`_.
 
     .. warning::
-        :class:`catalyst.dl.callbacks.MixupCallback` is inherited from
-        :class:`catalyst.dl.CriterionCallback` and does its work.
+        `catalyst.dl.callbacks.MixupCallback` is inherited from
+        `catalyst.dl.CriterionCallback` and does its work.
         You may not use them together.
 
-    .. _mixup\: Beyond Empirical Risk Minimization:
+    .. _mixup\: Beyond Empirical Risk Minimization:  # noqa: W605
         https://arxiv.org/abs/1710.09412
     """
 
@@ -58,32 +59,32 @@ class MixupCallback(CriterionCallback):
         self.index = None
         self.is_needed = True
 
-    def _compute_loss_value(self, state: State, criterion):
+    def _compute_loss_value(self, runner: IRunner, criterion):
         if not self.is_needed:
-            return super()._compute_loss_value(state, criterion)
+            return super()._compute_loss_value(runner, criterion)
 
-        pred = state.output[self.output_key]
-        y_a = state.input[self.input_key]
-        y_b = state.input[self.input_key][self.index]
+        pred = runner.output[self.output_key]
+        y_a = runner.input[self.input_key]
+        y_b = runner.input[self.input_key][self.index]
 
         loss = self.lam * criterion(pred, y_a) + (1 - self.lam) * criterion(
             pred, y_b
         )
         return loss
 
-    def on_loader_start(self, state: State):
+    def on_loader_start(self, runner: IRunner):
         """Loader start hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
-        self.is_needed = not self.on_train_only or state.is_train_loader
+        self.is_needed = not self.on_train_only or runner.is_train_loader
 
-    def on_batch_start(self, state: State):
+    def on_batch_start(self, runner: IRunner):
         """Batch start hook.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
         if not self.is_needed:
             return
@@ -93,13 +94,13 @@ class MixupCallback(CriterionCallback):
         else:
             self.lam = 1
 
-        self.index = torch.randperm(state.input[self.fields[0]].shape[0])
-        self.index.to(state.device)
+        self.index = torch.randperm(runner.input[self.fields[0]].shape[0])
+        self.index.to(runner.device)
 
         for f in self.fields:
-            state.input[f] = (
-                self.lam * state.input[f]
-                + (1 - self.lam) * state.input[f][self.index]
+            runner.input[f] = (
+                self.lam * runner.input[f]
+                + (1 - self.lam) * runner.input[f][self.index]
             )
 
 

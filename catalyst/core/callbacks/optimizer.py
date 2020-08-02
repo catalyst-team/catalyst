@@ -2,17 +2,18 @@ from typing import Callable, Dict, List
 import logging
 import warnings
 
-from catalyst.core import (
-    Callback,
-    CallbackNode,
-    CallbackOrder,
-    registry,
-    State,
-    utils,
-)
+from catalyst import registry
+from catalyst.core import utils
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.runner import IRunner
 from catalyst.tools.typing import Optimizer
 
 logger = logging.getLogger(__name__)
+
+try:
+    import torch_xla.core.xla_model as xm
+except ModuleNotFoundError:
+    pass
 
 
 class OptimizerCallback(Callback):
@@ -26,10 +27,11 @@ class OptimizerCallback(Callback):
         grad_clip_params: Dict = None,
         decouple_weight_decay: bool = True,
         loss_key: str = None,
+        xla_barrier: bool = True,
     ):
         """
         Args:
-            loss_key (str): key to get loss from ``state.batch_metrics``
+            loss_key (str): key to get loss from ``runner.batch_metrics``
             optimizer_key (str): A key to take a optimizer in case
                 there are several of them and they are in a dictionary format.
             accumulation_steps (int): number of steps before
@@ -37,8 +39,17 @@ class OptimizerCallback(Callback):
             grad_clip_params (dict): params for gradient clipping
             decouple_weight_decay (bool): If True - decouple weight decay
                 regularization.
+            xla_barrier (bool): barrier option for xla. Here you can find
+                more about usage of `barrier flag
+                <https://pytorch.org/xla/release/1.5/index.html?
+                highlight=optimizer_step#torch_xla.core.xla_model.optimizer_step>`_
+                and `examples
+                <https://pytorch.org/xla/release/1.5/index.html#
+                running-on-a-single-xla-device>`_.
+
+                Default is ``True``.
         """
-        super().__init__(order=CallbackOrder.Optimizer, node=CallbackNode.All)
+        super().__init__(order=CallbackOrder.optimizer, node=CallbackNode.all)
         assert metric_key is None or loss_key is None
         if loss_key is not None:
             warnings.warn(
@@ -53,15 +64,18 @@ class OptimizerCallback(Callback):
         self._accumulation_counter: int = 0
 
         grad_clip_params: dict = grad_clip_params or {}
-        self.grad_clip_fn = registry.GRAD_CLIPPERS.get_from_params(
+        self.grad_clip_fn = registry.GRAD_CLIPPER.get_from_params(
             **grad_clip_params
         )
 
         self.decouple_weight_decay = decouple_weight_decay
         self._optimizer_wd: List[float] = [0.0]
+        self._optimizer_step_fn: Callable = None
+        self.is_xla = False
+        self.use_xla_barrier = xla_barrier
 
-    @staticmethod
     def grad_step(
+        self,
         *,
         optimizer: Optimizer,
         optimizer_wds: List[float] = 0,
@@ -81,20 +95,50 @@ class OptimizerCallback(Callback):
                     param.data = param.data.add(-wd * group["lr"], param.data)
             if grad_clip_fn is not None:
                 grad_clip_fn(group["params"])
+        # optimize parameters
+        self._optimizer_step_fn(optimizer)
+
+    def _optimizer_step(self, optimizer: Optimizer) -> None:
+        """CPU and GPU optimization step.
+
+        Args:
+            optimizer (Optimizer): optimizer object
+        """
         optimizer.step()
 
-    def on_stage_start(self, state: State) -> None:
-        """Checks that the current stage has correct optimizer."""
-        self._optimizer = state.get_attr(
+    def _optimizer_step_tpu(self, optimizer: Optimizer) -> None:
+        """TPU optimization step.
+
+        Args:
+            optimizer (Optimizer): optimizer object
+        """
+        if self.use_xla_barrier:
+            xm.optimizer_step(optimizer, barrier=True)
+        else:
+            xm.optimizer_step(optimizer)
+
+    def on_stage_start(self, runner: IRunner) -> None:
+        """Checks that the current stage has correct optimizer.
+
+        Args:
+            runner(IRunner): current runner
+        """
+        self._optimizer = runner.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
+        # device based optimization step
+        if runner.device.type == "xla":
+            self._optimizer_step_fn = self._optimizer_step_tpu
+        else:
+            self._optimizer_step_fn = self._optimizer_step
+
         assert self._optimizer is not None
 
-    def on_epoch_start(self, state: State) -> None:
+    def on_epoch_start(self, runner: IRunner) -> None:
         """On epoch start event.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
         if self.decouple_weight_decay:
             self._optimizer_wd = [
@@ -106,11 +150,11 @@ class OptimizerCallback(Callback):
         else:
             self._optimizer_wd = [0.0] * len(self._optimizer.param_groups)
 
-    def on_epoch_end(self, state: State) -> None:
+    def on_epoch_end(self, runner: IRunner) -> None:
         """On epoch end event.
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
         if self.decouple_weight_decay:
             for i, wd in enumerate(self._optimizer_wd):
@@ -122,7 +166,7 @@ class OptimizerCallback(Callback):
             if self.optimizer_key is not None
             else "lr"
         )
-        state.epoch_metrics[lr_name] = lr
+        runner.epoch_metrics[lr_name] = lr
 
         momentum = utils.get_optimizer_momentum(self._optimizer)
         if momentum is not None:
@@ -131,18 +175,18 @@ class OptimizerCallback(Callback):
                 if self.optimizer_key is not None
                 else "momentum"
             )
-            state.epoch_metrics[momentum_name] = momentum
+            runner.epoch_metrics[momentum_name] = momentum
 
-    def on_batch_end(self, state: State) -> None:
+    def on_batch_end(self, runner: IRunner) -> None:
         """On batch end event
 
         Args:
-            state (State): current state
+            runner (IRunner): current runner
         """
-        if not state.is_train_loader:
+        if not runner.is_train_loader:
             return
 
-        loss = state.batch_metrics[self.metric_key]
+        loss = runner.batch_metrics[self.metric_key]
 
         self._accumulation_counter += 1
         need_gradient_step = (

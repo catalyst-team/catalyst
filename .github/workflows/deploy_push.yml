@@ -1,0 +1,86 @@
+name: deploy-on-push
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+
+  build-docs:
+    name: build-docs
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      # max-parallel: 6
+      matrix:
+        os: [ubuntu-18.04] # , windows-2019, macOS-10.15]
+        python-version: [3.6] #, 3.7, 3.8]
+        requires: ['latest']
+#        exclude:
+#          # excludes node 4 on macOS
+#          - python-version: 3.8
+#            requires: 'minimal'
+    # Timeout: 4
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: setup ubuntu
+        run: |
+          python -c "from pip._internal.locations import USER_CACHE_DIR; print('::set-output name=dir::' + USER_CACHE_DIR)"
+
+      # https://github.com/actions/cache/blob/master/examples.md
+      # Note: This uses an internal pip API and may not always work
+      # https://github.com/actions/cache/blob/master/examples.md#multiple-oss-in-a-workflow
+      - name: get pip cache
+        id: pip-cache
+        run: |
+          python -c "from pip._internal.locations import USER_CACHE_DIR; print('::set-output name=dir::' + USER_CACHE_DIR)"
+
+      - name: cache pip
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.pip-cache.outputs.dir }}
+          key: ${{ runner.os }}-${{ matrix.python-version }}-pip-${{ hashFiles('./requirements/requirements.txt') }}-${{ hashFiles('./requirements/requirements-dev.txt') }}-${{ hashFiles('./requirements/requirements-ml.txt') }}-${{ hashFiles('./requirements/requirements-cv.txt') }}-${{ hashFiles('./requirements/requirements-nlp.txt') }}-${{ hashFiles('./requirements/requirements-contrib.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.python-version }}-pip-
+
+      - name: install dependencies
+        run: |
+          # python -m pip install --upgrade --user pip
+          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-nlp.txt -r ./requirements/requirements-contrib.txt
+          python --version
+          pip --version
+          pip list
+        shell: bash
+
+      - name: make docs
+        run: |
+          REMOVE_BUILDS=0 make check-docs
+
+      - name: commit documentation changes
+        run: |
+          git clone https://github.com/catalyst-team/catalyst.git --branch gh-pages --single-branch gh-pages
+          cd gh-pages
+          # Remove master docs, do not touch the past versions
+          rm -f * || true
+          rm -rf .doctrees _modules _sources _static api info
+          cp -a ../builds/* .
+          # commit changes
+          git config --local user.email "action@ithub.com"
+          git config --local user.name "GitHub Action"
+          git add .
+          git commit -m "$(git log -1 --pretty=%B)" || true
+
+      - name: push changes
+        uses: ad-m/github-push-action@master
+        with:
+          branch: gh-pages
+          directory: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}

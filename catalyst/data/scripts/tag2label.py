@@ -1,3 +1,5 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 import argparse
 import json
 
@@ -7,8 +9,13 @@ from catalyst import utils
 
 
 def build_args(parser):
-    """
-    Constructs the command-line arguments for ``catalyst-data tag2label``.
+    """Constructs the command-line arguments for ``catalyst-data tag2label``.
+
+    Args:
+        parser: current parser
+
+    Returns:
+        updated parser
     """
     parser.add_argument(
         "--in-csv", type=str, default=None, help="Path to data in `.csv`."
@@ -18,7 +25,7 @@ def build_args(parser):
         type=str,
         default=None,
         help="Path to directory with dataset"
-        "or paths separated by commas for several datasets",
+        + "or paths separated by commas for several datasets",
     )
 
     parser.add_argument(

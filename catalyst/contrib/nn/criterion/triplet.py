@@ -1,14 +1,17 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 import torch
 from torch import nn
 
-from .functional import triplet_loss
+from catalyst.contrib.nn.criterion.functional import triplet_loss
+
+TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
 
 
 class TripletLoss(nn.Module):
     """Triplet loss with hard positive/negative mining.
 
-    Reference:
-        Code imported from https://github.com/NegatioN/OnlineMiningTripletLoss
+    Adapted from: https://github.com/NegatioN/OnlineMiningTripletLoss
     """
 
     def __init__(self, margin: float = 0.3):
@@ -69,15 +72,17 @@ class TripletLoss(nn.Module):
             labels: tf.int32 `Tensor` with shape [batch_size]
 
         Returns:
-            mask: tf.bool `Tensor` with shape [batch_size, batch_size]
+            torch.Tensor: mask with shape [batch_size, batch_size]
         """
-        indices_equal = torch.eye(labels.size(0)).bool()
+        indices_equal = torch.eye(labels.size(0)).type(torch.bool)
 
         # labels and indices should be on
         # the same device, otherwise - exception
         indices_equal = indices_equal.to("cuda" if labels.is_cuda else "cpu")
 
         # Check that i and j are distinct
+
+        indices_equal = indices_equal.type(TORCH_BOOL)
         indices_not_equal = ~indices_equal
 
         # Check if labels[i] == labels[j]
@@ -94,7 +99,7 @@ class TripletLoss(nn.Module):
             labels: tf.int32 `Tensor` with shape [batch_size]
 
         Returns:
-            mask: tf.bool `Tensor` with shape [batch_size, batch_size]
+            torch.Tensor: mask with shape [batch_size, batch_size]
         """
         # Check if labels[i] != labels[k]
         # Uses broadcasting where the 1st argument
@@ -118,7 +123,7 @@ class TripletLoss(nn.Module):
                      pairwise euclidean distance matrix.
 
         Returns:
-            triplet_loss: scalar tensor containing the triplet loss
+            torch.Tensor: scalar tensor containing the triplet loss
         """
         # Get the pairwise distance matrix
         pairwise_dist = self._pairwise_distances(embeddings, squared=squared)
@@ -157,9 +162,9 @@ class TripletLoss(nn.Module):
         # Combine biggest d(a, p) and smallest d(a, n) into final triplet loss
         tl = hardest_positive_dist - hardest_negative_dist + margin
         tl[tl < 0] = 0
-        triplet_loss = tl.mean()
+        loss = tl.mean()
 
-        return triplet_loss
+        return loss
 
     def forward(self, embeddings, targets):
         """Forward propagation method for the triplet loss.
@@ -169,7 +174,7 @@ class TripletLoss(nn.Module):
             targets: labels of the batch, of size (batch_size,)
 
         Returns:
-            triplet_loss: scalar tensor containing the triplet loss
+            torch.Tensor: scalar tensor containing the triplet loss
         """
         return self._batch_hard_triplet_loss(embeddings, targets, self.margin)
 
@@ -187,7 +192,7 @@ class TripletLossV2(nn.Module):
 
     def forward(self, embeddings, targets):
         """@TODO: Docs. Contribution is welcome."""
-        return triplet_loss(embeddings, targets, margin=self.margin,)
+        return triplet_loss(embeddings, targets, margin=self.margin)
 
 
 class TripletPairwiseEmbeddingLoss(nn.Module):

@@ -7,13 +7,10 @@ Tensorboard readers:
 from typing import BinaryIO, Optional, Union
 from collections import namedtuple
 from collections.abc import Iterable
-import os
 from pathlib import Path
 import struct
 
-if os.environ.get("CRC32C_SW_MODE", None) is None:
-    os.environ["CRC32C_SW_MODE"] = "auto"
-from crc32c import crc32 as crc32c  # noqa: E402
+from tensorboardX.crc32c import crc32c  # noqa: E402
 
 import numpy as np  # noqa: E402
 
@@ -151,7 +148,7 @@ class SummaryReader(Iterable):
         Only scalars are supported at the moment.
     """
 
-    _DECODERS = {
+    _DECODERS = {  # noqa: WPS115
         "scalar": _get_scalar,
     }
 
@@ -184,14 +181,16 @@ class SummaryReader(Iterable):
             raise ValueError("Invalid type name")
 
     def _decode_events(self, events: Iterable) -> Optional[SummaryItem]:
-        """Convert events to `SummaryItem` instances.
+        """
+        Convert events to `SummaryItem` instances.
+        Returns a generator with decoded events
+        or `None` if an event can't be decoded.
 
         Args:
-            events: An iterable with events objects
+            events: An iterable with events objects.
 
         Returns:
-            A generator with decoded events
-            or `None`s if an event can"t be decoded
+            Optional[SummaryItem]: decoded event
         """
         for event in events:
             if not event.HasField("summary"):

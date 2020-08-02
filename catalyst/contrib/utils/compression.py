@@ -1,12 +1,13 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 import base64
 import logging
 
 import numpy as np
 from six import string_types
 
+from catalyst.contrib.utils.serialization import deserialize, serialize
 from catalyst.tools import settings
-
-from .serialization import deserialize, serialize
 
 logger = logging.getLogger(__name__)
 

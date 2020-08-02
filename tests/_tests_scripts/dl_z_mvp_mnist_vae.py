@@ -80,7 +80,7 @@ class CustomRunner(dl.Runner):
             y_hat, y, topk=(1, 3, 5)
         )
 
-        self.state.batch_metrics = {
+        self.batch_metrics = {
             "loss_clf": loss_clf,
             "loss_ae": loss_ae,
             "loss_kld": loss_kld,
@@ -91,10 +91,10 @@ class CustomRunner(dl.Runner):
             "accuracy05": accuracy05,
         }
 
-        if self.state.is_train_loader:
+        if self.is_train_loader:
             loss.backward()
-            self.state.optimizer.step()
-            self.state.optimizer.zero_grad()
+            self.optimizer.step()
+            self.optimizer.zero_grad()
 
 
 def main():
@@ -103,15 +103,11 @@ def main():
 
     loaders = {
         "train": DataLoader(
-            MNIST(
-                os.getcwd(), train=False, download=True, transform=ToTensor(),
-            ),
+            MNIST("./data", train=False, download=True, transform=ToTensor(),),
             batch_size=32,
         ),
         "valid": DataLoader(
-            MNIST(
-                os.getcwd(), train=False, download=True, transform=ToTensor(),
-            ),
+            MNIST("./data", train=False, download=True, transform=ToTensor(),),
             batch_size=32,
         ),
     }
