@@ -1,9 +1,9 @@
 from catalyst.contrib.nn import criterion as module
-from catalyst.data import AllTripletsSampler
 from catalyst.contrib.nn.criterion import (
     CircleLoss,
     TripletMarginLossWithSampling,
 )
+from catalyst.data import AllTripletsSampler
 
 
 def test_criterion_init():
