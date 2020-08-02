@@ -260,11 +260,16 @@
               
   <h1>Source code for catalyst.contrib.nn.criterion.triplet</h1><div class="highlight"><pre>
 <span></span><span class="c1"># flake8: noqa</span>
-<span class="c1"># @TODO: code formatting issue for 20.07 release</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Union</span>
+
 <span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="nb">int</span> <span class="k">as</span> <span class="n">tint</span><span class="p">,</span> <span class="n">long</span><span class="p">,</span> <span class="n">nn</span><span class="p">,</span> <span class="n">short</span><span class="p">,</span> <span class="n">Tensor</span>
+<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">TripletMarginLoss</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.contrib.nn.criterion.functional</span> <span class="kn">import</span> <span class="n">triplet_loss</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">catalyst.data.sampler_inbatch</span> <span class="kn">import</span> <span class="n">InBatchTripletsSampler</span>
 
 <span class="n">TORCH_BOOL</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bool</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">__version__</span> <span class="o">&gt;</span> <span class="s2">&quot;1.1.0&quot;</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">ByteTensor</span>
 
@@ -440,20 +445,20 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_batch_hard_triplet_loss</span><span class="p">(</span><span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="p">)</span></div></div>
 
 
-<span class="k">class</span> <span class="nc">TripletLossV2</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="TripletLossV2"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletLossV2">[docs]</a><span class="k">class</span> <span class="nc">TripletLossV2</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mf">0.3</span><span class="p">):</span>
+<div class="viewcode-block" id="TripletLossV2.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletLossV2.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mf">0.3</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            margin (float): margin for triplet.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="n">margin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="n">margin</span></div>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
+<div class="viewcode-block" id="TripletLossV2.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletLossV2.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">triplet_loss</span><span class="p">(</span><span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">triplet_loss</span><span class="p">(</span><span class="n">embeddings</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">margin</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="TripletPairwiseEmbeddingLoss"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletPairwiseEmbeddingLoss">[docs]</a><span class="k">class</span> <span class="nc">TripletPairwiseEmbeddingLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -518,7 +523,84 @@
         <span class="k">return</span> <span class="n">loss</span></div></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;TripletLoss&quot;</span><span class="p">,</span> <span class="s2">&quot;TripletPairwiseEmbeddingLoss&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="TripletMarginLossWithSampling"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletMarginLossWithSampling">[docs]</a><span class="k">class</span> <span class="nc">TripletMarginLossWithSampling</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class combains in-batch sampling of triplets and</span>
+<span class="sd">    default TripletMargingLoss from PyTorch.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TripletMarginLossWithSampling.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletMarginLossWithSampling.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">sampler_inbatch</span><span class="p">:</span> <span class="s2">&quot;InBatchTripletsSampler&quot;</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            margin: margin value</span>
+<span class="sd">            sampler_inbatch: sampler for forming triplets inside the batch</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_inbatch</span> <span class="o">=</span> <span class="n">sampler_inbatch</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_triplet_margin_loss</span> <span class="o">=</span> <span class="n">TripletMarginLoss</span><span class="p">(</span><span class="n">margin</span><span class="o">=</span><span class="n">margin</span><span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_prepate_labels</span><span class="p">(</span><span class="n">labels</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function allows to work with 2 types of indexing:</span>
+<span class="sd">        using a integer tensor and a list of indices.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            labels: labels of batch samples</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            labels of batch samples in the aligned format</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">):</span>
+            <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+            <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+                <span class="n">labels</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="n">short</span><span class="p">,</span> <span class="n">tint</span><span class="p">,</span> <span class="n">long</span><span class="p">]</span>
+            <span class="p">),</span> <span class="s2">&quot;Labels cannot be interpreted as indices.&quot;</span>
+            <span class="n">labels_list</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">labels_list</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected type of labels: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">labels_list</span>
+
+<div class="viewcode-block" id="TripletMarginLossWithSampling.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletMarginLossWithSampling.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            features: features with the shape of [batch_size, features_dim]</span>
+<span class="sd">            labels: labels of samples having batch_size elements</span>
+
+<span class="sd">        Returns: loss value</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">labels_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepate_labels</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+
+        <span class="p">(</span>
+            <span class="n">features_anchor</span><span class="p">,</span>
+            <span class="n">features_positive</span><span class="p">,</span>
+            <span class="n">features_negative</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_inbatch</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">features</span><span class="o">=</span><span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels_list</span><span class="p">)</span>
+
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_triplet_margin_loss</span><span class="p">(</span>
+            <span class="n">anchor</span><span class="o">=</span><span class="n">features_anchor</span><span class="p">,</span>
+            <span class="n">positive</span><span class="o">=</span><span class="n">features_positive</span><span class="p">,</span>
+            <span class="n">negative</span><span class="o">=</span><span class="n">features_negative</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">loss</span></div></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;TripletLoss&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TripletLossV2&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TripletPairwiseEmbeddingLoss&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TripletMarginLossWithSampling&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 </pre></div>
 
              </article>

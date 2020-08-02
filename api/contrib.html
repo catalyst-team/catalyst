@@ -934,6 +934,56 @@ that takes in the target and transforms it.</p></li>
 
 </dd></dl>
 
+<dl class="class">
+<dt id="catalyst.contrib.datasets.mnist.MnistMLDataset">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.datasets.mnist.</code><code class="sig-name descname">MnistMLDataset</code><span class="sig-paren">(</span><em class="sig-param">root</em>, <em class="sig-param">train=True</em>, <em class="sig-param">transform=None</em>, <em class="sig-param">target_transform=None</em>, <em class="sig-param">download=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/mnist.html#MnistMLDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MnistMLDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.metric_learning.MetricLearningTrainDataset</span></code>, <a class="reference internal" href="#catalyst.contrib.datasets.mnist.MNIST" title="catalyst.contrib.datasets.mnist.MNIST"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.mnist.MNIST</span></code></a></p>
+<p>Simple wrapper for MNIST dataset</p>
+<dl class="method">
+<dt id="catalyst.contrib.datasets.mnist.MnistMLDataset.get_labels">
+<code class="sig-name descname">get_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[int]<a class="reference internal" href="../_modules/catalyst/contrib/datasets/mnist.html#MnistMLDataset.get_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MnistMLDataset.get_labels" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>labels of digits</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.datasets.mnist.MnistQGDataset">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.datasets.mnist.</code><code class="sig-name descname">MnistQGDataset</code><span class="sig-paren">(</span><em class="sig-param">root: str</em>, <em class="sig-param">transform: Optional[Callable] = None</em>, <em class="sig-param">gallery_fraq: Optional[float] = 0.2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/mnist.html#MnistQGDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MnistQGDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.metric_learning.QueryGalleryDataset</span></code></p>
+<p>MNIST for metric learning with query and gallery split</p>
+<dl class="method">
+<dt id="catalyst.contrib.datasets.mnist.MnistQGDataset.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">root: str</em>, <em class="sig-param">transform: Optional[Callable] = None</em>, <em class="sig-param">gallery_fraq: Optional[float] = 0.2</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/contrib/datasets/mnist.html#MnistQGDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MnistQGDataset.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root</strong> – root directory for storing dataset</p></li>
+<li><p><strong>transform</strong> – transform</p></li>
+<li><p><strong>gallery_fraq</strong> – gallery size</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.datasets.mnist.MnistQGDataset.gallery_size">
+<em class="property">property </em><code class="sig-name descname">gallery_size</code><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MnistQGDataset.gallery_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query Gallery dataset should have gallery_size property</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.datasets.mnist.MnistQGDataset.query_size">
+<em class="property">property </em><code class="sig-name descname">query_size</code><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MnistQGDataset.query_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Query Gallery dataset should have query_size property</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="function">
 <dt id="catalyst.contrib.datasets.mnist.get_int">
 <code class="sig-prename descclassname">catalyst.contrib.datasets.mnist.</code><code class="sig-name descname">get_int</code><span class="sig-paren">(</span><em class="sig-param">b</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/mnist.html#get_int"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.mnist.get_int" title="Permalink to this definition">¶</a></dt>
@@ -2740,6 +2790,29 @@ in neural networks</a>.</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="catalyst.contrib.nn.criterion.triplet.TripletLossV2">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.triplet.</code><code class="sig-name descname">TripletLossV2</code><span class="sig-paren">(</span><em class="sig-param">margin=0.3</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/triplet.html#TripletLossV2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.triplet.TripletLossV2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dl class="method">
+<dt id="catalyst.contrib.nn.criterion.triplet.TripletLossV2.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">margin=0.3</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/triplet.html#TripletLossV2.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.triplet.TripletLossV2.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>margin</strong> (<em>float</em>) – margin for triplet.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.nn.criterion.triplet.TripletLossV2.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">embeddings</em>, <em class="sig-param">targets</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/triplet.html#TripletLossV2.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.triplet.TripletLossV2.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="catalyst.contrib.nn.criterion.triplet.TripletPairwiseEmbeddingLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.triplet.</code><code class="sig-name descname">TripletPairwiseEmbeddingLoss</code><span class="sig-paren">(</span><em class="sig-param">margin: float = 0.3</em>, <em class="sig-param">reduction: str = 'mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/triplet.html#TripletPairwiseEmbeddingLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.triplet.TripletPairwiseEmbeddingLoss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
@@ -2779,6 +2852,41 @@ with shape [batch_size, embedding_size]</p></li>
 <dd class="field-odd"><p>torch.Tensor</p>
 </dd>
 </dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.nn.criterion.triplet.TripletMarginLossWithSampling">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.triplet.</code><code class="sig-name descname">TripletMarginLossWithSampling</code><span class="sig-paren">(</span><em class="sig-param">margin: float</em>, <em class="sig-param">sampler_inbatch: InBatchTripletsSampler</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/triplet.html#TripletMarginLossWithSampling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.triplet.TripletMarginLossWithSampling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>This class combains in-batch sampling of triplets and
+default TripletMargingLoss from PyTorch.</p>
+<dl class="method">
+<dt id="catalyst.contrib.nn.criterion.triplet.TripletMarginLossWithSampling.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">margin: float</em>, <em class="sig-param">sampler_inbatch: InBatchTripletsSampler</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/triplet.html#TripletMarginLossWithSampling.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.triplet.TripletMarginLossWithSampling.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>margin</strong> – margin value</p></li>
+<li><p><strong>sampler_inbatch</strong> – sampler for forming triplets inside the batch</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.nn.criterion.triplet.TripletMarginLossWithSampling.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">features: torch.Tensor, labels: Union[torch.Tensor, List[int]]</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/triplet.html#TripletMarginLossWithSampling.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.triplet.TripletMarginLossWithSampling.forward" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> – features with the shape of [batch_size, features_dim]</p></li>
+<li><p><strong>labels</strong> – labels of samples having batch_size elements</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: loss value</p>
 </dd></dl>
 
 </dd></dl>
