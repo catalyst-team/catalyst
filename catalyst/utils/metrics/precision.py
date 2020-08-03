@@ -69,34 +69,4 @@ def average_precision(
     return [ap]
 
 
-def mean_average_precision(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    weights: Optional[torch.Tensor] = None,
-    topk: Sequence[int] = (1,),
-) -> Sequence[torch.Tensor]:
-    """Computes the mean average precision at `topk`.
-
-    Args:
-        outputs (torch.Tensor): NxK tensor that for each of the N examples
-            indicates the probability of the example belonging to each of
-            the K classes, according to the model.
-        targets (torch.Tensor): binary NxK tensort that encodes which of the K
-            classes are associated with the N-th input
-            (eg: a row [0, 1, 0, 1] indicates that the example is
-            associated with classes 2 and 4)
-        weights (torch.Tensor): importance for each sample
-        topk (int, optional): The maximum number of predicted elements
-
-    Returns:
-        Sequence[torch.Tensor]: list of 1x1 tensor,
-        with mean average precision@topk_i for K classes
-    """
-    output = average_precision(
-        outputs=outputs, targets=targets, weights=weights, topk=topk
-    )
-    output = [x.mean() for x in output]
-    return output
-
-
-__all__ = ["average_precision", "mean_average_precision"]
+__all__ = ["average_precision"]
