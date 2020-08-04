@@ -17,4 +17,6 @@ from .trace import (
     trace_model_from_checkpoint,
     trace_model_from_runner,
 )
+from .quantization import save_quantized_model
+
 from .wizard import run_wizard, Wizard
