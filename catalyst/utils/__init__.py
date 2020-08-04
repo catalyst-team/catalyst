@@ -46,7 +46,7 @@ from .distributed import (
     is_apex_available,
 )
 from .hash import get_hash, get_short_hash
-from .initialization import get_optimal_inner_init, outer_init
+from .initialization import get_optimal_inner_init, outer_init, weight_reset
 from .loader import (
     get_native_batch_from_loader,
     get_native_batch_from_loaders,
@@ -95,3 +95,13 @@ from .torch import (
     detach,
     trim_tensors,
 )
+
+try:
+    from .pruning import prune_model, remove_reparametrization
+except ImportError as ex:
+    logger.warning(
+        "Quantization and pruning are not available,"
+        "run `pip install torch>=1.4` to enable them."
+    )
+    if settings.pytorch_14:
+        raise ex

@@ -1,11 +1,10 @@
 from typing import Callable, List, Optional, Union
 import warnings
 
-import torch
 from torch.nn.utils import prune
 
 from catalyst.core import Callback, CallbackOrder, IRunner
-from catalyst.utils.initialization import weight_reset
+from catalyst.utils import prune_model, remove_reparametrization
 
 PRUNING_FN = {
     "l1_unstructured": prune.l1_unstructured,
@@ -121,45 +120,6 @@ class PruningCallback(Callback):
             module, name, amount, *args, **kwargs
         )
 
-    def _prune_module(self, module):
-        for key in self.keys_to_prune:
-            self.pruning_fn(module, name=key, amount=self.amount)
-
-    def _to_be_pruned(self, layer_name):
-        return (
-            self.layers_to_prune is None or layer_name in self.layers_to_prune
-        )
-
-    def _run_pruning(self, model: torch.nn.Module):
-        pruned_modules = 0
-        for name, module in model.named_modules():
-            try:
-                if self._to_be_pruned(name):
-                    self._prune_module(module)
-                    pruned_modules += 1
-            except AttributeError as e:
-                if self.layers_to_prune is not None:
-                    raise e
-
-        if pruned_modules == 0:
-            raise Exception(
-                f"There is no {self.keys_to_prune} key in your model"
-            )
-        if self.reinitialize_after_pruning:
-            model.apply(weight_reset)
-
-    def _remove_reparametrization(self, runner: "IRunner"):
-        for name, module in runner.model.named_modules():
-            try:
-                if self._to_be_pruned(name):
-                    if isinstance(self.keys_to_prune, str):
-                        prune.remove(module, self.keys_to_prune)
-                    elif isinstance(self.keys_to_prune, list):
-                        for key in self.keys_to_prune:
-                            prune.remove(module, key)
-            except ValueError:
-                pass
-
     def on_epoch_end(self, runner: "IRunner") -> None:
         """
         On epoch end action.
@@ -181,6 +141,17 @@ class PruningCallback(Callback):
             runner: runner for your experiment
         """
         if self.prune_on_stage_end:
-            self._run_pruning(runner.model)
+            prune_model(
+                model=runner.model,
+                pruning_fn=self.pruning_fn,
+                keys_to_prune=self.keys_to_prune,
+                amount=self.amount,
+                layers_to_prune=self.layers_to_prune,
+                reinitialize_after_pruning=self.reinitialize_after_pruning,
+            )
         if self.remove_reparametrization:
-            self._remove_reparametrization(runner)
+            remove_reparametrization(
+                model=runner.model,
+                keys_to_prune=self.keys_to_prune,
+                layers_to_prune=self.layers_to_prune,
+            )
