@@ -110,15 +110,15 @@ class ILoaderMetricCallback(IMetricCallback):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.input = None
-        self.output = None
+        self.input = defaultdict(lambda: [])
+        self.output = defaultdict(lambda: [])
 
     def on_loader_start(self, runner: IRunner):
         self.input = defaultdict(lambda: [])
         self.output = defaultdict(lambda: [])
 
     def on_batch_end(self, runner: IRunner) -> None:
-        """Computes metrics and add them to batch metrics."""
+        """Stores new input/output for the metric computation."""
         output = self._get_output(runner.output, self.output_key)
         input = self._get_input(runner.input, self.input_key)
 

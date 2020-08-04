@@ -1,14 +1,29 @@
+from typing import Tuple
+
 import numpy as np
 
 import torch
 from torch.nn import functional as F
 
 
-def _binary_auc(outputs: torch.Tensor, targets: torch.Tensor):
+def _binary_auc(
+    scores: torch.Tensor, targets: torch.Tensor
+) -> Tuple[float, np.ndarray, np.ndarray]:
+    """
+    Binary AUC computation.
+
+    Args:
+        scores: estimated scores from a model.
+        targets:ground truth (correct) target values.
+
+    Returns:
+        Tuple[float, np.ndarray, np.ndarray]: measured roc-auc,
+        true positive rate, false positive rate
+    """
     targets = targets.numpy()
 
     # sorting the arrays
-    scores, sortind = torch.sort(outputs, dim=0, descending=True)
+    scores, sortind = torch.sort(scores, dim=0, descending=True)
     scores = scores.numpy()
     sortind = sortind.numpy()
 
@@ -35,20 +50,20 @@ def _binary_auc(outputs: torch.Tensor, targets: torch.Tensor):
     sum_h[1:n] += h
     area = (sum_h * tpr).sum() / 2.0
 
-    return (area, tpr, fpr)
+    return area, tpr, fpr
 
 
 def auc(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
     """
+    AUC metric.
 
     Args:
-        outputs: [bs; num_classes] scores
-        targets: [bs; num_classes] binary mask
+        outputs: [bs; num_classes] estimated scores from a model.
+        targets: [bs; num_classes] ground truth (correct) target values.
 
     Returns:
         torch.Tensor: Tensor with [num_classes] shape of per-class-aucs
     """
-
     if len(outputs) == 0:
         return 0.5
 
