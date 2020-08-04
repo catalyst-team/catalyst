@@ -127,7 +127,7 @@ class ILoaderMetricCallback(IMetricCallback):
                 for key, value in data.items():
                     storage[key].append(value.detach().cpu().numpy())
             else:
-                storage["data"].append(data.detach().cpu().numpy())
+                storage["_data"].append(data.detach().cpu().numpy())
 
     def on_loader_end(self, runner: IRunner):
         input = {
@@ -139,9 +139,9 @@ class ILoaderMetricCallback(IMetricCallback):
             for key in self.output
         }
 
-        input = {self.input_key: input["data"]} if len(input) == 1 else input
+        input = {self.input_key: input["_data"]} if len(input) == 1 else input
         output = (
-            {self.output_key: output["data"]} if len(output) == 1 else output
+            {self.output_key: output["_data"]} if len(output) == 1 else output
         )
 
         metrics = self._compute_metric(output, input)
@@ -358,17 +358,6 @@ class MetricManagerCallback(Callback):
         runner.loader_metrics = defaultdict(None)
         self.meters = defaultdict(meters.AverageValueMeter)
 
-    def on_loader_end(self, runner: IRunner) -> None:
-        """Loader end hook.
-        Args:
-            runner (IRunner): current runner
-        """
-        for key, value in self.meters.items():
-            value = value.mean
-            runner.loader_metrics[key] = value
-        for key, value in runner.loader_metrics.items():
-            runner.epoch_metrics[f"{runner.loader_name}_{key}"] = value
-
     def on_batch_start(self, runner: IRunner) -> None:
         """Batch start hook.
         Args:
@@ -385,6 +374,20 @@ class MetricManagerCallback(Callback):
         for key, value in runner.batch_metrics.items():
             self.meters[key].add(value, runner.batch_size)
 
+    def on_loader_end(self, runner: IRunner) -> None:
+        """Loader end hook.
+        Args:
+            runner (IRunner): current runner
+        """
+        for key, value in self.meters.items():
+            value = value.mean
+            runner.loader_metrics[key] = value
+        for key, value in runner.loader_metrics.items():
+            runner.epoch_metrics[f"{runner.loader_name}_{key}"] = value
+
+
+# backward compatibility
+MetricCallback = BatchMetricCallback
 
 __all__ = [
     "IMetricCallback",
@@ -392,6 +395,7 @@ __all__ = [
     "ILoaderMetricCallback",
     "BatchMetricCallback",
     "LoaderMetricCallback",
+    "MetricCallback",
     "MetricAggregationCallback",
     "MetricManagerCallback",
 ]

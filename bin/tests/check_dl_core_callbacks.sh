@@ -785,8 +785,8 @@ import numpy as np
 metrics = utils.load_config('$LOGFILE')
 
 EPS = 0.00001
-assert metrics['last']['cmc_1'] > 0.1  # slightly better then random
-assert metrics['last']['cmc_5'] > 0.5
+assert metrics['last']['cmc01'] > 0.1  # slightly better then random
+assert metrics['last']['cmc05'] > 0.5
 """
 
 rm -rf {LOGDIR}

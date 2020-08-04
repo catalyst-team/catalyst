@@ -25,6 +25,7 @@ class AccuracyCallback(BatchMetricCallback):
         multiplier: float = 1.0,
         topk_args: List[int] = None,
         num_classes: int = None,
+        accuracy_args: List[int] = None,
         **kwargs,
     ):
         """
@@ -43,7 +44,9 @@ class AccuracyCallback(BatchMetricCallback):
             activation (str): An torch.nn activation applied to the outputs.
                 Must be one of ``"none"``, ``"Sigmoid"``, or ``"Softmax"``
         """
-        topk_args = topk_args or get_default_topk_args(num_classes)
+        topk_args = (
+            topk_args or accuracy_args or get_default_topk_args(num_classes)
+        )
 
         super().__init__(
             prefix=prefix,

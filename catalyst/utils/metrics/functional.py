@@ -1,4 +1,5 @@
-from typing import Optional, Sequence, Tuple
+from typing import Callable, Dict, Optional, Sequence, Tuple
+from functools import partial
 
 import torch
 
@@ -92,23 +93,76 @@ def get_default_topk_args(num_classes: int) -> Sequence[int]:
     return result
 
 
-def wrap_topk_metric2dict(metric_fn, topk_args):
-    def topk_metric_with_dict_output(*args, **kwargs):
-        metric_output = metric_fn(*args, **kwargs, topk=topk_args)
-        metric_output = {
-            f"{key:02}": value for key, value in zip(topk_args, metric_output)
-        }
-        return metric_output
+def wrap_class_metric2dict(
+    metric_fn: Callable, class_args: Sequence[str] = None
+) -> Callable:
+    """
+    Logging wrapper for metrics with torch.Tensor output
+    and [num_classes] shape.
+    Computes the metric and sync each element from the output Tensor
+    with passed `class` argument.
 
-    return topk_metric_with_dict_output
+    Args:
+        metric_fn (Callable): metric function to compute
+        class_args (Sequence[str]): class names for logging.
+            default: None - class indexes will be used.
 
+    Returns:
+        (Callable): wrapped metric function with List[Dict] output
+    """
 
-def wrap_class_metric2dict(metric_fn, class_args):
     def class_metric_with_dict_output(*args, **kwargs):
-        metric_output = metric_fn(*args, **kwargs)
-        # metric_output = {
-        #     f"{key:02}": value for key, value in zip(topk, metric_output)
-        # }
-        return metric_output
+        output = metric_fn(*args, **kwargs)
+        num_classes = len(output)
+        output_class_args = class_args or [
+            f"{i:02}" for i in range(num_classes)
+        ]
+        mean_stats = torch.mean(output)
+        output = {key: value for key, value in zip(output_class_args, output)}
+        output["mean"] = mean_stats
+        return output
 
     return class_metric_with_dict_output
+
+
+def wrap_topk_metric2dict(
+    metric_fn: Callable, topk_args: Sequence[int]
+) -> Callable:
+    """
+    Logging wrapper for metrics with
+    Sequence[Union[torch.Tensor, int, float, Dict]] output.
+    Computes the metric and sync each element from the output sequence
+    with passed `topk` argument.
+
+    Args:
+        metric_fn (Callable): metric function to compute
+        topk_args (Sequence[int]): topk args to sync outputs with
+
+    Returns:
+        (Callable): wrapped metric function with List[Dict] output
+
+    """
+    metric_fn = partial(metric_fn, topk=topk_args)
+
+    def topk_metric_with_dict_output(*args, **kwargs):
+        output: Sequence = metric_fn(*args, **kwargs)
+
+        if isinstance(output[0], (int, float, torch.Tensor)):
+            output = {
+                f"{topk_key:02}": metric_value
+                for topk_key, metric_value in zip(topk_args, output)
+            }
+        elif isinstance(output[0], Dict):
+            output = {
+                {
+                    f"{metric_key}{topk_key:02}": metric_value
+                    for metric_key, metric_value in metric_dict_value.items()
+                }
+                for topk_key, metric_dict_value in zip(topk_args, output)
+            }
+        else:
+            raise NotImplementedError()
+
+        return output
+
+    return topk_metric_with_dict_output

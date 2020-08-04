@@ -886,7 +886,7 @@ runner.train(
     verbose=True,
     valid_loader="valid",
     num_epochs=200,
-    main_metric="cmc_1",
+    main_metric="cmc01",
 )   
 ```
 </p>

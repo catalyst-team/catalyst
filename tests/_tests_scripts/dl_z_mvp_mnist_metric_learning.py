@@ -69,9 +69,9 @@ def run_ml_pipeline(sampler_inbatch: data.InBatchTripletsSampler) -> float:
         verbose=True,
         valid_loader="valid",
         num_epochs=50,
-        main_metric="cmc_1",
+        main_metric="cmc01",
     )
-    return runner.best_valid_metrics["cmc_1"]
+    return runner.best_valid_metrics["cmc01"]
 
 
 def main() -> None:
