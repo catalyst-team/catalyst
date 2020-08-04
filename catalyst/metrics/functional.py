@@ -1,23 +1,24 @@
 from typing import Tuple
 
 import torch
+from torch import Tensor
 
 
 def get_binary_statistics(
-    predictions: torch.Tensor, targets: torch.Tensor
+    predictions: Tensor, targets: Tensor
 ) -> Tuple[
-    torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor
+    Tensor, Tensor, Tensor, Tensor, Tensor
 ]:
     """
     Computes the number of true positive, false positive, true negative,
     false negative and support for a binary classification problem.
 
     Args:
-        predictions (torch.Tensor): model predictions
-        targets (torch.Tensor):
+        predictions (Tensor): model predictions
+        targets (Tensor):
 
     Returns:
-
+        Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]: stats
     """
     true_positive = ((predictions == 1) * (targets == 1)).to(torch.long).sum()
     false_positive = ((predictions == 1) * (targets != 1)).to(torch.long).sum()

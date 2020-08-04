@@ -1,12 +1,10 @@
-from typing import Optional, Sequence, Union
-
 import numpy as np
 
 import torch
 from torch.nn import functional as F
 
 
-def binary_auc(outputs: torch.Tensor, targets: torch.Tensor):
+def _binary_auc(outputs: torch.Tensor, targets: torch.Tensor):
     targets = targets.numpy()
 
     # sorting the arrays
@@ -48,7 +46,7 @@ def auc(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         targets: [bs; num_classes] binary mask
 
     Returns:
-
+        torch.Tensor: Tensor with [num_classes] shape of per-class-aucs
     """
 
     if len(outputs) == 0:
@@ -72,7 +70,7 @@ def auc(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
     per_class_auc = []
     for class_i in range(outputs.shape[1]):
         per_class_auc.append(
-            binary_auc(outputs[:, class_i], targets[:, class_i])[0]
+            _binary_auc(outputs[:, class_i], targets[:, class_i])[0]
         )
     output = torch.Tensor(per_class_auc)
     return output

@@ -1,4 +1,4 @@
-from typing import Optional, Sequence
+from typing import Optional
 
 import torch
 

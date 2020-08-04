@@ -67,17 +67,17 @@ def calculate_dice(
     """
     epsilon = 1e-7
 
-    dice = (2 * true_positives + epsilon) / (
+    dice_metric = (2 * true_positives + epsilon) / (
         2 * true_positives + false_positives + false_negatives + epsilon
     )
 
-    if not np.all(dice <= 1):
+    if not np.all(dice_metric <= 1):
         raise ValueError("Dice index should be less or equal to 1")
 
-    if not np.all(dice > 0):
+    if not np.all(dice_metric > 0):
         raise ValueError("Dice index should be more than 1")
 
-    return dice
+    return dice_metric
 
 
 __all__ = ["dice", "calculate_dice"]

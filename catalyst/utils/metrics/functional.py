@@ -103,7 +103,7 @@ def get_default_topk_args(num_classes: int) -> Sequence[int]:
 def wrap_class_metric2dict(
     metric_fn: Callable, class_args: Sequence[str] = None
 ) -> Callable:
-    """
+    """# noqa: D202
     Logging wrapper for metrics with torch.Tensor output
     and [num_classes] shape.
     Computes the metric and sync each element from the output Tensor

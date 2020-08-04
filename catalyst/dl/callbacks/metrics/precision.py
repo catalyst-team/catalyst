@@ -30,7 +30,6 @@ class AveragePrecisionCallback(LoaderMetricCallback):
             class_args (List[str]): class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0
         """
-
         super().__init__(
             prefix=prefix,
             metric_fn=wrap_class_metric2dict(
