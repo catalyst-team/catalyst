@@ -12,11 +12,13 @@ from torch import Tensor
 
 from catalyst.contrib.nn.criterion.functional import euclidean_distance
 from catalyst.contrib.utils.misc import find_value_ids
+from catalyst.data.utils import prepare_labels
 from catalyst.utils.torch import normalize
 
 # order in the triplets: (anchor, positive, negative)
 TTriplets = Tuple[Tensor, Tensor, Tensor]
 TTripletsIds = Tuple[List[int], List[int], List[int]]
+TLabels = Union[List[int], Tensor]
 
 
 class IInbatchTripletSampler(ABC):
@@ -29,6 +31,10 @@ class IInbatchTripletSampler(ABC):
         """
         Check if the batch labels list is valid for the sampler.
 
+        We expect you to implement this method to guarantee correct
+        performance of sampling method. You can pass it
+        but we strongly do not recommend you to do it.
+
         Args:
             labels: labels of the samples in the batch,
             list or Tensor of shape (batch_size;)
@@ -36,13 +42,14 @@ class IInbatchTripletSampler(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def sample(self, features: Tensor, labels: List[int]) -> TTriplets:
+    def sample(self, features: Tensor, labels: TLabels) -> TTriplets:
         """
         This method includes the logic of sampling/selecting triplets.
 
         Args:
             features: tensor of features
-            labels: labels of the samples in the batch
+            labels: labels of the samples in the batch, list or Tensor
+            of shape (batch_size;)
 
         Returns: the batch of triplets
 
@@ -94,7 +101,7 @@ class InBatchTripletsSampler(IInbatchTripletSampler):
         """
         raise NotImplementedError
 
-    def sample(self, features: Tensor, labels: List[int]) -> TTriplets:
+    def sample(self, features: Tensor, labels: TLabels) -> TTriplets:
         """
         Args:
             features: has the shape of [batch_size, feature_size]
@@ -104,6 +111,8 @@ class InBatchTripletsSampler(IInbatchTripletSampler):
             the batch of the triplets in the order below:
             (anchor, positive, negative)
         """
+        # Convert labels to list
+        labels = prepare_labels(labels)
         self._check_input_labels(labels=labels)
 
         ids_anchor, ids_pos, ids_neg = self._sample(features, labels=labels)
@@ -282,7 +291,7 @@ class HardClusterSampler(IInbatchTripletSampler):
         for label_idx, label in enumerate(unique_labels):
             label_indices = find_value_ids(labels, label)
             labels_mask[label_idx][label_indices] = 1
-        return labels_mask.bool()
+        return labels_mask.type(torch.bool)
 
     @staticmethod
     def _count_intra_class_distances(
@@ -337,11 +346,11 @@ class HardClusterSampler(IInbatchTripletSampler):
             modified matrix with inf on diagonal
         """
         p, _ = matrix.shape
-        indices = torch.diag(torch.ones(p)).bool()
+        indices = torch.diag(torch.ones(p)).type(torch.bool)
         matrix[indices] = value
         return matrix
 
-    def sample(self, features: Tensor, labels: List[int]) -> TTriplets:
+    def sample(self, features: Tensor, labels: TLabels) -> TTriplets:
         """
         This method selects the hardest positive and negative example for
         each label in the batch. It counts mean vectors for all the labels
@@ -351,11 +360,13 @@ class HardClusterSampler(IInbatchTripletSampler):
         Args:
             features: tensor of shape (batch_size; embed_dim)
             where batch_size = k * p
-            labels: labels of the batch, of size (batch_size,)
+            labels: labels of the batch, list or tensor of size (batch_size,)
 
         Returns:
             triplet of (mean_vector, positive, negative_mean_vector)
         """
+        # Convert labels to list
+        labels = prepare_labels(labels)
         self._check_input_labels(labels)
 
         # Get matrix of indices of labels in batch

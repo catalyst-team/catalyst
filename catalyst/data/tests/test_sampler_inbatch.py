@@ -16,6 +16,7 @@ from catalyst.data.sampler_inbatch import (
     AllTripletsSampler,
     HardClusterSampler,
     HardTripletsSampler,
+    TLabels,
 )
 from catalyst.data.tests.test_sampler import generate_valid_labels
 
@@ -374,7 +375,6 @@ def test_cluster_count_inter_class_distances(mean_vectors, expected) -> None:
     distances = sampler._count_inter_class_distances(  # noqa: WPS437
         mean_vectors
     )
-    print(distances)
     assert (distances == expected).all()
 
 
@@ -387,10 +387,11 @@ def test_cluster_count_inter_class_distances(mean_vectors, expected) -> None:
             [(4, 128), (4, 128), (4, 128)],
         ],
         [32, [1, 2, 3, 4, 5, 1, 2, 3, 4, 5], [(5, 32), (5, 32), (5, 32)]],
+        [16, torch.tensor([0, 0, 1, 1]), [(2, 16), (2, 16), (2, 16)]],
     ],
 )
 def test_cluster_sample_shapes(
-    embed_dim: int, labels: List[int], expected_shape: List[Tuple[int]]
+    embed_dim: int, labels: TLabels, expected_shape: List[Tuple[int]]
 ) -> None:
     """
     Test output shapes in sample method of HardClusterSampler.
