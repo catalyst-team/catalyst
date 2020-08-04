@@ -1,11 +1,10 @@
 # flake8: noqa
-
 import logging
 
 from catalyst.tools import settings
 
-from catalyst.contrib.datasets.mnist import MNIST
-from catalyst.contrib.datasets.mnist_qg import MnistQGDataset
+from .metric_learning import MetricLearningTrainDataset, QueryGalleryDataset
+from .mnist import MnistMLDataset, MnistQGDataset, MNIST
 
 logger = logging.getLogger(__name__)
 
