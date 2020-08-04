@@ -72,6 +72,7 @@ class IMetricCallback(ABC, Callback):
         pass
 
     def _compute_metric_value(self, output: Dict, input: Dict):
+        """@TODO: Docs. Contribution is welcome."""
         output = self._get_output(output, self.output_key)
         input = self._get_input(input, self.input_key)
 
@@ -79,6 +80,7 @@ class IMetricCallback(ABC, Callback):
         return metric
 
     def _compute_metric_key_value(self, output: Dict, input: Dict):
+        """@TODO: Docs. Contribution is welcome."""
         output = self._get_output(output, self.output_key)
         input = self._get_input(input, self.input_key)
 
@@ -86,6 +88,7 @@ class IMetricCallback(ABC, Callback):
         return metric
 
     def _process_computed_metric(self, metric) -> Dict:
+        """@TODO: Docs. Contribution is welcome."""
         if isinstance(metric, dict):
             metric = {
                 f"{self.prefix}{key}": value * self.multiplier
@@ -99,6 +102,8 @@ class IMetricCallback(ABC, Callback):
 
 
 class IBatchMetricCallback(IMetricCallback):
+    """@TODO: Docs. Contribution is welcome."""
+
     def on_batch_end(self, runner: IRunner) -> None:
         """Computes metrics and add them to batch metrics."""
         metrics = self._compute_metric(runner.output, runner.input)
@@ -107,13 +112,17 @@ class IBatchMetricCallback(IMetricCallback):
 
 
 class ILoaderMetricCallback(IMetricCallback):
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(self, **kwargs):
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__(**kwargs)
 
         self.input = defaultdict(lambda: [])
         self.output = defaultdict(lambda: [])
 
     def on_loader_start(self, runner: IRunner):
+        """Reinitialises internal storages."""
         self.input = defaultdict(lambda: [])
         self.output = defaultdict(lambda: [])
 
@@ -130,6 +139,7 @@ class ILoaderMetricCallback(IMetricCallback):
                 storage["_data"].append(data.detach().cpu().numpy())
 
     def on_loader_end(self, runner: IRunner):
+        """@TODO: Docs. Contribution is welcome."""
         input = {
             key: torch.from_numpy(np.concatenate(self.input[key], axis=0))
             for key in self.input
