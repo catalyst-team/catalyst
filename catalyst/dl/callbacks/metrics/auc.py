@@ -24,14 +24,13 @@ class AUCCallback(LoaderMetricCallback):
         """
         Args:
             input_key (str): input key to use for auc calculation
-                specifies our ``y_true``
+                specifies our ``y_true``.
             output_key (str): output key to use for auc calculation;
-                specifies our ``y_pred``
-            prefix (str): name to display for auc when printing
+                specifies our ``y_pred``.
+            prefix (str): metric's name.
+            multiplier (float): scale factor for the metric.
             class_args (List[str]): class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0
-            activation (str): An torch.nn activation applied to the outputs.
-                Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax2d'``
         """
 
         super().__init__(

@@ -74,7 +74,7 @@ def auc(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         per_class_auc.append(
             binary_auc(outputs[:, class_i], targets[:, class_i])[0]
         )
-    output = np.mean(per_class_auc)
+    output = torch.Tensor(per_class_auc)
     return output
 
 

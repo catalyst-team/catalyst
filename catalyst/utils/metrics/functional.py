@@ -2,6 +2,7 @@ from typing import Callable, Dict, Optional, Sequence, Tuple
 from functools import partial
 
 import torch
+from torch.nn import functional as F
 
 
 def preprocess_multi_label_metrics(
@@ -44,7 +45,13 @@ def preprocess_multi_label_metrics(
         )
 
     if targets.dim() == 1:
-        targets = targets.view(-1, 1)
+        if outputs.shape[1] > 1:
+            # multi-class case
+            num_classes = outputs.shape[1]
+            targets = F.one_hot(targets, num_classes).float()
+        else:
+            # binary case
+            targets = targets.view(-1, 1)
     else:
         assert targets.dim() == 2, (
             "wrong `targets` size "
@@ -115,11 +122,13 @@ def wrap_class_metric2dict(
         output = metric_fn(*args, **kwargs)
         num_classes = len(output)
         output_class_args = class_args or [
-            f"{i:02}" for i in range(num_classes)
+            f"/class_{i:02}" for i in range(num_classes)
         ]
-        mean_stats = torch.mean(output)
-        output = {key: value for key, value in zip(output_class_args, output)}
-        output["mean"] = mean_stats
+        mean_stats = torch.mean(output).item()
+        output = {
+            key: value.item() for key, value in zip(output_class_args, output)
+        }
+        output["/mean"] = mean_stats
         return output
 
     return class_metric_with_dict_output

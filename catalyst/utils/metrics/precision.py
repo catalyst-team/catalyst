@@ -9,9 +9,8 @@ def average_precision(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     weights: Optional[torch.Tensor] = None,
-    topk: Sequence[int] = (1,),
-) -> Sequence[torch.Tensor]:
-    """Computes the average precision at `topk`.
+) -> torch.Tensor:
+    """Computes the average precision.
 
     Args:
         outputs (torch.Tensor): NxK tensor that for each of the N examples
@@ -22,13 +21,11 @@ def average_precision(
             (eg: a row [0, 1, 0, 1] indicates that the example is
             associated with classes 2 and 4)
         weights (torch.Tensor): importance for each sample
-        topk (int, optional): The maximum number of predicted elements
 
     Returns:
-        Sequence[torch.Tensor]: list of 1xK tensor,
-        with average precision@topk_i for K classes
+        torch.Tensor: tensor of [K; ] shape,
+        with average precision for K classes
     """
-    assert len(topk) == 1 and topk[0] == 1, "@K logic is not implemented yet"
     # outputs - [bs; num_classes] with scores
     # targets - [bs; num_classes] with binary labels
     outputs, targets, weights = preprocess_multi_label_metrics(
@@ -66,7 +63,7 @@ def average_precision(
             float(correct.sum()), 1
         )
 
-    return [ap]
+    return ap
 
 
 __all__ = ["average_precision"]
