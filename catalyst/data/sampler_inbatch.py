@@ -36,8 +36,8 @@ class IInbatchTripletSampler(ABC):
         but we strongly do not recommend you to do it.
 
         Args:
-            labels: labels of the samples in the batch,
-            list or Tensor of shape (batch_size;)
+            labels: labels of the samples in the batch;
+                list or Tensor of shape (batch_size;)
         """
         raise NotImplementedError()
 
@@ -49,7 +49,7 @@ class IInbatchTripletSampler(ABC):
         Args:
             features: tensor of features
             labels: labels of the samples in the batch, list or Tensor
-            of shape (batch_size;)
+                of shape (batch_size;)
 
         Returns: the batch of triplets
 
@@ -97,7 +97,7 @@ class InBatchTripletsSampler(IInbatchTripletSampler):
             features: has the shape of [batch_size, feature_size]
             labels: labels of the samples in the batch
 
-        Returns: indeces of the batch samples to forming triplets.
+        Returns: indices of the batch samples to forming triplets.
         """
         raise NotImplementedError
 
@@ -245,8 +245,13 @@ class HardTripletsSampler(InBatchTripletsSampler):
 
 class HardClusterSampler(IInbatchTripletSampler):
     """
-    This sampler selects hardest triplets based on distance to mean vectors.
-    The batch must contain k samples for p classes in it, k > 1, p > 1.
+    This sampler selects hardest triplets based on distance to mean vectors:
+    anchor is a mean vector of features of i-th class in the batch,
+    the hardest positive sample is the most distant from anchor sample of
+    anchor's class, the hardest negative sample is the closest mean vector
+    of another classes.
+
+    The batch must contain k samples for p classes in it (k > 1, p > 1).
     """
 
     def _check_input_labels(self, labels: List[int]) -> None:
@@ -259,8 +264,8 @@ class HardClusterSampler(IInbatchTripletSampler):
 
         Raises:
             ValueError: if batch is invalid (contains different samples
-            for classes, contains only one class or only one sample for
-            each class)
+                for classes, contains only one class or only one sample for
+                each class)
         """
         labels_counter = Counter(labels)
         k = labels_counter[labels[0]]
@@ -303,13 +308,14 @@ class HardClusterSampler(IInbatchTripletSampler):
 
         Args:
             embeddings: tensor of shape (p, k, embed_dim) where p is a number
-            of classes in the batch, k is a number of samples for each class
-            mean_vectors: tensor of shape (p, embed_dim) -- mean vectors
-            of each class in the batch
+                of classes in the batch, k is a number of samples for each
+                class
+                mean_vectors: tensor of shape (p, embed_dim) -- mean vectors
+                of each class in the batch
 
         Returns:
             tensor of shape (p, k) -- matrix of distances from mean vectors to
-            related samples in the batch
+                related samples in the batch
         """
         p, k, embed_dim = embeddings.shape
         # Create (p, k, embed_dim) tensor of mean vectors for each class
@@ -325,7 +331,7 @@ class HardClusterSampler(IInbatchTripletSampler):
 
         Args:
             mean_vectors: tensor of shape (p, embed_dim) -- mean vectors
-            of classes
+                of classes
 
         Returns:
             tensor of shape (p, p) -- matrix of distances between mean vectors
@@ -358,8 +364,8 @@ class HardClusterSampler(IInbatchTripletSampler):
         mean vector for it.
 
         Args:
-            features: tensor of shape (batch_size; embed_dim)
-            where batch_size = k * p
+            features: tensor of shape (batch_size; embed_dim) that contains
+                k samples for each of p classes
             labels: labels of the batch, list or tensor of size (batch_size,)
 
         Returns:
