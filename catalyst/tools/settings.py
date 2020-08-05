@@ -101,7 +101,9 @@ class Settings(FrozenClass):
         )
 
         # [pruning and quantization]
-        self.is_pytorch_above_v14 = self._optional_value(is_pytorch_above_v14, default=False)
+        self.is_pytorch_above_v14 = self._optional_value(
+            is_pytorch_above_v14, default=False
+        )
 
     @staticmethod
     def _optional_value(value, default):
