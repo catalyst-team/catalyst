@@ -310,7 +310,7 @@ class HardClusterSampler(IInbatchTripletSampler):
             embeddings: tensor of shape (p, k, embed_dim) where p is a number
                 of classes in the batch, k is a number of samples for each
                 class
-                mean_vectors: tensor of shape (p, embed_dim) -- mean vectors
+            mean_vectors: tensor of shape (p, embed_dim) -- mean vectors
                 of each class in the batch
 
         Returns:
