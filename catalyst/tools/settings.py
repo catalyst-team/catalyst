@@ -9,6 +9,13 @@ from catalyst.tools.frozen_class import FrozenClass
 
 logger = logging.getLogger(__name__)
 
+try:
+    import torch_xla.core.xla_model as xm
+
+    IS_XLA_AVAILABLE = True
+except ModuleNotFoundError:
+    IS_XLA_AVAILABLE = False
+
 
 class Settings(FrozenClass):
     def __init__(

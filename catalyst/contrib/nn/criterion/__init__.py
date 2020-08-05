@@ -23,5 +23,10 @@ from .lovasz import (
     LovaszLossMultiLabel,
 )
 from .margin import MarginLoss
-from .triplet import TripletLoss, TripletLossV2, TripletPairwiseEmbeddingLoss
+from .triplet import (
+    TripletLoss,
+    TripletLossV2,
+    TripletPairwiseEmbeddingLoss,
+    TripletMarginLossWithSampling,
+)
 from .wing import WingLoss
