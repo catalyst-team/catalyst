@@ -23,6 +23,8 @@ class InBatchTripletsSampler(ABC):
     Base class for a triplets samplers.
     We expect that the child instances of this class
     will be used to forming triplets inside the batches.
+    (Note. It is assumed that set of output features is a
+    subset of samples features inside the batch.)
     The batches must contain at least 2 samples for
     each class and at least 2 different classes,
     such behaviour can be garantee via using
@@ -72,9 +74,7 @@ class InBatchTripletsSampler(ABC):
         """
         self._check_input_labels(labels=labels)
 
-        ids_anchor, ids_pos, ids_neg = self._sample(
-            features=features, labels=labels
-        )
+        ids_anchor, ids_pos, ids_neg = self._sample(features, labels=labels)
 
         return features[ids_anchor], features[ids_pos], features[ids_neg]
 
@@ -126,14 +126,19 @@ class HardTripletsSampler(InBatchTripletsSampler):
     the hardest positive sample has the maximal distance to the anchor sample,
     the hardest negative sample has the minimal distance to the anchor sample.
 
+    Note that a typical triplet loss chart is as follows:
+    1. Falling: loss decreases to a value equal to the margin.
+    2. Long plato: the loss oscillates near the margin.
+    3. Falling: loss decreases to zero.
+
     """
 
-    def __init__(self, need_norm: bool = False):
+    def __init__(self, norm_required: bool = False):
         """
         Args:
-            need_norm: set True if features normalisation is needed
+            norm_required: set True if features normalisation is needed
         """
-        self._need_norm = need_norm
+        self._norm_required = norm_required
 
     def _sample(self, features: Tensor, labels: List[int]) -> TTripletsIds:
         """
@@ -149,8 +154,8 @@ class HardTripletsSampler(InBatchTripletsSampler):
         """
         assert features.shape[0] == len(labels)
 
-        if self._need_norm:
-            features = normalize(samples=features)
+        if self._norm_required:
+            features = normalize(samples=features.detach())
 
         dist_mat = torch.cdist(x1=features, x2=features, p=2)
 

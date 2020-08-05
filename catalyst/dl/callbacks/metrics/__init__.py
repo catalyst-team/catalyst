@@ -5,7 +5,7 @@ from catalyst.dl.callbacks.metrics.accuracy import (
     MultiLabelAccuracyCallback,
 )
 from catalyst.dl.callbacks.metrics.auc import AUCCallback
-from catalyst.dl.callbacks.metrics.cmc import CMCScoreCallback
+from catalyst.dl.callbacks.metrics.cmc_score import CMCScoreCallback
 from catalyst.dl.callbacks.metrics.dice import (
     DiceCallback,
     MultiClassDiceMetricCallback,
@@ -22,9 +22,13 @@ from catalyst.dl.callbacks.metrics.ppv_tpr_f1 import (
     PrecisionRecallF1ScoreCallback,
 )
 
+<<<<<<< HEAD
 from catalyst.dl.callbacks.metrics.precision import (
     AveragePrecisionCallback,
     MeanAveragePrecisionCallback,
 )
 
 from catalyst.dl.callbacks.metrics.mrr import MRRCallback
+=======
+from catalyst.dl.callbacks.metrics.precision import AveragePrecisionCallback
+>>>>>>> master

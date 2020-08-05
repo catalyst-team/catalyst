@@ -50,6 +50,13 @@ Transforms
     :undoc-members:
     :show-inheritance:
 
+Dataset
+"""""""""""""
+.. automodule:: catalyst.contrib.data.cv.dataset
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Reader
 """""""""""""
 .. automodule:: catalyst.contrib.data.cv.reader
@@ -86,6 +93,37 @@ Datasets
 MNIST
 ~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.datasets.mnist
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Computer Vision
+~~~~~~~~~~~~~~~~
+
+ImageClassificationDataset
+""""""""""""""""""""""""""
+.. automodule:: catalyst.contrib.datasets.cv.fastai
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Imagenette
+""""""""""
+.. automodule:: catalyst.contrib.datasets.cv.imagenette
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Imagewoof
+"""""""""
+.. automodule:: catalyst.contrib.datasets.cv.imagewoof
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Imagewang
+"""""""""
+.. automodule:: catalyst.contrib.datasets.cv.imagewang
     :members:
     :undoc-members:
     :show-inheritance:

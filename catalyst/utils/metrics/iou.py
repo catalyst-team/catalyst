@@ -14,7 +14,7 @@ def iou(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     # values are discarded, only None check
-    # used for compatibility with MultiMetricCallback
+    # used for compatibility with BatchMetricCallback
     classes: List[str] = None,
     eps: float = 1e-7,
     threshold: float = None,
