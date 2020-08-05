@@ -105,11 +105,6 @@ Logging
 
 Metrics
 ~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.core.callbacks.metrics.IMetricCallback
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 .. automodule:: catalyst.core.callbacks.metrics
     :members:
     :undoc-members:

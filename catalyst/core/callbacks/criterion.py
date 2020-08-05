@@ -2,11 +2,11 @@
 # @TODO: code formatting issue for 20.07 release
 from typing import Dict, List, Union
 
-from catalyst.core.callbacks.metrics import IMetricCallback
+from catalyst.core.callbacks.metrics import IBatchMetricCallback
 from catalyst.core.runner import IRunner
 
 
-class CriterionCallback(IMetricCallback):
+class CriterionCallback(IBatchMetricCallback):
     """Callback for that measures loss with specified criterion."""
 
     def __init__(

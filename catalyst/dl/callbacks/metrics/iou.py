@@ -1,6 +1,6 @@
 from typing import List
 
-from catalyst.core import MetricCallback, MultiMetricCallback
+from catalyst.core import BatchMetricCallback
 from catalyst.utils import metrics
 
 
@@ -9,7 +9,7 @@ def _get_default_classwise_iou_args(num_classes: int) -> List[int]:
     return [str(i) for i in range(num_classes)]
 
 
-class IouCallback(MetricCallback):
+class IouCallback(BatchMetricCallback):
     """IoU (Jaccard) metric callback."""
 
     def __init__(
@@ -47,7 +47,7 @@ class IouCallback(MetricCallback):
 JaccardCallback = IouCallback
 
 
-class ClasswiseIouCallback(MultiMetricCallback):
+class ClasswiseIouCallback(BatchMetricCallback):
     """Classwise IoU (Jaccard) metric callback."""
 
     def __init__(
