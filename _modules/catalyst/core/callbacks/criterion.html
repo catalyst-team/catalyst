@@ -263,11 +263,11 @@
 <span class="c1"># @TODO: code formatting issue for 20.07 release</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.core.callbacks.metrics</span> <span class="kn">import</span> <span class="n">IMetricCallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.callbacks.metrics</span> <span class="kn">import</span> <span class="n">IBatchMetricCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>
 
 
-<div class="viewcode-block" id="CriterionCallback"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.criterion.CriterionCallback">[docs]</a><span class="k">class</span> <span class="nc">CriterionCallback</span><span class="p">(</span><span class="n">IMetricCallback</span><span class="p">):</span>
+<div class="viewcode-block" id="CriterionCallback"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.criterion.CriterionCallback">[docs]</a><span class="k">class</span> <span class="nc">CriterionCallback</span><span class="p">(</span><span class="n">IBatchMetricCallback</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Callback for that measures loss with specified criterion.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="CriterionCallback.__init__"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.criterion.CriterionCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>

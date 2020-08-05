@@ -295,20 +295,22 @@
 <ul>
 <li><p><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.accuracy" id="id16">Accuracy</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.auc" id="id17">AUC</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.dice" id="id18">Dice</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.f1_score" id="id19">F1 score</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.iou" id="id20">IOU</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.ppv_tpr_f1" id="id21">Global precision, recall and F1-score</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.cmc_score" id="id18">CMC score</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.dice" id="id19">Dice</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.f1_score" id="id20">F1 score</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.iou" id="id21">IOU</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.ppv_tpr_f1" id="id22">Global precision, recall and F1-score</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.precision" id="id23">Precision</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#utils" id="id22">Utils</a></p>
+<li><p><a class="reference internal" href="#utils" id="id24">Utils</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.dl.utils.torch" id="id23">Torch</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.dl.utils.trace" id="id24">Trace</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.dl.utils.wizard" id="id25">Wizard</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.dl.utils.torch" id="id25">Torch</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.dl.utils.trace" id="id26">Trace</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.dl.utils.wizard" id="id27">Wizard</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#module-catalyst.dl.registry" id="id26">Registry</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.dl.registry" id="id28">Registry</a></p></li>
 </ul>
 </div>
 <div class="section" id="module-catalyst.dl.experiment">
@@ -1162,8 +1164,8 @@ for learning rate scheduling</p></li>
 <span id="accuracy"></span><h3><a class="toc-backref" href="#id16">Accuracy</a><a class="headerlink" href="#module-catalyst.dl.callbacks.metrics.accuracy" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.metrics.accuracy.</code><code class="sig-name descname">AccuracyCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'accuracy'</em>, <em class="sig-param">accuracy_args: List[int] = None</em>, <em class="sig-param">num_classes: int = None</em>, <em class="sig-param">activation: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/accuracy.html#AccuracyCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.MultiMetricCallback" title="catalyst.core.callbacks.metrics.MultiMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.MultiMetricCallback</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.metrics.accuracy.</code><code class="sig-name descname">AccuracyCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'accuracy'</em>, <em class="sig-param">multiplier: float = 1.0</em>, <em class="sig-param">topk_args: List[int] = None</em>, <em class="sig-param">num_classes: int = None</em>, <em class="sig-param">accuracy_args: List[int] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/accuracy.html#AccuracyCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.BatchMetricCallback" title="catalyst.core.callbacks.metrics.BatchMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.BatchMetricCallback</span></code></a></p>
 <p>Accuracy metric callback.
 Computes multi-class <a class="reference external" href="mailto:accuracy&#37;&#52;&#48;topk">accuracy<span>&#64;</span>topk</a> for the specified values of <cite>topk</cite>.</p>
 <div class="admonition note">
@@ -1173,7 +1175,7 @@ Computes multi-class <a class="reference external" href="mailto:accuracy&#37;&#5
 </div>
 <dl class="method">
 <dt id="catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'accuracy'</em>, <em class="sig-param">accuracy_args: List[int] = None</em>, <em class="sig-param">num_classes: int = None</em>, <em class="sig-param">activation: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/accuracy.html#AccuracyCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'accuracy'</em>, <em class="sig-param">multiplier: float = 1.0</em>, <em class="sig-param">topk_args: List[int] = None</em>, <em class="sig-param">num_classes: int = None</em>, <em class="sig-param">accuracy_args: List[int] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/accuracy.html#AccuracyCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.accuracy.AccuracyCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1182,11 +1184,11 @@ specifies our <cite>y_true</cite></p></li>
 <li><p><strong>output_key</strong> (<em>str</em>) – output key to use for accuracy calculation;
 specifies our <cite>y_pred</cite></p></li>
 <li><p><strong>prefix</strong> (<em>str</em>) – key for the metric’s name</p></li>
-<li><p><strong>accuracy_args</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – specifies which accuracy&#64;K to log:
+<li><p><strong>topk_args</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – specifies which accuracy&#64;K to log:
 [1] - accuracy
 [1, 3] - accuracy at 1 and 3
 [1, 3, 5] - accuracy at 1, 3 and 5</p></li>
-<li><p><strong>num_classes</strong> (<em>int</em>) – number of classes to calculate <code class="docutils literal notranslate"><span class="pre">accuracy_args</span></code>
+<li><p><strong>num_classes</strong> (<em>int</em>) – number of classes to calculate <code class="docutils literal notranslate"><span class="pre">topk_args</span></code>
 if <code class="docutils literal notranslate"><span class="pre">accuracy_args</span></code> is None</p></li>
 <li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
 Must be one of <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Sigmoid&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;Softmax&quot;</span></code></p></li>
@@ -1200,7 +1202,7 @@ Must be one of <code class="docutils literal notranslate"><span class="pre">&quo
 <dl class="class">
 <dt id="catalyst.dl.callbacks.metrics.accuracy.MultiLabelAccuracyCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.metrics.accuracy.</code><code class="sig-name descname">MultiLabelAccuracyCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'multi_label_accuracy'</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/accuracy.html#MultiLabelAccuracyCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.accuracy.MultiLabelAccuracyCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.MetricCallback" title="catalyst.core.callbacks.metrics.MetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.MetricCallback</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.BatchMetricCallback" title="catalyst.core.callbacks.metrics.BatchMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.BatchMetricCallback</span></code></a></p>
 <p>Accuracy metric callback.
 Computes multi-class <a class="reference external" href="mailto:accuracy&#37;&#52;&#48;topk">accuracy<span>&#64;</span>topk</a> for the specified values of <cite>topk</cite>.</p>
 <div class="admonition note">
@@ -1234,8 +1236,8 @@ Must be one of <code class="docutils literal notranslate"><span class="pre">&quo
 <span id="auc"></span><h3><a class="toc-backref" href="#id17">AUC</a><a class="headerlink" href="#module-catalyst.dl.callbacks.metrics.auc" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.dl.callbacks.metrics.auc.AUCCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.metrics.auc.</code><code class="sig-name descname">AUCCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'auc'</em>, <em class="sig-param">class_names: List[str] = None</em>, <em class="sig-param">num_classes: int = 2</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/auc.html#AUCCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.auc.AUCCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.dl.callbacks.meter.MeterMetricsCallback</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.metrics.auc.</code><code class="sig-name descname">AUCCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'auc'</em>, <em class="sig-param">multiplier: float = 1.0</em>, <em class="sig-param">class_args: List[str] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/auc.html#AUCCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.auc.AUCCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.LoaderMetricCallback" title="catalyst.core.callbacks.metrics.LoaderMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.LoaderMetricCallback</span></code></a></p>
 <p>Calculates the AUC  per class for each loader.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -1243,20 +1245,18 @@ Must be one of <code class="docutils literal notranslate"><span class="pre">&quo
 </div>
 <dl class="method">
 <dt id="catalyst.dl.callbacks.metrics.auc.AUCCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'auc'</em>, <em class="sig-param">class_names: List[str] = None</em>, <em class="sig-param">num_classes: int = 2</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/auc.html#AUCCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.auc.AUCCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'auc'</em>, <em class="sig-param">multiplier: float = 1.0</em>, <em class="sig-param">class_args: List[str] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/auc.html#AUCCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.auc.AUCCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input_key</strong> (<em>str</em>) – input key to use for auc calculation
-specifies our <code class="docutils literal notranslate"><span class="pre">y_true</span></code></p></li>
+specifies our <code class="docutils literal notranslate"><span class="pre">y_true</span></code>.</p></li>
 <li><p><strong>output_key</strong> (<em>str</em>) – output key to use for auc calculation;
-specifies our <code class="docutils literal notranslate"><span class="pre">y_pred</span></code></p></li>
-<li><p><strong>prefix</strong> (<em>str</em>) – name to display for auc when printing</p></li>
-<li><p><strong>class_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – class names to display in the logs.
+specifies our <code class="docutils literal notranslate"><span class="pre">y_pred</span></code>.</p></li>
+<li><p><strong>prefix</strong> (<em>str</em>) – metric’s name.</p></li>
+<li><p><strong>multiplier</strong> (<em>float</em>) – scale factor for the metric.</p></li>
+<li><p><strong>class_args</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – class names to display in the logs.
 If None, defaults to indices for each class, starting from 0</p></li>
-<li><p><strong>num_classes</strong> (<em>int</em>) – Number of classes; must be &gt; 1</p></li>
-<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
-Must be one of <code class="docutils literal notranslate"><span class="pre">'none'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Sigmoid'</span></code>, or <code class="docutils literal notranslate"><span class="pre">'Softmax2d'</span></code></p></li>
 </ul>
 </dd>
 </dl>
@@ -1265,12 +1265,78 @@ Must be one of <code class="docutils literal notranslate"><span class="pre">'non
 </dd></dl>
 
 </div>
+<div class="section" id="module-catalyst.dl.callbacks.metrics.cmc_score">
+<span id="cmc-score"></span><h3><a class="toc-backref" href="#id18">CMC score</a><a class="headerlink" href="#module-catalyst.dl.callbacks.metrics.cmc_score" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.dl.callbacks.metrics.cmc_score.CMCScoreCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.metrics.cmc_score.</code><code class="sig-name descname">CMCScoreCallback</code><span class="sig-paren">(</span><em class="sig-param">embeddings_key: str = 'logits'</em>, <em class="sig-param">labels_key: str = 'targets'</em>, <em class="sig-param">is_query_key: str = 'is_query'</em>, <em class="sig-param">prefix: str = 'cmc'</em>, <em class="sig-param">topk_args: List[int] = None</em>, <em class="sig-param">num_classes: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/cmc_score.html#CMCScoreCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.cmc_score.CMCScoreCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
+<p>Cumulative Matching Characteristics callback.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You should use it with <cite>ControlFlowCallback</cite>
+and add all query/gallery sets to loaders.
+Loaders should contain “is_query” and “label” key.</p>
+</div>
+<p>An usage example can be found in Readme.md under
+“CV - MNIST with Metric Learning”.</p>
+<dl class="method">
+<dt id="catalyst.dl.callbacks.metrics.cmc_score.CMCScoreCallback.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">embeddings_key: str = 'logits'</em>, <em class="sig-param">labels_key: str = 'targets'</em>, <em class="sig-param">is_query_key: str = 'is_query'</em>, <em class="sig-param">prefix: str = 'cmc'</em>, <em class="sig-param">topk_args: List[int] = None</em>, <em class="sig-param">num_classes: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/cmc_score.html#CMCScoreCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.cmc_score.CMCScoreCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>This callback was designed to count
+cumulative matching characteristics.
+If current object is from query your dataset
+should output <cite>True</cite> in <cite>is_query_key</cite>
+and false if current object is from gallery.
+You can see <cite>QueryGalleryDataset</cite> in
+<cite>catalyst.contrib.datasets.metric_learning</cite> for more information.
+On batch end callback accumulate all embeddings</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>embeddings_key</strong> (<em>str</em>) – embeddings key in output dict</p></li>
+<li><p><strong>labels_key</strong> (<em>str</em>) – labels key in output dict</p></li>
+<li><p><strong>is_query_key</strong> (<em>str</em>) – bool key True if current
+object is from query</p></li>
+<li><p><strong>prefix</strong> (<em>str</em>) – key for the metric’s name</p></li>
+<li><p><strong>topk_args</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – specifies which cmc&#64;K to log.
+[1] - cmc&#64;1
+[1, 3] - cmc&#64;1 and cmc&#64;3
+[1, 3, 5] - cmc&#64;1, cmc&#64;3 and cmc&#64;5</p></li>
+<li><p><strong>num_classes</strong> (<em>int</em>) – number of classes to calculate <code class="docutils literal notranslate"><span class="pre">accuracy_args</span></code>
+if <code class="docutils literal notranslate"><span class="pre">topk_args</span></code> is None</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.metrics.cmc_score.CMCScoreCallback.on_batch_end">
+<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/cmc_score.html#CMCScoreCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.cmc_score.CMCScoreCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>On batch end action</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.metrics.cmc_score.CMCScoreCallback.on_loader_end">
+<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/cmc_score.html#CMCScoreCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.cmc_score.CMCScoreCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>On loader end action</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.dl.callbacks.metrics.cmc_score.CMCScoreCallback.on_loader_start">
+<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/cmc_score.html#CMCScoreCallback.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.cmc_score.CMCScoreCallback.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>On loader start action</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-catalyst.dl.callbacks.metrics.dice">
-<span id="dice"></span><h3><a class="toc-backref" href="#id18">Dice</a><a class="headerlink" href="#module-catalyst.dl.callbacks.metrics.dice" title="Permalink to this headline">¶</a></h3>
+<span id="dice"></span><h3><a class="toc-backref" href="#id19">Dice</a><a class="headerlink" href="#module-catalyst.dl.callbacks.metrics.dice" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.dl.callbacks.metrics.dice.DiceCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.metrics.dice.</code><code class="sig-name descname">DiceCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'dice'</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/dice.html#DiceCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.dice.DiceCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.MetricCallback" title="catalyst.core.callbacks.metrics.MetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.MetricCallback</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.BatchMetricCallback" title="catalyst.core.callbacks.metrics.BatchMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.BatchMetricCallback</span></code></a></p>
 <p>Dice metric callback.</p>
 <dl class="method">
 <dt id="catalyst.dl.callbacks.metrics.dice.DiceCallback.__init__">
@@ -1348,11 +1414,11 @@ if list, make sure it corresponds to the number of classes</p></li>
 
 </div>
 <div class="section" id="module-catalyst.dl.callbacks.metrics.f1_score">
-<span id="f1-score"></span><h3><a class="toc-backref" href="#id19">F1 score</a><a class="headerlink" href="#module-catalyst.dl.callbacks.metrics.f1_score" title="Permalink to this headline">¶</a></h3>
+<span id="f1-score"></span><h3><a class="toc-backref" href="#id20">F1 score</a><a class="headerlink" href="#module-catalyst.dl.callbacks.metrics.f1_score" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.dl.callbacks.metrics.f1_score.F1ScoreCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.metrics.f1_score.</code><code class="sig-name descname">F1ScoreCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'f1_score'</em>, <em class="sig-param">beta: float = 1.0</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/f1_score.html#F1ScoreCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.f1_score.F1ScoreCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.MetricCallback" title="catalyst.core.callbacks.metrics.MetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.MetricCallback</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.BatchMetricCallback" title="catalyst.core.callbacks.metrics.BatchMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.BatchMetricCallback</span></code></a></p>
 <p>F1 score metric callback.</p>
 <dl class="method">
 <dt id="catalyst.dl.callbacks.metrics.f1_score.F1ScoreCallback.__init__">
@@ -1379,11 +1445,11 @@ Must be one of <code class="docutils literal notranslate"><span class="pre">'non
 
 </div>
 <div class="section" id="module-catalyst.dl.callbacks.metrics.iou">
-<span id="iou"></span><h3><a class="toc-backref" href="#id20">IOU</a><a class="headerlink" href="#module-catalyst.dl.callbacks.metrics.iou" title="Permalink to this headline">¶</a></h3>
+<span id="iou"></span><h3><a class="toc-backref" href="#id21">IOU</a><a class="headerlink" href="#module-catalyst.dl.callbacks.metrics.iou" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.dl.callbacks.metrics.iou.IouCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.metrics.iou.</code><code class="sig-name descname">IouCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'iou'</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/iou.html#IouCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.iou.IouCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.MetricCallback" title="catalyst.core.callbacks.metrics.MetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.MetricCallback</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.BatchMetricCallback" title="catalyst.core.callbacks.metrics.BatchMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.BatchMetricCallback</span></code></a></p>
 <p>IoU (Jaccard) metric callback.</p>
 <dl class="method">
 <dt id="catalyst.dl.callbacks.metrics.iou.IouCallback.__init__">
@@ -1416,7 +1482,7 @@ Must be one of <code class="docutils literal notranslate"><span class="pre">'non
 <dl class="class">
 <dt id="catalyst.dl.callbacks.metrics.iou.ClasswiseIouCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.metrics.iou.</code><code class="sig-name descname">ClasswiseIouCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'iou'</em>, <em class="sig-param">classes: List[str] = None</em>, <em class="sig-param">num_classes: int = None</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/iou.html#ClasswiseIouCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.iou.ClasswiseIouCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.MultiMetricCallback" title="catalyst.core.callbacks.metrics.MultiMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.MultiMetricCallback</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.BatchMetricCallback" title="catalyst.core.callbacks.metrics.BatchMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.BatchMetricCallback</span></code></a></p>
 <p>Classwise IoU (Jaccard) metric callback.</p>
 <dl class="method">
 <dt id="catalyst.dl.callbacks.metrics.iou.ClasswiseIouCallback.__init__">
@@ -1452,7 +1518,7 @@ Must be one of <code class="docutils literal notranslate"><span class="pre">'non
 
 </div>
 <div class="section" id="module-catalyst.dl.callbacks.metrics.ppv_tpr_f1">
-<span id="global-precision-recall-and-f1-score"></span><h3><a class="toc-backref" href="#id21">Global precision, recall and F1-score</a><a class="headerlink" href="#module-catalyst.dl.callbacks.metrics.ppv_tpr_f1" title="Permalink to this headline">¶</a></h3>
+<span id="global-precision-recall-and-f1-score"></span><h3><a class="toc-backref" href="#id22">Global precision, recall and F1-score</a><a class="headerlink" href="#module-catalyst.dl.callbacks.metrics.ppv_tpr_f1" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.dl.callbacks.metrics.ppv_tpr_f1.PrecisionRecallF1ScoreCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.metrics.ppv_tpr_f1.</code><code class="sig-name descname">PrecisionRecallF1ScoreCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">class_names: List[str] = None</em>, <em class="sig-param">num_classes: int = 2</em>, <em class="sig-param">threshold: float = 0.5</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/ppv_tpr_f1.html#PrecisionRecallF1ScoreCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.ppv_tpr_f1.PrecisionRecallF1ScoreCallback" title="Permalink to this definition">¶</a></dt>
@@ -1487,11 +1553,42 @@ Must be one of <code class="docutils literal notranslate"><span class="pre">'non
 </dd></dl>
 
 </div>
+<div class="section" id="module-catalyst.dl.callbacks.metrics.precision">
+<span id="precision"></span><h3><a class="toc-backref" href="#id23">Precision</a><a class="headerlink" href="#module-catalyst.dl.callbacks.metrics.precision" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.dl.callbacks.metrics.precision.AveragePrecisionCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.dl.callbacks.metrics.precision.</code><code class="sig-name descname">AveragePrecisionCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'average_precision'</em>, <em class="sig-param">multiplier: float = 1.0</em>, <em class="sig-param">class_args: List[str] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/precision.html#AveragePrecisionCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.precision.AveragePrecisionCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.LoaderMetricCallback" title="catalyst.core.callbacks.metrics.LoaderMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.LoaderMetricCallback</span></code></a></p>
+<p>AveragePrecision metric callback.</p>
+<dl class="method">
+<dt id="catalyst.dl.callbacks.metrics.precision.AveragePrecisionCallback.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'average_precision'</em>, <em class="sig-param">multiplier: float = 1.0</em>, <em class="sig-param">class_args: List[str] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/callbacks/metrics/precision.html#AveragePrecisionCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.callbacks.metrics.precision.AveragePrecisionCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_key</strong> (<em>str</em>) – input key to use for
+calculation mean average precision;
+specifies our <cite>y_true</cite>.</p></li>
+<li><p><strong>output_key</strong> (<em>str</em>) – output key to use for
+calculation mean average precision;
+specifies our <cite>y_pred</cite>.</p></li>
+<li><p><strong>prefix</strong> (<em>str</em>) – metric’s name.</p></li>
+<li><p><strong>multiplier</strong> (<em>float</em>) – scale factor for the metric.</p></li>
+<li><p><strong>class_args</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – class names to display in the logs.
+If None, defaults to indices for each class, starting from 0</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 <div class="section" id="utils">
-<h2><a class="toc-backref" href="#id22">Utils</a><a class="headerlink" href="#utils" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id24">Utils</a><a class="headerlink" href="#utils" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-catalyst.dl.utils.torch">
-<span id="torch"></span><h3><a class="toc-backref" href="#id23">Torch</a><a class="headerlink" href="#module-catalyst.dl.utils.torch" title="Permalink to this headline">¶</a></h3>
+<span id="torch"></span><h3><a class="toc-backref" href="#id25">Torch</a><a class="headerlink" href="#module-catalyst.dl.utils.torch" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.dl.utils.torch.get_loader">
 <code class="sig-prename descclassname">catalyst.dl.utils.torch.</code><code class="sig-name descname">get_loader</code><span class="sig-paren">(</span><em class="sig-param">data_source: Iterable[dict], open_fn: Callable, dict_transform: Callable = None, sampler=None, collate_fn: Callable = &lt;function default_collate&gt;, batch_size: int = 32, num_workers: int = 4, shuffle: bool = False, drop_last: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils/torch.html#get_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.torch.get_loader" title="Permalink to this definition">¶</a></dt>
@@ -1534,7 +1631,7 @@ will be smaller. (default: <code class="docutils literal notranslate"><span clas
 
 </div>
 <div class="section" id="module-catalyst.dl.utils.trace">
-<span id="trace"></span><h3><a class="toc-backref" href="#id24">Trace</a><a class="headerlink" href="#module-catalyst.dl.utils.trace" title="Permalink to this headline">¶</a></h3>
+<span id="trace"></span><h3><a class="toc-backref" href="#id26">Trace</a><a class="headerlink" href="#module-catalyst.dl.utils.trace" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.dl.utils.trace.trace_model">
 <code class="sig-prename descclassname">catalyst.dl.utils.trace.</code><code class="sig-name descname">trace_model</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module</em>, <em class="sig-param">predict_fn: Callable</em>, <em class="sig-param">batch=None</em>, <em class="sig-param">method_name: str = 'forward'</em>, <em class="sig-param">mode: str = 'eval'</em>, <em class="sig-param">requires_grad: bool = False</em>, <em class="sig-param">opt_level: str = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = 'cpu'</em>, <em class="sig-param">predict_params: dict = None</em><span class="sig-paren">)</span> &#x2192; torch.jit.ScriptModule<a class="reference internal" href="../_modules/catalyst/dl/utils/trace.html#trace_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.trace.trace_model" title="Permalink to this definition">¶</a></dt>
@@ -1693,7 +1790,7 @@ used as entrypoint during tracing</p></li>
 
 </div>
 <div class="section" id="module-catalyst.dl.utils.wizard">
-<span id="wizard"></span><h3><a class="toc-backref" href="#id25">Wizard</a><a class="headerlink" href="#module-catalyst.dl.utils.wizard" title="Permalink to this headline">¶</a></h3>
+<span id="wizard"></span><h3><a class="toc-backref" href="#id27">Wizard</a><a class="headerlink" href="#module-catalyst.dl.utils.wizard" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.dl.utils.wizard.run_wizard">
 <code class="sig-prename descclassname">catalyst.dl.utils.wizard.</code><code class="sig-name descname">run_wizard</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/utils/wizard.html#run_wizard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.utils.wizard.run_wizard" title="Permalink to this definition">¶</a></dt>
@@ -1730,7 +1827,7 @@ lists to ease the choice.</p>
 </div>
 </div>
 <div class="section" id="module-catalyst.dl.registry">
-<span id="registry"></span><h2><a class="toc-backref" href="#id26">Registry</a><a class="headerlink" href="#module-catalyst.dl.registry" title="Permalink to this headline">¶</a></h2>
+<span id="registry"></span><h2><a class="toc-backref" href="#id28">Registry</a><a class="headerlink" href="#module-catalyst.dl.registry" title="Permalink to this headline">¶</a></h2>
 </div>
 </div>
 
@@ -1795,10 +1892,12 @@ lists to ease the choice.</p>
 <li><a class="reference internal" href="#metrics">Metrics</a><ul>
 <li><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.accuracy">Accuracy</a></li>
 <li><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.auc">AUC</a></li>
+<li><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.cmc_score">CMC score</a></li>
 <li><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.dice">Dice</a></li>
 <li><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.f1_score">F1 score</a></li>
 <li><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.iou">IOU</a></li>
 <li><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.ppv_tpr_f1">Global precision, recall and F1-score</a></li>
+<li><a class="reference internal" href="#module-catalyst.dl.callbacks.metrics.precision">Precision</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#utils">Utils</a><ul>

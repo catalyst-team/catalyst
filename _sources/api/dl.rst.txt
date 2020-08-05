@@ -111,6 +111,13 @@ AUC
     :undoc-members:
     :show-inheritance:
 
+CMC score
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.dl.callbacks.metrics.cmc_score
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Dice
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.dl.callbacks.metrics.dice
@@ -135,6 +142,13 @@ IOU
 Global precision, recall and F1-score
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.dl.callbacks.metrics.ppv_tpr_f1
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Precision
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.dl.callbacks.metrics.precision
     :members:
     :undoc-members:
     :show-inheritance:

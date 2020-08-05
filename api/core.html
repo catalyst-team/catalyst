@@ -286,7 +286,7 @@
 <li><p><a class="reference internal" href="#module-catalyst.core.callbacks.early_stop" id="id14">Early Stop</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.core.callbacks.exception" id="id15">Exception</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.core.callbacks.logging" id="id16">Logging</a></p></li>
-<li><p><a class="reference internal" href="#metrics" id="id17">Metrics</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.metrics" id="id17">Metrics</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.core.callbacks.optimizer" id="id18">Optimizer</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.core.callbacks.scheduler" id="id19">Scheduler</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.core.callbacks.timer" id="id20">Timer</a></p></li>
@@ -2954,7 +2954,7 @@ a stage, the default value is <code class="docutils literal notranslate"><span c
 <dl class="class">
 <dt id="catalyst.core.callbacks.criterion.CriterionCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.criterion.</code><code class="sig-name descname">CriterionCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', prefix: str = 'loss', criterion_key: str = None, multiplier: float = 1.0, **metric_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/criterion.html#CriterionCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.criterion.CriterionCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callbacks.metrics.IMetricCallback" title="catalyst.core.callbacks.metrics.IMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.IMetricCallback</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callbacks.metrics.IBatchMetricCallback" title="catalyst.core.callbacks.metrics.IBatchMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.IBatchMetricCallback</span></code></a></p>
 <p>Callback for that measures loss with specified criterion.</p>
 <dl class="method">
 <dt id="catalyst.core.callbacks.criterion.CriterionCallback.__init__">
@@ -3280,8 +3280,8 @@ to remove always_show metrics set it to an empty list <code class="docutils lite
 </dd></dl>
 
 </div>
-<div class="section" id="metrics">
-<h3><a class="toc-backref" href="#id17">Metrics</a><a class="headerlink" href="#metrics" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="module-catalyst.core.callbacks.metrics">
+<span id="metrics"></span><h3><a class="toc-backref" href="#id17">Metrics</a><a class="headerlink" href="#module-catalyst.core.callbacks.metrics" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.core.callbacks.metrics.IMetricCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">IMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metrics_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#IMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.IMetricCallback" title="Permalink to this definition">¶</a></dt>
@@ -3304,58 +3304,66 @@ to remove always_show metrics set it to an empty list <code class="docutils lite
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="catalyst.core.callbacks.metrics.IMetricCallback.on_batch_end">
-<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#IMetricCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.IMetricCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the metric and add it to batch metrics.</p>
 </dd></dl>
 
-</dd></dl>
-
-<span class="target" id="module-catalyst.core.callbacks.metrics"></span><dl class="class">
-<dt>
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">IMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metrics_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#IMetricCallback"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code>, <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
+<dl class="class">
+<dt id="catalyst.core.callbacks.metrics.IBatchMetricCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">IBatchMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metrics_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#IBatchMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.IBatchMetricCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callbacks.metrics.IMetricCallback" title="catalyst.core.callbacks.metrics.IMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.IMetricCallback</span></code></a></p>
 <p>&#64;TODO: Docs. Contribution is welcome.</p>
 <dl class="method">
-<dt>
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metrics_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#IMetricCallback.__init__"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<em class="property">abstract property </em><code class="sig-name descname">metric_fn</code></dt>
-<dd><p>Docs. Contribution is welcome.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>&#64;TODO</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#IMetricCallback.on_batch_end"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Computes the metric and add it to batch metrics.</p>
+<dt id="catalyst.core.callbacks.metrics.IBatchMetricCallback.on_batch_end">
+<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#IBatchMetricCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.IBatchMetricCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes metrics and add them to batch metrics.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt id="catalyst.core.callbacks.metrics.MetricCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">MetricCallback</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, metric_fn: Callable, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metric_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricCallback" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.core.callbacks.metrics.ILoaderMetricCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">ILoaderMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#ILoaderMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.ILoaderMetricCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.callbacks.metrics.IMetricCallback" title="catalyst.core.callbacks.metrics.IMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.IMetricCallback</span></code></a></p>
+<p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dl class="method">
+<dt id="catalyst.core.callbacks.metrics.ILoaderMetricCallback.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#ILoaderMetricCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.ILoaderMetricCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callbacks.metrics.ILoaderMetricCallback.on_batch_end">
+<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#ILoaderMetricCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.ILoaderMetricCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stores new input/output for the metric computation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callbacks.metrics.ILoaderMetricCallback.on_loader_end">
+<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#ILoaderMetricCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.ILoaderMetricCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callbacks.metrics.ILoaderMetricCallback.on_loader_start">
+<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#ILoaderMetricCallback.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.ILoaderMetricCallback.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reinitialises internal storages.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.core.callbacks.metrics.BatchMetricCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">BatchMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, metric_fn: Callable, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metric_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#BatchMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.BatchMetricCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callbacks.metrics.IBatchMetricCallback" title="catalyst.core.callbacks.metrics.IBatchMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.IBatchMetricCallback</span></code></a></p>
 <p>A callback that returns single metric on <cite>runner.on_batch_end</cite>.</p>
 <dl class="method">
-<dt id="catalyst.core.callbacks.metrics.MetricCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, metric_fn: Callable, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metric_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.core.callbacks.metrics.BatchMetricCallback.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, metric_fn: Callable, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metric_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#BatchMetricCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.BatchMetricCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.core.callbacks.metrics.MetricCallback.metric_fn">
-<em class="property">property </em><code class="sig-name descname">metric_fn</code><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricCallback.metric_fn" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.core.callbacks.metrics.BatchMetricCallback.metric_fn">
+<em class="property">property </em><code class="sig-name descname">metric_fn</code><a class="headerlink" href="#catalyst.core.callbacks.metrics.BatchMetricCallback.metric_fn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Docs. Contribution is welcome.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -3367,37 +3375,43 @@ to remove always_show metrics set it to an empty list <code class="docutils lite
 </dd></dl>
 
 <dl class="class">
-<dt id="catalyst.core.callbacks.metrics.MultiMetricCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">MultiMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, metric_fn: Callable, list_args: List, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metrics_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MultiMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MultiMetricCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callbacks.metrics.MetricCallback" title="catalyst.core.callbacks.metrics.MetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.MetricCallback</span></code></a></p>
-<p>A callback that returns multiple metrics on <cite>runner.on_batch_end</cite>.</p>
+<dt id="catalyst.core.callbacks.metrics.LoaderMetricCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">LoaderMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, metric_fn: Callable, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metric_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#LoaderMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.LoaderMetricCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callbacks.metrics.ILoaderMetricCallback" title="catalyst.core.callbacks.metrics.ILoaderMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.ILoaderMetricCallback</span></code></a></p>
+<p>A callback that returns single metric on <cite>runner.on_batch_end</cite>.</p>
 <dl class="method">
-<dt id="catalyst.core.callbacks.metrics.MultiMetricCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, metric_fn: Callable, list_args: List, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metrics_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MultiMetricCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MultiMetricCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.core.callbacks.metrics.LoaderMetricCallback.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, metric_fn: Callable, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metric_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#LoaderMetricCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.LoaderMetricCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.core.callbacks.metrics.MultiMetricCallback.on_batch_end">
-<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MultiMetricCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MultiMetricCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Batch end hook.</p>
+<dt id="catalyst.core.callbacks.metrics.LoaderMetricCallback.metric_fn">
+<em class="property">property </em><code class="sig-name descname">metric_fn</code><a class="headerlink" href="#catalyst.core.callbacks.metrics.LoaderMetricCallback.metric_fn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Docs. Contribution is welcome.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>&#64;TODO</p>
 </dd>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.core.callbacks.metrics.MetricCallback">
+<code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">MetricCallback</code><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#catalyst.core.callbacks.metrics.BatchMetricCallback" title="catalyst.core.callbacks.metrics.BatchMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.BatchMetricCallback</span></code></a></p>
 </dd></dl>
 
 <dl class="class">
 <dt id="catalyst.core.callbacks.metrics.MetricAggregationCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">MetricAggregationCallback</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, metrics: Union[str, List[str], Dict[str, float]] = None, mode: str = 'mean', multiplier: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricAggregationCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricAggregationCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">MetricAggregationCallback</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, metrics: Union[str, List[str], Dict[str, float]] = None, mode: str = 'mean', scope: str = 'batch', multiplier: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricAggregationCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricAggregationCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
 <p>A callback to aggregate several metrics in one value.</p>
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.MetricAggregationCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, metrics: Union[str, List[str], Dict[str, float]] = None, mode: str = 'mean', multiplier: float = 1.0</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricAggregationCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricAggregationCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, metrics: Union[str, List[str], Dict[str, float]] = None, mode: str = 'mean', scope: str = 'batch', multiplier: float = 1.0</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricAggregationCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricAggregationCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -3424,6 +3438,16 @@ Must be either <code class="docutils literal notranslate"><span class="pre">sum<
 </dl>
 </dd></dl>
 
+<dl class="method">
+<dt id="catalyst.core.callbacks.metrics.MetricAggregationCallback.on_epoch_end">
+<code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricAggregationCallback.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricAggregationCallback.on_epoch_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callbacks.metrics.MetricAggregationCallback.on_loader_end">
+<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricAggregationCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricAggregationCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -3440,56 +3464,41 @@ Must be either <code class="docutils literal notranslate"><span class="pre">sum<
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.MetricManagerCallback.on_batch_end">
 <code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricManagerCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricManagerCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Batch end hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
-</dd>
-</dl>
+<dd><p>Batch end hook.
+:param runner: current runner
+:type runner: IRunner</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.MetricManagerCallback.on_batch_start">
 <code class="sig-name descname">on_batch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricManagerCallback.on_batch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricManagerCallback.on_batch_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Batch start hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
-</dd>
-</dl>
+<dd><p>Batch start hook.
+:param runner: current runner
+:type runner: IRunner</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.MetricManagerCallback.on_epoch_start">
 <code class="sig-name descname">on_epoch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricManagerCallback.on_epoch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricManagerCallback.on_epoch_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Epoch start hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
-</dd>
-</dl>
+<dd><p>Epoch start hook.
+:param runner: current runner
+:type runner: IRunner</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.MetricManagerCallback.on_loader_end">
 <code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricManagerCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricManagerCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loader end hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
-</dd>
-</dl>
+<dd><p>Loader end hook.
+:param runner: current runner
+:type runner: IRunner</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.MetricManagerCallback.on_loader_start">
 <code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricManagerCallback.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricManagerCallback.on_loader_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loader start hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
-</dd>
-</dl>
+<dd><p>Loader start hook.
+:param runner: current runner
+:type runner: IRunner</p>
 </dd></dl>
 
 <dl class="method">
@@ -4096,7 +4105,7 @@ Please use <cite>runner</cite> instead.</p>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.early_stop">Early Stop</a></li>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.exception">Exception</a></li>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.logging">Logging</a></li>
-<li><a class="reference internal" href="#metrics">Metrics</a></li>
+<li><a class="reference internal" href="#module-catalyst.core.callbacks.metrics">Metrics</a></li>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.optimizer">Optimizer</a></li>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.scheduler">Scheduler</a></li>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.timer">Timer</a></li>

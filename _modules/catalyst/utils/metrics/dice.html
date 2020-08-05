@@ -262,6 +262,9 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Dice metric.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="n">get_activation_fn</span>
@@ -304,7 +307,41 @@
     <span class="k">return</span> <span class="n">output_dice</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dice&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="calculate_dice"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.utils.metrics.dice.calculate_dice">[docs]</a><span class="k">def</span> <span class="nf">calculate_dice</span><span class="p">(</span>
+    <span class="n">true_positives</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
+    <span class="n">false_positives</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
+    <span class="n">false_negatives</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate list of Dice coefficients.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        true_positives: true positives numpy tensor</span>
+<span class="sd">        false_positives: false positives numpy tensor</span>
+<span class="sd">        false_negatives: false negatives numpy tensor</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.array: dice score</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if `dice` is out of [0; 1] bounds</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">epsilon</span> <span class="o">=</span> <span class="mf">1e-7</span>
+
+    <span class="n">dice_metric</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">true_positives</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="mi">2</span> <span class="o">*</span> <span class="n">true_positives</span> <span class="o">+</span> <span class="n">false_positives</span> <span class="o">+</span> <span class="n">false_negatives</span> <span class="o">+</span> <span class="n">epsilon</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">dice_metric</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Dice index should be less or equal to 1&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">dice_metric</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Dice index should be more than 1&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dice_metric</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dice&quot;</span><span class="p">,</span> <span class="s2">&quot;calculate_dice&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

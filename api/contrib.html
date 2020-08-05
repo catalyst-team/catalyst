@@ -1751,7 +1751,7 @@ in the epochs where this loader is missing.</p>
 <dl class="class">
 <dt id="catalyst.contrib.dl.callbacks.perplexity_metric.PerplexityMetricCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.callbacks.perplexity_metric.</code><code class="sig-name descname">PerplexityMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'perplexity'</em>, <em class="sig-param">ignore_index: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/perplexity_metric.html#PerplexityMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.perplexity_metric.PerplexityMetricCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.MetricCallback" title="catalyst.core.callbacks.metrics.MetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.MetricCallback</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callbacks.metrics.BatchMetricCallback" title="catalyst.core.callbacks.metrics.BatchMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.BatchMetricCallback</span></code></a></p>
 <p>Perplexity is a very popular metric in NLP
 especially in Language Modeling task.
 It is 2^cross_entropy.</p>
