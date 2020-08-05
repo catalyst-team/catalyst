@@ -229,6 +229,14 @@ Accuracy
     :undoc-members:
     :show-inheritance:
 
+AUC
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.metrics.auc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 CMC score
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.metrics.cmc_score_count
@@ -276,7 +284,9 @@ Precision
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.metrics.mean_average_precision
+Functional
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.metrics.functional
     :members:
     :undoc-members:
     :show-inheritance:

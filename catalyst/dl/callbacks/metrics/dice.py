@@ -1,12 +1,12 @@
 import numpy as np
 
-from catalyst.core import Callback, CallbackOrder, IRunner, MetricCallback
+from catalyst.core import BatchMetricCallback, Callback, CallbackOrder, IRunner
 from catalyst.dl import utils
-from catalyst.dl.callbacks.metrics.functional import calculate_dice
 from catalyst.utils import metrics
+from catalyst.utils.metrics.dice import calculate_dice
 
 
-class DiceCallback(MetricCallback):
+class DiceCallback(BatchMetricCallback):
     """Dice metric callback."""
 
     def __init__(

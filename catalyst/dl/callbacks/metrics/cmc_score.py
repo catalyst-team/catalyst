@@ -3,27 +3,24 @@ from typing import List
 import torch
 
 from catalyst.contrib.datasets.metric_learning import QueryGalleryDataset
-from catalyst.core import IRunner
-from catalyst.core.callback import CallbackOrder
-from catalyst.dl import Callback
-from catalyst.dl.callbacks.metrics.functional import get_default_topk_args
-from catalyst.utils.metrics.cmc_score import cmc_score
+from catalyst.core import Callback, CallbackOrder, IRunner
+from catalyst.utils.metrics import cmc_score, get_default_topk_args
 
 TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
 
 
 class CMCScoreCallback(Callback):
     """
-    Cumulative Matching Characteristics callback
+    Cumulative Matching Characteristics callback.
 
-    You should use it with `ControlFlowCallback`
-    and add all query/gallery sets to loaders.
-    Loaders should contain "is_query" and "label" key.
+    .. note::
 
-    An usage example can be found in Readme.md:
+        You should use it with `ControlFlowCallback`
+        and add all query/gallery sets to loaders.
+        Loaders should contain "is_query" and "label" key.
+
+    An usage example can be found in Readme.md under
     "CV - MNIST with Metric Learning".
-    Or you can also found full metric learning pipeline
-    :ref:`here <catalyst.test._tests_scripts.dl_z_mvp_mnist_metric_learning>`.
     """
 
     def __init__(
@@ -42,8 +39,9 @@ class CMCScoreCallback(Callback):
         should output `True` in `is_query_key`
         and false if current object is from gallery.
         You can see `QueryGalleryDataset` in
-        `catalyst.contrib.data.ml` for more information.
+        `catalyst.contrib.datasets.metric_learning` for more information.
         On batch end callback accumulate all embeddings
+
         Args:
             embeddings_key (str): embeddings key in output dict
             labels_key (str): labels key in output dict
@@ -119,12 +117,10 @@ class CMCScoreCallback(Callback):
 
     def on_loader_start(self, runner: "IRunner"):
         """On loader start action"""
-        assert isinstance(
-            runner.loaders[runner.loader_name].dataset, QueryGalleryDataset
-        )
-        loader = runner.loaders[runner.loader_name]
-        self._query_size = loader.dataset.query_size
-        self._gallery_size = loader.dataset.gallery_size
+        dataset = runner.loaders[runner.loader_name].dataset
+        assert isinstance(dataset, QueryGalleryDataset)
+        self._query_size = dataset.query_size
+        self._gallery_size = dataset.gallery_size
         self._query_labels = torch.empty(self._query_size, dtype=torch.long)
         self._gallery_labels = torch.empty(
             self._gallery_size, dtype=torch.long
@@ -145,16 +141,13 @@ class CMCScoreCallback(Callback):
         conformity_matrix = self._query_labels == self._gallery_labels.reshape(
             -1, 1
         )
-        for k in self.list_args:
+        for key in self.list_args:
             metric = self._metric_fn(
                 self._gallery_embeddings,
                 self._query_embeddings,
                 conformity_matrix,
-                k,
+                key,
             )
-            runner.loader_metrics[f"{self._prefix}_{k}"] = metric
-            runner.epoch_metrics[
-                f"{runner.loader_name}_{self._prefix}_{k}"
-            ] = metric
+            runner.loader_metrics[f"{self._prefix}{key:02}"] = metric
         self._gallery_embeddings = None
         self._query_embeddings = None

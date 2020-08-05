@@ -225,7 +225,7 @@ runner.train(
     scheduler=scheduler,
     loaders=loaders,
     callbacks=[
-        AccuracyCallback(accuracy_args=[1, 3, 5]),
+        AccuracyCallback(topk_args=[1, 3, 5]),
         EarlyStoppingCallback(patience=2, min_delta=0.01),
     ],
     logdir=logdir,
@@ -274,7 +274,7 @@ runner.train(
     scheduler=scheduler,
     loaders=loaders,
     callbacks=[
-        AccuracyCallback(accuracy_args=[1, 3, 5]),
+        AccuracyCallback(topk_args=[1, 3, 5]),
         EarlyStoppingCallback(patience=2, min_delta=0.01),
     ],
     logdir=logdir,
@@ -319,7 +319,7 @@ runner.train(
     scheduler=scheduler,
     loaders={"train": loaders["train"]},
     valid_loader="train",
-    callbacks=[AccuracyCallback(accuracy_args=[1, 3, 5]),],
+    callbacks=[AccuracyCallback(topk_args=[1, 3, 5]),],
     logdir=logdir,
     num_epochs=num_epochs,
     check=True,
@@ -392,7 +392,7 @@ runner.train(
     scheduler=scheduler,
     loaders=loaders,
     callbacks=[
-        AccuracyCallback(accuracy_args=[1, 3, 5]),
+        AccuracyCallback(topk_args=[1, 3, 5]),
         EarlyStoppingCallback(patience=2, min_delta=0.01),
     ],
     logdir=logdir,
