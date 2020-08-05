@@ -12,7 +12,7 @@ from torch import Tensor
 
 from catalyst.contrib.nn.criterion.functional import euclidean_distance
 from catalyst.contrib.utils.misc import find_value_ids
-from catalyst.data.utils import prepare_labels
+from catalyst.data.utils import process_labels
 from catalyst.utils.torch import normalize
 
 # order in the triplets: (anchor, positive, negative)
@@ -112,7 +112,7 @@ class InBatchTripletsSampler(IInbatchTripletSampler):
             (anchor, positive, negative)
         """
         # Convert labels to list
-        labels = prepare_labels(labels)
+        labels = process_labels(labels)
         self._check_input_labels(labels=labels)
 
         ids_anchor, ids_pos, ids_neg = self._sample(features, labels=labels)
@@ -366,7 +366,7 @@ class HardClusterSampler(IInbatchTripletSampler):
             triplet of (mean_vector, positive, negative_mean_vector)
         """
         # Convert labels to list
-        labels = prepare_labels(labels)
+        labels = process_labels(labels)
         self._check_input_labels(labels)
 
         # Get matrix of indices of labels in batch

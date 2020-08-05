@@ -3,7 +3,7 @@ from typing import List, Union
 from torch import int as tint, long, short, Tensor
 
 
-def prepare_labels(labels: Union[Tensor, List[int]]) -> List[int]:
+def process_labels(labels: Union[Tensor, List[int]]) -> List[int]:
     """
     This function allows to work with 2 types of indexing:
     using a integer tensor and a list of indices.
