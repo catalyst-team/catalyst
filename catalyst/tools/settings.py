@@ -39,7 +39,7 @@ class Settings(FrozenClass):
         use_libjpeg_turbo: bool = False,
         nmslib_required: Optional[bool] = None,
         transformers_required: Optional[bool] = None,
-        pytorch_14: Optional[bool] = None,
+        is_pytorch_above_v14: Optional[bool] = None,
     ):
         # [catalyst]
         self.contrib_required: bool = contrib_required
@@ -101,7 +101,7 @@ class Settings(FrozenClass):
         )
 
         # [pruning and quantization]
-        self.pytorch_14 = self._optional_value(pytorch_14, default=False)
+        self.is_pytorch_above_v14 = self._optional_value(is_pytorch_above_v14, default=False)
 
     @staticmethod
     def _optional_value(value, default):

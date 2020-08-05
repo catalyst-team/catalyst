@@ -18,7 +18,7 @@ except ImportError as ex:
         "Quantization and pruning are not available,"
         "run `pip install torch>=1.4` to enable them."
     )
-    if settings.pytorch_14:
+    if settings.is_pytorch_above_v14:
         raise ex
 
 from catalyst.core.callbacks.criterion import CriterionCallback

@@ -14,6 +14,12 @@ PRUNING_FN = {
 }
 
 
+def _wrap_pruning_fn(pruning_fn, *args, **kwargs):
+    return lambda module, name, amount: pruning_fn(
+        module, name, amount, *args, **kwargs
+    )
+
+
 class PruningCallback(Callback):
     """
     Pruning Callback
@@ -87,11 +93,11 @@ class PruningCallback(Callback):
                             "If you are using ln_unstructured you"
                             "need to specify n in callback args"
                         )
-                    self.pruning_fn = self._wrap_pruning_fn(
+                    self.pruning_fn = _wrap_pruning_fn(
                         prune.ln_structured, dim=dim, n=n
                     )
                 else:
-                    self.pruning_fn = self._wrap_pruning_fn(
+                    self.pruning_fn = _wrap_pruning_fn(
                         PRUNING_FN[pruning_fn], dim=dim
                     )
             else:  # unstructured
@@ -113,12 +119,6 @@ class PruningCallback(Callback):
         self.amount = amount
         self.reinitialize_after_pruning = reinitialize_after_pruning
         self.layers_to_prune = layers_to_prune
-
-    @staticmethod
-    def _wrap_pruning_fn(pruning_fn, *args, **kwargs):
-        return lambda module, name, amount: pruning_fn(
-            module, name, amount, *args, **kwargs
-        )
 
     def on_epoch_end(self, runner: "IRunner") -> None:
         """

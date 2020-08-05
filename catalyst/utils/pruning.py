@@ -15,7 +15,26 @@ def prune_model(
     reinitialize_after_pruning: Optional[bool] = False,
 ) -> None:
     """
-    @TODO
+    Prune model function can be used for pruning certain
+    tensors in model layers.
+
+    Args:
+        model: Model to be pruned.
+        pruning_fn: Pruning function with API same as in
+            torch.nn.utils.pruning.
+            pruning_fn(module, name, amount).
+        keys_to_prune: list of strings. Determines
+            which tensor in modules will be pruned.
+        amount: quantity of parameters to prune.
+            If float, should be between 0.0 and 1.0 and
+            represent the fraction of parameters to prune.
+            If int, it represents the absolute number
+            of parameters to prune.
+        layers_to_prune: list of strings - module names to be pruned.
+            If None provided then will try to prune every module in
+            model.
+        reinitialize_after_pruning: if True then will reinitialize model
+                after pruning. (Lottery Ticket Hypothesis check e.g.)
     """
     pruned_modules = 0
     for name, module in model.named_modules():
@@ -40,7 +59,16 @@ def remove_reparametrization(
     layers_to_prune: Optional[List[str]] = None,
 ) -> None:
     """
-    @TODO
+    Removes pre-hooks and pruning mask from the model.
+
+    Args:
+        model: model to remove reparametrization.
+        keys_to_prune: list of strings. Determines
+            which tensor in modules have already been pruned.
+        layers_to_prune: list of strings - module names
+            have already been pruned.
+            If None provided then will try to prune every module in
+            model.
     """
     for name, module in model.named_modules():
         try:
