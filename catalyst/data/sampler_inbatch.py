@@ -10,9 +10,8 @@ import numpy as np
 import torch
 from torch import Tensor
 
-from catalyst.contrib.nn.criterion.functional import euclidean_distance
 from catalyst.contrib.utils.misc import find_value_ids
-from catalyst.data.utils import process_labels
+from catalyst.data.utils import convert_labels2list
 from catalyst.utils.torch import normalize
 
 # order in the triplets: (anchor, positive, negative)
@@ -112,7 +111,7 @@ class InBatchTripletsSampler(IInbatchTripletSampler):
             (anchor, positive, negative)
         """
         # Convert labels to list
-        labels = process_labels(labels)
+        labels = convert_labels2list(labels)
         self._check_input_labels(labels=labels)
 
         ids_anchor, ids_pos, ids_neg = self._sample(features, labels=labels)
@@ -336,7 +335,7 @@ class HardClusterSampler(IInbatchTripletSampler):
         Returns:
             tensor of shape (p, p) -- matrix of distances between mean vectors
         """
-        distance = euclidean_distance(mean_vectors, mean_vectors)
+        distance = torch.cdist(x1=mean_vectors, x2=mean_vectors, p=2)
         return distance
 
     @staticmethod
@@ -358,10 +357,7 @@ class HardClusterSampler(IInbatchTripletSampler):
 
     def sample(self, features: Tensor, labels: TLabels) -> TTriplets:
         """
-        This method selects the hardest positive and negative example for
-        each label in the batch. It counts mean vectors for all the labels
-        and choose the hardest positive sample from the batch and the hardest
-        mean vector for it.
+        This method samples the hardest triplets in the batch.
 
         Args:
             features: tensor of shape (batch_size; embed_dim) that contains
@@ -369,10 +365,10 @@ class HardClusterSampler(IInbatchTripletSampler):
             labels: labels of the batch, list or tensor of size (batch_size,)
 
         Returns:
-            triplet of (mean_vector, positive, negative_mean_vector)
+            p triplets of (mean_vector, positive, negative_mean_vector)
         """
         # Convert labels to list
-        labels = process_labels(labels)
+        labels = convert_labels2list(labels)
         self._check_input_labels(labels)
 
         # Get matrix of indices of labels in batch
