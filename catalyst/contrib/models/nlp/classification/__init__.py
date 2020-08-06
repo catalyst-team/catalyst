@@ -1,3 +1,3 @@
 # flake8: noqa
 
-from .bert import BertClassifier
+from catalyst.contrib.models.nlp.classification.bert import BertClassifier

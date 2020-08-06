@@ -109,3 +109,6 @@ def get_resnet1d(model: ResNet) -> ResNet:
         bias=conv_old.bias,
     )
     return model
+
+
+__all__ = ["ResnetEncoder"]

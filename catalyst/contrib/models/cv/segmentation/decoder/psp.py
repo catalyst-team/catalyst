@@ -69,3 +69,6 @@ class PSPDecoder(DecoderSpec):
         x = self.psp(features)
         x = self.conv(x)
         return [x]
+
+
+__all__ = ["PSPDecoder"]

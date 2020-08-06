@@ -38,3 +38,6 @@ class SimpleConv(nn.Module):
             extracted features
         """
         return self._net(x)
+
+
+__all__ = ["SimpleConv"]

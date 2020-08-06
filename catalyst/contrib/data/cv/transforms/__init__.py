@@ -1,3 +1,3 @@
 # flake8: noqa
 
-from .tensor import TensorToImage, ToTensor
+from catalyst.contrib.data.cv.transforms.tensor import TensorToImage, ToTensor

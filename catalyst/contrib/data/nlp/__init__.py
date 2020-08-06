@@ -1,2 +1,5 @@
 # flake8: noqa
-from .dataset import *
+from catalyst.contrib.data.nlp.dataset import (
+    LanguageModelingDataset,
+    TextClassificationDataset,
+)

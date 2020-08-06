@@ -2,7 +2,7 @@ from typing import Iterable, Tuple
 import os
 
 from catalyst.contrib.data.cv.dataset import ImageFolderDataset
-from catalyst.contrib.datasets.utils import download_and_extract_archive
+from catalyst.contrib.datasets.functional import download_and_extract_archive
 
 
 class ImageClassificationDataset(ImageFolderDataset):

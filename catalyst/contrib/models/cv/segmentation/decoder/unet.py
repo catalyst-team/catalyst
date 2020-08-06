@@ -74,3 +74,6 @@ class UNetDecoder(DecoderSpec):
             )
 
         return decoder_outputs
+
+
+__all__ = ["UNetDecoder"]

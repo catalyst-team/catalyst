@@ -1,10 +1,8 @@
-from typing import Union  # isort:skip
-
+from typing import Union
 from pathlib import Path
 import warnings
 
-from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.runner import IRunner
+from catalyst.core import Callback, CallbackNode, CallbackOrder, IRunner
 from catalyst.dl.utils import save_traced_model, trace_model_from_runner
 
 
