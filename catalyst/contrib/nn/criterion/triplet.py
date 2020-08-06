@@ -264,7 +264,7 @@ class TripletPairwiseEmbeddingLoss(nn.Module):
 
 class TripletMarginLossWithSampling(nn.Module):
     """
-    This class combains in-batch sampling of triplets and
+    This class combines in-batch sampling of triplets and
     default TripletMargingLoss from PyTorch.
     """
 

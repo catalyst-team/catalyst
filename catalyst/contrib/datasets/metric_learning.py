@@ -52,7 +52,7 @@ class QueryGalleryDataset(Dataset, ABC):
         query size.
 
         Returns:
-            query size
+            query size  # noqa: DAR202
 
         Raises:
             NotImplementedError: You should implement it  # noqa: DAR402
@@ -67,7 +67,7 @@ class QueryGalleryDataset(Dataset, ABC):
         gallery size.
 
         Returns:
-            gallery size
+            gallery size  # noqa: DAR202
 
         Raises:
             NotImplementedError: You should implement it  # noqa: DAR402
