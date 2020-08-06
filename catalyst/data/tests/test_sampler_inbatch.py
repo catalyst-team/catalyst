@@ -422,8 +422,8 @@ def test_triplet_cluster_edge_case() -> None:
     expected HardTripletsSampler and HardClusterSampler to
     generate the same triplets.
     """
-    features_dim = 10
-    p, k = randint(2, 12), randint(2, 12)
+    features_dim = 128
+    p, k = randint(2, 32), randint(2, 32)
 
     # Create a list of random labels
     unique_labels = torch.tensor(list(range(p)))
@@ -443,4 +443,7 @@ def test_triplet_cluster_edge_case() -> None:
     triplets = torch.cat(triplets, dim=1)
     cluster_triplets = torch.cat(cluster_triplets, dim=1)
 
-    assert (torch.unique(triplets) == torch.unique(cluster_triplets)).all()
+    triplets = torch.unique(triplets, dim=0)
+    cluster_triplets = torch.unique(cluster_triplets, dim=0)
+
+    assert torch.allclose(triplets, cluster_triplets, atol=1e-10)
