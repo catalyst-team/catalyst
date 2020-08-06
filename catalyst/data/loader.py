@@ -122,3 +122,6 @@ class BatchLimitLoaderWrapper:
             int: length of the wrapper loader
         """
         return len(self.origin)
+
+
+__all__ = ["BatchLimitLoaderWrapper"]

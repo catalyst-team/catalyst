@@ -200,3 +200,10 @@ class HardTripletsSampler(InBatchTripletsSampler):
             ids_neg.append(i_neg)
 
         return ids_anchor, ids_pos, ids_neg
+
+
+__all__ = [
+    "InBatchTripletsSampler",
+    "AllTripletsSampler",
+    "HardTripletsSampler",
+]
