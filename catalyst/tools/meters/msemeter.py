@@ -50,3 +50,6 @@ class MSEMeter(meter.Meter):
         """
         mse = self.sesum / max(1, self.n)
         return math.sqrt(mse) if self.root else mse
+
+
+__all__ = ["MSEMeter"]

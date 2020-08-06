@@ -25,3 +25,5 @@ class Meter(object):
     def value(self):
         """Get the value of the meter in the current state."""
         pass
+
+__all__ = ["Meter"]

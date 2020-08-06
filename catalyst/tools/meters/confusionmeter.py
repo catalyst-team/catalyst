@@ -100,3 +100,6 @@ class ConfusionMeter(meter.Meter):
             return conf / conf.sum(1).clip(min=1e-12)[:, None]
         else:
             return self.conf
+
+
+__all__ = ["ConfusionMeter"]

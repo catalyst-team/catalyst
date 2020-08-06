@@ -105,3 +105,5 @@ class AUCMeter(meter.Meter):
         area = (sum_h * tpr).sum() / 2.0
 
         return (area, tpr, fpr)
+
+__all__ = ["AUCMeter"]

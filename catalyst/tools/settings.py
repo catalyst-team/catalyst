@@ -295,4 +295,4 @@ class MergedConfigParser:
 
 settings = Settings.parse()
 
-__all__ = ["settings"]
+__all__ = ["settings", "Settings", "ConfigFileFinder", "MergedConfigParser"]
