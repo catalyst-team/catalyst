@@ -151,3 +151,6 @@ class CMCScoreCallback(Callback):
             runner.loader_metrics[f"{self._prefix}{key:02}"] = metric
         self._gallery_embeddings = None
         self._query_embeddings = None
+
+
+__all__ = ["CMCScoreCallback"]
