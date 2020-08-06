@@ -1,7 +1,6 @@
 # flake8: noqa
 
 import logging
-import os
 
 logger = logging.getLogger(__name__)
 
