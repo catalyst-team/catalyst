@@ -2,6 +2,7 @@
 # @TODO: code formatting issue for 20.07 release
 from typing import List, Tuple
 from collections import Counter
+from random import randint
 
 import numpy as np
 import pytest
@@ -343,7 +344,8 @@ def test_cluster_count_intra_class_distances(
             torch.tensor(
                 [[1, 0, 0, 0], [1, 1, 0, 0], [0, 1, 1, 0]], dtype=torch.float
             ),
-            torch.tensor([[0, 1, 3], [1, 0, 2], [3, 2, 0]]),
+            torch.tensor([[0, 1, 3], [1, 0, 2], [3, 2, 0]], dtype=torch.float)
+            ** 0.5,
         ],
         [
             torch.tensor(
@@ -356,8 +358,10 @@ def test_cluster_count_intra_class_distances(
                     [9, 0, 25, 34],
                     [16, 25, 0, 41],
                     [25, 34, 41, 0],
-                ]
-            ),
+                ],
+                dtype=torch.float,
+            )
+            ** 0.5,
         ],
     ],
 )
@@ -410,3 +414,33 @@ def test_cluster_sample_shapes(
     assert anchor.shape == anchor_shape
     assert positive.shape == pos_shape
     assert negative.shape == neg_shape
+
+
+def test_triplet_cluster_edge_case() -> None:
+    """
+    Check an edge case of trivial samples for classes:
+    expected HardTripletsSampler and HardClusterSampler to
+    generate the same triplets.
+    """
+    features_dim = 10
+    p, k = randint(2, 12), randint(2, 12)
+
+    # Create a list of random labels
+    unique_labels = torch.tensor(list(range(p)))
+    # Create a list of random features for all the classes
+    unique_features = torch.rand(size=(p, features_dim), dtype=torch.float)
+
+    labels = unique_labels.repeat((k,))
+    features = unique_features.repeat((k, 1))
+
+    hard_triplet_sampler = HardTripletsSampler()
+    hard_cluster_sampler = HardClusterSampler()
+
+    triplets = hard_triplet_sampler.sample(features, labels)
+    cluster_triplets = hard_cluster_sampler.sample(features, labels)
+
+    # Concatenates tensors from triplets to use torch.unique for comparison
+    triplets = torch.cat(triplets, dim=1)
+    cluster_triplets = torch.cat(cluster_triplets, dim=1)
+
+    assert (torch.unique(triplets) == torch.unique(cluster_triplets)).all()
