@@ -77,7 +77,7 @@ def outer_init(layer: nn.Module) -> None:
 
 def weight_reset(module: nn.Module):
     """
-    Reseting module parameters.
+    Reseting module parameters if possible.
 
     Args:
         module: Module to reset.

@@ -16,6 +16,13 @@ try:
 except ModuleNotFoundError:
     IS_XLA_AVAILABLE = False
 
+try:
+    import torch.nn.utils.prune as prune
+
+    IS_PRUNING_AVAILABLE = True
+except ModuleNotFoundError:
+    IS_PRUNING_AVAILABLE = False
+
 
 class Settings(FrozenClass):
     def __init__(
@@ -39,7 +46,6 @@ class Settings(FrozenClass):
         use_libjpeg_turbo: bool = False,
         nmslib_required: Optional[bool] = None,
         transformers_required: Optional[bool] = None,
-        is_pytorch_above_v14: Optional[bool] = None,
     ):
         # [catalyst]
         self.contrib_required: bool = contrib_required
@@ -100,10 +106,6 @@ class Settings(FrozenClass):
             transformers_required, default=nlp_required
         )
 
-        # [pruning and quantization]
-        self.is_pytorch_above_v14 = self._optional_value(
-            is_pytorch_above_v14, default=False
-        )
 
     @staticmethod
     def _optional_value(value, default):
@@ -301,4 +303,4 @@ class MergedConfigParser:
 
 settings = Settings.parse()
 
-__all__ = ["settings"]
+__all__ = ["settings", "IS_XLA_AVAILABLE", "IS_PRUNING_AVAILABLE",]

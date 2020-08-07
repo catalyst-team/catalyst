@@ -59,7 +59,7 @@ def remove_reparametrization(
     layers_to_prune: Optional[List[str]] = None,
 ) -> None:
     """
-    Removes pre-hooks and pruning mask from the model.
+    Removes pre-hooks and pruning masks from the model.
 
     Args:
         model: model to remove reparametrization.
