@@ -6,8 +6,6 @@ All utils are gathered in :py:mod:`catalyst.utils` for easier access.
     Everything from :py:mod:`catalyst.contrib.utils` is included in :py:mod:`catalyst.utils`
 """
 
-from catalyst.tools.settings import IS_PRUNING_AVAILABLE
-
 from catalyst.contrib.utils import *
 
 from .checkpoint import (
@@ -98,5 +96,7 @@ from .torch import (
     trim_tensors,
 )
 
-if IS_PRUNING_AVAILABLE:
+try:
     from .pruning import prune_model, remove_reparametrization
+except ImportError:
+    pass
