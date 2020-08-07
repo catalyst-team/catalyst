@@ -6,7 +6,6 @@ import torch
 from torch import nn
 
 from catalyst import dl
-
 from catalyst.tools.settings import IS_PRUNING_AVAILABLE
 
 if IS_PRUNING_AVAILABLE:

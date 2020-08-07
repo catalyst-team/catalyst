@@ -106,7 +106,6 @@ class Settings(FrozenClass):
             transformers_required, default=nlp_required
         )
 
-
     @staticmethod
     def _optional_value(value, default):
         return value if value is not None else default
@@ -303,4 +302,8 @@ class MergedConfigParser:
 
 settings = Settings.parse()
 
-__all__ = ["settings", "IS_XLA_AVAILABLE", "IS_PRUNING_AVAILABLE",]
+__all__ = [
+    "settings",
+    "IS_XLA_AVAILABLE",
+    "IS_PRUNING_AVAILABLE",
+]
