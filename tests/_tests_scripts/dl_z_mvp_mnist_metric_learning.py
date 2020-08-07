@@ -45,7 +45,7 @@ def run_ml_pipeline(sampler_inbatch: data.IInbatchTripletSampler) -> float:
     optimizer = Adam(model.parameters(), lr=0.0005)
 
     # 3. criterion with triplets sampling
-    criterion = nn.TripletMarginLossWithSampling(
+    criterion = nn.TripletMarginLossWithSampler(
         margin=0.5, sampler_inbatch=sampler_inbatch
     )
 

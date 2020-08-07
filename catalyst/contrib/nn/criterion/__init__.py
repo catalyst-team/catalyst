@@ -33,6 +33,6 @@ from catalyst.contrib.nn.criterion.triplet import (
     TripletLoss,
     TripletLossV2,
     TripletPairwiseEmbeddingLoss,
-    TripletMarginLossWithSampling,
+    TripletMarginLossWithSampler,
 )
 from catalyst.contrib.nn.criterion.wing import WingLoss
