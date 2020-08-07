@@ -26,4 +26,5 @@ class Meter(object):
         """Get the value of the meter in the current state."""
         pass
 
+
 __all__ = ["Meter"]

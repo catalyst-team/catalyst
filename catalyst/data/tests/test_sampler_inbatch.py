@@ -2,6 +2,7 @@
 # @TODO: code formatting issue for 20.07 release
 from typing import List, Tuple
 from collections import Counter
+from random import randint
 
 import numpy as np
 import pytest
@@ -14,7 +15,9 @@ from torch import Tensor, tensor
 from catalyst.contrib.utils.misc import find_value_ids
 from catalyst.data.sampler_inbatch import (
     AllTripletsSampler,
+    HardClusterSampler,
     HardTripletsSampler,
+    TLabels,
 )
 from catalyst.data.tests.test_sampler import generate_valid_labels
 
@@ -236,3 +239,211 @@ def test_hard_sampler_manual() -> None:
 
     assert len(labels) == len(ids_a)
     assert predict == gt
+
+
+@pytest.mark.parametrize(
+    ["labels", "expected"],
+    [
+        [
+            [0, 0, 1, 2, 2, 1],
+            torch.tensor(
+                [
+                    [True, True, False, False, False, False],
+                    [False, False, True, False, False, True],
+                    [False, False, False, True, True, False],
+                ]
+            ),
+        ],
+        [
+            [1, 2, 3],
+            torch.tensor(
+                [
+                    [True, False, False],
+                    [False, True, False],
+                    [False, False, True],
+                ]
+            ),
+        ],
+        [
+            [1, 1, 1, 1, 2, 2, 2, 2],
+            torch.tensor(
+                [
+                    [True, True, True, True, False, False, False, False],
+                    [False, False, False, False, True, True, True, True],
+                ]
+            ),
+        ],
+    ],
+)
+def test_cluster_get_labels_mask(
+    labels: List[int], expected: torch.Tensor
+) -> None:
+    """
+    Test _get_labels_mask method of HardClusterSampler.
+
+    Args:
+        labels: list of labels -- input data for method _skip_diagonal
+        expected: correct answer for labels input
+    """
+    sampler = HardClusterSampler()
+    labels_mask = sampler._get_labels_mask(labels)  # noqa: WPS437
+    assert (labels_mask == expected).all()
+
+
+@pytest.mark.parametrize(
+    ["features", "expected"],
+    [
+        [
+            torch.tensor(
+                [
+                    [[1, 0, 0, 0], [1, 0, 0, 0], [1, 0, 0, 3]],
+                    [[0, 3, 0, 1], [0, 6, 0, 1], [0, 3, 0, 1]],
+                ],
+                dtype=torch.float,
+            ),
+            torch.tensor([[1, 1, 4], [1, 4, 1]]),
+        ],
+        [
+            torch.tensor(
+                [
+                    [[1, 1, 1], [1, 3, 1]],
+                    [[2, 2, 6], [2, 6, 2]],
+                    [[3, 3, 3], [3, 3, 9]],
+                ],
+                dtype=torch.float,
+            ),
+            torch.tensor([[[1, 1], [8, 8], [9, 9]]]),
+        ],
+    ],
+)
+def test_cluster_count_intra_class_distances(
+    features: torch.Tensor, expected: torch.Tensor
+) -> None:
+    """
+    Test _count_intra_class_distances method of HardClusterSampler.
+
+    Args:
+        features: tensor of shape (p, k, embed_dim), where p is a number of
+        classes in the batch, k is a number of samples for each class,
+        embed_dim is an embedding size -- features grouped by labels
+        expected: tensor of shape (p, k) -- expected distances from mean
+        vectors of classes to corresponding features
+    """
+    sampler = HardClusterSampler()
+    mean_vectors = features.mean(1)
+    distances = sampler._count_intra_class_distances(  # noqa: WPS437
+        features, mean_vectors
+    )
+    assert (distances == expected).all()
+
+
+@pytest.mark.parametrize(
+    ["mean_vectors", "expected"],
+    [
+        [
+            torch.tensor(
+                [[1, 0, 0, 0], [1, 1, 0, 0], [0, 1, 1, 0]], dtype=torch.float
+            ),
+            torch.tensor([[0, 1, 3], [1, 0, 2], [3, 2, 0]], dtype=torch.float)
+            ** 0.5,
+        ],
+        [
+            torch.tensor(
+                [[0, 0, 0, 0], [3, 0, 0, 0], [0, 4, 0, 0], [0, 0, 0, 5]],
+                dtype=torch.float,
+            ),
+            torch.tensor(
+                [
+                    [0, 9, 16, 25],
+                    [9, 0, 25, 34],
+                    [16, 25, 0, 41],
+                    [25, 34, 41, 0],
+                ],
+                dtype=torch.float,
+            )
+            ** 0.5,
+        ],
+    ],
+)
+def test_cluster_count_inter_class_distances(mean_vectors, expected) -> None:
+    """
+    Test _count_inter_class_distances method of HardClusterSampler.
+
+    Args:
+        mean_vectors: tensor of shape (p, embed_dim) -- mean vectors of
+        classes in the batch
+        expected: tensor of shape (p, p) -- expected distances from mean
+        vectors of classes
+    """
+    sampler = HardClusterSampler()
+    distances = sampler._count_inter_class_distances(  # noqa: WPS437
+        mean_vectors
+    )
+    assert (distances == expected).all()
+
+
+@pytest.mark.parametrize(
+    ["embed_dim", "labels", "expected_shape"],
+    [
+        [
+            128,
+            [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3],
+            [(4, 128), (4, 128), (4, 128)],
+        ],
+        [32, [1, 2, 3, 4, 5, 1, 2, 3, 4, 5], [(5, 32), (5, 32), (5, 32)]],
+        [16, torch.tensor([0, 0, 1, 1]), [(2, 16), (2, 16), (2, 16)]],
+    ],
+)
+def test_cluster_sample_shapes(
+    embed_dim: int, labels: TLabels, expected_shape: List[Tuple[int]]
+) -> None:
+    """
+    Test output shapes in sample method of HardClusterSampler.
+
+    Args:
+        embed_dim: size of embedding
+        labels: list of labels for samples in batch
+        expected_shape: expected shape of output triplet
+    """
+    sampler = HardClusterSampler()
+    batch_size = len(labels)
+    features = torch.rand(size=(batch_size, embed_dim))
+    anchor, positive, negative = sampler.sample(features, labels)
+    anchor_shape, pos_shape, neg_shape = expected_shape
+
+    assert anchor.shape == anchor_shape
+    assert positive.shape == pos_shape
+    assert negative.shape == neg_shape
+
+
+def test_triplet_cluster_edge_case() -> None:
+    """
+    Check an edge case of trivial samples for classes:
+    expected HardTripletsSampler and HardClusterSampler to
+    generate the same triplets.
+    """
+    features_dim = 128
+    p, k = randint(2, 32), randint(2, 32)
+
+    # Create a list of random labels
+    unique_labels = torch.tensor(list(range(p)))
+    # Create a list of random features for all the classes
+    unique_features = torch.rand(size=(p, features_dim), dtype=torch.float)
+
+    labels = unique_labels.repeat((k,))
+    features = unique_features.repeat((k, 1))
+
+    hard_triplet_sampler = HardTripletsSampler()
+    hard_cluster_sampler = HardClusterSampler()
+
+    triplets = hard_triplet_sampler.sample(features, labels)
+    cluster_triplets = hard_cluster_sampler.sample(features, labels)
+
+    # Concatenates tensors from triplets to use torch.unique for comparison
+    triplets = torch.cat(triplets, dim=1)
+    cluster_triplets = torch.cat(cluster_triplets, dim=1)
+
+    triplets = torch.unique(triplets, dim=0)
+    cluster_triplets = torch.unique(cluster_triplets, dim=0)
+
+    assert torch.allclose(triplets, cluster_triplets, atol=1e-10)
