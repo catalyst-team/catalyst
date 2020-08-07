@@ -6,7 +6,7 @@ from torch.nn.utils import prune
 from catalyst.core import Callback, CallbackOrder, IRunner
 from catalyst.utils import prune_model, remove_reparametrization
 
-PRUNING_FN = {
+PRUNING_FN = {  # noqa: WPS407
     "l1_unstructured": prune.l1_unstructured,
     "random_unstructured": prune.random_unstructured,
     "ln_structured": prune.ln_structured,
@@ -35,7 +35,7 @@ class PruningCallback(Callback):
         amount: Optional[Union[int, float]] = 0.5,
         prune_on_epoch_end: Optional[bool] = False,
         prune_on_stage_end: Optional[bool] = True,
-        remove_reparametrization: Optional[bool] = True,
+        remove_reparametrization: Optional[bool] = True,  # noqa: WPS442
         reinitialize_after_pruning: Optional[bool] = False,
         layers_to_prune: Optional[List[str]] = None,
         dim: Optional[int] = None,
@@ -125,6 +125,7 @@ class PruningCallback(Callback):
         On epoch end action.
 
         Active if prune_on_epoch_end is True.
+
         Args:
             runner: runner for your experiment
         """
@@ -137,6 +138,7 @@ class PruningCallback(Callback):
 
         Active if prune_on_stage_end or
         remove_reparametrization is True.
+
         Args:
             runner: runner for your experiment
         """

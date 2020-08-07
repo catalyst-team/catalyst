@@ -35,6 +35,11 @@ def prune_model(
             model.
         reinitialize_after_pruning: if True then will reinitialize model
                 after pruning. (Lottery Ticket Hypothesis check e.g.)
+
+        Raises:
+            AttributeError: If layers_to_prune is not None, but there is
+                no layers with specified name.
+            Exception: If no layers have specified keys.
     """
     pruned_modules = 0
     for name, module in model.named_modules():
