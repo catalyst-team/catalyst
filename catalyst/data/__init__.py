@@ -21,4 +21,6 @@ from .sampler_inbatch import (
     InBatchTripletsSampler,
     AllTripletsSampler,
     HardTripletsSampler,
+    IInbatchTripletSampler,
+    HardClusterSampler,
 )
