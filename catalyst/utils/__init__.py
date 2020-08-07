@@ -95,8 +95,7 @@ from .torch import (
     detach,
     trim_tensors,
 )
+from catalyst.tools.settings import IS_PRUNING_AVAILABLE
 
-try:
+if IS_PRUNING_AVAILABLE:
     from .pruning import prune_model, remove_reparametrization
-except ImportError:
-    pass

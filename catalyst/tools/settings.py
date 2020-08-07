@@ -304,4 +304,6 @@ settings = Settings.parse()
 
 __all__ = [
     "settings",
+    "IS_PRUNING_AVAILABLE",
+    "IS_XLA_AVAILABLE",
 ]
