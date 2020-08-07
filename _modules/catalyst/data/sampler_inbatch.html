@@ -259,7 +259,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.data.sampler_inbatch</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span><span class="p">,</span> <span class="n">product</span>
@@ -272,14 +272,54 @@
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.contrib.utils.misc</span> <span class="kn">import</span> <span class="n">find_value_ids</span>
+<span class="kn">from</span> <span class="nn">catalyst.data.utils</span> <span class="kn">import</span> <span class="n">convert_labels2list</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="n">normalize</span>
 
 <span class="c1"># order in the triplets: (anchor, positive, negative)</span>
 <span class="n">TTriplets</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]</span>
 <span class="n">TTripletsIds</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>
+<span class="n">TLabels</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Tensor</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="InBatchTripletsSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.InBatchTripletsSampler">[docs]</a><span class="k">class</span> <span class="nc">InBatchTripletsSampler</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="IInbatchTripletSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.IInbatchTripletSampler">[docs]</a><span class="k">class</span> <span class="nc">IInbatchTripletSampler</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An abstraction of inbatch triplet sampler.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">_check_input_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the batch labels list is valid for the sampler.</span>
+
+<span class="sd">        We expect you to implement this method to guarantee correct</span>
+<span class="sd">        performance of sampling method. You can pass it</span>
+<span class="sd">        but we strongly do not recommend you to do it.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            labels: labels of the samples in the batch;</span>
+<span class="sd">                list or Tensor of shape (batch_size;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+<div class="viewcode-block" id="IInbatchTripletSampler.sample"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.IInbatchTripletSampler.sample">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">TLabels</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TTriplets</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method includes the logic of sampling/selecting triplets.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            features: tensor of features</span>
+<span class="sd">            labels: labels of the samples in the batch, list or Tensor</span>
+<span class="sd">                of shape (batch_size;)</span>
+
+<span class="sd">        Returns: the batch of triplets</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: you should implement it</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="InBatchTripletsSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.InBatchTripletsSampler">[docs]</a><span class="k">class</span> <span class="nc">InBatchTripletsSampler</span><span class="p">(</span><span class="n">IInbatchTripletSampler</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class for a triplets samplers.</span>
 <span class="sd">    We expect that the child instances of this class</span>
@@ -294,12 +334,10 @@
 <span class="sd">    But you are not limited to using it in any other way.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_check_input_labels</span><span class="p">(</span><span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_check_input_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        The input must satisfy the conditions described in</span>
 <span class="sd">        the class documentation.</span>
-
 <span class="sd">        Args:</span>
 <span class="sd">            labels: labels of the samples in the batch</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -319,11 +357,11 @@
 <span class="sd">            features: has the shape of [batch_size, feature_size]</span>
 <span class="sd">            labels: labels of the samples in the batch</span>
 
-<span class="sd">        Returns: indeces of the batch samples to forming triplets.</span>
+<span class="sd">        Returns: indices of the batch samples to forming triplets.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-<div class="viewcode-block" id="InBatchTripletsSampler.sample"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.InBatchTripletsSampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">TTriplets</span><span class="p">:</span>
+<div class="viewcode-block" id="InBatchTripletsSampler.sample"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.InBatchTripletsSampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">TLabels</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TTriplets</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            features: has the shape of [batch_size, feature_size]</span>
@@ -333,6 +371,8 @@
 <span class="sd">            the batch of the triplets in the order below:</span>
 <span class="sd">            (anchor, positive, negative)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Convert labels to list</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">convert_labels2list</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_input_labels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
 
         <span class="n">ids_anchor</span><span class="p">,</span> <span class="n">ids_pos</span><span class="p">,</span> <span class="n">ids_neg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sample</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">labels</span><span class="p">)</span>
@@ -461,6 +501,164 @@
             <span class="n">ids_neg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_neg</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">ids_anchor</span><span class="p">,</span> <span class="n">ids_pos</span><span class="p">,</span> <span class="n">ids_neg</span></div>
+
+
+<div class="viewcode-block" id="HardClusterSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.HardClusterSampler">[docs]</a><span class="k">class</span> <span class="nc">HardClusterSampler</span><span class="p">(</span><span class="n">IInbatchTripletSampler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This sampler selects hardest triplets based on distance to mean vectors:</span>
+<span class="sd">    anchor is a mean vector of features of i-th class in the batch,</span>
+<span class="sd">    the hardest positive sample is the most distant from anchor sample of</span>
+<span class="sd">    anchor&#39;s class, the hardest negative sample is the closest mean vector</span>
+<span class="sd">    of another classes.</span>
+
+<span class="sd">    The batch must contain k samples for p classes in it (k &gt; 1, p &gt; 1).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">_check_input_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if the labels list is valid: contains k occurrences</span>
+<span class="sd">        for each of p classes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            labels: labels in the batch</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: if batch is invalid (contains different samples</span>
+<span class="sd">                for classes, contains only one class or only one sample for</span>
+<span class="sd">                each class)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">labels_counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">labels_counter</span><span class="p">[</span><span class="n">labels</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">n</span> <span class="o">==</span> <span class="n">k</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">labels_counter</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expected equal number of samples for each class&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels_counter</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expected at least 2 classes in the batch&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expected more than one sample for each class&quot;</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_labels_mask</span><span class="p">(</span><span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate matrix of bool of shape (n_unique_labels, batch_size),</span>
+<span class="sd">        where n_unique_labels is a number of unique labels</span>
+<span class="sd">        in the batch; matrix[i, j] is True if j-th element of</span>
+<span class="sd">        the batch relates to i-th class and False otherwise.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            labels: labels of the batch, shape (batch_size,)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            matrix of indices of classes in batch</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">unique_labels</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span>
+        <span class="n">labels_number</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_labels</span><span class="p">)</span>
+        <span class="n">labels_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">labels_number</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)))</span>
+        <span class="k">for</span> <span class="n">label_idx</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">unique_labels</span><span class="p">):</span>
+            <span class="n">label_indices</span> <span class="o">=</span> <span class="n">find_value_ids</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">label</span><span class="p">)</span>
+            <span class="n">labels_mask</span><span class="p">[</span><span class="n">label_idx</span><span class="p">][</span><span class="n">label_indices</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">labels_mask</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_count_intra_class_distances</span><span class="p">(</span>
+        <span class="n">embeddings</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">mean_vectors</span><span class="p">:</span> <span class="n">Tensor</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Count matrix of distances from mean vector of each class to it&#39;s</span>
+<span class="sd">        samples embeddings.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            embeddings: tensor of shape (p, k, embed_dim) where p is a number</span>
+<span class="sd">                of classes in the batch, k is a number of samples for each</span>
+<span class="sd">                class</span>
+<span class="sd">            mean_vectors: tensor of shape (p, embed_dim) -- mean vectors</span>
+<span class="sd">                of each class in the batch</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tensor of shape (p, k) -- matrix of distances from mean vectors to</span>
+<span class="sd">                related samples in the batch</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">embed_dim</span> <span class="o">=</span> <span class="n">embeddings</span><span class="o">.</span><span class="n">shape</span>
+        <span class="c1"># Create (p, k, embed_dim) tensor of mean vectors for each class</span>
+        <span class="n">mean_vectors</span> <span class="o">=</span> <span class="n">mean_vectors</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">repeat</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="c1"># Count euclidean distance between embeddings and mean vectors</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">embeddings</span> <span class="o">-</span> <span class="n">mean_vectors</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">distances</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_count_inter_class_distances</span><span class="p">(</span><span class="n">mean_vectors</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Count matrix of distances from mean vectors of classes to each other</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            mean_vectors: tensor of shape (p, embed_dim) -- mean vectors</span>
+<span class="sd">                of classes</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tensor of shape (p, p) -- matrix of distances between mean vectors</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cdist</span><span class="p">(</span><span class="n">x1</span><span class="o">=</span><span class="n">mean_vectors</span><span class="p">,</span> <span class="n">x2</span><span class="o">=</span><span class="n">mean_vectors</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">distance</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_fill_diagonal</span><span class="p">(</span><span class="n">matrix</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set diagonal elements with the value.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            matrix: tensor of shape (p, p)</span>
+<span class="sd">            value: value that diagonal should be filled with</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            modified matrix with inf on diagonal</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">p</span><span class="p">))</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+        <span class="n">matrix</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="n">matrix</span>
+
+<div class="viewcode-block" id="HardClusterSampler.sample"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.HardClusterSampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">TLabels</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TTriplets</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method samples the hardest triplets in the batch.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            features: tensor of shape (batch_size; embed_dim) that contains</span>
+<span class="sd">                k samples for each of p classes</span>
+<span class="sd">            labels: labels of the batch, list or tensor of size (batch_size,)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            p triplets of (mean_vector, positive, negative_mean_vector)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Convert labels to list</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">convert_labels2list</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_input_labels</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+
+        <span class="c1"># Get matrix of indices of labels in batch</span>
+        <span class="n">labels_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_labels_mask</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">labels_mask</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">embed_dim</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># Reshape embeddings to groups of (p, k, embed_dim) ones,</span>
+        <span class="c1"># each i-th group contains embeddings of i-th class.</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">repeat</span><span class="p">((</span><span class="n">p</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="n">features</span><span class="p">[</span><span class="n">labels_mask</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="n">p</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">embed_dim</span><span class="p">))</span>
+
+        <span class="c1"># Count mean vectors for each class in batch</span>
+        <span class="n">mean_vectors</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">d_intra</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count_intra_class_distances</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">mean_vectors</span><span class="p">)</span>
+        <span class="c1"># Count the distances to the sample farthest from mean vector</span>
+        <span class="c1"># for each class.</span>
+        <span class="n">pos_indices</span> <span class="o">=</span> <span class="n">d_intra</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">indices</span>
+        <span class="c1"># Count matrix of distances from mean vectors to each other</span>
+        <span class="n">d_inter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count_inter_class_distances</span><span class="p">(</span><span class="n">mean_vectors</span><span class="p">)</span>
+        <span class="c1"># For each class mean vector get the closest mean vector</span>
+        <span class="n">d_inter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_diagonal</span><span class="p">(</span><span class="n">d_inter</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">))</span>
+        <span class="n">neg_indices</span> <span class="o">=</span> <span class="n">d_inter</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">indices</span>
+        <span class="n">positives</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">features</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="n">pos_idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">pos_idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">pos_indices</span><span class="p">)]</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">mean_vectors</span><span class="p">,</span> <span class="n">positives</span><span class="p">,</span> <span class="n">mean_vectors</span><span class="p">[</span><span class="n">neg_indices</span><span class="p">]</span></div></div>
 </pre></div>
 
              </article>

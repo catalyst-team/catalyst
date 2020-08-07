@@ -718,6 +718,35 @@ determined by this parameter.</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="catalyst.data.sampler_inbatch.HardClusterSampler">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler_inbatch.</code><code class="sig-name descname">HardClusterSampler</code><a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#HardClusterSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler_inbatch.HardClusterSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This sampler selects hardest triplets based on distance to mean vectors:
+anchor is a mean vector of features of i-th class in the batch,
+the hardest positive sample is the most distant from anchor sample of
+anchor’s class, the hardest negative sample is the closest mean vector
+of another classes.</p>
+<p>The batch must contain k samples for p classes in it (k &gt; 1, p &gt; 1).</p>
+<dl class="method">
+<dt id="catalyst.data.sampler_inbatch.HardClusterSampler.sample">
+<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param">features: torch.Tensor, labels: Union[List[int], torch.Tensor]</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#HardClusterSampler.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler_inbatch.HardClusterSampler.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method samples the hardest triplets in the batch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> – tensor of shape (batch_size; embed_dim) that contains
+k samples for each of p classes</p></li>
+<li><p><strong>labels</strong> – labels of the batch, list or tensor of size (batch_size,)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>p triplets of (mean_vector, positive, negative_mean_vector)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="catalyst.data.sampler_inbatch.HardTripletsSampler">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler_inbatch.</code><code class="sig-name descname">HardTripletsSampler</code><span class="sig-paren">(</span><em class="sig-param">norm_required: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#HardTripletsSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler_inbatch.HardTripletsSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>This sampler selects hardest triplets based on distances between features:
@@ -740,6 +769,33 @@ the hardest negative sample has the minimal distance to the anchor sample.</p>
 </dd></dl>
 
 <dl class="class">
+<dt id="catalyst.data.sampler_inbatch.IInbatchTripletSampler">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler_inbatch.</code><code class="sig-name descname">IInbatchTripletSampler</code><a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#IInbatchTripletSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler_inbatch.IInbatchTripletSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>An abstraction of inbatch triplet sampler.</p>
+<dl class="method">
+<dt id="catalyst.data.sampler_inbatch.IInbatchTripletSampler.sample">
+<em class="property">abstract </em><code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param">features: torch.Tensor, labels: Union[List[int], torch.Tensor]</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#IInbatchTripletSampler.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler_inbatch.IInbatchTripletSampler.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method includes the logic of sampling/selecting triplets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> – tensor of features</p></li>
+<li><p><strong>labels</strong> – labels of the samples in the batch, list or Tensor
+of shape (batch_size;)</p></li>
+</ul>
+</dd>
+</dl>
+<p>Returns: the batch of triplets</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>NotImplementedError</strong> – you should implement it</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="catalyst.data.sampler_inbatch.InBatchTripletsSampler">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler_inbatch.</code><code class="sig-name descname">InBatchTripletsSampler</code><a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#InBatchTripletsSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler_inbatch.InBatchTripletsSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base class for a triplets samplers.
@@ -754,7 +810,7 @@ catalyst.data.sampler.BalanceBatchSampler</p>
 <p>But you are not limited to using it in any other way.</p>
 <dl class="method">
 <dt id="catalyst.data.sampler_inbatch.InBatchTripletsSampler.sample">
-<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param">features: torch.Tensor, labels: List[int]</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#InBatchTripletsSampler.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler_inbatch.InBatchTripletsSampler.sample" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param">features: torch.Tensor, labels: Union[List[int], torch.Tensor]</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#InBatchTripletsSampler.sample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler_inbatch.InBatchTripletsSampler.sample" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
