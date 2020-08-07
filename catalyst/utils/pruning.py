@@ -18,6 +18,11 @@ def prune_model(
     Prune model function can be used for pruning certain
     tensors in model layers.
 
+    Raises:
+        AttributeError: If layers_to_prune is not None, but there is
+                no layers with specified name.
+        Exception: If no layers have specified keys.
+
     Args:
         model: Model to be pruned.
         pruning_fn: Pruning function with API same as in
@@ -35,11 +40,6 @@ def prune_model(
             model.
         reinitialize_after_pruning: if True then will reinitialize model
                 after pruning. (Lottery Ticket Hypothesis check e.g.)
-
-        Raises:
-            AttributeError: If layers_to_prune is not None, but there is
-                no layers with specified name.
-            Exception: If no layers have specified keys.
     """
     pruned_modules = 0
     for name, module in model.named_modules():
