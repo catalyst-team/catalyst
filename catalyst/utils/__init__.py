@@ -6,7 +6,7 @@ All utils are gathered in :py:mod:`catalyst.utils` for easier access.
     Everything from :py:mod:`catalyst.contrib.utils` is included in :py:mod:`catalyst.utils`
 """
 
-import logging
+from catalyst.tools.settings import IS_PRUNING_AVAILABLE
 
 from catalyst.contrib.utils import *
 
@@ -98,14 +98,5 @@ from .torch import (
     trim_tensors,
 )
 
-logger = logging.getLogger(__name__)
-
-try:
+if IS_PRUNING_AVAILABLE:
     from .pruning import prune_model, remove_reparametrization
-except ImportError as ex:
-    logger.warning(
-        "Quantization and pruning are not available,"
-        "run `pip install torch>=1.4` to enable them."
-    )
-    if settings.is_pytorch_above_v14:
-        raise ex
