@@ -117,6 +117,13 @@ Optimizer
     :undoc-members:
     :show-inheritance:
 
+PeriodicLoaderCallback
+""""""""""""""""""""""
+.. automodule:: catalyst.core.callbacks.periodic_loader
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Scheduler
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.core.callbacks.scheduler

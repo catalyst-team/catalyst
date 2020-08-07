@@ -31,5 +31,4 @@ from catalyst.core.callbacks.optimizer import OptimizerCallback
 from catalyst.core.callbacks.periodic_loader import PeriodicLoaderCallback
 from catalyst.core.callbacks.scheduler import LRUpdater, SchedulerCallback
 from catalyst.core.callbacks.timer import TimerCallback
-from catalyst.core.callbacks.tracing import TracerCallback
 from catalyst.core.callbacks.validation import ValidationManagerCallback

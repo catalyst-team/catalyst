@@ -169,6 +169,13 @@ KNNMetricCallback
     :undoc-members:
     :show-inheritance:
 
+BatchTransformCallback
+""""""""""""""""""""""
+.. automodule:: catalyst.contrib.dl.callbacks.kornia_transform
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 InferMaskCallback
 """""""""""""""""
 .. automodule:: catalyst.contrib.dl.callbacks.mask_inference
@@ -179,13 +186,6 @@ InferMaskCallback
 NeptuneLogger
 """""""""""""
 .. automodule:: catalyst.contrib.dl.callbacks.neptune_logger
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-PeriodicLoaderCallback
-""""""""""""""""""""""
-.. automodule:: catalyst.contrib.dl.callbacks.periodic_loader_callback
     :members:
     :undoc-members:
     :show-inheritance:
@@ -204,13 +204,6 @@ TelegramLogger
     :undoc-members:
     :show-inheritance:
 
-TracerCallback
-""""""""""""""""""""""
-.. automodule:: catalyst.contrib.dl.callbacks.tracer_callback
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 VisdomLogger
 """"""""""""""""""""""
 .. automodule:: catalyst.contrib.dl.callbacks.visdom_logger
@@ -224,7 +217,6 @@ WandbLogger
     :members:
     :undoc-members:
     :show-inheritance:
-
 
 Models
 --------------------
