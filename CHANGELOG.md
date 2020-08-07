@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - experimental TPU support ([#893](https://github.com/catalyst-team/catalyst/pull/893))
 - add `Imagenette`, `Imagewoof`, and `Imagewang` datasets ([#902](https://github.com/catalyst-team/catalyst/pull/902))
 - `IMetricCallback`, `IBatchMetricCallback`, `ILoaderMetricCallback`, `BatchMetricCallback`, `LoaderMetricCallback` abstractions ([#897](https://github.com/catalyst-team/catalyst/pull/897))
+- `HardClusterSampler` inbatch sampler ([#888](https://github.com/catalyst-team/catalyst/pull/888))
 
 ### Changed
 
