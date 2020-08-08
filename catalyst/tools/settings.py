@@ -16,6 +16,13 @@ try:
 except ModuleNotFoundError:
     IS_XLA_AVAILABLE = False
 
+try:
+    import torch.nn.utils.prune as prune
+
+    IS_PRUNING_AVAILABLE = True
+except ModuleNotFoundError:
+    IS_PRUNING_AVAILABLE = False
+
 
 class Settings(FrozenClass):
     def __init__(
@@ -295,4 +302,8 @@ class MergedConfigParser:
 
 settings = Settings.parse()
 
-__all__ = ["settings"]
+__all__ = [
+    "settings",
+    "IS_PRUNING_AVAILABLE",
+    "IS_XLA_AVAILABLE",
+]
