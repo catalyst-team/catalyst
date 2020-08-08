@@ -3,7 +3,7 @@ name: How to question
 about: Asking how-to questions
 title: ''
 labels: help wanted, question
-assignees: Scitator, bagxi
+assignees: Scitator, bagxi, Ditwoo
 
 ---
 
