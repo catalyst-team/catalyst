@@ -336,7 +336,20 @@
             <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">uniform_</span><span class="p">(</span><span class="n">layer</span><span class="o">.</span><span class="n">bias</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="o">-</span><span class="n">v</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;get_optimal_inner_init&quot;</span><span class="p">,</span> <span class="s2">&quot;outer_init&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="weight_reset"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.initialization.weight_reset">[docs]</a><span class="k">def</span> <span class="nf">weight_reset</span><span class="p">(</span><span class="n">module</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reseting module parameters if possible.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        module: Module to reset.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">module</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;get_optimal_inner_init&quot;</span><span class="p">,</span> <span class="s2">&quot;outer_init&quot;</span><span class="p">,</span> <span class="s2">&quot;weight_reset&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>
