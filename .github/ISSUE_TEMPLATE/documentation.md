@@ -3,7 +3,7 @@ name: Typos and documentation fixes
 about: Make awesome documentation and tutorials
 title: ''
 labels: ''
-assignees: Scitator, bagxi
+assignees: Scitator, bagxi, Ditwoo
 
 ---
 
