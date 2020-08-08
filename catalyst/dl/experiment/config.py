@@ -467,8 +467,7 @@ class ConfigExperiment(IExperiment):
             )
         return callback
 
-    @staticmethod
-    def _process_callbacks(callbacks: OrderedDict) -> None:
+    def _process_callbacks(self, callbacks: OrderedDict) -> None:
         """
         Iterate over each of the callbacks and update
         approptiate parameters required for success
@@ -479,6 +478,15 @@ class ConfigExperiment(IExperiment):
         """
         for callback in callbacks.values():
             if isinstance(callback, CheckpointCallback):
+                # use resume only for first stage
+                _resume = self._config["args"].pop("resume", None)
+                _autoresume = self._config["args"].pop("autoresume", None)
+                if _resume:
+                    callback.resume = _resume
+                elif _autoresume:
+                    callback.resume_dir = self.logdir
+                    callback.resume = f"{_autoresume}.pth"
+
                 if callback.load_on_stage_start is None:
                     callback.load_on_stage_start = "best"
                 if (
