@@ -1,5 +1,11 @@
+from packaging import version
+
 import torch
-from transformers import AutoModelWithLMHead, AutoTokenizer
+from transformers import (
+    __version__ as transformers_version,
+    AutoModelWithLMHead,
+    AutoTokenizer,
+)
 from transformers.data.data_collator import DataCollatorForLanguageModeling
 
 from catalyst import dl
@@ -38,6 +44,9 @@ texts = [
 
 def test_is_running():
     """Test if perplexity is running normal"""
+    if version.parse(transformers_version) >= version.parse("3.0.0"):
+        return
+
     tok = AutoTokenizer.from_pretrained("distilbert-base-uncased")
     model = AutoModelWithLMHead.from_pretrained("distilbert-base-uncased")
     dataset = LanguageModelingDataset(texts, tok)

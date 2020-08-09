@@ -35,11 +35,11 @@ class PruningCallback(Callback):
         amount: Optional[Union[int, float]] = 0.5,
         prune_on_epoch_end: Optional[bool] = False,
         prune_on_stage_end: Optional[bool] = True,
-        remove_reparametrization: Optional[bool] = True,  # noqa: WPS442
+        remove_reparametrization_on_stage_end: Optional[bool] = True,
         reinitialize_after_pruning: Optional[bool] = False,
         layers_to_prune: Optional[List[str]] = None,
         dim: Optional[int] = None,
-        n: Optional[int] = None,
+        l_norm: Optional[int] = None,
     ) -> None:
         """
         Init method for pruning callback
@@ -60,9 +60,9 @@ class PruningCallback(Callback):
                 to call pruning_fn on epoch end.
             prune_on_stage_end: bool flag determines call or not
                 to call pruning_fn on stage end.
-            remove_reparametrization: if True then all reparametrization
-                pre-hooks and tensors with mask will be removed on
-                stage end.
+            remove_reparametrization_on_stage_end: if True then all
+                reparametrization pre-hooks and tensors with mask
+                will be removed on stage end.
             reinitialize_after_pruning: if True then will reinitialize model
                 after pruning. (Lottery Ticket Hypothesis)
             layers_to_prune: list of strings - module names to be pruned.
@@ -70,8 +70,7 @@ class PruningCallback(Callback):
                 model.
             dim: if you are using structured pruning method you need
                 to specify dimension.
-            n: if you are using ln_structured you need to specify l_n
-                norm.
+            l_norm: if you are using ln_structured you need to specify l_norm.
 
         """
         super().__init__(CallbackOrder.External)
@@ -88,13 +87,13 @@ class PruningCallback(Callback):
                         "need to specify dim in callback args"
                     )
                 if pruning_fn == "ln_structured":
-                    if n is None:
+                    if l_norm is None:
                         raise Exception(
                             "If you are using ln_unstructured you"
                             "need to specify n in callback args"
                         )
                     self.pruning_fn = _wrap_pruning_fn(
-                        prune.ln_structured, dim=dim, n=n
+                        prune.ln_structured, dim=dim, n=l_norm
                     )
                 else:
                     self.pruning_fn = _wrap_pruning_fn(
@@ -114,7 +113,9 @@ class PruningCallback(Callback):
                 "You disabled pruning pruning both on epoch and stage end."
                 "Model won't be pruned by this callback."
             )
-        self.remove_reparametrization = remove_reparametrization
+        self.remove_reparametrization_on_stage_end = (
+            remove_reparametrization_on_stage_end
+        )
         self.keys_to_prune = keys_to_prune
         self.amount = amount
         self.reinitialize_after_pruning = reinitialize_after_pruning
@@ -130,7 +131,14 @@ class PruningCallback(Callback):
             runner: runner for your experiment
         """
         if self.prune_on_epoch_end and runner.num_epochs != runner.epoch:
-            self._run_pruning(runner.model)
+            prune_model(
+                model=runner.model,
+                pruning_fn=self.pruning_fn,
+                keys_to_prune=self.keys_to_prune,
+                amount=self.amount,
+                layers_to_prune=self.layers_to_prune,
+                reinitialize_after_pruning=self.reinitialize_after_pruning,
+            )
 
     def on_stage_end(self, runner: "IRunner") -> None:
         """
@@ -151,7 +159,7 @@ class PruningCallback(Callback):
                 layers_to_prune=self.layers_to_prune,
                 reinitialize_after_pruning=self.reinitialize_after_pruning,
             )
-        if self.remove_reparametrization:
+        if self.remove_reparametrization_on_stage_end:
             remove_reparametrization(
                 model=runner.model,
                 keys_to_prune=self.keys_to_prune,

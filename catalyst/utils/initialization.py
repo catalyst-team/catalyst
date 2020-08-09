@@ -75,9 +75,9 @@ def outer_init(layer: nn.Module) -> None:
             nn.init.uniform_(layer.bias.data, -v, v)
 
 
-def weight_reset(module: nn.Module):
+def reset_weights_if_possible(module: nn.Module):
     """
-    Reseting module parameters if possible.
+    Resets module parameters if possible.
 
     Args:
         module: Module to reset.
@@ -88,4 +88,4 @@ def weight_reset(module: nn.Module):
         pass
 
 
-__all__ = ["get_optimal_inner_init", "outer_init", "weight_reset"]
+__all__ = ["get_optimal_inner_init", "outer_init", "reset_weights_if_possible"]
