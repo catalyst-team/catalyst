@@ -10,7 +10,7 @@ from catalyst.contrib.datasets.functional import (
     read_image_file,
     read_label_file,
 )
-from catalyst.contrib.datasets.metric_learning import (
+from catalyst.data.dataset.metric_learning import (
     MetricLearningTrainDataset,
     QueryGalleryDataset,
 )

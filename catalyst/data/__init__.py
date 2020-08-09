@@ -7,6 +7,8 @@ from catalyst.data.dataset import (
     MergeDataset,
     NumpyDataset,
     PathsDataset,
+    MetricLearningTrainDataset,
+    QueryGalleryDataset,
 )
 from catalyst.data.loader import BatchLimitLoaderWrapper
 from catalyst.data.reader import (

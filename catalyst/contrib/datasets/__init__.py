@@ -3,10 +3,6 @@ import logging
 
 from catalyst.tools import settings
 
-from catalyst.contrib.datasets.metric_learning import (
-    MetricLearningTrainDataset,
-    QueryGalleryDataset,
-)
 from catalyst.contrib.datasets.mnist import (
     MnistMLDataset,
     MnistQGDataset,
