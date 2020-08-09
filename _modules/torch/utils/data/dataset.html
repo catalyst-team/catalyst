@@ -263,7 +263,7 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">from</span> <span class="nn">torch._utils</span> <span class="kn">import</span> <span class="n">_accumulate</span>
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">randperm</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">randperm</span><span class="p">,</span> <span class="n">default_generator</span>
 
 
 <div class="viewcode-block" id="Dataset"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.typing.Dataset">[docs]</a><span class="k">class</span> <span class="nc">Dataset</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -521,19 +521,23 @@
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">indices</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">random_split</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">lengths</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">random_split</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">lengths</span><span class="p">,</span> <span class="n">generator</span><span class="o">=</span><span class="n">default_generator</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Randomly split a dataset into non-overlapping new datasets of given lengths.</span>
+<span class="sd">    Optionally fix the generator for reproducible results, e.g.:</span>
+
+<span class="sd">    &gt;&gt;&gt; random_split(range(10), [3, 7], generator=torch.Generator().manual_seed(42))</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        dataset (Dataset): Dataset to be split</span>
 <span class="sd">        lengths (sequence): lengths of splits to be produced</span>
+<span class="sd">        generator (Generator): Generator used for the random permutation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">lengths</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Sum of input lengths does not equal the length of the input dataset!&quot;</span><span class="p">)</span>
 
-    <span class="n">indices</span> <span class="o">=</span> <span class="n">randperm</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">lengths</span><span class="p">))</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
-    <span class="k">return</span> <span class="p">[</span><span class="n">Subset</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">indices</span><span class="p">[</span><span class="n">offset</span> <span class="o">-</span> <span class="n">length</span><span class="p">:</span><span class="n">offset</span><span class="p">])</span> <span class="k">for</span> <span class="n">offset</span><span class="p">,</span> <span class="n">length</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">_accumulate</span><span class="p">(</span><span class="n">lengths</span><span class="p">),</span> <span class="n">lengths</span><span class="p">)]</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">randperm</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">lengths</span><span class="p">),</span> <span class="n">generator</span><span class="o">=</span><span class="n">generator</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">Subset</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">indices</span><span class="p">[</span><span class="n">offset</span> <span class="o">-</span> <span class="n">length</span> <span class="p">:</span> <span class="n">offset</span><span class="p">])</span> <span class="k">for</span> <span class="n">offset</span><span class="p">,</span> <span class="n">length</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">_accumulate</span><span class="p">(</span><span class="n">lengths</span><span class="p">),</span> <span class="n">lengths</span><span class="p">)]</span>
 </pre></div>
 
              </article>
