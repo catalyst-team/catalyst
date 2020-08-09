@@ -164,4 +164,4 @@ class Normalize(object):
         )
 
 
-__all__ = ["Compose", "Normalize", "ToTensor", "normalize", "to_tensor"]
+__all__ = ["Compose", "Normalize", "ToTensor"]

@@ -7,8 +7,6 @@ from catalyst.data.cv.transforms.torch import (
     Compose,
     Normalize,
     ToTensor,
-    normalize,
-    to_tensor,
 )
 
 
