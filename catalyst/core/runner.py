@@ -29,7 +29,7 @@ from catalyst.tools.typing import (
 
 
 class RunnerException(Exception):
-    """Exception call for all runner errors."""
+    """Exception class for all runner errors."""
 
     def __init__(self, message: str):
         """
