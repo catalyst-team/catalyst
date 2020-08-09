@@ -46,7 +46,11 @@ from catalyst.utils.distributed import (
     is_apex_available,
 )
 from catalyst.utils.hash import get_hash, get_short_hash
-from catalyst.utils.initialization import get_optimal_inner_init, outer_init
+from catalyst.utils.initialization import (
+    get_optimal_inner_init,
+    outer_init,
+    weight_reset,
+)
 from catalyst.utils.loader import (
     get_native_batch_from_loader,
     get_native_batch_from_loaders,
@@ -95,3 +99,7 @@ from catalyst.utils.torch import (
     detach,
     trim_tensors,
 )
+from catalyst.tools.settings import IS_PRUNING_AVAILABLE
+
+if IS_PRUNING_AVAILABLE:
+    from .pruning import prune_model, remove_reparametrization

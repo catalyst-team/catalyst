@@ -1,5 +1,7 @@
 # flake8: noqa
 
+from catalyst.tools.settings import IS_PRUNING_AVAILABLE
+
 from catalyst.core.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.core.callbacks.checkpoint import (
     CheckpointCallback,
@@ -32,3 +34,6 @@ from catalyst.core.callbacks.periodic_loader import PeriodicLoaderCallback
 from catalyst.core.callbacks.scheduler import LRUpdater, SchedulerCallback
 from catalyst.core.callbacks.timer import TimerCallback
 from catalyst.core.callbacks.validation import ValidationManagerCallback
+
+if IS_PRUNING_AVAILABLE:
+    from catalyst.core.callbacks.pruning import PruningCallback
