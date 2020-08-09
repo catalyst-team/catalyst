@@ -57,7 +57,7 @@ import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.transforms import ToTensor
+from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
@@ -305,7 +305,7 @@ import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.transforms import ToTensor
+from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
@@ -359,7 +359,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.transforms import ToTensor
+from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
@@ -433,7 +433,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.transforms import ToTensor
+from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
@@ -532,7 +532,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.transforms import ToTensor
+from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
@@ -608,7 +608,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.transforms import ToTensor
+from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.nn.modules import Flatten, GlobalMaxPool2d, Lambda
 
@@ -766,7 +766,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from catalyst import dl, utils
-from catalyst.contrib.data.transforms import ToTensor
+from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
@@ -846,7 +846,7 @@ from torch.utils.data import DataLoader
 
 from catalyst import data, dl, utils
 from catalyst.contrib import datasets, models, nn
-import catalyst.contrib.data.transforms as t
+import catalyst.data.cv.transforms.torchvision as t
 
 
 # 1. train and valid datasets

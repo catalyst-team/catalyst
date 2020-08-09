@@ -18,7 +18,7 @@ def _transforms_loader(r: Registry):
 
         r.add_from_module(p, prefix=["A.", "albu.", "albumentations."])
 
-        from catalyst.contrib.data.cv import transforms as t
+        from catalyst.data.cv import transforms as t
 
         r.add_from_module(t, prefix=["catalyst.", "C."])
     except ImportError as ex:

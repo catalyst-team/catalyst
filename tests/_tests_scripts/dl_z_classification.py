@@ -18,7 +18,7 @@ import collections
 import torch
 
 from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.data.transforms import ToTensor, Compose, Normalize
+from catalyst.data.cv import ToTensor, Compose, Normalize
 
 bs = 32
 num_workers = 0
@@ -78,8 +78,6 @@ class Net(nn.Module):
 # for graphs use `tensorboard --logdir=./logs`
 
 # In[ ]:
-
-from catalyst.dl import utils
 
 # In[ ]:
 
@@ -294,7 +292,7 @@ runner.train(
 # In[ ]:
 
 from catalyst.dl.runner import SupervisedRunner
-from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
+from catalyst.dl.callbacks import AccuracyCallback
 
 # experiment setup
 num_epochs = NUM_EPOCHS
