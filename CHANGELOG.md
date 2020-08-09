@@ -4,7 +4,27 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [20.08] - YYYY-MM-DD
+
+## [20.08.1] - YYYY-MM-DD
+
+### Added
+
+- 
+
+### Changed
+
+- 
+
+### Removed
+
+- 
+
+### Fixed
+
+- 
+
+
+## [20.08] - 2020-08-09
 
 ### Added
 - Full metric learning pipeline including training and validation stages ([#886](https://github.com/catalyst-team/catalyst/pull/876))
@@ -22,6 +42,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - all registries merged to one `catalyst.registry` ([#883](https://github.com/catalyst-team/catalyst/pull/883))
 - `mean_average_precision` logic merged with `average_precision` ([#897](https://github.com/catalyst-team/catalyst/pull/897))
+- all imports moved to absolute ([#905](https://github.com/catalyst-team/catalyst/pull/905))
+- `catalyst.contrib.data` merged to `catalyst.data` ([#905](https://github.com/catalyst-team/catalyst/pull/905))
+- {breaking} Catalyst transform `ToTensor` was renamed to `ImageToTensor` ([#905](https://github.com/catalyst-team/catalyst/pull/905))
+- `TracerCallback` moved to `catalyst.dl` ([#905](https://github.com/catalyst-team/catalyst/pull/905))
+- `ControlFlowCallback`, `PeriodicLoaderCallback` moved to `catalyst.core` ([#905](https://github.com/catalyst-team/catalyst/pull/905))
 
 ### Removed
 
