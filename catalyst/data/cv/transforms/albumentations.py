@@ -44,7 +44,7 @@ class TensorToImage(ImageOnlyTransform):
         )
 
 
-class ToTensor(ToTensorV2):
+class ImageToTensor(ToTensorV2):
     """Casts ``numpy.array`` to ``torch.tensor``."""
 
     def __init__(
@@ -80,4 +80,4 @@ class ToTensor(ToTensorV2):
         return ("move_channels_dim",)
 
 
-__all__ = ["TensorToImage", "ToTensor"]
+__all__ = ["TensorToImage", "ImageToTensor"]

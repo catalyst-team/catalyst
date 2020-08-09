@@ -78,3 +78,6 @@ class ResnetFPNUnet(ResnetUnetSpec):
             **head_params
         )
         return encoder, bridge, decoder, head
+
+
+__all__ = ["FPNUnet", "ResnetFPNUnet"]

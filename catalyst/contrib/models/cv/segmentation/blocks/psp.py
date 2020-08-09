@@ -86,3 +86,6 @@ class PSPBlock(nn.Module):
         xs = [stage(x) for stage in self.stages] + [x]
         x = torch.cat(xs, dim=1)
         return x
+
+
+__all__ = ["PyramidBlock", "PSPBlock"]

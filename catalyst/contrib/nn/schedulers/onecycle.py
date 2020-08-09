@@ -213,3 +213,6 @@ class OneCycleLRWithWarmup(BatchScheduler):
             warmup_steps, lr_annealing_steps, decay_steps
         )
         self.last_epoch = current_step * loader_len
+
+
+__all__ = ["OneCycleLRWithWarmup"]

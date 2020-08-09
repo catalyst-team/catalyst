@@ -233,9 +233,9 @@ class DatasetFromSampler(Dataset):
 
 
 __all__ = [
+    "DatasetFromSampler",
     "ListDataset",
     "MergeDataset",
     "NumpyDataset",
     "PathsDataset",
-    "DatasetFromSampler",
 ]

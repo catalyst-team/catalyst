@@ -115,7 +115,6 @@ ENV/
 
 tmp/
 logs/
-dataset/
 # Examples - mock data
 !examples/distilbert_text_classification/input/*.csv
 !tests/_tests_nlp_classification/input/*.csv

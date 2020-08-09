@@ -68,3 +68,6 @@ class ResnetPSPnet(ResnetUnetSpec):
             **head_params
         )
         return encoder, bridge, decoder, head
+
+
+__all__ = ["PSPnet", "ResnetPSPnet"]

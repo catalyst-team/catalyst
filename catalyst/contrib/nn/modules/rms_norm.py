@@ -36,3 +36,6 @@ class RMSNorm(nn.Module):
         if self.is_bias:
             return self.scale * x_norm + self.bias
         return self.scale * x_norm
+
+
+__all__ = ["RMSNorm"]

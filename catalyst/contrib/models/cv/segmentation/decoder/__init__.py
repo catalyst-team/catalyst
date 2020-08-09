@@ -1,5 +1,5 @@
 # flake8: noqa
-from .core import *
-from .fpn import *
-from .psp import *
-from .unet import *
+from catalyst.contrib.models.cv.segmentation.decoder.core import DecoderSpec
+from catalyst.contrib.models.cv.segmentation.decoder.fpn import FPNDecoder
+from catalyst.contrib.models.cv.segmentation.decoder.psp import PSPDecoder
+from catalyst.contrib.models.cv.segmentation.decoder.unet import UNetDecoder

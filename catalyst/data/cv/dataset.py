@@ -3,7 +3,7 @@ import glob
 from pathlib import Path
 
 from catalyst import utils
-from catalyst.contrib.data.cv.reader import ImageReader
+from catalyst.data.cv import ImageReader
 from catalyst.data.dataset import PathsDataset
 from catalyst.data.reader import ReaderCompose, ScalarReader
 

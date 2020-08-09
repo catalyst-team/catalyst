@@ -4,10 +4,10 @@ import os
 
 from torch.utils.data import Subset
 
-from catalyst import dl, registry
-from catalyst.contrib.data.transforms import Compose, Normalize, ToTensor
 from catalyst.contrib.datasets import MNIST
+from catalyst.data.cv import Compose, Normalize, ToTensor
 from catalyst.dl import ConfigExperiment
+from catalyst import dl, registry
 
 
 @registry.Callback

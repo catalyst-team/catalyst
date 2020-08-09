@@ -1,7 +1,7 @@
 from catalyst.contrib.nn import criterion as module
 from catalyst.contrib.nn.criterion import (
     CircleLoss,
-    TripletMarginLossWithSampling,
+    TripletMarginLossWithSampler,
 )
 from catalyst.data import AllTripletsSampler
 
@@ -12,7 +12,7 @@ def test_criterion_init():
         if isinstance(module_class, type):
             if module_class == CircleLoss:
                 instance = module_class(margin=0.25, gamma=256)
-            elif module_class == TripletMarginLossWithSampling:
+            elif module_class == TripletMarginLossWithSampler:
                 instance = module_class(
                     margin=1.0, sampler_inbatch=AllTripletsSampler()
                 )

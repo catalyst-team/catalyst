@@ -46,3 +46,6 @@ class BridgeSpec(ABC, nn.Module):
     def forward(self, x: List[torch.Tensor]) -> List[torch.Tensor]:
         """Forward call."""
         pass
+
+
+__all__ = ["BridgeSpec"]

@@ -22,3 +22,6 @@ class EncoderSpec(ABC, nn.Module):
     def out_strides(self) -> List[int]:
         """@TODO: Docs. Contribution is welcome."""
         pass
+
+
+__all__ = ["EncoderSpec"]

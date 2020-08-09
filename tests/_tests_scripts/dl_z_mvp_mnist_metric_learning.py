@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 
 from catalyst import data, dl, utils
 from catalyst.contrib import datasets, models, nn
-import catalyst.contrib.data.transforms as t
+import catalyst.data.cv.transforms.torch as t
 
 
 def run_ml_pipeline(sampler_inbatch: data.IInbatchTripletSampler) -> float:
@@ -45,7 +45,7 @@ def run_ml_pipeline(sampler_inbatch: data.IInbatchTripletSampler) -> float:
     optimizer = Adam(model.parameters(), lr=0.0005)
 
     # 3. criterion with triplets sampling
-    criterion = nn.TripletMarginLossWithSampling(
+    criterion = nn.TripletMarginLossWithSampler(
         margin=0.5, sampler_inbatch=sampler_inbatch
     )
 
