@@ -1,9 +1,12 @@
 # flake8: noqa
-from catalyst.data.dataset import _Path, PathsDataset
+from typing import Union
+from pathlib import Path
+
+from catalyst.data.dataset import PathsDataset
 
 
 def test_PathsDataset() -> None:
-    def get_target(path: _Path) -> int:
+    def get_target(path: Union[str, Path]) -> int:
         result = str(path).split(".")[0].split("_")[1]
         result = int(result)
 
