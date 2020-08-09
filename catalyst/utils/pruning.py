@@ -3,7 +3,7 @@ from typing import Callable, List, Optional, Union
 from torch.nn import Module
 from torch.nn.utils import prune
 
-from catalyst.utils.initialization import weight_reset
+from catalyst.utils.initialization import reset_weights_if_possible
 
 
 def prune_model(
@@ -55,7 +55,7 @@ def prune_model(
     if pruned_modules == 0:
         raise Exception(f"There is no {keys_to_prune} key in your model")
     if reinitialize_after_pruning:
-        model.apply(weight_reset)
+        model.apply(reset_weights_if_possible)
 
 
 def remove_reparametrization(
@@ -82,3 +82,6 @@ def remove_reparametrization(
                     prune.remove(module, key)
         except ValueError:
             pass
+
+
+__all__ = ["prune_model", "remove_reparametrization"]

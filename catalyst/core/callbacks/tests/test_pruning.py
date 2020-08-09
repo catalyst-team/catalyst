@@ -66,7 +66,9 @@ def test_parametrization():
         criterion=criterion,
         loaders={"train": dataloader},
         callbacks=[
-            PruningCallback(l1_unstructured, remove_reparametrization=False)
+            PruningCallback(
+                l1_unstructured, remove_reparametrization_on_stage_end=False
+            )
         ],
         num_epochs=1,
     )
@@ -107,7 +109,7 @@ def test_pruning_str_structured():
         optimizer=torch.optim.Adam(model.parameters()),
         criterion=criterion,
         loaders={"train": dataloader},
-        callbacks=[PruningCallback("ln_structured", dim=1, n=2)],
+        callbacks=[PruningCallback("ln_structured", dim=1, l_norm=2)],
         num_epochs=1,
     )
     assert np.isclose(pruning_factor(model), 0.5)
