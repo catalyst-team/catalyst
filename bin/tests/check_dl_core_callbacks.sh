@@ -795,6 +795,12 @@ assert metrics['last']['cmc05'] > 0.5
 LOG_MSG='pipeline 22'
 echo ${LOG_MSG}
 
+EXPDIR=./tests/_tests_dl_callbacks
+LOGDIR=./tests/logs/_tests_dl_callbacks
+CHECKPOINTS=${LOGDIR}/checkpoints
+LOGFILE=${CHECKPOINTS}/_metrics.json
+EXP_OUTPUT=./tests/output.txt
+
 INTERRUPT_EPOCH=4 \
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
