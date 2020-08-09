@@ -401,6 +401,7 @@ class HardClusterSampler(IInbatchTripletSampler):
 
 
 __all__ = [
+    "IInbatchTripletSampler",
     "InBatchTripletsSampler",
     "AllTripletsSampler",
     "HardTripletsSampler",

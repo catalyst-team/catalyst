@@ -846,7 +846,7 @@ from torch.utils.data import DataLoader
 
 from catalyst import data, dl, utils
 from catalyst.contrib import datasets, models, nn
-import catalyst.data.cv.transforms.torchvision as t
+import catalyst.data.cv.transforms.torch as t
 
 
 # 1. train and valid datasets
