@@ -174,25 +174,9 @@ class ReaderCompose(object):
         return result
 
 
-try:
-    # @TODO: remove hotfix
-    from catalyst.contrib.data.cv.reader import (  # noqa: F401
-        ImageReader,
-        MaskReader,
-    )
-
-    __all__ = [
-        "ReaderSpec",
-        "ScalarReader",
-        "LambdaReader",
-        "ReaderCompose",
-        "ImageReader",
-        "MaskReader",
-    ]
-except ImportError:
-    __all__ = [
-        "ReaderSpec",
-        "ScalarReader",
-        "LambdaReader",
-        "ReaderCompose",
-    ]
+__all__ = [
+    "ReaderSpec",
+    "ScalarReader",
+    "LambdaReader",
+    "ReaderCompose",
+]

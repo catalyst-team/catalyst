@@ -6,8 +6,8 @@ from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
 from catalyst import dl
-from catalyst.contrib.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
+from catalyst.data.cv import ToTensor
 from catalyst.utils import metrics
 
 model = torch.nn.Linear(28 * 28, 10)

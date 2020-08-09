@@ -2,8 +2,8 @@ from typing import List
 
 import torch
 
-from catalyst.contrib.datasets.metric_learning import QueryGalleryDataset
 from catalyst.core import Callback, CallbackOrder, IRunner
+from catalyst.data.dataset.metric_learning import QueryGalleryDataset
 from catalyst.utils.metrics import cmc_score, get_default_topk_args
 
 TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
@@ -151,3 +151,6 @@ class CMCScoreCallback(Callback):
             runner.loader_metrics[f"{self._prefix}{key:02}"] = metric
         self._gallery_embeddings = None
         self._query_embeddings = None
+
+
+__all__ = ["CMCScoreCallback"]

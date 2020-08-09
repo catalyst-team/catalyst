@@ -398,3 +398,12 @@ class HardClusterSampler(IInbatchTripletSampler):
         )
 
         return mean_vectors, positives, mean_vectors[neg_indices]
+
+
+__all__ = [
+    "IInbatchTripletSampler",
+    "InBatchTripletsSampler",
+    "AllTripletsSampler",
+    "HardTripletsSampler",
+    "HardClusterSampler",
+]

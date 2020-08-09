@@ -113,3 +113,6 @@ def get_linear_net(
     )
 
     return net
+
+
+__all__ = ["get_convolution_net", "get_linear_net"]

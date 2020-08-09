@@ -203,3 +203,14 @@ class GlobalConcatAttnPool2d(nn.Module):
             number of output features
         """
         return in_features * 3
+
+
+__all__ = [
+    "GlobalAttnPool2d",
+    "GlobalAvgAttnPool2d",
+    "GlobalAvgPool2d",
+    "GlobalConcatAttnPool2d",
+    "GlobalConcatPool2d",
+    "GlobalMaxAttnPool2d",
+    "GlobalMaxPool2d",
+]

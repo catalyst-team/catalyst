@@ -3,8 +3,8 @@ from transformers import AutoModelWithLMHead, AutoTokenizer
 from transformers.data.data_collator import DataCollatorForLanguageModeling
 
 from catalyst import dl
-from catalyst.contrib.data.nlp import LanguageModelingDataset
 from catalyst.contrib.dl.callbacks import PerplexityMetricCallback
+from catalyst.data.nlp import LanguageModelingDataset
 
 
 class HuggingFaceRunner(dl.Runner):

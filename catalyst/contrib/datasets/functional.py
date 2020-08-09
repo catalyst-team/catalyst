@@ -1,11 +1,15 @@
 # flake8: noqa
 # @TODO: code formatting issue for 20.07 release
+import codecs
 import gzip
 import hashlib
 import os
 import tarfile
 import zipfile
 
+import numpy as np
+
+import torch
 from torch.utils.model_zoo import tqdm
 
 
@@ -146,3 +150,74 @@ def download_and_extract_archive(
     archive = os.path.join(download_root, filename)
     print(f"Extracting {archive} to {extract_root}")
     extract_archive(archive, extract_root, remove_finished)
+
+
+def get_int(b):
+    """@TODO: Docs. Contribution is welcome."""
+    return int(codecs.encode(b, "hex"), 16)
+
+
+def open_maybe_compressed_file(path):
+    """Return a file object that possibly decompresses 'path' on the fly.
+    Decompression occurs when argument `path` is a string
+    and ends with '.gz' or '.xz'.
+    """
+    if not isinstance(path, torch._six.string_classes):  # noqa: WPS437
+        return path
+    if path.endswith(".gz"):
+        import gzip
+
+        return gzip.open(path, "rb")
+    if path.endswith(".xz"):
+        import lzma
+
+        return lzma.open(path, "rb")
+    return open(path, "rb")
+
+
+def read_sn3_pascalvincent_tensor(path, strict=True):
+    """Read a SN3 file in "Pascal Vincent" format.
+    Argument may be a filename, compressed filename, or file object.
+    """
+    # typemap
+    if not hasattr(read_sn3_pascalvincent_tensor, "typemap"):
+        read_sn3_pascalvincent_tensor.typemap = {
+            8: (torch.uint8, np.uint8, np.uint8),
+            9: (torch.int8, np.int8, np.int8),
+            11: (torch.int16, np.dtype(">i2"), "i2"),
+            12: (torch.int32, np.dtype(">i4"), "i4"),
+            13: (torch.float32, np.dtype(">f4"), "f4"),
+            14: (torch.float64, np.dtype(">f8"), "f8"),
+        }
+    # read
+    with open_maybe_compressed_file(path) as f:
+        data = f.read()
+    # parse
+    magic = get_int(data[0:4])  # noqa: WPS349
+    nd = magic % 256
+    ty = magic // 256
+    assert nd >= 1 and nd <= 3
+    assert ty >= 8 and ty <= 14
+    m = read_sn3_pascalvincent_tensor.typemap[ty]
+    s = [get_int(data[4 * (i + 1) : 4 * (i + 2)]) for i in range(nd)]
+    parsed = np.frombuffer(data, dtype=m[1], offset=(4 * (nd + 1)))
+    assert parsed.shape[0] == np.prod(s) or not strict
+    return torch.from_numpy(parsed.astype(m[2], copy=False)).view(*s)
+
+
+def read_label_file(path):
+    """@TODO: Docs. Contribution is welcome."""
+    with open(path, "rb") as f:
+        x = read_sn3_pascalvincent_tensor(f, strict=False)
+    assert x.dtype == torch.uint8
+    assert x.ndimension() == 1
+    return x.long()
+
+
+def read_image_file(path):
+    """@TODO: Docs. Contribution is welcome."""
+    with open(path, "rb") as f:
+        x = read_sn3_pascalvincent_tensor(f, strict=False)
+    assert x.dtype == torch.uint8
+    assert x.ndimension() == 3
+    return x

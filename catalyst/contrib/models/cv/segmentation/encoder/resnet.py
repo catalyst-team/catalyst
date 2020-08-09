@@ -136,3 +136,6 @@ class ResnetEncoder(EncoderSpec):
 
         output = _take(output, self._layers_indices)
         return output
+
+
+__all__ = ["ResnetEncoder"]

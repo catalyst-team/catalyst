@@ -302,8 +302,12 @@ class MergedConfigParser:
 
 settings = Settings.parse()
 
+
 __all__ = [
     "settings",
+    "Settings",
+    "ConfigFileFinder",
+    "MergedConfigParser",
     "IS_PRUNING_AVAILABLE",
     "IS_XLA_AVAILABLE",
 ]

@@ -126,3 +126,6 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
         )
         f1_value = f1score(precision_value, recall_value)
         return (float(precision_value), float(recall_value), float(f1_value))
+
+
+__all__ = ["PrecisionRecallF1ScoreMeter"]

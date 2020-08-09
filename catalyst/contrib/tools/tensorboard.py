@@ -241,3 +241,12 @@ class SummaryReader(Iterable):
                     and self._check_tag(item.tag)
                     and item.type in self._types
                 )
+
+
+# __all__ = [
+#     "EventReadingException",
+#     "EventsFileReader",
+#     "SummaryItem",
+#     "SummaryReader",
+#     "SummaryWriter",
+# ]
