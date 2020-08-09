@@ -281,7 +281,7 @@
 <span class="n">TLabels</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">Tensor</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="IInbatchTripletSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.IInbatchTripletSampler">[docs]</a><span class="k">class</span> <span class="nc">IInbatchTripletSampler</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="IInbatchTripletSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.IInbatchTripletSampler">[docs]</a><span class="k">class</span> <span class="nc">IInbatchTripletSampler</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An abstraction of inbatch triplet sampler.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -301,7 +301,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 
-<div class="viewcode-block" id="IInbatchTripletSampler.sample"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.IInbatchTripletSampler.sample">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="IInbatchTripletSampler.sample"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.IInbatchTripletSampler.sample">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">TLabels</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TTriplets</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This method includes the logic of sampling/selecting triplets.</span>
@@ -319,7 +319,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div></div>
 
 
-<div class="viewcode-block" id="InBatchTripletsSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.InBatchTripletsSampler">[docs]</a><span class="k">class</span> <span class="nc">InBatchTripletsSampler</span><span class="p">(</span><span class="n">IInbatchTripletSampler</span><span class="p">):</span>
+<div class="viewcode-block" id="InBatchTripletsSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.InBatchTripletsSampler">[docs]</a><span class="k">class</span> <span class="nc">InBatchTripletsSampler</span><span class="p">(</span><span class="n">IInbatchTripletSampler</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Base class for a triplets samplers.</span>
 <span class="sd">    We expect that the child instances of this class</span>
@@ -361,7 +361,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-<div class="viewcode-block" id="InBatchTripletsSampler.sample"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.InBatchTripletsSampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">TLabels</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TTriplets</span><span class="p">:</span>
+<div class="viewcode-block" id="InBatchTripletsSampler.sample"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.InBatchTripletsSampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">TLabels</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TTriplets</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            features: has the shape of [batch_size, feature_size]</span>
@@ -380,12 +380,12 @@
         <span class="k">return</span> <span class="n">features</span><span class="p">[</span><span class="n">ids_anchor</span><span class="p">],</span> <span class="n">features</span><span class="p">[</span><span class="n">ids_pos</span><span class="p">],</span> <span class="n">features</span><span class="p">[</span><span class="n">ids_neg</span><span class="p">]</span></div></div>
 
 
-<div class="viewcode-block" id="AllTripletsSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.AllTripletsSampler">[docs]</a><span class="k">class</span> <span class="nc">AllTripletsSampler</span><span class="p">(</span><span class="n">InBatchTripletsSampler</span><span class="p">):</span>
+<div class="viewcode-block" id="AllTripletsSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.AllTripletsSampler">[docs]</a><span class="k">class</span> <span class="nc">AllTripletsSampler</span><span class="p">(</span><span class="n">InBatchTripletsSampler</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This sampler selects all the possible triplets for the given labels</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="AllTripletsSampler.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.AllTripletsSampler.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_output_triplets</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">maxsize</span><span class="p">):</span>
+<div class="viewcode-block" id="AllTripletsSampler.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.AllTripletsSampler.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_output_triplets</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">maxsize</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            max_output_triplets: with the strategy of choosing all</span>
@@ -421,7 +421,7 @@
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">ids_anchor</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">ids_pos</span><span class="p">),</span> <span class="nb">list</span><span class="p">(</span><span class="n">ids_neg</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="HardTripletsSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.HardTripletsSampler">[docs]</a><span class="k">class</span> <span class="nc">HardTripletsSampler</span><span class="p">(</span><span class="n">InBatchTripletsSampler</span><span class="p">):</span>
+<div class="viewcode-block" id="HardTripletsSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.HardTripletsSampler">[docs]</a><span class="k">class</span> <span class="nc">HardTripletsSampler</span><span class="p">(</span><span class="n">InBatchTripletsSampler</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This sampler selects hardest triplets based on distances between features:</span>
 <span class="sd">    the hardest positive sample has the maximal distance to the anchor sample,</span>
@@ -434,7 +434,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="HardTripletsSampler.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.HardTripletsSampler.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">norm_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="HardTripletsSampler.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.HardTripletsSampler.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">norm_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            norm_required: set True if features normalisation is needed</span>
@@ -503,7 +503,7 @@
         <span class="k">return</span> <span class="n">ids_anchor</span><span class="p">,</span> <span class="n">ids_pos</span><span class="p">,</span> <span class="n">ids_neg</span></div>
 
 
-<div class="viewcode-block" id="HardClusterSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.HardClusterSampler">[docs]</a><span class="k">class</span> <span class="nc">HardClusterSampler</span><span class="p">(</span><span class="n">IInbatchTripletSampler</span><span class="p">):</span>
+<div class="viewcode-block" id="HardClusterSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.HardClusterSampler">[docs]</a><span class="k">class</span> <span class="nc">HardClusterSampler</span><span class="p">(</span><span class="n">IInbatchTripletSampler</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This sampler selects hardest triplets based on distance to mean vectors:</span>
 <span class="sd">    anchor is a mean vector of features of i-th class in the batch,</span>
@@ -616,7 +616,7 @@
         <span class="n">matrix</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
         <span class="k">return</span> <span class="n">matrix</span>
 
-<div class="viewcode-block" id="HardClusterSampler.sample"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler_inbatch.HardClusterSampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">TLabels</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TTriplets</span><span class="p">:</span>
+<div class="viewcode-block" id="HardClusterSampler.sample"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.HardClusterSampler.sample">[docs]</a>    <span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">TLabels</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">TTriplets</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This method samples the hardest triplets in the batch.</span>
 
@@ -659,6 +659,15 @@
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">mean_vectors</span><span class="p">,</span> <span class="n">positives</span><span class="p">,</span> <span class="n">mean_vectors</span><span class="p">[</span><span class="n">neg_indices</span><span class="p">]</span></div></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;IInbatchTripletSampler&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;InBatchTripletsSampler&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;AllTripletsSampler&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HardTripletsSampler&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;HardClusterSampler&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 </pre></div>
 
              </article>

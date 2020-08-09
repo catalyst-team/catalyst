@@ -524,13 +524,13 @@
         <span class="k">return</span> <span class="n">loss</span></div></div>
 
 
-<div class="viewcode-block" id="TripletMarginLossWithSampling"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletMarginLossWithSampling">[docs]</a><span class="k">class</span> <span class="nc">TripletMarginLossWithSampling</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="TripletMarginLossWithSampler"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletMarginLossWithSampler">[docs]</a><span class="k">class</span> <span class="nc">TripletMarginLossWithSampler</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This class combains in-batch sampling of triplets and</span>
+<span class="sd">    This class combines in-batch sampling of triplets and</span>
 <span class="sd">    default TripletMargingLoss from PyTorch.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="TripletMarginLossWithSampling.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletMarginLossWithSampling.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="TripletMarginLossWithSampler.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletMarginLossWithSampler.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">sampler_inbatch</span><span class="p">:</span> <span class="s2">&quot;IInbatchTripletSampler&quot;</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -542,7 +542,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_inbatch</span> <span class="o">=</span> <span class="n">sampler_inbatch</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_triplet_margin_loss</span> <span class="o">=</span> <span class="n">TripletMarginLoss</span><span class="p">(</span><span class="n">margin</span><span class="o">=</span><span class="n">margin</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="TripletMarginLossWithSampling.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletMarginLossWithSampling.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
+<div class="viewcode-block" id="TripletMarginLossWithSampler.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletMarginLossWithSampler.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -573,7 +573,7 @@
     <span class="s2">&quot;TripletLoss&quot;</span><span class="p">,</span>
     <span class="s2">&quot;TripletLossV2&quot;</span><span class="p">,</span>
     <span class="s2">&quot;TripletPairwiseEmbeddingLoss&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;TripletMarginLossWithSampling&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;TripletMarginLossWithSampler&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

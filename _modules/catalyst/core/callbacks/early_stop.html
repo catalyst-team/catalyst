@@ -392,6 +392,9 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_bad_epochs</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">patience</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Early stop at </span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">epoch</span><span class="si">}</span><span class="s2"> epoch&quot;</span><span class="p">)</span>
             <span class="n">runner</span><span class="o">.</span><span class="n">need_early_stop</span> <span class="o">=</span> <span class="kc">True</span></div></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CheckRunCallback&quot;</span><span class="p">,</span> <span class="s2">&quot;EarlyStoppingCallback&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

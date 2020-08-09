@@ -1087,63 +1087,6 @@ tp/fp/fn counts.</p>
 
 </dd></dl>
 
-<dl class="function">
-<dt id="catalyst.tools.meters.ppv_tpr_f1_meter.f1score">
-<code class="sig-prename descclassname">catalyst.tools.meters.ppv_tpr_f1_meter.</code><code class="sig-name descname">f1score</code><span class="sig-paren">(</span><em class="sig-param">precision_value</em>, <em class="sig-param">recall_value</em>, <em class="sig-param">eps=1e-05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/ppv_tpr_f1_meter.html#f1score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.ppv_tpr_f1_meter.f1score" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculating F1-score from precision and recall to reduce computation
-redundancy.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>precision_value</strong> – precision (0-1)</p></li>
-<li><p><strong>recall_value</strong> – recall (0-1)</p></li>
-<li><p><strong>eps</strong> – epsilon to use</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>F1 score (0-1)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.tools.meters.ppv_tpr_f1_meter.precision">
-<code class="sig-prename descclassname">catalyst.tools.meters.ppv_tpr_f1_meter.</code><code class="sig-name descname">precision</code><span class="sig-paren">(</span><em class="sig-param">tp</em>, <em class="sig-param">fp</em>, <em class="sig-param">eps: float = 1e-05</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/catalyst/tools/meters/ppv_tpr_f1_meter.html#precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.ppv_tpr_f1_meter.precision" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates precision (a.k.a. positive predictive value) for binary
-classification and segmentation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>tp</strong> (<em>int</em>) – number of true positives</p></li>
-<li><p><strong>fp</strong> (<em>int</em>) – number of false positives</p></li>
-<li><p><strong>eps</strong> – epsilon to use</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>precision value (0-1)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.tools.meters.ppv_tpr_f1_meter.recall">
-<code class="sig-prename descclassname">catalyst.tools.meters.ppv_tpr_f1_meter.</code><code class="sig-name descname">recall</code><span class="sig-paren">(</span><em class="sig-param">tp</em>, <em class="sig-param">fn</em>, <em class="sig-param">eps=1e-05</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/catalyst/tools/meters/ppv_tpr_f1_meter.html#recall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.ppv_tpr_f1_meter.recall" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculates recall (a.k.a. true positive rate) for binary classification and
-segmentation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>tp</strong> – number of true positives</p></li>
-<li><p><strong>fn</strong> – number of false negatives</p></li>
-<li><p><strong>eps</strong> – epsilon to use</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>recall value (0-1)</p>
-</dd>
-</dl>
-</dd></dl>
-
 </div>
 </div>
 <div class="section" id="module-catalyst.utils">

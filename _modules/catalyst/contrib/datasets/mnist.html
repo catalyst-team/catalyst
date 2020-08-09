@@ -261,19 +261,20 @@
   <h1>Source code for catalyst.contrib.datasets.mnist</h1><div class="highlight"><pre>
 <span></span><span class="c1"># flake8: noqa</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
-<span class="kn">import</span> <span class="nn">codecs</span>
 <span class="kn">import</span> <span class="nn">os</span>
-
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.contrib.datasets.metric_learning</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.datasets.functional</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">download_and_extract_archive</span><span class="p">,</span>
+    <span class="n">read_image_file</span><span class="p">,</span>
+    <span class="n">read_label_file</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catalyst.data.dataset.metric_learning</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">MetricLearningTrainDataset</span><span class="p">,</span>
     <span class="n">QueryGalleryDataset</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">catalyst.contrib.datasets.utils</span> <span class="kn">import</span> <span class="n">download_and_extract_archive</span>
 
 
 <div class="viewcode-block" id="MNIST"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.datasets.mnist.MNIST">[docs]</a><span class="k">class</span> <span class="nc">MNIST</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
@@ -467,77 +468,6 @@
         <span class="k">return</span> <span class="s2">&quot;Split: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;Train&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">train</span> <span class="ow">is</span> <span class="kc">True</span> <span class="k">else</span> <span class="s2">&quot;Test&quot;</span><span class="p">)</span></div></div>
 
 
-<div class="viewcode-block" id="get_int"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.datasets.mnist.get_int">[docs]</a><span class="k">def</span> <span class="nf">get_int</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">codecs</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="s2">&quot;hex&quot;</span><span class="p">),</span> <span class="mi">16</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="open_maybe_compressed_file"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.datasets.mnist.open_maybe_compressed_file">[docs]</a><span class="k">def</span> <span class="nf">open_maybe_compressed_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return a file object that possibly decompresses &#39;path&#39; on the fly.</span>
-<span class="sd">    Decompression occurs when argument `path` is a string</span>
-<span class="sd">    and ends with &#39;.gz&#39; or &#39;.xz&#39;.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">_six</span><span class="o">.</span><span class="n">string_classes</span><span class="p">):</span>  <span class="c1"># noqa: WPS437</span>
-        <span class="k">return</span> <span class="n">path</span>
-    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">):</span>
-        <span class="kn">import</span> <span class="nn">gzip</span>
-
-        <span class="k">return</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.xz&quot;</span><span class="p">):</span>
-        <span class="kn">import</span> <span class="nn">lzma</span>
-
-        <span class="k">return</span> <span class="n">lzma</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="read_sn3_pascalvincent_tensor"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.datasets.mnist.read_sn3_pascalvincent_tensor">[docs]</a><span class="k">def</span> <span class="nf">read_sn3_pascalvincent_tensor</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Read a SN3 file in &quot;Pascal Vincent&quot; format.</span>
-<span class="sd">    Argument may be a filename, compressed filename, or file object.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># typemap</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">read_sn3_pascalvincent_tensor</span><span class="p">,</span> <span class="s2">&quot;typemap&quot;</span><span class="p">):</span>
-        <span class="n">read_sn3_pascalvincent_tensor</span><span class="o">.</span><span class="n">typemap</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="mi">8</span><span class="p">:</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">),</span>
-            <span class="mi">9</span><span class="p">:</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">int8</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">),</span>
-            <span class="mi">11</span><span class="p">:</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">int16</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s2">&quot;&gt;i2&quot;</span><span class="p">),</span> <span class="s2">&quot;i2&quot;</span><span class="p">),</span>
-            <span class="mi">12</span><span class="p">:</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s2">&quot;&gt;i4&quot;</span><span class="p">),</span> <span class="s2">&quot;i4&quot;</span><span class="p">),</span>
-            <span class="mi">13</span><span class="p">:</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s2">&quot;&gt;f4&quot;</span><span class="p">),</span> <span class="s2">&quot;f4&quot;</span><span class="p">),</span>
-            <span class="mi">14</span><span class="p">:</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s2">&quot;&gt;f8&quot;</span><span class="p">),</span> <span class="s2">&quot;f8&quot;</span><span class="p">),</span>
-        <span class="p">}</span>
-    <span class="c1"># read</span>
-    <span class="k">with</span> <span class="n">open_maybe_compressed_file</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-    <span class="c1"># parse</span>
-    <span class="n">magic</span> <span class="o">=</span> <span class="n">get_int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">])</span>  <span class="c1"># noqa: WPS349</span>
-    <span class="n">nd</span> <span class="o">=</span> <span class="n">magic</span> <span class="o">%</span> <span class="mi">256</span>
-    <span class="n">ty</span> <span class="o">=</span> <span class="n">magic</span> <span class="o">//</span> <span class="mi">256</span>
-    <span class="k">assert</span> <span class="n">nd</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">nd</span> <span class="o">&lt;=</span> <span class="mi">3</span>
-    <span class="k">assert</span> <span class="n">ty</span> <span class="o">&gt;=</span> <span class="mi">8</span> <span class="ow">and</span> <span class="n">ty</span> <span class="o">&lt;=</span> <span class="mi">14</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">read_sn3_pascalvincent_tensor</span><span class="o">.</span><span class="n">typemap</span><span class="p">[</span><span class="n">ty</span><span class="p">]</span>
-    <span class="n">s</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">:</span> <span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nd</span><span class="p">)]</span>
-    <span class="n">parsed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">frombuffer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">m</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">offset</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="p">(</span><span class="n">nd</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)))</span>
-    <span class="k">assert</span> <span class="n">parsed</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">strict</span>
-    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">parsed</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">m</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">*</span><span class="n">s</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="read_label_file"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.datasets.mnist.read_label_file">[docs]</a><span class="k">def</span> <span class="nf">read_label_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">read_sn3_pascalvincent_tensor</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">uint8</span>
-    <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">ndimension</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span>
-    <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">long</span><span class="p">()</span></div>
-
-
-<div class="viewcode-block" id="read_image_file"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.datasets.mnist.read_image_file">[docs]</a><span class="k">def</span> <span class="nf">read_image_file</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="n">read_sn3_pascalvincent_tensor</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">strict</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">torch</span><span class="o">.</span><span class="n">uint8</span>
-    <span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">ndimension</span><span class="p">()</span> <span class="o">==</span> <span class="mi">3</span>
-    <span class="k">return</span> <span class="n">x</span></div>
-
-
 <div class="viewcode-block" id="MnistMLDataset"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.datasets.mnist.MnistMLDataset">[docs]</a><span class="k">class</span> <span class="nc">MnistMLDataset</span><span class="p">(</span><span class="n">MetricLearningTrainDataset</span><span class="p">,</span> <span class="n">MNIST</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Simple wrapper for MNIST dataset</span>
@@ -607,6 +537,9 @@
     <span class="k">def</span> <span class="nf">query_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Query Gallery dataset should have query_size property&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_size</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MNIST&quot;</span><span class="p">,</span> <span class="s2">&quot;MnistMLDataset&quot;</span><span class="p">,</span> <span class="s2">&quot;MnistQGDataset&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

@@ -79,6 +79,13 @@ InferCallback
     :undoc-members:
     :show-inheritance:
 
+MeterMetricsCallback
+~~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.dl.callbacks.meter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 MixupCallback
 ~~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.dl.callbacks.mixup
@@ -93,6 +100,12 @@ LRFinder
     :undoc-members:
     :show-inheritance:
 
+TracerCallback
+""""""""""""""""""""""
+.. automodule:: catalyst.dl.callbacks.tracing
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Metrics
 --------------------

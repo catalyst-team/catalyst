@@ -420,6 +420,9 @@
             <span class="c1"># compute average precision</span>
             <span class="n">ap</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">precision</span><span class="p">[</span><span class="n">truth</span><span class="o">.</span><span class="n">byte</span><span class="p">()]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">truth</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ap</span></div></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;APMeter&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

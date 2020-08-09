@@ -486,7 +486,10 @@ please first open an issue and discuss the feature with us.</p>
 <li class="toctree-l3"><a class="reference internal" href="api/core.html#module-catalyst.core.callbacks.exception">Exception</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/core.html#module-catalyst.core.callbacks.logging">Logging</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/core.html#module-catalyst.core.callbacks.metrics">Metrics</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/core.html#module-catalyst.core.callbacks.optimizer">Optimizer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/core.html#module-catalyst.core.callbacks.optimizer">Optimizer</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/core.html#module-catalyst.core.callbacks.periodic_loader">PeriodicLoaderCallback</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="api/core.html#module-catalyst.core.callbacks.scheduler">Scheduler</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/core.html#module-catalyst.core.callbacks.timer">Timer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/core.html#module-catalyst.core.callbacks.validation">Validation</a></li>
@@ -515,8 +518,12 @@ please first open an issue and discuss the feature with us.</p>
 <li class="toctree-l2"><a class="reference internal" href="api/dl.html#module-catalyst.dl.callbacks">Callbacks</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/dl.html#module-catalyst.dl.callbacks.confusion_matrix">ConfusionMatrixCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/dl.html#module-catalyst.dl.callbacks.inference">InferCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/dl.html#module-catalyst.dl.callbacks.meter">MeterMetricsCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/dl.html#module-catalyst.dl.callbacks.mixup">MixupCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/dl.html#module-catalyst.dl.callbacks.scheduler">LRFinder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/dl.html#module-catalyst.dl.callbacks.scheduler">LRFinder</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/dl.html#module-catalyst.dl.callbacks.tracing">TracerCallback</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/dl.html#metrics">Metrics</a><ul>
@@ -546,13 +553,93 @@ please first open an issue and discuss the feature with us.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/data.html">Data</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/data.html#scripts">Scripts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.augmentor">Augmentor</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.collate_fn">Collate Functions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.dataset">Dataset</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.sampler_inbatch">In-batch Samplers</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.loader">Loader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data.html#reader">Reader</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.sampler">Sampler</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#augmentors">Augmentors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#augmentor">Augmentor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#augmentorcompose">AugmentorCompose</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#augmentorkeys">AugmentorKeys</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#collate-functions">Collate Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#filteringcollatefn">FilteringCollateFn</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.dataset">Dataset</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#pytorch-extensions">PyTorch Extensions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#datasetfromsampler">DatasetFromSampler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#listdataset">ListDataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#mergedataset">MergeDataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#numpydataset">NumpyDataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#pathsdataset">PathsDataset</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#metric-learning-datasets">Metric Learning Datasets</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#metriclearningtraindataset">MetricLearningTrainDataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#querygallerydataset">QueryGalleryDataset</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#in-batch-samplers">In-batch Samplers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#iinbatchtripletsampler">IInbatchTripletSampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#inbatchtripletssampler">InBatchTripletsSampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#alltripletssampler">AllTripletsSampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#hardtripletssampler">HardTripletsSampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#hardclustersampler">HardClusterSampler</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#loader">Loader</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#batchlimitloaderwrapper">BatchLimitLoaderWrapper</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#readers">Readers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#readerspec">ReaderSpec</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#scalarreader">ScalarReader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#lambdareader">LambdaReader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#readercompose">ReaderCompose</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#samplers">Samplers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#balancebatchsampler">BalanceBatchSampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#balanceclasssampler">BalanceClassSampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#distributedsamplerwrapper">DistributedSamplerWrapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#dynamiclenbatchsampler">DynamicLenBatchSampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#miniepochsampler">MiniEpochSampler</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#computer-vision-extensions">Computer Vision Extensions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#id1">Dataset</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#imagefolderdataset">ImageFolderDataset</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#mixins">Mixins</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#blurmixin">BlurMixin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#flaremixin">FlareMixin</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#rotatemixin">RotateMixin</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#id2">Readers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#imagereader">ImageReader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#maskreader">MaskReader</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#transforms">Transforms</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#tensortoimage">TensorToImage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#imagetotensor">ImageToTensor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#compose">Compose</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#normalize">Normalize</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#totensor">ToTensor</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.nlp">Natural Language Processing Extensions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#datasets">Datasets</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#languagemodelingdataset">LanguageModelingDataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#textclassificationdataset">TextClassificationDataset</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/utils.html">Tools and Utilities</a><ul>
@@ -606,24 +693,9 @@ please first open an issue and discuss the feature with us.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contrib</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.data">Data</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.data.transforms">Transforms</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#computer-vision">Computer Vision</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.data.cv.mixins.blur">Mixins</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#id2">Transforms</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.data.cv.dataset">Dataset</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.data.cv.reader">Reader</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#natural-language-processing">Natural Language Processing</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#id3">Dataset</a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.datasets">Datasets</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.datasets.mnist">MNIST</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#id5">Computer Vision</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#computer-vision">Computer Vision</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.datasets.cv.fastai">ImageClassificationDataset</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.datasets.cv.imagenette">Imagenette</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.datasets.cv.imagewoof">Imagewoof</a></li>
@@ -638,12 +710,11 @@ please first open an issue and discuss the feature with us.</p>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.cutmix_callback">CutmixCallback</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.gradnorm_logger">GradNormLogger</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.knn_metric">KNNMetricCallback</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.kornia_transform">BatchTransformCallback</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.mask_inference">InferMaskCallback</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.neptune_logger">NeptuneLogger</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.periodic_loader_callback">PeriodicLoaderCallback</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.perplexity_metric">PerplexityMetricCallback</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.telegram_logger">TelegramLogger</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.tracer_callback">TracerCallback</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.visdom_logger">VisdomLogger</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.dl.callbacks.wandb_logger">WandbLogger</a></li>
 </ul>
@@ -689,7 +760,7 @@ please first open an issue and discuss the feature with us.</p>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#id21">Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#id17">Models</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/contrib.html#segmentation">Segmentation</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.models.cv.segmentation.unet">Unet</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.models.cv.segmentation.linknet">Linknet</a></li>
@@ -708,7 +779,7 @@ please first open an issue and discuss the feature with us.</p>
 <li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.argparse">Argparse</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.compression">Compression</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.confusion_matrix">Confusion Matrix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#id22">Dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.dataset">Dataset</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.misc">Misc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.pandas">Pandas</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.utils.parallel">Parallel</a></li>

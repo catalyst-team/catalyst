@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.data.cv.mixins.blur &mdash; Catalyst 20.08 documentation</title>
+  <title>catalyst.data.dataset.metric_learning &mdash; Catalyst 20.08 documentation</title>
   
 
   
@@ -25,25 +25,25 @@
 
   
 
-  <link rel="stylesheet" href="../../../../../../_static/css/theme.css" type="text/css" />
-  <!-- <link rel="stylesheet" href="../../../../../../_static/pygments.css" type="text/css" /> -->
-    <link rel="index" title="Index" href="../../../../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../../../../search.html" /> 
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" /> -->
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../../../_static/js/googleanalytics.min.js"></script>
+  <script src="../../../../_static/js/googleanalytics.min.js"></script>
   
-  <script src="../../../../../../_static/js/modernizr.min.js"></script>
+  <script src="../../../../_static/js/modernizr.min.js"></script>
 
   <!-- Preload the theme fonts -->
 
-<link rel="preload" href="../../../../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../../../../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../../../../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../../../../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../../../../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../../../../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
 
 <!-- Preload the katex fonts -->
 
@@ -159,7 +159,7 @@
 
 
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search Docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -177,19 +177,19 @@
             
               <p class="caption"><span class="caption-text">Overview</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../index.html">Catalyst</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../info/examples.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../info/distributed.html">Distributed training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../info/contributing.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../info/examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../info/distributed.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../info/contributing.html">Contribution</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../api/dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../api/registry.html">Registry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../api/data.html">Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../api/utils.html">Tools and Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/dl.html">DL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/registry.html">Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Tools and Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/contrib.html">Contrib</a></li>
 </ul>
 
             
@@ -222,7 +222,7 @@
   <ul class="catalyst-breadcrumbs">
     
       <li>
-        <a href="../../../../../../index.html">
+        <a href="../../../../index.html">
           
             Docs
           
@@ -230,9 +230,9 @@
       </li>
 
         
-          <li><a href="../../../../../index.html">Module code</a> &gt;</li>
+          <li><a href="../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.contrib.data.cv.mixins.blur</li>
+      <li>catalyst.data.dataset.metric_learning</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -258,65 +258,85 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.contrib.data.cv.mixins.blur</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
-<span class="kn">import</span> <span class="nn">random</span>
+  <h1>Source code for catalyst.data.dataset.metric_learning</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span>
 
-<span class="kn">import</span> <span class="nn">albumentations</span> <span class="k">as</span> <span class="nn">albu</span>
 
+<div class="viewcode-block" id="MetricLearningTrainDataset"><a class="viewcode-back" href="../../../../api/data.html#catalyst.data.dataset.metric_learning.MetricLearningTrainDataset">[docs]</a><span class="k">class</span> <span class="nc">MetricLearningTrainDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for datasets adapted for</span>
+<span class="sd">    metric learning train stage.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="BlurMixin"><a class="viewcode-back" href="../../../../../../api/contrib.html#catalyst.contrib.data.cv.mixins.blur.BlurMixin">[docs]</a><span class="k">class</span> <span class="nc">BlurMixin</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Calculates blur factor for augmented image.&quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="BlurMixin.__init__"><a class="viewcode-back" href="../../../../../../api/contrib.html#catalyst.contrib.data.cv.mixins.blur.BlurMixin.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span>
-        <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;blur_factor&quot;</span><span class="p">,</span>
-        <span class="n">blur_min</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
-        <span class="n">blur_max</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span>
-        <span class="n">blur</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
+<div class="viewcode-block" id="MetricLearningTrainDataset.get_labels"><a class="viewcode-back" href="../../../../api/data.html#catalyst.data.dataset.metric_learning.MetricLearningTrainDataset.get_labels">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Args:</span>
-<span class="sd">            input_key (str): input key to use from annotation dict</span>
-<span class="sd">            output_key (str): output key to use to store the result</span>
+<span class="sd">        Dataset for metric learning must provide</span>
+<span class="sd">        label of each sample for forming positive</span>
+<span class="sd">        and negative pairs during the training</span>
+<span class="sd">        based on these labels.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: You should implement it  # noqa: DAR402</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span> <span class="o">=</span> <span class="n">input_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span> <span class="o">=</span> <span class="n">output_key</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">blur_min</span> <span class="o">=</span> <span class="n">blur_min</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">blur_max</span> <span class="o">=</span> <span class="n">blur_max</span>
-        <span class="n">blur</span> <span class="o">=</span> <span class="n">blur</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">&quot;Blur&quot;</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">blur</span> <span class="o">=</span> <span class="p">[</span><span class="n">albu</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">x</span><span class="p">]()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">blur</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_blur</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blur</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_blur_classes</span> <span class="o">=</span> <span class="n">blur_max</span> <span class="o">-</span> <span class="n">blur_min</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">blur_probability</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">num_blur_classes</span> <span class="o">-</span> <span class="mi">1</span>
-        <span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_blur_classes</span></div>
-
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
-        <span class="n">image</span> <span class="o">=</span> <span class="n">dictionary</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">]</span>
-        <span class="n">blur_factor</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">blur_probability</span><span class="p">:</span>
-            <span class="n">blur_fn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blur</span><span class="p">)</span>
-            <span class="n">blur_factor</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blur_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">blur_max</span><span class="p">)</span>
-                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">blur_min</span>
-                <span class="o">+</span> <span class="mi">1</span>
-            <span class="p">)</span>
-            <span class="n">image</span> <span class="o">=</span> <span class="n">blur_fn</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">ksize</span><span class="o">=</span><span class="n">blur_factor</span><span class="p">)</span>
-
-        <span class="n">dictionary</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">image</span>
-        <span class="n">dictionary</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">blur_factor</span>
-
-        <span class="k">return</span> <span class="n">dictionary</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;BlurMixin&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="QueryGalleryDataset"><a class="viewcode-back" href="../../../../api/data.html#catalyst.data.dataset.metric_learning.QueryGalleryDataset">[docs]</a><span class="k">class</span> <span class="nc">QueryGalleryDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    QueryGallleryDataset for CMCScoreCallback</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="QueryGalleryDataset.__getitem__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.data.dataset.metric_learning.QueryGalleryDataset.__getitem__">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Dataset for query/gallery split should</span>
+<span class="sd">        return dict with `feature`, `targets` and</span>
+<span class="sd">        `is_query` key. Value by key `is_query` should</span>
+<span class="sd">        be boolean and indicate whether current object</span>
+<span class="sd">        is in query or in gallery.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: You should implement it  # noqa: DAR402</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">query_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Query/Gallery dataset should have property</span>
+<span class="sd">        query size.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            query size  # noqa: DAR202</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: You should implement it  # noqa: DAR402</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">gallery_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Query/Gallery dataset should have property</span>
+<span class="sd">        gallery size.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            gallery size  # noqa: DAR202</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: You should implement it  # noqa: DAR402</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MetricLearningTrainDataset&quot;</span><span class="p">,</span> <span class="s2">&quot;QueryGalleryDataset&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>
@@ -360,19 +380,19 @@
   
 
      
-       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../../" src="../../../../../../_static/documentation_options.js"></script>
-         <script type="text/javascript" src="../../../../../../_static/jquery.js"></script>
-         <script type="text/javascript" src="../../../../../../_static/underscore.js"></script>
-         <script type="text/javascript" src="../../../../../../_static/doctools.js"></script>
-         <script type="text/javascript" src="../../../../../../_static/language_data.js"></script>
+       <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+         <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+         <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+         <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+         <script type="text/javascript" src="../../../../_static/language_data.js"></script>
          <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
      
 
   
 
-  <script type="text/javascript" src="../../../../../../_static/js/vendor/popper.min.js"></script>
-  <script type="text/javascript" src="../../../../../../_static/js/vendor/bootstrap.min.js"></script>
-  <script type="text/javascript" src="../../../../../../_static/js/theme.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {
@@ -460,7 +480,7 @@
 
   <!-- End Mobile Menu -->
 
-  <script type="text/javascript" src="../../../../../../_static/js/vendor/anchor.min.js"></script>
+  <script type="text/javascript" src="../../../../_static/js/vendor/anchor.min.js"></script>
 
   <script type="text/javascript">
     $(document).ready(function() {

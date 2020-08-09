@@ -287,17 +287,21 @@
 <li><p><a class="reference internal" href="#module-catalyst.core.callbacks.exception" id="id15">Exception</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.core.callbacks.logging" id="id16">Logging</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.core.callbacks.metrics" id="id17">Metrics</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.optimizer" id="id18">Optimizer</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.scheduler" id="id19">Scheduler</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.timer" id="id20">Timer</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.validation" id="id21">Validation</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.optimizer" id="id18">Optimizer</a></p>
+<ul>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.periodic_loader" id="id19">PeriodicLoaderCallback</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#module-catalyst.core.registry" id="id22">Registry</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.core.utils" id="id23">Utils</a></p></li>
-<li><p><a class="reference internal" href="#legacy" id="id24">Legacy</a></p>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.scheduler" id="id20">Scheduler</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.timer" id="id21">Timer</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.callbacks.validation" id="id22">Validation</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#module-catalyst.core.registry" id="id23">Registry</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.core.utils" id="id24">Utils</a></p></li>
+<li><p><a class="reference internal" href="#legacy" id="id25">Legacy</a></p>
 <ul>
-<li><p><a class="reference internal" href="#id4" id="id25">Runner</a></p></li>
+<li><p><a class="reference internal" href="#id4" id="id26">Runner</a></p></li>
 </ul>
 </li>
 </ul>
@@ -1839,7 +1843,7 @@ datasources per stage.</p>
 <dt id="catalyst.core.runner.RunnerException">
 <em class="property">exception </em><code class="sig-prename descclassname">catalyst.core.runner.</code><code class="sig-name descname">RunnerException</code><span class="sig-paren">(</span><em class="sig-param">message: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#RunnerException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.RunnerException" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Exception clas for all runner errors.</p>
+<p>Exception class for all runner errors.</p>
 <dl class="method">
 <dt id="catalyst.core.runner.RunnerException.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">message: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#RunnerException.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.RunnerException.__init__" title="Permalink to this definition">¶</a></dt>
@@ -3603,9 +3607,108 @@ for each param group</p></li>
 
 </dd></dl>
 
+<div class="section" id="module-catalyst.core.callbacks.periodic_loader">
+<span id="periodicloadercallback"></span><h4><a class="toc-backref" href="#id19">PeriodicLoaderCallback</a><a class="headerlink" href="#module-catalyst.core.callbacks.periodic_loader" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="catalyst.core.callbacks.periodic_loader.PeriodicLoaderCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.periodic_loader.</code><code class="sig-name descname">PeriodicLoaderCallback</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/periodic_loader.html#PeriodicLoaderCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.periodic_loader.PeriodicLoaderCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
+<p>Callback for runing loaders with specified period.
+To disable loader use <code class="docutils literal notranslate"><span class="pre">0</span></code> as period (if specified
+<code class="docutils literal notranslate"><span class="pre">0</span></code> for validation loader then will be raised an
+error).</p>
+<p>For example, if you have <code class="docutils literal notranslate"><span class="pre">train</span></code>, <code class="docutils literal notranslate"><span class="pre">train_additional</span></code>,
+<code class="docutils literal notranslate"><span class="pre">valid</span></code> and <code class="docutils literal notranslate"><span class="pre">valid_additional</span></code> loaders and wan’t to
+use <code class="docutils literal notranslate"><span class="pre">train_additional</span></code> every 2 epochs, <code class="docutils literal notranslate"><span class="pre">valid</span></code> - every
+3 epochs and <code class="docutils literal notranslate"><span class="pre">valid_additional</span></code> - every 5 epochs:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SupervisedRunner</span><span class="p">,</span> <span class="n">PeriodicLoaderRunnerCallback</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="o">...</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span>
+        <span class="s2">&quot;train_additional&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span>
+        <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span>
+        <span class="s2">&quot;valid_additional&quot;</span><span class="p">:</span><span class="o">...</span>
+    <span class="p">}</span>
+    <span class="o">...</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
+        <span class="o">...</span>
+        <span class="n">PeriodicLoaderRunnerCallback</span><span class="p">(</span>
+            <span class="n">train_additional</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">valid</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+            <span class="n">valid_additional</span><span class="o">=</span><span class="mi">5</span>
+        <span class="p">),</span>
+        <span class="o">...</span>
+    <span class="p">]</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="catalyst.core.callbacks.periodic_loader.PeriodicLoaderCallback.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/periodic_loader.html#PeriodicLoaderCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.periodic_loader.PeriodicLoaderCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> – loader names and their run periods.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callbacks.periodic_loader.PeriodicLoaderCallback.on_epoch_end">
+<code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/periodic_loader.html#PeriodicLoaderCallback.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.periodic_loader.PeriodicLoaderCallback.on_epoch_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if validation metric should be
+dropped for current epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callbacks.periodic_loader.PeriodicLoaderCallback.on_epoch_start">
+<code class="sig-name descname">on_epoch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/periodic_loader.html#PeriodicLoaderCallback.on_epoch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.periodic_loader.PeriodicLoaderCallback.on_epoch_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set loaders for current epoch.
+If validation is not required then the first loader
+from loaders used in current epoch will be used
+as validation loader.
+Metrics from the latest epoch with true
+validation loader will be used
+in the epochs where this loader is missing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if there are no loaders in epoch</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callbacks.periodic_loader.PeriodicLoaderCallback.on_stage_start">
+<code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/periodic_loader.html#PeriodicLoaderCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.periodic_loader.PeriodicLoaderCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Collect information about loaders.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if there are no loaders in epoch</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 <div class="section" id="module-catalyst.core.callbacks.scheduler">
-<span id="scheduler"></span><h3><a class="toc-backref" href="#id19">Scheduler</a><a class="headerlink" href="#module-catalyst.core.callbacks.scheduler" title="Permalink to this headline">¶</a></h3>
+<span id="scheduler"></span><h3><a class="toc-backref" href="#id20">Scheduler</a><a class="headerlink" href="#module-catalyst.core.callbacks.scheduler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.core.callbacks.scheduler.SchedulerCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.scheduler.</code><code class="sig-name descname">SchedulerCallback</code><span class="sig-paren">(</span><em class="sig-param">scheduler_key: str = None</em>, <em class="sig-param">mode: str = None</em>, <em class="sig-param">reduced_metric: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/scheduler.html#SchedulerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.scheduler.SchedulerCallback" title="Permalink to this definition">¶</a></dt>
@@ -3836,7 +3939,7 @@ for learning rate scheduling</p>
 
 </div>
 <div class="section" id="module-catalyst.core.callbacks.timer">
-<span id="timer"></span><h3><a class="toc-backref" href="#id20">Timer</a><a class="headerlink" href="#module-catalyst.core.callbacks.timer" title="Permalink to this headline">¶</a></h3>
+<span id="timer"></span><h3><a class="toc-backref" href="#id21">Timer</a><a class="headerlink" href="#module-catalyst.core.callbacks.timer" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.core.callbacks.timer.TimerCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.timer.</code><code class="sig-name descname">TimerCallback</code><a class="reference internal" href="../_modules/catalyst/core/callbacks/timer.html#TimerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.timer.TimerCallback" title="Permalink to this definition">¶</a></dt>
@@ -3896,7 +3999,7 @@ for learning rate scheduling</p>
 
 </div>
 <div class="section" id="module-catalyst.core.callbacks.validation">
-<span id="validation"></span><h3><a class="toc-backref" href="#id21">Validation</a><a class="headerlink" href="#module-catalyst.core.callbacks.validation" title="Permalink to this headline">¶</a></h3>
+<span id="validation"></span><h3><a class="toc-backref" href="#id22">Validation</a><a class="headerlink" href="#module-catalyst.core.callbacks.validation" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.core.callbacks.validation.ValidationManagerCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.validation.</code><code class="sig-name descname">ValidationManagerCallback</code><a class="reference internal" href="../_modules/catalyst/core/callbacks/validation.html#ValidationManagerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.validation.ValidationManagerCallback" title="Permalink to this definition">¶</a></dt>
@@ -3935,10 +4038,10 @@ for learning rate scheduling</p>
 </div>
 </div>
 <div class="section" id="module-catalyst.core.registry">
-<span id="registry"></span><h2><a class="toc-backref" href="#id22">Registry</a><a class="headerlink" href="#module-catalyst.core.registry" title="Permalink to this headline">¶</a></h2>
+<span id="registry"></span><h2><a class="toc-backref" href="#id23">Registry</a><a class="headerlink" href="#module-catalyst.core.registry" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-catalyst.core.utils">
-<span id="utils"></span><h2><a class="toc-backref" href="#id23">Utils</a><a class="headerlink" href="#module-catalyst.core.utils" title="Permalink to this headline">¶</a></h2>
+<span id="utils"></span><h2><a class="toc-backref" href="#id24">Utils</a><a class="headerlink" href="#module-catalyst.core.utils" title="Permalink to this headline">¶</a></h2>
 <span class="target" id="module-catalyst.core.utils.callbacks"></span><dl class="function">
 <dt id="catalyst.core.utils.callbacks.sort_callbacks_by_order">
 <code class="sig-prename descclassname">catalyst.core.utils.callbacks.</code><code class="sig-name descname">sort_callbacks_by_order</code><span class="sig-paren">(</span><em class="sig-param">callbacks: Union[List, Dict]</em><span class="sig-paren">)</span> &#x2192; collections.OrderedDict<a class="reference internal" href="../_modules/catalyst/core/utils/callbacks.html#sort_callbacks_by_order"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.utils.callbacks.sort_callbacks_by_order" title="Permalink to this definition">¶</a></dt>
@@ -3978,9 +4081,9 @@ and master-only callbacks from <code class="docutils literal notranslate"><span 
 
 </div>
 <div class="section" id="legacy">
-<h2><a class="toc-backref" href="#id24">Legacy</a><a class="headerlink" href="#legacy" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id25">Legacy</a><a class="headerlink" href="#legacy" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="id4">
-<h3><a class="toc-backref" href="#id25">Runner</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id26">Runner</a><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.core.legacy.IRunnerLegacy">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.legacy.</code><code class="sig-name descname">IRunnerLegacy</code><a class="reference internal" href="../_modules/catalyst/core/legacy.html#IRunnerLegacy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.legacy.IRunnerLegacy" title="Permalink to this definition">¶</a></dt>
@@ -4106,7 +4209,10 @@ Please use <cite>runner</cite> instead.</p>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.exception">Exception</a></li>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.logging">Logging</a></li>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.metrics">Metrics</a></li>
-<li><a class="reference internal" href="#module-catalyst.core.callbacks.optimizer">Optimizer</a></li>
+<li><a class="reference internal" href="#module-catalyst.core.callbacks.optimizer">Optimizer</a><ul>
+<li><a class="reference internal" href="#module-catalyst.core.callbacks.periodic_loader">PeriodicLoaderCallback</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.scheduler">Scheduler</a></li>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.timer">Timer</a></li>
 <li><a class="reference internal" href="#module-catalyst.core.callbacks.validation">Validation</a></li>

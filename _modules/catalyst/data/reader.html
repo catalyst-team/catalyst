@@ -435,28 +435,12 @@
         <span class="k">return</span> <span class="n">result</span></div></div>
 
 
-<span class="k">try</span><span class="p">:</span>
-    <span class="c1"># @TODO: remove hotfix</span>
-    <span class="kn">from</span> <span class="nn">catalyst.contrib.data.cv.reader</span> <span class="kn">import</span> <span class="p">(</span>  <span class="c1"># noqa: F401</span>
-        <span class="n">ImageReader</span><span class="p">,</span>
-        <span class="n">MaskReader</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">&quot;ReaderSpec&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;ScalarReader&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;LambdaReader&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;ReaderCompose&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;ImageReader&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;MaskReader&quot;</span><span class="p">,</span>
-    <span class="p">]</span>
-<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s2">&quot;ReaderSpec&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;ScalarReader&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;LambdaReader&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;ReaderCompose&quot;</span><span class="p">,</span>
-    <span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;ReaderSpec&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ScalarReader&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;LambdaReader&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ReaderCompose&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 </pre></div>
 
              </article>
