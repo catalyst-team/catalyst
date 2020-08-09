@@ -789,4 +789,30 @@ assert metrics['last']['cmc01'] > 0.1  # slightly better then random
 assert metrics['last']['cmc05'] > 0.5
 """
 
+################################  pipeline 22  ################################
+# test autoresume
+
+LOG_MSG='pipeline 22'
+echo ${LOG_MSG}
+
+INTERRUPT_EPOCH=4 \
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config21.yml \
+  --logdir=${LOGDIR} || true
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config21.yml \
+  --logdir=${LOGDIR} \
+  --autoresume last > ${EXP_OUTPUT}
+
+cat ${EXP_OUTPUT}
+check_line_counts ${EXP_OUTPUT} "loaded state .*/last_full.pth (global epoch 3, epoch 3, stage stage1)" 1
+
+rm -rf ./tests/logs/_tests_dl_callbacks ${EXP_OUTPUT}
+
+
 rm -rf {LOGDIR}
