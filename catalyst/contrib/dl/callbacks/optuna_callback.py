@@ -37,7 +37,8 @@ class OptunaCallback(Callback):
 
     def __init__(self, trial: optuna.Trial):
         """
-        This callback can be used for early stopping (pruning) unpromising runs.
+        This callback can be used for early stopping (pruning)
+        unpromising runs.
 
         Args:
              trial: Optuna.Trial for experiment.
