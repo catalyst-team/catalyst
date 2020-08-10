@@ -1,9 +1,15 @@
 # flake8: noqa
-# @TODO: code formatting issue for 20.07 release
+from typing import List, TYPE_CHECKING, Union
+
 import torch
-from torch import nn
+from torch import nn, Tensor
+from torch.nn import TripletMarginLoss
 
 from catalyst.contrib.nn.criterion.functional import triplet_loss
+from catalyst.data.utils import convert_labels2list
+
+if TYPE_CHECKING:
+    from catalyst.data.sampler_inbatch import IInbatchTripletSampler
 
 TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
 
@@ -257,4 +263,54 @@ class TripletPairwiseEmbeddingLoss(nn.Module):
         return loss
 
 
-__all__ = ["TripletLoss", "TripletPairwiseEmbeddingLoss"]
+class TripletMarginLossWithSampler(nn.Module):
+    """
+    This class combines in-batch sampling of triplets and
+    default TripletMargingLoss from PyTorch.
+    """
+
+    def __init__(
+        self, margin: float, sampler_inbatch: "IInbatchTripletSampler"
+    ):
+        """
+        Args:
+            margin: margin value
+            sampler_inbatch: sampler for forming triplets inside the batch
+        """
+        super().__init__()
+        self._sampler_inbatch = sampler_inbatch
+        self._triplet_margin_loss = TripletMarginLoss(margin=margin)
+
+    def forward(
+        self, features: Tensor, labels: Union[Tensor, List[int]]
+    ) -> Tensor:
+        """
+        Args:
+            features: features with the shape of [batch_size, features_dim]
+            labels: labels of samples having batch_size elements
+
+        Returns: loss value
+
+        """
+        labels_list = convert_labels2list(labels)
+
+        (
+            features_anchor,
+            features_positive,
+            features_negative,
+        ) = self._sampler_inbatch.sample(features=features, labels=labels_list)
+
+        loss = self._triplet_margin_loss(
+            anchor=features_anchor,
+            positive=features_positive,
+            negative=features_negative,
+        )
+        return loss
+
+
+__all__ = [
+    "TripletLoss",
+    "TripletLossV2",
+    "TripletPairwiseEmbeddingLoss",
+    "TripletMarginLossWithSampler",
+]

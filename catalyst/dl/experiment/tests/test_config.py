@@ -58,9 +58,9 @@ class SomeScheduler(torch.nn.Module):
         super().__init__()
 
 
-registry.MODELS.add(SomeModel)
-registry.OPTIMIZERS.add(SomeOptimizer)
-registry.SCHEDULERS.add(SomeScheduler)
+registry.MODEL.add(SomeModel)
+registry.OPTIMIZER.add(SomeOptimizer)
+registry.SCHEDULER.add(SomeScheduler)
 
 
 def _test_callbacks(test_callbacks, exp, stage="train"):

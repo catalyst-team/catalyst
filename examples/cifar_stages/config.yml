@@ -31,7 +31,7 @@ stages:
     transform: albumentations.Compose
     transforms:
       - transform: albumentations.Normalize
-      - transform: catalyst.ToTensor
+      - transform: catalyst.ImageToTensor
 
   stage_params:
     num_epochs: 3

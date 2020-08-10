@@ -2,7 +2,8 @@
 # pylint: disable=unused-import
 
 from catalyst.contrib.models.nlp import BertClassifier
-from catalyst.dl import registry, SupervisedRunner as Runner
+from catalyst import registry
+from catalyst.dl import SupervisedRunner as Runner
 
 from .experiment import Experiment
 

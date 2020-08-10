@@ -1,9 +1,22 @@
 # flake8: noqa
 from torch.nn.modules import *
 
-from .common import Flatten, GaussianNoise, Lambda, Normalize
-from .lama import LamaPooling, TemporalAttentionPooling, TemporalConcatPooling
-from .pooling import (
+from catalyst.contrib.nn.modules.common import (
+    Flatten,
+    GaussianNoise,
+    Lambda,
+    Normalize,
+)
+from catalyst.contrib.nn.modules.lama import (
+    LamaPooling,
+    TemporalLastPooling,
+    TemporalAvgPooling,
+    TemporalMaxPooling,
+    TemporalDropLastWrapper,
+    TemporalAttentionPooling,
+    TemporalConcatPooling,
+)
+from catalyst.contrib.nn.modules.pooling import (
     GlobalAttnPool2d,
     GlobalAvgAttnPool2d,
     GlobalAvgPool2d,
@@ -12,8 +25,8 @@ from .pooling import (
     GlobalMaxAttnPool2d,
     GlobalMaxPool2d,
 )
-from .rms_norm import RMSNorm
-from .se import (
+from catalyst.contrib.nn.modules.rms_norm import RMSNorm
+from catalyst.contrib.nn.modules.se import (
     sSE,
     scSE,
     cSE,

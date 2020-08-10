@@ -60,3 +60,6 @@ class mAPMeter(meter.Meter):  # noqa: N801
             torch.Tensor: mAP scalar tensor
         """
         return self.apmeter.value().mean()
+
+
+__all__ = ["mAPMeter"]

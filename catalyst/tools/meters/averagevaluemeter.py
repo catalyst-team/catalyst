@@ -79,3 +79,6 @@ class AverageValueMeter(meter.Meter):
         self.m_s = 0.0
         self.std = np.nan
         self.n_samples = 0
+
+
+__all__ = ["AverageValueMeter"]

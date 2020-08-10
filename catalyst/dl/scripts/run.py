@@ -8,7 +8,7 @@ import os
 from pathlib import Path
 
 from catalyst.dl import utils
-from catalyst.dl.registry import EXPERIMENTS
+from catalyst.registry import EXPERIMENTS
 from catalyst.utils import distributed_cmd_run, get_rank
 
 

@@ -9,7 +9,7 @@ args:
 stages:
   trian:
     stage_params:
-      main_metric: cmc_1
+      main_metric: cmc01
       valid_loader: valid_query_gallery
       minimize_metric: false
 
