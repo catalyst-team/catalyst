@@ -88,3 +88,11 @@ except ImportError as ex:
             "run `pip install wandb`."
         )
         raise ex
+
+try:
+    import optuna
+    from .optuna_callback import OptunaCallback
+except ImportError as ex:
+    logger.warning(
+        "optuna not available, to install optuna, " "run `pip install optuna`."
+    )
