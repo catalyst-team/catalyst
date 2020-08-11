@@ -52,8 +52,7 @@ class OptunaCallback(Callback):
 
         Considering prune or not to prune current run at current epoch.
         """
-        main_metric = runner.main_metric
-        metric_value = runner.valid_metrics[main_metric]
+        metric_value = runner.valid_metrics[runner.main_metric]
         self.trial.report(metric_value, step=runner.epoch)
         if self.trial.should_prune():
             message = "Trial was pruned at epoch {}.".format(runner.epoch)
