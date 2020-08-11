@@ -8,6 +8,7 @@ class OptunaCallback(Callback):
     Optuna callback for pruning unpromising runs
 
     .. code-block:: python
+
         import optuna
 
         from catalyst.dl import SupervisedRunner
@@ -33,6 +34,8 @@ class OptunaCallback(Callback):
 
         study = optuna.create_study()
         study.optimize(objective, n_trials=100, timeout=600)
+
+    Config API is not supported.
     """
 
     def __init__(self, trial: optuna.Trial):
@@ -53,7 +56,7 @@ class OptunaCallback(Callback):
         Considering prune or not to prune current run at current epoch.
 
         Raises:
-            optuna.TrialPruned: if current run should be pruned
+            TrialPruned: if current run should be pruned
 
         Args:
             runner: runner for current experiment

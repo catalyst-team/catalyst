@@ -1,4 +1,4 @@
-# noqa: flake8
+# flake8: noqa
 import optuna
 
 import torch
