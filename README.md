@@ -598,6 +598,62 @@ runner.train(
 </details>
 
 <details>
+<summary>[CV - MNIST with Metric Learning](https://colab.research.google.com/drive/1xcob6Y2W0O1JiN-juoF1YfJMJsScCVhV?usp=sharing)</summary>
+<p>
+
+```python
+from torch.optim import Adam
+from torch.utils.data import DataLoader
+
+from catalyst import data, dl, utils
+from catalyst.contrib import datasets, models, nn
+import catalyst.data.cv.transforms.torch as t
+
+
+# 1. train and valid datasets
+dataset_root = "."
+transforms = t.Compose([t.ToTensor(), t.Normalize((0.1307,), (0.3081,))])
+
+dataset_train = datasets.MnistMLDataset(root=dataset_root, train=True, download=True, transform=transforms)
+sampler = data.BalanceBatchSampler(labels=dataset_train.get_labels(), p=10, k=10)
+train_loader = DataLoader(dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size)
+
+dataset_val = datasets.MnistQGDataset(root=dataset_root, transform=transforms, gallery_fraq=0.2)
+val_loader = DataLoader(dataset=dataset_val, batch_size=1024)
+
+# 2. model and optimizer
+model = models.SimpleConv(features_dim=16)
+optimizer = Adam(model.parameters(), lr=0.001)
+
+# 3. criterion with triplets sampling
+sampler_inbatch = data.HardTripletsSampler(norm_required=False)
+criterion = nn.TripletMarginLossWithSampling(margin=0.5, sampler_inbatch=sampler_inbatch)
+
+# 4. training with catalyst Runner
+callbacks = [
+    dl.ControlFlowCallback(dl.CriterionCallback(), loaders="train"),
+    dl.ControlFlowCallback(dl.CMCScoreCallback(topk_args=[1]), loaders="valid"),
+    dl.PeriodicLoaderCallback(valid=100),
+]
+
+runner = dl.SupervisedRunner(device=utils.get_device())
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    callbacks=callbacks,
+    loaders={"train": train_loader, "valid": val_loader},
+    minimize_metric=False,
+    verbose=True,
+    valid_loader="valid",
+    num_epochs=200,
+    main_metric="cmc01",
+)   
+```
+</p>
+</details>
+
+<details>
 <summary>GAN - MNIST, flatten version</summary>
 <p>
 
@@ -709,7 +765,93 @@ runner.train(
 </details>
 
 <details>
-<summary>ML - Linear Regression is my profession (distributed version)</summary>
+<summary>[ML - multi-class classification (fp16 training version)](https://colab.research.google.com/drive/1q8BPg1XpQn2J5vWV9OYKSBo-k9wA2jYS?usp=sharing)</summary>
+<p>
+
+```python
+# pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" git+https://github.com/NVIDIA/apex
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst import dl
+
+# sample data
+num_samples, num_features, num_classes = int(1e4), int(1e1), 4
+X = torch.rand(num_samples, num_features)
+y = (torch.rand(num_samples, ) * num_classes).to(torch.int64)
+
+# pytorch loaders
+dataset = TensorDataset(X, y)
+loader = DataLoader(dataset, batch_size=32, num_workers=1)
+loaders = {"train": loader, "valid": loader}
+
+# model, criterion, optimizer, scheduler
+model = torch.nn.Linear(num_features, num_classes)
+criterion = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters())
+scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
+
+# model training
+runner = dl.SupervisedRunner()
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    scheduler=scheduler,
+    loaders=loaders,
+    logdir="./logdir",
+    num_epochs=3,
+    callbacks=[dl.AccuracyCallback(num_classes=num_classes)],
+    fp16=True,
+)
+```
+</p>
+</details>
+
+<details>
+<summary>[ML - multi-class classification (advanced fp16 training version)](https://colab.research.google.com/drive/1q8BPg1XpQn2J5vWV9OYKSBo-k9wA2jYS?usp=sharing)</summary>
+<p>
+
+```python
+# pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" git+https://github.com/NVIDIA/apex
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst import dl
+
+# sample data
+num_samples, num_features, num_classes = int(1e4), int(1e1), 4
+X = torch.rand(num_samples, num_features)
+y = (torch.rand(num_samples, ) * num_classes).to(torch.int64)
+
+# pytorch loaders
+dataset = TensorDataset(X, y)
+loader = DataLoader(dataset, batch_size=32, num_workers=1)
+loaders = {"train": loader, "valid": loader}
+
+# model, criterion, optimizer, scheduler
+model = torch.nn.Linear(num_features, num_classes)
+criterion = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters())
+scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
+
+# model training
+runner = dl.SupervisedRunner()
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    scheduler=scheduler,
+    loaders=loaders,
+    logdir="./logdir",
+    num_epochs=3,
+    callbacks=[dl.AccuracyCallback(num_classes=num_classes)],
+    fp16=dict(opt_level="O1"),
+)
+```
+</p>
+</details>
+
+<details>
+<summary>ML - Linear Regression is my profession (distributed training version)</summary>
 <p>
 
 ```python
@@ -756,7 +898,7 @@ utils.distributed_cmd_run(train)
 </details>
 
 <details>
-<summary>CV - classification with AutoEncoder (distributed version)</summary>
+<summary>CV - classification with AutoEncoder (distributed training version)</summary>
 <p>
 
 ```python
@@ -836,61 +978,6 @@ utils.distributed_cmd_run(train)
 </p>
 </details>
 
-<details>
-<summary>CV - MNIST with Metric Learning</summary>
-<p>
-
-```python
-from torch.optim import Adam
-from torch.utils.data import DataLoader
-
-from catalyst import data, dl, utils
-from catalyst.contrib import datasets, models, nn
-import catalyst.data.cv.transforms.torch as t
-
-
-# 1. train and valid datasets
-dataset_root = "."
-transforms = t.Compose([t.ToTensor(), t.Normalize((0.1307,), (0.3081,))])
-
-dataset_train = datasets.MnistMLDataset(root=dataset_root, train=True, download=True, transform=transforms)
-sampler = data.BalanceBatchSampler(labels=dataset_train.get_labels(), p=10, k=10)
-train_loader = DataLoader(dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size)
-
-dataset_val = datasets.MnistQGDataset(root=dataset_root, transform=transforms, gallery_fraq=0.2)
-val_loader = DataLoader(dataset=dataset_val, batch_size=1024)
-
-# 2. model and optimizer
-model = models.SimpleConv(features_dim=16)
-optimizer = Adam(model.parameters(), lr=0.001)
-
-# 3. criterion with triplets sampling
-sampler_inbatch = data.HardTripletsSampler(norm_required=False)
-criterion = nn.TripletMarginLossWithSampling(margin=0.5, sampler_inbatch=sampler_inbatch)
-
-# 4. training with catalyst Runner
-callbacks = [
-    dl.ControlFlowCallback(dl.CriterionCallback(), loaders="train"),
-    dl.ControlFlowCallback(dl.CMCScoreCallback(topk_args=[1]), loaders="valid"),
-    dl.PeriodicLoaderCallback(valid=100),
-]
-
-runner = dl.SupervisedRunner(device=utils.get_device())
-runner.train(
-    model=model,
-    criterion=criterion,
-    optimizer=optimizer,
-    callbacks=callbacks,
-    loaders={"train": train_loader, "valid": val_loader},
-    minimize_metric=False,
-    verbose=True,
-    valid_loader="valid",
-    num_epochs=200,
-    main_metric="cmc01",
-)   
-```
-</p>
-</details>
 
 ### Features
 - Universal train/inference loop.
