@@ -5,11 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 
-## [20.08.1] - YYYY-MM-DD
+## [20.09] - YYYY-MM-DD
 
 ### Added
 
-- 
+- `force` and `bert-level` keywords to `catalyst-data text2embedding` ([#917](https://github.com/catalyst-team/catalyst/pull/917))
 
 ### Changed
 
@@ -22,6 +22,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - autoresume option for Config API ([#907](https://github.com/catalyst-team/catalyst/pull/907))
+- a few issues with TF projector ([#917](https://github.com/catalyst-team/catalyst/pull/917))
+
 
 
 ## [20.08] - 2020-08-09
