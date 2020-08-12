@@ -1,16 +1,20 @@
 # flake8: noqa
 # @TODO: code formatting issue for 20.07 release
+from typing import List
 import argparse
+import logging
 import os
 from os import path
 
-import cv2
 import numpy as np
 import pandas as pd
 
 import torch
 
 from catalyst.contrib.tools.tensorboard import SummaryWriter
+from catalyst.tools import settings
+
+logger = logging.getLogger(__name__)
 
 
 def build_args(parser):
@@ -78,11 +82,42 @@ def parse_args():
     return args
 
 
-def load_image(filename, size):
-    """@TODO: Docs. Contribution is welcome."""
-    image = cv2.imread(filename)[..., ::-1]
-    image = cv2.resize(image, (size, size), interpolation=cv2.INTER_NEAREST)
-    return image
+def _load_image_data(rootpath: str, paths: List):
+    img_data = None
+
+    try:
+        import cv2
+
+        def _load_image(filename, size):
+            image = cv2.imread(filename)[..., ::-1]
+            image = cv2.resize(
+                image, (size, size), interpolation=cv2.INTER_NEAREST
+            )
+            return image
+
+        image_names = [path.join(rootpath, name) for name in paths]
+        img_data = np.stack(
+            [_load_image(name, args.img_size) for name in image_names], axis=0
+        )
+        img_data = (
+            img_data.transpose((0, 3, 1, 2)) / 255.0  # noqa: WPS432
+        ).astype(np.float32)
+        img_data = torch.from_numpy(img_data)
+
+    except ImportError as ex:
+        if settings.cv_required:
+            logger.warning(
+                "some of catalyst-cv dependencies are not available,"
+                + " to install dependencies, run `pip install catalyst[cv]`."
+            )
+            raise ex
+        else:
+            logger.warning(
+                "opencv is not available"
+                + " to install opencv, run `pip install opencv-python`."
+            )
+
+    return img_data
 
 
 def main(args, _=None):
@@ -101,24 +136,16 @@ def main(args, _=None):
         df = df.sample(n=args.num_rows)
 
     if args.img_col is not None:
-        image_names = [
-            path.join(args.img_rootpath, name)
-            for name in df[args.img_col].values
-        ]
-        img_data = np.stack(
-            [load_image(name, args.img_size) for name in image_names], axis=0
+        img_data = _load_image_data(
+            rootpath=args.img_rootpath, paths=df[args.img_col].values
         )
-        img_data = (
-            img_data.transpose((0, 3, 1, 2)) / 255.0  # noqa: WPS432
-        ).astype(np.float32)
-        img_data = torch.from_numpy(img_data)
     else:
         img_data = None
 
     summary_writer = SummaryWriter(args.out_dir)
     summary_writer.add_embedding(
         features,
-        metadata=df[meta_header].astype(str).values,
+        metadata=df[meta_header].values.tolist(),
         label_img=img_data,
         metadata_header=meta_header,
     )
