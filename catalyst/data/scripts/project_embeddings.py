@@ -131,9 +131,12 @@ def main(args, _=None):
         raise ValueError("meta-cols must not be None")
 
     features = np.load(args.in_npy, mmap_mode="r")
+    assert len(df) == len(features)
 
     if args.num_rows is not None:
-        df = df.sample(n=args.num_rows)
+        indices = np.random.choice(len(df), args.num_rows)
+        features = features[indices, :]
+        df = df.iloc[indices]
 
     if args.img_col is not None:
         img_data = _load_image_data(
@@ -143,9 +146,22 @@ def main(args, _=None):
         img_data = None
 
     summary_writer = SummaryWriter(args.out_dir)
+    metadata = df[meta_header].values.tolist()
+    metadata = [
+        [
+            str(text)
+            .replace("\n", " ")
+            .replace(r"\s", " ")
+            .replace(r"\s\s+", " ")
+            .strip()
+            for text in texts
+        ]
+        for texts in metadata
+    ]
+    assert len(metadata) == len(features)
     summary_writer.add_embedding(
         features,
-        metadata=df[meta_header].values.tolist(),
+        metadata=metadata,
         label_img=img_data,
         metadata_header=meta_header,
     )
