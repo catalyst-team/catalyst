@@ -598,8 +598,10 @@ runner.train(
 </details>
 
 <details>
-<summary>[CV - MNIST with Metric Learning](https://colab.research.google.com/drive/1xcob6Y2W0O1JiN-juoF1YfJMJsScCVhV?usp=sharing)</summary>
+<summary>CV - MNIST with Metric Learning</summary>
 <p>
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1xcob6Y2W0O1JiN-juoF1YfJMJsScCVhV?usp=sharing)
 
 ```python
 from torch.optim import Adam
@@ -765,8 +767,10 @@ runner.train(
 </details>
 
 <details>
-<summary>[ML - multi-class classification (fp16 training version)](https://colab.research.google.com/drive/1q8BPg1XpQn2J5vWV9OYKSBo-k9wA2jYS?usp=sharing)</summary>
+<summary>ML - multi-class classification (fp16 training version)</summary>
 <p>
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1q8BPg1XpQn2J5vWV9OYKSBo-k9wA2jYS?usp=sharing)
 
 ```python
 # pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" git+https://github.com/NVIDIA/apex
@@ -808,8 +812,10 @@ runner.train(
 </details>
 
 <details>
-<summary>[ML - multi-class classification (advanced fp16 training version)](https://colab.research.google.com/drive/1q8BPg1XpQn2J5vWV9OYKSBo-k9wA2jYS?usp=sharing)</summary>
+<summary>ML - multi-class classification (advanced fp16 training version)</summary>
 <p>
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1q8BPg1XpQn2J5vWV9OYKSBo-k9wA2jYS?usp=sharing)
 
 ```python
 # pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" git+https://github.com/NVIDIA/apex
