@@ -1082,7 +1082,7 @@ best practices for your deep learning research.
 
 - [master](https://catalyst-team.github.io/catalyst/)
 - [20.08.2](https://catalyst-team.github.io/catalyst/v20.08.2/index.html)
-- [20.07](https://catalyst-team.github.io/catalyst/v20.07/index.html)
+- [20.07](https://catalyst-team.github.io/catalyst/v20.07/index.html) - [dev blog: 20.07 release](https://medium.com/pytorch/catalyst-dev-blog-20-07-release-fb489cd23e14?source=friends_link&sk=7ab92169658fe9a9e1c44068f28cc36c)
 - [20.06](https://catalyst-team.github.io/catalyst/v20.06/index.html)
 - [20.05](https://catalyst-team.github.io/catalyst/v20.05/index.html), [20.05.1](https://catalyst-team.github.io/catalyst/v20.05.1/index.html)
 - [20.04](https://catalyst-team.github.io/catalyst/v20.04/index.html), [20.04.1](https://catalyst-team.github.io/catalyst/v20.04.1/index.html), [20.04.2](https://catalyst-team.github.io/catalyst/v20.04.2/index.html)
@@ -1189,8 +1189,14 @@ a lot of people have influenced it in a lot of different ways.
 
 #### Catalyst.Team
 - [Eugene Kachan](https://www.linkedin.com/in/yauheni-kachan/) ([bagxi](https://github.com/bagxi)) - Config API improvements and CV pipelines
+- [Dmytro Doroshenko](https://www.linkedin.com/in/dmytro-doroshenko-05671112a/) ([ditwoo](https://github.com/Ditwoo)) - best ever test cases 
 - [Artem Zolkin](https://www.linkedin.com/in/artem-zolkin-b5155571/) ([arquestro](https://github.com/Arquestro)) - documentation grandmaster
 - [David Kuryakin](https://www.linkedin.com/in/dkuryakin/) ([dkuryakin](https://github.com/dkuryakin)) - Reaction design
+
+#### Catalyst - Metric Learning
+- [Aleksey Shabanov](https://linkedin.com/in/aleksey-shabanov-96b351189) ([AlekseySh](https://github.com/AlekseySh))
+- [Nikita Balagansky](https://www.linkedin.com/in/nikita-balagansky-50414a19a/) ([elephantmipt](https://github.com/elephantmipt))
+- [Julia Shenshina](https://github.com/julia-shenshina) ([julia-shenshina](https://github.com/julia-shenshina))
 
 #### Catalyst.Contributors
 - [Evgeny Semyonov](https://www.linkedin.com/in/ewan-semyonov/) ([lightforever](https://github.com/lightforever)) - MLComp creator
