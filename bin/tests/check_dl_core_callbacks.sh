@@ -805,18 +805,20 @@ INTERRUPT_EPOCH=4 \
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
-  --config=${EXPDIR}/config21.yml \
-  --logdir=${LOGDIR} || true
+  --config=${EXPDIR}/config0.yml \
+  --logdir=${LOGDIR}
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
+  --stages/stage1/stage_params/num_epochs='10:int' \
+  --stages/stage1/callbacks_params/fast_run/num_epoch_steps='10:int' \
   --expdir=${EXPDIR} \
-  --config=${EXPDIR}/config21.yml \
+  --config=${EXPDIR}/config0.yml \
   --logdir=${LOGDIR} \
   --autoresume last > ${EXP_OUTPUT}
 
 cat ${EXP_OUTPUT}
-check_line_counts ${EXP_OUTPUT} "loaded state .*/last_full.pth (global epoch 3, epoch 3, stage stage1)" 1
+check_line_counts ${EXP_OUTPUT} "loaded state .*/last_full.pth (global epoch 5, epoch 5, stage stage1)" 1
 
 rm -rf ./tests/logs/_tests_dl_callbacks ${EXP_OUTPUT}
 
