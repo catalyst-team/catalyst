@@ -144,6 +144,13 @@ WandbLogger
     :undoc-members:
     :show-inheritance:
 
+OptunaCallback
+""""""""""""""""""""""
+.. automodule:: catalyst.contrib.dl.callbacks.optuna_callback
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Models
 --------------------
 
