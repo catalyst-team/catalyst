@@ -116,6 +116,13 @@ NeptuneLogger
     :undoc-members:
     :show-inheritance:
 
+OptunaCallback
+""""""""""""""""""""""
+.. automodule:: catalyst.contrib.dl.callbacks.optuna_callback
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 PerplexityMetricCallback
 """"""""""""""""""""""""
 .. automodule:: catalyst.contrib.dl.callbacks.perplexity_metric
@@ -140,13 +147,6 @@ VisdomLogger
 WandbLogger
 """"""""""""""""""""""
 .. automodule:: catalyst.contrib.dl.callbacks.wandb_logger
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-OptunaCallback
-""""""""""""""""""""""
-.. automodule:: catalyst.contrib.dl.callbacks.optuna_callback
     :members:
     :undoc-members:
     :show-inheritance:
