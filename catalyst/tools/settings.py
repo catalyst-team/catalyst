@@ -35,6 +35,7 @@ class Settings(FrozenClass):
         neptune_logger_required: Optional[bool] = None,
         visdom_logger_required: Optional[bool] = None,
         wandb_logger_required: Optional[bool] = None,
+        optuna_required: Optional[bool] = None,
         plotly_required: Optional[bool] = None,
         telegram_logger_token: Optional[str] = None,
         telegram_logger_chat_id: Optional[str] = None,
@@ -75,6 +76,9 @@ class Settings(FrozenClass):
         )
         self.wandb_logger_required: bool = self._optional_value(
             wandb_logger_required, default=contrib_required
+        )
+        self.optuna_required: bool = self._optional_value(
+            optuna_required, default=contrib_required
         )
         self.plotly_required: bool = self._optional_value(
             plotly_required, default=contrib_required
