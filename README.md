@@ -629,7 +629,7 @@ optimizer = Adam(model.parameters(), lr=0.001)
 
 # 3. criterion with triplets sampling
 sampler_inbatch = data.HardTripletsSampler(norm_required=False)
-criterion = nn.TripletMarginLossWithSampling(margin=0.5, sampler_inbatch=sampler_inbatch)
+criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
 
 # 4. training with catalyst Runner
 callbacks = [
