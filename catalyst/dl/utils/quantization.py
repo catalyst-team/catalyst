@@ -1,8 +1,17 @@
-from typing import Union
+from typing import Dict, Optional, Set, Union
 from pathlib import Path
 
 import torch
+from torch import quantization
 from torch.nn import Module
+
+from catalyst.dl import ConfigExperiment
+from catalyst.utils import (
+    import_experiment_and_runner,
+    load_checkpoint,
+    load_config,
+    unpack_checkpoint,
+)
 
 
 def save_quantized_model(
@@ -45,3 +54,58 @@ def save_quantized_model(
         out_model = str(out_model)
 
     torch.save(model.state_dict(), out_model)
+
+
+def quantize_model_from_checkpoint(
+    logdir: Path,
+    checkpoint_name: str,
+    stage: str = None,
+    qconfig_spec: Optional[Union[Set, Dict]] = None,
+    dtype: Optional[torch.dtype] = torch.qint8,
+):
+    """
+    Quantize model using created experiment and runner.
+    Args:
+        logdir (Union[str, Path]): Path to Catalyst logdir with model
+        checkpoint_name (str): Name of model checkpoint to use
+        stage (str): experiment's stage name
+        qconfig_spec: torch.quantization.quantize_dynamic
+                parameter, you can define layers to be quantize
+        dtype: type of the model parameters, default int8
+    Returns:
+        Quantized model
+    """
+    config_path = logdir / "configs" / "_config.json"
+    checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
+    print("Load config")
+    config: Dict[str, dict] = load_config(config_path)
+    runner_params = config.get("runner_params", {}) or {}
+
+    # Get expdir name
+    config_expdir = Path(config["args"]["expdir"])
+    # We will use copy of expdir from logs for reproducibility
+    expdir = Path(logdir) / "code" / config_expdir.name
+
+    print("Import experiment and runner from logdir")
+    experiment_fn, runner_fn = import_experiment_and_runner(expdir)
+    experiment: ConfigExperiment = experiment_fn(config)
+
+    print(f"Load model state from checkpoints/{checkpoint_name}.pth")
+    if stage is None:
+        stage = list(experiment.stages)[0]
+
+    model = experiment.get_model(stage)
+    checkpoint = load_checkpoint(checkpoint_path)
+    unpack_checkpoint(checkpoint, model=model)
+
+    runner: runner_fn = runner_fn(**runner_params)
+    # only cpu backend is supported for quantization
+    runner.model, runner.device = model, torch.device("cpu")
+
+    print("Quantizing")
+    quantized_model = quantization.quantize_dynamic(
+        runner.model.cpu(), qconfig_spec=qconfig_spec, dtype=dtype,
+    )
+
+    print("Done")
+    return quantized_model
