@@ -4,13 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [20.07.1] - YYYY-MM-DD
+
+## [20.09] - YYYY-MM-DD
 
 ### Added
 
-- `CMCScoreCallback` ([#880](https://github.com/catalyst-team/catalyst/pull/880))
+- `force` and `bert-level` keywords to `catalyst-data text2embedding` ([#917](https://github.com/catalyst-team/catalyst/pull/917))
 
-- kornia augmentations `BatchTransformCallback` ([#862](https://github.com/catalyst-team/catalyst/issues/862))
+- `OptunaCallback` to `catalyst.contrib` ([#915](https://github.com/catalyst-team/catalyst/pull/915))
 
 ### Changed
 
@@ -22,7 +23,43 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- a few issues with TF projector ([#917](https://github.com/catalyst-team/catalyst/pull/917))
+
+
+## [20.08] - 2020-08-09
+
+### Added
+- Full metric learning pipeline including training and validation stages ([#886](https://github.com/catalyst-team/catalyst/pull/876))
+- `CMCScoreCallback` ([#880](https://github.com/catalyst-team/catalyst/pull/880))
+- kornia augmentations `BatchTransformCallback` ([#862](https://github.com/catalyst-team/catalyst/issues/862))
+- `average_precision` and `mean_average_precision` metrics ([#883](https://github.com/catalyst-team/catalyst/pull/883))
+- `MultiLabelAccuracyCallback`, `AveragePrecisionCallback` and `MeanAveragePrecisionCallback` callbacks ([#883](https://github.com/catalyst-team/catalyst/pull/883))
+- minimal examples for multi-class and milti-label classification ([#883](https://github.com/catalyst-team/catalyst/pull/883))
+- experimental TPU support ([#893](https://github.com/catalyst-team/catalyst/pull/893))
+- add `Imagenette`, `Imagewoof`, and `Imagewang` datasets ([#902](https://github.com/catalyst-team/catalyst/pull/902))
+- `IMetricCallback`, `IBatchMetricCallback`, `ILoaderMetricCallback`, `BatchMetricCallback`, `LoaderMetricCallback` abstractions ([#897](https://github.com/catalyst-team/catalyst/pull/897))
+- `HardClusterSampler` inbatch sampler ([#888](https://github.com/catalyst-team/catalyst/pull/888))
+
+### Changed
+
+- all registries merged to one `catalyst.registry` ([#883](https://github.com/catalyst-team/catalyst/pull/883))
+- `mean_average_precision` logic merged with `average_precision` ([#897](https://github.com/catalyst-team/catalyst/pull/897))
+- all imports moved to absolute ([#905](https://github.com/catalyst-team/catalyst/pull/905))
+- `catalyst.contrib.data` merged to `catalyst.data` ([#905](https://github.com/catalyst-team/catalyst/pull/905))
+- {breaking} Catalyst transform `ToTensor` was renamed to `ImageToTensor` ([#905](https://github.com/catalyst-team/catalyst/pull/905))
+- `TracerCallback` moved to `catalyst.dl` ([#905](https://github.com/catalyst-team/catalyst/pull/905))
+- `ControlFlowCallback`, `PeriodicLoaderCallback` moved to `catalyst.core` ([#905](https://github.com/catalyst-team/catalyst/pull/905))
+
+### Removed
+
+- `average_accuracy` and `mean_average_accuracy` metrics ([#883](https://github.com/catalyst-team/catalyst/pull/883))
+- MultiMetricCallback abstraction ([#897](https://github.com/catalyst-team/catalyst/pull/897))
+
+### Fixed
+
 - `utils.tokenize_text` typo with punctuation ([#880](https://github.com/catalyst-team/catalyst/pull/880))
+- `ControlFlowCallback` logic ([#892](https://github.com/catalyst-team/catalyst/pull/892))
+- docs ([#897](https://github.com/catalyst-team/catalyst/pull/897))
 
 
 ## [20.07] - 2020-07-06
@@ -176,7 +213,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 
--
+- 
 
 ### Fixed
 

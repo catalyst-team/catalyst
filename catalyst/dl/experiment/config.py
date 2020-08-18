@@ -27,7 +27,8 @@ from catalyst.dl import (
     ValidationManagerCallback,
     VerboseLogger,
 )
-from catalyst.dl.registry import (
+from catalyst.dl.utils import check_callback_isinstance
+from catalyst.registry import (
     CALLBACKS,
     CRITERIONS,
     MODELS,
@@ -35,7 +36,6 @@ from catalyst.dl.registry import (
     SCHEDULERS,
     TRANSFORMS,
 )
-from catalyst.dl.utils import check_callback_isinstance
 from catalyst.tools.typing import Criterion, Model, Optimizer, Scheduler
 
 

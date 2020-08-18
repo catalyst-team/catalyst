@@ -1,12 +1,12 @@
 import numpy as np
 
-from catalyst.core import Callback, CallbackOrder, IRunner, MetricCallback
+from catalyst.core import BatchMetricCallback, Callback, CallbackOrder, IRunner
 from catalyst.dl import utils
-from catalyst.dl.callbacks.metrics.functional import calculate_dice
 from catalyst.utils import metrics
+from catalyst.utils.metrics.dice import calculate_dice
 
 
-class DiceCallback(MetricCallback):
+class DiceCallback(BatchMetricCallback):
     """Dice metric callback."""
 
     def __init__(
@@ -36,7 +36,7 @@ class DiceCallback(MetricCallback):
         )
 
 
-class MulticlassDiceMetricCallback(Callback):
+class MultiClassDiceMetricCallback(Callback):
     """
     Global Multi-Class Dice Metric Callback: calculates the exact
     dice score across multiple batches. This callback is good for getting
@@ -124,4 +124,12 @@ class MulticlassDiceMetricCallback(Callback):
         self._reset_stats()
 
 
-__all__ = ["DiceCallback", "MulticlassDiceMetricCallback"]
+# backward compatibility
+MulticlassDiceMetricCallback = MultiClassDiceMetricCallback
+
+
+__all__ = [
+    "DiceCallback",
+    "MultiClassDiceMetricCallback",
+    "MulticlassDiceMetricCallback",
+]

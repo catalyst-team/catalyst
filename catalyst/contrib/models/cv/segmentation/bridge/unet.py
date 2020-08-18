@@ -51,3 +51,6 @@ class UnetBridge(BridgeSpec):
         x_last: torch.Tensor = self.block(x_last)
         output = x + [x_last]
         return output
+
+
+__all__ = ["UnetBridge"]
