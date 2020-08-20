@@ -1,5 +1,6 @@
 from typing import Any, Iterable, List, Optional
 from itertools import tee
+
 import numpy as np
 
 
