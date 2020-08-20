@@ -126,3 +126,6 @@ class SegmentationBlock(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward call."""
         return self.block(x)
+
+
+__all__ = ["DecoderFPNBlock", "Conv3x3GNReLU", "SegmentationBlock"]

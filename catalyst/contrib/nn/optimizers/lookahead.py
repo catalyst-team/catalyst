@@ -106,10 +106,13 @@ class Lookahead(Optimizer):
         cls, params: Dict, base_optimizer_params: Dict = None, **kwargs,
     ) -> "Lookahead":
         """@TODO: Docs. Contribution is welcome."""
-        from catalyst.dl.registry import OPTIMIZERS
+        from catalyst.registry import OPTIMIZERS
 
         base_optimizer = OPTIMIZERS.get_from_params(
             params=params, **base_optimizer_params
         )
         optimizer = cls(optimizer=base_optimizer, **kwargs)
         return optimizer
+
+
+__all__ = ["Lookahead"]

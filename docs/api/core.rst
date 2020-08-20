@@ -105,11 +105,6 @@ Logging
 
 Metrics
 ~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.core.callbacks.metrics.IMetricCallback
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 .. automodule:: catalyst.core.callbacks.metrics
     :members:
     :undoc-members:
@@ -118,6 +113,13 @@ Metrics
 Optimizer
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.core.callbacks.optimizer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+PeriodicLoaderCallback
+""""""""""""""""""""""
+.. automodule:: catalyst.core.callbacks.periodic_loader
     :members:
     :undoc-members:
     :show-inheritance:

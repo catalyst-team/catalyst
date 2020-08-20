@@ -48,3 +48,6 @@ class MarginLoss(nn.Module):
             beta=self.beta,
             skip_labels=self.skip_labels,
         )
+
+
+__all__ = ["MarginLoss"]

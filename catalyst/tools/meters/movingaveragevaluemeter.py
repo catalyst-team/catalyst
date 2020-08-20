@@ -60,3 +60,6 @@ class MovingAverageValueMeter(meter.Meter):
         mean = self.sum / max(1, n)
         std = math.sqrt(max((self.var - n * mean * mean) / max(1, n - 1), 0))
         return mean, std
+
+
+__all__ = ["MovingAverageValueMeter"]

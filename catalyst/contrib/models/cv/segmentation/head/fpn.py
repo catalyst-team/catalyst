@@ -81,3 +81,6 @@ class FPNHead(HeadSpec):
                 align_corners=self.align_corners,
             )
         return x
+
+
+__all__ = ["FPNHead"]

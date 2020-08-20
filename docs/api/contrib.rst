@@ -8,73 +8,6 @@ Contrib
    :local:
 
 
-Data
---------------------
-
-.. automodule:: catalyst.contrib.data
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Transforms
-~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.data.transforms
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Computer Vision
-~~~~~~~~~~~~~~~~
-
-Mixins
-"""""""""""""
-.. automodule:: catalyst.contrib.data.cv.mixins.blur
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.data.cv.mixins.flare
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.data.cv.mixins.rotate
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Transforms
-"""""""""""""
-.. automodule:: catalyst.contrib.data.cv.transforms.tensor
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Reader
-"""""""""""""
-.. automodule:: catalyst.contrib.data.cv.reader
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Natural Language Processing
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Dataset
-"""""""""""""
-
-.. automodule:: catalyst.contrib.data.nlp.dataset.language_modeling
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.contrib.data.nlp.dataset.text_classification
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
 Datasets
 --------------------
 
@@ -86,6 +19,37 @@ Datasets
 MNIST
 ~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.datasets.mnist
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Computer Vision
+~~~~~~~~~~~~~~~~
+
+ImageClassificationDataset
+""""""""""""""""""""""""""
+.. automodule:: catalyst.contrib.datasets.cv.fastai
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Imagenette
+""""""""""
+.. automodule:: catalyst.contrib.datasets.cv.imagenette
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Imagewoof
+"""""""""
+.. automodule:: catalyst.contrib.datasets.cv.imagewoof
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Imagewang
+"""""""""
+.. automodule:: catalyst.contrib.datasets.cv.imagewang
     :members:
     :undoc-members:
     :show-inheritance:
@@ -131,6 +95,13 @@ KNNMetricCallback
     :undoc-members:
     :show-inheritance:
 
+BatchTransformCallback
+""""""""""""""""""""""
+.. automodule:: catalyst.contrib.dl.callbacks.kornia_transform
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 InferMaskCallback
 """""""""""""""""
 .. automodule:: catalyst.contrib.dl.callbacks.mask_inference
@@ -145,9 +116,9 @@ NeptuneLogger
     :undoc-members:
     :show-inheritance:
 
-PeriodicLoaderCallback
+OptunaCallback
 """"""""""""""""""""""
-.. automodule:: catalyst.contrib.dl.callbacks.periodic_loader_callback
+.. automodule:: catalyst.contrib.dl.callbacks.optuna_callback
     :members:
     :undoc-members:
     :show-inheritance:
@@ -166,13 +137,6 @@ TelegramLogger
     :undoc-members:
     :show-inheritance:
 
-TracerCallback
-""""""""""""""""""""""
-.. automodule:: catalyst.contrib.dl.callbacks.tracer_callback
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 VisdomLogger
 """"""""""""""""""""""
 .. automodule:: catalyst.contrib.dl.callbacks.visdom_logger
@@ -186,7 +150,6 @@ WandbLogger
     :members:
     :undoc-members:
     :show-inheritance:
-
 
 Models
 --------------------

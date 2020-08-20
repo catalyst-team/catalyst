@@ -8,18 +8,18 @@ from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
-from catalyst.contrib import registry
-from catalyst.contrib.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.dl.callbacks.tracer_callback import TracerCallback
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.callbacks import CriterionCallback, OptimizerCallback
 from catalyst.core.runner import IRunner
+from catalyst.data.cv import ToTensor
 from catalyst.dl import SupervisedRunner
+from catalyst.dl.callbacks.tracing import TracerCallback
 from catalyst.dl.utils import get_device, get_trace_name
+from catalyst.registry import Model
 
 
-@registry.Model
+@Model
 class _TracedNet(nn.Module):
     """
     Simple model for the testing.
@@ -88,7 +88,7 @@ class _TracedNet(nn.Module):
             lambda x: torch.tensor(x, dtype=torch.int32),
             (size, kernel_size, stride),
         )
-        output_size = (size - (kernel_size - 1) - 1) / stride + 1
+        output_size = (size - (kernel_size - 1) - 1) // stride + 1
         h, w = map(lambda x: x.item(), output_size)
 
         return h, w

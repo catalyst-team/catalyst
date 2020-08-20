@@ -159,3 +159,6 @@ class APMeter(meter.Meter):
             # compute average precision
             ap[k] = precision[truth.byte()].sum() / max(float(truth.sum()), 1)
         return ap
+
+
+__all__ = ["APMeter"]

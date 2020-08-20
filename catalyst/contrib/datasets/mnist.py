@@ -1,14 +1,19 @@
 # flake8: noqa
-# TODO: docs and refactor for datasets-contrib
-import codecs
+from typing import Any, Callable, Dict, List, Optional
 import os
-
-import numpy as np
 
 import torch
 from torch.utils.data import Dataset
 
-from catalyst.contrib.datasets.utils import download_and_extract_archive
+from catalyst.contrib.datasets.functional import (
+    download_and_extract_archive,
+    read_image_file,
+    read_label_file,
+)
+from catalyst.data.dataset.metric_learning import (
+    MetricLearningTrainDataset,
+    QueryGalleryDataset,
+)
 
 
 class MNIST(Dataset):
@@ -202,72 +207,75 @@ class MNIST(Dataset):
         return "Split: {}".format("Train" if self.train is True else "Test")
 
 
-def get_int(b):
-    """@TODO: Docs. Contribution is welcome."""
-    return int(codecs.encode(b, "hex"), 16)
-
-
-def open_maybe_compressed_file(path):
-    """Return a file object that possibly decompresses 'path' on the fly.
-    Decompression occurs when argument `path` is a string
-    and ends with '.gz' or '.xz'.
+class MnistMLDataset(MetricLearningTrainDataset, MNIST):
     """
-    if not isinstance(path, torch._six.string_classes):  # noqa: WPS437
-        return path
-    if path.endswith(".gz"):
-        import gzip
-
-        return gzip.open(path, "rb")
-    if path.endswith(".xz"):
-        import lzma
-
-        return lzma.open(path, "rb")
-    return open(path, "rb")
-
-
-def read_sn3_pascalvincent_tensor(path, strict=True):
-    """Read a SN3 file in "Pascal Vincent" format.
-    Argument may be a filename, compressed filename, or file object.
+    Simple wrapper for MNIST dataset
     """
-    # typemap
-    if not hasattr(read_sn3_pascalvincent_tensor, "typemap"):
-        read_sn3_pascalvincent_tensor.typemap = {
-            8: (torch.uint8, np.uint8, np.uint8),
-            9: (torch.int8, np.int8, np.int8),
-            11: (torch.int16, np.dtype(">i2"), "i2"),
-            12: (torch.int32, np.dtype(">i4"), "i4"),
-            13: (torch.float32, np.dtype(">f4"), "f4"),
-            14: (torch.float64, np.dtype(">f8"), "f8"),
+
+    def get_labels(self) -> List[int]:
+        """
+        Returns:
+            labels of digits
+        """
+        return self.targets.tolist()
+
+
+class MnistQGDataset(QueryGalleryDataset):
+    """MNIST for metric learning with query and gallery split"""
+
+    def __init__(
+        self,
+        root: str,
+        transform: Optional[Callable] = None,
+        gallery_fraq: Optional[float] = 0.2,
+    ) -> None:
+        """
+        Args:
+            root: root directory for storing dataset
+            transform: transform
+            gallery_fraq: gallery size
+        """
+        self._mnist = MNIST(
+            root, train=False, download=True, transform=transform
+        )
+
+        self._gallery_size = int(gallery_fraq * len(self._mnist))
+        self._query_size = len(self._mnist) - self._gallery_size
+
+        self._is_query = torch.zeros(len(self._mnist)).type(torch.bool)
+        self._is_query[: self._query_size] = True
+
+    def __getitem__(self, idx: int) -> Dict[str, Any]:
+        """
+        Get item method for dataset
+
+
+        Args:
+            idx: index of the object
+
+        Returns:
+            Dict with features, targets and is_query flag
+        """
+        image, label = self._mnist[idx]
+        return {
+            "features": image,
+            "targets": label,
+            "is_query": self._is_query[idx],
         }
-    # read
-    with open_maybe_compressed_file(path) as f:
-        data = f.read()
-    # parse
-    magic = get_int(data[0:4])  # noqa: WPS349
-    nd = magic % 256
-    ty = magic // 256
-    assert nd >= 1 and nd <= 3
-    assert ty >= 8 and ty <= 14
-    m = read_sn3_pascalvincent_tensor.typemap[ty]
-    s = [get_int(data[4 * (i + 1) : 4 * (i + 2)]) for i in range(nd)]
-    parsed = np.frombuffer(data, dtype=m[1], offset=(4 * (nd + 1)))
-    assert parsed.shape[0] == np.prod(s) or not strict
-    return torch.from_numpy(parsed.astype(m[2], copy=False)).view(*s)
+
+    def __len__(self) -> int:
+        """Length"""
+        return len(self._mnist)
+
+    @property
+    def gallery_size(self) -> int:
+        """Query Gallery dataset should have gallery_size property"""
+        return self._gallery_size
+
+    @property
+    def query_size(self) -> int:
+        """Query Gallery dataset should have query_size property"""
+        return self._query_size
 
 
-def read_label_file(path):
-    """@TODO: Docs. Contribution is welcome."""
-    with open(path, "rb") as f:
-        x = read_sn3_pascalvincent_tensor(f, strict=False)
-    assert x.dtype == torch.uint8
-    assert x.ndimension() == 1
-    return x.long()
-
-
-def read_image_file(path):
-    """@TODO: Docs. Contribution is welcome."""
-    with open(path, "rb") as f:
-        x = read_sn3_pascalvincent_tensor(f, strict=False)
-    assert x.dtype == torch.uint8
-    assert x.ndimension() == 3
-    return x
+__all__ = ["MNIST", "MnistMLDataset", "MnistQGDataset"]

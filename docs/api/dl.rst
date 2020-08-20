@@ -79,6 +79,13 @@ InferCallback
     :undoc-members:
     :show-inheritance:
 
+MeterMetricsCallback
+~~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.dl.callbacks.meter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 MixupCallback
 ~~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.dl.callbacks.mixup
@@ -93,6 +100,12 @@ LRFinder
     :undoc-members:
     :show-inheritance:
 
+TracerCallback
+""""""""""""""""""""""
+.. automodule:: catalyst.dl.callbacks.tracing
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Metrics
 --------------------
@@ -107,6 +120,13 @@ Accuracy
 AUC
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.dl.callbacks.metrics.auc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+CMC score
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.dl.callbacks.metrics.cmc_score
     :members:
     :undoc-members:
     :show-inheritance:
@@ -135,6 +155,13 @@ IOU
 Global precision, recall and F1-score
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.dl.callbacks.metrics.ppv_tpr_f1
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Precision
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.dl.callbacks.metrics.precision
     :members:
     :undoc-members:
     :show-inheritance:

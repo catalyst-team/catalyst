@@ -57,7 +57,7 @@ import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.transforms import ToTensor
+from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
@@ -157,12 +157,9 @@ pip install -U catalyst
 <p>
 
 ```bash
-pip install catalyst[ml]         # installs DL+ML based catalyst
-pip install catalyst[cv]         # installs DL+CV based catalyst
-pip install catalyst[nlp]        # installs DL+NLP based catalyst
+pip install catalyst[cv]         # installs CV-based catalyst
+pip install catalyst[nlp]        # installs NLP-based catalyst
 pip install catalyst[ecosystem]  # installs Catalyst.Ecosystem
-pip install catalyst[contrib]    # installs DL+contrib based catalyst
-pip install catalyst[all]        # installs everything
 # and master version installation
 pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 ```
@@ -176,7 +173,7 @@ Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10 and Windows Subsyste
 ### Minimal Examples
 
 <details>
-<summary>ML - Linear Regression is my profession</summary>
+<summary>ML - linear regression</summary>
 <p>
 
 ```python
@@ -213,8 +210,93 @@ runner.train(
 </p>
 </details>
 
+
 <details>
-<summary>CV - MNIST classification one more time</summary>
+<summary>ML - multi-class classification</summary>
+<p>
+
+```python
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst import dl
+
+# sample data
+num_samples, num_features, num_classes = int(1e4), int(1e1), 4
+X = torch.rand(num_samples, num_features)
+y = (torch.rand(num_samples, ) * num_classes).to(torch.int64)
+
+# pytorch loaders
+dataset = TensorDataset(X, y)
+loader = DataLoader(dataset, batch_size=32, num_workers=1)
+loaders = {"train": loader, "valid": loader}
+
+# model, criterion, optimizer, scheduler
+model = torch.nn.Linear(num_features, num_classes)
+criterion = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters())
+scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
+
+# model training
+runner = dl.SupervisedRunner()
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    scheduler=scheduler,
+    loaders=loaders,
+    logdir="./logdir",
+    num_epochs=3,
+    callbacks=[dl.AccuracyCallback(num_classes=num_classes)]
+)
+```
+</p>
+</details>
+
+
+<details>
+<summary>ML - multi-label classification</summary>
+<p>
+
+```python
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst import dl
+
+# sample data
+num_samples, num_features, num_classes = int(1e4), int(1e1), 4
+X = torch.rand(num_samples, num_features)
+y = (torch.rand(num_samples, num_classes) > 0.5).to(torch.float32)
+
+# pytorch loaders
+dataset = TensorDataset(X, y)
+loader = DataLoader(dataset, batch_size=32, num_workers=1)
+loaders = {"train": loader, "valid": loader}
+
+# model, criterion, optimizer, scheduler
+model = torch.nn.Linear(num_features, num_classes)
+criterion = torch.nn.BCEWithLogitsLoss()
+optimizer = torch.optim.Adam(model.parameters())
+scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
+
+# model training
+runner = dl.SupervisedRunner()
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    scheduler=scheduler,
+    loaders=loaders,
+    logdir="./logdir",
+    num_epochs=3,
+    callbacks=[dl.MultiLabelAccuracyCallback(threshold=0.5)]
+)
+```
+</p>
+</details>
+
+
+<details>
+<summary>CV - MNIST classification</summary>
 <p>
 
 ```python
@@ -223,7 +305,7 @@ import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.transforms import ToTensor
+from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
@@ -231,7 +313,7 @@ model = torch.nn.Linear(28 * 28, 10)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
 loaders = {
-    "train": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+    "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
     "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
 }
 
@@ -277,7 +359,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.transforms import ToTensor
+from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
@@ -299,7 +381,7 @@ model = ClassifyAE(28 * 28, 128, 10)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
 loaders = {
-    "train": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+    "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
     "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
 }
 
@@ -351,7 +433,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.transforms import ToTensor
+from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
@@ -395,7 +477,7 @@ model = ClassifyVAE(28 * 28, 64, 10)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
 loaders = {
-    "train": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+    "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
     "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
 }
 
@@ -450,7 +532,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.transforms import ToTensor
+from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
@@ -473,7 +555,7 @@ model = ClassifyUnet(1, 28, 10)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
 loaders = {
-    "train": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+    "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
     "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
 }
 
@@ -516,6 +598,64 @@ runner.train(
 </details>
 
 <details>
+<summary>CV - MNIST with Metric Learning</summary>
+<p>
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1xcob6Y2W0O1JiN-juoF1YfJMJsScCVhV?usp=sharing)
+
+```python
+from torch.optim import Adam
+from torch.utils.data import DataLoader
+
+from catalyst import data, dl, utils
+from catalyst.contrib import datasets, models, nn
+import catalyst.data.cv.transforms.torch as t
+
+
+# 1. train and valid datasets
+dataset_root = "."
+transforms = t.Compose([t.ToTensor(), t.Normalize((0.1307,), (0.3081,))])
+
+dataset_train = datasets.MnistMLDataset(root=dataset_root, train=True, download=True, transform=transforms)
+sampler = data.BalanceBatchSampler(labels=dataset_train.get_labels(), p=10, k=10)
+train_loader = DataLoader(dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size)
+
+dataset_val = datasets.MnistQGDataset(root=dataset_root, transform=transforms, gallery_fraq=0.2)
+val_loader = DataLoader(dataset=dataset_val, batch_size=1024)
+
+# 2. model and optimizer
+model = models.SimpleConv(features_dim=16)
+optimizer = Adam(model.parameters(), lr=0.001)
+
+# 3. criterion with triplets sampling
+sampler_inbatch = data.HardTripletsSampler(norm_required=False)
+criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
+
+# 4. training with catalyst Runner
+callbacks = [
+    dl.ControlFlowCallback(dl.CriterionCallback(), loaders="train"),
+    dl.ControlFlowCallback(dl.CMCScoreCallback(topk_args=[1]), loaders="valid"),
+    dl.PeriodicLoaderCallback(valid=100),
+]
+
+runner = dl.SupervisedRunner(device=utils.get_device())
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    callbacks=callbacks,
+    loaders={"train": train_loader, "valid": val_loader},
+    minimize_metric=False,
+    verbose=True,
+    valid_loader="valid",
+    num_epochs=200,
+    main_metric="cmc01",
+)   
+```
+</p>
+</details>
+
+<details>
 <summary>GAN - MNIST, flatten version</summary>
 <p>
 
@@ -526,7 +666,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.transforms import ToTensor
+from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.nn.modules import Flatten, GlobalMaxPool2d, Lambda
 
@@ -627,7 +767,97 @@ runner.train(
 </details>
 
 <details>
-<summary>ML - Linear Regression is my profession (distributed version)</summary>
+<summary>ML - multi-class classification (fp16 training version)</summary>
+<p>
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1q8BPg1XpQn2J5vWV9OYKSBo-k9wA2jYS?usp=sharing)
+
+```python
+# pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" git+https://github.com/NVIDIA/apex
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst import dl
+
+# sample data
+num_samples, num_features, num_classes = int(1e4), int(1e1), 4
+X = torch.rand(num_samples, num_features)
+y = (torch.rand(num_samples, ) * num_classes).to(torch.int64)
+
+# pytorch loaders
+dataset = TensorDataset(X, y)
+loader = DataLoader(dataset, batch_size=32, num_workers=1)
+loaders = {"train": loader, "valid": loader}
+
+# model, criterion, optimizer, scheduler
+model = torch.nn.Linear(num_features, num_classes)
+criterion = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters())
+scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
+
+# model training
+runner = dl.SupervisedRunner()
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    scheduler=scheduler,
+    loaders=loaders,
+    logdir="./logdir",
+    num_epochs=3,
+    callbacks=[dl.AccuracyCallback(num_classes=num_classes)],
+    fp16=True,
+)
+```
+</p>
+</details>
+
+<details>
+<summary>ML - multi-class classification (advanced fp16 training version)</summary>
+<p>
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1q8BPg1XpQn2J5vWV9OYKSBo-k9wA2jYS?usp=sharing)
+
+```python
+# pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" git+https://github.com/NVIDIA/apex
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst import dl
+
+# sample data
+num_samples, num_features, num_classes = int(1e4), int(1e1), 4
+X = torch.rand(num_samples, num_features)
+y = (torch.rand(num_samples, ) * num_classes).to(torch.int64)
+
+# pytorch loaders
+dataset = TensorDataset(X, y)
+loader = DataLoader(dataset, batch_size=32, num_workers=1)
+loaders = {"train": loader, "valid": loader}
+
+# model, criterion, optimizer, scheduler
+model = torch.nn.Linear(num_features, num_classes)
+criterion = torch.nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(model.parameters())
+scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
+
+# model training
+runner = dl.SupervisedRunner()
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    scheduler=scheduler,
+    loaders=loaders,
+    logdir="./logdir",
+    num_epochs=3,
+    callbacks=[dl.AccuracyCallback(num_classes=num_classes)],
+    fp16=dict(opt_level="O1"),
+)
+```
+</p>
+</details>
+
+<details>
+<summary>ML - Linear Regression (distributed training version)</summary>
 <p>
 
 ```python
@@ -674,7 +904,7 @@ utils.distributed_cmd_run(train)
 </details>
 
 <details>
-<summary>CV - classification with AutoEncoder (distributed version)</summary>
+<summary>CV - classification with AutoEncoder (distributed training version)</summary>
 <p>
 
 ```python
@@ -684,7 +914,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from catalyst import dl, utils
-from catalyst.contrib.data.transforms import ToTensor
+from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.utils import metrics
 
@@ -754,6 +984,50 @@ utils.distributed_cmd_run(train)
 </p>
 </details>
 
+<details>
+<summary>ML - multi-class classification (TPU version)</summary>
+<p>
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1AhvNzTRb3gd3AYhzUfm3dzw8TddlsfhD?usp=sharing)
+
+```python
+import torch
+from torch.utils.data import DataLoader, TensorDataset
+from catalyst import dl, utils
+
+# sample data
+num_samples, num_features, num_classes = int(1e4), int(1e1), 4
+X = torch.rand(num_samples, num_features)
+y = (torch.rand(num_samples, ) * num_classes).to(torch.int64)
+
+# pytorch loaders
+dataset = TensorDataset(X, y)
+loader = DataLoader(dataset, batch_size=32, num_workers=1)
+loaders = {"train": loader, "valid": loader}
+
+# device (TPU > GPU > CPU)
+device = utils.get_device()  # <--------- TPU device
+
+# model, criterion, optimizer, scheduler
+model = torch.nn.Linear(num_features, num_classes).to(device)
+criterion = torch.nn.CrossEntropyLoss().to(device)
+optimizer = torch.optim.Adam(model.parameters())
+
+# model training
+runner = dl.SupervisedRunner(device=device)
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    loaders=loaders,
+    logdir="./logdir",
+    num_epochs=3,
+    callbacks=[dl.AccuracyCallback(num_classes=num_classes)]
+)
+```
+</p>
+</details>
+
 
 ### Features
 - Universal train/inference loop.
@@ -801,12 +1075,15 @@ best practices for your deep learning research.
 - Advanced [segmentation tutorial](./examples/notebooks/segmentation-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb)
 - Comprehensive [classification pipeline](https://github.com/catalyst-team/classification)
 - Binary and semantic [segmentation pipeline](https://github.com/catalyst-team/segmentation)
+- Metric Learning tutorial [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1xcob6Y2W0O1JiN-juoF1YfJMJsScCVhV?usp=sharing)
+- Catalyst with Google TPU [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1AhvNzTRb3gd3AYhzUfm3dzw8TddlsfhD?usp=sharing)
 
 
 ### Docs
 
 - [master](https://catalyst-team.github.io/catalyst/)
-- [20.07](https://catalyst-team.github.io/catalyst/v20.07/index.html)
+- [20.08.2](https://catalyst-team.github.io/catalyst/v20.08.2/index.html)
+- [20.07](https://catalyst-team.github.io/catalyst/v20.07/index.html) - [dev blog: 20.07 release](https://medium.com/pytorch/catalyst-dev-blog-20-07-release-fb489cd23e14?source=friends_link&sk=7ab92169658fe9a9e1c44068f28cc36c)
 - [20.06](https://catalyst-team.github.io/catalyst/v20.06/index.html)
 - [20.05](https://catalyst-team.github.io/catalyst/v20.05/index.html), [20.05.1](https://catalyst-team.github.io/catalyst/v20.05.1/index.html)
 - [20.04](https://catalyst-team.github.io/catalyst/v20.04/index.html), [20.04.1](https://catalyst-team.github.io/catalyst/v20.04.1/index.html), [20.04.2](https://catalyst-team.github.io/catalyst/v20.04.2/index.html)
@@ -913,8 +1190,14 @@ a lot of people have influenced it in a lot of different ways.
 
 #### Catalyst.Team
 - [Eugene Kachan](https://www.linkedin.com/in/yauheni-kachan/) ([bagxi](https://github.com/bagxi)) - Config API improvements and CV pipelines
-- [Artem Zolkin](https://www.linkedin.com/in/artem-zolkin-b5155571/) ([arquestro](https://github.com/Arquestro)) - best ever documentation
+- [Dmytro Doroshenko](https://www.linkedin.com/in/dmytro-doroshenko-05671112a/) ([ditwoo](https://github.com/Ditwoo)) - best ever test cases 
+- [Artem Zolkin](https://www.linkedin.com/in/artem-zolkin-b5155571/) ([arquestro](https://github.com/Arquestro)) - documentation grandmaster
 - [David Kuryakin](https://www.linkedin.com/in/dkuryakin/) ([dkuryakin](https://github.com/dkuryakin)) - Reaction design
+
+#### Catalyst - Metric Learning team
+- [Aleksey Shabanov](https://linkedin.com/in/aleksey-shabanov-96b351189) ([AlekseySh](https://github.com/AlekseySh))
+- [Nikita Balagansky](https://www.linkedin.com/in/nikita-balagansky-50414a19a/) ([elephantmipt](https://github.com/elephantmipt))
+- [Julia Shenshina](https://github.com/julia-shenshina) ([julia-shenshina](https://github.com/julia-shenshina))
 
 #### Catalyst.Contributors
 - [Evgeny Semyonov](https://www.linkedin.com/in/ewan-semyonov/) ([lightforever](https://github.com/lightforever)) - MLComp creator
