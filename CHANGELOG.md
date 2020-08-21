@@ -24,6 +24,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - a few issues with TF projector ([#917](https://github.com/catalyst-team/catalyst/pull/917))
+- batch sampler speed issue ([#921](https://github.com/catalyst-team/catalyst/pull/921)) 
 
 
 ## [20.08] - 2020-08-09
