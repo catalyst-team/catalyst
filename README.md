@@ -629,7 +629,7 @@ optimizer = Adam(model.parameters(), lr=0.001)
 
 # 3. criterion with triplets sampling
 sampler_inbatch = data.HardTripletsSampler(norm_required=False)
-criterion = nn.TripletMarginLossWithSampling(margin=0.5, sampler_inbatch=sampler_inbatch)
+criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
 
 # 4. training with catalyst Runner
 callbacks = [
@@ -993,7 +993,7 @@ utils.distributed_cmd_run(train)
 ```python
 import torch
 from torch.utils.data import DataLoader, TensorDataset
-from catalyst import dl
+from catalyst import dl, utils
 
 # sample data
 num_samples, num_features, num_classes = int(1e4), int(1e1), 4
@@ -1005,19 +1005,20 @@ dataset = TensorDataset(X, y)
 loader = DataLoader(dataset, batch_size=32, num_workers=1)
 loaders = {"train": loader, "valid": loader}
 
+# device (TPU > GPU > CPU)
+device = utils.get_device()  # <--------- TPU device
+
 # model, criterion, optimizer, scheduler
-model = torch.nn.Linear(num_features, num_classes)
-criterion = torch.nn.CrossEntropyLoss()
+model = torch.nn.Linear(num_features, num_classes).to(device)
+criterion = torch.nn.CrossEntropyLoss().to(device)
 optimizer = torch.optim.Adam(model.parameters())
-scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
 # model training
-runner = dl.SupervisedRunner()
+runner = dl.SupervisedRunner(device=device)
 runner.train(
     model=model,
     criterion=criterion,
     optimizer=optimizer,
-    scheduler=scheduler,
     loaders=loaders,
     logdir="./logdir",
     num_epochs=3,

@@ -90,3 +90,13 @@ except ImportError as ex:
             "run `pip install wandb`."
         )
         raise ex
+
+try:
+    import optuna
+    from catalyst.contrib.dl.callbacks.optuna_callback import OptunaCallback
+except ImportError as ex:
+    if settings.optuna_required:
+        logger.warning(
+            "optuna not available, to install optuna, "
+            "run `pip install optuna`."
+        )
