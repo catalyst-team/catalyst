@@ -71,7 +71,7 @@ def find_value_ids(it: Iterable[Any], value: Any) -> List[int]:
         indices of the all elements equal x0
     """
     if isinstance(it, np.ndarray):
-        inds = np.where(it == value)[0]
+        inds = list(np.where(it == value)[0])
     else:  # could be very slow
         inds = [i for i, el in enumerate(it) if el == value]
     return inds
