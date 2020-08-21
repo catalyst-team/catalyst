@@ -103,3 +103,7 @@ from catalyst.tools.settings import IS_PRUNING_AVAILABLE
 
 if IS_PRUNING_AVAILABLE:
     from catalyst.utils.pruning import prune_model, remove_reparametrization
+
+from catalyst.tools.settings import IS_GIT_AVAILABLE
+if IS_GIT_AVAILABLE:
+    from catalyst.utils.pipelines import clone_pipeline
