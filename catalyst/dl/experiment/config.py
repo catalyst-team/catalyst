@@ -467,7 +467,8 @@ class ConfigExperiment(IExperiment):
             )
         return callback
 
-    def _process_callbacks(self, callbacks: OrderedDict, stage_num: int) -> None:
+    @staticmethod
+    def _process_callbacks(callbacks: OrderedDict, stage_num: int) -> None:
         """
         Iterate over each of the callbacks and update
         approptiate parameters required for success
