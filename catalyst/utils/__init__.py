@@ -67,7 +67,6 @@ from catalyst.utils.misc import (
 )
 from catalyst.utils.numpy import get_one_hot
 from catalyst.utils.parser import parse_config_args, parse_args_uargs
-from catalyst.utils.pipelines import clone_pipeline
 from catalyst.utils.scripts import (
     import_module,
     dump_code,
@@ -105,5 +104,6 @@ if IS_PRUNING_AVAILABLE:
     from catalyst.utils.pruning import prune_model, remove_reparametrization
 
 from catalyst.tools.settings import IS_GIT_AVAILABLE
+
 if IS_GIT_AVAILABLE:
     from catalyst.utils.pipelines import clone_pipeline
