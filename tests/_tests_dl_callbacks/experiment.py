@@ -1,6 +1,5 @@
 # flake8: noqa
 from collections import OrderedDict
-import os
 
 from torch.utils.data import Subset
 
