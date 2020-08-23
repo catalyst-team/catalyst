@@ -545,10 +545,10 @@ class CheckpointCallback(BaseCheckpointCallback):
             from torch import save
         self._save_fn = save
 
-        if hasattr(runner, "resume") and runner.resume:
+        if getattr(runner, "resume", None) is not None:
             self.resume = runner.resume
             runner.resume = None
-        elif hasattr(runner, "autoresume") and runner.autoresume:
+        elif getattr(runner, "autoresume", None) is not None:
             self.resume_dir = runner.logdir / "checkpoints"
             self.resume = f"{runner.autoresume}_full.pth"
             runner.autoresume = None
