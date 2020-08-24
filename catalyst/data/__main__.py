@@ -94,10 +94,8 @@ COMMANDS = OrderedDict(
 
 try:
     import imageio  # noqa: F401
-    from catalyst.data.scripts import (
-        image2embedding,
-        process_images,
-    )
+
+    from catalyst.data.scripts import image2embedding, process_images
 
     COMMANDS["process-images"] = process_images
     COMMANDS["image2embedding"] = image2embedding
@@ -111,6 +109,7 @@ except ImportError as ex:  # noqa: WPS440
 
 try:
     import transformers  # noqa: F401
+
     from catalyst.data.scripts import text2embedding
 
     COMMANDS["text2embedding"] = text2embedding

@@ -1,6 +1,6 @@
-from catalyst.__version__ import __version__  # noqa: F401
-
 import warnings
+
+from catalyst.__version__ import __version__  # noqa: F401
 
 warnings.filterwarnings(
     "ignore", message="numpy.dtype size changed", append=True

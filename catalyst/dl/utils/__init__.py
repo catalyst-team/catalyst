@@ -2,8 +2,6 @@
 
 from catalyst.contrib.utils import *
 from catalyst.core.utils import *
-from catalyst.utils import *
-
 from catalyst.dl.utils.callbacks import (
     check_callback_isinstance,
     get_original_callback,
@@ -17,4 +15,8 @@ from catalyst.dl.utils.trace import (
     trace_model_from_checkpoint,
     trace_model_from_runner,
 )
-from catalyst.dl.utils.wizard import run_wizard, Wizard
+from catalyst.tools.settings import IS_GIT_AVAILABLE
+from catalyst.utils import *
+
+if IS_GIT_AVAILABLE:
+    from catalyst.dl.utils.wizard import run_wizard, Wizard

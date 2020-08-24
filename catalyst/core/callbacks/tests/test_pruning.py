@@ -9,8 +9,9 @@ from catalyst import dl
 from catalyst.tools.settings import IS_PRUNING_AVAILABLE
 
 if IS_PRUNING_AVAILABLE:
-    from catalyst.core.callbacks import PruningCallback
     from torch.nn.utils.prune import l1_unstructured
+
+    from catalyst.core.callbacks import PruningCallback
 
 
 def pruning_factor(model):
