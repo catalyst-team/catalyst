@@ -30,7 +30,6 @@ try:
 except ImportError:
     IS_GIT_AVAILABLE = False
 
-
 class Settings(FrozenClass):
     def __init__(
         self,
@@ -321,5 +320,5 @@ __all__ = [
     "MergedConfigParser",
     "IS_PRUNING_AVAILABLE",
     "IS_XLA_AVAILABLE",
-    "IS_GIT_AVAILABLE",
+    "IS_GIT_AVAILABLE"
 ]

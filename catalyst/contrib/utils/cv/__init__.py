@@ -10,8 +10,8 @@ try:
     from catalyst.contrib.utils.cv.image import (
         has_image_extension,
         imread,
-        imsave,
         imwrite,
+        imsave,
         mask_to_overlay_image,
         mimread,
         mimwrite_with_meta,

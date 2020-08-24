@@ -5,8 +5,10 @@ from prompt_toolkit import prompt
 import yaml
 
 from catalyst import registry
-from catalyst.utils import clone_pipeline, import_module
-from catalyst.utils.pipelines import URLS
+from catalyst.tools.settings import IS_GIT_AVAILABLE
+if IS_GIT_AVAILABLE:
+    from catalyst.utils import clone_pipeline, import_module
+    from catalyst.utils.pipelines import URLS
 
 yaml.add_representer(
     OrderedDict,

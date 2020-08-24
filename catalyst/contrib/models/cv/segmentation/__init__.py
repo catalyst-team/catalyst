@@ -1,27 +1,28 @@
 # flake8: noqa
 
 from catalyst.contrib.models.cv.segmentation.abn import ABN
+from catalyst.contrib.models.cv.segmentation.core import (
+    UnetMetaSpec,
+    UnetSpec,
+    ResnetUnetSpec,
+)
+
 from catalyst.contrib.models.cv.segmentation.blocks import (
-    Conv3x3GNReLU,
-    DecoderBlock,
-    DecoderConcatBlock,
-    DecoderFPNBlock,
-    DecoderSumBlock,
     EncoderBlock,
+    DecoderBlock,
+    DecoderFPNBlock,
+    Conv3x3GNReLU,
+    SegmentationBlock,
+    PyramidBlock,
+    PSPBlock,
     EncoderDownsampleBlock,
     EncoderUpsampleBlock,
-    PSPBlock,
-    PyramidBlock,
-    SegmentationBlock,
+    DecoderConcatBlock,
+    DecoderSumBlock,
 )
 from catalyst.contrib.models.cv.segmentation.bridge import (
     BridgeSpec,
     UnetBridge,
-)
-from catalyst.contrib.models.cv.segmentation.core import (
-    ResnetUnetSpec,
-    UnetMetaSpec,
-    UnetSpec,
 )
 from catalyst.contrib.models.cv.segmentation.decoder import (
     DecoderSpec,
@@ -34,18 +35,20 @@ from catalyst.contrib.models.cv.segmentation.encoder import (
     ResnetEncoder,
     UnetEncoder,
 )
-from catalyst.contrib.models.cv.segmentation.fpn import FPNUnet, ResnetFPNUnet
 from catalyst.contrib.models.cv.segmentation.head import (
-    FPNHead,
     HeadSpec,
+    FPNHead,
     UnetHead,
 )
+
+from catalyst.contrib.models.cv.segmentation.fpn import FPNUnet, ResnetFPNUnet
 from catalyst.contrib.models.cv.segmentation.linknet import (
     Linknet,
     ResnetLinknet,
 )
 from catalyst.contrib.models.cv.segmentation.psp import PSPnet, ResnetPSPnet
-from catalyst.contrib.models.cv.segmentation.unet import ResnetUnet, Unet
+from catalyst.contrib.models.cv.segmentation.unet import Unet, ResnetUnet
+
 
 __all__ = [
     "UnetMetaSpec",

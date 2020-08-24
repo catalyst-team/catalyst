@@ -9,12 +9,12 @@ from catalyst.contrib.nn.modules.common import (
 )
 from catalyst.contrib.nn.modules.lama import (
     LamaPooling,
-    TemporalAttentionPooling,
-    TemporalAvgPooling,
-    TemporalConcatPooling,
-    TemporalDropLastWrapper,
     TemporalLastPooling,
+    TemporalAvgPooling,
     TemporalMaxPooling,
+    TemporalDropLastWrapper,
+    TemporalAttentionPooling,
+    TemporalConcatPooling,
 )
 from catalyst.contrib.nn.modules.pooling import (
     GlobalAttnPool2d,
@@ -26,4 +26,8 @@ from catalyst.contrib.nn.modules.pooling import (
     GlobalMaxPool2d,
 )
 from catalyst.contrib.nn.modules.rms_norm import RMSNorm
-from catalyst.contrib.nn.modules.se import cSE, scSE, sSE
+from catalyst.contrib.nn.modules.se import (
+    sSE,
+    scSE,
+    cSE,
+)

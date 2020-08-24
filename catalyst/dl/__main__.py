@@ -2,14 +2,9 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
 
 from catalyst.__version__ import __version__
-from catalyst.dl.scripts import run, trace
-from catalyst.tools.settings import IS_GIT_AVAILABLE
+from catalyst.dl.scripts import init, run, trace
 
-COMMANDS = OrderedDict([("run", run), ("trace", trace)])
-if IS_GIT_AVAILABLE:
-    from catalyst.dl.scripts import init
-
-    COMMANDS["init"] = init
+COMMANDS = OrderedDict([("init", init), ("run", run), ("trace", trace)])
 
 
 def build_parser() -> ArgumentParser:

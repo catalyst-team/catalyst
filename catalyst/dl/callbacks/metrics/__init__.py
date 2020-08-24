@@ -21,4 +21,5 @@ from catalyst.dl.callbacks.metrics.iou import (
 from catalyst.dl.callbacks.metrics.ppv_tpr_f1 import (
     PrecisionRecallF1ScoreCallback,
 )
+
 from catalyst.dl.callbacks.metrics.precision import AveragePrecisionCallback

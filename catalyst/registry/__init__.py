@@ -1,3 +1,4 @@
+from catalyst.registry.registry import Registry, RegistryException
 from catalyst.registry.registries import (
     Callback,
     CALLBACK,
@@ -32,7 +33,6 @@ from catalyst.registry.registries import (
     TRANSFORM,
     TRANSFORMS,
 )
-from catalyst.registry.registry import Registry, RegistryException
 
 __all__ = [
     "Registry",

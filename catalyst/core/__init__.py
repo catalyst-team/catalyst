@@ -5,6 +5,8 @@
 # experiment
 # runner
 
+from catalyst.core.experiment import IExperiment
+from catalyst.core.runner import IRunner, IStageBasedRunner, RunnerException
 from catalyst.core.callback import (
     Callback,
     CallbackNode,
@@ -13,6 +15,4 @@ from catalyst.core.callback import (
     WrapperCallback,
 )
 from catalyst.core.callbacks import *
-from catalyst.core.experiment import IExperiment
-from catalyst.core.runner import IRunner, IStageBasedRunner, RunnerException
 from catalyst.core.state import State

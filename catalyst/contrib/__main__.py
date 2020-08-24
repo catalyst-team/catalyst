@@ -13,7 +13,6 @@ COMMANDS = OrderedDict(
 
 try:
     import nmslib  # noqa: F401
-
     from catalyst.contrib.scripts import check_index_model, create_index_model
 
     COMMANDS["check-index-model"] = check_index_model

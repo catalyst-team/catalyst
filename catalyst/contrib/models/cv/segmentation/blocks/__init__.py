@@ -1,20 +1,20 @@
 # flake8: noqa
 from catalyst.contrib.models.cv.segmentation.blocks.core import (
-    DecoderBlock,
     EncoderBlock,
+    DecoderBlock,
 )
 from catalyst.contrib.models.cv.segmentation.blocks.fpn import (
-    Conv3x3GNReLU,
     DecoderFPNBlock,
+    Conv3x3GNReLU,
     SegmentationBlock,
 )
 from catalyst.contrib.models.cv.segmentation.blocks.psp import (
-    PSPBlock,
     PyramidBlock,
+    PSPBlock,
 )
 from catalyst.contrib.models.cv.segmentation.blocks.unet import (
-    DecoderConcatBlock,
-    DecoderSumBlock,
     EncoderDownsampleBlock,
     EncoderUpsampleBlock,
+    DecoderConcatBlock,
+    DecoderSumBlock,
 )

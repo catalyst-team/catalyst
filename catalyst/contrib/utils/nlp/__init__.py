@@ -8,10 +8,9 @@ from catalyst.tools import settings
 
 try:
     import transformers  # noqa: F401
-
     from catalyst.contrib.utils.nlp.text import (
-        process_bert_output,
         tokenize_text,
+        process_bert_output,
     )
 except ImportError as ex:
     if settings.transformers_required:

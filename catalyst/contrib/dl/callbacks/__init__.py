@@ -3,6 +3,8 @@ import logging
 
 from torch.jit.frontend import UnsupportedNodeError
 
+from catalyst.tools import settings
+
 from catalyst.contrib.dl.callbacks.cutmix_callback import CutmixCallback
 from catalyst.contrib.dl.callbacks.gradnorm_logger import GradNormLogger
 from catalyst.contrib.dl.callbacks.knn_metric import KNNMetricCallback
@@ -10,13 +12,11 @@ from catalyst.contrib.dl.callbacks.perplexity_metric import (
     PerplexityMetricCallback,
 )
 from catalyst.contrib.dl.callbacks.telegram_logger import TelegramLogger
-from catalyst.tools import settings
 
 logger = logging.getLogger(__name__)
 
 try:
     import imageio
-
     from catalyst.contrib.dl.callbacks.mask_inference import InferMaskCallback
 except ImportError as ex:
     if settings.cv_required:
@@ -28,7 +28,6 @@ except ImportError as ex:
 
 try:
     import kornia
-
     from catalyst.contrib.dl.callbacks.kornia_transform import (
         BatchTransformCallback,
     )
@@ -50,7 +49,6 @@ except UnsupportedNodeError as ex:
 
 try:
     import alchemy
-
     from catalyst.contrib.dl.callbacks.alchemy_logger import AlchemyLogger
 except ImportError as ex:
     if settings.alchemy_logger_required:
@@ -62,7 +60,6 @@ except ImportError as ex:
 
 try:
     import visdom
-
     from catalyst.contrib.dl.callbacks.visdom_logger import VisdomLogger
 except ImportError as ex:
     if settings.visdom_logger_required:
@@ -74,7 +71,6 @@ except ImportError as ex:
 
 try:
     import neptune
-
     from catalyst.contrib.dl.callbacks.neptune_logger import NeptuneLogger
 except ImportError as ex:
     if settings.neptune_logger_required:
@@ -86,7 +82,6 @@ except ImportError as ex:
 
 try:
     import wandb
-
     from catalyst.contrib.dl.callbacks.wandb_logger import WandbLogger
 except ImportError as ex:
     if settings.wandb_logger_required:
@@ -98,7 +93,6 @@ except ImportError as ex:
 
 try:
     import optuna
-
     from catalyst.contrib.dl.callbacks.optuna_callback import OptunaCallback
 except ImportError as ex:
     if settings.optuna_required:
