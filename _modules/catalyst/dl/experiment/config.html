@@ -729,17 +729,26 @@
         <span class="k">return</span> <span class="n">callback</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_process_callbacks</span><span class="p">(</span><span class="n">callbacks</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_process_callbacks</span><span class="p">(</span>
+        <span class="n">callbacks</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">stage_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Iterate over each of the callbacks and update</span>
-<span class="sd">        approptiate parameters required for success</span>
+<span class="sd">        appropriate parameters required for success</span>
 <span class="sd">        run of config experiment.</span>
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            callbacks (OrderedDict): finalized order of callbacks.</span>
+<span class="sd">            stage_index (int): number of a current stage</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">stage_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">stage_index</span> <span class="o">=</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">):</span>
+            <span class="c1"># NOTE: in experiments with multiple stages need to omit</span>
+            <span class="c1">#       loading of a best model state for the first stage</span>
+            <span class="c1">#       but for the other stages by default should</span>
+            <span class="c1">#       load best state of a model</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">)</span> <span class="ow">and</span> <span class="n">stage_index</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">callback</span><span class="o">.</span><span class="n">load_on_stage_start</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">callback</span><span class="o">.</span><span class="n">load_on_stage_start</span> <span class="o">=</span> <span class="s2">&quot;best&quot;</span>
                 <span class="k">if</span> <span class="p">(</span>
@@ -798,7 +807,10 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">is_already_present</span><span class="p">:</span>
                 <span class="n">callbacks</span><span class="p">[</span><span class="n">callback_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">callback_fn</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_process_callbacks</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
+        <span class="c1"># NOTE: stage should be in self.stages_config</span>
+        <span class="c1">#       othervise will be raised ValueError</span>
+        <span class="n">stage_index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_process_callbacks</span><span class="p">(</span><span class="n">callbacks</span><span class="p">,</span> <span class="n">stage_index</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">callbacks</span></div></div>
 
