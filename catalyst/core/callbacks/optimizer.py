@@ -92,7 +92,7 @@ class OptimizerCallback(Callback):
         for group, wd in zip(optimizer.param_groups, optimizer_wds):
             if wd > 0:
                 for param in group["params"]:
-                    param.data = param.data.add(-wd * group["lr"], param.data)
+                    param.data = param.data.add(param.data, -wd * group["lr"])
             if grad_clip_fn is not None:
                 grad_clip_fn(group["params"])
         # optimize parameters
