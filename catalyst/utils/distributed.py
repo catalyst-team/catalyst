@@ -126,10 +126,14 @@ def get_distributed_mean(value: Union[float, torch.Tensor]):
     """Computes distributed mean among all nodes."""
     if check_torch_distributed_initialized():
         # Fix for runtime warning:
-        # To copy construct from a tensor, it is recommended to use sourceTensor.clone().detach() or
-        # sourceTensor.clone().detach().requires_grad_(True), rather than torch.tensor(sourceTensor).
+        # To copy construct from a tensor, it is recommended to use 
+        # sourceTensor.clone().detach() or 
+        # sourceTensor.clone().detach().requires_grad_(True), 
+        # rather than torch.tensor(sourceTensor).
         if torch.is_tensor(value):
-            value = value.clone().detach().to(device=f"cuda:{torch.cuda.current_device()}")
+            value = value.clone().detach().to(
+                device=f"cuda:{torch.cuda.current_device()}"
+            )
         else:
             value = torch.tensor(
                 value,
