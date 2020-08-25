@@ -468,17 +468,26 @@ class ConfigExperiment(IExperiment):
         return callback
 
     @staticmethod
-    def _process_callbacks(callbacks: OrderedDict) -> None:
+    def _process_callbacks(
+        callbacks: OrderedDict, stage_index: int = None
+    ) -> None:
         """
         Iterate over each of the callbacks and update
-        approptiate parameters required for success
+        appropriate parameters required for success
         run of config experiment.
 
         Arguments:
             callbacks (OrderedDict): finalized order of callbacks.
+            stage_index (int): number of a current stage
         """
+        if stage_index is None:
+            stage_index = -float("inf")
         for callback in callbacks.values():
-            if isinstance(callback, CheckpointCallback):
+            # NOTE: in experiments with multiple stages need to omit
+            #       loading of a best model state for the first stage
+            #       but for the other stages by default should
+            #       load best state of a model
+            if isinstance(callback, CheckpointCallback) and stage_index > 0:
                 if callback.load_on_stage_start is None:
                     callback.load_on_stage_start = "best"
                 if (
@@ -537,7 +546,10 @@ class ConfigExperiment(IExperiment):
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
 
-        self._process_callbacks(callbacks)
+        # NOTE: stage should be in self.stages_config
+        #       othervise will be raised ValueError
+        stage_index = list(self.stages_config.keys()).index(stage)
+        self._process_callbacks(callbacks, stage_index)
 
         return callbacks
 
