@@ -524,7 +524,7 @@ for distributed and FP16 method</p></li>
 
 <dl class="method">
 <dt id="catalyst.dl.experiment.config.ConfigExperiment.get_scheduler">
-<code class="sig-name descname">get_scheduler</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em>, <em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em><span class="sig-paren">)</span> &#x2192; torch.optim.lr_scheduler._LRScheduler<a class="reference internal" href="../_modules/catalyst/dl/experiment/config.html#ConfigExperiment.get_scheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.config.ConfigExperiment.get_scheduler" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_scheduler</code><span class="sig-paren">(</span><em class="sig-param">stage: str, optimizer: Union[torch.optim.optimizer.Optimizer, Dict[str, torch.optim.optimizer.Optimizer]]</em><span class="sig-paren">)</span> &#x2192; Union[torch.optim.lr_scheduler._LRScheduler, Dict[str, torch.optim.lr_scheduler._LRScheduler]]<a class="reference internal" href="../_modules/catalyst/dl/experiment/config.html#ConfigExperiment.get_scheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.config.ConfigExperiment.get_scheduler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the scheduler for a given stage.</p>
 </dd></dl>
 
