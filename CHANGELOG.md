@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `force` and `bert-level` keywords to `catalyst-data text2embedding` ([#917](https://github.com/catalyst-team/catalyst/pull/917))
 
 - `OptunaCallback` to `catalyst.contrib` ([#915](https://github.com/catalyst-team/catalyst/pull/915))
+- Multi-scheduler support for multi-optimizer case ([#923](https://github.com/catalyst-team/catalyst/pull/923))
 
 ### Changed
 
@@ -26,6 +27,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - autoresume option for Config API ([#907](https://github.com/catalyst-team/catalyst/pull/907))
 - a few issues with TF projector ([#917](https://github.com/catalyst-team/catalyst/pull/917))
 - batch sampler speed issue ([#921](https://github.com/catalyst-team/catalyst/pull/921)) 
+- add apex key-value optimizer support ([#924](https://github.com/catalyst-team/catalyst/pull/924))
+- runtime warning for PyTorch 1.6 ([920](https://github.com/catalyst-team/catalyst/pull/920))
+- Apex synbn usage ([920](https://github.com/catalyst-team/catalyst/pull/920))
 
 
 
