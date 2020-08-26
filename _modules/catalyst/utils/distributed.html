@@ -345,11 +345,31 @@
         <span class="k">if</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">amp_params</span><span class="p">:</span>
             <span class="n">amp_params</span><span class="p">[</span><span class="n">dp</span><span class="p">]</span> <span class="o">=</span> <span class="n">distributed_params</span><span class="p">[</span><span class="n">dp</span><span class="p">]</span>
 
+    <span class="c1"># NVIDIA apex support only:</span>
+    <span class="c1">#  model: nn.Module or list of modules</span>
+    <span class="c1">#  optimizer: None, torch.Optimizer or list of optimizers</span>
+    <span class="c1"># while key-value is preferred in the `catalyst`.</span>
+    <span class="c1"># So if model/optimizer is a dict, convert it to lists of keys</span>
+    <span class="c1"># and values first, and then cast it back after apex initialization</span>
+    <span class="n">model_keys</span><span class="p">,</span> <span class="n">optimizer_keys</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">model_keys</span><span class="p">,</span> <span class="n">model</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="nb">list</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">optimizer_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">optimizer</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">optimizer</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
     <span class="n">amp_result</span> <span class="o">=</span> <span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">amp_params</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">optimizer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">amp_result</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">amp_result</span>
+
+    <span class="c1"># convert model/optimizer back to dict if it needed</span>
+    <span class="k">if</span> <span class="n">model_keys</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">model_keys</span><span class="p">,</span> <span class="n">model</span><span class="p">)])</span>
+    <span class="k">if</span> <span class="n">optimizer_keys</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">optimizers</span> <span class="o">=</span> <span class="p">[(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">optimizer_keys</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)]</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">optimizers</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span></div>
 
 
