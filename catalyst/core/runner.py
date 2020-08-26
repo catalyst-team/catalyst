@@ -819,7 +819,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
                 from DataLoader.
         """
         if isinstance(batch, dict):
-            self.batch_size = next(iter(batch.values())).shape[0]
+            self.batch_size = len(next(iter(batch.values())))
         else:
             self.batch_size = len(batch[0])
         self.global_sample_step += self.batch_size
