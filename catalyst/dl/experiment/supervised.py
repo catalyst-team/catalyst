@@ -6,6 +6,7 @@ from catalyst.dl import (
     Callback,
     CriterionCallback,
     OptimizerCallback,
+    AMPOptimizerCallback,
     SchedulerCallback,
 )
 from catalyst.dl.experiment.experiment import Experiment
@@ -56,6 +57,14 @@ class SupervisedExperiment(Experiment):
         """
         callbacks = super().get_callbacks(stage=stage) or OrderedDict()
 
+        from catalyst.utils.distributed import check_amp_available
+        is_amp_enabled = (
+            self.distributed_params.get("amp", False) and check_amp_available()
+        )
+        optimizer_cls = OptimizerCallback
+        if is_amp_enabled:
+            optimizer_cls = AMPOptimizerCallback
+
         default_callbacks = []
 
         if not stage.startswith("infer"):
@@ -66,7 +75,7 @@ class SupervisedExperiment(Experiment):
             if self._optimizer is not None and isinstance(
                 self._optimizer, Optimizer
             ):
-                default_callbacks.append(("_optimizer", OptimizerCallback))
+                default_callbacks.append(("_optimizer", optimizer_cls))
             if self._scheduler is not None and isinstance(
                 self._scheduler, (Scheduler, ReduceLROnPlateau)
             ):

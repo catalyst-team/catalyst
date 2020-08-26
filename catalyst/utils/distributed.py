@@ -48,6 +48,15 @@ def check_apex_available() -> bool:
         return False and env_apex
 
 
+def check_amp_available() -> bool:
+    """Checks if torch.amp is available."""
+    major, minor = torch.__version__.split(".")[:2]
+    major = int(major)
+    minor = int(minor)
+    # torch.amp available since version 1.6 and above
+    return (major >= 1 and minor >= 6) or major > 1
+
+
 def check_torch_distributed_initialized() -> bool:
     """Checks if torch.distributed is available and initialized."""
     return (
@@ -277,6 +286,7 @@ def is_apex_available() -> bool:
 __all__ = [
     "check_ddp_wrapped",
     "check_apex_available",
+    "check_amp_available",
     "check_torch_distributed_initialized",
     "check_slurm_available",
     "assert_fp16_available",
