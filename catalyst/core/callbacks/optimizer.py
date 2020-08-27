@@ -3,7 +3,6 @@ import logging
 import warnings
 
 import torch
-from torch.cuda.amp import GradScaler
 
 from catalyst import registry
 from catalyst.core import utils
@@ -280,6 +279,8 @@ class AMPOptimizerCallback(Callback):
         Args:
             runner(IRunner): current runner
         """
+        from torch.cuda.amp import GradScaler
+
         self._optimizer = runner.get_attr(
             key="optimizer", inner_key=self.optimizer_key
         )
