@@ -2,7 +2,7 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
 
 from catalyst.__version__ import __version__
-from catalyst.dl.scripts import init, run, trace
+from catalyst.dl.scripts import run, trace
 from catalyst.tools.settings import IS_GIT_AVAILABLE
 
 COMMANDS = OrderedDict([("run", run), ("trace", trace)])
