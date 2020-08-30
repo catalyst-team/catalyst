@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Set, Union
+from typing import Dict, Optional, Set, Union, TYPE_CHECKING
 from pathlib import Path
 import logging
 
@@ -6,7 +6,9 @@ import torch
 from torch import quantization
 from torch.nn import Module
 
-from catalyst.dl import ConfigExperiment
+if TYPE_CHECKING:
+    from catalyst.dl.experiment.config import ConfigExperiment
+
 from catalyst.utils import (
     import_experiment_and_runner,
     load_checkpoint,
