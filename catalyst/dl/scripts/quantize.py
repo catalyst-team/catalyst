@@ -2,7 +2,10 @@ import argparse
 from argparse import ArgumentParser
 from pathlib import Path
 
-from catalyst.dl.utils.quantization import save_quantized_model, quantize_model_from_checkpoint
+from catalyst.dl.utils.quantization import (
+    quantize_model_from_checkpoint,
+    save_quantized_model,
+)
 
 
 def build_args(parser: ArgumentParser):
@@ -30,25 +33,12 @@ def build_args(parser: ArgumentParser):
         default=None,
         help="Output path to save traced model (overrides --out-dir)",
     )
-    parser.add_argument(
-        "--opt-level",
-        type=str,
-        default=None,
-        help="Opt level for FP16 (optional)",
-    )
 
     parser.add_argument(
         "--stage",
         type=str,
         default=None,
         help="Stage from experiment from which model and loader will be taken",
-    )
-
-    parser.add_argument(
-        "--loader",
-        type=str,
-        default=None,
-        help="Loader name to get the batch from",
     )
 
     return parser
@@ -71,7 +61,6 @@ def main(args, _):
         logdir,
         checkpoint_name=checkpoint_name,
         stage=args.stage,
-        qconfig_spec=args.qconf,
         dtype=args.dtype,
     )
 

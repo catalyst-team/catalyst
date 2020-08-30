@@ -26,6 +26,7 @@ def save_quantized_model(
     Args:
         model (ScriptModule): Traced model
         logdir (Union[str, Path]): Path to experiment
+        checkpoint_name (str): name for the checkpoint
         out_dir (Union[str, Path]): Directory to save model to
             (overrides logdir)
         out_model (Union[str, Path]): Path to save model to
@@ -98,13 +99,9 @@ def quantize_model_from_checkpoint(
     checkpoint = load_checkpoint(checkpoint_path)
     unpack_checkpoint(checkpoint, model=model)
 
-    runner: runner_fn = runner_fn(**runner_params)
-    # only cpu backend is supported for quantization
-    runner.model, runner.device = model, torch.device("cpu")
-
-    print("Quantizing")
+    print("Quantization is running...")
     quantized_model = quantization.quantize_dynamic(
-        runner.model.cpu(), qconfig_spec=qconfig_spec, dtype=dtype,
+        model.cpu(), qconfig_spec=qconfig_spec, dtype=dtype,
     )
 
     print("Done")
