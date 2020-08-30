@@ -16,7 +16,8 @@ from catalyst.tools.settings import IS_QUANTIZATION_AVAILABLE
 @pytest.mark.skipif(
     not IS_QUANTIZATION_AVAILABLE, reason="torch version too low"
 )
-def test_pruning_callback():
+def test_pruning_callback() -> None:
+    """quantize model"""
     loaders = {
         "train": DataLoader(
             MNIST(

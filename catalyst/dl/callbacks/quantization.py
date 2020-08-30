@@ -77,7 +77,8 @@ class DynamicQuantizationCallback(Callback):
 
     def on_epoch_end(self, runner: IRunner):
         """
-        Performing model quantization on epoch end if condition metric is improved
+        Performing model quantization on epoch end if condition metric is
+        improved
 
         Args:
             runner (IRunner): Current runner
