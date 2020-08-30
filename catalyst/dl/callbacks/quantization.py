@@ -14,7 +14,7 @@ class DynamicQuantizationCallback(Callback):
     Dynamic Quantization Callback
 
     This callback applying dynamic quantization
-    of the model.
+    to the model.
     """
 
     def __init__(
