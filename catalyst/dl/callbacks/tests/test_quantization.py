@@ -17,7 +17,7 @@ from catalyst.tools.settings import IS_QUANTIZATION_AVAILABLE
     not IS_QUANTIZATION_AVAILABLE, reason="torch version too low"
 )
 def test_pruning_callback() -> None:
-    """quantize model"""
+    """Quantize model"""
     loaders = {
         "train": DataLoader(
             MNIST(
