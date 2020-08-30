@@ -789,4 +789,38 @@ assert metrics['last']['cmc01'] > 0.1  # slightly better then random
 assert metrics['last']['cmc05'] > 0.5
 """
 
+################################  pipeline 22  ################################
+# test autoresume
+
+LOG_MSG='pipeline 22'
+echo ${LOG_MSG}
+
+EXPDIR=./tests/_tests_dl_callbacks
+LOGDIR=./tests/logs/_tests_dl_callbacks
+CHECKPOINTS=${LOGDIR}/checkpoints
+LOGFILE=${CHECKPOINTS}/_metrics.json
+EXP_OUTPUT=./tests/output.txt
+
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --stages/stage1/stage_params/num_epochs='2:int' \
+  --stages/stage1/callbacks_params/fast_run/num_epoch_steps='2:int' \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config0.yml \
+  --logdir=${LOGDIR}
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config0.yml \
+  --logdir=${LOGDIR} \
+  --autoresume last > ${EXP_OUTPUT}
+
+cat ${EXP_OUTPUT}
+check_line_counts ${EXP_OUTPUT} "loaded state .*/last_full.pth (global epoch 2, epoch 2, stage stage1)" 1
+
+rm -rf ./tests/logs/_tests_dl_callbacks ${EXP_OUTPUT}
+
+
 rm -rf {LOGDIR}

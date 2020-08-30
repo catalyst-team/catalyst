@@ -84,11 +84,31 @@ def initialize_apex(model, optimizer=None, **distributed_params):
         if dp in amp_params:
             amp_params[dp] = distributed_params[dp]
 
+    # NVIDIA apex support only:
+    #  model: nn.Module or list of modules
+    #  optimizer: None, torch.Optimizer or list of optimizers
+    # while key-value is preferred in the `catalyst`.
+    # So if model/optimizer is a dict, convert it to lists of keys
+    # and values first, and then cast it back after apex initialization
+    model_keys, optimizer_keys = None, None
+    if isinstance(model, dict):
+        model_keys, model = list(model.keys()), list(model.values())
+    if isinstance(optimizer, dict):
+        optimizer_keys = list(optimizer.keys())
+        optimizer = list(optimizer.values())
+
     amp_result = apex.amp.initialize(model, optimizer, **amp_params)
     if optimizer is not None:
         model, optimizer = amp_result
     else:
         model = amp_result
+
+    # convert model/optimizer back to dict if it needed
+    if model_keys is not None:
+        model = OrderedDict([(k, v) for k, v in zip(model_keys, model)])
+    if optimizer_keys is not None:
+        optimizers = [(k, v) for k, v in zip(optimizer_keys, optimizer)]
+        optimizer = OrderedDict(optimizers)
     return model, optimizer
 
 
@@ -125,12 +145,24 @@ def get_rank() -> int:
 def get_distributed_mean(value: Union[float, torch.Tensor]):
     """Computes distributed mean among all nodes."""
     if check_torch_distributed_initialized():
-        value = torch.tensor(
-            value,
-            dtype=torch.float,
-            device=f"cuda:{torch.cuda.current_device()}",
-            requires_grad=False,
-        )
+        # Fix for runtime warning:
+        # To copy construct from a tensor, it is recommended to use
+        # sourceTensor.clone().detach() or
+        # sourceTensor.clone().detach().requires_grad_(True),
+        # rather than torch.tensor(sourceTensor).
+        if torch.is_tensor(value):
+            value = (
+                value.clone()
+                .detach()
+                .to(device=f"cuda:{torch.cuda.current_device()}")
+            )
+        else:
+            value = torch.tensor(
+                value,
+                dtype=torch.float,
+                device=f"cuda:{torch.cuda.current_device()}",
+                requires_grad=False,
+            )
         torch.distributed.all_reduce(value)
         value = float(value.item() / torch.distributed.get_world_size())
     return value

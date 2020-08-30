@@ -21,3 +21,8 @@ from catalyst.dl.utils.trace import (
 from catalyst.dl.utils.quantization import save_quantized_model
 
 from catalyst.dl.utils.wizard import run_wizard, Wizard
+
+from catalyst.tools.settings import IS_GIT_AVAILABLE
+
+if IS_GIT_AVAILABLE:
+    from catalyst.dl.utils.wizard import run_wizard, Wizard

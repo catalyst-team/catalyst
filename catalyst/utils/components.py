@@ -94,13 +94,14 @@ def process_components(
         if is_apex_available:
             import apex
 
+            if syncbn:
+                model = apex.parallel.convert_syncbn_model(model)
+
             model, optimizer = initialize_apex(
                 model, optimizer, **distributed_params
             )
             model = apex.parallel.DistributedDataParallel(model)
 
-            if syncbn:
-                model = apex.parallel.convert_syncbn_model(model)
         else:
             model = nn.parallel.DistributedDataParallel(
                 model, device_ids=[local_rank], output_device=local_rank

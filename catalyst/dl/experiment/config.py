@@ -343,31 +343,31 @@ class ConfigExperiment(IExperiment):
         return optimizer
 
     @staticmethod
-    def _get_scheduler(*, optimizer, **params):
+    def _get_scheduler(
+        *, optimizer: Union[Optimizer, Dict[str, Optimizer]], **params: Any
+    ) -> Union[Scheduler, Dict[str, Scheduler]]:
+        optimizer_key = params.pop("_optimizer", None)
+        optimizer_ = optimizer[optimizer_key] if optimizer_key else optimizer
+        scheduler = SCHEDULERS.get_from_params(**params, optimizer=optimizer_)
+
+        return scheduler
+
+    def get_scheduler(
+        self, stage: str, optimizer: Union[Optimizer, Dict[str, Optimizer]]
+    ) -> Union[Scheduler, Dict[str, Scheduler]]:
+        """Returns the scheduler for a given stage."""
+        params = self.stages_config[stage].get("scheduler_params", {})
         key_value_flag = params.pop("_key_value", False)
 
         if key_value_flag:
-            scheduler = {}
-            for scheduler_key, scheduler_params in params.items():
-                scheduler[
-                    scheduler_key
-                ] = ConfigExperiment._get_scheduler(  # noqa: WPS437
+            scheduler: Dict[str, Scheduler] = {}
+            for key, scheduler_params in params.items():
+                scheduler[key] = self._get_scheduler(
                     optimizer=optimizer, **scheduler_params
                 )
         else:
-            scheduler = SCHEDULERS.get_from_params(
-                **params, optimizer=optimizer
-            )
-        return scheduler
+            scheduler = self._get_scheduler(optimizer=optimizer, **params)
 
-    def get_scheduler(self, stage: str, optimizer: Optimizer) -> Scheduler:
-        """Returns the scheduler for a given stage."""
-        scheduler_params = self.stages_config[stage].get(
-            "scheduler_params", {}
-        )
-        scheduler = self._get_scheduler(
-            optimizer=optimizer, **scheduler_params
-        )
         return scheduler
 
     @staticmethod
@@ -468,17 +468,26 @@ class ConfigExperiment(IExperiment):
         return callback
 
     @staticmethod
-    def _process_callbacks(callbacks: OrderedDict) -> None:
+    def _process_callbacks(
+        callbacks: OrderedDict, stage_index: int = None
+    ) -> None:
         """
         Iterate over each of the callbacks and update
-        approptiate parameters required for success
+        appropriate parameters required for success
         run of config experiment.
 
         Arguments:
             callbacks (OrderedDict): finalized order of callbacks.
+            stage_index (int): number of a current stage
         """
+        if stage_index is None:
+            stage_index = -float("inf")
         for callback in callbacks.values():
-            if isinstance(callback, CheckpointCallback):
+            # NOTE: in experiments with multiple stages need to omit
+            #       loading of a best model state for the first stage
+            #       but for the other stages by default should
+            #       load best state of a model
+            if isinstance(callback, CheckpointCallback) and stage_index > 0:
                 if callback.load_on_stage_start is None:
                     callback.load_on_stage_start = "best"
                 if (
@@ -537,7 +546,10 @@ class ConfigExperiment(IExperiment):
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
 
-        self._process_callbacks(callbacks)
+        # NOTE: stage should be in self.stages_config
+        #       othervise will be raised ValueError
+        stage_index = list(self.stages_config.keys()).index(stage)
+        self._process_callbacks(callbacks, stage_index)
 
         return callbacks
 

@@ -1,6 +1,8 @@
 from typing import Any, Iterable, List, Optional
 from itertools import tee
 
+import numpy as np
+
 
 def pairwise(iterable: Iterable[Any]) -> Iterable[Any]:
     """Iterate sequences by pairs.
@@ -68,7 +70,10 @@ def find_value_ids(it: Iterable[Any], value: Any) -> List[int]:
     Returns:
         indices of the all elements equal x0
     """
-    inds = [i for i, el in enumerate(it) if el == value]
+    if isinstance(it, np.ndarray):
+        inds = list(np.where(it == value)[0])
+    else:  # could be very slow
+        inds = [i for i, el in enumerate(it) if el == value]
     return inds
 
 
