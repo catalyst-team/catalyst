@@ -11,7 +11,7 @@ from catalyst.dl.utils import save_quantized_model
 
 class DynamicQuantizationCallback(Callback):
     """
-    Dynamic Quantization Caallback
+    Dynamic Quantization Callback
 
     This callback applying dynamic quantization
     of the model.
@@ -32,11 +32,20 @@ class DynamicQuantizationCallback(Callback):
         """
         Init method for callback
         Args:
+            metric (str): Metric key we should trace model based on
+            minimize (bool): Whether do we minimize metric or not
+            min_delta (float): Minimum value of change for metric to be
+                considered as improved
+            mode (str): One of `best` or `last`
+            do_once (str): Whether do we trace once per stage or every epoch
             qconfig_spec: torch.quantization.quantize_dynamic
                 parameter, you can define layers to be quantize
             dtype: type of the model parameters, default int8
+            out_dir (Union[str, Path]): Directory to save model to
+            out_model (Union[str, Path]): Path to save model to
+                (overrides `out_dir` argument)
         """
-        super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
+        super().__init__(order=CallbackOrder.external)
 
         if mode not in ["best", "last"]:
             raise ValueError(

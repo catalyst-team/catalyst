@@ -43,8 +43,7 @@ def build_args(parser: ArgumentParser):
     )
 
     parser.add_argument(
-        "--verbose",
-        action="store_true",
+        "--verbose", action="store_true",
     )
 
     return parser

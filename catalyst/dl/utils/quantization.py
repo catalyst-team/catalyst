@@ -1,13 +1,10 @@
-from typing import Dict, Optional, Set, Union, TYPE_CHECKING
-from pathlib import Path
+from typing import Dict, Optional, Set, TYPE_CHECKING, Union
 import logging
+from pathlib import Path
 
 import torch
 from torch import quantization
 from torch.nn import Module
-
-if TYPE_CHECKING:
-    from catalyst.dl.experiment.config import ConfigExperiment
 
 from catalyst.utils import (
     import_experiment_and_runner,
@@ -15,6 +12,10 @@ from catalyst.utils import (
     load_config,
     unpack_checkpoint,
 )
+
+if TYPE_CHECKING:
+    from catalyst.dl.experiment.config import ConfigExperiment
+
 
 logger = logging.getLogger(__name__)
 
