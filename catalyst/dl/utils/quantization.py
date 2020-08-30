@@ -1,5 +1,6 @@
 from typing import Dict, Optional, Set, Union
 from pathlib import Path
+import logging
 
 import torch
 from torch import quantization
@@ -12,6 +13,8 @@ from catalyst.utils import (
     load_config,
     unpack_checkpoint,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def save_quantized_model(
@@ -78,7 +81,7 @@ def quantize_model_from_checkpoint(
     """
     config_path = logdir / "configs" / "_config.json"
     checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
-    print("Load config")
+    logging.info("Load config")
     config: Dict[str, dict] = load_config(config_path)
     runner_params = config.get("runner_params", {}) or {}
 
@@ -87,11 +90,11 @@ def quantize_model_from_checkpoint(
     # We will use copy of expdir from logs for reproducibility
     expdir = Path(logdir) / "code" / config_expdir.name
 
-    print("Import experiment and runner from logdir")
+    logger.info("Import experiment and runner from logdir")
     experiment_fn, runner_fn = import_experiment_and_runner(expdir)
     experiment: ConfigExperiment = experiment_fn(config)
 
-    print(f"Load model state from checkpoints/{checkpoint_name}.pth")
+    logger.info(f"Load model state from checkpoints/{checkpoint_name}.pth")
     if stage is None:
         stage = list(experiment.stages)[0]
 
@@ -99,10 +102,10 @@ def quantize_model_from_checkpoint(
     checkpoint = load_checkpoint(checkpoint_path)
     unpack_checkpoint(checkpoint, model=model)
 
-    print("Quantization is running...")
+    logger.info("Quantization is running...")
     quantized_model = quantization.quantize_dynamic(
         model.cpu(), qconfig_spec=qconfig_spec, dtype=dtype,
     )
 
-    print("Done")
+    logger.info("Done")
     return quantized_model

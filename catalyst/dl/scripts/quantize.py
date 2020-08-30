@@ -1,5 +1,6 @@
 import argparse
 from argparse import ArgumentParser
+import logging
 from pathlib import Path
 
 from catalyst.dl.utils.quantization import (
@@ -41,6 +42,11 @@ def build_args(parser: ArgumentParser):
         help="Stage from experiment from which model and loader will be taken",
     )
 
+    parser.add_argument(
+        "--verbose",
+        action="store_true",
+    )
+
     return parser
 
 
@@ -56,6 +62,11 @@ def main(args, _):
     """Main method for ``catalyst-dl quantize``."""
     logdir: Path = args.logdir
     checkpoint_name: str = args.checkpoint
+
+    if args.verbose:
+        logging.basicConfig(level=logging.INFO)
+    else:
+        logging.basicConfig(level=logging.WARNING)
 
     traced_model = quantize_model_from_checkpoint(
         logdir,
