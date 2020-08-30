@@ -71,7 +71,6 @@ def main(args, _):
         logdir,
         checkpoint_name=checkpoint_name,
         stage=args.stage,
-        dtype=args.dtype,
     )
 
     save_quantized_model(

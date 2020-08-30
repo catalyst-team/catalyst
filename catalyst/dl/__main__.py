@@ -2,10 +2,10 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
 
 from catalyst.__version__ import __version__
-from catalyst.dl.scripts import run, trace
+from catalyst.dl.scripts import run, trace, quantize
 from catalyst.tools.settings import IS_GIT_AVAILABLE
 
-COMMANDS = OrderedDict([("run", run), ("trace", trace)])
+COMMANDS = OrderedDict([("run", run), ("trace", trace), ("quantize", quantize)])
 if IS_GIT_AVAILABLE:
     from catalyst.dl.scripts import init
 
