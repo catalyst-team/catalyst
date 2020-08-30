@@ -6,6 +6,7 @@ import torch
 from torch import quantization
 from torch.nn import Module
 
+from catalyst.tools import Model
 from catalyst.utils import (
     import_experiment_and_runner,
     load_checkpoint,
@@ -69,9 +70,10 @@ def quantize_model_from_checkpoint(
     stage: str = None,
     qconfig_spec: Optional[Union[Set, Dict]] = None,
     dtype: Optional[torch.dtype] = torch.qint8,
-):
+) -> Model:
     """
     Quantize model using created experiment and runner.
+
     Args:
         logdir (Union[str, Path]): Path to Catalyst logdir with model
         checkpoint_name (str): Name of model checkpoint to use
@@ -79,6 +81,7 @@ def quantize_model_from_checkpoint(
         qconfig_spec: torch.quantization.quantize_dynamic
                 parameter, you can define layers to be quantize
         dtype: type of the model parameters, default int8
+
     Returns:
         Quantized model
     """
@@ -86,7 +89,6 @@ def quantize_model_from_checkpoint(
     checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
     logging.info("Load config")
     config: Dict[str, dict] = load_config(config_path)
-    runner_params = config.get("runner_params", {}) or {}
 
     # Get expdir name
     config_expdir = Path(config["args"]["expdir"])

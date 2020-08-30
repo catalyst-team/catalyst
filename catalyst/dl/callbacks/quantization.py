@@ -5,7 +5,7 @@ import torch
 from torch import quantization
 
 from catalyst.core import IRunner
-from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.dl.utils import save_quantized_model
 
 
@@ -78,6 +78,7 @@ class DynamicQuantizationCallback(Callback):
     def on_epoch_end(self, runner: IRunner):
         """
         Performing model quantization on epoch end if condition metric is improved
+
         Args:
             runner (IRunner): Current runner
         """
@@ -120,6 +121,7 @@ class DynamicQuantizationCallback(Callback):
     def on_stage_end(self, runner: "IRunner") -> None:
         """
         On stage end action.
+
         Args:
             runner: runner of your experiment
         """
