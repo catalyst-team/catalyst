@@ -830,7 +830,7 @@ echo ${LOG_MSG}
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --stages/stage1/stage_params/num_epochs='2:int' \
-  --stages/stage1/callbacks_params/optimizer/use_fast_zero_grad='true:bool' \
+  --stages/stage1/callbacks_params/optimizer/use_fast_zero_grad='1:bool' \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config0.yml \
   --logdir=${LOGDIR} > ${EXP_OUTPUT}
