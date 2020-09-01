@@ -14,11 +14,12 @@ from catalyst.tools.typing import (
     Scheduler,
 )
 from catalyst.utils.distributed import (
+    check_amp_available,
     check_apex_available,
     check_ddp_wrapped,
     get_distributed_params,
     get_rank,
-    initialize_apex, check_amp_available,
+    initialize_apex,
 )
 from catalyst.utils.misc import maybe_recursive_call
 from catalyst.utils.torch import get_device
@@ -80,8 +81,10 @@ def process_components(
     )
 
     if is_apex_enabled and is_amp_enabled:
-        raise ValueError("Both NVidia Apex and Torch.Amp are enabled. "
-                         "You must choose only one mixed precision backend")
+        raise ValueError(
+            "Both NVidia Apex and Torch.Amp are enabled. "
+            "You must choose only one mixed precision backend"
+        )
     model: Model = maybe_recursive_call(model, "to", device=device)
 
     if check_ddp_wrapped(model):

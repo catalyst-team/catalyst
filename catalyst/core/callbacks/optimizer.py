@@ -284,15 +284,13 @@ class AMPOptimizerCallback(Callback):
         self.scaler = GradScaler()
         assert self._optimizer is not None
 
-    def on_epoch_start(self, runner: IRunner) -> None:
-        """On epoch start event.
+    def on_batch_start(self, runner: IRunner) -> None:
+        """On batch start event
 
         Args:
             runner (IRunner): current runner
         """
-        pass
 
-    def on_batch_start(self, runner: IRunner) -> None:
         self.prev_autocast_state = torch.is_autocast_enabled()
         torch.set_autocast_enabled(True)
         torch.autocast_increment_nesting()

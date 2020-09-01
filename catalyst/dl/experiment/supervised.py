@@ -3,10 +3,10 @@ from collections import OrderedDict
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from catalyst.dl import (
+    AMPOptimizerCallback,
     Callback,
     CriterionCallback,
     OptimizerCallback,
-    AMPOptimizerCallback,
     SchedulerCallback,
 )
 from catalyst.dl.experiment.experiment import Experiment
