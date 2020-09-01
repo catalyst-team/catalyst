@@ -301,7 +301,6 @@ class AMPOptimizerCallback(Callback):
         Args:
             runner (IRunner): current runner
         """
-
         # Drop the cache when we exit to a nesting level
         # that's outside any instance of autocast.
         if torch.autocast_decrement_nesting() == 0:
@@ -335,11 +334,8 @@ class AMPOptimizerCallback(Callback):
 
         Args:
             optimizer (Optimizer): the optimizer
-            optimizer_wds (List[float]): list of weight decay parameters
-                for each param group
             grad_clip_fn (Callable): function for gradient clipping
         """
-
         if grad_clip_fn is not None:
             # Unscales the gradients of
             # optimizer's assigned params in-place
@@ -358,7 +354,6 @@ class AMPOptimizerCallback(Callback):
         Args:
             runner (IRunner): current runner
         """
-
         lr = self._optimizer.param_groups[0]["lr"]
         lr_name = (
             f"lr/{self.optimizer_key}"
@@ -377,6 +372,11 @@ class AMPOptimizerCallback(Callback):
             runner.epoch_metrics[momentum_name] = momentum
 
     def on_stage_end(self, runner: IRunner) -> None:
+        """On stage end event.
+
+        Args:
+            runner (IRunner): current runner
+        """
         self.scaler = None
 
 
