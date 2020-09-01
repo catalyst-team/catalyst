@@ -14,8 +14,8 @@ from catalyst.dl import (
     AMPOptimizerCallback,
     BatchOverfitCallback,
     Callback,
-    CheckRunCallback,
     CheckpointCallback,
+    CheckRunCallback,
     ConsoleLogger,
     CriterionCallback,
     ExceptionCallback,
@@ -24,9 +24,9 @@ from catalyst.dl import (
     SchedulerCallback,
     TensorboardLogger,
     TimerCallback,
+    utils,
     ValidationManagerCallback,
     VerboseLogger,
-    utils,
 )
 from catalyst.dl.utils import check_callback_isinstance
 from catalyst.registry import (
