@@ -12,6 +12,7 @@ import deprecation
 import torch
 from torch import nn
 import torch.distributed
+from packaging.version import parse, Version
 
 from catalyst import __version__
 from catalyst.utils.misc import get_fn_default_params
@@ -50,11 +51,7 @@ def check_apex_available() -> bool:
 
 def check_amp_available() -> bool:
     """Checks if torch.amp is available."""
-    major, minor = torch.__version__.split(".")[:2]
-    major = int(major)
-    minor = int(minor)
-    # torch.amp available since version 1.6 and above
-    return (major >= 1 and minor >= 6) or major > 1
+    return parse(torch.__version__) >= Version("1.6.0")
 
 
 def check_torch_distributed_initialized() -> bool:
