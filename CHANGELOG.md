@@ -30,6 +30,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - add apex key-value optimizer support ([#924](https://github.com/catalyst-team/catalyst/pull/924))
 - runtime warning for PyTorch 1.6 ([920](https://github.com/catalyst-team/catalyst/pull/920))
 - Apex synbn usage ([920](https://github.com/catalyst-team/catalyst/pull/920))
+- Catalyst dependency on system git ([922](https://github.com/catalyst-team/catalyst/pull/922))
 
 
 
