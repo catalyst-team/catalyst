@@ -322,18 +322,14 @@ class AMPOptimizerCallback(Callback):
 
         if need_gradient_step:
             self.grad_step(
-                optimizer=self._optimizer,
-                grad_clip_fn=self.grad_clip_fn,
+                optimizer=self._optimizer, grad_clip_fn=self.grad_clip_fn,
             )
 
             utils.maybe_recursive_call(self._optimizer, "zero_grad")
             self._accumulation_counter = 0
 
     def grad_step(
-        self,
-        *,
-        optimizer: Optimizer,
-        grad_clip_fn: Callable = None,
+        self, *, optimizer: Optimizer, grad_clip_fn: Callable = None,
     ) -> None:
         """Makes a gradient step for a given optimizer.
 

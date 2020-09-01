@@ -530,9 +530,10 @@ class ConfigExperiment(IExperiment):
                 default_callbacks.append(("_tensorboard", TensorboardLogger))
 
             from catalyst.utils.distributed import check_amp_available
+
             is_amp_enabled = (
-                self.distributed_params.get("amp", False) and
-                check_amp_available()
+                self.distributed_params.get("amp", False)
+                and check_amp_available()
             )
             optimizer_cls = OptimizerCallback
             if is_amp_enabled:
