@@ -29,7 +29,10 @@ from catalyst.core.callbacks.metrics import (
     MetricAggregationCallback,
     MetricManagerCallback,
 )
-from catalyst.core.callbacks.optimizer import OptimizerCallback, AMPOptimizerCallback
+from catalyst.core.callbacks.optimizer import (
+    OptimizerCallback,
+    AMPOptimizerCallback,
+)
 from catalyst.core.callbacks.periodic_loader import PeriodicLoaderCallback
 from catalyst.core.callbacks.scheduler import LRUpdater, SchedulerCallback
 from catalyst.core.callbacks.timer import TimerCallback

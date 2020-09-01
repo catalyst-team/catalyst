@@ -270,7 +270,6 @@ class AMPOptimizerCallback(Callback):
         # Initialized at on_state_start()
         self.scaler = None
 
-
     def on_stage_start(self, runner: IRunner) -> None:
         """Checks that the current stage has correct optimizer.
 
@@ -293,12 +292,10 @@ class AMPOptimizerCallback(Callback):
         """
         pass
 
-
     def on_batch_start(self, runner: IRunner) -> None:
         self.prev_autocast_state = torch.is_autocast_enabled()
         torch.set_autocast_enabled(True)
         torch.autocast_increment_nesting()
-
 
     def on_batch_end(self, runner: IRunner) -> None:
         """On batch end event
@@ -384,7 +381,6 @@ class AMPOptimizerCallback(Callback):
                 else "momentum"
             )
             runner.epoch_metrics[momentum_name] = momentum
-
 
     def on_stage_end(self, runner: IRunner) -> None:
         self.scaler = None
