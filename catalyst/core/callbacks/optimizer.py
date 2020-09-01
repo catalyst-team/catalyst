@@ -290,7 +290,6 @@ class AMPOptimizerCallback(Callback):
         Args:
             runner (IRunner): current runner
         """
-
         self.prev_autocast_state = torch.is_autocast_enabled()
         torch.set_autocast_enabled(True)
         torch.autocast_increment_nesting()
