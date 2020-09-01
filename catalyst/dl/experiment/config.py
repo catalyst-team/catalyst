@@ -11,22 +11,22 @@ from torch.utils.data import DataLoader
 from catalyst.core import IExperiment
 from catalyst.data import Augmentor, AugmentorCompose
 from catalyst.dl import (
+    AMPOptimizerCallback,
     BatchOverfitCallback,
     Callback,
-    CheckpointCallback,
     CheckRunCallback,
+    CheckpointCallback,
     ConsoleLogger,
     CriterionCallback,
     ExceptionCallback,
     MetricManagerCallback,
     OptimizerCallback,
-    AMPOptimizerCallback,
     SchedulerCallback,
     TensorboardLogger,
     TimerCallback,
-    utils,
     ValidationManagerCallback,
     VerboseLogger,
+    utils,
 )
 from catalyst.dl.utils import check_callback_isinstance
 from catalyst.registry import (

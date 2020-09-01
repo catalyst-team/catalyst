@@ -8,11 +8,11 @@ import socket
 import subprocess
 
 import deprecation
+from packaging.version import parse, Version
 
 import torch
 from torch import nn
 import torch.distributed
-from packaging.version import parse, Version
 
 from catalyst import __version__
 from catalyst.utils.misc import get_fn_default_params
