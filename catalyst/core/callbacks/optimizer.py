@@ -227,8 +227,6 @@ class OptimizerCallback(Callback):
 class AMPOptimizerCallback(Callback):
     """
     Optimizer callback with native torch amp support.
-    TODO: Implement correct gradient clipping
-    TODO: Investigate whether we need invidual loss scaling
     """
 
     def __init__(
@@ -350,8 +348,14 @@ class AMPOptimizerCallback(Callback):
                 for each param group
             grad_clip_fn (Callable): function for gradient clipping
         """
-        for group in zip(optimizer.param_groups):
-            if grad_clip_fn is not None:
+
+        if grad_clip_fn is not None:
+            # Unscales the gradients of
+            # optimizer's assigned params in-place
+            self.scaler.unscale_(optimizer)
+            for group in zip(optimizer.param_groups):
+                # Since the gradients of optimizer's
+                # assigned params are unscaled, clips as usual:
                 grad_clip_fn(group["params"])
 
         self.scaler.step(optimizer)
