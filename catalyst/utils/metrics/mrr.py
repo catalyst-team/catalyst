@@ -5,7 +5,7 @@ MRR metric.
 import torch
 
 
-def mrr(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+def mrr(outputs: torch.Tensor, targets: torch.Tensor, k=100) -> torch.Tensor:
 
     """
     Calculate the MRR score given model ouptputs and targets
@@ -21,6 +21,9 @@ def mrr(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         mrr (float): the mrr score for each slate
     """
     max_rank = targets.shape[0]
+    # print(targets.size())
+    # if len(targets.size()) > 2: 
+    #     k = min(targets.size()[1], k)
 
     _, indices_for_sort = outputs.sort(descending=True, dim=-1)
     true_sorted_by_preds = torch.gather(
@@ -37,7 +40,7 @@ def mrr(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
 
     zero_sum_mask = torch.sum(values) == 0.0
     result[zero_sum_mask] = 0.0
-
+    # print(result*within_at_mask)
     return result * within_at_mask
 
 
