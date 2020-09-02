@@ -35,9 +35,9 @@ so you can create something new rather than writing another regular train cycle.
 <br/> Break the cycle - use the Catalyst!
 
 Project [manifest](https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md). Part of [PyTorch Ecosystem](https://pytorch.org/ecosystem/). Part of [Catalyst Ecosystem](https://docs.google.com/presentation/d/1D-yhVOg6OXzjo9K_-IS5vSHLPIUxp1PEkFGnpRcNCNU/edit?usp=sharing):
-- [Alchemy](https://github.com/catalyst-team/alchemy) - Experiments logging & visualization
-- [Catalyst](https://github.com/catalyst-team/catalyst) - Accelerated Deep Learning Research and Development
-- [Reaction](https://github.com/catalyst-team/reaction) - Convenient Deep Learning models serving
+- [Alchemy](https://github.com/catalyst-team/alchemy) - experiments logging & visualization
+- [Catalyst](https://github.com/catalyst-team/catalyst) - accelerated deep learning research and development
+- [Reaction](https://github.com/catalyst-team/reaction) - convenient deep learning models serving
 
 [Catalyst at AI Landscape](https://landscape.lfai.foundation/selected=catalyst).
 
@@ -1243,7 +1243,7 @@ Please use this bibtex if you want to cite this repository in your publications:
 
     @misc{catalyst,
         author = {Kolesnikov, Sergey},
-        title = {Accelerated DL R&D},
+        title = {Accelerated deep learning R&D},
         year = {2018},
         publisher = {GitHub},
         journal = {GitHub repository},
