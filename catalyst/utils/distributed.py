@@ -8,6 +8,7 @@ import socket
 import subprocess
 
 import deprecation
+from packaging.version import parse, Version
 
 import torch
 from torch import nn
@@ -46,6 +47,11 @@ def check_apex_available() -> bool:
         return True and env_apex
     except ImportError:
         return False and env_apex
+
+
+def check_amp_available() -> bool:
+    """Checks if torch.amp is available."""
+    return parse(torch.__version__) >= Version("1.6.0")
 
 
 def check_torch_distributed_initialized() -> bool:
@@ -277,6 +283,7 @@ def is_apex_available() -> bool:
 __all__ = [
     "check_ddp_wrapped",
     "check_apex_available",
+    "check_amp_available",
     "check_torch_distributed_initialized",
     "check_slurm_available",
     "assert_fp16_available",

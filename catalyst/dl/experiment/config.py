@@ -11,6 +11,7 @@ from torch.utils.data import DataLoader
 from catalyst.core import IExperiment
 from catalyst.data import Augmentor, AugmentorCompose
 from catalyst.dl import (
+    AMPOptimizerCallback,
     BatchOverfitCallback,
     Callback,
     CheckpointCallback,
@@ -528,10 +529,20 @@ class ConfigExperiment(IExperiment):
                 default_callbacks.append(("_saver", CheckpointCallback))
                 default_callbacks.append(("_tensorboard", TensorboardLogger))
 
+            from catalyst.utils.distributed import check_amp_available
+
+            is_amp_enabled = (
+                self.distributed_params.get("amp", False)
+                and check_amp_available()
+            )
+            optimizer_cls = OptimizerCallback
+            if is_amp_enabled:
+                optimizer_cls = AMPOptimizerCallback
+
             if self.stages_config[stage].get("criterion_params", {}):
                 default_callbacks.append(("_criterion", CriterionCallback))
             if self.stages_config[stage].get("optimizer_params", {}):
-                default_callbacks.append(("_optimizer", OptimizerCallback))
+                default_callbacks.append(("_optimizer", optimizer_cls))
             if self.stages_config[stage].get("scheduler_params", {}):
                 default_callbacks.append(("_scheduler", SchedulerCallback))
 
