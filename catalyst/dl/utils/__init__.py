@@ -18,8 +18,6 @@ from catalyst.dl.utils.trace import (
     trace_model_from_runner,
 )
 
-from catalyst.dl.utils.wizard import run_wizard, Wizard
-
 from catalyst.tools.settings import IS_GIT_AVAILABLE, IS_QUANTIZATION_AVAILABLE
 
 if IS_GIT_AVAILABLE:
