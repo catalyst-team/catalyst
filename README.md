@@ -2,7 +2,7 @@
 
 [![Catalyst logo](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png)](https://github.com/catalyst-team/catalyst)
 
-**Accelerated DL R&D**
+**Accelerated deep learning R&D**
 
 [![CodeFactor](https://www.codefactor.io/repository/github/catalyst-team/catalyst/badge)](https://www.codefactor.io/repository/github/catalyst-team/catalyst)
 [![Pipi version](https://img.shields.io/pypi/v/catalyst.svg)](https://pypi.org/project/catalyst/)
@@ -30,16 +30,14 @@
 </div>
 
 PyTorch framework for Deep Learning research and development.
-It was developed with a focus on reproducibility,
-fast experimentation and code/ideas reusing.
-Being able to research/develop something new,
-rather than write another regular train loop. <br/>
-Break the cycle - use the Catalyst!
+It focuses on reproducibility, rapid experimentation, and codebase reuse 
+so you can create something new rather than write another regular train loop.
+<br/> Break the cycle - use the Catalyst!
 
 Project [manifest](https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md). Part of [PyTorch Ecosystem](https://pytorch.org/ecosystem/). Part of [Catalyst Ecosystem](https://docs.google.com/presentation/d/1D-yhVOg6OXzjo9K_-IS5vSHLPIUxp1PEkFGnpRcNCNU/edit?usp=sharing):
-- [Alchemy](https://github.com/catalyst-team/alchemy) - Experiments logging & visualization
-- [Catalyst](https://github.com/catalyst-team/catalyst) - Accelerated Deep Learning Research and Development
-- [Reaction](https://github.com/catalyst-team/reaction) - Convenient Deep Learning models serving
+- [Alchemy](https://github.com/catalyst-team/alchemy) - experiments logging & visualization
+- [Catalyst](https://github.com/catalyst-team/catalyst) - accelerated deep learning R&D
+- [Reaction](https://github.com/catalyst-team/reaction) - convenient deep learning models serving
 
 [Catalyst at AI Landscape](https://landscape.lfai.foundation/selected=catalyst).
 
@@ -109,9 +107,10 @@ for prediction in runner.predict_loader(loader=loaders["valid"]):
 traced_model = runner.trace(loader=loaders["valid"])
 ```
 
+- [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff)
+- [Minimal examples](#minimal-examples)
 - [Customizing what happens in `train`](https://colab.research.google.com/drive/1T5G_OVLYHq483l80ikabXRsx_WB3rwPf?usp=sharing)
 - [Colab with ML, CV, NLP, GANs and RecSys demos](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
-- [Minimal examples](#minimal-examples)
 - For Catalyst.RL introduction, please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
 
 
@@ -124,11 +123,10 @@ traced_model = runner.trace(loader=loaders["valid"])
   * [Tests](#tests)
 - [Catalyst](#catalyst)
   * [Tutorials](#tutorials)
+  * [Blogposts](#blogposts)
   * [Docs](#docs)
-  * [Guides](#guides)
   * [Projects](#projects)
-  * [Tools and pipelines](#tools-and-pipelines)
-  * [Talks and videos](#talks-and-videos)
+  * [Talks](#talks)
 - [Community](#community)
   * [Contribution guide](#contribution-guide)
   * [User feedback](#user-feedback)
@@ -1073,10 +1071,19 @@ best practices for your deep learning research.
 - [Demo with minimal examples](./examples/notebooks/demo.ipynb) for ML, CV, NLP, GANs and RecSys [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
 - Detailed [classification tutorial](./examples/notebooks/classification-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb)
 - Advanced [segmentation tutorial](./examples/notebooks/segmentation-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb)
-- Comprehensive [classification pipeline](https://github.com/catalyst-team/classification)
-- Binary and semantic [segmentation pipeline](https://github.com/catalyst-team/segmentation)
 - Metric Learning tutorial [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1xcob6Y2W0O1JiN-juoF1YfJMJsScCVhV?usp=sharing)
 - Catalyst with Google TPU [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1AhvNzTRb3gd3AYhzUfm3dzw8TddlsfhD?usp=sharing)
+
+
+### Blogposts
+
+- [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff)
+- [BERT Distillation with Catalyst](https://medium.com/pytorch/bert-distillation-with-catalyst-c6f30c985854?source=friends_link&sk=1a28469ac8c0e6e6ad35bd26dfd95dd9)
+- [Metric Learning with Catalyst](https://medium.com/pytorch/metric-learning-with-catalyst-8c8337dfab1a?source=friends_link&sk=320b95f9b2a9074aab8d916ed78912d6)
+- [Distributed training best practices](https://catalyst-team.github.io/catalyst/info/distributed.html)
+- [Addressing the Cocktail Party Problem using PyTorch](https://medium.com/pytorch/addressing-the-cocktail-party-problem-using-pytorch-305fb74560ea)
+- [Beyond fashion: Deep Learning with Catalyst (Config API)](https://evilmartians.com/chronicles/beyond-fashion-deep-learning-with-catalyst)
+- [Tutorial from Notebook API to Config API (RU)](https://github.com/Bekovmi/Segmentation_tutorial)
 
 
 ### Docs
@@ -1087,16 +1094,6 @@ best practices for your deep learning research.
 - [20.06](https://catalyst-team.github.io/catalyst/v20.06/index.html)
 - [20.05](https://catalyst-team.github.io/catalyst/v20.05/index.html), [20.05.1](https://catalyst-team.github.io/catalyst/v20.05.1/index.html)
 - [20.04](https://catalyst-team.github.io/catalyst/v20.04/index.html), [20.04.1](https://catalyst-team.github.io/catalyst/v20.04.1/index.html), [20.04.2](https://catalyst-team.github.io/catalyst/v20.04.2/index.html)
-
-
-### Guides
-
-- [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff)
-- [BERT Distillation with Catalyst](https://medium.com/pytorch/bert-distillation-with-catalyst-c6f30c985854?source=friends_link&sk=1a28469ac8c0e6e6ad35bd26dfd95dd9)
-- [Addressing the Cocktail Party Problem using PyTorch](https://medium.com/pytorch/addressing-the-cocktail-party-problem-using-pytorch-305fb74560ea)
-- [Distributed training best practices](https://catalyst-team.github.io/catalyst/info/distributed.html)
-- [Beyond fashion: Deep Learning with Catalyst (Config API)](https://evilmartians.com/chronicles/beyond-fashion-deep-learning-with-catalyst)
-- [Tutorial from Notebook API to Config API (RU)](https://github.com/Bekovmi/Segmentation_tutorial)
 
 
 ### Projects
@@ -1145,7 +1142,7 @@ best practices for your deep learning research.
 - [Helper functions](https://github.com/ternaus/iglovikov_helper_functions) - An unstructured set of helper functions by [Ternaus](https://github.com/ternaus)
 - [BERT Distillation with Catalyst](https://github.com/elephantmipt/bert-distillation) by [elephantmipt](https://github.com/elephantmipt)
 
-### Talks and videos
+### Talks
 - [Catalyst-team YouTube channel](https://www.youtube.com/channel/UC39Z1Cwr9n8DVpuXcsyi9FQ)
 - [Catalyst.RL – reproducible RL research framework](https://docs.google.com/presentation/d/1U6VWIwQnQDGtu6a1x61tt3AlxCJ1-A1EYKd8lR9tKos/edit?usp=sharing) at [Stachka](https://nastachku.ru/archive/2019_innopolis/index.php?dispatch=products.view&product_id=3650)
 - [Catalyst.DL – reproducible DL research framework (rus)](https://youtu.be/EfG8iwFNdWg) and [slides (eng)](https://docs.google.com/presentation/d/1TL7N_H31zDFShVbKzLfMC3DYw4e1psj6ScDN8spKQlk/edit?usp=sharing) at [RIF](http://rifvrn.ru/program/catalyst-dl-fast-reproducible-dl-4-html)
@@ -1246,7 +1243,7 @@ Please use this bibtex if you want to cite this repository in your publications:
 
     @misc{catalyst,
         author = {Kolesnikov, Sergey},
-        title = {Accelerated DL R&D},
+        title = {Accelerated deep learning R&D},
         year = {2018},
         publisher = {GitHub},
         journal = {GitHub repository},
