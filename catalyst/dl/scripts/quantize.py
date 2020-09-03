@@ -11,10 +11,7 @@ from catalyst.dl.utils.quantization import (
 
 def build_args(parser: ArgumentParser):
     """Builds the command line parameters."""
-    parser.add_argument("logdir", type=Path, help="Path to model logdir")
-    parser.add_argument(
-        "--method", "-m", default="forward", help="Model method to trace"
-    )
+    parser.add_argument("--logdir", type=Path, help="Path to model logdir")
     parser.add_argument(
         "--checkpoint",
         "-c",
