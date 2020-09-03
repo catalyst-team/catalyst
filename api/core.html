@@ -3607,6 +3607,101 @@ for each param group</p></li>
 
 </dd></dl>
 
+<dl class="class">
+<dt id="catalyst.core.callbacks.optimizer.AMPOptimizerCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.optimizer.</code><code class="sig-name descname">AMPOptimizerCallback</code><span class="sig-paren">(</span><em class="sig-param">metric_key: str = None</em>, <em class="sig-param">optimizer_key: str = None</em>, <em class="sig-param">accumulation_steps: int = 1</em>, <em class="sig-param">grad_clip_params: Dict = None</em>, <em class="sig-param">loss_key: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/optimizer.html#AMPOptimizerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.optimizer.AMPOptimizerCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
+<p>Optimizer callback with native torch amp support.</p>
+<dl class="method">
+<dt id="catalyst.core.callbacks.optimizer.AMPOptimizerCallback.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">metric_key: str = None</em>, <em class="sig-param">optimizer_key: str = None</em>, <em class="sig-param">accumulation_steps: int = 1</em>, <em class="sig-param">grad_clip_params: Dict = None</em>, <em class="sig-param">loss_key: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/optimizer.html#AMPOptimizerCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.optimizer.AMPOptimizerCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loss_key</strong> (<em>str</em>) – key to get loss from <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code></p></li>
+<li><p><strong>optimizer_key</strong> (<em>str</em>) – A key to take a optimizer in case
+there are several of them and they are in a dictionary format.</p></li>
+<li><p><strong>accumulation_steps</strong> (<em>int</em>) – number of steps before
+<code class="docutils literal notranslate"><span class="pre">model.zero_grad()</span></code></p></li>
+<li><p><strong>grad_clip_params</strong> (<em>dict</em>) – params for gradient clipping</p></li>
+<li><p><strong>decouple_weight_decay</strong> (<em>bool</em>) – If True - decouple weight decay
+regularization.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callbacks.optimizer.AMPOptimizerCallback.grad_step">
+<code class="sig-name descname">grad_step</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em>, <em class="sig-param">grad_clip_fn: Callable = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/optimizer.html#AMPOptimizerCallback.grad_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.optimizer.AMPOptimizerCallback.grad_step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a gradient step for a given optimizer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer"><em>Optimizer</em></a>) – the optimizer</p></li>
+<li><p><strong>grad_clip_fn</strong> (<em>Callable</em>) – function for gradient clipping</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callbacks.optimizer.AMPOptimizerCallback.on_batch_end">
+<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/optimizer.html#AMPOptimizerCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.optimizer.AMPOptimizerCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>On batch end event</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callbacks.optimizer.AMPOptimizerCallback.on_batch_start">
+<code class="sig-name descname">on_batch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/optimizer.html#AMPOptimizerCallback.on_batch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.optimizer.AMPOptimizerCallback.on_batch_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>On batch start event</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callbacks.optimizer.AMPOptimizerCallback.on_epoch_end">
+<code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/optimizer.html#AMPOptimizerCallback.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.optimizer.AMPOptimizerCallback.on_epoch_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>On epoch end event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callbacks.optimizer.AMPOptimizerCallback.on_stage_end">
+<code class="sig-name descname">on_stage_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/optimizer.html#AMPOptimizerCallback.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.optimizer.AMPOptimizerCallback.on_stage_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>On stage end event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.callbacks.optimizer.AMPOptimizerCallback.on_stage_start">
+<code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/optimizer.html#AMPOptimizerCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.optimizer.AMPOptimizerCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that the current stage has correct optimizer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <div class="section" id="module-catalyst.core.callbacks.periodic_loader">
 <span id="periodicloadercallback"></span><h4><a class="toc-backref" href="#id19">PeriodicLoaderCallback</a><a class="headerlink" href="#module-catalyst.core.callbacks.periodic_loader" title="Permalink to this headline">¶</a></h4>
 <dl class="class">

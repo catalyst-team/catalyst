@@ -275,6 +275,7 @@
     <span class="n">Scheduler</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">check_amp_available</span><span class="p">,</span>
     <span class="n">check_apex_available</span><span class="p">,</span>
     <span class="n">check_ddp_wrapped</span><span class="p">,</span>
     <span class="n">get_distributed_params</span><span class="p">,</span>
@@ -332,10 +333,19 @@
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">device</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 
-    <span class="n">is_apex_available</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">distributed_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;apex&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check_apex_available</span><span class="p">()</span>
+    <span class="n">is_apex_enabled</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">distributed_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;apex&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check_apex_available</span><span class="p">()</span>
     <span class="p">)</span>
 
+    <span class="n">is_amp_enabled</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">distributed_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;amp&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check_amp_available</span><span class="p">()</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">is_apex_enabled</span> <span class="ow">and</span> <span class="n">is_amp_enabled</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Both NVidia Apex and Torch.Amp are enabled. &quot;</span>
+            <span class="s2">&quot;You must choose only one mixed precision backend&quot;</span>
+        <span class="p">)</span>
     <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">maybe_recursive_call</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">check_ddp_wrapped</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
@@ -352,7 +362,7 @@
 
         <span class="n">syncbn</span> <span class="o">=</span> <span class="n">distributed_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;syncbn&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">is_apex_available</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">is_apex_enabled</span><span class="p">:</span>
             <span class="kn">import</span> <span class="nn">apex</span>
 
             <span class="k">if</span> <span class="n">syncbn</span><span class="p">:</span>
@@ -362,16 +372,21 @@
                 <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">distributed_params</span>
             <span class="p">)</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">apex</span><span class="o">.</span><span class="n">parallel</span><span class="o">.</span><span class="n">DistributedDataParallel</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-
         <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">is_amp_enabled</span><span class="p">:</span>
+                <span class="k">pass</span>
+
+            <span class="k">if</span> <span class="n">syncbn</span><span class="p">:</span>
+                <span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">SyncBatchNorm</span><span class="o">.</span><span class="n">convert_sync_batchnorm</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
             <span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">parallel</span><span class="o">.</span><span class="n">DistributedDataParallel</span><span class="p">(</span>
                 <span class="n">model</span><span class="p">,</span> <span class="n">device_ids</span><span class="o">=</span><span class="p">[</span><span class="n">local_rank</span><span class="p">],</span> <span class="n">output_device</span><span class="o">=</span><span class="n">local_rank</span>
             <span class="p">)</span>
     <span class="c1"># data parallel run (dp) (with apex support)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># apex issue https://github.com/deepset-ai/FARM/issues/210</span>
-        <span class="n">use_apex</span> <span class="o">=</span> <span class="p">(</span><span class="n">is_apex_available</span> <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
-            <span class="n">is_apex_available</span>
+        <span class="n">use_apex</span> <span class="o">=</span> <span class="p">(</span><span class="n">is_apex_enabled</span> <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="n">is_apex_enabled</span>
             <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span>
             <span class="ow">and</span> <span class="n">distributed_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;opt_level&quot;</span><span class="p">,</span> <span class="s2">&quot;O0&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;O1&quot;</span>
         <span class="p">)</span>

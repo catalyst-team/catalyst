@@ -490,6 +490,8 @@
 </li>
         <li><a href="api/core.html#catalyst.core.callbacks.metrics.MetricManagerCallback.__init__">(catalyst.core.callbacks.metrics.MetricManagerCallback method)</a>
 </li>
+        <li><a href="api/core.html#catalyst.core.callbacks.optimizer.AMPOptimizerCallback.__init__">(catalyst.core.callbacks.optimizer.AMPOptimizerCallback method)</a>
+</li>
         <li><a href="api/core.html#catalyst.core.callbacks.optimizer.OptimizerCallback.__init__">(catalyst.core.callbacks.optimizer.OptimizerCallback method)</a>
 </li>
         <li><a href="api/core.html#catalyst.core.callbacks.periodic_loader.PeriodicLoaderCallback.__init__">(catalyst.core.callbacks.periodic_loader.PeriodicLoaderCallback method)</a>
@@ -721,13 +723,15 @@
 </li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackNode.All">All (catalyst.core.callback.CallbackNode attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/core.html#catalyst.core.callback.CallbackNode.all">all (catalyst.core.callback.CallbackNode attribute)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/registry.html#catalyst.registry.registry.Registry.all">all() (catalyst.registry.registry.Registry method)</a>
 </li>
       <li><a href="api/data.html#catalyst.data.AllTripletsSampler">AllTripletsSampler (class in catalyst.data)</a>
+</li>
+      <li><a href="api/core.html#catalyst.core.callbacks.optimizer.AMPOptimizerCallback">AMPOptimizerCallback (class in catalyst.core.callbacks.optimizer)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.torch.any2device">any2device() (in module catalyst.utils.torch)</a>
 </li>
@@ -1148,6 +1152,8 @@
       <li><a href="api/utils.html#module-catalyst.utils.sys">catalyst.utils.sys (module)</a>
 </li>
       <li><a href="api/utils.html#module-catalyst.utils.torch">catalyst.utils.torch (module)</a>
+</li>
+      <li><a href="api/utils.html#catalyst.utils.distributed.check_amp_available">check_amp_available() (in module catalyst.utils.distributed)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.distributed.check_apex_available">check_apex_available() (in module catalyst.utils.distributed)</a>
 </li>
@@ -1615,8 +1621,12 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.gradnorm_logger.GradNormLogger.grad_norm">grad_norm() (catalyst.contrib.dl.callbacks.gradnorm_logger.GradNormLogger static method)</a>
 </li>
-      <li><a href="api/core.html#catalyst.core.callbacks.optimizer.OptimizerCallback.grad_step">grad_step() (catalyst.core.callbacks.optimizer.OptimizerCallback method)</a>
+      <li><a href="api/core.html#catalyst.core.callbacks.optimizer.AMPOptimizerCallback.grad_step">grad_step() (catalyst.core.callbacks.optimizer.AMPOptimizerCallback method)</a>
+
+      <ul>
+        <li><a href="api/core.html#catalyst.core.callbacks.optimizer.OptimizerCallback.grad_step">(catalyst.core.callbacks.optimizer.OptimizerCallback method)</a>
 </li>
+      </ul></li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.gan.GradientPenaltyLoss">GradientPenaltyLoss (class in catalyst.contrib.nn.criterion.gan)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.gradnorm_logger.GradNormLogger">GradNormLogger (class in catalyst.contrib.dl.callbacks.gradnorm_logger)</a>
@@ -2022,6 +2032,8 @@
 </li>
         <li><a href="api/core.html#catalyst.core.callbacks.metrics.MetricManagerCallback.on_batch_end">(catalyst.core.callbacks.metrics.MetricManagerCallback method)</a>
 </li>
+        <li><a href="api/core.html#catalyst.core.callbacks.optimizer.AMPOptimizerCallback.on_batch_end">(catalyst.core.callbacks.optimizer.AMPOptimizerCallback method)</a>
+</li>
         <li><a href="api/core.html#catalyst.core.callbacks.optimizer.OptimizerCallback.on_batch_end">(catalyst.core.callbacks.optimizer.OptimizerCallback method)</a>
 </li>
         <li><a href="api/core.html#catalyst.core.callbacks.scheduler.LRUpdater.on_batch_end">(catalyst.core.callbacks.scheduler.LRUpdater method)</a>
@@ -2053,6 +2065,8 @@
         <li><a href="api/core.html#catalyst.core.callback.WrapperCallback.on_batch_start">(catalyst.core.callback.WrapperCallback method)</a>
 </li>
         <li><a href="api/core.html#catalyst.core.callbacks.metrics.MetricManagerCallback.on_batch_start">(catalyst.core.callbacks.metrics.MetricManagerCallback method)</a>
+</li>
+        <li><a href="api/core.html#catalyst.core.callbacks.optimizer.AMPOptimizerCallback.on_batch_start">(catalyst.core.callbacks.optimizer.AMPOptimizerCallback method)</a>
 </li>
         <li><a href="api/core.html#catalyst.core.callbacks.timer.TimerCallback.on_batch_start">(catalyst.core.callbacks.timer.TimerCallback method)</a>
 </li>
@@ -2087,6 +2101,8 @@
         <li><a href="api/core.html#catalyst.core.callbacks.logging.TensorboardLogger.on_epoch_end">(catalyst.core.callbacks.logging.TensorboardLogger method)</a>
 </li>
         <li><a href="api/core.html#catalyst.core.callbacks.metrics.MetricAggregationCallback.on_epoch_end">(catalyst.core.callbacks.metrics.MetricAggregationCallback method)</a>
+</li>
+        <li><a href="api/core.html#catalyst.core.callbacks.optimizer.AMPOptimizerCallback.on_epoch_end">(catalyst.core.callbacks.optimizer.AMPOptimizerCallback method)</a>
 </li>
         <li><a href="api/core.html#catalyst.core.callbacks.optimizer.OptimizerCallback.on_epoch_end">(catalyst.core.callbacks.optimizer.OptimizerCallback method)</a>
 </li>
@@ -2224,6 +2240,8 @@
 </li>
         <li><a href="api/core.html#catalyst.core.callbacks.logging.TensorboardLogger.on_stage_end">(catalyst.core.callbacks.logging.TensorboardLogger method)</a>
 </li>
+        <li><a href="api/core.html#catalyst.core.callbacks.optimizer.AMPOptimizerCallback.on_stage_end">(catalyst.core.callbacks.optimizer.AMPOptimizerCallback method)</a>
+</li>
         <li><a href="api/dl.html#catalyst.dl.callbacks.tracing.TracerCallback.on_stage_end">(catalyst.dl.callbacks.tracing.TracerCallback method)</a>
 </li>
       </ul></li>
@@ -2247,6 +2265,8 @@
         <li><a href="api/core.html#catalyst.core.callbacks.logging.ConsoleLogger.on_stage_start">(catalyst.core.callbacks.logging.ConsoleLogger method)</a>
 </li>
         <li><a href="api/core.html#catalyst.core.callbacks.logging.TensorboardLogger.on_stage_start">(catalyst.core.callbacks.logging.TensorboardLogger method)</a>
+</li>
+        <li><a href="api/core.html#catalyst.core.callbacks.optimizer.AMPOptimizerCallback.on_stage_start">(catalyst.core.callbacks.optimizer.AMPOptimizerCallback method)</a>
 </li>
         <li><a href="api/core.html#catalyst.core.callbacks.optimizer.OptimizerCallback.on_stage_start">(catalyst.core.callbacks.optimizer.OptimizerCallback method)</a>
 </li>
