@@ -83,6 +83,7 @@ check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
 
 ############################# CHECK QUANTIZATION FEATURE ####################################
 
+PYTHONPATH=.:${PYTHONPATH}
 quantization=$(python -c "from catalyst.tools.settings import IS_QUANTIZATION_AVAILABLE; print(int(IS_QUANTIZATION_AVAILABLE))")
 
 echo "pytorch quantization available: ${quantization}"
