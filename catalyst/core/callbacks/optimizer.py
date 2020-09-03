@@ -16,6 +16,17 @@ except ModuleNotFoundError:
     pass
 
 
+def zero_grad(optimizer: Optimizer) -> None:
+    """Perform an hacky way to zero gradients.
+
+    Args:
+        optimizer (Optimizer): optimizer with model parameters.
+    """
+    for group in optimizer.param_groups:
+        for p in group["params"]:
+            p.grad = None
+
+
 class OptimizerCallback(Callback):
     """Optimizer callback, abstraction over optimizer step."""
 
@@ -224,13 +235,6 @@ class OptimizerCallback(Callback):
             if not self.use_fast_zero_grad:
                 utils.maybe_recursive_call(self._optimizer, "zero_grad")
             else:
-
-                def zero_grad(optimizer):
-                    for group in optimizer.param_groups:
-                        for p in group["params"]:
-                            if p.grad is not None:
-                                p.grad = None
-
                 utils.maybe_recursive_call(self._optimizer, zero_grad)
             self._accumulation_counter = 0
 
