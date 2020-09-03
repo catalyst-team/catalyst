@@ -9,3 +9,8 @@ from catalyst.dl.callbacks.scheduler import LRFinder
 from catalyst.dl.callbacks.tracing import TracerCallback
 from catalyst.dl.callbacks.metrics import *
 from catalyst.contrib.dl.callbacks import *
+
+from catalyst.tools.settings import IS_QUANTIZATION_AVAILABLE
+
+if IS_QUANTIZATION_AVAILABLE:
+    from catalyst.dl.callbacks.quantization import DynamicQuantizationCallback
