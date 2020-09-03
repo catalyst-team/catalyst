@@ -64,12 +64,12 @@ def main(args, _):
     else:
         logging.basicConfig(level=logging.WARNING)
 
-    traced_model = quantize_model_from_checkpoint(
+    quantized_model = quantize_model_from_checkpoint(
         logdir, checkpoint_name=checkpoint_name, stage=args.stage,
     )
 
     save_quantized_model(
-        model=traced_model,
+        model=quantized_model,
         logdir=logdir,
         out_model=args.out_model,
         out_dir=args.out_dir,
