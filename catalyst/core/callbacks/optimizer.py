@@ -2,6 +2,8 @@ from typing import Callable, Dict, List
 import logging
 import warnings
 
+import torch
+
 from catalyst import registry
 from catalyst.core import utils
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
@@ -222,4 +224,159 @@ class OptimizerCallback(Callback):
             self._accumulation_counter = 0
 
 
-__all__ = ["OptimizerCallback"]
+class AMPOptimizerCallback(Callback):
+    """
+    Optimizer callback with native torch amp support.
+    """
+
+    def __init__(
+        self,
+        metric_key: str = None,
+        optimizer_key: str = None,
+        accumulation_steps: int = 1,
+        grad_clip_params: Dict = None,
+        loss_key: str = None,
+    ):
+        """
+        Args:
+            loss_key (str): key to get loss from ``runner.batch_metrics``
+            optimizer_key (str): A key to take a optimizer in case
+                there are several of them and they are in a dictionary format.
+            accumulation_steps (int): number of steps before
+                ``model.zero_grad()``
+            grad_clip_params (dict): params for gradient clipping
+            decouple_weight_decay (bool): If True - decouple weight decay
+                regularization.
+        """
+        super().__init__(order=CallbackOrder.optimizer, node=CallbackNode.all)
+        assert metric_key is None or loss_key is None
+        if loss_key is not None:
+            warnings.warn(
+                "OptimizerCallback: "
+                "`loss_key` is now deprecated in favor `metric_key`",
+                stacklevel=2,
+            )
+        self.metric_key: str = metric_key or loss_key or "loss"
+        self.optimizer_key: str = optimizer_key
+
+        self.accumulation_steps: int = accumulation_steps
+        self._accumulation_counter: int = 0
+
+        grad_clip_params: dict = grad_clip_params or {}
+        self.grad_clip_fn = registry.GRAD_CLIPPER.get_from_params(
+            **grad_clip_params
+        )
+
+        # Initialized at on_state_start()
+        self.scaler = None
+
+    def on_stage_start(self, runner: IRunner) -> None:
+        """Checks that the current stage has correct optimizer.
+
+        Args:
+            runner(IRunner): current runner
+        """
+        from torch.cuda.amp import GradScaler
+
+        self._optimizer = runner.get_attr(
+            key="optimizer", inner_key=self.optimizer_key
+        )
+        self.scaler = GradScaler()
+        assert self._optimizer is not None
+
+    def on_batch_start(self, runner: IRunner) -> None:
+        """On batch start event
+
+        Args:
+            runner (IRunner): current runner
+        """
+        self.prev_autocast_state = torch.is_autocast_enabled()
+        torch.set_autocast_enabled(True)
+        torch.autocast_increment_nesting()
+
+    def on_batch_end(self, runner: IRunner) -> None:
+        """On batch end event
+
+        Args:
+            runner (IRunner): current runner
+        """
+        # Drop the cache when we exit to a nesting level
+        # that's outside any instance of autocast.
+        if torch.autocast_decrement_nesting() == 0:
+            torch.clear_autocast_cache()
+        torch.set_autocast_enabled(self.prev_autocast_state)
+
+        if not runner.is_train_loader:
+            return
+
+        loss = runner.batch_metrics[self.metric_key]
+
+        self._accumulation_counter += 1
+        need_gradient_step = (
+            self._accumulation_counter % self.accumulation_steps == 0
+        )
+
+        self.scaler.scale(loss).backward()
+
+        if need_gradient_step:
+            self.grad_step(
+                optimizer=self._optimizer, grad_clip_fn=self.grad_clip_fn,
+            )
+
+            utils.maybe_recursive_call(self._optimizer, "zero_grad")
+            self._accumulation_counter = 0
+
+    def grad_step(
+        self, *, optimizer: Optimizer, grad_clip_fn: Callable = None,
+    ) -> None:
+        """Makes a gradient step for a given optimizer.
+
+        Args:
+            optimizer (Optimizer): the optimizer
+            grad_clip_fn (Callable): function for gradient clipping
+        """
+        if grad_clip_fn is not None:
+            # Unscales the gradients of
+            # optimizer's assigned params in-place
+            self.scaler.unscale_(optimizer)
+            for group in zip(optimizer.param_groups):
+                # Since the gradients of optimizer's
+                # assigned params are unscaled, clips as usual:
+                grad_clip_fn(group["params"])
+
+        self.scaler.step(optimizer)
+        self.scaler.update()
+
+    def on_epoch_end(self, runner: IRunner) -> None:
+        """On epoch end event.
+
+        Args:
+            runner (IRunner): current runner
+        """
+        lr = self._optimizer.param_groups[0]["lr"]
+        lr_name = (
+            f"lr/{self.optimizer_key}"
+            if self.optimizer_key is not None
+            else "lr"
+        )
+        runner.epoch_metrics[lr_name] = lr
+
+        momentum = utils.get_optimizer_momentum(self._optimizer)
+        if momentum is not None:
+            momentum_name = (
+                f"momentum/{self.optimizer_key}"
+                if self.optimizer_key is not None
+                else "momentum"
+            )
+            runner.epoch_metrics[momentum_name] = momentum
+
+    def on_stage_end(self, runner: IRunner) -> None:
+        """On stage end event.
+
+        Args:
+            runner (IRunner): current runner
+        """
+        self.scaler = None
+
+
+__all__ = ["OptimizerCallback", "AMPOptimizerCallback"]
