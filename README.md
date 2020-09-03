@@ -31,7 +31,7 @@
 
 PyTorch framework for Deep Learning research and development.
 It focuses on reproducibility, rapid experimentation, and codebase reuse 
-so you can create something new rather than writing another regular train cycle.
+so you can create something new rather than write another regular train loop.
 <br/> Break the cycle - use the Catalyst!
 
 Project [manifest](https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md). Part of [PyTorch Ecosystem](https://pytorch.org/ecosystem/). Part of [Catalyst Ecosystem](https://docs.google.com/presentation/d/1D-yhVOg6OXzjo9K_-IS5vSHLPIUxp1PEkFGnpRcNCNU/edit?usp=sharing):
