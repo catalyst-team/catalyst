@@ -14,7 +14,7 @@ Break the cycle - use the Catalyst_!
 
 Project manifest_. Part of `PyTorch Ecosystem`_. Part of `Catalyst Ecosystem`_:
     - Alchemy_ - experiments logging & visualization
-    - Catalyst_ - accelerated deep learning research and development
+    - Catalyst_ - accelerated deep learning R&D
     - Reaction_ - convenient deep learning models serving
 
 `Catalyst at AI Landscape`_.
@@ -92,13 +92,15 @@ Getting started
 - `Minimal examples`_
 - `Customizing what happens in train`_
 - `Colab with ML, CV, NLP, GANs and RecSys demos`_
-- For Catalyst.RL introduction, please follow `Catalyst.RL repo`_.
+- For Catalyst.RL introduction, please follow `Catalyst.RL repo`_
+- For more Catalyst tutorials, please check `Catalyst section`_
 
 .. _`Catalyst 101 — Accelerated PyTorch`: https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff
 .. _`Minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
 .. _`Customizing what happens in train`: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb
 .. _Colab with ML, CV, NLP, GANs and RecSys demos: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb
 .. _Catalyst.RL repo: https://github.com/catalyst-team/catalyst-rl
+.. _Catalyst section: https://github.com/catalyst-team/catalyst#catalyst
 
 Overview
 ----------------------------------------
@@ -141,6 +143,24 @@ Structure
 - **tools** - extra tools for Deep Learning research, class-based helpers.
 - **utils** - typical utils for Deep Learning research, function-based helpers.
 - **contrib** - additional modules contributed by Catalyst users.
+
+
+Tests
+~~~~~~~~~~~~~~~~~~~~~~
+All Catalyst code, features and pipelines `are fully tested`_
+with our own `catalyst-codestyle`_.
+
+In fact, we train a number of different models for various of tasks -
+image classification, image segmentation, text classification, GANs training
+and much more.
+During the tests, we compare their convergence metrics in order to verify
+the correctness of the training procedure and its reproducibility.
+
+As a result, Catalyst provides fully tested and reproducible
+best practices for your deep learning research.
+
+.. _are fully tested: https://github.com/catalyst-team/catalyst/tree/master/tests
+.. _catalyst-codestyle: https://github.com/catalyst-team/codestyle
 
 
 Indices and tables

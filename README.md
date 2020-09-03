@@ -36,7 +36,7 @@ so you can create something new rather than write another regular train loop.
 
 Project [manifest](https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md). Part of [PyTorch Ecosystem](https://pytorch.org/ecosystem/). Part of [Catalyst Ecosystem](https://docs.google.com/presentation/d/1D-yhVOg6OXzjo9K_-IS5vSHLPIUxp1PEkFGnpRcNCNU/edit?usp=sharing):
 - [Alchemy](https://github.com/catalyst-team/alchemy) - experiments logging & visualization
-- [Catalyst](https://github.com/catalyst-team/catalyst) - accelerated deep learning research and development
+- [Catalyst](https://github.com/catalyst-team/catalyst) - accelerated deep learning R&D
 - [Reaction](https://github.com/catalyst-team/reaction) - convenient deep learning models serving
 
 [Catalyst at AI Landscape](https://landscape.lfai.foundation/selected=catalyst).
