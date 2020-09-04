@@ -261,7 +261,7 @@
   <h1>Source code for catalyst.utils.misc</h1><div class="highlight"><pre>
 <span></span><span class="c1"># flake8: noqa</span>
 <span class="c1"># @TODO: code formatting issue for 20.07 release</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
@@ -270,7 +270,7 @@
 
 <div class="viewcode-block" id="maybe_recursive_call"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.maybe_recursive_call">[docs]</a><span class="k">def</span> <span class="nf">maybe_recursive_call</span><span class="p">(</span>
     <span class="n">object_or_dict</span><span class="p">,</span>
-    <span class="n">method</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">],</span>
     <span class="n">recursive_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">recursive_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
@@ -307,7 +307,10 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r_args</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
         <span class="n">r_args</span> <span class="o">=</span> <span class="p">[</span><span class="n">r_args</span><span class="p">]</span>
     <span class="n">r_kwargs</span> <span class="o">=</span> <span class="n">recursive_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
-    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">object_or_dict</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="o">*</span><span class="n">r_args</span><span class="p">,</span> <span class="o">**</span><span class="n">r_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">object_or_dict</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="o">*</span><span class="n">r_args</span><span class="p">,</span> <span class="o">**</span><span class="n">r_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="n">object_or_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">r_args</span><span class="p">,</span> <span class="o">**</span><span class="n">r_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="is_exception"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.is_exception">[docs]</a><span class="k">def</span> <span class="nf">is_exception</span><span class="p">(</span><span class="n">ex</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>

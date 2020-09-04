@@ -279,6 +279,17 @@
     <span class="k">pass</span>
 
 
+<span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Perform an hacky way to zero gradients.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        optimizer (Optimizer): optimizer with model parameters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">]:</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="kc">None</span>
+
+
 <div class="viewcode-block" id="OptimizerCallback"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.optimizer.OptimizerCallback">[docs]</a><span class="k">class</span> <span class="nc">OptimizerCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Optimizer callback, abstraction over optimizer step.&quot;&quot;&quot;</span>
 
@@ -290,6 +301,7 @@
         <span class="n">grad_clip_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">decouple_weight_decay</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">loss_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_fast_zero_grad</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">xla_barrier</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -300,8 +312,10 @@
 <span class="sd">            accumulation_steps (int): number of steps before</span>
 <span class="sd">                ``model.zero_grad()``</span>
 <span class="sd">            grad_clip_params (dict): params for gradient clipping</span>
-<span class="sd">            decouple_weight_decay (bool): If True - decouple weight decay</span>
+<span class="sd">            decouple_weight_decay (bool): If ``True`` - decouple weight decay</span>
 <span class="sd">                regularization.</span>
+<span class="sd">            use_fast_zero_grad (bool): boost ``optiomizer.zero_grad()``,</span>
+<span class="sd">                default is ``False``.</span>
 <span class="sd">            xla_barrier (bool): barrier option for xla. Here you can find</span>
 <span class="sd">                more about usage of `barrier flag</span>
 <span class="sd">                &lt;https://pytorch.org/xla/release/1.5/index.html?</span>
@@ -335,6 +349,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer_wd</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer_step_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_xla</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_fast_zero_grad</span> <span class="o">=</span> <span class="n">use_fast_zero_grad</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">use_xla_barrier</span> <span class="o">=</span> <span class="n">xla_barrier</span></div>
 
 <div class="viewcode-block" id="OptimizerCallback.grad_step"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.optimizer.OptimizerCallback.grad_step">[docs]</a>    <span class="k">def</span> <span class="nf">grad_step</span><span class="p">(</span>
@@ -480,8 +495,10 @@
                 <span class="n">optimizer_wds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer_wd</span><span class="p">,</span>
                 <span class="n">grad_clip_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grad_clip_fn</span><span class="p">,</span>
             <span class="p">)</span>
-
-            <span class="n">utils</span><span class="o">.</span><span class="n">maybe_recursive_call</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">,</span> <span class="s2">&quot;zero_grad&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_fast_zero_grad</span><span class="p">:</span>
+                <span class="n">utils</span><span class="o">.</span><span class="n">maybe_recursive_call</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">,</span> <span class="s2">&quot;zero_grad&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">utils</span><span class="o">.</span><span class="n">maybe_recursive_call</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">,</span> <span class="n">zero_grad</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_accumulation_counter</span> <span class="o">=</span> <span class="mi">0</span></div></div>
 
 
