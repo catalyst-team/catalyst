@@ -40,7 +40,9 @@ def test_pruning_callback() -> None:
     runner = dl.SupervisedRunner()
     runner.train(
         model=model,
-        callbacks=[dl.DynamicQuantizationCallback(out_dir="./logs")],
+        callbacks=[
+            dl.DynamicQuantizationCallback(out_dir="./logs", backend="qnnpack")
+        ],
         loaders=loaders,
         criterion=criterion,
         optimizer=optimizer,

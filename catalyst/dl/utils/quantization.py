@@ -21,9 +21,6 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-if not platform.system() == "Windows":
-    torch.backends.quantized.engine = "qnnpack"
-
 
 def save_quantized_model(
     model: Module,
