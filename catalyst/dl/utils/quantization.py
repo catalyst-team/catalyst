@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-torch.backends.quantized.engine = "qnnpack"
+# torch.backends.quantized.engine = "qnnpack"
 
 
 def save_quantized_model(
