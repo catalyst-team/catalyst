@@ -43,6 +43,13 @@ def build_args(parser: ArgumentParser):
         "--verbose", action="store_true",
     )
 
+    parser.add_argument(
+        "--backend",
+        type=str,
+        default=None,
+        help="Defines backend for quantization",
+    )
+
     return parser
 
 
@@ -65,7 +72,10 @@ def main(args, _):
         logging.basicConfig(level=logging.WARNING)
 
     quantized_model = quantize_model_from_checkpoint(
-        logdir, checkpoint_name=checkpoint_name, stage=args.stage,
+        logdir,
+        checkpoint_name=checkpoint_name,
+        stage=args.stage,
+        backend=args.backend,
     )
 
     save_quantized_model(

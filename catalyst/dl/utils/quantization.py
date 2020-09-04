@@ -1,6 +1,7 @@
 from typing import Dict, Optional, Set, TYPE_CHECKING, Union
 import logging
 from pathlib import Path
+import platform
 
 import torch
 from torch import quantization
@@ -20,7 +21,8 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-torch.backends.quantized.engine = "qnnpack"
+if not platform.system() == "Windows":
+    torch.backends.quantized.engine = "qnnpack"
 
 
 def save_quantized_model(
@@ -72,6 +74,7 @@ def quantize_model_from_checkpoint(
     stage: str = None,
     qconfig_spec: Optional[Union[Set, Dict]] = None,
     dtype: Optional[torch.dtype] = torch.qint8,
+    backend: str = None,
 ) -> Model:
     """
     Quantize model using created experiment and runner.
@@ -83,10 +86,14 @@ def quantize_model_from_checkpoint(
         qconfig_spec: torch.quantization.quantize_dynamic
                 parameter, you can define layers to be quantize
         dtype: type of the model parameters, default int8
+        backend: defines backend for quantization
 
     Returns:
         Quantized model
     """
+    if backend is not None:
+        torch.backends.quantized.engine = backend
+
     config_path = logdir / "configs" / "_config.json"
     checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
     logging.info("Load config")

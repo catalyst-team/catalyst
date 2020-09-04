@@ -28,6 +28,7 @@ class DynamicQuantizationCallback(Callback):
         dtype: Optional[torch.dtype] = torch.qint8,
         out_dir: Union[str, Path] = None,
         out_model: Union[str, Path] = None,
+        backend: str = None,
     ):
         """
         Init method for callback
@@ -44,6 +45,7 @@ class DynamicQuantizationCallback(Callback):
             out_dir (Union[str, Path]): Directory to save model to
             out_model (Union[str, Path]): Path to save model to
                 (overrides `out_dir` argument)
+            backend: defines backend for quantization
         """
         super().__init__(order=CallbackOrder.external)
 
@@ -74,6 +76,9 @@ class DynamicQuantizationCallback(Callback):
         self.out_dir = out_dir
         self.qconfig_spec = qconfig_spec
         self.dtype = dtype
+
+        if backend is not None:
+            torch.backends.quantized.engine = backend
 
     def on_epoch_end(self, runner: IRunner):
         """
