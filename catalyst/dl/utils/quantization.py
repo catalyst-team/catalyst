@@ -1,7 +1,6 @@
 from typing import Dict, Optional, Set, TYPE_CHECKING, Union
 import logging
 from pathlib import Path
-import platform
 
 import torch
 from torch import quantization
