@@ -253,6 +253,7 @@ class AMPOptimizerCallback(Callback):
         accumulation_steps: int = 1,
         grad_clip_params: Dict = None,
         loss_key: str = None,
+        use_fast_zero_grad: bool = True,
     ):
         """
         Args:
@@ -278,6 +279,7 @@ class AMPOptimizerCallback(Callback):
 
         self.accumulation_steps: int = accumulation_steps
         self._accumulation_counter: int = 0
+        self.use_fast_zero_grad = use_fast_zero_grad
 
         grad_clip_params: dict = grad_clip_params or {}
         self.grad_clip_fn = registry.GRAD_CLIPPER.get_from_params(
@@ -339,8 +341,10 @@ class AMPOptimizerCallback(Callback):
             self.grad_step(
                 optimizer=self._optimizer, grad_clip_fn=self.grad_clip_fn,
             )
-
-            utils.maybe_recursive_call(self._optimizer, "zero_grad")
+            if not self.use_fast_zero_grad:
+                utils.maybe_recursive_call(self._optimizer, "zero_grad")
+            else:
+                utils.maybe_recursive_call(self._optimizer, zero_grad)
             self._accumulation_counter = 0
 
     def grad_step(
