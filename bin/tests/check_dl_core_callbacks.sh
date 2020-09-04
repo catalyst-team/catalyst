@@ -81,6 +81,18 @@ check_checkpoints "${CHECKPOINTS}/last" 1
 check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
 check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
 
+############################# CHECK QUANTIZATION FEATURE ####################################
+
+quantization=$(python -c "from catalyst.tools.settings import IS_QUANTIZATION_AVAILABLE; print(int(IS_QUANTIZATION_AVAILABLE))")
+
+echo "pytorch quantization available: ${quantization}"
+
+if [ "$quantization" = "1" ]; then
+PYTHONPATH=.:${PYTHONPATH} \
+python catalyst/dl/scripts/quantize.py --logdir ${LOGDIR} --out-dir ${LOGDIR}
+check_file_existence "${LOGDIR}/best_quantized.pth"
+fi
+
 rm -rf ${LOGDIR} ${EXP_OUTPUT}
 
 
