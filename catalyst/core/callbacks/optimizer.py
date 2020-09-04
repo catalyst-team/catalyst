@@ -18,6 +18,17 @@ except ModuleNotFoundError:
     pass
 
 
+def zero_grad(optimizer: Optimizer) -> None:
+    """Perform an hacky way to zero gradients.
+
+    Args:
+        optimizer (Optimizer): optimizer with model parameters.
+    """
+    for group in optimizer.param_groups:
+        for p in group["params"]:
+            p.grad = None
+
+
 class OptimizerCallback(Callback):
     """Optimizer callback, abstraction over optimizer step."""
 
@@ -29,6 +40,7 @@ class OptimizerCallback(Callback):
         grad_clip_params: Dict = None,
         decouple_weight_decay: bool = True,
         loss_key: str = None,
+        use_fast_zero_grad: bool = False,
         xla_barrier: bool = True,
     ):
         """
@@ -39,8 +51,10 @@ class OptimizerCallback(Callback):
             accumulation_steps (int): number of steps before
                 ``model.zero_grad()``
             grad_clip_params (dict): params for gradient clipping
-            decouple_weight_decay (bool): If True - decouple weight decay
+            decouple_weight_decay (bool): If ``True`` - decouple weight decay
                 regularization.
+            use_fast_zero_grad (bool): boost ``optiomizer.zero_grad()``,
+                default is ``False``.
             xla_barrier (bool): barrier option for xla. Here you can find
                 more about usage of `barrier flag
                 <https://pytorch.org/xla/release/1.5/index.html?
@@ -74,6 +88,7 @@ class OptimizerCallback(Callback):
         self._optimizer_wd: List[float] = [0.0]
         self._optimizer_step_fn: Callable = None
         self.is_xla = False
+        self.use_fast_zero_grad = use_fast_zero_grad
         self.use_xla_barrier = xla_barrier
 
     def grad_step(
@@ -219,8 +234,10 @@ class OptimizerCallback(Callback):
                 optimizer_wds=self._optimizer_wd,
                 grad_clip_fn=self.grad_clip_fn,
             )
-
-            utils.maybe_recursive_call(self._optimizer, "zero_grad")
+            if not self.use_fast_zero_grad:
+                utils.maybe_recursive_call(self._optimizer, "zero_grad")
+            else:
+                utils.maybe_recursive_call(self._optimizer, zero_grad)
             self._accumulation_counter = 0
 
 
