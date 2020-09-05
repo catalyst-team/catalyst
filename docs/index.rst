@@ -103,7 +103,7 @@ Step by step guide
 .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
 .. _`Notebook Tutorials with Google Colab`: https://github.com/catalyst-team/catalyst#tutorials
 .. _`blogposts`: https://github.com/catalyst-team/catalyst#blogposts
-.. _`classification: https://github.com/catalyst-team/classification
+.. _`classification`: https://github.com/catalyst-team/classification
 .. _`detection`: https://github.com/catalyst-team/detection
 .. _`segmentation`: https://github.com/catalyst-team/segmentation
 .. _`projects section`: https://github.com/catalyst-team/catalyst#projects
