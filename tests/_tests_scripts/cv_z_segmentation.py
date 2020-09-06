@@ -39,8 +39,7 @@ valid_data = data[:2]
 
 import collections
 import numpy as np
-import torch
-from catalyst.contrib.data.transforms import Compose, Normalize
+from catalyst.data.cv import Compose, Normalize
 from catalyst.data import Augmentor
 from catalyst.dl import utils
 from catalyst.contrib.nn.criterion import (

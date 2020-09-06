@@ -4,12 +4,7 @@ import shutil
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
-from catalyst.dl import (
-    Callback,
-    CallbackOrder,
-    CriterionCallback,
-    SupervisedRunner,
-)
+from catalyst.dl import Callback, CallbackOrder, SupervisedRunner
 
 
 def test_epoch_increasing():

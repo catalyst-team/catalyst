@@ -5,34 +5,36 @@ from torch.jit.frontend import UnsupportedNodeError
 
 from catalyst.tools import settings
 
-from .cutmix_callback import CutmixCallback
-from .gradnorm_logger import GradNormLogger
-from .knn_metric import KNNMetricCallback
-from .periodic_loader_callback import PeriodicLoaderCallback
-from .perplexity_metric import PerplexityMetricCallback
-from .telegram_logger import TelegramLogger
-from .tracer_callback import TracerCallback
+from catalyst.contrib.dl.callbacks.cutmix_callback import CutmixCallback
+from catalyst.contrib.dl.callbacks.gradnorm_logger import GradNormLogger
+from catalyst.contrib.dl.callbacks.knn_metric import KNNMetricCallback
+from catalyst.contrib.dl.callbacks.perplexity_metric import (
+    PerplexityMetricCallback,
+)
+from catalyst.contrib.dl.callbacks.telegram_logger import TelegramLogger
 
 logger = logging.getLogger(__name__)
 
 try:
     import imageio
-    from .mask_inference import InferMaskCallback
+    from catalyst.contrib.dl.callbacks.mask_inference import InferMaskCallback
 except ImportError as ex:
     if settings.cv_required:
         logger.warning(
-            "some of catalyst-cv dependencies not available,"
+            "some of catalyst-cv dependencies are not available,"
             " to install dependencies, run `pip install catalyst[cv]`."
         )
         raise ex
 
 try:
     import kornia
-    from .kornia_transform import BatchTransformCallback
+    from catalyst.contrib.dl.callbacks.kornia_transform import (
+        BatchTransformCallback,
+    )
 except ImportError as ex:
     if settings.cv_required:
         logger.warning(
-            "some of catalyst-cv dependencies not available,"
+            "some of catalyst-cv dependencies are not available,"
             " to install dependencies, run `pip install catalyst[cv]`."
         )
         raise ex
@@ -47,7 +49,7 @@ except UnsupportedNodeError as ex:
 
 try:
     import alchemy
-    from .alchemy_logger import AlchemyLogger
+    from catalyst.contrib.dl.callbacks.alchemy_logger import AlchemyLogger
 except ImportError as ex:
     if settings.alchemy_logger_required:
         logger.warning(
@@ -58,7 +60,7 @@ except ImportError as ex:
 
 try:
     import visdom
-    from .visdom_logger import VisdomLogger
+    from catalyst.contrib.dl.callbacks.visdom_logger import VisdomLogger
 except ImportError as ex:
     if settings.visdom_logger_required:
         logger.warning(
@@ -69,7 +71,7 @@ except ImportError as ex:
 
 try:
     import neptune
-    from .neptune_logger import NeptuneLogger
+    from catalyst.contrib.dl.callbacks.neptune_logger import NeptuneLogger
 except ImportError as ex:
     if settings.neptune_logger_required:
         logger.warning(
@@ -80,7 +82,7 @@ except ImportError as ex:
 
 try:
     import wandb
-    from .wandb_logger import WandbLogger
+    from catalyst.contrib.dl.callbacks.wandb_logger import WandbLogger
 except ImportError as ex:
     if settings.wandb_logger_required:
         logger.warning(
@@ -88,3 +90,13 @@ except ImportError as ex:
             "run `pip install wandb`."
         )
         raise ex
+
+try:
+    import optuna
+    from catalyst.contrib.dl.callbacks.optuna_callback import OptunaCallback
+except ImportError as ex:
+    if settings.optuna_required:
+        logger.warning(
+            "optuna not available, to install optuna, "
+            "run `pip install optuna`."
+        )

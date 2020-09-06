@@ -1,6 +1,6 @@
 # flake8: noqa
 # @TODO: code formatting issue for 20.07 release
-from typing import Any, Callable, List
+from typing import Any, Callable, List, Union
 from datetime import datetime
 import inspect
 from pathlib import Path
@@ -9,7 +9,7 @@ import shutil
 
 def maybe_recursive_call(
     object_or_dict,
-    method: str,
+    method: Union[str, Callable],
     recursive_args=None,
     recursive_kwargs=None,
     **kwargs,
@@ -46,7 +46,10 @@ def maybe_recursive_call(
     if not isinstance(r_args, (list, tuple)):
         r_args = [r_args]
     r_kwargs = recursive_kwargs or {}
-    return getattr(object_or_dict, method)(*r_args, **r_kwargs, **kwargs)
+    if isinstance(method, str):
+        return getattr(object_or_dict, method)(*r_args, **r_kwargs, **kwargs)
+    else:
+        return method(object_or_dict, *r_args, **r_kwargs, **kwargs)
 
 
 def is_exception(ex: Any) -> bool:

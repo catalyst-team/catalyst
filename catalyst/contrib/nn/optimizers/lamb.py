@@ -146,3 +146,6 @@ class Lamb(Optimizer):
                 p.data.add_(-step_size * trust_ratio, adam_step)
 
         return loss
+
+
+__all__ = ["Lamb"]

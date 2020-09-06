@@ -21,7 +21,7 @@ stages:
       - transform: A.Normalize
         mean: [0.1307]
         std: [0.3081]
-      - transform: catalyst.ToTensor
+      - transform: catalyst.ImageToTensor
 
   criterion_params:
       criterion: CrossEntropyLoss

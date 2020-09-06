@@ -5,10 +5,10 @@ from torch.utils.data import DataLoader
 
 from catalyst import data, dl, utils
 from catalyst.contrib import datasets, models, nn
-import catalyst.contrib.data.transforms as t
+import catalyst.data.cv.transforms.torch as t
 
 
-def run_ml_pipeline(sampler_inbatch: data.InBatchTripletsSampler) -> float:
+def run_ml_pipeline(sampler_inbatch: data.IInbatchTripletSampler) -> float:
     """
     Full metric learning pipeline, including train and val.
 
@@ -45,7 +45,7 @@ def run_ml_pipeline(sampler_inbatch: data.InBatchTripletsSampler) -> float:
     optimizer = Adam(model.parameters(), lr=0.0005)
 
     # 3. criterion with triplets sampling
-    criterion = nn.TripletMarginLossWithSampling(
+    criterion = nn.TripletMarginLossWithSampler(
         margin=0.5, sampler_inbatch=sampler_inbatch
     )
 
@@ -87,9 +87,11 @@ def main() -> None:
 
     all_sampler = data.AllTripletsSampler(max_output_triplets=512)
     hard_sampler = data.HardTripletsSampler(norm_required=False)
+    cluster_sampler = data.HardClusterSampler()
 
     assert run_ml_pipeline(all_sampler) > cmc_score_th
     assert run_ml_pipeline(hard_sampler) > cmc_score_th
+    assert run_ml_pipeline(cluster_sampler) > cmc_score_th
 
 
 if __name__ == "__main__":
