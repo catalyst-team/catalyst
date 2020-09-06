@@ -58,7 +58,7 @@ class SupervisedExperiment(Experiment):
         """
         callbacks = super().get_callbacks(stage=stage) or OrderedDict()
 
-        # default_callbacks = [(Name, Optional[InterfaceClass], InstanceClass)]
+        # default_callbacks = [(Name, InterfaceClass, InstanceFactory)]
         default_callbacks = []
 
         is_amp_enabled = (

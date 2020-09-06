@@ -511,7 +511,7 @@ class ConfigExperiment(IExperiment):
             callback = self._get_callback(**callback_params)
             callbacks[key] = callback
 
-        # default_callbacks = [(Name, Optional[InterfaceClass], InstanceClass)]
+        # default_callbacks = [(Name, InterfaceClass, InstanceFactory)]
         default_callbacks = []
 
         is_amp_enabled = (
@@ -556,13 +556,14 @@ class ConfigExperiment(IExperiment):
                     ("_scheduler", ISchedulerCallback, SchedulerCallback)
                 )
 
-        default_callbacks.append(("_exception", ExceptionCallback))
+        default_callbacks.append(("_exception", None, ExceptionCallback))
 
         for (
             callback_name,
             callback_interface,
             callback_fn,
         ) in default_callbacks:
+            callback_interface = callback_interface or callback_fn
             is_already_present = any(
                 check_callback_isinstance(x, callback_interface)
                 for x in callbacks.values()
