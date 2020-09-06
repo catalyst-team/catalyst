@@ -34,10 +34,12 @@ class SupervisedExperiment(Experiment):
         CheckpointCallback:
             saves model and optimizer state each epoch callback to save/restore
             your model/criterion/optimizer/metrics.
-        ConsoleLogger: translates ``runner.*_metrics`` to console and text file
-        TensorboardLogger: writes ``runner.*_metrics`` to tensorboard
+        ConsoleLogger:
+            translates ``runner.*_metrics`` to console and text file.
+        TensorboardLogger:
+            writes ``runner.*_metrics`` to tensorboard.
         RaiseExceptionCallback:
-            will raise exception if needed
+            will raise exception if needed.
     """
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":

@@ -413,7 +413,9 @@ class AMPOptimizerCallback(IOptimizerCallback):
 #         os.getenv("USE_AMP", "0") == "1" and utils.check_amp_available()
 #     )
 #
-#     optimizer_callback = AMPOptimizerCallback(*args, **kwargs) if is_amp_enabled else OptimizerCallback(*args, **kwargs)
+#     optimizer_callback = AMPOptimizerCallback(*args, **kwargs) \
+#         if is_amp_enabled \
+#         else OptimizerCallback(*args, **kwargs)
 #     return optimizer_callback
 
 
