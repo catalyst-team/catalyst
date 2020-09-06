@@ -159,15 +159,9 @@ Global precision, recall and F1-score
     :undoc-members:
     :show-inheritance:
 
-<<<<<<< HEAD
-MRR
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.dl.callbacks.metrics.mrr
-=======
 Precision
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.dl.callbacks.metrics.precision
->>>>>>> master
     :members:
     :undoc-members:
     :show-inheritance:

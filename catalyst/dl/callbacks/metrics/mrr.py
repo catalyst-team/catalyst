@@ -13,7 +13,7 @@ class MRRCallback(MetricCallback):
         self,
         input_key: str = "targets",
         output_key: str = "logits",
-        prefix: str = "mrr"
+        prefix: str = "mrr",
     ):
         """
         Args:
@@ -27,7 +27,7 @@ class MRRCallback(MetricCallback):
             prefix=prefix,
             metric_fn=metrics.mrr,
             input_key=input_key,
-            output_key=output_key
+            output_key=output_key,
         )
 
 
