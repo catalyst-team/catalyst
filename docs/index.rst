@@ -7,17 +7,15 @@ Catalyst
 
 
 PyTorch framework for Deep Learning research and development.
-It was developed with a focus on reproducibility,
-fast experimentation and code/ideas reusing.
-Being able to research/develop something new,
-rather than write another regular train loop.
+It focuses on reproducibility, rapid experimentation, and codebase reuse
+so you can create something new rather than write another regular train loop.
 
 Break the cycle - use the Catalyst_!
 
 Project manifest_. Part of `PyTorch Ecosystem`_. Part of `Catalyst Ecosystem`_:
-    - Alchemy_ - Experiments logging & visualization
-    - Catalyst_ - Accelerated DL R&D
-    - Reaction_ - Convenient DL serving
+    - Alchemy_ - experiments logging & visualization
+    - Catalyst_ - accelerated deep learning R&D
+    - Reaction_ - convenient deep learning models serving
 
 `Catalyst at AI Landscape`_.
 
@@ -90,12 +88,27 @@ Getting started
     # model tracing
     traced_model = runner.trace(loader=loaders["valid"])
 
-- `Customizing what happens in train`_
-- `Colab with ML, CV, NLP, GANs and RecSys demos`_
-- For Catalyst.RL introduction, please follow `Catalyst.RL repo`_.
 
-.. _`Customizing what happens in train`: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb
-.. _Colab with ML, CV, NLP, GANs and RecSys demos: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb
+Step by step guide
+~~~~~~~~~~~~~~~~~~~~~~
+1. Start with `Catalyst 101 — Accelerated PyTorch`_ introduction.
+2. Check `minimal examples`_.
+3. Try `notebook tutorials with Google Colab`_.
+4. Read `blogposts`_ with use-cases and guides (and Config API intro).
+5. Go through advanced  `classification`_, `detection`_ and `segmentation`_ pipelines with Config API. More pipelines available under `projects section`_.
+6. Want more? See `Alchemy`_ and `Reaction`_ packages.
+7. For Catalyst.RL introduction, please follow `Catalyst.RL repo`_.
+
+.. _`Catalyst 101 — Accelerated PyTorch`: https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff
+.. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+.. _`Notebook Tutorials with Google Colab`: https://github.com/catalyst-team/catalyst#tutorials
+.. _`blogposts`: https://github.com/catalyst-team/catalyst#blogposts
+.. _`classification`: https://github.com/catalyst-team/classification
+.. _`detection`: https://github.com/catalyst-team/detection
+.. _`segmentation`: https://github.com/catalyst-team/segmentation
+.. _`projects section`: https://github.com/catalyst-team/catalyst#projects
+.. _Alchemy: https://github.com/catalyst-team/alchemy
+.. _Reaction: https://github.com/catalyst-team/reaction
 .. _Catalyst.RL repo: https://github.com/catalyst-team/catalyst-rl
 
 Overview
@@ -131,17 +144,6 @@ Catalyst is compatible with: Python 3.6+. PyTorch 1.1+.
 Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10 and Windows Subsystem for Linux.
 
 
-Features
-~~~~~~~~~~~~~~~~~~~~~~
-- Universal train/inference loop.
-- Configuration files for model/data hyperparameters.
-- Reproducibility – all source code and environment variables will be saved.
-- Callbacks – reusable train/inference pipeline parts with easy customization.
-- Training stages support.
-- Deep Learning best practices - SWA, AdamW, Ranger optimizer, OneCycle, and more.
-- Developments best practices - fp16 support, distributed training, slurm support.
-
-
 Structure
 ~~~~~~~~~~~~~~~~~~~~~~
 - **core** - framework core with main abstractions - Experiment, Runner and Callback.
@@ -169,78 +171,6 @@ best practices for your deep learning research.
 .. _are fully tested: https://github.com/catalyst-team/catalyst/tree/master/tests
 .. _catalyst-codestyle: https://github.com/catalyst-team/codestyle
 
-
-Tutorials
-~~~~~~~~~~~~~~~~~~~~~~
-
-- `Demo with minimal examples`_ for ML, CV, NLP, GANs and RecSys
-- Detailed `classification tutorial`_
-- Advanced `segmentation tutorial`_
-- Comprehensive `classification pipeline`_
-- Binary and semantic `segmentation pipeline`_
-- `Beyond fashion - Deep Learning with Catalyst (Config API)`_
-- `Tutorial from Notebook API to Config API (RU)`_
-
-.. _Demo with minimal examples: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb
-.. _`classification tutorial`: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb
-.. _`segmentation tutorial`: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb
-.. _`classification pipeline`: https://github.com/catalyst-team/classification
-.. _`segmentation pipeline`: https://github.com/catalyst-team/segmentation
-.. _`Beyond fashion - Deep Learning with Catalyst (Config API)`: https://evilmartians.com/chronicles/beyond-fashion-deep-learning-with-catalyst
-.. _`Tutorial from Notebook API to Config API (RU)`: https://github.com/Bekovmi/Segmentation_tutorial
-
-In the examples_ of the repository, you can find advanced tutorials and Catalyst best practices.
-
-.. _examples: https://github.com/catalyst-team/catalyst/tree/master/examples
-
-
-Community
-----------------------------------------
-
-Contribution guide
-~~~~~~~~~~~~~~~~~~~~~~
-
-We appreciate all contributions.
-If you are planning to contribute back bug-fixes,
-please do so without any further discussion.
-If you plan to contribute new features, utility functions or extensions,
-please first open an issue and discuss the feature with us.
-
-Please see the `contribution guide`_ for more information.
-
-.. _`contribution guide`: https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md
-
-By participating in this project, you agree to abide by its `Code of Conduct`_.
-
-.. _`Code of Conduct`: https://github.com/catalyst-team/catalyst/blob/master/CODE_OF_CONDUCT.md
-
-User feedback
-~~~~~~~~~~~~~~~~~~~~~~
-
-We have created ``catalyst.team.core@gmail.com`` for "user feedback".
-    - If you like the project and want to say thanks, this the right place.
-    - If you would like to start a collaboration between your team and Catalyst team to do better Deep Learning R&D - you are always welcome.
-    - If you just don't like Github issues and this ways suits you better - feel free to email us.
-    - Finally, if you do not like something, please, share it with us and we can see how to improve it.
-
-We appreciate any type of feedback. Thank you!
-
-
-Citation
-~~~~~~~~~~~~~~~~~~~~~~
-
-Please use this bibtex if you want to cite this repository in your publications:
-
-.. code:: bibtex
-
-    @misc{catalyst,
-        author = {Kolesnikov, Sergey},
-        title = {Accelerated DL R&D},
-        year = {2018},
-        publisher = {GitHub},
-        journal = {GitHub repository},
-        howpublished = {\url{https://github.com/catalyst-team/catalyst}},
-    }
 
 Indices and tables
 ----------------------------------------

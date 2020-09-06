@@ -75,3 +75,6 @@ class GaussianNoise(nn.Module):
         """Forward call."""
         noise = torch.empty_like(x)
         noise.normal_(0, self.stddev)
+
+
+__all__ = ["Flatten", "Lambda", "Normalize", "GaussianNoise"]

@@ -16,6 +16,27 @@ try:
 except ModuleNotFoundError:
     IS_XLA_AVAILABLE = False
 
+try:
+    import torch.nn.utils.prune as prune
+
+    IS_PRUNING_AVAILABLE = True
+except ModuleNotFoundError:
+    IS_PRUNING_AVAILABLE = False
+
+try:
+    from git import Repo as repo
+
+    IS_GIT_AVAILABLE = True
+except ImportError:
+    IS_GIT_AVAILABLE = False
+
+try:
+    import torch.quantization
+
+    IS_QUANTIZATION_AVAILABLE = True
+except ModuleNotFoundError:
+    IS_QUANTIZATION_AVAILABLE = False
+
 
 class Settings(FrozenClass):
     def __init__(
@@ -28,6 +49,7 @@ class Settings(FrozenClass):
         neptune_logger_required: Optional[bool] = None,
         visdom_logger_required: Optional[bool] = None,
         wandb_logger_required: Optional[bool] = None,
+        optuna_required: Optional[bool] = None,
         plotly_required: Optional[bool] = None,
         telegram_logger_token: Optional[str] = None,
         telegram_logger_chat_id: Optional[str] = None,
@@ -68,6 +90,9 @@ class Settings(FrozenClass):
         )
         self.wandb_logger_required: bool = self._optional_value(
             wandb_logger_required, default=contrib_required
+        )
+        self.optuna_required: bool = self._optional_value(
+            optuna_required, default=contrib_required
         )
         self.plotly_required: bool = self._optional_value(
             plotly_required, default=contrib_required
@@ -295,4 +320,14 @@ class MergedConfigParser:
 
 settings = Settings.parse()
 
-__all__ = ["settings"]
+
+__all__ = [
+    "settings",
+    "Settings",
+    "ConfigFileFinder",
+    "MergedConfigParser",
+    "IS_PRUNING_AVAILABLE",
+    "IS_XLA_AVAILABLE",
+    "IS_GIT_AVAILABLE",
+    "IS_QUANTIZATION_AVAILABLE",
+]

@@ -21,7 +21,7 @@ stages:
       - transform: A.Normalize
         mean: [0.1307]
         std: [0.3081]
-      - transform: catalyst.ToTensor # the same as `C.ToTensor`
+      - transform: catalyst.ImageToTensor # the same as `C.ToTensor`
 
   stage_params:
     main_metric: &reduced_metric accuracy01

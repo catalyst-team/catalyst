@@ -4,7 +4,39 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [20.08] - YYYY-MM-DD
+
+## [20.09] - YYYY-MM-DD
+
+### Added
+
+- `force` and `bert-level` keywords to `catalyst-data text2embedding` ([#917](https://github.com/catalyst-team/catalyst/pull/917))
+- `OptunaCallback` to `catalyst.contrib` ([#915](https://github.com/catalyst-team/catalyst/pull/915))
+- `DynamicQuantizationCallback` and `catalyst-dl quantize` script for fast quantization of your model ([#890](https://github.com/catalyst-team/catalyst/pull/915))
+- Multi-scheduler support for multi-optimizer case ([#923](https://github.com/catalyst-team/catalyst/pull/923))
+- Native mixed-precision training support ([#740](https://github.com/catalyst-team/catalyst/issues/740))
+- `OptiomizerCallback` - flag `use_fast_zero_grad` for faster (and hacky) version of `optimizer.zero_grad()` ([#927](https://github.com/catalyst-team/catalyst/pull/927))
+
+### Changed
+
+- 
+
+### Removed
+
+- 
+
+### Fixed
+
+- autoresume option for Config API ([#907](https://github.com/catalyst-team/catalyst/pull/907))
+- a few issues with TF projector ([#917](https://github.com/catalyst-team/catalyst/pull/917))
+- batch sampler speed issue ([#921](https://github.com/catalyst-team/catalyst/pull/921)) 
+- add apex key-value optimizer support ([#924](https://github.com/catalyst-team/catalyst/pull/924))
+- runtime warning for PyTorch 1.6 ([920](https://github.com/catalyst-team/catalyst/pull/920))
+- Apex synbn usage ([920](https://github.com/catalyst-team/catalyst/pull/920))
+- Catalyst dependency on system git ([922](https://github.com/catalyst-team/catalyst/pull/922))
+
+
+
+## [20.08] - 2020-08-09
 
 ### Added
 - MRR metrics calculation ([#886](https://github.com/catalyst-team/catalyst/pull/886))
@@ -16,11 +48,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - experimental TPU support ([#893](https://github.com/catalyst-team/catalyst/pull/893))
 - add `Imagenette`, `Imagewoof`, and `Imagewang` datasets ([#902](https://github.com/catalyst-team/catalyst/pull/902))
 - `IMetricCallback`, `IBatchMetricCallback`, `ILoaderMetricCallback`, `BatchMetricCallback`, `LoaderMetricCallback` abstractions ([#897](https://github.com/catalyst-team/catalyst/pull/897))
+- `HardClusterSampler` inbatch sampler ([#888](https://github.com/catalyst-team/catalyst/pull/888))
 
 ### Changed
 
 - all registries merged to one `catalyst.registry` ([#883](https://github.com/catalyst-team/catalyst/pull/883))
 - `mean_average_precision` logic merged with `average_precision` ([#897](https://github.com/catalyst-team/catalyst/pull/897))
+- all imports moved to absolute ([#905](https://github.com/catalyst-team/catalyst/pull/905))
+- `catalyst.contrib.data` merged to `catalyst.data` ([#905](https://github.com/catalyst-team/catalyst/pull/905))
+- {breaking} Catalyst transform `ToTensor` was renamed to `ImageToTensor` ([#905](https://github.com/catalyst-team/catalyst/pull/905))
+- `TracerCallback` moved to `catalyst.dl` ([#905](https://github.com/catalyst-team/catalyst/pull/905))
+- `ControlFlowCallback`, `PeriodicLoaderCallback` moved to `catalyst.core` ([#905](https://github.com/catalyst-team/catalyst/pull/905))
 
 ### Removed
 

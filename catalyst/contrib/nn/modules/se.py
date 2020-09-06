@@ -121,3 +121,6 @@ class scSE(nn.Module):  # noqa: N801
         sse = self.sse_block(x)
         x = torch.add(cse, sse)
         return x
+
+
+__all__ = ["sSE", "scSE", "cSE"]

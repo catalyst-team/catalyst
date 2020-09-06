@@ -117,7 +117,7 @@ class BalanceBatchSampler(Sampler):
         https://arxiv.org/abs/1703.07737
     """
 
-    def __init__(self, labels: List[int], p: int, k: int):
+    def __init__(self, labels: Union[List[int], np.ndarray], p: int, k: int):
         """
         Args:
             labels: list of classes labeles for each elem in the dataset
@@ -133,7 +133,7 @@ class BalanceBatchSampler(Sampler):
             n > 1 for n in Counter(labels).values()
         ), "Each class shoud contain at least 2 instances to fit (1)"
 
-        self._labels = tuple(labels)  # to make it immutable
+        self._labels = labels
         self._p = p
         self._k = k
 

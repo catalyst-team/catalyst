@@ -51,10 +51,11 @@ class QueryGalleryDataset(Dataset, ABC):
         Query/Gallery dataset should have property
         query size.
 
+        Returns:
+            query size  # noqa: DAR202
+
         Raises:
             NotImplementedError: You should implement it  # noqa: DAR402
-        Returns:
-            query size
         """
         raise NotImplementedError()
 
@@ -65,9 +66,13 @@ class QueryGalleryDataset(Dataset, ABC):
         Query/Gallery dataset should have property
         gallery size.
 
+        Returns:
+            gallery size  # noqa: DAR202
+
         Raises:
             NotImplementedError: You should implement it  # noqa: DAR402
-        Returns:
-            gallery size
         """
         raise NotImplementedError()
+
+
+__all__ = ["MetricLearningTrainDataset", "QueryGalleryDataset"]
