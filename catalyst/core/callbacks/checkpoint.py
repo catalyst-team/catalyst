@@ -196,15 +196,22 @@ class BaseCheckpointCallback(ICheckpointCallback):
         self.metrics_filename = metrics_filename
         self.metrics: dict = {}
 
-    def get_checkpoint_suffix(self, checkpoint: dict) -> str:
+    def _get_checkpoint_suffix(self, checkpoint: dict) -> str:
         return "checkpoint"
 
-    def save_metric(self, logdir: Union[str, Path], metrics: Dict) -> None:
+    def _save_metric(self, logdir: Union[str, Path], metrics: Dict) -> None:
         utils.save_config(
             metrics, f"{logdir}/checkpoints/{self.metrics_filename}"
         )
 
     def on_exception(self, runner: IRunner):
+        """
+        Expection handler.
+
+        Args:
+            runner: current runner
+
+        """
         exception = runner.exception
         if not utils.is_exception(exception):
             return
@@ -216,7 +223,7 @@ class BaseCheckpointCallback(ICheckpointCallback):
 
         try:
             checkpoint = _pack_runner(runner)
-            suffix = self.get_checkpoint_suffix(checkpoint)
+            suffix = self._get_checkpoint_suffix(checkpoint)
             suffix = f"{suffix}.exception_{exception.__class__.__name__}"
             utils.save_checkpoint(
                 logdir=Path(f"{runner.logdir}/checkpoints/"),
@@ -228,7 +235,7 @@ class BaseCheckpointCallback(ICheckpointCallback):
             )
             metrics = self.metrics
             metrics[suffix] = runner.valid_metrics
-            self.save_metric(runner.logdir, metrics)
+            self._save_metric(runner.logdir, metrics)
         except Exception:  # noqa: S110
             pass
 
@@ -353,7 +360,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         self._keys_from_state = ["resume", "resume_dir"]
         self._save_fn: Callable = None
 
-    def get_checkpoint_suffix(self, checkpoint: dict) -> str:
+    def _get_checkpoint_suffix(self, checkpoint: dict) -> str:
         """
         Create checkpoint filename suffix based on checkpoint data.
 
@@ -494,7 +501,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         _, filepath = self._save_checkpoint(
             logdir=logdir,
             checkpoint=checkpoint,
-            suffix=self.get_checkpoint_suffix(checkpoint),
+            suffix=self._get_checkpoint_suffix(checkpoint),
             is_best=is_best,
             is_last=True,
         )
@@ -505,7 +512,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         self.metrics_history.append(metrics_record)
         self.truncate_checkpoints(minimize_metric=minimize_metric)
         metrics = self.process_metrics(valid_metrics)
-        self.save_metric(logdir, metrics)
+        self._save_metric(logdir, metrics)
 
     @staticmethod
     def _load_runner(
@@ -647,7 +654,7 @@ class CheckpointCallback(BaseCheckpointCallback):
                 is_last=False,  # don't need that because current state is last
             )
             metrics = self.process_metrics(checkpoint["valid_metrics"])
-            self.save_metric(runner.logdir, metrics)
+            self._save_metric(runner.logdir, metrics)
             main_metric_value = metrics["last"][runner.main_metric]
             log_message += "{filepath}\t{metric:3.4f}".format(
                 filepath=filepath, metric=main_metric_value
@@ -721,7 +728,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         self.load_on_stage_end = load_on_stage_end
         self._save_fn = None
 
-    def get_checkpoint_suffix(self, checkpoint: dict) -> str:
+    def _get_checkpoint_suffix(self, checkpoint: dict) -> str:
         """
         Create checkpoint filename suffix based on checkpoint data.
 
@@ -787,7 +794,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         filepath = utils.save_checkpoint(
             logdir=Path(f"{logdir}/checkpoints/"),
             checkpoint=checkpoint,
-            suffix=self.get_checkpoint_suffix(checkpoint),
+            suffix=self._get_checkpoint_suffix(checkpoint),
             is_best=False,
             is_last=False,
             saver_fn=self._save_fn,
@@ -799,7 +806,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         self.metrics_history.append(batch_metrics)
 
         metrics = self.process_metrics()
-        self.save_metric(logdir, metrics)
+        self._save_metric(logdir, metrics)
         print(f"\nSaved checkpoint at {filepath}")
 
     def on_stage_start(self, runner: IRunner):

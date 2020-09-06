@@ -10,6 +10,8 @@ from catalyst.core.runner import IRunner
 
 
 class ISchedulerCallback(Callback):
+    """Scheduler callback interface, abstraction over scheduler step."""
+
     pass
 
 
