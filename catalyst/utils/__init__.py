@@ -38,6 +38,7 @@ from catalyst.utils.distributed import (
     check_torch_distributed_initialized,
     check_slurm_available,
     check_apex_available,
+    check_amp_available,
     initialize_apex,
     assert_fp16_available,
     is_wrapped_with_ddp,

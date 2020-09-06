@@ -15,19 +15,18 @@ def get_original_callback(callback: Callback) -> Callback:
     return callback
 
 
-def check_callback_isinstance(first: Callback, second: Callback) -> bool:
+def check_callback_isinstance(callback: Callback, class_or_tuple) -> bool:
     """Check if first callback is the same type as second callback
 
     Args:
-        first (Callback): callback to check
+        callback (Callback): callback to check
         second (Callback): callback onject to compare with
 
     Returns:
         bool: true if first object has the same type as second
     """
-    first = get_original_callback(first)
-    second = get_original_callback(second)
-    return isinstance(first, second)
+    callback = get_original_callback(callback)
+    return isinstance(callback, class_or_tuple)
 
 
 __all__ = ["get_original_callback", "check_callback_isinstance"]

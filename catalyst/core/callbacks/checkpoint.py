@@ -173,7 +173,15 @@ def _load_states_from_file_map(
         print(f"   loaded: {', '.join(parts_to_load)}")
 
 
-class BaseCheckpointCallback(Callback):
+class ICheckpointCallback(Callback):
+    """
+    Checkpoint callback interface, abstraction over model checkpointing step.
+    """
+
+    pass
+
+
+class BaseCheckpointCallback(ICheckpointCallback):
     """Base class for all checkpoint callbacks."""
 
     def __init__(self, metrics_filename: str = "_metrics.json"):
@@ -182,7 +190,9 @@ class BaseCheckpointCallback(Callback):
             metrics_filename (str): filename to save metrics
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
         """
-        super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
+        super().__init__(
+            order=CallbackOrder.external, node=CallbackNode.master
+        )
         self.metrics_filename = metrics_filename
         self.metrics: dict = {}
 
@@ -843,4 +853,9 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
             )
 
 
-__all__ = ["CheckpointCallback", "IterationCheckpointCallback"]
+__all__ = [
+    "CheckpointCallback",
+    "IterationCheckpointCallback",
+    "ICheckpointCallback",
+    "BaseCheckpointCallback",
+]

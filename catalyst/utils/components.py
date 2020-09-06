@@ -112,9 +112,6 @@ def process_components(
             )
             model = apex.parallel.DistributedDataParallel(model)
         else:
-            if is_amp_enabled:
-                pass
-
             if syncbn:
                 model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
 
