@@ -5,7 +5,7 @@ from catalyst.core.runner import IRunner
 
 
 class CheckRunCallback(Callback):
-    """Execute exeperiment not fully."""
+    """Executes only a pipeline part from the ``Experiment``."""
 
     def __init__(self, num_batch_steps: int = 3, num_epoch_steps: int = 2):
         """

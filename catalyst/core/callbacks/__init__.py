@@ -1,9 +1,9 @@
 # flake8: noqa
 
-from catalyst.tools.settings import IS_PRUNING_AVAILABLE
-
 from catalyst.core.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.core.callbacks.checkpoint import (
+    ICheckpointCallback,
+    BaseCheckpointCallback,
     CheckpointCallback,
     IterationCheckpointCallback,
 )
@@ -15,6 +15,7 @@ from catalyst.core.callbacks.early_stop import (
 )
 from catalyst.core.callbacks.exception import ExceptionCallback
 from catalyst.core.callbacks.logging import (
+    ILoggerCallback,
     ConsoleLogger,
     TensorboardLogger,
     VerboseLogger,
@@ -30,13 +31,15 @@ from catalyst.core.callbacks.metrics import (
     MetricManagerCallback,
 )
 from catalyst.core.callbacks.optimizer import (
+    IOptimizerCallback,
     OptimizerCallback,
     AMPOptimizerCallback,
 )
 from catalyst.core.callbacks.periodic_loader import PeriodicLoaderCallback
-from catalyst.core.callbacks.scheduler import LRUpdater, SchedulerCallback
+from catalyst.core.callbacks.scheduler import (
+    ISchedulerCallback,
+    LRUpdater,
+    SchedulerCallback,
+)
 from catalyst.core.callbacks.timer import TimerCallback
 from catalyst.core.callbacks.validation import ValidationManagerCallback
-
-if IS_PRUNING_AVAILABLE:
-    from catalyst.core.callbacks.pruning import PruningCallback

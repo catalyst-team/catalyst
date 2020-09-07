@@ -6,11 +6,13 @@ from catalyst.dl import (
     AMPOptimizerCallback,
     Callback,
     CriterionCallback,
+    IOptimizerCallback,
+    ISchedulerCallback,
     OptimizerCallback,
     SchedulerCallback,
 )
 from catalyst.dl.experiment.experiment import Experiment
-from catalyst.dl.utils import check_callback_isinstance
+from catalyst.dl.utils import check_amp_available, check_callback_isinstance
 from catalyst.tools.typing import Criterion, Optimizer, Scheduler
 
 
@@ -33,12 +35,11 @@ class SupervisedExperiment(Experiment):
             saves model and optimizer state each epoch callback to save/restore
             your model/criterion/optimizer/metrics.
         ConsoleLogger:
-            standard Catalyst logger,
-            translates ``runner.*_metrics`` to console and text file
+            translates ``runner.*_metrics`` to console and text file.
         TensorboardLogger:
-            will write ``runner.*_metrics`` to tensorboard
+            writes ``runner.*_metrics`` to tensorboard.
         RaiseExceptionCallback:
-            will raise exception if needed
+            will raise exception if needed.
     """
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
@@ -57,34 +58,44 @@ class SupervisedExperiment(Experiment):
         """
         callbacks = super().get_callbacks(stage=stage) or OrderedDict()
 
-        from catalyst.utils.distributed import check_amp_available
+        # default_callbacks = [(Name, InterfaceClass, InstanceFactory)]
+        default_callbacks = []
 
         is_amp_enabled = (
             self.distributed_params.get("amp", False) and check_amp_available()
         )
-        optimizer_cls = OptimizerCallback
-        if is_amp_enabled:
-            optimizer_cls = AMPOptimizerCallback
-
-        default_callbacks = []
+        optimizer_cls = (
+            AMPOptimizerCallback if is_amp_enabled else OptimizerCallback
+        )
 
         if not stage.startswith("infer"):
             if self._criterion is not None and isinstance(
                 self._criterion, Criterion
             ):
-                default_callbacks.append(("_criterion", CriterionCallback))
+                default_callbacks.append(
+                    ("_criterion", None, CriterionCallback)
+                )
             if self._optimizer is not None and isinstance(
                 self._optimizer, Optimizer
             ):
-                default_callbacks.append(("_optimizer", optimizer_cls))
+                default_callbacks.append(
+                    ("_optimizer", IOptimizerCallback, optimizer_cls)
+                )
             if self._scheduler is not None and isinstance(
                 self._scheduler, (Scheduler, ReduceLROnPlateau)
             ):
-                default_callbacks.append(("_scheduler", SchedulerCallback))
+                default_callbacks.append(
+                    ("_scheduler", ISchedulerCallback, SchedulerCallback)
+                )
 
-        for callback_name, callback_fn in default_callbacks:
+        for (
+            callback_name,
+            callback_interface,
+            callback_fn,
+        ) in default_callbacks:
+            callback_interface = callback_interface or callback_fn
             is_already_present = any(
-                check_callback_isinstance(x, callback_fn)
+                check_callback_isinstance(x, callback_interface)
                 for x in callbacks.values()
             )
             if not is_already_present:

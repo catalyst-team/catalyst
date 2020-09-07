@@ -19,6 +19,8 @@ from catalyst.dl import (
     ConsoleLogger,
     CriterionCallback,
     ExceptionCallback,
+    IOptimizerCallback,
+    ISchedulerCallback,
     MetricManagerCallback,
     OptimizerCallback,
     SchedulerCallback,
@@ -28,7 +30,7 @@ from catalyst.dl import (
     ValidationManagerCallback,
     VerboseLogger,
 )
-from catalyst.dl.utils import check_callback_isinstance
+from catalyst.dl.utils import check_amp_available, check_callback_isinstance
 from catalyst.registry import (
     CALLBACKS,
     CRITERIONS,
@@ -488,6 +490,7 @@ class ConfigExperiment(IExperiment):
             #       loading of a best model state for the first stage
             #       but for the other stages by default should
             #       load best state of a model
+            # @TODO: move this logic to ``CheckpointCallback``
             if isinstance(callback, CheckpointCallback) and stage_index > 0:
                 if callback.load_on_stage_start is None:
                     callback.load_on_stage_start = "best"
@@ -508,52 +511,63 @@ class ConfigExperiment(IExperiment):
             callback = self._get_callback(**callback_params)
             callbacks[key] = callback
 
+        # default_callbacks = [(Name, InterfaceClass, InstanceFactory)]
         default_callbacks = []
+
+        is_amp_enabled = (
+            self.distributed_params.get("amp", False) and check_amp_available()
+        )
+        optimizer_cls = (
+            AMPOptimizerCallback if is_amp_enabled else OptimizerCallback
+        )
+
         if self._verbose:
-            default_callbacks.append(("_verbose", VerboseLogger))
+            default_callbacks.append(("_verbose", None, VerboseLogger))
         if self._check_time:
-            default_callbacks.append(("_timer", TimerCallback))
+            default_callbacks.append(("_timer", None, TimerCallback))
         if self._check_run:
-            default_callbacks.append(("_check", CheckRunCallback))
+            default_callbacks.append(("_check", None, CheckRunCallback))
         if self._overfit:
-            default_callbacks.append(("_overfit", BatchOverfitCallback))
+            default_callbacks.append(("_overfit", None, BatchOverfitCallback))
 
         if not stage.startswith("infer"):
-            default_callbacks.append(("_metrics", MetricManagerCallback))
+            default_callbacks.append(("_metrics", None, MetricManagerCallback))
             default_callbacks.append(
-                ("_validation", ValidationManagerCallback)
+                ("_validation", None, ValidationManagerCallback)
             )
-            default_callbacks.append(("_console", ConsoleLogger))
+            default_callbacks.append(("_console", None, ConsoleLogger))
 
             if self.logdir is not None:
-                default_callbacks.append(("_saver", CheckpointCallback))
-                default_callbacks.append(("_tensorboard", TensorboardLogger))
-
-            from catalyst.utils.distributed import check_amp_available
-
-            is_amp_enabled = (
-                self.distributed_params.get("amp", False)
-                and check_amp_available()
-            )
-            optimizer_cls = OptimizerCallback
-            if is_amp_enabled:
-                optimizer_cls = AMPOptimizerCallback
+                default_callbacks.append(("_saver", None, CheckpointCallback))
+                default_callbacks.append(
+                    ("_tensorboard", None, TensorboardLogger)
+                )
 
             if self.stages_config[stage].get("criterion_params", {}):
-                default_callbacks.append(("_criterion", CriterionCallback))
+                default_callbacks.append(
+                    ("_criterion", None, CriterionCallback)
+                )
             if self.stages_config[stage].get("optimizer_params", {}):
-                default_callbacks.append(("_optimizer", optimizer_cls))
+                default_callbacks.append(
+                    ("_optimizer", IOptimizerCallback, optimizer_cls)
+                )
             if self.stages_config[stage].get("scheduler_params", {}):
-                default_callbacks.append(("_scheduler", SchedulerCallback))
+                default_callbacks.append(
+                    ("_scheduler", ISchedulerCallback, SchedulerCallback)
+                )
 
-        default_callbacks.append(("_exception", ExceptionCallback))
+        default_callbacks.append(("_exception", None, ExceptionCallback))
 
-        for callback_name, callback_fn in default_callbacks:
-            is_already_present = False
-            for x in callbacks.values():
-                if check_callback_isinstance(x, callback_fn):
-                    is_already_present = True
-                    break
+        for (
+            callback_name,
+            callback_interface,
+            callback_fn,
+        ) in default_callbacks:
+            callback_interface = callback_interface or callback_fn
+            is_already_present = any(
+                check_callback_isinstance(x, callback_interface)
+                for x in callbacks.values()
+            )
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
 
