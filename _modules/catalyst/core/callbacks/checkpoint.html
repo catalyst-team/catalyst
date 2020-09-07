@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.core.callbacks.checkpoint &mdash; Catalyst 20.08.3 documentation</title>
+  <title>catalyst.core.callbacks.checkpoint &mdash; Catalyst 20.09 documentation</title>
   
 
   
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.08</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.09</a>
                 </div>
               
             
@@ -434,28 +434,45 @@
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   loaded: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts_to_load</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
-<span class="k">class</span> <span class="nc">BaseCheckpointCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+<div class="viewcode-block" id="ICheckpointCallback"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.checkpoint.ICheckpointCallback">[docs]</a><span class="k">class</span> <span class="nc">ICheckpointCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checkpoint callback interface, abstraction over model checkpointing step.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="BaseCheckpointCallback"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.checkpoint.BaseCheckpointCallback">[docs]</a><span class="k">class</span> <span class="nc">BaseCheckpointCallback</span><span class="p">(</span><span class="n">ICheckpointCallback</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Base class for all checkpoint callbacks.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_metrics.json&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseCheckpointCallback.__init__"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.checkpoint.BaseCheckpointCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_metrics.json&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            metrics_filename (str): filename to save metrics</span>
 <span class="sd">                in checkpoint folder. Must ends on ``.json`` or ``.yml``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">external</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">all</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">external</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">master</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics_filename</span> <span class="o">=</span> <span class="n">metrics_filename</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span></div>
 
-    <span class="k">def</span> <span class="nf">get_checkpoint_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_get_checkpoint_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="k">return</span> <span class="s2">&quot;checkpoint&quot;</span>
 
-    <span class="k">def</span> <span class="nf">save_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logdir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_save_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logdir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">utils</span><span class="o">.</span><span class="n">save_config</span><span class="p">(</span>
             <span class="n">metrics</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">logdir</span><span class="si">}</span><span class="s2">/checkpoints/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metrics_filename</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">on_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">):</span>
+<div class="viewcode-block" id="BaseCheckpointCallback.on_exception"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.checkpoint.BaseCheckpointCallback.on_exception">[docs]</a>    <span class="k">def</span> <span class="nf">on_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Expection handler.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner: current runner</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">exception</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">exception</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">utils</span><span class="o">.</span><span class="n">is_exception</span><span class="p">(</span><span class="n">exception</span><span class="p">):</span>
             <span class="k">return</span>
@@ -467,7 +484,7 @@
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">_pack_runner</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
-            <span class="n">suffix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_checkpoint_suffix</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span>
+            <span class="n">suffix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_checkpoint_suffix</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span>
             <span class="n">suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">.exception_</span><span class="si">{</span><span class="n">exception</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="n">utils</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span>
                 <span class="n">logdir</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">logdir</span><span class="si">}</span><span class="s2">/checkpoints/&quot;</span><span class="p">),</span>
@@ -479,9 +496,9 @@
             <span class="p">)</span>
             <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span>
             <span class="n">metrics</span><span class="p">[</span><span class="n">suffix</span><span class="p">]</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">valid_metrics</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">save_metric</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_metric</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>  <span class="c1"># noqa: S110</span>
-            <span class="k">pass</span>
+            <span class="k">pass</span></div></div>
 
 
 <div class="viewcode-block" id="CheckpointCallback"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.checkpoint.CheckpointCallback">[docs]</a><span class="k">class</span> <span class="nc">CheckpointCallback</span><span class="p">(</span><span class="n">BaseCheckpointCallback</span><span class="p">):</span>
@@ -604,7 +621,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_keys_from_state</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;resume&quot;</span><span class="p">,</span> <span class="s2">&quot;resume_dir&quot;</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="CheckpointCallback.get_checkpoint_suffix"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.checkpoint.CheckpointCallback.get_checkpoint_suffix">[docs]</a>    <span class="k">def</span> <span class="nf">get_checkpoint_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_get_checkpoint_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create checkpoint filename suffix based on checkpoint data.</span>
 
@@ -616,7 +633,7 @@
 <span class="sd">            str: checkpoint suffix</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;stage_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;epoch&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">return</span> <span class="n">result</span></div>
+        <span class="k">return</span> <span class="n">result</span>
 
 <div class="viewcode-block" id="CheckpointCallback.process_metrics"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.checkpoint.CheckpointCallback.process_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">process_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">last_valid_metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -745,7 +762,7 @@
         <span class="n">_</span><span class="p">,</span> <span class="n">filepath</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_checkpoint</span><span class="p">(</span>
             <span class="n">logdir</span><span class="o">=</span><span class="n">logdir</span><span class="p">,</span>
             <span class="n">checkpoint</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span>
-            <span class="n">suffix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_checkpoint_suffix</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">),</span>
+            <span class="n">suffix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_checkpoint_suffix</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">),</span>
             <span class="n">is_best</span><span class="o">=</span><span class="n">is_best</span><span class="p">,</span>
             <span class="n">is_last</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="p">)</span>
@@ -756,7 +773,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metrics_record</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">truncate_checkpoints</span><span class="p">(</span><span class="n">minimize_metric</span><span class="o">=</span><span class="n">minimize_metric</span><span class="p">)</span>
         <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_metrics</span><span class="p">(</span><span class="n">valid_metrics</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">save_metric</span><span class="p">(</span><span class="n">logdir</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_metric</span><span class="p">(</span><span class="n">logdir</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span></div>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_load_runner</span><span class="p">(</span>
@@ -898,7 +915,7 @@
                 <span class="n">is_last</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># don&#39;t need that because current state is last</span>
             <span class="p">)</span>
             <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_metrics</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;valid_metrics&quot;</span><span class="p">])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">save_metric</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_save_metric</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span>
             <span class="n">main_metric_value</span> <span class="o">=</span> <span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;last&quot;</span><span class="p">][</span><span class="n">runner</span><span class="o">.</span><span class="n">main_metric</span><span class="p">]</span>
             <span class="n">log_message</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">{filepath}</span><span class="se">\t</span><span class="si">{metric:3.4f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">filepath</span><span class="o">=</span><span class="n">filepath</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="n">main_metric_value</span>
@@ -972,7 +989,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_end</span> <span class="o">=</span> <span class="n">load_on_stage_end</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_fn</span> <span class="o">=</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="IterationCheckpointCallback.get_checkpoint_suffix"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.get_checkpoint_suffix">[docs]</a>    <span class="k">def</span> <span class="nf">get_checkpoint_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_get_checkpoint_suffix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create checkpoint filename suffix based on checkpoint data.</span>
 
@@ -989,7 +1006,7 @@
             <span class="sa">f</span><span class="s2">&quot;iter.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_iteration_counter</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">result</span></div>
+        <span class="k">return</span> <span class="n">result</span>
 
 <div class="viewcode-block" id="IterationCheckpointCallback.process_metrics"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.process_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">process_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Update metrics with last ``save_n_last`` checkpoints.</span>
@@ -1038,7 +1055,7 @@
         <span class="n">filepath</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span>
             <span class="n">logdir</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">logdir</span><span class="si">}</span><span class="s2">/checkpoints/&quot;</span><span class="p">),</span>
             <span class="n">checkpoint</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span>
-            <span class="n">suffix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_checkpoint_suffix</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">),</span>
+            <span class="n">suffix</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_checkpoint_suffix</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">),</span>
             <span class="n">is_best</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">is_last</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">saver_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_save_fn</span><span class="p">,</span>
@@ -1050,7 +1067,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">batch_metrics</span><span class="p">)</span>
 
         <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_metrics</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">save_metric</span><span class="p">(</span><span class="n">logdir</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_metric</span><span class="p">(</span><span class="n">logdir</span><span class="p">,</span> <span class="n">metrics</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Saved checkpoint at </span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="IterationCheckpointCallback.on_stage_start"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.on_stage_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">):</span>
@@ -1104,7 +1121,12 @@
             <span class="p">)</span></div></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CheckpointCallback&quot;</span><span class="p">,</span> <span class="s2">&quot;IterationCheckpointCallback&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;CheckpointCallback&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;IterationCheckpointCallback&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ICheckpointCallback&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;BaseCheckpointCallback&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 </pre></div>
 
              </article>

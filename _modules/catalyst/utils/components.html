@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.components &mdash; Catalyst 20.08.3 documentation</title>
+  <title>catalyst.utils.components &mdash; Catalyst 20.09 documentation</title>
   
 
   
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.08</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.09</a>
                 </div>
               
             
@@ -373,9 +373,6 @@
             <span class="p">)</span>
             <span class="n">model</span> <span class="o">=</span> <span class="n">apex</span><span class="o">.</span><span class="n">parallel</span><span class="o">.</span><span class="n">DistributedDataParallel</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">is_amp_enabled</span><span class="p">:</span>
-                <span class="k">pass</span>
-
             <span class="k">if</span> <span class="n">syncbn</span><span class="p">:</span>
                 <span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">SyncBatchNorm</span><span class="o">.</span><span class="n">convert_sync_batchnorm</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.experiment.supervised &mdash; Catalyst 20.08.3 documentation</title>
+  <title>catalyst.dl.experiment.supervised &mdash; Catalyst 20.09 documentation</title>
   
 
   
@@ -147,7 +147,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.08</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.09</a>
                 </div>
               
             
@@ -267,11 +267,13 @@
     <span class="n">AMPOptimizerCallback</span><span class="p">,</span>
     <span class="n">Callback</span><span class="p">,</span>
     <span class="n">CriterionCallback</span><span class="p">,</span>
+    <span class="n">IOptimizerCallback</span><span class="p">,</span>
+    <span class="n">ISchedulerCallback</span><span class="p">,</span>
     <span class="n">OptimizerCallback</span><span class="p">,</span>
     <span class="n">SchedulerCallback</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl.experiment.experiment</span> <span class="kn">import</span> <span class="n">Experiment</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="kn">import</span> <span class="n">check_callback_isinstance</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl.utils</span> <span class="kn">import</span> <span class="n">check_amp_available</span><span class="p">,</span> <span class="n">check_callback_isinstance</span>
 <span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
 
 
@@ -294,12 +296,11 @@
 <span class="sd">            saves model and optimizer state each epoch callback to save/restore</span>
 <span class="sd">            your model/criterion/optimizer/metrics.</span>
 <span class="sd">        ConsoleLogger:</span>
-<span class="sd">            standard Catalyst logger,</span>
-<span class="sd">            translates ``runner.*_metrics`` to console and text file</span>
+<span class="sd">            translates ``runner.*_metrics`` to console and text file.</span>
 <span class="sd">        TensorboardLogger:</span>
-<span class="sd">            will write ``runner.*_metrics`` to tensorboard</span>
+<span class="sd">            writes ``runner.*_metrics`` to tensorboard.</span>
 <span class="sd">        RaiseExceptionCallback:</span>
-<span class="sd">            will raise exception if needed</span>
+<span class="sd">            will raise exception if needed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="SupervisedExperiment.get_callbacks"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.supervised.SupervisedExperiment.get_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Callback]&quot;</span><span class="p">:</span>
@@ -318,34 +319,44 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">callbacks</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_callbacks</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">)</span> <span class="ow">or</span> <span class="n">OrderedDict</span><span class="p">()</span>
 
-        <span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">check_amp_available</span>
+        <span class="c1"># default_callbacks = [(Name, InterfaceClass, InstanceFactory)]</span>
+        <span class="n">default_callbacks</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="n">is_amp_enabled</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">distributed_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;amp&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check_amp_available</span><span class="p">()</span>
         <span class="p">)</span>
-        <span class="n">optimizer_cls</span> <span class="o">=</span> <span class="n">OptimizerCallback</span>
-        <span class="k">if</span> <span class="n">is_amp_enabled</span><span class="p">:</span>
-            <span class="n">optimizer_cls</span> <span class="o">=</span> <span class="n">AMPOptimizerCallback</span>
-
-        <span class="n">default_callbacks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">optimizer_cls</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">AMPOptimizerCallback</span> <span class="k">if</span> <span class="n">is_amp_enabled</span> <span class="k">else</span> <span class="n">OptimizerCallback</span>
+        <span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">stage</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span><span class="p">,</span> <span class="n">Criterion</span>
             <span class="p">):</span>
-                <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_criterion&quot;</span><span class="p">,</span> <span class="n">CriterionCallback</span><span class="p">))</span>
+                <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">(</span><span class="s2">&quot;_criterion&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">CriterionCallback</span><span class="p">)</span>
+                <span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">,</span> <span class="n">Optimizer</span>
             <span class="p">):</span>
-                <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_optimizer&quot;</span><span class="p">,</span> <span class="n">optimizer_cls</span><span class="p">))</span>
+                <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">(</span><span class="s2">&quot;_optimizer&quot;</span><span class="p">,</span> <span class="n">IOptimizerCallback</span><span class="p">,</span> <span class="n">optimizer_cls</span><span class="p">)</span>
+                <span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="p">,</span> <span class="p">(</span><span class="n">Scheduler</span><span class="p">,</span> <span class="n">ReduceLROnPlateau</span><span class="p">)</span>
             <span class="p">):</span>
-                <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_scheduler&quot;</span><span class="p">,</span> <span class="n">SchedulerCallback</span><span class="p">))</span>
+                <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">(</span><span class="s2">&quot;_scheduler&quot;</span><span class="p">,</span> <span class="n">ISchedulerCallback</span><span class="p">,</span> <span class="n">SchedulerCallback</span><span class="p">)</span>
+                <span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">callback_name</span><span class="p">,</span> <span class="n">callback_fn</span> <span class="ow">in</span> <span class="n">default_callbacks</span><span class="p">:</span>
+        <span class="k">for</span> <span class="p">(</span>
+            <span class="n">callback_name</span><span class="p">,</span>
+            <span class="n">callback_interface</span><span class="p">,</span>
+            <span class="n">callback_fn</span><span class="p">,</span>
+        <span class="p">)</span> <span class="ow">in</span> <span class="n">default_callbacks</span><span class="p">:</span>
+            <span class="n">callback_interface</span> <span class="o">=</span> <span class="n">callback_interface</span> <span class="ow">or</span> <span class="n">callback_fn</span>
             <span class="n">is_already_present</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
-                <span class="n">check_callback_isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">callback_fn</span><span class="p">)</span>
+                <span class="n">check_callback_isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">callback_interface</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
             <span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">is_already_present</span><span class="p">:</span>

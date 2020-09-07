@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; Catalyst 20.08.3 documentation</title>
+  <title>Index &mdash; Catalyst 20.09 documentation</title>
   
 
   
@@ -148,7 +148,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.08</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.09</a>
                 </div>
               
             
@@ -457,6 +457,8 @@
         <li><a href="api/core.html#catalyst.core.callback.WrapperCallback.__init__">(catalyst.core.callback.WrapperCallback method)</a>
 </li>
         <li><a href="api/core.html#catalyst.core.callbacks.batch_overfit.BatchOverfitCallback.__init__">(catalyst.core.callbacks.batch_overfit.BatchOverfitCallback method)</a>
+</li>
+        <li><a href="api/core.html#catalyst.core.callbacks.checkpoint.BaseCheckpointCallback.__init__">(catalyst.core.callbacks.checkpoint.BaseCheckpointCallback method)</a>
 </li>
         <li><a href="api/core.html#catalyst.core.callbacks.checkpoint.CheckpointCallback.__init__">(catalyst.core.callbacks.checkpoint.CheckpointCallback method)</a>
 </li>
@@ -778,6 +780,8 @@
       <li><a href="api/data.html#catalyst.data.sampler.BalanceBatchSampler">BalanceBatchSampler (class in catalyst.data.sampler)</a>
 </li>
       <li><a href="api/data.html#catalyst.data.sampler.BalanceClassSampler">BalanceClassSampler (class in catalyst.data.sampler)</a>
+</li>
+      <li><a href="api/core.html#catalyst.core.callbacks.checkpoint.BaseCheckpointCallback">BaseCheckpointCallback (class in catalyst.core.callbacks.checkpoint)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.schedulers.base.BaseScheduler">BaseScheduler (class in catalyst.contrib.nn.schedulers.base)</a>
 </li>
@@ -1465,12 +1469,6 @@
         <li><a href="api/dl.html#catalyst.dl.experiment.supervised.SupervisedExperiment.get_callbacks">(catalyst.dl.experiment.supervised.SupervisedExperiment method)</a>
 </li>
       </ul></li>
-      <li><a href="api/core.html#catalyst.core.callbacks.checkpoint.CheckpointCallback.get_checkpoint_suffix">get_checkpoint_suffix() (catalyst.core.callbacks.checkpoint.CheckpointCallback method)</a>
-
-      <ul>
-        <li><a href="api/core.html#catalyst.core.callbacks.checkpoint.IterationCheckpointCallback.get_checkpoint_suffix">(catalyst.core.callbacks.checkpoint.IterationCheckpointCallback method)</a>
-</li>
-      </ul></li>
       <li><a href="api/core.html#catalyst.core.experiment.IExperiment.get_criterion">get_criterion() (catalyst.core.experiment.IExperiment method)</a>, <a href="api/core.html#catalyst.core.experiment.IExperiment.get_criterion">[1]</a>
 
       <ul>
@@ -1663,11 +1661,15 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/core.html#catalyst.core.callbacks.metrics.IBatchMetricCallback">IBatchMetricCallback (class in catalyst.core.callbacks.metrics)</a>
 </li>
+      <li><a href="api/core.html#catalyst.core.callbacks.checkpoint.ICheckpointCallback">ICheckpointCallback (class in catalyst.core.callbacks.checkpoint)</a>
+</li>
       <li><a href="api/core.html#catalyst.core.experiment.IExperiment">IExperiment (class in catalyst.core.experiment)</a>, <a href="api/core.html#catalyst.core.experiment.IExperiment">[1]</a>
 </li>
       <li><a href="api/data.html#catalyst.data.IInbatchTripletSampler">IInbatchTripletSampler (class in catalyst.data)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.callbacks.metrics.ILoaderMetricCallback">ILoaderMetricCallback (class in catalyst.core.callbacks.metrics)</a>
+</li>
+      <li><a href="api/core.html#catalyst.core.callbacks.logging.ILoggerCallback">ILoggerCallback (class in catalyst.core.callbacks.logging)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset">ImageClassificationDataset (class in catalyst.contrib.datasets.cv.fastai)</a>
 </li>
@@ -1731,6 +1733,8 @@
 </li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackOrder.internal">internal (catalyst.core.callback.CallbackOrder attribute)</a>
 </li>
+      <li><a href="api/core.html#catalyst.core.callbacks.optimizer.IOptimizerCallback">IOptimizerCallback (class in catalyst.core.callbacks.optimizer)</a>
+</li>
       <li><a href="api/utils.html#catalyst.utils.metrics.iou.iou">iou() (in module catalyst.utils.metrics.iou)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.iou.IouCallback">IouCallback (class in catalyst.dl.callbacks.metrics.iou)</a>
@@ -1750,6 +1754,8 @@
       <li><a href="api/utils.html#catalyst.utils.distributed.is_torch_distributed_initialized">is_torch_distributed_initialized() (in module catalyst.utils.distributed)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.distributed.is_wrapped_with_ddp">is_wrapped_with_ddp() (in module catalyst.utils.distributed)</a>
+</li>
+      <li><a href="api/core.html#catalyst.core.callbacks.scheduler.ISchedulerCallback">ISchedulerCallback (class in catalyst.core.callbacks.scheduler)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.runner.IStageBasedRunner">IStageBasedRunner (class in catalyst.core.runner)</a>, <a href="api/core.html#catalyst.core.runner.IStageBasedRunner">[1]</a>
 </li>
@@ -2137,6 +2143,8 @@
         <li><a href="api/core.html#catalyst.core.callback.Callback.on_exception">(catalyst.core.callback.Callback method)</a>
 </li>
         <li><a href="api/core.html#catalyst.core.callback.WrapperCallback.on_exception">(catalyst.core.callback.WrapperCallback method)</a>
+</li>
+        <li><a href="api/core.html#catalyst.core.callbacks.checkpoint.BaseCheckpointCallback.on_exception">(catalyst.core.callbacks.checkpoint.BaseCheckpointCallback method)</a>
 </li>
         <li><a href="api/core.html#catalyst.core.callbacks.exception.ExceptionCallback.on_exception">(catalyst.core.callbacks.exception.ExceptionCallback method)</a>
 </li>
