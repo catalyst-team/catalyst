@@ -133,10 +133,10 @@ class MovieLens(Dataset):
         return os.path.join(self.root, self.__class__.__name__, "processed")
 
     def _check_exists(self):
-        '''
+        """
         Check if the path for tarining and testing data exists 
         in processed folder
-        '''
+        """
 
         return os.path.exists(
             os.path.join(self.processed_folder, self.training_file)
@@ -145,9 +145,9 @@ class MovieLens(Dataset):
         )
 
     def _download(self):
-        '''
+        """
         Download and extarct files
-        '''
+        """
         if self._check_exists():
             return
 
@@ -188,6 +188,10 @@ class MovieLens(Dataset):
         return (ua_base, ua_test, u_item, u_genre)
 
     def _build_interaction_matrix(self, rows, cols, data):
+        """
+        Args:
+            rows
+        """
 
         mat = sp.lil_matrix((rows, cols), dtype=np.int32)
 
@@ -208,6 +212,10 @@ class MovieLens(Dataset):
         """
         Parse the raw data. 
         Substract one to shift to zero based indexing
+        Args:
+            data: raw data of the dataset
+        Return:
+            Generator iterator for parsed data
         """
 
         for line in data:
@@ -221,6 +229,13 @@ class MovieLens(Dataset):
     def _get_dimensions(self, train_data, test_data):
         """
         Get the dimensions of the raw dataset
+        Args:
+            train_data: (uid, iid, rating, timestamp)
+                Genrator for training data
+            test_data: (uid, iid, rating, timestamp)
+                Genrator for testing data
+        Returns:
+            The total dimension of the dataset
         """
 
         uids = set()
@@ -238,13 +253,13 @@ class MovieLens(Dataset):
         return rows, cols
 
     def _fetch_movies(self):
-        '''
+        """
         Fetch data and save in the pytorch format
-        1. Read the train/test data from raw archive
-        2. Parse train data
-        3. Parse test data
-        4. Save in the .pt with torch.save
-        '''
+            1. Read the train/test data from raw archive
+            2. Parse train data
+            3. Parse test data
+            4. Save in the .pt with torch.save
+        """
         (
             train_raw,
             test_raw,
