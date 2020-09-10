@@ -9,20 +9,23 @@ def mrr(outputs: torch.Tensor, targets: torch.Tensor, k=100) -> torch.Tensor:
 
     """
     Calculate the MRR score given model ouptputs and targets
-    Users data represnted via batches.
+    Users data aggreagtesd in batches.
     Args:
         outputs (torch.Tensor):
             Tensor weith predicted score
             size: [batch_size, slate_length] 
             model outputs, logits
         targets (torch.Tensor):
-            Binary tensor with ground truth. 1 means the item is relevant
+            Binary tensor with ground truth. 
+            1 means the item is relevant
             for the user and 0 not relevant
             size: [batch_szie, slate_length]
             ground truth, labels
 
     Returns:
-        mrr (float): the mrr score for each slate
+        result (torch.Tensor): 
+            The mrr score for each user.
+            
     """
     k = min(outputs.size()[1], k)
     _, indices_for_sort = outputs.sort(descending=True, dim=-1)
