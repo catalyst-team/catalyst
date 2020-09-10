@@ -4,6 +4,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+from catalyst.tools import settings
+
 from catalyst.contrib.utils.argparse import boolean_flag
 from catalyst.contrib.utils.compression import (
     pack,

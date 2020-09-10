@@ -116,7 +116,7 @@ class ConsoleLogger(ILoggerCallback):
 
     @staticmethod
     def _get_logger():
-        logger = logging.getLogger(f"metrics_logger")
+        logger = logging.getLogger("metrics_logger")
         logger.setLevel(logging.INFO)
         return logger
 
