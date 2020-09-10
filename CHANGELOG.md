@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- `MovieLens dataset` loader [#903](https://github.com/catalyst-team/catalyst/pull/903)
 - `CMCScoreCallback` ([#880](https://github.com/catalyst-team/catalyst/pull/880))
 - kornia augmentations `BatchTransformCallback` ([#862](https://github.com/catalyst-team/catalyst/issues/862))
 - `average_precision` and `mean_average_precision` metrics ([#883](https://github.com/catalyst-team/catalyst/pull/883))
