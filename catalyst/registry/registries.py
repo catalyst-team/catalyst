@@ -168,9 +168,10 @@ Scheduler = SCHEDULER.add
 
 
 def _experiments_loader(r: Registry):
-    from catalyst.core import IExperiment
+    from catalyst.core import IExperiment, IStageBasedRunner
 
     r.add(IExperiment)
+    r.add(IStageBasedRunner)
 
     from catalyst.dl import experiment as m  # noqa: WPS347
 
