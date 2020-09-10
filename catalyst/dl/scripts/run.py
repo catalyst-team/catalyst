@@ -113,15 +113,22 @@ def main_worker(args, unknown_args):
     experiment_fn, runner_fn = utils.import_experiment_and_runner(
         Path(args.expdir)
     )
-    if experiment_fn is None:
-        experiment_params = config.get("experiment_params", {})
-        experiment = experiment_params.get("experiment", "Experiment")
-        experiment_fn = EXPERIMENTS.get(experiment)
+
+    experiment_params = config.get("experiment_params", {})
+    experiment_from_config = experiment_params.get("experiment", None)
+    assert any(
+        [x is None for x in (experiment_fn, experiment_from_config)]
+    ), "Experiment set in both code and config."
+    if experiment_fn is None and experiment_from_config is not None:
+        experiment_fn = EXPERIMENTS.get(experiment_from_config)
 
     runner_params = config.get("runner_params", {})
-    if runner_fn is None:
-        runner = runner_params.get("runner", "Runner")
-        runner_fn = RUNNERS.get(runner)
+    runner_from_config = runner_params.get("runner", None)
+    assert any(
+        [x is None for x in (runner_fn, runner_from_config)]
+    ), "Runner set in both code and config."
+    if runner_fn is None and runner_from_config is not None:
+        runner_fn = RUNNERS.get(runner_from_config)
 
     experiment = experiment_fn(config)
     runner = runner_fn(**runner_params)
