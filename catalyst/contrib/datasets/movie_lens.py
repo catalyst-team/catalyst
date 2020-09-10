@@ -103,36 +103,40 @@ class MovieLens(Dataset):
 
         self.data = torch.load(os.path.join(self.processed_folder, data_file))
 
-    def __getitem__(self, item_index):
+    def __getitem__(self, user_index):
         """
         Args:
-            index (int): Index
+            user_index (int): User index [0, 942]
         Returns:
-            tuple: (image, target) where target is index of the target class.
-
-        !!! WIP - research TensorDataset since multiople indexing is disabled
+            tensor: (items) item's ranking for the user with index user_index
         """
-        return self.data.tocsr()[item_index, item_index]
+        return self.data[user_index]
 
     def __len__(self):
         """@TODO: Docs. Contribution is welcome.
-         !!! WIP - research TensorDataset since multiople indexing is disabled
+        The length of the loader
         """
         return self.dimensions[0]
 
     @property
     def raw_folder(self):
         """
-            Create raw folder for data download
+        Create raw folder for data download
         """
         return os.path.join(self.root, self.__class__.__name__, "raw")
 
     @property
     def processed_folder(self):
-        """@TODO: Docs. Contribution is welcome."""
+        """
+        Create the folder for the processed files
+        """
         return os.path.join(self.root, self.__class__.__name__, "processed")
 
     def _check_exists(self):
+        '''
+        Check if the path for tarining and testing data exists 
+        in processed folder
+        '''
 
         return os.path.exists(
             os.path.join(self.processed_folder, self.training_file)
@@ -141,6 +145,9 @@ class MovieLens(Dataset):
         )
 
     def _download(self):
+        '''
+        Download and extarct files
+        '''
         if self._check_exists():
             return
 
@@ -158,8 +165,6 @@ class MovieLens(Dataset):
         )
 
         self._fetch_movies()
-
-        print("Processing")
 
     def _read_raw_movielens_data(self):
         """
@@ -189,8 +194,15 @@ class MovieLens(Dataset):
         for uid, iid, rating, _ in data:
             if rating >= self.min_rating:
                 mat[uid, iid] = rating
+        coo = mat.tocoo()
+        values = coo.data
+        indices = np.vstack((coo.row, coo.col))
 
-        return mat.tocoo()
+        i = torch.LongTensor(indices)
+        v = torch.FloatTensor(values)
+        shape = coo.shape
+
+        return torch.sparse.FloatTensor(i, v, torch.Size(shape)).to_dense()
 
     def _parse(self, data):
         """
@@ -226,6 +238,13 @@ class MovieLens(Dataset):
         return rows, cols
 
     def _fetch_movies(self):
+        '''
+        Fetch data and save in the pytorch format
+        1. Read the train/test data from raw archive
+        2. Parse train data
+        3. Parse test data
+        4. Save in the .pt with torch.save
+        '''
         (
             train_raw,
             test_raw,
