@@ -1,5 +1,5 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
+#!/usr/bin/env python
+
 import argparse
 from argparse import ArgumentParser
 from pathlib import Path

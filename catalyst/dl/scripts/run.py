@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 
 import argparse
 from argparse import ArgumentParser
@@ -8,7 +6,7 @@ import os
 from pathlib import Path
 
 from catalyst.dl import utils
-from catalyst.registry import EXPERIMENTS
+from catalyst.registry import EXPERIMENTS, RUNNERS
 from catalyst.utils import distributed_cmd_run, get_rank
 
 
@@ -104,7 +102,7 @@ def parse_args():
 
 
 def main_worker(args, unknown_args):
-    """@TODO: Docs. Contribution is welcome."""
+    """Runs main worker thread from model training."""
     args, config = utils.parse_args_uargs(args, unknown_args)
     utils.set_global_seed(args.seed)
     utils.prepare_cudnn(args.deterministic, args.benchmark)
@@ -121,6 +119,10 @@ def main_worker(args, unknown_args):
         experiment_fn = EXPERIMENTS.get(experiment)
 
     runner_params = config.get("runner_params", {})
+    if runner_fn is None:
+        runner = runner_params.get("runner", "Runner")
+        runner_fn = RUNNERS.get(runner)
+
     experiment = experiment_fn(config)
     runner = runner_fn(**runner_params)
 
@@ -132,7 +134,7 @@ def main_worker(args, unknown_args):
 
 
 def main(args, unknown_args):
-    """Run the ``catalyst-dl run`` script."""
+    """Runs the ``catalyst-dl run`` script."""
     distributed_cmd_run(main_worker, args.distributed, args, unknown_args)
 
 
