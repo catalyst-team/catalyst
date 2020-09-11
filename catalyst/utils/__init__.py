@@ -72,8 +72,8 @@ from catalyst.utils.scripts import (
     import_module,
     dump_code,
     dump_python_files,
-    import_experiment_and_runner,
-    dump_base_experiment_code,
+    prepare_config_api_components,
+    dump_experiment_code,
     distributed_cmd_run,
 )
 from catalyst.utils.seed import set_global_seed

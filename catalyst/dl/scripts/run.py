@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 
 import argparse
 from argparse import ArgumentParser
@@ -8,8 +6,6 @@ import os
 from pathlib import Path
 
 from catalyst.dl import utils
-from catalyst.registry import EXPERIMENTS
-from catalyst.utils import distributed_cmd_run, get_rank
 
 
 def build_args(parser: ArgumentParser):
@@ -104,7 +100,7 @@ def parse_args():
 
 
 def main_worker(args, unknown_args):
-    """@TODO: Docs. Contribution is welcome."""
+    """Runs main worker thread from model training."""
     args, config = utils.parse_args_uargs(args, unknown_args)
     utils.set_global_seed(args.seed)
     utils.prepare_cudnn(args.deterministic, args.benchmark)
@@ -112,19 +108,11 @@ def main_worker(args, unknown_args):
     config.setdefault("distributed_params", {})["apex"] = args.apex
     config.setdefault("distributed_params", {})["amp"] = args.amp
 
-    experiment_fn, runner_fn = utils.import_experiment_and_runner(
-        Path(args.expdir)
+    experiment, runner, config = utils.prepare_config_api_components(
+        expdir=Path(args.expdir), config=config
     )
-    if experiment_fn is None:
-        experiment_params = config.get("experiment_params", {})
-        experiment = experiment_params.get("experiment", "Experiment")
-        experiment_fn = EXPERIMENTS.get(experiment)
 
-    runner_params = config.get("runner_params", {})
-    experiment = experiment_fn(config)
-    runner = runner_fn(**runner_params)
-
-    if experiment.logdir is not None and get_rank() <= 0:
+    if experiment.logdir is not None and utils.get_rank() <= 0:
         utils.dump_environment(config, experiment.logdir, args.configs)
         utils.dump_code(args.expdir, experiment.logdir)
 
@@ -132,8 +120,10 @@ def main_worker(args, unknown_args):
 
 
 def main(args, unknown_args):
-    """Run the ``catalyst-dl run`` script."""
-    distributed_cmd_run(main_worker, args.distributed, args, unknown_args)
+    """Runs the ``catalyst-dl run`` script."""
+    utils.distributed_cmd_run(
+        main_worker, args.distributed, args, unknown_args
+    )
 
 
 if __name__ == "__main__":

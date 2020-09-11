@@ -9,11 +9,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- 
+- Runner registry support for Config API ([#936](https://github.com/catalyst-team/catalyst/pull/936))
 
 ### Changed
 
-- 
+- Config API components preparation logic moved to ``utils.prepare_config_api_components`` ([#936](https://github.com/catalyst-team/catalyst/pull/936))
 
 ### Removed
 
@@ -21,7 +21,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
-- 
+- Logging double logging :) ([#936](https://github.com/catalyst-team/catalyst/pull/936))
 
 
 ## [20.09] - 2020-09-07

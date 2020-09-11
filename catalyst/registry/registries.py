@@ -94,6 +94,7 @@ def _grad_clip_loader(r: Registry):
     r.add_from_module(m)
 
 
+# @TODO: why func? should be renamed
 GRAD_CLIPPER = Registry("func", default_meta_factory=_GradClipperWrap)
 GRAD_CLIPPER.late_add(_grad_clip_loader)
 
@@ -166,10 +167,43 @@ SCHEDULER.late_add(_schedulers_loader)
 Scheduler = SCHEDULER.add
 
 
+def _experiments_loader(r: Registry):
+    from catalyst.core import IExperiment, IStageBasedRunner
+
+    r.add(IExperiment)
+    r.add(IStageBasedRunner)
+
+    from catalyst.dl import experiment as m  # noqa: WPS347
+
+    r.add_from_module(m)
+
+    from catalyst.contrib.dl import experiment as m  # noqa: WPS347
+
+    r.add_from_module(m)
+
+
 EXPERIMENT = Registry("experiment")
+EXPERIMENT.late_add(_experiments_loader)
 Experiment = EXPERIMENT.add
 
+
+def _runners_loader(r: Registry):
+    from catalyst.core import IRunner, IStageBasedRunner
+
+    r.add(IRunner)
+    r.add(IStageBasedRunner)
+
+    from catalyst.dl import runner as m  # noqa: WPS347
+
+    r.add_from_module(m)
+
+    from catalyst.contrib.dl import runner as m  # noqa: WPS347
+
+    r.add_from_module(m)
+
+
 RUNNER = Registry("runner")
+RUNNER.late_add(_runners_loader)
 Runner = RUNNER.add
 
 
