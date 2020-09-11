@@ -6,7 +6,7 @@ from catalyst.tools import settings
 from catalyst.contrib.datasets.mnist import (
     MnistMLDataset,
     MnistQGDataset,
-    MNIST
+    MNIST,
 )
 
 from catalyst.contrib.datasets.movielens import MovieLens
