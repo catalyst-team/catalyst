@@ -6,8 +6,6 @@ import os
 from pathlib import Path
 
 from catalyst.dl import utils
-from catalyst.registry import EXPERIMENTS, RUNNERS
-from catalyst.utils import distributed_cmd_run, get_rank
 
 
 def build_args(parser: ArgumentParser):
@@ -110,30 +108,11 @@ def main_worker(args, unknown_args):
     config.setdefault("distributed_params", {})["apex"] = args.apex
     config.setdefault("distributed_params", {})["amp"] = args.amp
 
-    experiment_fn, runner_fn = utils.import_experiment_and_runner(
-        Path(args.expdir)
+    experiment, runner, config = utils.prepare_config_api_components(
+        expdir=Path(args.expdir), config=config
     )
 
-    experiment_params = config.get("experiment_params", {})
-    experiment_from_config = experiment_params.pop("experiment", None)
-    assert any(
-        x is None for x in (experiment_fn, experiment_from_config)
-    ), "Experiment is set both in code and config."
-    if experiment_fn is None and experiment_from_config is not None:
-        experiment_fn = EXPERIMENTS.get(experiment_from_config)
-
-    runner_params = config.get("runner_params", {})
-    runner_from_config = runner_params.pop("runner", None)
-    assert any(
-        x is None for x in (runner_fn, runner_from_config)
-    ), "Runner is set both in code and config."
-    if runner_fn is None and runner_from_config is not None:
-        runner_fn = RUNNERS.get(runner_from_config)
-
-    experiment = experiment_fn(config)
-    runner = runner_fn(**runner_params)
-
-    if experiment.logdir is not None and get_rank() <= 0:
+    if experiment.logdir is not None and utils.get_rank() <= 0:
         utils.dump_environment(config, experiment.logdir, args.configs)
         utils.dump_code(args.expdir, experiment.logdir)
 
@@ -142,7 +121,9 @@ def main_worker(args, unknown_args):
 
 def main(args, unknown_args):
     """Runs the ``catalyst-dl run`` script."""
-    distributed_cmd_run(main_worker, args.distributed, args, unknown_args)
+    utils.distributed_cmd_run(
+        main_worker, args.distributed, args, unknown_args
+    )
 
 
 if __name__ == "__main__":
