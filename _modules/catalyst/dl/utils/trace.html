@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.utils.trace &mdash; Catalyst 20.09 documentation</title>
+  <title>catalyst.dl.utils.trace &mdash; Catalyst 20.09.1 documentation</title>
   
 
   
@@ -267,6 +267,7 @@
     <span class="n">Union</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">jit</span><span class="p">,</span> <span class="n">nn</span>
@@ -281,13 +282,15 @@
     <span class="n">get_native_batch_from_loaders</span><span class="p">,</span>
     <span class="n">get_nn_from_ddp_module</span><span class="p">,</span>
     <span class="n">get_requires_grad</span><span class="p">,</span>
-    <span class="n">import_experiment_and_runner</span><span class="p">,</span>
     <span class="n">load_checkpoint</span><span class="p">,</span>
     <span class="n">load_config</span><span class="p">,</span>
     <span class="n">pack_checkpoint</span><span class="p">,</span>
+    <span class="n">prepare_config_api_components</span><span class="p">,</span>
     <span class="n">set_requires_grad</span><span class="p">,</span>
     <span class="n">unpack_checkpoint</span><span class="p">,</span>
 <span class="p">)</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_get_input_argnames</span><span class="p">(</span>
@@ -448,28 +451,27 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">config_path</span> <span class="o">=</span> <span class="n">logdir</span> <span class="o">/</span> <span class="s2">&quot;configs&quot;</span> <span class="o">/</span> <span class="s2">&quot;_config.json&quot;</span>
     <span class="n">checkpoint_path</span> <span class="o">=</span> <span class="n">logdir</span> <span class="o">/</span> <span class="s2">&quot;checkpoints&quot;</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">checkpoint_name</span><span class="si">}</span><span class="s2">.pth&quot;</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Load config&quot;</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Load config&quot;</span><span class="p">)</span>
     <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="n">load_config</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span>
-    <span class="n">runner_params</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;runner_params&quot;</span><span class="p">,</span> <span class="p">{})</span> <span class="ow">or</span> <span class="p">{}</span>
 
     <span class="c1"># Get expdir name</span>
     <span class="n">config_expdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;args&quot;</span><span class="p">][</span><span class="s2">&quot;expdir&quot;</span><span class="p">])</span>
     <span class="c1"># We will use copy of expdir from logs for reproducibility</span>
     <span class="n">expdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">logdir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;code&quot;</span> <span class="o">/</span> <span class="n">config_expdir</span><span class="o">.</span><span class="n">name</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Import experiment and runner from logdir&quot;</span><span class="p">)</span>
-    <span class="n">experiment_fn</span><span class="p">,</span> <span class="n">runner_fn</span> <span class="o">=</span> <span class="n">import_experiment_and_runner</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
-    <span class="n">experiment</span><span class="p">:</span> <span class="n">ConfigExperiment</span> <span class="o">=</span> <span class="n">experiment_fn</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Import experiment and runner from logdir&quot;</span><span class="p">)</span>
+    <span class="n">experiment</span><span class="p">:</span> <span class="n">ConfigExperiment</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">experiment</span><span class="p">,</span> <span class="n">runner</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">prepare_config_api_components</span><span class="p">(</span>
+        <span class="n">expdir</span><span class="o">=</span><span class="n">expdir</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">config</span>
+    <span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Load model state from checkpoints/</span><span class="si">{</span><span class="n">checkpoint_name</span><span class="si">}</span><span class="s2">.pth&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Load model state from checkpoints/</span><span class="si">{</span><span class="n">checkpoint_name</span><span class="si">}</span><span class="s2">.pth&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">stage</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">stage</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">experiment</span><span class="o">.</span><span class="n">stages</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="n">model</span> <span class="o">=</span> <span class="n">experiment</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
     <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">load_checkpoint</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="p">)</span>
     <span class="n">unpack_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
-
-    <span class="n">runner</span><span class="p">:</span> <span class="n">runner_fn</span> <span class="o">=</span> <span class="n">runner_fn</span><span class="p">(</span><span class="o">**</span><span class="n">runner_params</span><span class="p">)</span>
     <span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">runner</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">model</span><span class="p">,</span> <span class="n">device</span>
 
     <span class="k">if</span> <span class="n">loader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -486,7 +488,7 @@
         <span class="n">runner</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model_dump</span>
         <span class="k">return</span> <span class="n">result</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Tracing&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Tracing is running...&quot;</span><span class="p">)</span>
     <span class="n">traced_model</span> <span class="o">=</span> <span class="n">trace_model</span><span class="p">(</span>
         <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
         <span class="n">predict_fn</span><span class="o">=</span><span class="n">predict_fn</span><span class="p">,</span>
@@ -498,7 +500,7 @@
         <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Done&quot;</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Done&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">traced_model</span></div>
 
 
@@ -515,7 +517,7 @@
 <span class="sd">    Traces model using created experiment and runner.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        runner (Runner): Current runner.</span>
+<span class="sd">        runner (IRunner): Current runner.</span>
 <span class="sd">        checkpoint_name (str): Name of model checkpoint to use, if None</span>
 <span class="sd">            traces current model from runner</span>
 <span class="sd">        method_name (str): Model&#39;s method name that will be</span>

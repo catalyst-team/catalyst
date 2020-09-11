@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.experiment.config &mdash; Catalyst 20.09 documentation</title>
+  <title>catalyst.dl.experiment.config &mdash; Catalyst 20.09.1 documentation</title>
   
 
   
@@ -303,7 +303,7 @@
 <span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
 
 
-<div class="viewcode-block" id="ConfigExperiment"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment">[docs]</a><span class="k">class</span> <span class="nc">ConfigExperiment</span><span class="p">(</span><span class="n">IExperiment</span><span class="p">):</span>
+<div class="viewcode-block" id="ConfigExperiment"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.ConfigExperiment">[docs]</a><span class="k">class</span> <span class="nc">ConfigExperiment</span><span class="p">(</span><span class="n">IExperiment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Experiment created from a configuration file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -318,7 +318,7 @@
         <span class="s2">&quot;callbacks_params&quot;</span><span class="p">,</span>
     <span class="p">]</span>
 
-<div class="viewcode-block" id="ConfigExperiment.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+<div class="viewcode-block" id="ConfigExperiment.__init__"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.ConfigExperiment.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            config (dict): dictionary with parameters</span>
@@ -435,7 +435,7 @@
         <span class="sd">&quot;&quot;&quot;Dict with the parameters for distributed and FP16 methond.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;distributed_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
 
-<div class="viewcode-block" id="ConfigExperiment.get_stage_params"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_stage_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_stage_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<div class="viewcode-block" id="ConfigExperiment.get_stage_params"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.ConfigExperiment.get_stage_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_stage_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Returns the state parameters for a given stage.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stage_params&quot;</span><span class="p">,</span> <span class="p">{})</span></div>
 
@@ -454,7 +454,7 @@
             <span class="n">model</span> <span class="o">=</span> <span class="n">MODELS</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">model</span>
 
-<div class="viewcode-block" id="ConfigExperiment.get_model"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="ConfigExperiment.get_model"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.ConfigExperiment.get_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Returns the model for a given stage.&quot;&quot;&quot;</span>
         <span class="n">model_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s2">&quot;model_params&quot;</span><span class="p">]</span>
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_model</span><span class="p">(</span><span class="o">**</span><span class="n">model_params</span><span class="p">)</span>
@@ -478,7 +478,7 @@
                 <span class="n">criterion</span> <span class="o">=</span> <span class="n">criterion</span><span class="o">.</span><span class="n">cuda</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">criterion</span>
 
-<div class="viewcode-block" id="ConfigExperiment.get_criterion"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_criterion">[docs]</a>    <span class="k">def</span> <span class="nf">get_criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Criterion</span><span class="p">:</span>
+<div class="viewcode-block" id="ConfigExperiment.get_criterion"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.ConfigExperiment.get_criterion">[docs]</a>    <span class="k">def</span> <span class="nf">get_criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Criterion</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the criterion for a given stage.&quot;&quot;&quot;</span>
         <span class="n">criterion_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
             <span class="s2">&quot;criterion_params&quot;</span><span class="p">,</span> <span class="p">{}</span>
@@ -574,7 +574,7 @@
 
         <span class="k">return</span> <span class="n">optimizer</span>
 
-<div class="viewcode-block" id="ConfigExperiment.get_optimizer"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_optimizer">[docs]</a>    <span class="k">def</span> <span class="nf">get_optimizer</span><span class="p">(</span>
+<div class="viewcode-block" id="ConfigExperiment.get_optimizer"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.ConfigExperiment.get_optimizer">[docs]</a>    <span class="k">def</span> <span class="nf">get_optimizer</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Model</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Model</span><span class="p">]]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Optimizer</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -616,7 +616,7 @@
 
         <span class="k">return</span> <span class="n">scheduler</span>
 
-<div class="viewcode-block" id="ConfigExperiment.get_scheduler"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_scheduler">[docs]</a>    <span class="k">def</span> <span class="nf">get_scheduler</span><span class="p">(</span>
+<div class="viewcode-block" id="ConfigExperiment.get_scheduler"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.ConfigExperiment.get_scheduler">[docs]</a>    <span class="k">def</span> <span class="nf">get_scheduler</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Optimizer</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">]]</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Scheduler</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Scheduler</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;Returns the scheduler for a given stage.&quot;&quot;&quot;</span>
@@ -671,7 +671,7 @@
 
         <span class="k">return</span> <span class="n">transform</span>
 
-<div class="viewcode-block" id="ConfigExperiment.get_transforms"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_transforms">[docs]</a>    <span class="k">def</span> <span class="nf">get_transforms</span><span class="p">(</span>
+<div class="viewcode-block" id="ConfigExperiment.get_transforms"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.ConfigExperiment.get_transforms">[docs]</a>    <span class="k">def</span> <span class="nf">get_transforms</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -707,7 +707,7 @@
 
         <span class="k">return</span> <span class="n">transform_fn</span></div>
 
-<div class="viewcode-block" id="ConfigExperiment.get_loaders"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_loaders">[docs]</a>    <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span>
+<div class="viewcode-block" id="ConfigExperiment.get_loaders"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.ConfigExperiment.get_loaders">[docs]</a>    <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the loaders for a given stage.&quot;&quot;&quot;</span>
@@ -761,7 +761,7 @@
                 <span class="p">):</span>
                     <span class="n">callback</span><span class="o">.</span><span class="n">load_on_stage_start</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;best&quot;</span>
 
-<div class="viewcode-block" id="ConfigExperiment.get_callbacks"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[Callback]&quot;</span><span class="p">:</span>
+<div class="viewcode-block" id="ConfigExperiment.get_callbacks"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.ConfigExperiment.get_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[Callback]&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the callbacks for a given stage.&quot;&quot;&quot;</span>
         <span class="n">callbacks_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
             <span class="s2">&quot;callbacks_params&quot;</span><span class="p">,</span> <span class="p">{}</span>

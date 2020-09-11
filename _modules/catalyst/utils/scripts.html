@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.scripts &mdash; Catalyst 20.09 documentation</title>
+  <title>catalyst.utils.scripts &mdash; Catalyst 20.09.1 documentation</title>
   
 
   
@@ -259,9 +259,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.utils.scripts</h1><div class="highlight"><pre>
-<span></span><span class="c1"># flake8: noqa</span>
-<span class="c1"># @TODO: code formatting issue for 20.07 release</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">importlib.util</span> <span class="kn">import</span> <span class="n">module_from_spec</span><span class="p">,</span> <span class="n">spec_from_file_location</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pathlib</span>
@@ -273,6 +271,7 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.distributed</span>
 
+<span class="kn">from</span> <span class="nn">catalyst.registry</span> <span class="kn">import</span> <span class="n">EXPERIMENTS</span><span class="p">,</span> <span class="n">RUNNERS</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_distributed_env</span><span class="p">,</span>
     <span class="n">get_distributed_params</span><span class="p">,</span>
@@ -280,11 +279,16 @@
 <span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">get_utcnow_time</span>
 
 
-<div class="viewcode-block" id="import_module"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.scripts.import_module">[docs]</a><span class="k">def</span> <span class="nf">import_module</span><span class="p">(</span><span class="n">expdir</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
+<div class="viewcode-block" id="import_module"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.scripts.import_module">[docs]</a><span class="k">def</span> <span class="nf">import_module</span><span class="p">(</span><span class="n">expdir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">]):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    @TODO: Docs. Contribution is welcome</span>
+<span class="sd">    Imports python module by path.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        expdir (pathlib.Path): path to python module.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Imported module.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># @TODO: better PYTHONPATH handling</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expdir</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
         <span class="n">expdir</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">expdir</span><span class="o">.</span><span class="n">absolute</span><span class="p">()))</span>
@@ -300,15 +304,62 @@
     <span class="k">return</span> <span class="n">m</span></div>
 
 
-<span class="k">def</span> <span class="nf">_tricky_dir_copy</span><span class="p">(</span><span class="n">dir_from</span><span class="p">,</span> <span class="n">dir_to</span><span class="p">):</span>
+<div class="viewcode-block" id="prepare_config_api_components"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.scripts.prepare_config_api_components">[docs]</a><span class="k">def</span> <span class="nf">prepare_config_api_components</span><span class="p">(</span><span class="n">expdir</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Imports and create core Config API components - Experiment, Runner</span>
+<span class="sd">    and Config from ``expdir`` - experiment directory</span>
+<span class="sd">    and ``config`` - experiment config.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        expdir (pathlib.Path): experiment directory path</span>
+<span class="sd">        config (Dict): dictionary with experiment Config</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Experiment, Runner, Config for Config API usage.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expdir</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
+        <span class="n">expdir</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
+    <span class="n">experiment_fn</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s2">&quot;Experiment&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">runner_fn</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s2">&quot;Runner&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">experiment_params</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;experiment_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">experiment_from_config</span> <span class="o">=</span> <span class="n">experiment_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;experiment&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="n">experiment_fn</span><span class="p">,</span> <span class="n">experiment_from_config</span><span class="p">)</span>
+    <span class="p">),</span> <span class="s2">&quot;Experiment is set both in code and config.&quot;</span>
+    <span class="k">if</span> <span class="n">experiment_fn</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">experiment_from_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">experiment_fn</span> <span class="o">=</span> <span class="n">EXPERIMENTS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">experiment_from_config</span><span class="p">)</span>
+
+    <span class="n">runner_params</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;runner_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">runner_from_config</span> <span class="o">=</span> <span class="n">runner_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;runner&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="n">runner_fn</span><span class="p">,</span> <span class="n">runner_from_config</span><span class="p">)</span>
+    <span class="p">),</span> <span class="s2">&quot;Runner is set both in code and config.&quot;</span>
+    <span class="k">if</span> <span class="n">runner_fn</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">runner_from_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">runner_fn</span> <span class="o">=</span> <span class="n">RUNNERS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">runner_from_config</span><span class="p">)</span>
+
+    <span class="n">experiment</span> <span class="o">=</span> <span class="n">experiment_fn</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">runner_fn</span><span class="p">(</span><span class="o">**</span><span class="n">runner_params</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">experiment</span><span class="p">,</span> <span class="n">runner</span><span class="p">,</span> <span class="n">config</span></div>
+
+
+<span class="k">def</span> <span class="nf">_tricky_dir_copy</span><span class="p">(</span><span class="n">dir_from</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dir_to</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dir_to</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">dir_to</span><span class="p">)</span>
     <span class="n">shutil</span><span class="o">.</span><span class="n">copytree</span><span class="p">(</span><span class="n">dir_from</span><span class="p">,</span> <span class="n">dir_to</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="dump_code"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.scripts.dump_code">[docs]</a><span class="k">def</span> <span class="nf">dump_code</span><span class="p">(</span><span class="n">expdir</span><span class="p">,</span> <span class="n">logdir</span><span class="p">):</span>
+<div class="viewcode-block" id="dump_code"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.scripts.dump_code">[docs]</a><span class="k">def</span> <span class="nf">dump_code</span><span class="p">(</span>
+    <span class="n">expdir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">],</span> <span class="n">logdir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    @TODO: Docs. Contribution is welcome</span>
+<span class="sd">    Dumps Catalyst code for reproducibility.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        expdir (Union[str, pathlib.Path]): experiment dir path</span>
+<span class="sd">        logdir (Union[str, pathlib.Path]): logging dir path</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">expdir</span> <span class="o">=</span> <span class="n">expdir</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">expdir</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">expdir</span>
     <span class="n">new_src_dir</span> <span class="o">=</span> <span class="s2">&quot;code&quot;</span>
@@ -324,9 +375,13 @@
     <span class="n">_tricky_dir_copy</span><span class="p">(</span><span class="n">old_expdir</span><span class="p">,</span> <span class="n">new_expdir</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="dump_python_files"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.scripts.dump_python_files">[docs]</a><span class="k">def</span> <span class="nf">dump_python_files</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">dst</span><span class="p">):</span>
+<div class="viewcode-block" id="dump_python_files"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.scripts.dump_python_files">[docs]</a><span class="k">def</span> <span class="nf">dump_python_files</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="n">dst</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    @TODO: Docs. Contribution is welcome</span>
+<span class="sd">    Dumps python code (``*.py`` and ``*.ipynb``) files.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        src (pathlib.Path): source code path</span>
+<span class="sd">        dst (pathlib.Path): destination code path</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">py_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.py&quot;</span><span class="p">))</span>
     <span class="n">ipynb_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.ipynb&quot;</span><span class="p">))</span>
@@ -337,24 +392,13 @@
         <span class="n">shutil</span><span class="o">.</span><span class="n">copy2</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">py_file</span><span class="o">.</span><span class="n">absolute</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dst</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">py_file</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="import_experiment_and_runner"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.scripts.import_experiment_and_runner">[docs]</a><span class="k">def</span> <span class="nf">import_experiment_and_runner</span><span class="p">(</span><span class="n">expdir</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
+<div class="viewcode-block" id="dump_experiment_code"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.scripts.dump_experiment_code">[docs]</a><span class="k">def</span> <span class="nf">dump_experiment_code</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="n">dst</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    @TODO: Docs. Contribution is welcome</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expdir</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
-        <span class="n">expdir</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
-    <span class="n">m</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
-    <span class="n">runner_fn</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">Runner</span>
-    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s2">&quot;Experiment&quot;</span><span class="p">):</span>
-        <span class="n">experiment_fn</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">Experiment</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">experiment_fn</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">return</span> <span class="n">experiment_fn</span><span class="p">,</span> <span class="n">runner_fn</span></div>
+<span class="sd">    Dumps your experiment code for Config API use cases.</span>
 
-
-<div class="viewcode-block" id="dump_base_experiment_code"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.scripts.dump_base_experiment_code">[docs]</a><span class="k">def</span> <span class="nf">dump_base_experiment_code</span><span class="p">(</span><span class="n">src</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="n">dst</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    @TODO: Docs. Contribution is welcome</span>
+<span class="sd">    Args:</span>
+<span class="sd">        src (pathlib.Path): source code path</span>
+<span class="sd">        dst (pathlib.Path): destination code path</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">utcnow</span> <span class="o">=</span> <span class="n">get_utcnow_time</span><span class="p">()</span>
     <span class="n">dst</span> <span class="o">=</span> <span class="n">dst</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">)</span>
@@ -417,8 +461,8 @@
     <span class="s2">&quot;import_module&quot;</span><span class="p">,</span>
     <span class="s2">&quot;dump_code&quot;</span><span class="p">,</span>
     <span class="s2">&quot;dump_python_files&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;import_experiment_and_runner&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;dump_base_experiment_code&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;prepare_config_api_components&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;dump_experiment_code&quot;</span><span class="p">,</span>
     <span class="s2">&quot;distributed_cmd_run&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>

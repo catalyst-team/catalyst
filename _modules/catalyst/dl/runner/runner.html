@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.dl.runner.runner &mdash; Catalyst 20.09 documentation</title>
+  <title>catalyst.dl.runner.runner &mdash; Catalyst 20.09.1 documentation</title>
   
 
   
@@ -278,7 +278,7 @@
 <span class="p">)</span>
 
 
-<div class="viewcode-block" id="Runner"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.runner.Runner">[docs]</a><span class="k">class</span> <span class="nc">Runner</span><span class="p">(</span><span class="n">IStageBasedRunner</span><span class="p">):</span>
+<div class="viewcode-block" id="Runner"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.Runner">[docs]</a><span class="k">class</span> <span class="nc">Runner</span><span class="p">(</span><span class="n">IStageBasedRunner</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Deep Learning Runner for supervised, unsupervised, gan, etc runs.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -288,7 +288,7 @@
     <span class="k">def</span> <span class="nf">_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">:</span> <span class="n">Experiment</span> <span class="o">=</span> <span class="kc">None</span>
 
-<div class="viewcode-block" id="Runner.train"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.runner.Runner.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span>
+<div class="viewcode-block" id="Runner.train"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.Runner.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
@@ -423,7 +423,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span> <span class="o">=</span> <span class="n">experiment</span>
         <span class="n">utils</span><span class="o">.</span><span class="n">distributed_cmd_run</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_experiment</span><span class="p">,</span> <span class="n">distributed</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Runner.infer"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.runner.Runner.infer">[docs]</a>    <span class="k">def</span> <span class="nf">infer</span><span class="p">(</span>
+<div class="viewcode-block" id="Runner.infer"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.Runner.infer">[docs]</a>    <span class="k">def</span> <span class="nf">infer</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
@@ -505,7 +505,7 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">run_experiment</span><span class="p">(</span><span class="n">experiment</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Runner.predict_batch"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.runner.Runner.predict_batch">[docs]</a>    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+<div class="viewcode-block" id="Runner.predict_batch"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.Runner.predict_batch">[docs]</a>    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">predict_batch</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -528,7 +528,7 @@
             <span class="s2">&quot;Please implement `runner.predict_batch` method&quot;</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Runner.predict_loader"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.runner.Runner.predict_loader">[docs]</a>    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+<div class="viewcode-block" id="Runner.predict_loader"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.Runner.predict_loader">[docs]</a>    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
     <span class="k">def</span> <span class="nf">predict_loader</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -585,7 +585,7 @@
         <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">loader</span><span class="p">:</span>
             <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Runner.trace"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.runner.Runner.trace">[docs]</a>    <span class="k">def</span> <span class="nf">trace</span><span class="p">(</span>
+<div class="viewcode-block" id="Runner.trace"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.runner.Runner.trace">[docs]</a>    <span class="k">def</span> <span class="nf">trace</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

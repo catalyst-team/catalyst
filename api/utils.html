@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Tools and Utilities &mdash; Catalyst 20.09 documentation</title>
+  <title>Tools and Utilities &mdash; Catalyst 20.09.1 documentation</title>
   
 
   
@@ -1667,32 +1667,77 @@ from <code class="docutils literal notranslate"><span class="pre">Bag</span> <sp
 <span id="scripts"></span><h3><a class="toc-backref" href="#id26">Scripts</a><a class="headerlink" href="#module-catalyst.utils.scripts" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.utils.scripts.import_module">
-<code class="sig-prename descclassname">catalyst.utils.scripts.</code><code class="sig-name descname">import_module</code><span class="sig-paren">(</span><em class="sig-param">expdir: pathlib.Path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/scripts.html#import_module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.scripts.import_module" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome</p>
+<code class="sig-prename descclassname">catalyst.utils.scripts.</code><code class="sig-name descname">import_module</code><span class="sig-paren">(</span><em class="sig-param">expdir: Union[str, pathlib.Path]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/scripts.html#import_module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.scripts.import_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Imports python module by path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>expdir</strong> (<em>pathlib.Path</em>) – path to python module.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Imported module.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.scripts.dump_code">
-<code class="sig-prename descclassname">catalyst.utils.scripts.</code><code class="sig-name descname">dump_code</code><span class="sig-paren">(</span><em class="sig-param">expdir</em>, <em class="sig-param">logdir</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/scripts.html#dump_code"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.scripts.dump_code" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome</p>
+<code class="sig-prename descclassname">catalyst.utils.scripts.</code><code class="sig-name descname">dump_code</code><span class="sig-paren">(</span><em class="sig-param">expdir: Union[str, pathlib.Path], logdir: Union[str, pathlib.Path]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/scripts.html#dump_code"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.scripts.dump_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dumps Catalyst code for reproducibility.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expdir</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>pathlib.Path</em><em>]</em>) – experiment dir path</p></li>
+<li><p><strong>logdir</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>pathlib.Path</em><em>]</em>) – logging dir path</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.utils.scripts.dump_python_files">
-<code class="sig-prename descclassname">catalyst.utils.scripts.</code><code class="sig-name descname">dump_python_files</code><span class="sig-paren">(</span><em class="sig-param">src</em>, <em class="sig-param">dst</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/scripts.html#dump_python_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.scripts.dump_python_files" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome</p>
+<code class="sig-prename descclassname">catalyst.utils.scripts.</code><code class="sig-name descname">dump_python_files</code><span class="sig-paren">(</span><em class="sig-param">src: pathlib.Path</em>, <em class="sig-param">dst: pathlib.Path</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/scripts.html#dump_python_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.scripts.dump_python_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dumps python code (<code class="docutils literal notranslate"><span class="pre">*.py</span></code> and <code class="docutils literal notranslate"><span class="pre">*.ipynb</span></code>) files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>pathlib.Path</em>) – source code path</p></li>
+<li><p><strong>dst</strong> (<em>pathlib.Path</em>) – destination code path</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.scripts.import_experiment_and_runner">
-<code class="sig-prename descclassname">catalyst.utils.scripts.</code><code class="sig-name descname">import_experiment_and_runner</code><span class="sig-paren">(</span><em class="sig-param">expdir: pathlib.Path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/scripts.html#import_experiment_and_runner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.scripts.import_experiment_and_runner" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome</p>
+<dt id="catalyst.utils.scripts.prepare_config_api_components">
+<code class="sig-prename descclassname">catalyst.utils.scripts.</code><code class="sig-name descname">prepare_config_api_components</code><span class="sig-paren">(</span><em class="sig-param">expdir: pathlib.Path</em>, <em class="sig-param">config: Dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/scripts.html#prepare_config_api_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.scripts.prepare_config_api_components" title="Permalink to this definition">¶</a></dt>
+<dd><p>Imports and create core Config API components - Experiment, Runner
+and Config from <code class="docutils literal notranslate"><span class="pre">expdir</span></code> - experiment directory
+and <code class="docutils literal notranslate"><span class="pre">config</span></code> - experiment config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>expdir</strong> (<em>pathlib.Path</em>) – experiment directory path</p></li>
+<li><p><strong>config</strong> (<em>Dict</em>) – dictionary with experiment Config</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Experiment, Runner, Config for Config API usage.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.utils.scripts.dump_base_experiment_code">
-<code class="sig-prename descclassname">catalyst.utils.scripts.</code><code class="sig-name descname">dump_base_experiment_code</code><span class="sig-paren">(</span><em class="sig-param">src: pathlib.Path</em>, <em class="sig-param">dst: pathlib.Path</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/scripts.html#dump_base_experiment_code"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.scripts.dump_base_experiment_code" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome</p>
+<dt id="catalyst.utils.scripts.dump_experiment_code">
+<code class="sig-prename descclassname">catalyst.utils.scripts.</code><code class="sig-name descname">dump_experiment_code</code><span class="sig-paren">(</span><em class="sig-param">src: pathlib.Path</em>, <em class="sig-param">dst: pathlib.Path</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/scripts.html#dump_experiment_code"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.scripts.dump_experiment_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dumps your experiment code for Config API use cases.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> (<em>pathlib.Path</em>) – source code path</p></li>
+<li><p><strong>dst</strong> (<em>pathlib.Path</em>) – destination code path</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">

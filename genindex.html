@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; Catalyst 20.09 documentation</title>
+  <title>Index &mdash; Catalyst 20.09.1 documentation</title>
   
 
   
@@ -610,9 +610,15 @@
 </li>
         <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.__init__">(catalyst.dl.experiment.config.ConfigExperiment method)</a>
 </li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.ConfigExperiment.__init__">(catalyst.dl.experiment.ConfigExperiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.Experiment.__init__">(catalyst.dl.experiment.Experiment method)</a>
+</li>
         <li><a href="api/dl.html#catalyst.dl.experiment.experiment.Experiment.__init__">(catalyst.dl.experiment.experiment.Experiment method)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.runner.supervised.SupervisedRunner.__init__">(catalyst.dl.runner.supervised.SupervisedRunner method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.runner.SupervisedRunner.__init__">(catalyst.dl.runner.SupervisedRunner method)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.utils.wizard.Wizard.__init__">(catalyst.dl.utils.wizard.Wizard method)</a>
 </li>
@@ -1021,10 +1027,10 @@
 </li>
       <li><a href="api/data.html#module-catalyst.data.nlp">catalyst.data.nlp (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/dl.html#module-catalyst.dl.callbacks">catalyst.dl.callbacks (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/dl.html#module-catalyst.dl.callbacks.confusion_matrix">catalyst.dl.callbacks.confusion_matrix (module)</a>
 </li>
       <li><a href="api/dl.html#module-catalyst.dl.callbacks.inference">catalyst.dl.callbacks.inference (module)</a>
@@ -1191,8 +1197,12 @@
 </li>
       <li><a href="api/data.html#catalyst.data.cv.transforms.torch.Compose">Compose (class in catalyst.data.cv.transforms.torch)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment">ConfigExperiment (class in catalyst.dl.experiment.config)</a>
+      <li><a href="api/dl.html#catalyst.dl.experiment.ConfigExperiment">ConfigExperiment (class in catalyst.dl.experiment)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment">(class in catalyst.dl.experiment.config)</a>
 </li>
+      </ul></li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.confusion_matrix.ConfusionMatrixCallback">ConfusionMatrixCallback (class in catalyst.dl.callbacks.confusion_matrix)</a>
 </li>
       <li><a href="api/utils.html#catalyst.tools.meters.confusionmeter.ConfusionMeter">ConfusionMeter (class in catalyst.tools.meters.confusionmeter)</a>
@@ -1249,25 +1259,29 @@
 </li>
       <li><a href="api/utils.html#catalyst.utils.scripts.distributed_cmd_run">distributed_cmd_run() (in module catalyst.utils.scripts)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/core.html#catalyst.core.experiment.IExperiment.distributed_params">distributed_params() (catalyst.core.experiment.IExperiment property)</a>, <a href="api/core.html#catalyst.core.experiment.IExperiment.distributed_params">[1]</a>
 
       <ul>
         <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.distributed_params">(catalyst.dl.experiment.config.ConfigExperiment property)</a>
 </li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.ConfigExperiment.distributed_params">(catalyst.dl.experiment.ConfigExperiment property)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.Experiment.distributed_params">(catalyst.dl.experiment.Experiment property)</a>
+</li>
         <li><a href="api/dl.html#catalyst.dl.experiment.experiment.Experiment.distributed_params">(catalyst.dl.experiment.experiment.Experiment property)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data.html#catalyst.data.sampler.DistributedSamplerWrapper">DistributedSamplerWrapper (class in catalyst.data.sampler)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.datasets.mnist.MNIST.download">download() (catalyst.contrib.datasets.mnist.MNIST method)</a>
 </li>
-      <li><a href="api/utils.html#catalyst.utils.scripts.dump_base_experiment_code">dump_base_experiment_code() (in module catalyst.utils.scripts)</a>
-</li>
       <li><a href="api/utils.html#catalyst.utils.scripts.dump_code">dump_code() (in module catalyst.utils.scripts)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.sys.dump_environment">dump_environment() (in module catalyst.utils.sys)</a>
+</li>
+      <li><a href="api/utils.html#catalyst.utils.scripts.dump_experiment_code">dump_experiment_code() (in module catalyst.utils.scripts)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.scripts.dump_python_files">dump_python_files() (in module catalyst.utils.scripts)</a>
 </li>
@@ -1289,12 +1303,16 @@
 </li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackScope.Experiment">Experiment (catalyst.core.callback.CallbackScope attribute)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/core.html#catalyst.core.callback.CallbackScope.experiment">experiment (catalyst.core.callback.CallbackScope attribute)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.experiment.experiment.Experiment">Experiment (class in catalyst.dl.experiment.experiment)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/dl.html#catalyst.dl.experiment.Experiment">Experiment (class in catalyst.dl.experiment)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.experiment.experiment.Experiment">(class in catalyst.dl.experiment.experiment)</a>
 </li>
+      </ul></li>
       <li><a href="api/registry.html#catalyst.registry.registries.Experiment">Experiment() (in module catalyst.registry.registries)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackOrder.External">External (catalyst.core.callback.CallbackOrder attribute)</a>
@@ -1430,6 +1448,8 @@
 </li>
         <li><a href="api/dl.html#catalyst.dl.runner.supervised.SupervisedRunner.forward">(catalyst.dl.runner.supervised.SupervisedRunner method)</a>
 </li>
+        <li><a href="api/dl.html#catalyst.dl.runner.SupervisedRunner.forward">(catalyst.dl.runner.SupervisedRunner method)</a>
+</li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -1464,15 +1484,25 @@
       <ul>
         <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_callbacks">(catalyst.dl.experiment.config.ConfigExperiment method)</a>
 </li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.ConfigExperiment.get_callbacks">(catalyst.dl.experiment.ConfigExperiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.Experiment.get_callbacks">(catalyst.dl.experiment.Experiment method)</a>
+</li>
         <li><a href="api/dl.html#catalyst.dl.experiment.experiment.Experiment.get_callbacks">(catalyst.dl.experiment.experiment.Experiment method)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.experiment.supervised.SupervisedExperiment.get_callbacks">(catalyst.dl.experiment.supervised.SupervisedExperiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.SupervisedExperiment.get_callbacks">(catalyst.dl.experiment.SupervisedExperiment method)</a>
 </li>
       </ul></li>
       <li><a href="api/core.html#catalyst.core.experiment.IExperiment.get_criterion">get_criterion() (catalyst.core.experiment.IExperiment method)</a>, <a href="api/core.html#catalyst.core.experiment.IExperiment.get_criterion">[1]</a>
 
       <ul>
         <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_criterion">(catalyst.dl.experiment.config.ConfigExperiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.ConfigExperiment.get_criterion">(catalyst.dl.experiment.ConfigExperiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.Experiment.get_criterion">(catalyst.dl.experiment.Experiment method)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.experiment.experiment.Experiment.get_criterion">(catalyst.dl.experiment.experiment.Experiment method)</a>
 </li>
@@ -1524,6 +1554,10 @@
       <ul>
         <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_loaders">(catalyst.dl.experiment.config.ConfigExperiment method)</a>
 </li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.ConfigExperiment.get_loaders">(catalyst.dl.experiment.ConfigExperiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.Experiment.get_loaders">(catalyst.dl.experiment.Experiment method)</a>
+</li>
         <li><a href="api/dl.html#catalyst.dl.experiment.experiment.Experiment.get_loaders">(catalyst.dl.experiment.experiment.Experiment method)</a>
 </li>
       </ul></li>
@@ -1533,6 +1567,10 @@
 
       <ul>
         <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_model">(catalyst.dl.experiment.config.ConfigExperiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.ConfigExperiment.get_model">(catalyst.dl.experiment.ConfigExperiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.Experiment.get_model">(catalyst.dl.experiment.Experiment method)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.experiment.experiment.Experiment.get_model">(catalyst.dl.experiment.experiment.Experiment method)</a>
 </li>
@@ -1560,6 +1598,10 @@
       <ul>
         <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_optimizer">(catalyst.dl.experiment.config.ConfigExperiment method)</a>
 </li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.ConfigExperiment.get_optimizer">(catalyst.dl.experiment.ConfigExperiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.Experiment.get_optimizer">(catalyst.dl.experiment.Experiment method)</a>
+</li>
         <li><a href="api/dl.html#catalyst.dl.experiment.experiment.Experiment.get_optimizer">(catalyst.dl.experiment.experiment.Experiment method)</a>
 </li>
       </ul></li>
@@ -1576,6 +1618,10 @@
       <ul>
         <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_scheduler">(catalyst.dl.experiment.config.ConfigExperiment method)</a>
 </li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.ConfigExperiment.get_scheduler">(catalyst.dl.experiment.ConfigExperiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.Experiment.get_scheduler">(catalyst.dl.experiment.Experiment method)</a>
+</li>
         <li><a href="api/dl.html#catalyst.dl.experiment.experiment.Experiment.get_scheduler">(catalyst.dl.experiment.experiment.Experiment method)</a>
 </li>
       </ul></li>
@@ -1588,6 +1634,10 @@
       <ul>
         <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_stage_params">(catalyst.dl.experiment.config.ConfigExperiment method)</a>
 </li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.ConfigExperiment.get_stage_params">(catalyst.dl.experiment.ConfigExperiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.Experiment.get_stage_params">(catalyst.dl.experiment.Experiment method)</a>
+</li>
         <li><a href="api/dl.html#catalyst.dl.experiment.experiment.Experiment.get_stage_params">(catalyst.dl.experiment.experiment.Experiment method)</a>
 </li>
       </ul></li>
@@ -1599,6 +1649,8 @@
 
       <ul>
         <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.get_transforms">(catalyst.dl.experiment.config.ConfigExperiment method)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.ConfigExperiment.get_transforms">(catalyst.dl.experiment.ConfigExperiment method)</a>
 </li>
       </ul></li>
       <li><a href="api/utils.html#catalyst.utils.misc.get_utcnow_time">get_utcnow_time() (in module catalyst.utils.misc)</a>
@@ -1641,16 +1693,20 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.utils.cv.image.has_image_extension">has_image_extension() (in module catalyst.contrib.utils.cv.image)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/core.html#catalyst.core.experiment.IExperiment.hparams">hparams() (catalyst.core.experiment.IExperiment property)</a>, <a href="api/core.html#catalyst.core.experiment.IExperiment.hparams">[1]</a>
 
       <ul>
         <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.hparams">(catalyst.dl.experiment.config.ConfigExperiment property)</a>
 </li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.ConfigExperiment.hparams">(catalyst.dl.experiment.ConfigExperiment property)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.Experiment.hparams">(catalyst.dl.experiment.Experiment property)</a>
+</li>
         <li><a href="api/dl.html#catalyst.dl.experiment.experiment.Experiment.hparams">(catalyst.dl.experiment.experiment.Experiment property)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.huber.HuberLoss">HuberLoss (class in catalyst.contrib.nn.criterion.huber)</a>
 </li>
   </ul></td>
@@ -1699,22 +1755,24 @@
 </li>
       <li><a href="api/core.html#catalyst.core.callbacks.metrics.IMetricCallback">IMetricCallback (class in catalyst.core.callbacks.metrics)</a>
 </li>
-      <li><a href="api/utils.html#catalyst.utils.scripts.import_experiment_and_runner">import_experiment_and_runner() (in module catalyst.utils.scripts)</a>
-</li>
       <li><a href="api/utils.html#catalyst.utils.scripts.import_module">import_module() (in module catalyst.utils.scripts)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.utils.cv.image.imread">imread() (in module catalyst.contrib.utils.cv.image)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.utils.cv.image.imsave">imsave() (in module catalyst.contrib.utils.cv.image)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/contrib.html#catalyst.contrib.utils.cv.image.imwrite">imwrite() (in module catalyst.contrib.utils.cv.image)</a>
 </li>
       <li><a href="api/data.html#catalyst.data.InBatchTripletsSampler">InBatchTripletsSampler (class in catalyst.data)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.runner.runner.Runner.infer">infer() (catalyst.dl.runner.runner.Runner method)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/dl.html#catalyst.dl.runner.Runner.infer">infer() (catalyst.dl.runner.Runner method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.runner.runner.Runner.infer">(catalyst.dl.runner.runner.Runner method)</a>
 </li>
+      </ul></li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.inference.InferCallback">InferCallback (class in catalyst.dl.callbacks.inference)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.mask_inference.InferMaskCallback">InferMaskCallback (class in catalyst.contrib.dl.callbacks.mask_inference)</a>
@@ -1723,6 +1781,10 @@
 
       <ul>
         <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.initial_seed">(catalyst.dl.experiment.config.ConfigExperiment property)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.ConfigExperiment.initial_seed">(catalyst.dl.experiment.ConfigExperiment property)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.Experiment.initial_seed">(catalyst.dl.experiment.Experiment property)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.experiment.experiment.Experiment.initial_seed">(catalyst.dl.experiment.experiment.Experiment property)</a>
 </li>
@@ -1831,6 +1893,10 @@
 
       <ul>
         <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.logdir">(catalyst.dl.experiment.config.ConfigExperiment property)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.ConfigExperiment.logdir">(catalyst.dl.experiment.ConfigExperiment property)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.Experiment.logdir">(catalyst.dl.experiment.Experiment property)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.experiment.experiment.Experiment.logdir">(catalyst.dl.experiment.experiment.Experiment property)</a>
 </li>
@@ -2353,17 +2419,27 @@
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.metrics.ppv_tpr_f1.PrecisionRecallF1ScoreCallback">PrecisionRecallF1ScoreCallback (class in catalyst.dl.callbacks.metrics.ppv_tpr_f1)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/utils.html#catalyst.tools.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter">PrecisionRecallF1ScoreMeter (class in catalyst.tools.meters.ppv_tpr_f1_meter)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.runner.runner.Runner.predict_batch">predict_batch() (catalyst.dl.runner.runner.Runner method)</a>
+      <li><a href="api/dl.html#catalyst.dl.runner.Runner.predict_batch">predict_batch() (catalyst.dl.runner.Runner method)</a>
 
       <ul>
+        <li><a href="api/dl.html#catalyst.dl.runner.runner.Runner.predict_batch">(catalyst.dl.runner.runner.Runner method)</a>
+</li>
         <li><a href="api/dl.html#catalyst.dl.runner.supervised.SupervisedRunner.predict_batch">(catalyst.dl.runner.supervised.SupervisedRunner method)</a>
 </li>
+        <li><a href="api/dl.html#catalyst.dl.runner.SupervisedRunner.predict_batch">(catalyst.dl.runner.SupervisedRunner method)</a>
+</li>
       </ul></li>
-      <li><a href="api/dl.html#catalyst.dl.runner.runner.Runner.predict_loader">predict_loader() (catalyst.dl.runner.runner.Runner method)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/dl.html#catalyst.dl.runner.Runner.predict_loader">predict_loader() (catalyst.dl.runner.Runner method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.runner.runner.Runner.predict_loader">(catalyst.dl.runner.runner.Runner method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/utils.html#catalyst.utils.scripts.prepare_config_api_components">prepare_config_api_components() (in module catalyst.utils.scripts)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.torch.prepare_cudnn">prepare_cudnn() (in module catalyst.utils.torch)</a>
 </li>
@@ -2511,8 +2587,12 @@
 </li>
       <li><a href="api/dl.html#catalyst.dl.utils.wizard.run_wizard">run_wizard() (in module catalyst.dl.utils.wizard)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.runner.runner.Runner">Runner (class in catalyst.dl.runner.runner)</a>
+      <li><a href="api/dl.html#catalyst.dl.runner.Runner">Runner (class in catalyst.dl.runner)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.runner.runner.Runner">(class in catalyst.dl.runner.runner)</a>
 </li>
+      </ul></li>
       <li><a href="api/registry.html#catalyst.registry.registries.Runner">Runner() (in module catalyst.registry.registries)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.runner.RunnerException">RunnerException</a>
@@ -2579,12 +2659,12 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.utils.pandas.split_dataframe_train_test">split_dataframe_train_test() (in module catalyst.contrib.utils.pandas)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/contrib.html#catalyst.contrib.utils.dataset.split_dataset_train_test">split_dataset_train_test() (in module catalyst.contrib.utils.dataset)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.modules.se.sSE">sSE (class in catalyst.contrib.nn.modules.se)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/core.html#catalyst.core.callback.CallbackScope.Stage">Stage (catalyst.core.callback.CallbackScope attribute)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackScope.stage">stage (catalyst.core.callback.CallbackScope attribute)</a>
@@ -2595,6 +2675,10 @@
 
       <ul>
         <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.stages">(catalyst.dl.experiment.config.ConfigExperiment property)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.ConfigExperiment.stages">(catalyst.dl.experiment.ConfigExperiment property)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.Experiment.stages">(catalyst.dl.experiment.Experiment property)</a>
 </li>
         <li><a href="api/dl.html#catalyst.dl.experiment.experiment.Experiment.stages">(catalyst.dl.experiment.experiment.Experiment property)</a>
 </li>
@@ -2637,10 +2721,18 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.tools.tensorboard.SummaryReader">SummaryReader (class in catalyst.contrib.tools.tensorboard)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.experiment.supervised.SupervisedExperiment">SupervisedExperiment (class in catalyst.dl.experiment.supervised)</a>
+      <li><a href="api/dl.html#catalyst.dl.experiment.SupervisedExperiment">SupervisedExperiment (class in catalyst.dl.experiment)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.experiment.supervised.SupervisedExperiment">(class in catalyst.dl.experiment.supervised)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.runner.supervised.SupervisedRunner">SupervisedRunner (class in catalyst.dl.runner.supervised)</a>
+      </ul></li>
+      <li><a href="api/dl.html#catalyst.dl.runner.SupervisedRunner">SupervisedRunner (class in catalyst.dl.runner)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.runner.supervised.SupervisedRunner">(class in catalyst.dl.runner.supervised)</a>
 </li>
+      </ul></li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.ce.SymmetricCrossEntropyLoss">SymmetricCrossEntropyLoss (class in catalyst.contrib.nn.criterion.ce)</a>
 </li>
   </ul></td>
@@ -2685,14 +2777,18 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.utils.nlp.text.tokenize_text">tokenize_text() (in module catalyst.contrib.utils.nlp.text)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data.html#catalyst.data.cv.transforms.torch.ToTensor">ToTensor (class in catalyst.data.cv.transforms.torch)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/contrib.html#catalyst.contrib.utils.parallel.tqdm_parallel_imap">tqdm_parallel_imap() (in module catalyst.contrib.utils.parallel)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.runner.runner.Runner.trace">trace() (catalyst.dl.runner.runner.Runner method)</a>
+      <li><a href="api/dl.html#catalyst.dl.runner.Runner.trace">trace() (catalyst.dl.runner.Runner method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.runner.runner.Runner.trace">(catalyst.dl.runner.runner.Runner method)</a>
 </li>
+      </ul></li>
       <li><a href="api/dl.html#catalyst.dl.utils.trace.trace_model">trace_model() (in module catalyst.dl.utils.trace)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.utils.trace.trace_model_from_checkpoint">trace_model_from_checkpoint() (in module catalyst.dl.utils.trace)</a>
@@ -2701,8 +2797,12 @@
 </li>
       <li><a href="api/dl.html#catalyst.dl.callbacks.tracing.TracerCallback">TracerCallback (class in catalyst.dl.callbacks.tracing)</a>
 </li>
-      <li><a href="api/dl.html#catalyst.dl.runner.runner.Runner.train">train() (catalyst.dl.runner.runner.Runner method)</a>
+      <li><a href="api/dl.html#catalyst.dl.runner.Runner.train">train() (catalyst.dl.runner.Runner method)</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.runner.runner.Runner.train">(catalyst.dl.runner.runner.Runner method)</a>
 </li>
+      </ul></li>
       <li><a href="api/contrib.html#catalyst.contrib.datasets.mnist.MNIST.training_file">training_file (catalyst.contrib.datasets.mnist.MNIST attribute)</a>
 </li>
       <li><a href="api/registry.html#catalyst.registry.registries.Transform">Transform() (in module catalyst.registry.registries)</a>
