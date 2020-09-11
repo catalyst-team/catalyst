@@ -1,8 +1,8 @@
-from catalyst.core import MetricCallback
+from catalyst.core import BatchMetricCallback
 from catalyst.utils import metrics
 
 
-class F1ScoreCallback(MetricCallback):
+class F1ScoreCallback(BatchMetricCallback):
     """F1 score metric callback."""
 
     def __init__(

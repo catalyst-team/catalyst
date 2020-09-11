@@ -29,7 +29,7 @@ from catalyst.tools.typing import (
 
 
 class RunnerException(Exception):
-    """Exception clas for all runner errors."""
+    """Exception class for all runner errors."""
 
     def __init__(self, message: str):
         """
@@ -709,7 +709,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
             scheduler,
             device,
         ) = self._get_experiment_components(
-            experiment=self.experiment, stage=stage,
+            experiment=self.experiment, stage=stage, device=self.device
         )
 
         utils.set_global_seed(self.experiment.initial_seed)
@@ -819,7 +819,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
                 from DataLoader.
         """
         if isinstance(batch, dict):
-            self.batch_size = next(iter(batch.values())).shape[0]
+            self.batch_size = len(next(iter(batch.values())))
         else:
             self.batch_size = len(batch[0])
         self.global_sample_step += self.batch_size

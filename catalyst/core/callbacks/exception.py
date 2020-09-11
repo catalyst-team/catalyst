@@ -22,3 +22,6 @@ class ExceptionCallback(Callback):
 
         if runner.need_exception_reraise:
             raise exception
+
+
+__all__ = ["ExceptionCallback"]

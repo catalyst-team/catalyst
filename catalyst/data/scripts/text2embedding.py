@@ -63,6 +63,12 @@ def build_args(parser):
     parser.add_argument("--max-length", type=int, default=512)  # noqa: WPS432
     utils.boolean_flag(parser, "mask-for-max-length", default=False)
     utils.boolean_flag(parser, "output-hidden-states", default=False)
+    parser.add_argument(
+        "--bert-level",
+        type=int,
+        help="BERT features level to use",
+        default=None,  # noqa: WPS432
+    )
     utils.boolean_flag(parser, "strip", default=True)
     utils.boolean_flag(parser, "lowercase", default=True)
     utils.boolean_flag(parser, "remove-punctuation", default=True)
@@ -98,6 +104,12 @@ def build_args(parser):
     utils.boolean_flag(
         parser, "benchmark", default=None, help="Use CuDNN benchmark"
     )
+    utils.boolean_flag(
+        parser,
+        "force-save",
+        default=None,
+        help="Force save `.npy` with np.save",
+    )
 
     return parser
 
@@ -121,6 +133,12 @@ def main(args, _=None):
     num_workers = args.num_workers
     max_length = args.max_length
     pooling_groups = args.pooling.split(",")
+    bert_level = args.bert_level
+
+    if bert_level is not None:
+        assert (
+            args.output_hidden_states
+        ), "You need hidden states output for level specification"
 
     utils.set_global_seed(args.seed)
     utils.prepare_cudnn(args.deterministic, args.benchmark)
@@ -202,6 +220,8 @@ def main(args, _=None):
             # create storage based on network output
             if idx == 0:
                 for layer_name, layer_value in batch_features.items():
+                    if bert_level is not None and bert_level != layer_name:
+                        continue
                     layer_name = (
                         layer_name
                         if isinstance(layer_name, str)
@@ -219,12 +239,21 @@ def main(args, _=None):
                 idx * batch_size, min((idx + 1) * batch_size, num_samples)
             )
             for layer_name2, layer_value2 in batch_features.items():
+                if bert_level is not None and bert_level != layer_name2:
+                    continue
                 layer_name2 = (
                     layer_name2
                     if isinstance(layer_name2, str)
                     else f"{layer_name2:02d}"
                 )
                 features[layer_name2][indices] = _detach(layer_value2)
+
+    if args.force_save:
+        for key, mmap in features.items():
+            mmap.flush()
+            np.save(
+                f"{args.out_prefix}.{key}.force.npy", mmap, allow_pickle=False
+            )
 
 
 if __name__ == "__main__":

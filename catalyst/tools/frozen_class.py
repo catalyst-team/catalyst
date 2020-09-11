@@ -24,3 +24,6 @@ class FrozenClass:
 
     def _unfreeze(self):
         self.__is_frozen = False
+
+
+__all__ = ["FrozenClass"]

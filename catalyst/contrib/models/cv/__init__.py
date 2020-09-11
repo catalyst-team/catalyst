@@ -1,5 +1,17 @@
 # flake8: noqa
 
-from .encoders import *
-from .classification import *
-from .segmentation import *
+from catalyst.contrib.models.cv.encoders import ResnetEncoder
+from catalyst.contrib.models.cv.classification import *
+from catalyst.contrib.models.cv.segmentation import (
+    UnetMetaSpec,
+    UnetSpec,
+    ResnetUnetSpec,
+    Unet,
+    Linknet,
+    FPNUnet,
+    PSPnet,
+    ResnetUnet,
+    ResnetLinknet,
+    ResnetFPNUnet,
+    ResnetPSPnet,
+)

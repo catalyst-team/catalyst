@@ -82,3 +82,6 @@ class ResnetLinknet(ResnetUnetSpec):
             **head_params
         )
         return encoder, bridge, decoder, head
+
+
+__all__ = ["Linknet", "ResnetLinknet"]

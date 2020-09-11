@@ -9,7 +9,7 @@ import scipy.sparse as sp
 import torch
 from torch.utils.data import Dataset
 
-from catalyst.contrib.datasets.utils import (
+from catalyst.contrib.datasets.functional import (
     download_and_extract_archive,
     download_url,
 )
@@ -91,6 +91,8 @@ class MovieLens(Dataset):
         if download:
             self._download()
 
+        self._fetch_movies()
+
         if not self._check_exists():
             raise RuntimeError(
                 "Dataset not found. You can use download=True to download it"
@@ -164,8 +166,6 @@ class MovieLens(Dataset):
             remove_finished=True,
         )
 
-        self._fetch_movies()
-
     def _read_raw_movielens_data(self):
         """
         Return the raw lines of the train and test files
@@ -190,7 +190,12 @@ class MovieLens(Dataset):
     def _build_interaction_matrix(self, rows, cols, data):
         """
         Args:
-            rows
+            rows (int): rows of the oevrall dataset 
+            cols (int): columns of the overall dataset
+            data (generator object): generator of the data object
+
+        Return:
+            interaction_matrix (torch.sparse.Float): sparse user2item interaction matrix
         """
 
         mat = sp.lil_matrix((rows, cols), dtype=np.int32)
@@ -206,7 +211,8 @@ class MovieLens(Dataset):
         v = torch.FloatTensor(values)
         shape = coo.shape
 
-        return torch.sparse.FloatTensor(i, v, torch.Size(shape)).to_dense()
+        interaction_matrix = torch.sparse.FloatTensor(i, v, torch.Size(shape)).to_dense()
+        return interaction_matrix
 
     def _parse(self, data):
         """
@@ -266,14 +272,14 @@ class MovieLens(Dataset):
             item_metadata_raw,
             genres_raw,
         ) = self._read_raw_movielens_data()
-        parsed_train = self._parse(train_raw)
-        parsed_test = self._parse(test_raw)
-        num_users, num_items = self._get_dimensions(parsed_train, parsed_test)
+
+        num_users, num_items = self._get_dimensions(self._parse(train_raw), self._parse(test_raw))
+        
         train = self._build_interaction_matrix(
-            num_users, num_items, parsed_train
+            num_users, num_items, self._parse(train_raw)
         )
         test = self._build_interaction_matrix(
-            num_users, num_items, parsed_test
+            num_users, num_items, self._parse(test_raw)
         )
         assert train.shape == test.shape
 
@@ -286,3 +292,5 @@ class MovieLens(Dataset):
             os.path.join(self.processed_folder, self.test_file), "wb"
         ) as f:
             torch.save(test, f)
+
+__all__ = ["MovieLens"]
