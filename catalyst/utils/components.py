@@ -115,8 +115,12 @@ def process_components(
             if syncbn:
                 model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
 
+            find_unused = distributed_params.get("find_unused_parameters", False)
             model = nn.parallel.DistributedDataParallel(
-                model, device_ids=[local_rank], output_device=local_rank
+                model,
+                device_ids=[local_rank],
+                output_device=local_rank,
+                find_unused_parameters=find_unused,
             )
     # data parallel run (dp) (with apex support)
     else:
