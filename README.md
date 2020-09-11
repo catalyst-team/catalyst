@@ -107,11 +107,14 @@ for prediction in runner.predict_loader(loader=loaders["valid"]):
 traced_model = runner.trace(loader=loaders["valid"])
 ```
 
-- [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff)
-- [Minimal examples](#minimal-examples)
-- [Customizing what happens in `train`](https://colab.research.google.com/drive/1T5G_OVLYHq483l80ikabXRsx_WB3rwPf?usp=sharing)
-- [Colab with ML, CV, NLP, GANs and RecSys demos](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
-- For Catalyst.RL introduction, please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
+### Step by step guide
+1. Start with [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff) introduction.
+2. Check [minimal examples](#minimal-examples).
+3. Try [notebook tutorials with Google Colab](#tutorials).
+4. Read [blogposts](#blogposts) with use-cases and guides (and Config API intro).
+5. Go through advanced  [classification](https://github.com/catalyst-team/classification), [detection](https://github.com/catalyst-team/detection) and [segmentation](https://github.com/catalyst-team/segmentation) pipelines with Config API. More pipelines available under [projects section](#projects). 
+6. Want more? See [Alchemy](https://github.com/catalyst-team/alchemy) and [Reaction](https://github.com/catalyst-team/reaction) packages.
+7. For Catalyst.RL introduction, please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
 
 
 ## Table of Contents
@@ -1026,6 +1029,66 @@ runner.train(
 </p>
 </details>
 
+<details>
+<summary>AutoML - hyperparameters optimization with Optuna</summary>
+<p>
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/14njbSYUESZPc0iCnECTG4hkbDuEnGJTi?usp=sharing)
+
+```python
+import os
+import optuna
+import torch
+from torch import nn
+from torch.utils.data import DataLoader
+from catalyst import dl
+from catalyst.data.cv import ToTensor
+from catalyst.contrib.datasets import MNIST
+from catalyst.contrib.nn import Flatten
+    
+
+def objective(trial):
+    lr = trial.suggest_loguniform("lr", 1e-3, 1e-1)
+    num_hidden = int(trial.suggest_loguniform("num_hidden", 32, 128))
+
+    loaders = {
+        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
+        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+    }
+    model = nn.Sequential(
+        Flatten(), nn.Linear(784, num_hidden), nn.ReLU(), nn.Linear(num_hidden, 10)
+    )
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    criterion = nn.CrossEntropyLoss()
+
+    runner = dl.SupervisedRunner()
+    runner.train(
+        model=model,
+        loaders=loaders,
+        criterion=criterion,
+        optimizer=optimizer,
+        callbacks=[
+            dl.OptunaCallback(trial),
+            dl.AccuracyCallback(num_classes=10),
+        ],
+        num_epochs=10,
+        main_metric="accuracy01",
+        minimize_metric=False,
+    )
+    return runner.best_valid_metrics[runner.main_metric]
+
+study = optuna.create_study(
+    direction="maximize",
+    pruner=optuna.pruners.MedianPruner(
+        n_startup_trials=1, n_warmup_steps=0, interval_steps=1
+    ),
+)
+study.optimize(objective, n_trials=10, timeout=300)
+print(study.best_value, study.best_params)
+```
+</p>
+</details>
+
 
 ### Features
 - Universal train/inference loop.
@@ -1089,6 +1152,7 @@ best practices for your deep learning research.
 ### Docs
 
 - [master](https://catalyst-team.github.io/catalyst/)
+- [20.09](https://catalyst-team.github.io/catalyst/v20.09/index.html)
 - [20.08.2](https://catalyst-team.github.io/catalyst/v20.08.2/index.html)
 - [20.07](https://catalyst-team.github.io/catalyst/v20.07/index.html) - [dev blog: 20.07 release](https://medium.com/pytorch/catalyst-dev-blog-20-07-release-fb489cd23e14?source=friends_link&sk=7ab92169658fe9a9e1c44068f28cc36c)
 - [20.06](https://catalyst-team.github.io/catalyst/v20.06/index.html)

@@ -89,7 +89,7 @@ echo "pytorch quantization available: ${quantization}"
 
 if [ "$quantization" = "1" ]; then
 PYTHONPATH=.:${PYTHONPATH} \
-python catalyst/dl/scripts/quantize.py --logdir ${LOGDIR} --out-dir ${LOGDIR}
+python catalyst/dl/scripts/quantize.py --logdir ${LOGDIR} --out-dir ${LOGDIR} --backend "qnnpack"
 check_file_existence "${LOGDIR}/best_quantized.pth"
 fi
 

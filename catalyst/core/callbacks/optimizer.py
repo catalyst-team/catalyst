@@ -29,7 +29,13 @@ def zero_grad(optimizer: Optimizer) -> None:
             p.grad = None
 
 
-class OptimizerCallback(Callback):
+class IOptimizerCallback(Callback):
+    """Optimizer callback interface, abstraction over optimizer step."""
+
+    pass
+
+
+class OptimizerCallback(IOptimizerCallback):
     """Optimizer callback, abstraction over optimizer step."""
 
     def __init__(
@@ -91,6 +97,25 @@ class OptimizerCallback(Callback):
         self.use_fast_zero_grad = use_fast_zero_grad
         self.use_xla_barrier = xla_barrier
 
+    def _optimizer_step(self, optimizer: Optimizer) -> None:
+        """CPU and GPU optimization step.
+
+        Args:
+            optimizer (Optimizer): optimizer object
+        """
+        optimizer.step()
+
+    def _optimizer_step_tpu(self, optimizer: Optimizer) -> None:
+        """TPU optimization step.
+
+        Args:
+            optimizer (Optimizer): optimizer object
+        """
+        if self.use_xla_barrier:
+            xm.optimizer_step(optimizer, barrier=True)
+        else:
+            xm.optimizer_step(optimizer)
+
     def grad_step(
         self,
         *,
@@ -114,25 +139,6 @@ class OptimizerCallback(Callback):
                 grad_clip_fn(group["params"])
         # optimize parameters
         self._optimizer_step_fn(optimizer)
-
-    def _optimizer_step(self, optimizer: Optimizer) -> None:
-        """CPU and GPU optimization step.
-
-        Args:
-            optimizer (Optimizer): optimizer object
-        """
-        optimizer.step()
-
-    def _optimizer_step_tpu(self, optimizer: Optimizer) -> None:
-        """TPU optimization step.
-
-        Args:
-            optimizer (Optimizer): optimizer object
-        """
-        if self.use_xla_barrier:
-            xm.optimizer_step(optimizer, barrier=True)
-        else:
-            xm.optimizer_step(optimizer)
 
     def on_stage_start(self, runner: IRunner) -> None:
         """Checks that the current stage has correct optimizer.
@@ -167,6 +173,53 @@ class OptimizerCallback(Callback):
         else:
             self._optimizer_wd = [0.0] * len(self._optimizer.param_groups)
 
+    def on_batch_end(self, runner: IRunner) -> None:
+        """On batch end event
+
+        Args:
+            runner (IRunner): current runner
+        """
+        if not runner.is_train_loader:
+            return
+
+        loss = runner.batch_metrics[self.metric_key]
+
+        self._accumulation_counter += 1
+        need_gradient_step = (
+            self._accumulation_counter % self.accumulation_steps == 0
+        )
+
+        # This is very hacky check whether we have AMP optimizer and this may
+        # change in future.
+        # But alternative solution is to have AmpOptimizerCallback.
+        # or expose another c'tor argument.
+        # @TODO: speedup with re-definition ``on_stage_start``
+        if hasattr(self._optimizer, "_amp_stash"):
+            from apex import amp
+
+            # Need to set ``delay_unscale``
+            # according to
+            # https://nvidia.github.io/apex/advanced.html#gradient-accumulation-across-iterations
+            delay_unscale = not need_gradient_step
+            with amp.scale_loss(
+                loss, self._optimizer, delay_unscale=delay_unscale
+            ) as scaled_loss:
+                scaled_loss.backward()
+        else:
+            loss.backward()
+
+        if need_gradient_step:
+            self.grad_step(
+                optimizer=self._optimizer,
+                optimizer_wds=self._optimizer_wd,
+                grad_clip_fn=self.grad_clip_fn,
+            )
+            if not self.use_fast_zero_grad:
+                utils.maybe_recursive_call(self._optimizer, "zero_grad")
+            else:
+                utils.maybe_recursive_call(self._optimizer, zero_grad)
+            self._accumulation_counter = 0
+
     def on_epoch_end(self, runner: IRunner) -> None:
         """On epoch end event.
 
@@ -194,54 +247,8 @@ class OptimizerCallback(Callback):
             )
             runner.epoch_metrics[momentum_name] = momentum
 
-    def on_batch_end(self, runner: IRunner) -> None:
-        """On batch end event
 
-        Args:
-            runner (IRunner): current runner
-        """
-        if not runner.is_train_loader:
-            return
-
-        loss = runner.batch_metrics[self.metric_key]
-
-        self._accumulation_counter += 1
-        need_gradient_step = (
-            self._accumulation_counter % self.accumulation_steps == 0
-        )
-
-        # This is very hacky check whether we have AMP optimizer and this may
-        # change in future.
-        # But alternative solution is to have AmpOptimizerCallback.
-        # or expose another c'tor argument.
-        if hasattr(self._optimizer, "_amp_stash"):
-            from apex import amp
-
-            # Need to set ``delay_unscale``
-            # according to
-            # https://nvidia.github.io/apex/advanced.html#gradient-accumulation-across-iterations
-            delay_unscale = not need_gradient_step
-            with amp.scale_loss(
-                loss, self._optimizer, delay_unscale=delay_unscale
-            ) as scaled_loss:
-                scaled_loss.backward()
-        else:
-            loss.backward()
-
-        if need_gradient_step:
-            self.grad_step(
-                optimizer=self._optimizer,
-                optimizer_wds=self._optimizer_wd,
-                grad_clip_fn=self.grad_clip_fn,
-            )
-            if not self.use_fast_zero_grad:
-                utils.maybe_recursive_call(self._optimizer, "zero_grad")
-            else:
-                utils.maybe_recursive_call(self._optimizer, zero_grad)
-            self._accumulation_counter = 0
-
-
-class AMPOptimizerCallback(Callback):
+class AMPOptimizerCallback(IOptimizerCallback):
     """
     Optimizer callback with native torch amp support.
     """
@@ -288,6 +295,27 @@ class AMPOptimizerCallback(Callback):
 
         # Initialized at on_state_start()
         self.scaler = None
+
+    def grad_step(
+        self, *, optimizer: Optimizer, grad_clip_fn: Callable = None,
+    ) -> None:
+        """Makes a gradient step for a given optimizer.
+
+        Args:
+            optimizer (Optimizer): the optimizer
+            grad_clip_fn (Callable): function for gradient clipping
+        """
+        if grad_clip_fn is not None:
+            # Unscales the gradients of
+            # optimizer's assigned params in-place
+            self.scaler.unscale_(optimizer)
+            for group in zip(optimizer.param_groups):
+                # Since the gradients of optimizer's
+                # assigned params are unscaled, clips as usual:
+                grad_clip_fn(group["params"])
+
+        self.scaler.step(optimizer)
+        self.scaler.update()
 
     def on_stage_start(self, runner: IRunner) -> None:
         """Checks that the current stage has correct optimizer.
@@ -347,27 +375,6 @@ class AMPOptimizerCallback(Callback):
                 utils.maybe_recursive_call(self._optimizer, zero_grad)
             self._accumulation_counter = 0
 
-    def grad_step(
-        self, *, optimizer: Optimizer, grad_clip_fn: Callable = None,
-    ) -> None:
-        """Makes a gradient step for a given optimizer.
-
-        Args:
-            optimizer (Optimizer): the optimizer
-            grad_clip_fn (Callable): function for gradient clipping
-        """
-        if grad_clip_fn is not None:
-            # Unscales the gradients of
-            # optimizer's assigned params in-place
-            self.scaler.unscale_(optimizer)
-            for group in zip(optimizer.param_groups):
-                # Since the gradients of optimizer's
-                # assigned params are unscaled, clips as usual:
-                grad_clip_fn(group["params"])
-
-        self.scaler.step(optimizer)
-        self.scaler.update()
-
     def on_epoch_end(self, runner: IRunner) -> None:
         """On epoch end event.
 
@@ -400,4 +407,24 @@ class AMPOptimizerCallback(Callback):
         self.scaler = None
 
 
-__all__ = ["OptimizerCallback", "AMPOptimizerCallback"]
+# @TODO: add OptimizerCallback autocreation
+# def OptimizerCallback(*args, **kwargs):
+#     """
+#     Optimizer callback factory-wrapper to select required OptimizerCallback
+#     automatically.
+#     """
+#     is_amp_enabled = (
+#         os.getenv("USE_AMP", "0") == "1" and utils.check_amp_available()
+#     )
+#
+#     optimizer_callback = AMPOptimizerCallback(*args, **kwargs) \
+#         if is_amp_enabled \
+#         else OptimizerCallback(*args, **kwargs)
+#     return optimizer_callback
+
+
+__all__ = [
+    "IOptimizerCallback",
+    "AMPOptimizerCallback",
+    "OptimizerCallback",
+]

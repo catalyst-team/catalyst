@@ -14,7 +14,13 @@ from catalyst.core.callbacks import formatters
 from catalyst.core.runner import IRunner
 
 
-class VerboseLogger(Callback):
+class ILoggerCallback(Callback):
+    """Logger callback interface, abstraction over logging step"""
+
+    pass
+
+
+class VerboseLogger(ILoggerCallback):
     """Logs the params into console."""
 
     def __init__(
@@ -97,7 +103,7 @@ class VerboseLogger(Callback):
             runner.need_exception_reraise = False
 
 
-class ConsoleLogger(Callback):
+class ConsoleLogger(ILoggerCallback):
     """Logger callback,
     translates ``runner.*_metrics`` to console and text file.
     """
@@ -153,7 +159,7 @@ class ConsoleLogger(Callback):
         self.logger.info("", extra={"runner": runner})
 
 
-class TensorboardLogger(Callback):
+class TensorboardLogger(ILoggerCallback):
     """Logger callback, translates ``runner.metric_manager`` to tensorboard."""
 
     def __init__(
@@ -256,6 +262,7 @@ class TensorboardLogger(Callback):
 
 
 __all__ = [
+    "ILoggerCallback",
     "ConsoleLogger",
     "TensorboardLogger",
     "VerboseLogger",

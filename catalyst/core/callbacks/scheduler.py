@@ -9,7 +9,13 @@ from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
 
 
-class SchedulerCallback(Callback):
+class ISchedulerCallback(Callback):
+    """Scheduler callback interface, abstraction over scheduler step."""
+
+    pass
+
+
+class SchedulerCallback(ISchedulerCallback):
     """Callback for wrapping schedulers.
 
     Notebook API example:
@@ -315,4 +321,4 @@ class LRUpdater(ABC, Callback):
             self.update_optimizer(runner=runner)
 
 
-__all__ = ["SchedulerCallback", "LRUpdater"]
+__all__ = ["ISchedulerCallback", "SchedulerCallback", "LRUpdater"]

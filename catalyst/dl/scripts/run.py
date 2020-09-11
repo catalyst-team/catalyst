@@ -62,8 +62,14 @@ def build_args(parser: ArgumentParser):
     utils.boolean_flag(
         parser,
         "apex",
-        default=os.getenv("USE_APEX", "1") == "1",
+        default=os.getenv("USE_APEX", "0") == "1",
         help="Enable/disable using of Apex extension",
+    )
+    utils.boolean_flag(
+        parser,
+        "amp",
+        default=os.getenv("USE_AMP", "0") == "1",
+        help="Enable/disable using of PyTorch AMP extension",
     )
     utils.boolean_flag(
         parser,
@@ -104,6 +110,7 @@ def main_worker(args, unknown_args):
     utils.prepare_cudnn(args.deterministic, args.benchmark)
 
     config.setdefault("distributed_params", {})["apex"] = args.apex
+    config.setdefault("distributed_params", {})["amp"] = args.amp
 
     experiment_fn, runner_fn = utils.import_experiment_and_runner(
         Path(args.expdir)
