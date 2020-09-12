@@ -1,9 +1,9 @@
-## Catalyst.DL – cifar10 with stages example and Optuna AutoML
+## Config API + Optuna = AutoML
 
 ### Local run
 
 ```bash
-catalyst-dl run --config=./cifar_stages_optuna/config.yml --verbose
+catalyst-dl tune --config=./cifar_stages_optuna/config.yml --verbose
 ```
 
 ### Training visualization
