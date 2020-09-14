@@ -29,7 +29,6 @@ def test_cosface_loss():
     n_classes = 3
     s = 3.0
     m = 0.1
-    loss_fn = CosFaceLoss(emb_size, n_classes, s, m)
 
     features = np.array(
         [
@@ -48,20 +47,57 @@ def test_cosface_loss():
         dtype="f",
     )
 
+    loss_fn = CosFaceLoss(emb_size, n_classes, s, m, reduction="none")
     loss_fn.projection.data = torch.from_numpy(projection)
 
     def normalize(matr):
-        return matr / np.sqrt((matr ** 2).sum(axis=1))[:, np.newaxis]
+        return (
+            matr / np.sqrt((matr ** 2).sum(axis=1))[:, np.newaxis]
+        )  # for each row
 
-    normalized_features = normalize(features)
-    normalized_projection = normalize(projection)
+    def softmax(x):
+        e_x = np.exp(x - np.max(x))
+        return e_x / e_x.sum(1)[:, np.newaxis]  # for each row
 
-    cosine = normalized_features @ normalized_projection.T
-    phi = cosine - m
+    def cross_entropy(preds, targs, axis=None):
+        print(softmax(preds))
+        return -(targs * np.log(softmax(preds))).sum(axis)
 
-    mask = np.array([[1, 0, 0], [0, 0, 1]], dtype="l")
-    feats = (mask * phi + (1.0 - mask) * cosine) * s
+    normalized_features = normalize(features)  # 2x4
+    normalized_projection = normalize(projection)  # 3x4
 
-    expected_loss = 1.3651
-    actual = loss_fn(torch.from_numpy(features), torch.LongTensor(target))
-    assert abs(expected_loss - actual.item()) < 1e-5
+    cosine = normalized_features @ normalized_projection.T  # 2x4 * 4x3 = 2x3
+    phi = cosine - m  # 2x3
+
+    mask = np.array([[1, 0, 0], [0, 0, 1]], dtype="l")  # one_hot(target)
+    feats = (mask * phi + (1.0 - mask) * cosine) * s  # 2x3
+
+    expected_loss = cross_entropy(feats, mask, 1)
+    actual = (
+        loss_fn(torch.from_numpy(features), torch.LongTensor(target))
+        .detach()
+        .numpy()
+    )
+    assert np.allclose(expected_loss, actual)
+
+    loss_fn = CosFaceLoss(emb_size, n_classes, s, m, reduction="mean")
+    loss_fn.projection.data = torch.from_numpy(projection)
+
+    expected_loss = cross_entropy(feats, mask, 1)
+    actual = (
+        loss_fn(torch.from_numpy(features), torch.LongTensor(target))
+        .detach()
+        .numpy()
+    )
+    assert np.isclose(expected_loss.mean(), actual)
+
+    loss_fn = CosFaceLoss(emb_size, n_classes, s, m, reduction="sum")
+    loss_fn.projection.data = torch.from_numpy(projection)
+
+    expected_loss = cross_entropy(feats, mask, 1)
+    actual = (
+        loss_fn(torch.from_numpy(features), torch.LongTensor(target))
+        .detach()
+        .numpy()
+    )
+    assert np.isclose(expected_loss.sum(), actual)
