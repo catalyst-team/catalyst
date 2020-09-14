@@ -1,3 +1,4 @@
+# flake8: noqa
 import torch
 import numpy as np
 from catalyst.contrib.nn import criterion as module
