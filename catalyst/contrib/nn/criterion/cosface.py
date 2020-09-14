@@ -7,7 +7,7 @@ from torch.nn.modules.loss import _WeightedLoss  # noqa
 class CosFaceLoss(_WeightedLoss):
     """Implementation of CosFace loss for metric learning.
 
-    .. _CosFace: Large Margin Cosine Loss for Deep Face Recognition
+    .. _CosFace: Large Margin Cosine Loss for Deep Face Recognition:
         https://arxiv.org/abs/1801.09414
     """
 
