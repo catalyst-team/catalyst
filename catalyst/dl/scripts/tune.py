@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# Experimental API for Optuna integration to Catalyst Config API
+# for AutoML support.
 from typing import Dict, Tuple
 import argparse
 from argparse import ArgumentParser
@@ -45,17 +47,17 @@ def build_args(parser: ArgumentParser):
         metavar="PATH",
         help="path to latest checkpoint",
     )
-    parser.add_argument(
-        "--autoresume",
-        type=str,
-        help=(
-            "try automatically resume from logdir//{best,last}_full.pth "
-            "if --resume is empty"
-        ),
-        required=False,
-        choices=["best", "last"],
-        default=None,
-    )
+    # parser.add_argument(
+    #     "--autoresume",
+    #     type=str,
+    #     help=(
+    #         "try automatically resume from logdir//{best,last}_full.pth "
+    #         "if --resume is empty"
+    #     ),
+    #     required=False,
+    #     choices=["best", "last"],
+    #     default=None,
+    # )
     parser.add_argument("--seed", type=int, default=42)
     utils.boolean_flag(
         parser,
@@ -69,17 +71,17 @@ def build_args(parser: ArgumentParser):
         default=os.getenv("USE_AMP", "0") == "1",
         help="Enable/disable using of PyTorch AMP extension",
     )
-    utils.boolean_flag(
-        parser,
-        "distributed",
-        shorthand="ddp",
-        default=os.getenv("USE_DDP", "0") == "1",
-        help="Run in distributed mode",
-    )
+    # utils.boolean_flag(
+    #     parser,
+    #     "distributed",
+    #     shorthand="ddp",
+    #     default=os.getenv("USE_DDP", "0") == "1",
+    #     help="Run in distributed mode",
+    # )
     utils.boolean_flag(parser, "verbose", default=None)
     utils.boolean_flag(parser, "timeit", default=None)
-    utils.boolean_flag(parser, "check", default=None)
-    utils.boolean_flag(parser, "overfit", default=None)
+    # utils.boolean_flag(parser, "check", default=None)
+    # utils.boolean_flag(parser, "overfit", default=None)
     utils.boolean_flag(
         parser,
         "deterministic",
@@ -90,8 +92,14 @@ def build_args(parser: ArgumentParser):
         parser, "benchmark", default=None, help="Use CuDNN benchmark"
     )
 
+    parser.add_argument("--storage", type=int, default=None)
+    parser.add_argument("--study-name", type=int, default=None)
+
     parser.add_argument("--n-trials", type=int, default=None)
     parser.add_argument("--timeout", type=int, default=None)
+    parser.add_argument("--n-jobs", type=int, default=None)
+    utils.boolean_flag(parser, "gc-after-trial", default=False)
+    utils.boolean_flag(parser, "show-progress-bar", default=False)
 
     return parser
 
@@ -104,7 +112,7 @@ def parse_args():
     return args, unknown_args
 
 
-def process_trial_config(trial, config: Dict) -> Tuple[optuna.Trial, Dict]:
+def _process_trial_config(trial, config: Dict) -> Tuple[optuna.Trial, Dict]:
     def _eval_trial_suggestions(x):
         nonlocal trial
         if isinstance(x, str) and "trial.suggest_" in x:
@@ -126,7 +134,7 @@ def main_worker(args, unknown_args):
     expdir = Path(args.expdir)
 
     def objective(trial: optuna.trial):
-        trial, trial_config = process_trial_config(trial, config.copy())
+        trial, trial_config = _process_trial_config(trial, config.copy())
         experiment, runner, trial_config = utils.prepare_config_api_components(
             expdir=expdir, config=trial_config
         )
@@ -149,13 +157,38 @@ def main_worker(args, unknown_args):
         .get("minimize_metric", True)
         else "maximize"
     )
+
+    sampler_params = config.pop("optuna_sampler_params", {})
+    optuna_sampler_type = sampler_params.get("sampler", None)
+    optuna_sampler = (
+        optuna.samplers.__dict__[optuna_sampler_type](**sampler_params)
+        if optuna_sampler_type is not None
+        else None
+    )
+
+    pruner_params = config.pop("optuna_pruner_params", {})
+    optuna_pruner_type = pruner_params.get("pruner", None)
+    optuna_pruner = (
+        optuna.pruners.__dict__[optuna_pruner_type](**pruner_params)
+        if optuna_pruner_type is not None
+        else None
+    )
+
     study = optuna.create_study(
         direction=direction,
-        # pruner=optuna.pruners.MedianPruner(
-        #     n_startup_trials=1, n_warmup_steps=0, interval_steps=1
-        # ),
+        storage=args.storage,
+        study_name=args.study_name,
+        sampler=optuna_sampler,
+        pruner=optuna_pruner,
     )
-    study.optimize(objective, n_trials=args.n_trials, timeout=args.timeout)
+    study.optimize(
+        objective,
+        n_trials=args.n_trials,
+        timeout=args.timeout,
+        n_jobs=args.n_jobs or 1,
+        gc_after_trial=args.gc_after_trial,
+        show_progress_bar=args.show_progress_bar,
+    )
 
 
 def main(args, unknown_args):

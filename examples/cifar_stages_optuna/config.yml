@@ -17,6 +17,7 @@ runner_params:
 args:
   expdir: "cifar_stages_optuna"
   baselogdir: "./logs/cifar_stages_optuna"
+  n_jobs: 4
 
 
 stages:
@@ -76,15 +77,15 @@ stages:
       no_bias_weight_decay: True # removes `weight_decay` for model's biases
 
   # tune
-#  stage2:
-#    stage_params:
-#      num_epochs: 3
-#
-#    optimizer_params:
-#      load_from_previous_stage: True
-#      optimizer: Ralamb
-#      lr_linear_scaling:
-#        lr: 0.0001
-#        base_batch_size: 64
-#      weight_decay: 0.0001
-#      no_bias_weight_decay: False
+  stage2:
+    stage_params:
+      num_epochs: 2
+
+    optimizer_params:
+      load_from_previous_stage: True
+      optimizer: Ralamb
+      lr_linear_scaling:
+        lr: 0.0001
+        base_batch_size: 64
+      weight_decay: 0.0001
+      no_bias_weight_decay: False
