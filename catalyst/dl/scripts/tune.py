@@ -133,11 +133,13 @@ def main_worker(args, unknown_args):
     config.setdefault("distributed_params", {})["amp"] = args.amp
     expdir = Path(args.expdir)
 
+    # optuna objective
     def objective(trial: optuna.trial):
         trial, trial_config = _process_trial_config(trial, config.copy())
         experiment, runner, trial_config = utils.prepare_config_api_components(
             expdir=expdir, config=trial_config
         )
+        experiment.optuna_trial = trial
 
         if experiment.logdir is not None and utils.get_rank() <= 0:
             utils.dump_environment(
@@ -149,7 +151,7 @@ def main_worker(args, unknown_args):
 
         return runner.best_valid_metrics[runner.main_metric]
 
-    # @TODO: add more customization for optuna.Study and study.optimize
+    # optuna direction
     direction = (
         "minimize"
         if config.get("stages", {})
@@ -158,16 +160,18 @@ def main_worker(args, unknown_args):
         else "maximize"
     )
 
+    # optuna sampler
     sampler_params = config.pop("optuna_sampler_params", {})
-    optuna_sampler_type = sampler_params.get("sampler", None)
+    optuna_sampler_type = sampler_params.pop("sampler", None)
     optuna_sampler = (
         optuna.samplers.__dict__[optuna_sampler_type](**sampler_params)
         if optuna_sampler_type is not None
         else None
     )
 
+    # optuna pruner
     pruner_params = config.pop("optuna_pruner_params", {})
-    optuna_pruner_type = pruner_params.get("pruner", None)
+    optuna_pruner_type = pruner_params.pop("pruner", None)
     optuna_pruner = (
         optuna.pruners.__dict__[optuna_pruner_type](**pruner_params)
         if optuna_pruner_type is not None
