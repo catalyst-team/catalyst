@@ -8,9 +8,9 @@ from torch.nn import Module
 
 from catalyst.tools import Model
 from catalyst.utils import (
-    import_experiment_and_runner,
     load_checkpoint,
     load_config,
+    prepare_config_api_components,
     unpack_checkpoint,
 )
 
@@ -101,8 +101,10 @@ def quantize_model_from_checkpoint(
     expdir = Path(logdir) / "code" / config_expdir.name
 
     logger.info("Import experiment and runner from logdir")
-    experiment_fn, runner_fn = import_experiment_and_runner(expdir)
-    experiment: ConfigExperiment = experiment_fn(config)
+    experiment: ConfigExperiment = None
+    experiment, _, _ = prepare_config_api_components(
+        expdir=expdir, config=config
+    )
 
     logger.info(f"Load model state from checkpoints/{checkpoint_name}.pth")
     if stage is None:

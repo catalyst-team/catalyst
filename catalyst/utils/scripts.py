@@ -1,6 +1,4 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
-from typing import Callable
+from typing import Callable, Dict, Union
 from importlib.util import module_from_spec, spec_from_file_location
 import os
 import pathlib
@@ -12,6 +10,7 @@ import warnings
 import torch
 import torch.distributed
 
+from catalyst.registry import EXPERIMENTS, RUNNERS
 from catalyst.utils.distributed import (
     get_distributed_env,
     get_distributed_params,
@@ -19,11 +18,16 @@ from catalyst.utils.distributed import (
 from catalyst.utils.misc import get_utcnow_time
 
 
-def import_module(expdir: pathlib.Path):
+def import_module(expdir: Union[str, pathlib.Path]):
     """
-    @TODO: Docs. Contribution is welcome
+    Imports python module by path.
+
+    Args:
+        expdir (pathlib.Path): path to python module.
+
+    Returns:
+        Imported module.
     """
-    # @TODO: better PYTHONPATH handling
     if not isinstance(expdir, pathlib.Path):
         expdir = pathlib.Path(expdir)
     sys.path.insert(0, str(expdir.absolute()))
@@ -39,15 +43,62 @@ def import_module(expdir: pathlib.Path):
     return m
 
 
-def _tricky_dir_copy(dir_from, dir_to):
+def prepare_config_api_components(expdir: pathlib.Path, config: Dict):
+    """
+    Imports and create core Config API components - Experiment, Runner
+    and Config from ``expdir`` - experiment directory
+    and ``config`` - experiment config.
+
+    Args:
+        expdir (pathlib.Path): experiment directory path
+        config (Dict): dictionary with experiment Config
+
+    Returns:
+        Experiment, Runner, Config for Config API usage.
+    """
+    if not isinstance(expdir, pathlib.Path):
+        expdir = pathlib.Path(expdir)
+    m = import_module(expdir)
+    experiment_fn = getattr(m, "Experiment", None)
+    runner_fn = getattr(m, "Runner", None)
+
+    experiment_params = config.get("experiment_params", {})
+    experiment_from_config = experiment_params.pop("experiment", None)
+    assert any(
+        x is None for x in (experiment_fn, experiment_from_config)
+    ), "Experiment is set both in code and config."
+    if experiment_fn is None and experiment_from_config is not None:
+        experiment_fn = EXPERIMENTS.get(experiment_from_config)
+
+    runner_params = config.get("runner_params", {})
+    runner_from_config = runner_params.pop("runner", None)
+    assert any(
+        x is None for x in (runner_fn, runner_from_config)
+    ), "Runner is set both in code and config."
+    if runner_fn is None and runner_from_config is not None:
+        runner_fn = RUNNERS.get(runner_from_config)
+
+    experiment = experiment_fn(config)
+    runner = runner_fn(**runner_params)
+
+    return experiment, runner, config
+
+
+def _tricky_dir_copy(dir_from: str, dir_to: str) -> None:
     os.makedirs(dir_to, exist_ok=True)
     shutil.rmtree(dir_to)
     shutil.copytree(dir_from, dir_to)
 
 
-def dump_code(expdir, logdir):
+def dump_code(
+    expdir: Union[str, pathlib.Path], logdir: Union[str, pathlib.Path]
+) -> None:
     """
-    @TODO: Docs. Contribution is welcome
+    Dumps Catalyst code for reproducibility.
+
+    Args:
+        expdir (Union[str, pathlib.Path]): experiment dir path
+        logdir (Union[str, pathlib.Path]): logging dir path
     """
     expdir = expdir[:-1] if expdir.endswith("/") else expdir
     new_src_dir = "code"
@@ -63,9 +114,13 @@ def dump_code(expdir, logdir):
     _tricky_dir_copy(old_expdir, new_expdir)
 
 
-def dump_python_files(src, dst):
+def dump_python_files(src: pathlib.Path, dst: pathlib.Path) -> None:
     """
-    @TODO: Docs. Contribution is welcome
+    Dumps python code (``*.py`` and ``*.ipynb``) files.
+
+    Args:
+        src (pathlib.Path): source code path
+        dst (pathlib.Path): destination code path
     """
     py_files = list(src.glob("*.py"))
     ipynb_files = list(src.glob("*.ipynb"))
@@ -76,24 +131,13 @@ def dump_python_files(src, dst):
         shutil.copy2(f"{str(py_file.absolute())}", f"{dst}/{py_file.name}")
 
 
-def import_experiment_and_runner(expdir: pathlib.Path):
+def dump_experiment_code(src: pathlib.Path, dst: pathlib.Path) -> None:
     """
-    @TODO: Docs. Contribution is welcome
-    """
-    if not isinstance(expdir, pathlib.Path):
-        expdir = pathlib.Path(expdir)
-    m = import_module(expdir)
-    runner_fn = m.Runner
-    if hasattr(m, "Experiment"):
-        experiment_fn = m.Experiment
-    else:
-        experiment_fn = None
-    return experiment_fn, runner_fn
+    Dumps your experiment code for Config API use cases.
 
-
-def dump_base_experiment_code(src: pathlib.Path, dst: pathlib.Path):
-    """
-    @TODO: Docs. Contribution is welcome
+    Args:
+        src (pathlib.Path): source code path
+        dst (pathlib.Path): destination code path
     """
     utcnow = get_utcnow_time()
     dst = dst.joinpath("code")
@@ -156,7 +200,7 @@ __all__ = [
     "import_module",
     "dump_code",
     "dump_python_files",
-    "import_experiment_and_runner",
-    "dump_base_experiment_code",
+    "prepare_config_api_components",
+    "dump_experiment_code",
     "distributed_cmd_run",
 ]
