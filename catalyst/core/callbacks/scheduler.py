@@ -113,9 +113,12 @@ class SchedulerCallback(ISchedulerCallback):
     ):
         if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
             scheduler.step(reduced_metric)
-            lr = scheduler.optimizer.param_groups[0]["lr"]
         else:
             scheduler.step()
+
+        if hasattr(scheduler, "get_last_lr"):
+            lr = scheduler.get_last_lr()[0]
+        else:
             lr = scheduler.get_lr()[0]
 
         momentum = utils.get_optimizer_momentum(scheduler.optimizer)
