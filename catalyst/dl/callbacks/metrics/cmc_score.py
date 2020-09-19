@@ -144,7 +144,7 @@ class CMCScoreCallback(Callback):
         for key in self.list_args:
             metric = self._metric_fn(
                 query_embeddings=self._query_embeddings,
-                gallery_embeddings=self._gallery_embeddings_embeddings,
+                gallery_embeddings=self._gallery_embeddings,
                 conformity_matrix=conformity_matrix,
                 topk=key,
             )
