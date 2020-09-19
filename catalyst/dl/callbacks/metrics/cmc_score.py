@@ -143,10 +143,10 @@ class CMCScoreCallback(Callback):
         )
         for key in self.list_args:
             metric = self._metric_fn(
-                self._gallery_embeddings,
-                self._query_embeddings,
-                conformity_matrix,
-                key,
+                query_embeddings=self._query_embeddings,
+                gallery_embeddings=self._gallery_embeddings_embeddings,
+                conformity_matrix=conformity_matrix,
+                topk=key,
             )
             runner.loader_metrics[f"{self._prefix}{key:02}"] = metric
         self._gallery_embeddings = None
