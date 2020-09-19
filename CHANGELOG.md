@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - Logging double logging :) ([#936](https://github.com/catalyst-team/catalyst/pull/936))
 
+- CMCCallback ([#941](https://github.com/catalyst-team/catalyst/pull/941))
 
 ## [20.09] - 2020-09-07
 
