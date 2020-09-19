@@ -138,7 +138,7 @@ class CMCScoreCallback(Callback):
             self._query_idx == self._query_size
         ), "An error occurred during the accumulation process."
 
-        conformity_matrix = self._query_labels == self._gallery_labels.reshape(
+        conformity_matrix = self._gallery_labels == self._query_labels.reshape(
             -1, 1
         )
         for key in self.list_args:
