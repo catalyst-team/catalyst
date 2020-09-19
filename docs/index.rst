@@ -88,19 +88,28 @@ Getting started
     # model tracing
     traced_model = runner.trace(loader=loaders["valid"])
 
-- `Catalyst 101 — Accelerated PyTorch`_
-- `Minimal examples`_
-- `Customizing what happens in train`_
-- `Colab with ML, CV, NLP, GANs and RecSys demos`_
-- For Catalyst.RL introduction, please follow `Catalyst.RL repo`_
-- For more Catalyst tutorials, please check `Catalyst section`_
+
+Step by step guide
+~~~~~~~~~~~~~~~~~~~~~~
+1. Start with `Catalyst 101 — Accelerated PyTorch`_ introduction.
+2. Check `minimal examples`_.
+3. Try `notebook tutorials with Google Colab`_.
+4. Read `blogposts`_ with use-cases and guides (and Config API intro).
+5. Go through advanced  `classification`_, `detection`_ and `segmentation`_ pipelines with Config API. More pipelines available under `projects section`_.
+6. Want more? See `Alchemy`_ and `Reaction`_ packages.
+7. For Catalyst.RL introduction, please follow `Catalyst.RL repo`_.
 
 .. _`Catalyst 101 — Accelerated PyTorch`: https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff
-.. _`Minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
-.. _`Customizing what happens in train`: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb
-.. _Colab with ML, CV, NLP, GANs and RecSys demos: https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb
+.. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+.. _`Notebook Tutorials with Google Colab`: https://github.com/catalyst-team/catalyst#tutorials
+.. _`blogposts`: https://github.com/catalyst-team/catalyst#blogposts
+.. _`classification`: https://github.com/catalyst-team/classification
+.. _`detection`: https://github.com/catalyst-team/detection
+.. _`segmentation`: https://github.com/catalyst-team/segmentation
+.. _`projects section`: https://github.com/catalyst-team/catalyst#projects
+.. _Alchemy: https://github.com/catalyst-team/alchemy
+.. _Reaction: https://github.com/catalyst-team/reaction
 .. _Catalyst.RL repo: https://github.com/catalyst-team/catalyst-rl
-.. _Catalyst section: https://github.com/catalyst-team/catalyst#catalyst
 
 Overview
 ----------------------------------------

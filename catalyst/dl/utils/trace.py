@@ -6,6 +6,7 @@ from typing import (  # isort:skip
     Union,
 )
 import inspect
+import logging
 from pathlib import Path
 
 from torch import jit, nn
@@ -20,13 +21,15 @@ from catalyst.utils import (
     get_native_batch_from_loaders,
     get_nn_from_ddp_module,
     get_requires_grad,
-    import_experiment_and_runner,
     load_checkpoint,
     load_config,
     pack_checkpoint,
+    prepare_config_api_components,
     set_requires_grad,
     unpack_checkpoint,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def _get_input_argnames(
@@ -187,28 +190,27 @@ def trace_model_from_checkpoint(
     """
     config_path = logdir / "configs" / "_config.json"
     checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
-    print("Load config")
+    logging.info("Load config")
     config: Dict[str, dict] = load_config(config_path)
-    runner_params = config.get("runner_params", {}) or {}
 
     # Get expdir name
     config_expdir = Path(config["args"]["expdir"])
     # We will use copy of expdir from logs for reproducibility
     expdir = Path(logdir) / "code" / config_expdir.name
 
-    print("Import experiment and runner from logdir")
-    experiment_fn, runner_fn = import_experiment_and_runner(expdir)
-    experiment: ConfigExperiment = experiment_fn(config)
+    logger.info("Import experiment and runner from logdir")
+    experiment: ConfigExperiment = None
+    experiment, runner, _ = prepare_config_api_components(
+        expdir=expdir, config=config
+    )
 
-    print(f"Load model state from checkpoints/{checkpoint_name}.pth")
+    logger.info(f"Load model state from checkpoints/{checkpoint_name}.pth")
     if stage is None:
         stage = list(experiment.stages)[0]
 
     model = experiment.get_model(stage)
     checkpoint = load_checkpoint(checkpoint_path)
     unpack_checkpoint(checkpoint, model=model)
-
-    runner: runner_fn = runner_fn(**runner_params)
     runner.model, runner.device = model, device
 
     if loader is None:
@@ -225,7 +227,7 @@ def trace_model_from_checkpoint(
         runner.model = model_dump
         return result
 
-    print("Tracing")
+    logger.info("Tracing is running...")
     traced_model = trace_model(
         model=model,
         predict_fn=predict_fn,
@@ -237,7 +239,7 @@ def trace_model_from_checkpoint(
         device=device,
     )
 
-    print("Done")
+    logger.info("Done")
     return traced_model
 
 
@@ -254,7 +256,7 @@ def trace_model_from_runner(
     Traces model using created experiment and runner.
 
     Args:
-        runner (Runner): Current runner.
+        runner (IRunner): Current runner.
         checkpoint_name (str): Name of model checkpoint to use, if None
             traces current model from runner
         method_name (str): Model's method name that will be

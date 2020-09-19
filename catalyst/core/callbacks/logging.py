@@ -14,7 +14,13 @@ from catalyst.core.callbacks import formatters
 from catalyst.core.runner import IRunner
 
 
-class VerboseLogger(Callback):
+class ILoggerCallback(Callback):
+    """Logger callback interface, abstraction over logging step"""
+
+    pass
+
+
+class VerboseLogger(ILoggerCallback):
     """Logs the params into console."""
 
     def __init__(
@@ -65,16 +71,6 @@ class VerboseLogger(Callback):
             file=sys.stdout,
         )
 
-    def on_loader_end(self, runner: IRunner):
-        """Cleanup and close tqdm progress bar."""
-        # self.tqdm.visible = False
-        # self.tqdm.leave = True
-        # self.tqdm.disable = True
-        self.tqdm.clear()
-        self.tqdm.close()
-        self.tqdm = None
-        self.step = 0
-
     def on_batch_end(self, runner: IRunner):
         """Update tqdm progress bar at the end of each batch."""
         self.tqdm.set_postfix(
@@ -86,6 +82,16 @@ class VerboseLogger(Callback):
         )
         self.tqdm.update()
 
+    def on_loader_end(self, runner: IRunner):
+        """Cleanup and close tqdm progress bar."""
+        # self.tqdm.visible = False
+        # self.tqdm.leave = True
+        # self.tqdm.disable = True
+        self.tqdm.clear()
+        self.tqdm.close()
+        self.tqdm = None
+        self.step = 0
+
     def on_exception(self, runner: IRunner):
         """Called if an Exception was raised."""
         exception = runner.exception
@@ -93,11 +99,12 @@ class VerboseLogger(Callback):
             return
 
         if isinstance(exception, KeyboardInterrupt):
-            self.tqdm.write("Early exiting")
+            if self.tqdm is not None:
+                self.tqdm.write("Early exiting")
             runner.need_exception_reraise = False
 
 
-class ConsoleLogger(Callback):
+class ConsoleLogger(ILoggerCallback):
     """Logger callback,
     translates ``runner.*_metrics`` to console and text file.
     """
@@ -108,10 +115,13 @@ class ConsoleLogger(Callback):
         self.logger = None
 
     @staticmethod
-    def _get_logger(logdir):
+    def _get_logger():
         logger = logging.getLogger("metrics_logger")
         logger.setLevel(logging.INFO)
+        return logger
 
+    @staticmethod
+    def _setup_logger(logger, logdir: str):
         ch = logging.StreamHandler(sys.stdout)
         ch.setLevel(logging.INFO)
 
@@ -126,21 +136,21 @@ class ConsoleLogger(Callback):
             fh.setLevel(logging.INFO)
             fh.setFormatter(txt_formatter)
             logger.addHandler(fh)
-
         # logger.addHandler(jh)
-        return logger
+
+    @staticmethod
+    def _clean_logger(logger):
+        for handler in logger.handlers:
+            handler.close()
+        logger.handlers = []
 
     def on_stage_start(self, runner: IRunner):
         """Prepare ``runner.logdir`` for the current stage."""
         if runner.logdir:
             runner.logdir.mkdir(parents=True, exist_ok=True)
-        self.logger = self._get_logger(runner.logdir)
-
-    def on_stage_end(self, runner: IRunner):
-        """Called at the end of each stage."""
-        for handler in self.logger.handlers:
-            handler.close()
-        self.logger.handlers = []
+        self.logger = self._get_logger()
+        self._clean_logger(self.logger)
+        self._setup_logger(self.logger, runner.logdir)
 
     def on_epoch_end(self, runner: IRunner):
         """
@@ -152,8 +162,12 @@ class ConsoleLogger(Callback):
         """
         self.logger.info("", extra={"runner": runner})
 
+    def on_stage_end(self, runner: IRunner):
+        """Called at the end of each stage."""
+        self._clean_logger(self.logger)
 
-class TensorboardLogger(Callback):
+
+class TensorboardLogger(ILoggerCallback):
     """Logger callback, translates ``runner.metric_manager`` to tensorboard."""
 
     def __init__(
@@ -256,6 +270,7 @@ class TensorboardLogger(Callback):
 
 
 __all__ = [
+    "ILoggerCallback",
     "ConsoleLogger",
     "TensorboardLogger",
     "VerboseLogger",

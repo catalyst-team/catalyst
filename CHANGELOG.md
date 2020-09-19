@@ -5,7 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 
-## [20.09] - YYYY-MM-DD
+## [20.09.1] - YYYY-MM-DD
+
+### Added
+
+- Runner registry support for Config API ([#936](https://github.com/catalyst-team/catalyst/pull/936))
+
+### Changed
+
+- Config API components preparation logic moved to ``utils.prepare_config_api_components`` ([#936](https://github.com/catalyst-team/catalyst/pull/936))
+
+### Removed
+
+- 
+
+### Fixed
+
+- Logging double logging :) ([#936](https://github.com/catalyst-team/catalyst/pull/936))
+
+
+## [20.09] - 2020-09-07
 
 ### Added
 
@@ -15,10 +34,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Multi-scheduler support for multi-optimizer case ([#923](https://github.com/catalyst-team/catalyst/pull/923))
 - Native mixed-precision training support ([#740](https://github.com/catalyst-team/catalyst/issues/740))
 - `OptiomizerCallback` - flag `use_fast_zero_grad` for faster (and hacky) version of `optimizer.zero_grad()` ([#927](https://github.com/catalyst-team/catalyst/pull/927))
+- `IOptiomizerCallback`, `ISchedulerCallback`, `ICheckpointCallback`, `ILoggerCallback` as core abstractions for Callbacks ([#933](https://github.com/catalyst-team/catalyst/pull/933))
+- flag `USE_AMP` for PyTorch AMP usage ([#933](https://github.com/catalyst-team/catalyst/pull/933))
 
 ### Changed
 
-- 
+- Pruning moved to `catalyst.dl` ([#933](https://github.com/catalyst-team/catalyst/pull/933))
+- default `USE_APEX` changed to 0 ([#933](https://github.com/catalyst-team/catalyst/pull/933))
 
 ### Removed
 
@@ -33,7 +55,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - runtime warning for PyTorch 1.6 ([920](https://github.com/catalyst-team/catalyst/pull/920))
 - Apex synbn usage ([920](https://github.com/catalyst-team/catalyst/pull/920))
 - Catalyst dependency on system git ([922](https://github.com/catalyst-team/catalyst/pull/922))
-
 
 
 ## [20.08] - 2020-08-09
