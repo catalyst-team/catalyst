@@ -250,9 +250,23 @@ Wing
 Modules
 ~~~~~~~~~~~~~~~~
 
+ArcFace: Additive Angular Margin Loss for Deep Face Recognition
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.. automodule:: catalyst.contrib.nn.modules.arcface
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Common modules
 """"""""""""""""""""""""""""""""""""""""""
 .. automodule:: catalyst.contrib.nn.modules.common
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+CosFace: Large Margin Cosine Loss for Deep Face Recognition
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.. automodule:: catalyst.contrib.nn.modules.cosface
     :members:
     :undoc-members:
     :show-inheritance:
@@ -285,6 +299,12 @@ SqueezeAndExcitation
     :undoc-members:
     :show-inheritance:
 
+SoftMax
+""""""""""""""""""""""""""""""""""""""""""
+.. automodule:: catalyst.contrib.nn.modules.softmax
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 
 Optimizers
