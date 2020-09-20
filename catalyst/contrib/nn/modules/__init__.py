@@ -31,3 +31,7 @@ from catalyst.contrib.nn.modules.se import (
     scSE,
     cSE,
 )
+
+from catalyst.contrib.nn.modules.softmax import SoftMax
+from catalyst.contrib.nn.modules.arcface import ArcFace
+from catalyst.contrib.nn.modules.cosface import CosFace

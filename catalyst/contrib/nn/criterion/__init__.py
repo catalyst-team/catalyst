@@ -36,4 +36,3 @@ from catalyst.contrib.nn.criterion.triplet import (
     TripletMarginLossWithSampler,
 )
 from catalyst.contrib.nn.criterion.wing import WingLoss
-from catalyst.contrib.nn.criterion.cosface import CosFaceLoss
