@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Runner registry support for Config API ([#936](https://github.com/catalyst-team/catalyst/pull/936))
+- SoftMax, CosFace, ArcFace layers to contrib ([#939](https://github.com/catalyst-team/catalyst/pull/939))
 
 ### Changed
 
