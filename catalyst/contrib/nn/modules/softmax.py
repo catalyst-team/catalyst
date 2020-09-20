@@ -33,6 +33,7 @@ class SoftMax(nn.Module):
         nn.init.zeros_(self.bias)
 
     def __repr__(self) -> str:
+        """SoftMax representation."""
         return "SoftMax(in_features={},out_features={})".format(
             self.in_features, self.out_features
         )

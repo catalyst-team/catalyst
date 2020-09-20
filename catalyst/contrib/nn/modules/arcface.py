@@ -55,6 +55,7 @@ class ArcFace(nn.Module):
         nn.init.xavier_uniform_(self.weight)
 
     def __repr__(self) -> str:
+        """ArcFace representation."""
         return "ArcFace(in_features={},out_features={},s={},m={})".format(
             self.in_features, self.out_features, self.s, self.m
         )
