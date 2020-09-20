@@ -48,7 +48,7 @@ class CosFace(nn.Module):
         nn.init.xavier_uniform_(self.weight)
 
     def __repr__(self) -> str:
-        """CosFace representation."""
+        """Object representation."""
         return "CosFace(in_features={},out_features={},s={},m={})".format(
             self.in_features, self.out_features, self.s, self.m
         )
