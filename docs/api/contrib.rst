@@ -162,6 +162,13 @@ Extensions for ``torch.nn``
 Criterion
 ~~~~~~~~~~~~~~~~
 
+AdamP
+"""""""""""""
+.. automodule:: catalyst.contrib.nn.criterion.adamp
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Cross entropy
 """""""""""""
 .. automodule:: catalyst.contrib.nn.criterion.ce
@@ -228,6 +235,13 @@ Lovasz
 Margin
 """""""""
 .. automodule:: catalyst.contrib.nn.criterion.margin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+SGDP
+"""""""""""""
+.. automodule:: catalyst.contrib.nn.criterion.sgdp
     :members:
     :undoc-members:
     :show-inheritance:

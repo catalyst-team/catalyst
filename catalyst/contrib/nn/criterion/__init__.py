@@ -1,6 +1,7 @@
 # flake8: noqa
 from torch.nn.modules.loss import *
 
+from catalyst.contrib.nn.criterion.adamp import AdamP
 from catalyst.contrib.nn.criterion.ce import (
     MaskCrossEntropyLoss,
     NaiveCrossEntropyLoss,
@@ -29,6 +30,7 @@ from catalyst.contrib.nn.criterion.lovasz import (
     LovaszLossMultiLabel,
 )
 from catalyst.contrib.nn.criterion.margin import MarginLoss
+from catalyst.contrib.nn.criterion.sgdp import SGDP
 from catalyst.contrib.nn.criterion.triplet import (
     TripletLoss,
     TripletLossV2,
