@@ -14,13 +14,37 @@ from torch.optim.optimizer import Optimizer, required
 
 
 class SGDP(Optimizer):
+    """Implements SGDP algorithm.
+
+    The SGDP variant was proposed in `Slowing Down the Weight Norm Increase in Momentum-based Optimizers`_.
+
+    Args:
+        params (iterable): iterable of parameters to optimize or dicts defining
+            parameter groups
+        lr (float): learning rate
+        momentum (float, optional): momentum factor (default: 0)
+        weight_decay (float, optional): weight decay (L2 penalty) (default: 0)
+        dampening (float, optional): dampening for momentum (default: 0)
+        nesterov (bool, optional): enables Nesterov momentum (default: False)
+        eps (float, optional): term added to the denominator to improve
+            numerical stability (default: 1e-8)
+        delta (float): threhold that determines whether
+            a set of parameters is scale invariant or not (default: 0.1)
+        wd_ratio (float): relative weight decay applied on scale-invariant
+            parameters compared to that applied on scale-variant parameters
+            (default: 0.1)
+
+    .. _Slowing Down the Weight Norm Increase in Momentum-based Optimizers:
+        https://arxiv.org/abs/2006.08217
+    """
+
     def __init__(
         self,
         params,
         lr=required,
         momentum=0,
-        dampening=0,
         weight_decay=0,
+        dampening=0,
         nesterov=False,
         eps=1e-8,
         delta=0.1,
@@ -71,6 +95,17 @@ class SGDP(Optimizer):
         return perturb, wd
 
     def step(self, closure=None):
+        """
+        Performs a single optimization step (parameter update).
+
+        Arguments:
+            closure (callable): A closure that reevaluates the model and
+                returns the loss. Optional for most optimizers.
+
+        .. note::
+            Unless otherwise specified, this function should not modify the
+            ``.grad`` field of the parameters.
+        """
         loss = None
         if closure is not None:
             loss = closure()
