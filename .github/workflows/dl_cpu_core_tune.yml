@@ -1,4 +1,4 @@
-name: catalyst-settings
+name: catalyst-tune
 # <- standard block end ->
 on:
   push:
@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    name: dl-cpu-core-settings
+    name: dl-cpu-core-tune
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
