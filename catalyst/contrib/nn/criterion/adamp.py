@@ -16,8 +16,10 @@ from torch.optim.optimizer import Optimizer, required
 class AdamP(Optimizer):
     """Implements AdamP algorithm.
 
-    The original Adam algorithm was proposed in `Adam: A Method for Stochastic Optimization`_.
-    The AdamP variant was proposed in `Slowing Down the Weight Norm Increase in Momentum-based Optimizers`_.
+    The original Adam algorithm was proposed in
+    `Adam: A Method for Stochastic Optimization`_.
+    The AdamP variant was proposed in
+    `Slowing Down the Weight Norm Increase in Momentum-based Optimizers`_.
 
     Arguments:
         params (iterable): iterable of parameters to optimize or dicts defining
@@ -27,13 +29,15 @@ class AdamP(Optimizer):
             running averages of gradient and its square (default: (0.9, 0.999))
         eps (float, optional): term added to the denominator to improve
             numerical stability (default: 1e-8)
-        weight_decay (float, optional): weight decay coefficient (default: 1e-2)
-        delta (float): threhold that determines whether
+        weight_decay (float, optional): weight decay coefficient
+            (default: 0)
+        delta (float): threshold that determines whether
             a set of parameters is scale invariant or not (default: 0.1)
         wd_ratio (float): relative weight decay applied on scale-invariant
             parameters compared to that applied on scale-variant parameters
             (default: 0.1)
-        nesterov (boolean, optional): enables Nesterov momentum (default: False)
+        nesterov (boolean, optional): enables Nesterov momentum
+            (default: False)
 
     .. _Adam\: A Method for Stochastic Optimization:
         https://arxiv.org/abs/1412.6980
@@ -52,6 +56,27 @@ class AdamP(Optimizer):
         wd_ratio=0.1,
         nesterov=False,
     ):
+        """
+
+        Args:
+            params (iterable): iterable of parameters to optimize
+                or dicts defining parameter groups
+            lr (float, optional): learning rate (default: 1e-3)
+            betas (Tuple[float, float], optional): coefficients
+                used for computing running averages of gradient
+                and its square (default: (0.9, 0.999))
+            eps (float, optional): term added to the denominator to improve
+                numerical stability (default: 1e-8)
+            weight_decay (float, optional): weight decay coefficient
+                (default: 1e-2)
+            delta (float): threshold that determines whether
+                a set of parameters is scale invariant or not (default: 0.1)
+            wd_ratio (float): relative weight decay applied on scale-invariant
+                parameters compared to that applied on scale-variant parameters
+                (default: 0.1)
+            nesterov (boolean, optional): enables Nesterov momentum
+                (default: False)
+        """
         defaults = dict(
             lr=lr,
             betas=betas,
@@ -103,9 +128,8 @@ class AdamP(Optimizer):
             closure (callable): A closure that reevaluates the model and
                 returns the loss. Optional for most optimizers.
 
-        .. note::
-            Unless otherwise specified, this function should not modify the
-            ``.grad`` field of the parameters.
+        Returns:
+            computed loss
         """
         loss = None
         if closure is not None:

@@ -28,7 +28,7 @@ class SGDP(Optimizer):
         nesterov (bool, optional): enables Nesterov momentum (default: False)
         eps (float, optional): term added to the denominator to improve
             numerical stability (default: 1e-8)
-        delta (float): threhold that determines whether
+        delta (float): threshold that determines whether
             a set of parameters is scale invariant or not (default: 0.1)
         wd_ratio (float): relative weight decay applied on scale-invariant
             parameters compared to that applied on scale-variant parameters
@@ -50,6 +50,26 @@ class SGDP(Optimizer):
         delta=0.1,
         wd_ratio=0.1,
     ):
+        """
+
+        Args:
+            params (iterable): iterable of parameters to optimize
+                or dicts defining parameter groups
+            lr (float): learning rate
+            momentum (float, optional): momentum factor (default: 0)
+            weight_decay (float, optional): weight decay (L2 penalty)
+                (default: 0)
+            dampening (float, optional): dampening for momentum (default: 0)
+            nesterov (bool, optional): enables Nesterov momentum
+                (default: False)
+            eps (float, optional): term added to the denominator to improve
+                numerical stability (default: 1e-8)
+            delta (float): threshold that determines whether
+                a set of parameters is scale invariant or not (default: 0.1)
+            wd_ratio (float): relative weight decay applied on scale-invariant
+                parameters compared to that applied on scale-variant parameters
+                (default: 0.1)
+        """
         defaults = dict(
             lr=lr,
             momentum=momentum,
@@ -102,9 +122,8 @@ class SGDP(Optimizer):
             closure (callable): A closure that reevaluates the model and
                 returns the loss. Optional for most optimizers.
 
-        .. note::
-            Unless otherwise specified, this function should not modify the
-            ``.grad`` field of the parameters.
+        Returns:
+            computed loss
         """
         loss = None
         if closure is not None:
