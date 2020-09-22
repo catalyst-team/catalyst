@@ -18,8 +18,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --n-trials=3 \
   --timeout=600
 
-if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
-    echo "File $LOGFILE does not exist"
-    exit 1
+if [[ ! -d "$BASELOGDIR" ]]; then
+  echo "Directory $BASELOGDIR does not exist"
+  exit 1
 fi
-
