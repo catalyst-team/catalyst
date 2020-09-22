@@ -140,7 +140,7 @@ def main_worker(args, unknown_args):
             expdir=expdir, config=trial_config
         )
         # @TODO: here we need better solution.
-        experiment._trial = trial
+        experiment._trial = trial  # noqa: WPS437
 
         if experiment.logdir is not None and utils.get_rank() <= 0:
             utils.dump_environment(
