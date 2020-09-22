@@ -16,7 +16,8 @@ from torch.optim.optimizer import Optimizer, required
 class SGDP(Optimizer):
     """Implements SGDP algorithm.
 
-    The SGDP variant was proposed in `Slowing Down the Weight Norm Increase in Momentum-based Optimizers`_.
+    The SGDP variant was proposed in
+    `Slowing Down the Weight Norm Increase in Momentum-based Optimizers`_.
 
     Args:
         params (iterable): iterable of parameters to optimize or dicts defining

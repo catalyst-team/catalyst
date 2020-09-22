@@ -10,7 +10,7 @@ import math
 
 import torch
 import torch.nn.functional as F
-from torch.optim.optimizer import Optimizer, required
+from torch.optim.optimizer import Optimizer
 
 
 class AdamP(Optimizer):
