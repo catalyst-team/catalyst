@@ -25,7 +25,7 @@ class OptunaPruningCallback(Callback):
                 criterion=criterion,
                 optimizer=optimizer,
                 callbacks=[
-                    OptunaCallback(trial)
+                    OptunaPruningCallback(trial)
                     # some other callbacks ...
                 ],
                 num_epochs=num_epochs,
@@ -35,7 +35,7 @@ class OptunaPruningCallback(Callback):
         study = optuna.create_study()
         study.optimize(objective, n_trials=100, timeout=600)
 
-    Config API is not supported.
+    Config API is supported through `catalyst-dl tune` command.
     """
 
     def __init__(self, trial: optuna.Trial = None):
@@ -52,14 +52,24 @@ class OptunaPruningCallback(Callback):
     def on_stage_start(self, runner: "IRunner"):
         """
         On stage start hook.
-        Takes ``optuna_trial`` from ``Experiment`` for future needs if required.
+        Takes ``optuna_trial`` from ``Experiment`` for future usage if needed.
 
         Args:
             runner: runner for current experiment
+
+        Raises:
+            NotImplementedError: if no Optuna trial was found on stage start.
         """
-        optuna_trial = getattr(runner.experiment, "optuna_trial", None)
-        if self.trial is None and optuna_trial is not None:
-            self.trial = optuna_trial
+        trial = runner.experiment.trial
+        if (
+            self.trial is None
+            and trial is not None
+            and isinstance(trial, optuna.Trial)
+        ):
+            self.trial = trial
+
+        if self.trial is None:
+            raise NotImplementedError("No Optuna trial found for logging")
 
     def on_epoch_end(self, runner: "IRunner"):
         """
@@ -67,11 +77,11 @@ class OptunaPruningCallback(Callback):
 
         Considering prune or not to prune current run at current epoch.
 
-        Raises:
-            TrialPruned: if current run should be pruned
-
         Args:
             runner: runner for current experiment
+
+        Raises:
+            TrialPruned: if current run should be pruned
         """
         metric_value = runner.valid_metrics[runner.main_metric]
         self.trial.report(metric_value, step=runner.epoch)

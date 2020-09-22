@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-# Experimental API for Optuna integration to Catalyst Config API
-# for AutoML support.
+# Experimental API for Optuna integration with Catalyst Config API
+# for AutoML hyperparameters tuning.
 from typing import Dict, Tuple
 import argparse
 from argparse import ArgumentParser
@@ -139,7 +139,8 @@ def main_worker(args, unknown_args):
         experiment, runner, trial_config = utils.prepare_config_api_components(
             expdir=expdir, config=trial_config
         )
-        experiment.optuna_trial = trial
+        # @TODO: here we need better solution.
+        experiment._trial = trial
 
         if experiment.logdir is not None and utils.get_rank() <= 0:
             utils.dump_environment(
