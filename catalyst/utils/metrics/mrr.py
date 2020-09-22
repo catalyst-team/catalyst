@@ -8,8 +8,13 @@ import torch
 def mrr(outputs: torch.Tensor, targets: torch.Tensor, k=100) -> torch.Tensor:
 
     """
-    Calculate the MRR score given model ouptputs and targets
+    Calculate the Mean Reciprocal Rank (MRR) score given model ouptputs and targets
     Users data aggreagtesd in batches.
+
+    The MRR@k is the mean overall user of the reciprocal rank, that is 
+    the rank of the highest ranked relevant item, if any in the top *k*, 0 otherwise.
+    https://en.wikipedia.org/wiki/Mean_reciprocal_rank
+
     Args:
         outputs (torch.Tensor):
             Tensor weith predicted score
@@ -21,13 +26,17 @@ def mrr(outputs: torch.Tensor, targets: torch.Tensor, k=100) -> torch.Tensor:
             for the user and 0 not relevant
             size: [batch_szie, slate_length]
             ground truth, labels
+        k (int):
+            Parameter fro evaluation on top-k items
 
     Returns:
         result (torch.Tensor): 
             The mrr score for each user.
+
+    Examples
             
     """
-    k = min(outputs.size()[1], k)
+    k = min(outputs.size(1), k)
     _, indices_for_sort = outputs.sort(descending=True, dim=-1)
     true_sorted_by_preds = torch.gather(
         targets, dim=-1, index=indices_for_sort

@@ -20,15 +20,15 @@ optimizer = torch.optim.Adam(model.parameters())
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
 
 # model training
-runner = SupervisedRunner()
-runner.train(
-    model=model,
-    criterion=criterion,
-    optimizer=optimizer,
-    scheduler=scheduler,
-    loaders=loaders,
-    logdir="./logdir",
-    num_epochs=2,
-    verbose=True,
-    callbacks=[MRRCallback, SchedulerCallback(reduced_metric="loss")]
-)
+# runner = SupervisedRunner()
+# runner.train(
+#     model=model,
+#     criterion=criterion,
+#     optimizer=optimizer,
+#     scheduler=scheduler,
+#     loaders=loaders,
+#     logdir="./logdir",
+#     num_epochs=2,
+#     verbose=True,
+#     callbacks=[MRRCallback, SchedulerCallback(reduced_metric="loss")]
+# )
