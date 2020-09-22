@@ -162,13 +162,6 @@ Extensions for ``torch.nn``
 Criterion
 ~~~~~~~~~~~~~~~~
 
-AdamP
-"""""""""""""
-.. automodule:: catalyst.contrib.nn.criterion.adamp
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Cross entropy
 """""""""""""
 .. automodule:: catalyst.contrib.nn.criterion.ce
@@ -239,13 +232,6 @@ Margin
     :undoc-members:
     :show-inheritance:
 
-SGDP
-"""""""""""""
-.. automodule:: catalyst.contrib.nn.criterion.sgdp
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Triplet
 """""""""
 .. automodule:: catalyst.contrib.nn.criterion.triplet
@@ -300,9 +286,15 @@ SqueezeAndExcitation
     :show-inheritance:
 
 
-
 Optimizers
 ~~~~~~~~~~~~~~~~
+
+AdamP
+"""""""""""""
+.. automodule:: catalyst.contrib.nn.optimizers.adamp
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Lamb
 """"""""""""""""""""
@@ -335,6 +327,13 @@ RAdam
 Ralamb
 """"""""""""""""""""
 .. automodule:: catalyst.contrib.nn.optimizers.ralamb
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+SGDP
+"""""""""""""
+.. automodule:: catalyst.contrib.nn.optimizers.sgdp
     :members:
     :undoc-members:
     :show-inheritance:
