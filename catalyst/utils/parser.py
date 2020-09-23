@@ -3,43 +3,11 @@
 import copy
 from pathlib import Path
 
-from catalyst.utils.config import load_config
-from catalyst.utils.dict import merge_dicts
+from omegaconf import OmegaConf
 
 
 def parse_config_args(*, config, args, unknown_args):
     """@TODO: Docs. Contribution is welcome."""
-    for arg in unknown_args:
-        arg_name, value = arg.split("=")
-        arg_name = arg_name.lstrip("-").strip("/")
-
-        value_content, value_type = value.rsplit(":", 1)
-
-        if "/" in arg_name:
-            arg_names = arg_name.split("/")
-            if value_type == "str":
-                arg_value = value_content
-
-                if arg_value.lower() == "none":
-                    arg_value = None
-            else:
-                arg_value = eval("%s(%s)" % (value_type, value_content))
-
-            config_copy = config
-            for arg_name in arg_names[:-1]:
-                if arg_name not in config_copy:
-                    config_copy[arg_name] = {}
-
-                config_copy = config_copy[arg_name]
-
-            config_copy[arg_names[-1]] = arg_value
-        else:
-            if value_type == "str":
-                arg_value = value_content
-            else:
-                arg_value = eval("%s(%s)" % (value_type, value_content))
-            args.__setattr__(arg_name, arg_value)
-
     config_args = config.get("args", None)
     if config_args is None:
         config["args"] = {}
@@ -74,10 +42,11 @@ def parse_args_uargs(args, unknown_args):
     args_copy = copy.deepcopy(args)
 
     # load params
-    config = {}
+    configs = []
     for config_path in args_copy.configs:
-        config_part = load_config(config_path, ordered=True)
-        config = merge_dicts(config, config_part)
+        configs.append(OmegaConf.load(config_path))
+    cli_config = OmegaConf.from_cli()
+    config = OmegaConf.merge(*configs, cli_config)
 
     config, args_copy = parse_config_args(
         config=config, args=args_copy, unknown_args=unknown_args
