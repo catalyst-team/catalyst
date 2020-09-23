@@ -1326,9 +1326,15 @@ be turned off. It is useful for debugging</p></li>
 </div>
 <div class="section" id="module-catalyst.contrib.dl.callbacks.optuna_callback">
 <span id="optunacallback"></span><h4><a class="toc-backref" href="#id35">OptunaCallback</a><a class="headerlink" href="#module-catalyst.contrib.dl.callbacks.optuna_callback" title="Permalink to this headline">¶</a></h4>
-<dl class="class">
+<dl class="attribute">
 <dt id="catalyst.contrib.dl.callbacks.optuna_callback.OptunaCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.callbacks.optuna_callback.</code><code class="sig-name descname">OptunaCallback</code><span class="sig-paren">(</span><em class="sig-param">trial: optuna.trial._trial.Trial</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/optuna_callback.html#OptunaCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.optuna_callback.OptunaCallback" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.contrib.dl.callbacks.optuna_callback.</code><code class="sig-name descname">OptunaCallback</code><a class="headerlink" href="#catalyst.contrib.dl.callbacks.optuna_callback.OptunaCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#catalyst.contrib.dl.callbacks.optuna_callback.OptunaPruningCallback" title="catalyst.contrib.dl.callbacks.optuna_callback.OptunaPruningCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.dl.callbacks.optuna_callback.OptunaPruningCallback</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.contrib.dl.callbacks.optuna_callback.OptunaPruningCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.dl.callbacks.optuna_callback.</code><code class="sig-name descname">OptunaPruningCallback</code><span class="sig-paren">(</span><em class="sig-param">trial: optuna.trial._trial.Trial = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/optuna_callback.html#OptunaPruningCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.optuna_callback.OptunaPruningCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
 <p>Optuna callback for pruning unpromising runs</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">optuna</span>
@@ -1347,7 +1353,7 @@ be turned off. It is useful for debugging</p></li>
         <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
         <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
         <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
-            <span class="n">OptunaCallback</span><span class="p">(</span><span class="n">trial</span><span class="p">)</span>
+            <span class="n">OptunaPruningCallback</span><span class="p">(</span><span class="n">trial</span><span class="p">)</span>
             <span class="c1"># some other callbacks ...</span>
         <span class="p">],</span>
         <span class="n">num_epochs</span><span class="o">=</span><span class="n">num_epochs</span><span class="p">,</span>
@@ -1358,10 +1364,10 @@ be turned off. It is useful for debugging</p></li>
 <span class="n">study</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span><span class="n">objective</span><span class="p">,</span> <span class="n">n_trials</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Config API is not supported.</p>
+<p>Config API is supported through <cite>catalyst-dl tune</cite> command.</p>
 <dl class="method">
-<dt id="catalyst.contrib.dl.callbacks.optuna_callback.OptunaCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">trial: optuna.trial._trial.Trial</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/optuna_callback.html#OptunaCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.optuna_callback.OptunaCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.dl.callbacks.optuna_callback.OptunaPruningCallback.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">trial: optuna.trial._trial.Trial = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/optuna_callback.html#OptunaPruningCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.optuna_callback.OptunaPruningCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>This callback can be used for early stopping (pruning)
 unpromising runs.</p>
 <dl class="field-list simple">
@@ -1372,16 +1378,31 @@ unpromising runs.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.contrib.dl.callbacks.optuna_callback.OptunaCallback.on_epoch_end">
-<code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/optuna_callback.html#OptunaCallback.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.optuna_callback.OptunaCallback.on_epoch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>On epoch end action.</p>
+<dt id="catalyst.contrib.dl.callbacks.optuna_callback.OptunaPruningCallback.on_epoch_end">
+<code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/optuna_callback.html#OptunaPruningCallback.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.optuna_callback.OptunaPruningCallback.on_epoch_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>On epoch end hook.</p>
 <p>Considering prune or not to prune current run at current epoch.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>TrialPruned</strong> – if current run should be pruned</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – runner for current experiment</p>
 </dd>
-<dt class="field-even">Parameters</dt>
-<dd class="field-even"><p><strong>runner</strong> – runner for current experiment</p>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>TrialPruned</strong> – if current run should be pruned</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.dl.callbacks.optuna_callback.OptunaPruningCallback.on_stage_start">
+<code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/dl/callbacks/optuna_callback.html#OptunaPruningCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.dl.callbacks.optuna_callback.OptunaPruningCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>On stage start hook.
+Takes <code class="docutils literal notranslate"><span class="pre">optuna_trial</span></code> from <code class="docutils literal notranslate"><span class="pre">Experiment</span></code> for future usage if needed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – runner for current experiment</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – if no Optuna trial was found on stage start.</p>
 </dd>
 </dl>
 </dd></dl>

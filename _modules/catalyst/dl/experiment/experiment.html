@@ -305,6 +305,7 @@
         <span class="n">criterion</span><span class="p">:</span> <span class="n">Criterion</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">scheduler</span><span class="p">:</span> <span class="n">Scheduler</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">trial</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">valid_loader</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;valid&quot;</span><span class="p">,</span>
         <span class="n">main_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
@@ -336,6 +337,8 @@
 <span class="sd">            criterion (Criterion): criterion function</span>
 <span class="sd">            optimizer (Optimizer): optimizer</span>
 <span class="sd">            scheduler (Scheduler): scheduler</span>
+<span class="sd">            trial : hyperparameters optimization trial.</span>
+<span class="sd">                Used for integrations with Optuna/HyperOpt/Ray.tune.</span>
 <span class="sd">            num_epochs (int): number of experiment&#39;s epochs</span>
 <span class="sd">            valid_loader (str): loader name used to calculate</span>
 <span class="sd">                the metrics and save the checkpoints. For example,</span>
@@ -379,6 +382,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span> <span class="o">=</span> <span class="n">scheduler</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trial</span> <span class="o">=</span> <span class="n">trial</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_initial_seed</span> <span class="o">=</span> <span class="n">initial_seed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="o">=</span> <span class="n">logdir</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_stage</span> <span class="o">=</span> <span class="n">stage</span>
@@ -409,11 +414,6 @@
         <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_stage</span><span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">distributed_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Dict with the parameters for distributed and FP16 method.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distributed_params</span>
-
-    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">hparams</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns hyper parameters&quot;&quot;&quot;</span>
         <span class="n">hparams</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
@@ -429,6 +429,25 @@
             <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;train&quot;</span><span class="p">):</span>
                 <span class="n">hparams</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">_batch_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">batch_size</span>
         <span class="k">return</span> <span class="n">hparams</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">trial</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns hyperparameter trial for current experiment.</span>
+<span class="sd">        Could be usefull for Optuna/HyperOpt/Ray.tune</span>
+<span class="sd">        hyperparameters optimizers.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            &gt;&gt;&gt; experiment.trial</span>
+<span class="sd">            optuna.trial._trial.Trial  # Optuna variant</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trial</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">distributed_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Dict with the parameters for distributed and FP16 method.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distributed_params</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_loaders</span><span class="p">(</span>

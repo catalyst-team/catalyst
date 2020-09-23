@@ -324,6 +324,7 @@
 <span class="sd">            config (dict): dictionary with parameters</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trial</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_initial_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">,</span> <span class="mi">42</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
             <span class="s2">&quot;verbose&quot;</span><span class="p">,</span> <span class="kc">False</span>
@@ -338,7 +339,7 @@
             <span class="s2">&quot;overfit&quot;</span><span class="p">,</span> <span class="kc">False</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">__prepare_logdir</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_logdir</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s2">&quot;stages&quot;</span><span class="p">][</span><span class="s2">&quot;stage_params&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">merge_dicts</span><span class="p">(</span>
             <span class="n">deepcopy</span><span class="p">(</span>
@@ -352,7 +353,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">[</span><span class="s2">&quot;stages&quot;</span><span class="p">]</span>
         <span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">__prepare_logdir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># noqa: WPS112</span>
+    <span class="k">def</span> <span class="nf">_get_logdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_utcnow_time</span><span class="p">()</span>
+        <span class="n">config_hash</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_short_hash</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="n">logdir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">config_hash</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">logdir</span>
+
+    <span class="k">def</span> <span class="nf">_prepare_logdir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># noqa: WPS112</span>
         <span class="n">exclude_tag</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
 
         <span class="n">logdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;args&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;logdir&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -365,11 +372,6 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">baselogdir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">logdir_postfix</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="o">=</span> <span class="kc">None</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">hparams</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Returns hyperparameters&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_get_stages_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stages_config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
         <span class="n">stages_defaults</span> <span class="o">=</span> <span class="p">{}</span>
@@ -408,12 +410,6 @@
 
         <span class="k">return</span> <span class="n">stages_config_out</span>
 
-    <span class="k">def</span> <span class="nf">_get_logdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_utcnow_time</span><span class="p">()</span>
-        <span class="n">config_hash</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_short_hash</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-        <span class="n">logdir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">config_hash</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">return</span> <span class="n">logdir</span>
-
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">initial_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Experiment&#39;s initial seed value.&quot;&quot;&quot;</span>
@@ -425,15 +421,34 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">stages</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Experiment&#39;s stage names.&quot;&quot;&quot;</span>
-        <span class="n">stages_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-        <span class="k">return</span> <span class="n">stages_keys</span>
+    <span class="k">def</span> <span class="nf">hparams</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns hyperparameters&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">trial</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns hyperparameter trial for current experiment.</span>
+<span class="sd">        Could be usefull for Optuna/HyperOpt/Ray.tune</span>
+<span class="sd">        hyperparameters optimizers.</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            &gt;&gt;&gt; experiment.trial</span>
+<span class="sd">            optuna.trial._trial.Trial  # Optuna variant</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trial</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">distributed_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Dict with the parameters for distributed and FP16 methond.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;distributed_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stages</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Experiment&#39;s stage names.&quot;&quot;&quot;</span>
+        <span class="n">stages_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">stages_keys</span>
 
 <div class="viewcode-block" id="ConfigExperiment.get_stage_params"><a class="viewcode-back" href="../../../../api/dl.html#catalyst.dl.experiment.ConfigExperiment.get_stage_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_stage_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Returns the state parameters for a given stage.&quot;&quot;&quot;</span>

@@ -344,7 +344,7 @@
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.neptune_logger.NeptuneLogger.__init__">(catalyst.contrib.dl.callbacks.neptune_logger.NeptuneLogger method)</a>
 </li>
-        <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.optuna_callback.OptunaCallback.__init__">(catalyst.contrib.dl.callbacks.optuna_callback.OptunaCallback method)</a>
+        <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.optuna_callback.OptunaPruningCallback.__init__">(catalyst.contrib.dl.callbacks.optuna_callback.OptunaPruningCallback method)</a>
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.perplexity_metric.PerplexityMetricCallback.__init__">(catalyst.contrib.dl.callbacks.perplexity_metric.PerplexityMetricCallback method)</a>
 </li>
@@ -2160,7 +2160,7 @@
       <ul>
         <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.knn_metric.KNNMetricCallback.on_epoch_end">(catalyst.contrib.dl.callbacks.knn_metric.KNNMetricCallback method)</a>
 </li>
-        <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.optuna_callback.OptunaCallback.on_epoch_end">(catalyst.contrib.dl.callbacks.optuna_callback.OptunaCallback method)</a>
+        <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.optuna_callback.OptunaPruningCallback.on_epoch_end">(catalyst.contrib.dl.callbacks.optuna_callback.OptunaPruningCallback method)</a>
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.visdom_logger.VisdomLogger.on_epoch_end">(catalyst.contrib.dl.callbacks.visdom_logger.VisdomLogger method)</a>
 </li>
@@ -2332,6 +2332,8 @@
       <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.mask_inference.InferMaskCallback.on_stage_start">on_stage_start() (catalyst.contrib.dl.callbacks.mask_inference.InferMaskCallback method)</a>
 
       <ul>
+        <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.optuna_callback.OptunaPruningCallback.on_stage_start">(catalyst.contrib.dl.callbacks.optuna_callback.OptunaPruningCallback method)</a>
+</li>
         <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.telegram_logger.TelegramLogger.on_stage_start">(catalyst.contrib.dl.callbacks.telegram_logger.TelegramLogger method)</a>
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.wandb_logger.WandbLogger.on_stage_start">(catalyst.contrib.dl.callbacks.wandb_logger.WandbLogger method)</a>
@@ -2375,7 +2377,9 @@
 </li>
       <li><a href="api/core.html#catalyst.core.callbacks.optimizer.OptimizerCallback">OptimizerCallback (class in catalyst.core.callbacks.optimizer)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.optuna_callback.OptunaCallback">OptunaCallback (class in catalyst.contrib.dl.callbacks.optuna_callback)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.optuna_callback.OptunaCallback">OptunaCallback (in module catalyst.contrib.dl.callbacks.optuna_callback)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.dl.callbacks.optuna_callback.OptunaPruningCallback">OptunaPruningCallback (class in catalyst.contrib.dl.callbacks.optuna_callback)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.modules.pooling.GlobalAttnPool2d.out_features">out_features() (catalyst.contrib.nn.modules.pooling.GlobalAttnPool2d static method)</a>
 
@@ -2795,8 +2799,6 @@
 </li>
       <li><a href="api/data.html#catalyst.data.cv.transforms.torch.ToTensor">ToTensor (class in catalyst.data.cv.transforms.torch)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/contrib.html#catalyst.contrib.utils.parallel.tqdm_parallel_imap">tqdm_parallel_imap() (in module catalyst.contrib.utils.parallel)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.runner.Runner.trace">trace() (catalyst.dl.runner.Runner method)</a>
@@ -2805,6 +2807,8 @@
         <li><a href="api/dl.html#catalyst.dl.runner.runner.Runner.trace">(catalyst.dl.runner.runner.Runner method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/dl.html#catalyst.dl.utils.trace.trace_model">trace_model() (in module catalyst.dl.utils.trace)</a>
 </li>
       <li><a href="api/dl.html#catalyst.dl.utils.trace.trace_model_from_checkpoint">trace_model_from_checkpoint() (in module catalyst.dl.utils.trace)</a>
@@ -2823,6 +2827,18 @@
 </li>
       <li><a href="api/registry.html#catalyst.registry.registries.Transform">Transform() (in module catalyst.registry.registries)</a>
 </li>
+      <li><a href="api/core.html#catalyst.core.experiment.IExperiment.trial">trial() (catalyst.core.experiment.IExperiment property)</a>, <a href="api/core.html#catalyst.core.experiment.IExperiment.trial">[1]</a>
+
+      <ul>
+        <li><a href="api/dl.html#catalyst.dl.experiment.config.ConfigExperiment.trial">(catalyst.dl.experiment.config.ConfigExperiment property)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.ConfigExperiment.trial">(catalyst.dl.experiment.ConfigExperiment property)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.Experiment.trial">(catalyst.dl.experiment.Experiment property)</a>
+</li>
+        <li><a href="api/dl.html#catalyst.dl.experiment.experiment.Experiment.trial">(catalyst.dl.experiment.experiment.Experiment property)</a>
+</li>
+      </ul></li>
       <li><a href="api/utils.html#catalyst.utils.torch.trim_tensors">trim_tensors() (in module catalyst.utils.torch)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.triplet.TripletLoss">TripletLoss (class in catalyst.contrib.nn.criterion.triplet)</a>

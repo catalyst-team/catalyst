@@ -675,7 +675,7 @@ like “train” / “valid” / “infer”</p></li>
 <dl class="method">
 <dt id="catalyst.core.experiment.IExperiment.hparams">
 <em class="property">abstract property </em><code class="sig-name descname">hparams</code><a class="headerlink" href="#catalyst.core.experiment.IExperiment.hparams" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns hyper-parameters</p>
+<dd><p>Returns hyper-parameters for current experiment.</p>
 <dl>
 <dt>Example::</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">experiment</span><span class="o">.</span><span class="n">hparams</span>
 <span class="go">OrderedDict([(&#39;optimizer&#39;, &#39;Adam&#39;),</span>
@@ -731,6 +731,19 @@ Used for experiment reproducibility.</p>
 <p class="admonition-title">Note</p>
 <p>To understand stages concept, please follow Catalyst documentation,
 for example, <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.experiment.IExperiment.trial">
+<em class="property">abstract property </em><code class="sig-name descname">trial</code><a class="headerlink" href="#catalyst.core.experiment.IExperiment.trial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns hyperparameter trial for current experiment.
+Could be usefull for Optuna/HyperOpt/Ray.tune
+hyperparameters optimizers.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">experiment</span><span class="o">.</span><span class="n">trial</span>
+<span class="go">optuna.trial._trial.Trial  # Optuna variant</span>
+</pre></div>
 </div>
 </dd></dl>
 
@@ -1101,7 +1114,7 @@ like “train” / “valid” / “infer”</p></li>
 <dl class="method">
 <dt>
 <em class="property">abstract property </em><code class="sig-name descname">hparams</code></dt>
-<dd><p>Returns hyper-parameters</p>
+<dd><p>Returns hyper-parameters for current experiment.</p>
 <dl>
 <dt>Example::</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">experiment</span><span class="o">.</span><span class="n">hparams</span>
 <span class="go">OrderedDict([(&#39;optimizer&#39;, &#39;Adam&#39;),</span>
@@ -1157,6 +1170,19 @@ Used for experiment reproducibility.</p>
 <p class="admonition-title">Note</p>
 <p>To understand stages concept, please follow Catalyst documentation,
 for example, <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<em class="property">abstract property </em><code class="sig-name descname">trial</code></dt>
+<dd><p>Returns hyperparameter trial for current experiment.
+Could be usefull for Optuna/HyperOpt/Ray.tune
+hyperparameters optimizers.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">experiment</span><span class="o">.</span><span class="n">trial</span>
+<span class="go">optuna.trial._trial.Trial  # Optuna variant</span>
+</pre></div>
 </div>
 </dd></dl>
 
