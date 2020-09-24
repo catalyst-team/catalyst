@@ -5,34 +5,9 @@ from logging import getLogger
 from pathlib import Path
 import re
 
-from omegaconf import DictConfig, ListConfig
 import yaml
 
 LOG = getLogger(__name__)
-
-
-def omegaconf_to_dict(config):
-    """
-    Converts OmegaConf DictConfig/ListConfig to native Dict/List
-
-    Args:
-        config: OmegaConf DictConfig/ListConfig
-
-    Returns:
-        Dict/List/Native
-
-    """
-    if isinstance(config, DictConfig):
-        config = dict(config)
-    elif isinstance(config, ListConfig):
-        config = list(config)
-    if isinstance(config, dict):
-        for key in config:
-            config[key] = omegaconf_to_dict(config[key])
-    elif isinstance(config, list):
-        for i in range(len(config)):
-            config[i] = omegaconf_to_dict(config[i])
-    return config
 
 
 class OrderedLoader(yaml.Loader):
@@ -178,4 +153,4 @@ def save_config(
             yaml.dump(config, stream)
 
 
-__all__ = ["load_config", "save_config", "omegaconf_to_dict"]
+__all__ = ["load_config", "save_config"]

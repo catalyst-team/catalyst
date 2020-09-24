@@ -5,6 +5,8 @@ from argparse import ArgumentParser
 import os
 from pathlib import Path
 
+from omegaconf import OmegaConf
+
 from catalyst.dl import utils
 
 
@@ -105,7 +107,8 @@ def main_worker(args, unknown_args):
     utils.set_global_seed(args.seed)
     utils.prepare_cudnn(args.deterministic, args.benchmark)
 
-    config.setdefault("distributed_params", {})
+    config = OmegaConf.to_container(config, resolve=True)
+
     config.setdefault("distributed_params", {})["apex"] = args.apex
     config.setdefault("distributed_params", {})["amp"] = args.amp
 
@@ -113,10 +116,8 @@ def main_worker(args, unknown_args):
         expdir=Path(args.expdir), config=config
     )
 
-    dict_config = utils.config.omegaconf_to_dict(config)
-
     if experiment.logdir is not None and utils.get_rank() <= 0:
-        utils.dump_environment(dict_config, experiment.logdir, args.configs)
+        utils.dump_environment(config, experiment.logdir, args.configs)
         utils.dump_code(args.expdir, experiment.logdir)
 
     runner.run_experiment(experiment)
