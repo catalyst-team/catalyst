@@ -93,7 +93,10 @@ except ImportError as ex:
 
 try:
     import optuna
-    from catalyst.contrib.dl.callbacks.optuna_callback import OptunaCallback
+    from catalyst.contrib.dl.callbacks.optuna_callback import (
+        OptunaPruningCallback,
+        OptunaCallback,
+    )
 except ImportError as ex:
     if settings.optuna_required:
         logger.warning(

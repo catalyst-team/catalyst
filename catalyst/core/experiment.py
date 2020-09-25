@@ -63,7 +63,8 @@ class IExperiment(ABC):
     @property
     @abstractmethod
     def hparams(self) -> OrderedDict:
-        """Returns hyper-parameters
+        """
+        Returns hyper-parameters for current experiment.
 
         Example::
             >>> experiment.hparams
@@ -78,17 +79,16 @@ class IExperiment(ABC):
 
     @property
     @abstractmethod
-    def stages(self) -> Iterable[str]:
-        """Experiment's stage names.
+    def trial(self) -> Any:
+        """
+        Returns hyperparameter trial for current experiment.
+        Could be usefull for Optuna/HyperOpt/Ray.tune
+        hyperparameters optimizers.
 
         Example::
 
-            >>> experiment.stages
-            ["pretraining", "training", "finetuning"]
-
-        .. note::
-            To understand stages concept, please follow Catalyst documentation,
-            for example, :py:mod:`catalyst.core.callback.Callback`
+            >>> experiment.trial
+            optuna.trial._trial.Trial  # Optuna variant
         """
         pass
 
@@ -110,6 +110,22 @@ class IExperiment(ABC):
 
             >>> experiment.distributed_params
             {"opt_level": "O1", "syncbn": True}  # Apex variant
+        """
+        pass
+
+    @property
+    @abstractmethod
+    def stages(self) -> Iterable[str]:
+        """Experiment's stage names.
+
+        Example::
+
+            >>> experiment.stages
+            ["pretraining", "training", "finetuning"]
+
+        .. note::
+            To understand stages concept, please follow Catalyst documentation,
+            for example, :py:mod:`catalyst.core.callback.Callback`
         """
         pass
 
