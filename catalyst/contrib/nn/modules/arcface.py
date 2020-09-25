@@ -56,8 +56,18 @@ class ArcFace(nn.Module):
 
     def __repr__(self) -> str:
         """Object representation."""
-        return "ArcFace(in_features={},out_features={},s={},m={},eps={})".format(
-            self.in_features, self.out_features, self.s, self.m, self.eps
+        return (
+            "ArcFace("
+            + ",".join(
+                [
+                    f"in_features={self.in_features}",
+                    f"out_features={self.out_features}",
+                    f"s={self.s}",
+                    f"m={self.m}",
+                    f"eps={self.eps}",
+                ]
+            )
+            + ")"
         )
 
     def forward(
@@ -74,8 +84,8 @@ class ArcFace(nn.Module):
                 ``B`` is batch dimension.
 
         Returns:
-            logits tensor with shapes ``BxC``
-            where C is a number of classes.
+            tensor (logits) with shapes ``BxC``
+            where ``C`` is a number of classes.
         """
         cos_theta = F.linear(F.normalize(input), F.normalize(self.weight))
         theta = torch.acos(

@@ -45,12 +45,9 @@ class SoftMax(nn.Module):
                 expected shapes ``BxF`` where ``B``
                 is batch dimension and ``F`` is an
                 input feature dimension.
-            target (torch.Tensor): target classes,
-                expected shapes ``B`` where
-                ``B`` is batch dimension.
 
         Returns:
-            logits tensor with shapes ``BxC``
-            where C is a number of classes.
+            tensor (logits) with shapes ``BxC``
+            where ``C`` is a number of classes.
         """
         return F.linear(input, self.weight, self.bias)
