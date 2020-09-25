@@ -399,15 +399,15 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_query_idx</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_size</span>
         <span class="p">),</span> <span class="s2">&quot;An error occurred during the accumulation process.&quot;</span>
 
-        <span class="n">conformity_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_labels</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gallery_labels</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+        <span class="n">conformity_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gallery_labels</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_labels</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
             <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>
         <span class="p">)</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">list_args</span><span class="p">:</span>
             <span class="n">metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_metric_fn</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_gallery_embeddings</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_query_embeddings</span><span class="p">,</span>
-                <span class="n">conformity_matrix</span><span class="p">,</span>
-                <span class="n">key</span><span class="p">,</span>
+                <span class="n">query_embeddings</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_embeddings</span><span class="p">,</span>
+                <span class="n">gallery_embeddings</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_gallery_embeddings</span><span class="p">,</span>
+                <span class="n">conformity_matrix</span><span class="o">=</span><span class="n">conformity_matrix</span><span class="p">,</span>
+                <span class="n">topk</span><span class="o">=</span><span class="n">key</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">runner</span><span class="o">.</span><span class="n">loader_metrics</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_prefix</span><span class="si">}{</span><span class="n">key</span><span class="si">:</span><span class="s2">02</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metric</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_gallery_embeddings</span> <span class="o">=</span> <span class="kc">None</span>
