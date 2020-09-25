@@ -50,6 +50,7 @@ class SoftMax(nn.Module):
                 ``B`` is batch dimension.
 
         Returns:
-            logits tensor with shapes ``BxC`` where C is a number of classes.
+            logits tensor with shapes ``BxC``
+            where C is a number of classes.
         """
         return F.linear(input, self.weight, self.bias)

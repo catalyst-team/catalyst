@@ -74,7 +74,8 @@ class ArcFace(nn.Module):
                 ``B`` is batch dimension.
 
         Returns:
-            logits tensor with shapes ``BxC`` where C is a number of classes.
+            logits tensor with shapes ``BxC``
+            where C is a number of classes.
         """
         cos_theta = F.linear(F.normalize(input), F.normalize(self.weight))
         theta = torch.acos(
