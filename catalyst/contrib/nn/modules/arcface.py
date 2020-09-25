@@ -28,6 +28,7 @@ class ArcFace(nn.Module):
         out_features: int,
         s: float = 64.0,
         m: float = 0.5,
+        eps: float = 1e-6,
     ):
         """
         Args:
@@ -37,17 +38,16 @@ class ArcFace(nn.Module):
                 Default: ``64.0``.
             m (float, optional): margin.
                 Default: ``0.5``.
+            eps (float, optional): operation accuracy.
+                Default: ``1e-6``.
         """
         super(ArcFace, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
         self.s = s
         self.m = m
-
-        self.cos_m = math.cos(m)
-        self.sin_m = math.sin(m)
-        self.th = math.cos(math.pi - m)
-        self.mm = math.sin(math.pi - m) * m
+        self.threshold = math.pi - m
+        self.eps = eps
 
         self.weight = nn.Parameter(
             torch.FloatTensor(out_features, in_features)
@@ -56,8 +56,8 @@ class ArcFace(nn.Module):
 
     def __repr__(self) -> str:
         """Object representation."""
-        return "ArcFace(in_features={},out_features={},s={},m={})".format(
-            self.in_features, self.out_features, self.s, self.m
+        return "ArcFace(in_features={},out_features={},s={},m={},eps={})".format(
+            self.in_features, self.out_features, self.s, self.m, self.eps
         )
 
     def forward(
@@ -66,22 +66,29 @@ class ArcFace(nn.Module):
         """
         Args:
             input (torch.Tensor): input features,
-                expected shapes BxF.
+                expected shapes ``BxF`` where ``B``
+                is batch dimension and ``F`` is an
+                input feature dimension.
             target (torch.Tensor): target classes,
-                expected shapes B.
+                expected shapes ``B`` where
+                ``B`` is batch dimension.
 
         Returns:
-            torch.Tensor with loss value.
+            logits tensor with shapes ``BxC`` where C is a number of classes.
         """
-        cosine = F.linear(F.normalize(input), F.normalize(self.weight))
-        sine = torch.sqrt(1.0 - torch.pow(cosine, 2))
-        phi = cosine * self.cos_m - sine * self.sin_m
+        cos_theta = F.linear(F.normalize(input), F.normalize(self.weight))
+        theta = torch.acos(
+            torch.clamp(cos_theta, -1.0 + self.eps, 1.0 - self.eps)
+        )
 
-        phi = torch.where(cosine > self.th, phi, cosine - self.mm)
-
-        one_hot = torch.zeros(cosine.size()).to(input.device)
+        one_hot = torch.zeros_like(cos_theta, device=input.device)
         one_hot.scatter_(1, target.view(-1, 1).long(), 1)
-        logits = (one_hot * phi) + ((1.0 - one_hot) * cosine)
+
+        mask = torch.where(
+            theta > self.threshold, torch.zeros_like(one_hot), one_hot
+        )
+
+        logits = torch.cos(torch.where(mask.bool(), theta + self.m, theta))
         logits *= self.s
 
         return logits

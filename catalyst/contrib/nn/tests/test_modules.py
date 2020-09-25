@@ -61,6 +61,7 @@ def test_arcface_with_cross_entropy_loss():
     n_classes = 3
     s = 3.0
     m = 0.5
+    eps = 1e-8
 
     # fmt: off
     features = np.array(
@@ -81,7 +82,7 @@ def test_arcface_with_cross_entropy_loss():
     )
     # fmt: on
 
-    layer = ArcFace(emb_size, n_classes, s, m)
+    layer = ArcFace(emb_size, n_classes, s, m, eps)
     layer.weight.data = torch.from_numpy(weight)
     loss_fn = nn.CrossEntropyLoss(reduction="none")
 
@@ -89,14 +90,12 @@ def test_arcface_with_cross_entropy_loss():
     normalized_projection = normalize(weight)  # 3x4
 
     cosine = normalized_features @ normalized_projection.T  # 2x4 * 4x3 = 2x3
-    sine = np.sqrt(1 - np.power(cosine, 2))  # 2x3
-    phi = cosine * np.cos(m) - sine * np.sin(m)  # 2x3
-    phi = np.where(
-        cosine > np.cos(np.pi - m), phi, cosine - np.sin(np.pi - m) * m
-    )  # 2x3
+    theta = np.arccos(np.clip(cosine, -1 + eps, 1 - eps))  # 2x3
 
-    mask = np.array([[1, 0, 0], [0, 0, 1]], dtype="l")  # one_hot(target)
-    feats = (mask * phi + (1.0 - mask) * cosine) * s  # 2x3
+    # one_hot(target)
+    mask = np.array([[1, 0, 0], [0, 0, 1]], dtype="l")
+    mask = np.where(theta > (np.pi - m), np.zeros_like(mask), mask)  # 2x3
+    feats = np.cos(np.where(mask > 0, theta + m, theta)) * s  # 2x3
 
     expected_loss = cross_entropy(feats, mask, 1)
     actual = (

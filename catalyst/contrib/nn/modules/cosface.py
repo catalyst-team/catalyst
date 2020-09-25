@@ -59,12 +59,15 @@ class CosFace(nn.Module):
         """
         Args:
             input (torch.Tensor): input features,
-                expected shapes BxF.
+                expected shapes ``BxF`` where ``B``
+                is batch dimension and ``F`` is an
+                input feature dimension.
             target (torch.Tensor): target classes,
-                expected shapes B.
+                expected shapes ``B`` where
+                ``B`` is batch dimension.
 
         Returns:
-            torch.Tensor with loss value.
+            logits tensor with shapes ``BxC`` where C is a number of classes.
         """
         cosine = F.linear(F.normalize(input), F.normalize(self.weight))
         phi = cosine - self.m
