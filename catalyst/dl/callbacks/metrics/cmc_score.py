@@ -138,15 +138,15 @@ class CMCScoreCallback(Callback):
             self._query_idx == self._query_size
         ), "An error occurred during the accumulation process."
 
-        conformity_matrix = self._query_labels == self._gallery_labels.reshape(
+        conformity_matrix = self._gallery_labels == self._query_labels.reshape(
             -1, 1
         )
         for key in self.list_args:
             metric = self._metric_fn(
-                self._gallery_embeddings,
-                self._query_embeddings,
-                conformity_matrix,
-                key,
+                query_embeddings=self._query_embeddings,
+                gallery_embeddings=self._gallery_embeddings,
+                conformity_matrix=conformity_matrix,
+                topk=key,
             )
             runner.loader_metrics[f"{self._prefix}{key:02}"] = metric
         self._gallery_embeddings = None

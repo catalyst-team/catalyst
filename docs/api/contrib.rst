@@ -306,9 +306,15 @@ SoftMax
     :undoc-members:
     :show-inheritance:
 
-
 Optimizers
 ~~~~~~~~~~~~~~~~
+
+AdamP
+"""""""""""""
+.. automodule:: catalyst.contrib.nn.optimizers.adamp
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Lamb
 """"""""""""""""""""
@@ -341,6 +347,13 @@ RAdam
 Ralamb
 """"""""""""""""""""
 .. automodule:: catalyst.contrib.nn.optimizers.ralamb
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+SGDP
+"""""""""""""
+.. automodule:: catalyst.contrib.nn.optimizers.sgdp
     :members:
     :undoc-members:
     :show-inheritance:
