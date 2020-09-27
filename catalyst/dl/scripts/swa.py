@@ -10,16 +10,9 @@ from catalyst.dl.utils.swa import generate_averaged_weights
 
 def build_args(parser: ArgumentParser):
     """Builds the command line parameters."""
+    parser.add_argument("logdir", type=Path, help="Path to models logdir")
     parser.add_argument(
-        "logdir", 
-        type=Path, 
-        help="Path to models logdir"
-    )
-    parser.add_argument(
-        "--models_mask", 
-        "-m", 
-        type=str,
-        help="Pattern for models to average"
+        "--models_mask", "-m", type=str, help="Pattern for models to average"
     )
     parser.add_argument(
         "--save-avaraged-model",
@@ -47,10 +40,9 @@ def main(args, _):
     save_avaraged_model: bool = args.save_avaraged_model
 
     averaged_weights = generate_averaged_weights(
-        logdir,
-        models_mask,
-        save_avaraged_model=save_avaraged_model
+        logdir, models_mask, save_avaraged_model=save_avaraged_model
     )
+
 
 if __name__ == "__main__":
     main(parse_args(), None)

@@ -1,17 +1,18 @@
-import torch
-import os
+from typing import List
+from collections import OrderedDict
 import glob
 import logging
-from typing import List
+import os
 from pathlib import Path
-from collections import OrderedDict
+
+import torch
+
 from catalyst.utils import load_config
 
 logger = logging.getLogger(__name__)
 
-def average_weights(
-    state_dicts: List[dict]
-) -> OrderedDict:
+
+def average_weights(state_dicts: List[dict]) -> OrderedDict:
     """
     Averaging of input weights.
     Args:
@@ -23,12 +24,14 @@ def average_weights(
 
     average_dict = OrderedDict()
     for k in state_dicts[0].keys():
-        average_dict[k] = torch.true_divide(sum([state_dict[k] for state_dict in state_dicts]), len(state_dicts))
+        average_dict[k] = torch.true_divide(
+            sum([state_dict[k] for state_dict in state_dicts]),
+            len(state_dicts),
+        )
     return average_dict
 
-def load_weight(
-    path: str
-) -> dict:
+
+def load_weight(path: str) -> dict:
     """
     Load weights of a model.
     Args:
@@ -41,10 +44,9 @@ def load_weight(
         weights = weights["model_state_dict"]
     return weights
 
+
 def generate_averaged_weights(
-    logdir: Path, 
-    models_mask: str,
-    save_avaraged_model: bool = True
+    logdir: Path, models_mask: str, save_avaraged_model: bool = True
 ) -> OrderedDict:
     """
     Averaging of input weights.
@@ -65,6 +67,8 @@ def generate_averaged_weights(
     averaged_dict = average_weights(all_weights)
 
     if save_avaraged_model:
-        torch.save(averaged_dict, str(logdir / "checkpoints" / "swa_weights.pth"))
+        torch.save(
+            averaged_dict, str(logdir / "checkpoints" / "swa_weights.pth")
+        )
 
     return averaged_dict
