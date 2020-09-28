@@ -14,13 +14,6 @@ def build_args(parser: ArgumentParser):
     parser.add_argument(
         "--models_mask", "-m", type=str, help="Pattern for models to average"
     )
-    parser.add_argument(
-        "--save-avaraged-model",
-        "-s",
-        type=bool,
-        default=True,
-        help="Flag for saving avaraged model",
-    )
 
     return parser
 
@@ -37,11 +30,8 @@ def main(args, _):
     """Main method for ``catalyst-dl swa``."""
     logdir: Path = args.logdir
     models_mask: str = args.models_mask
-    save_avaraged_model: bool = args.save_avaraged_model
 
-    averaged_weights = generate_averaged_weights(
-        logdir, models_mask, save_avaraged_model=save_avaraged_model
-    )
+    averaged_weights = generate_averaged_weights(logdir, models_mask)
 
 
 if __name__ == "__main__":

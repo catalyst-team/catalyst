@@ -16,9 +16,9 @@ def average_weights(state_dicts: List[dict]) -> OrderedDict:
     """
     Averaging of input weights.
     Args:
-        state_dicts (List[dict]): Weights to avarage
+        state_dicts (List[dict]): Weights to average
     Returns:
-        Avaraged weights
+        Averaged weights
     """
     # source https://gist.github.com/qubvel/70c3d5e4cddcde731408f478e12ef87b
 
@@ -45,17 +45,14 @@ def load_weight(path: str) -> dict:
     return weights
 
 
-def generate_averaged_weights(
-    logdir: Path, models_mask: str, save_avaraged_model: bool = True
-) -> OrderedDict:
+def generate_averaged_weights(logdir: Path, models_mask: str) -> OrderedDict:
     """
-    Averaging of input weights.
+    Averaging of input weights and saving them.
     Args:
         logdir (Path): Path to logs directory
         models_mask (str): globe-like pattern for models to average
-        save_avaraged_model (bool): Flag for saving avaraged model
     Returns:
-        Avaraged weights
+        Averaged weights
     """
 
     config_path = logdir / "configs" / "_config.json"
@@ -66,9 +63,6 @@ def generate_averaged_weights(
     all_weights = [load_weight(path) for path in models_pathes]
     averaged_dict = average_weights(all_weights)
 
-    if save_avaraged_model:
-        torch.save(
-            averaged_dict, str(logdir / "checkpoints" / "swa_weights.pth")
-        )
+    torch.save(averaged_dict, str(logdir / "checkpoints" / "swa_weights.pth"))
 
     return averaged_dict
