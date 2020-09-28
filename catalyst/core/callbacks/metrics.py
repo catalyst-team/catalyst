@@ -163,6 +163,11 @@ class ILoaderMetricCallback(IMetricCallback):
     """
 
     def __init__(self, **kwargs):
+        """ILoaderMetricCallback init.
+
+        Args:
+            **kwargs: `IMetricCallback` params.
+        """
         super().__init__(**kwargs)
 
         self.input = defaultdict(lambda: [])
@@ -222,6 +227,19 @@ class BatchMetricCallback(IBatchMetricCallback):
         multiplier: float = 1.0,
         **metric_kwargs,
     ):
+        """BatchMetricCallback init.
+
+        Args:
+            prefix: key prefix to store computed
+                batch/loader/epoch metrics
+            input_key: input key to use for metric calculation;
+                specifies our `y_true`
+            output_key: output key to use for metric calculation;
+                specifies our `y_pred`
+            multiplier: scalar for metric reweighting
+            **metrics_kwargs: extra metric params
+                to pass for metric computation
+        """
         super().__init__(
             prefix=prefix,
             input_key=input_key,
@@ -249,6 +267,19 @@ class LoaderMetricCallback(ILoaderMetricCallback):
         multiplier: float = 1.0,
         **metric_kwargs,
     ):
+        """LoaderMetricCallback init.
+
+        Args:
+            prefix: key prefix to store computed
+                batch/loader/epoch metrics
+            input_key: input key to use for metric calculation;
+                specifies our `y_true`
+            output_key: output key to use for metric calculation;
+                specifies our `y_pred`
+            multiplier: scalar for metric reweighting
+            **metrics_kwargs: extra metric params
+                to pass for metric computation
+        """
         super().__init__(
             prefix=prefix,
             input_key=input_key,
@@ -388,6 +419,7 @@ class MetricManagerCallback(Callback):
     """
 
     def __init__(self):
+        """MetricManagerCallback init."""
         super().__init__(
             order=CallbackOrder.logging - 1, node=CallbackNode.all,
         )
@@ -395,6 +427,14 @@ class MetricManagerCallback(Callback):
 
     @staticmethod
     def to_single_value(value: Any) -> float:
+        """ Convert any value to float.
+
+        Args:
+            value: some value
+
+        Returns:
+            result
+        """
         if hasattr(value, "item"):
             value = value.item()
 
