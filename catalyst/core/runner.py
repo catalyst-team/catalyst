@@ -379,6 +379,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         optimizer: RunnerOptimizer = None,
         scheduler: RunnerScheduler = None,
         callbacks: Dict[str, "Callback"] = None,
+        loaders: OrderedDict[str, DataLoader] = None,
         logdir: str = None,
         num_epochs: int = 1,
         main_metric: str = "loss",
@@ -404,7 +405,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         self.callbacks: Dict[str, "Callback"] = callbacks or {}
 
         # the data
-        self.loaders: OrderedDict[str, DataLoader] = None
+        self.loaders: OrderedDict[str, DataLoader] = loaders
         # and the dataflow - model input, model output
         self.input = None
         self.output = None
@@ -749,6 +750,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
             optimizer=optimizer,
             scheduler=scheduler,
             callbacks=callbacks,
+            loaders=getattr(self, "loaders", None),
             **migrating_params,
         )
 
