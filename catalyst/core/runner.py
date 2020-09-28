@@ -379,7 +379,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         optimizer: RunnerOptimizer = None,
         scheduler: RunnerScheduler = None,
         callbacks: Dict[str, "Callback"] = None,
-        loaders: OrderedDict[str, DataLoader] = None,
+        loaders: Dict[str, "DataLoader"] = None,
         logdir: str = None,
         num_epochs: int = 1,
         main_metric: str = "loss",
