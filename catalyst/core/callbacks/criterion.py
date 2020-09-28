@@ -53,7 +53,7 @@ class CriterionCallback(IBatchMetricCallback):
         """Checks that the current stage has correct criterion.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         criterion = runner.get_attr(
             key="criterion", inner_key=self.criterion_key

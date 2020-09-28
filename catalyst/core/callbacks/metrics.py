@@ -16,9 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 class IMetricCallback(ABC, Callback):
-    """
-    Callback abstraction for metric computation.
-    """
+    """Callback abstraction for metric computation."""
 
     def __init__(
         self,
@@ -30,13 +28,13 @@ class IMetricCallback(ABC, Callback):
     ):
         """
         Args:
-            prefix (str): key prefix to store computed
+            prefix: key prefix to store computed
                 batch/loader/epoch metrics
-            input_key (str): input key to use for metric calculation;
+            input_key: input key to use for metric calculation;
                 specifies our `y_true`
-            output_key (str): output key to use for metric calculation;
+            output_key: output key to use for metric calculation;
                 specifies our `y_pred`
-            multiplier (float): scalar for metric reweighting
+            multiplier: scalar for metric reweighting
             **metrics_kwargs: extra metric params
                 to pass for metric computation
         """
@@ -78,9 +76,7 @@ class IMetricCallback(ABC, Callback):
     @property
     @abstractmethod
     def metric_fn(self):
-        """
-        Specifies used metric function.
-        """
+        """Specifies used metric function."""
         pass
 
     def _compute_metric_value(self, output: Dict, input: Dict):
@@ -89,9 +85,9 @@ class IMetricCallback(ABC, Callback):
         For example accuracy on `y_pred` and `y_true`.
 
         Args:
-            output (dict): dictionary with output (`y_pred`) values
+            output: dictionary with output (`y_pred`) values
                 for metric computation
-            input (dict): dictionary with input (`y_true`) values
+            input: dictionary with input (`y_true`) values
                 for metric computation
 
         Returns:
@@ -109,9 +105,9 @@ class IMetricCallback(ABC, Callback):
         For example accuracy on `y_pred` and `y_true` and `sample_weights`.
 
         Args:
-            output (dict): dictionary with output (`y_pred`) values
+            output: dictionary with output (`y_pred`) values
                 for metric computation
-            input (dict): dictionary with input (`y_true`, `sample_weights`)
+            input: dictionary with input (`y_true`, `sample_weights`)
                 values for metric computation
 
         Returns:
@@ -167,18 +163,13 @@ class ILoaderMetricCallback(IMetricCallback):
     """
 
     def __init__(self, **kwargs):
-        """
-
-        Args:
-            **kwargs: IMetricCallback params
-        """
         super().__init__(**kwargs)
 
         self.input = defaultdict(lambda: [])
         self.output = defaultdict(lambda: [])
 
     def on_loader_start(self, runner: IRunner):
-        """Reinitialises internal storages."""
+        """Reinitialises internal storage."""
         self.input = defaultdict(lambda: [])
         self.output = defaultdict(lambda: [])
 
@@ -195,11 +186,10 @@ class ILoaderMetricCallback(IMetricCallback):
                 storage["_data"].append(data.detach().cpu().numpy())
 
     def on_loader_end(self, runner: IRunner):
-        """
-        Computes loader-based metric.
+        """Computes loader-based metric.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         input = {
             key: torch.from_numpy(np.concatenate(self.input[key], axis=0))
@@ -232,7 +222,6 @@ class BatchMetricCallback(IBatchMetricCallback):
         multiplier: float = 1.0,
         **metric_kwargs,
     ):
-        """@TODO: Docs. Contribution is welcome."""
         super().__init__(
             prefix=prefix,
             input_key=input_key,
@@ -244,9 +233,7 @@ class BatchMetricCallback(IBatchMetricCallback):
 
     @property
     def metric_fn(self):
-        """
-        Specifies used metric function.
-        """
+        """Specifies used metric function."""
         return self.metric
 
 
@@ -262,7 +249,6 @@ class LoaderMetricCallback(ILoaderMetricCallback):
         multiplier: float = 1.0,
         **metric_kwargs,
     ):
-        """@TODO: Docs. Contribution is welcome."""
         super().__init__(
             prefix=prefix,
             input_key=input_key,
@@ -274,9 +260,7 @@ class LoaderMetricCallback(ILoaderMetricCallback):
 
     @property
     def metric_fn(self):
-        """
-        Specifies used metric function.
-        """
+        """Specifies used metric function."""
         return self.metric
 
 
@@ -293,13 +277,13 @@ class MetricAggregationCallback(Callback):
     ) -> None:
         """
         Args:
-            prefix (str): new key for aggregated metric.
+            prefix: new key for aggregated metric.
             metrics (Union[str, List[str], Dict[str, float]]): If not None,
                 it aggregates only the values from the metric by these keys.
                 for ``weighted_sum`` aggregation it must be a Dict[str, float].
-            mode (str): function for aggregation.
+            mode: function for aggregation.
                 Must be either ``sum``, ``mean`` or ``weighted_sum``.
-            multiplier (float): scale factor for the aggregated metric.
+            multiplier: scale factor for the aggregated metric.
         """
         super().__init__(
             order=CallbackOrder.metric_aggregation, node=CallbackNode.all
@@ -371,31 +355,28 @@ class MetricAggregationCallback(Callback):
         metrics[self.prefix] = metric_aggregated
 
     def on_batch_end(self, runner: IRunner) -> None:
-        """
-        Computes the metric and add it to the batch metrics.
+        """Computes the metric and add it to the batch metrics.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self.scope == "batch":
             self._process_metrics(runner.batch_metrics)
 
     def on_loader_end(self, runner: IRunner):
-        """
-        Computes the metric and add it to the loader metrics.
+        """Computes the metric and add it to the loader metrics.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self.scope == "loader":
             self._process_metrics(runner.loader_metrics)
 
     def on_epoch_end(self, runner: IRunner):
-        """
-        Computes the metric and add it to the epoch metrics.
+        """Computes the metric and add it to the epoch metrics.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self.scope == "epoch":
             self._process_metrics(runner.epoch_metrics)
@@ -407,7 +388,6 @@ class MetricManagerCallback(Callback):
     """
 
     def __init__(self):
-        """@TODO: Docs. Contribution is welcome."""
         super().__init__(
             order=CallbackOrder.logging - 1, node=CallbackNode.all,
         )
@@ -415,7 +395,6 @@ class MetricManagerCallback(Callback):
 
     @staticmethod
     def to_single_value(value: Any) -> float:
-        """@TODO: Docs. Contribution is welcome."""
         if hasattr(value, "item"):
             value = value.item()
 
@@ -432,50 +411,45 @@ class MetricManagerCallback(Callback):
         return output
 
     def on_epoch_start(self, runner: IRunner) -> None:
-        """
-        Epoch start hook.
+        """Epoch start hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         runner.epoch_metrics = defaultdict(None)
 
     def on_loader_start(self, runner: IRunner) -> None:
-        """
-        Loader start hook.
+        """Loader start hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         runner.loader_metrics = defaultdict(None)
         self.meters = defaultdict(meters.AverageValueMeter)
 
     def on_batch_start(self, runner: IRunner) -> None:
-        """
-        Batch start hook.
+        """Batch start hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         runner.batch_metrics = defaultdict(None)
 
     def on_batch_end(self, runner: IRunner) -> None:
-        """
-        Batch end hook.
+        """Batch end hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         runner.batch_metrics = self._process_metrics(runner.batch_metrics)
         for key, value in runner.batch_metrics.items():
             self.meters[key].add(value, runner.batch_size)
 
     def on_loader_end(self, runner: IRunner) -> None:
-        """
-        Loader end hook.
+        """Loader end hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         for key, value in self.meters.items():
             value = value.mean

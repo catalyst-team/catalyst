@@ -237,7 +237,7 @@ class WrapperCallback(Callback):
         Check if current epoch should be skipped.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self._is_enabled:
             self.callback.on_loader_start(runner)
@@ -247,7 +247,7 @@ class WrapperCallback(Callback):
         Reset status of callback
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self._is_enabled:
             self.callback.on_loader_end(runner)
@@ -256,7 +256,7 @@ class WrapperCallback(Callback):
         """Run base_callback (if possible)
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self._is_enabled:
             self.callback.on_stage_start(runner)
@@ -265,7 +265,7 @@ class WrapperCallback(Callback):
         """Run base_callback (if possible)
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self._is_enabled:
             self.callback.on_stage_end(runner)
@@ -274,7 +274,7 @@ class WrapperCallback(Callback):
         """Run base_callback (if possible)
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self._is_enabled:
             self.callback.on_epoch_start(runner)
@@ -283,7 +283,7 @@ class WrapperCallback(Callback):
         """Run base_callback (if possible)
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self._is_enabled:
             self.callback.on_epoch_end(runner)
@@ -292,7 +292,7 @@ class WrapperCallback(Callback):
         """Run base_callback (if possible)
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self._is_enabled:
             self.callback.on_batch_start(runner)
@@ -301,7 +301,7 @@ class WrapperCallback(Callback):
         """Run base_callback (if possible)
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self._is_enabled:
             self.callback.on_batch_end(runner)
@@ -310,7 +310,7 @@ class WrapperCallback(Callback):
         """Run base_callback (if possible)
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self._is_enabled:
             self.callback.on_exception(runner)
