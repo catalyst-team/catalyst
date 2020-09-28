@@ -427,7 +427,7 @@ class MetricManagerCallback(Callback):
 
     @staticmethod
     def to_single_value(value: Any) -> float:
-        """ Convert any value to float.
+        """Convert any value to float.
 
         Args:
             value: some value
