@@ -163,7 +163,7 @@ class ILoaderMetricCallback(IMetricCallback):
     """
 
     def __init__(self, **kwargs):
-        """ILoaderMetricCallback init.
+        """Init.
 
         Args:
             **kwargs: `IMetricCallback` params.
@@ -227,7 +227,7 @@ class BatchMetricCallback(IBatchMetricCallback):
         multiplier: float = 1.0,
         **metric_kwargs,
     ):
-        """BatchMetricCallback init.
+        """Init.
 
         Args:
             prefix: key prefix to store computed
@@ -267,7 +267,7 @@ class LoaderMetricCallback(ILoaderMetricCallback):
         multiplier: float = 1.0,
         **metric_kwargs,
     ):
-        """LoaderMetricCallback init.
+        """Init.
 
         Args:
             prefix: key prefix to store computed
@@ -419,7 +419,7 @@ class MetricManagerCallback(Callback):
     """
 
     def __init__(self):
-        """MetricManagerCallback init."""
+        """Init."""
         super().__init__(
             order=CallbackOrder.logging - 1, node=CallbackNode.all,
         )
