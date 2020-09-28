@@ -9,7 +9,8 @@ from catalyst.utils.metrics.functional import (
 
 
 class AccuracyCallback(BatchMetricCallback):
-    """Accuracy metric callback.
+    """
+    Accuracy metric callback.
     Computes multi-class accuracy@topk for the specified values of `topk`.
 
     .. note::

@@ -587,12 +587,10 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
             tuple: model, criterion, optimizer,
                 scheduler and device for a given stage and model
         """
-        (
-            model,
-            criterion,
-            optimizer,
-            scheduler,
-        ) = experiment.get_experiment_components(stage)
+        model = experiment.get_model(stage)
+        criterion = experiment.get_criterion(stage)
+        optimizer = experiment.get_optimizer(stage, model)
+        scheduler = experiment.get_scheduler(stage, optimizer)
         (
             model,
             criterion,
@@ -878,7 +876,6 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
                     f"DataLoader with name {loader_name} is empty."
                 )
 
-        # @TODO: better solution with train/inference handling ?
         self.is_infer_stage = self.stage_name.startswith("infer")
         if not self.is_infer_stage:
             assert self.valid_loader in self.loaders.keys(), (
@@ -886,7 +883,6 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
                 f"should be in provided loaders: {list(self.loaders.keys())}"
             )
         else:
-            # @TODO: add check for non distributed run for inference
             assert not any(
                 x.startswith(settings.loader_train_prefix)
                 for x in self.loaders.keys()
@@ -1011,12 +1007,12 @@ class IStageBasedRunner(IRunner):
             stage (str): stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
         """
-        super()._prepare_for_stage(stage=stage)
-
         utils.set_global_seed(self.experiment.initial_seed)
         loaders = self.experiment.get_loaders(stage=stage)
         loaders = utils.validate_loaders(loaders)
         self.loaders = loaders
+
+        super()._prepare_for_stage(stage=stage)
 
 
 __all__ = ["IRunner", "IStageBasedRunner", "RunnerException"]

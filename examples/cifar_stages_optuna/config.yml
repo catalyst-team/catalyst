@@ -1,11 +1,12 @@
 # Refer to configs/config-description-eng.yml
 # for detailed comments on this configuration file
 
-optuna_pruner_params:
-  pruner: MedianPruner
-  n_startup_trials: 1
-  n_warmup_steps: 0
-  interval_steps: 1
+study_params:
+  pruner_params:
+    pruner: MedianPruner
+    n_startup_trials: 1
+    n_warmup_steps: 0
+    interval_steps: 1
 
 
 model_params:
