@@ -498,7 +498,7 @@
 <span class="sd">        Check if current epoch should be skipped.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_loader_start</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
@@ -508,7 +508,7 @@
 <span class="sd">        Reset status of callback</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_loader_end</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
@@ -517,7 +517,7 @@
         <span class="sd">&quot;&quot;&quot;Run base_callback (if possible)</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_stage_start</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
@@ -526,7 +526,7 @@
         <span class="sd">&quot;&quot;&quot;Run base_callback (if possible)</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_stage_end</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
@@ -535,7 +535,7 @@
         <span class="sd">&quot;&quot;&quot;Run base_callback (if possible)</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_epoch_start</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
@@ -544,7 +544,7 @@
         <span class="sd">&quot;&quot;&quot;Run base_callback (if possible)</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_epoch_end</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
@@ -553,7 +553,7 @@
         <span class="sd">&quot;&quot;&quot;Run base_callback (if possible)</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_batch_start</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
@@ -562,7 +562,7 @@
         <span class="sd">&quot;&quot;&quot;Run base_callback (if possible)</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_batch_end</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
@@ -571,7 +571,7 @@
         <span class="sd">&quot;&quot;&quot;Run base_callback (if possible)</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_enabled</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">callback</span><span class="o">.</span><span class="n">on_exception</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div></div>

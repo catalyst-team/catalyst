@@ -280,7 +280,7 @@
         <span class="sd">&quot;&quot;&quot;Epoch start hook.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">runner</span><span class="o">.</span><span class="n">valid_metrics</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
         <span class="n">runner</span><span class="o">.</span><span class="n">is_best_valid</span> <span class="o">=</span> <span class="kc">False</span></div>
@@ -289,7 +289,7 @@
         <span class="sd">&quot;&quot;&quot;Epoch end hook.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">stage_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">):</span>
             <span class="k">return</span>

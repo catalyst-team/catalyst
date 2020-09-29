@@ -336,7 +336,7 @@
         <span class="sd">&quot;&quot;&quot;Collect information about loaders.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: if there are no loaders in epoch</span>
@@ -386,7 +386,7 @@
 <span class="sd">        in the epochs where this loader is missing.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: if there are no loaders in epoch</span>
@@ -414,7 +414,7 @@
 <span class="sd">        dropped for current epoch.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">valid_metric_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">valid_loader</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">main_metric</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_loader</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">runner</span><span class="o">.</span><span class="n">loaders</span><span class="p">:</span>

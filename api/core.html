@@ -479,39 +479,6 @@ For example, to run through train data before validation one :)</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.core.experiment.IExperiment.get_experiment_components">
-<code class="sig-name descname">get_experiment_components</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em>, <em class="sig-param">model: torch.nn.modules.module.Module = None</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.nn.modules.module.Module, torch.nn.modules.module.Module, torch.optim.optimizer.Optimizer, torch.optim.lr_scheduler._LRScheduler]<a class="reference internal" href="../_modules/catalyst/core/experiment.html#IExperiment.get_experiment_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.experiment.IExperiment.get_experiment_components" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the tuple containing criterion, optimizer and scheduler by
-giving model and stage.</p>
-<p>Aggregation method, based on,</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="#catalyst.core.experiment.IExperiment.get_model" title="catalyst.core.experiment.IExperiment.get_model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.experiment.IExperiment.get_model</span></code></a></p></li>
-<li><p><a class="reference internal" href="#catalyst.core.experiment.IExperiment.get_criterion" title="catalyst.core.experiment.IExperiment.get_criterion"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.experiment.IExperiment.get_criterion</span></code></a></p></li>
-<li><p><a class="reference internal" href="#catalyst.core.experiment.IExperiment.get_optimizer" title="catalyst.core.experiment.IExperiment.get_optimizer"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.experiment.IExperiment.get_optimizer</span></code></a></p></li>
-<li><p><a class="reference internal" href="#catalyst.core.experiment.IExperiment.get_scheduler" title="catalyst.core.experiment.IExperiment.get_scheduler"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.experiment.IExperiment.get_scheduler</span></code></a></p></li>
-</ul>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>stage</strong> (<em>str</em>) – stage name of interest,
-like “pretrain” / “train” / “finetune” / etc</p></li>
-<li><p><strong>model</strong> (<em>Model</em>) – model to optimize with stage optimizer</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>model, criterion, optimizer, scheduler</dt><dd><p>for a given stage and model</p>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
 <dt id="catalyst.core.experiment.IExperiment.get_loaders">
 <em class="property">abstract </em><code class="sig-name descname">get_loaders</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em>, <em class="sig-param">epoch: int = None</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, DataLoader]<a class="reference internal" href="../_modules/catalyst/core/experiment.html#IExperiment.get_loaders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.experiment.IExperiment.get_loaders" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the loaders for a given stage.  # noqa: DAR401</p>
@@ -915,39 +882,6 @@ For example, to run through train data before validation one :)</p>
 <span class="go">})</span>
 </pre></div>
 </div>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">get_experiment_components</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em>, <em class="sig-param">model: torch.nn.modules.module.Module = None</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.nn.modules.module.Module, torch.nn.modules.module.Module, torch.optim.optimizer.Optimizer, torch.optim.lr_scheduler._LRScheduler]<a class="reference internal" href="../_modules/catalyst/core/experiment.html#IExperiment.get_experiment_components"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Returns the tuple containing criterion, optimizer and scheduler by
-giving model and stage.</p>
-<p>Aggregation method, based on,</p>
-<ul class="simple">
-<li><p><a class="reference internal" href="#catalyst.core.experiment.IExperiment.get_model" title="catalyst.core.experiment.IExperiment.get_model"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.experiment.IExperiment.get_model</span></code></a></p></li>
-<li><p><a class="reference internal" href="#catalyst.core.experiment.IExperiment.get_criterion" title="catalyst.core.experiment.IExperiment.get_criterion"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.experiment.IExperiment.get_criterion</span></code></a></p></li>
-<li><p><a class="reference internal" href="#catalyst.core.experiment.IExperiment.get_optimizer" title="catalyst.core.experiment.IExperiment.get_optimizer"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.experiment.IExperiment.get_optimizer</span></code></a></p></li>
-<li><p><a class="reference internal" href="#catalyst.core.experiment.IExperiment.get_scheduler" title="catalyst.core.experiment.IExperiment.get_scheduler"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.experiment.IExperiment.get_scheduler</span></code></a></p></li>
-</ul>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>stage</strong> (<em>str</em>) – stage name of interest,
-like “pretrain” / “train” / “finetune” / etc</p></li>
-<li><p><strong>model</strong> (<em>Model</em>) – model to optimize with stage optimizer</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>model, criterion, optimizer, scheduler</dt><dd><p>for a given stage and model</p>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>tuple</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="method">
@@ -2268,7 +2202,7 @@ default <code class="docutils literal notranslate"><span class="pre">True</span>
 <dd><p>Run base_callback (if possible)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2279,7 +2213,7 @@ default <code class="docutils literal notranslate"><span class="pre">True</span>
 <dd><p>Run base_callback (if possible)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2290,7 +2224,7 @@ default <code class="docutils literal notranslate"><span class="pre">True</span>
 <dd><p>Run base_callback (if possible)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2301,7 +2235,7 @@ default <code class="docutils literal notranslate"><span class="pre">True</span>
 <dd><p>Run base_callback (if possible)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2312,7 +2246,7 @@ default <code class="docutils literal notranslate"><span class="pre">True</span>
 <dd><p>Run base_callback (if possible)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2323,7 +2257,7 @@ default <code class="docutils literal notranslate"><span class="pre">True</span>
 <dd><p>Reset status of callback</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2334,7 +2268,7 @@ default <code class="docutils literal notranslate"><span class="pre">True</span>
 <dd><p>Check if current epoch should be skipped.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2345,7 +2279,7 @@ default <code class="docutils literal notranslate"><span class="pre">True</span>
 <dd><p>Run base_callback (if possible)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2356,7 +2290,7 @@ default <code class="docutils literal notranslate"><span class="pre">True</span>
 <dd><p>Run base_callback (if possible)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2456,7 +2390,7 @@ and <code class="docutils literal notranslate"><span class="pre">valid_additiona
 <dd><p>Unwraps loaders for current epoch.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2469,7 +2403,7 @@ If number-of-batches for loader is not provided then the first batch
 from loader will be used for overfitting.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2565,7 +2499,7 @@ and will be used the last runner.</p>
 <dd><p>Collect and save checkpoint after epoch.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2577,7 +2511,7 @@ and will be used the last runner.</p>
 load model specified in <code class="docutils literal notranslate"><span class="pre">load_on_stage_end</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2596,7 +2530,7 @@ then will be performed loading checkpoint.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2688,7 +2622,7 @@ or <code class="docutils literal notranslate"><span class="pre">last</span></cod
 <dd><p>Save checkpoint based on batches count.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2699,7 +2633,7 @@ or <code class="docutils literal notranslate"><span class="pre">last</span></cod
 <dd><p>Load model specified in <code class="docutils literal notranslate"><span class="pre">load_on_stage_end</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2710,7 +2644,7 @@ or <code class="docutils literal notranslate"><span class="pre">last</span></cod
 <dd><p>Reset iterations counter.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2960,7 +2894,7 @@ a stage, the default value is <code class="docutils literal notranslate"><span c
 <dd><p>Reset status of callback</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2971,7 +2905,7 @@ a stage, the default value is <code class="docutils literal notranslate"><span c
 <dd><p>Check if current epoch should be skipped.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3022,7 +2956,7 @@ there are several of them and they are in a dictionary format.</p></li>
 <dd><p>Checks that the current stage has correct criterion.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3056,7 +2990,7 @@ there are several of them and they are in a dictionary format.</p></li>
 <dd><p>Check if iterated specified number of batches.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3067,7 +3001,7 @@ there are several of them and they are in a dictionary format.</p></li>
 <dd><p>Check if iterated specified number of epochs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3141,7 +3075,7 @@ default value is <code class="docutils literal notranslate"><span class="pre">1e
 <dd><p>Check if should be performed early stopping.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3199,7 +3133,7 @@ translates <code class="docutils literal notranslate"><span class="pre">runner.*
 at the end of an epoch.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner instance</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner instance</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3323,22 +3257,31 @@ to remove always_show metrics set it to an empty list <code class="docutils lite
 <dt id="catalyst.core.callbacks.metrics.IMetricCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">IMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metrics_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#IMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.IMetricCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code>, <a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
-<p>&#64;TODO: Docs. Contribution is welcome.</p>
+<p>Callback abstraction for metric computation.</p>
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.IMetricCallback.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metrics_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#IMetricCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.IMetricCallback.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prefix</strong> – key prefix to store computed
+batch/loader/epoch metrics</p></li>
+<li><p><strong>input_key</strong> – input key to use for metric calculation;
+specifies our <cite>y_true</cite></p></li>
+<li><p><strong>output_key</strong> – output key to use for metric calculation;
+specifies our <cite>y_pred</cite></p></li>
+<li><p><strong>multiplier</strong> – scalar for metric reweighting</p></li>
+<li><p><strong>**metrics_kwargs</strong> – extra metric params
+to pass for metric computation</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.IMetricCallback.metric_fn">
 <em class="property">abstract property </em><code class="sig-name descname">metric_fn</code><a class="headerlink" href="#catalyst.core.callbacks.metrics.IMetricCallback.metric_fn" title="Permalink to this definition">¶</a></dt>
-<dd><p>Docs. Contribution is welcome.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>&#64;TODO</p>
-</dd>
-</dl>
+<dd><p>Specifies used metric function.</p>
 </dd></dl>
 
 </dd></dl>
@@ -3347,7 +3290,8 @@ to remove always_show metrics set it to an empty list <code class="docutils lite
 <dt id="catalyst.core.callbacks.metrics.IBatchMetricCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">IBatchMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metrics_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#IBatchMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.IBatchMetricCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.callbacks.metrics.IMetricCallback" title="catalyst.core.callbacks.metrics.IMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.IMetricCallback</span></code></a></p>
-<p>&#64;TODO: Docs. Contribution is welcome.</p>
+<p>Batch-based metric callback.
+Computes metric on batch and saves for logging.</p>
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.IBatchMetricCallback.on_batch_end">
 <code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#IBatchMetricCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.IBatchMetricCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
@@ -3360,11 +3304,18 @@ to remove always_show metrics set it to an empty list <code class="docutils lite
 <dt id="catalyst.core.callbacks.metrics.ILoaderMetricCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callbacks.metrics.</code><code class="sig-name descname">ILoaderMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#ILoaderMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.ILoaderMetricCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.callbacks.metrics.IMetricCallback" title="catalyst.core.callbacks.metrics.IMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.metrics.IMetricCallback</span></code></a></p>
-<p>&#64;TODO: Docs. Contribution is welcome.</p>
+<p>Loader-based metric callback.
+Stores input/output values during loaders run
+and computes metric in the end.</p>
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.ILoaderMetricCallback.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#ILoaderMetricCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.ILoaderMetricCallback.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><p>Init.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – <cite>IMetricCallback</cite> params.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -3376,13 +3327,18 @@ to remove always_show metrics set it to an empty list <code class="docutils lite
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.ILoaderMetricCallback.on_loader_end">
 <code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#ILoaderMetricCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.ILoaderMetricCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><p>Computes loader-based metric.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.ILoaderMetricCallback.on_loader_start">
 <code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#ILoaderMetricCallback.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.ILoaderMetricCallback.on_loader_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reinitialises internal storages.</p>
+<dd><p>Reinitialises internal storage.</p>
 </dd></dl>
 
 </dd></dl>
@@ -3395,18 +3351,28 @@ to remove always_show metrics set it to an empty list <code class="docutils lite
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.BatchMetricCallback.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, metric_fn: Callable, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metric_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#BatchMetricCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.BatchMetricCallback.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><p>Init.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prefix</strong> – key prefix to store computed
+batch/loader/epoch metrics</p></li>
+<li><p><strong>input_key</strong> – input key to use for metric calculation;
+specifies our <cite>y_true</cite></p></li>
+<li><p><strong>output_key</strong> – output key to use for metric calculation;
+specifies our <cite>y_pred</cite></p></li>
+<li><p><strong>multiplier</strong> – scalar for metric reweighting</p></li>
+<li><p><strong>**metrics_kwargs</strong> – extra metric params
+to pass for metric computation</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.BatchMetricCallback.metric_fn">
 <em class="property">property </em><code class="sig-name descname">metric_fn</code><a class="headerlink" href="#catalyst.core.callbacks.metrics.BatchMetricCallback.metric_fn" title="Permalink to this definition">¶</a></dt>
-<dd><p>Docs. Contribution is welcome.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>&#64;TODO</p>
-</dd>
-</dl>
+<dd><p>Specifies used metric function.</p>
 </dd></dl>
 
 </dd></dl>
@@ -3419,18 +3385,28 @@ to remove always_show metrics set it to an empty list <code class="docutils lite
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.LoaderMetricCallback.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, metric_fn: Callable, input_key: Union[str, List[str], Dict[str, str]] = 'targets', output_key: Union[str, List[str], Dict[str, str]] = 'logits', multiplier: float = 1.0, **metric_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#LoaderMetricCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.LoaderMetricCallback.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><p>Init.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prefix</strong> – key prefix to store computed
+batch/loader/epoch metrics</p></li>
+<li><p><strong>input_key</strong> – input key to use for metric calculation;
+specifies our <cite>y_true</cite></p></li>
+<li><p><strong>output_key</strong> – output key to use for metric calculation;
+specifies our <cite>y_pred</cite></p></li>
+<li><p><strong>multiplier</strong> – scalar for metric reweighting</p></li>
+<li><p><strong>**metrics_kwargs</strong> – extra metric params
+to pass for metric computation</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.LoaderMetricCallback.metric_fn">
 <em class="property">property </em><code class="sig-name descname">metric_fn</code><a class="headerlink" href="#catalyst.core.callbacks.metrics.LoaderMetricCallback.metric_fn" title="Permalink to this definition">¶</a></dt>
-<dd><p>Docs. Contribution is welcome.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>&#64;TODO</p>
-</dd>
-</dl>
+<dd><p>Specifies used metric function.</p>
 </dd></dl>
 
 </dd></dl>
@@ -3452,13 +3428,13 @@ to remove always_show metrics set it to an empty list <code class="docutils lite
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>prefix</strong> (<em>str</em>) – new key for aggregated metric.</p></li>
+<li><p><strong>prefix</strong> – new key for aggregated metric.</p></li>
 <li><p><strong>metrics</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em>) – If not None,
 it aggregates only the values from the metric by these keys.
 for <code class="docutils literal notranslate"><span class="pre">weighted_sum</span></code> aggregation it must be a Dict[str, float].</p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – function for aggregation.
+<li><p><strong>mode</strong> – function for aggregation.
 Must be either <code class="docutils literal notranslate"><span class="pre">sum</span></code>, <code class="docutils literal notranslate"><span class="pre">mean</span></code> or <code class="docutils literal notranslate"><span class="pre">weighted_sum</span></code>.</p></li>
-<li><p><strong>multiplier</strong> (<em>float</em>) – scale factor for the aggregated metric.</p></li>
+<li><p><strong>multiplier</strong> – scale factor for the aggregated metric.</p></li>
 </ul>
 </dd>
 </dl>
@@ -3467,10 +3443,10 @@ Must be either <code class="docutils literal notranslate"><span class="pre">sum<
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.MetricAggregationCallback.on_batch_end">
 <code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricAggregationCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricAggregationCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the metric and add it to the metrics.</p>
+<dd><p>Computes the metric and add it to the batch metrics.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3478,12 +3454,24 @@ Must be either <code class="docutils literal notranslate"><span class="pre">sum<
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.MetricAggregationCallback.on_epoch_end">
 <code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricAggregationCallback.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricAggregationCallback.on_epoch_end" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Computes the metric and add it to the epoch metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.MetricAggregationCallback.on_loader_end">
 <code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricAggregationCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricAggregationCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Computes the metric and add it to the loader metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
+</dd>
+</dl>
+</dd></dl>
 
 </dd></dl>
 
@@ -3495,53 +3483,76 @@ Must be either <code class="docutils literal notranslate"><span class="pre">sum<
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.MetricManagerCallback.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricManagerCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricManagerCallback.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><p>Init.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.MetricManagerCallback.on_batch_end">
 <code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricManagerCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricManagerCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Batch end hook.
-:param runner: current runner
-:type runner: IRunner</p>
+<dd><p>Batch end hook.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.MetricManagerCallback.on_batch_start">
 <code class="sig-name descname">on_batch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricManagerCallback.on_batch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricManagerCallback.on_batch_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Batch start hook.
-:param runner: current runner
-:type runner: IRunner</p>
+<dd><p>Batch start hook.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.MetricManagerCallback.on_epoch_start">
 <code class="sig-name descname">on_epoch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricManagerCallback.on_epoch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricManagerCallback.on_epoch_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Epoch start hook.
-:param runner: current runner
-:type runner: IRunner</p>
+<dd><p>Epoch start hook.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.MetricManagerCallback.on_loader_end">
 <code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricManagerCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricManagerCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loader end hook.
-:param runner: current runner
-:type runner: IRunner</p>
+<dd><p>Loader end hook.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.MetricManagerCallback.on_loader_start">
 <code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricManagerCallback.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricManagerCallback.on_loader_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loader start hook.
-:param runner: current runner
-:type runner: IRunner</p>
+<dd><p>Loader start hook.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.callbacks.metrics.MetricManagerCallback.to_single_value">
 <em class="property">static </em><code class="sig-name descname">to_single_value</code><span class="sig-paren">(</span><em class="sig-param">value: Any</em><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/catalyst/core/callbacks/metrics.html#MetricManagerCallback.to_single_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.metrics.MetricManagerCallback.to_single_value" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><p>Convert any value to float.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> – some value</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>result</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -3600,7 +3611,7 @@ regularization.</p></li>
 <dd><p>On batch end event</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3611,7 +3622,7 @@ regularization.</p></li>
 <dd><p>On batch start event</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3622,7 +3633,7 @@ regularization.</p></li>
 <dd><p>On epoch end event.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3633,7 +3644,7 @@ regularization.</p></li>
 <dd><p>On stage end event.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3704,7 +3715,7 @@ for each param group</p></li>
 <dd><p>On batch end event</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3715,7 +3726,7 @@ for each param group</p></li>
 <dd><p>On epoch end event.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3726,7 +3737,7 @@ for each param group</p></li>
 <dd><p>On epoch start event.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3801,7 +3812,7 @@ use <code class="docutils literal notranslate"><span class="pre">train_additiona
 dropped for current epoch.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3818,7 +3829,7 @@ validation loader will be used
 in the epochs where this loader is missing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><strong>ValueError</strong> – if there are no loaders in epoch</p>
@@ -3832,7 +3843,7 @@ in the epochs where this loader is missing.</p>
 <dd><p>Collect information about loaders.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><p><strong>ValueError</strong> – if there are no loaders in epoch</p>
@@ -3945,7 +3956,7 @@ specified in experiment.</p></li>
 <dd><p>Batch end hook.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3956,7 +3967,7 @@ specified in experiment.</p></li>
 <dd><p>Epoch end hook.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3967,7 +3978,7 @@ specified in experiment.</p></li>
 <dd><p>Loader start hook.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3978,7 +3989,7 @@ specified in experiment.</p></li>
 <dd><p>Stage start hook.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3989,7 +4000,7 @@ specified in experiment.</p></li>
 <dd><p>Update learning rate and momentum in runner.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4000,7 +4011,7 @@ specified in experiment.</p></li>
 <dd><p>Update momentum in runner.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4041,7 +4052,7 @@ for learning rate scheduling</p>
 <dd><p>Batch end hook.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4052,7 +4063,7 @@ for learning rate scheduling</p>
 <dd><p>Loader start hook.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4063,7 +4074,7 @@ for learning rate scheduling</p>
 <dd><p>Stage start hook.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4074,7 +4085,7 @@ for learning rate scheduling</p>
 <dd><p>Update learning rate and momentum in runner.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4101,7 +4112,7 @@ for learning rate scheduling</p>
 <dd><p>Batch end hook.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4112,7 +4123,7 @@ for learning rate scheduling</p>
 <dd><p>Batch start hook.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4123,7 +4134,7 @@ for learning rate scheduling</p>
 <dd><p>Loader end hook.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4134,7 +4145,7 @@ for learning rate scheduling</p>
 <dd><p>Loader start hook.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4161,7 +4172,7 @@ for learning rate scheduling</p>
 <dd><p>Epoch end hook.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4172,7 +4183,7 @@ for learning rate scheduling</p>
 <dd><p>Epoch start hook.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
 </dd>
 </dl>
 </dd></dl>

@@ -278,7 +278,7 @@
         <span class="sd">&quot;&quot;&quot;Loader start hook.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s2">&quot;_timer/batch_time&quot;</span><span class="p">)</span>
@@ -288,7 +288,7 @@
         <span class="sd">&quot;&quot;&quot;Loader end hook.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>
 
@@ -296,7 +296,7 @@
         <span class="sd">&quot;&quot;&quot;Batch start hook.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s2">&quot;_timer/data_time&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s2">&quot;_timer/model_time&quot;</span><span class="p">)</span></div>
@@ -305,7 +305,7 @@
         <span class="sd">&quot;&quot;&quot;Batch end hook.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s2">&quot;_timer/model_time&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s2">&quot;_timer/batch_time&quot;</span><span class="p">)</span>

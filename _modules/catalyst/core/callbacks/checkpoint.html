@@ -298,7 +298,7 @@
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        filename (str): path to checkpoint</span>
-<span class="sd">        runner (IRunner): current runner</span>
+<span class="sd">        runner: current runner</span>
 <span class="sd">        load_full (bool): if true (default) then will be performed</span>
 <span class="sd">            loading states for criterion, optimizer and scheduler.</span>
 <span class="sd">            File should contain keys required for</span>
@@ -404,7 +404,7 @@
 <span class="sd">    from files specified in ``load_map``.</span>
 
 <span class="sd">    Arguments:</span>
-<span class="sd">        runner (IRunner): current runner</span>
+<span class="sd">        runner: current runner</span>
 <span class="sd">        load_map (Dict[str, str]): dict with mappings to load.</span>
 <span class="sd">            Expected keys - ``&#39;model&#39;``, ``&#39;criterion&#39;``</span>
 <span class="sd">            ``&#39;optimizer&#39;``, ``&#39;scheduler&#39;``, other keys will be</span>
@@ -785,7 +785,7 @@
 <span class="sd">        Selects a loading method based on type of mapping.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">            mapping (str or dict): mapping to use for loading</span>
 <span class="sd">            load_full (bool): load a full model, used only</span>
 <span class="sd">                when mapping type is string</span>
@@ -815,7 +815,7 @@
 <span class="sd">            then will be performed loading checkpoint.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">device</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s2">&quot;xla&quot;</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">torch_xla.core.xla_model</span> <span class="kn">import</span> <span class="n">save</span>
@@ -872,7 +872,7 @@
 <span class="sd">        Collect and save checkpoint after epoch.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">runner</span><span class="o">.</span><span class="n">stage_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">)</span>
@@ -896,7 +896,7 @@
 <span class="sd">        load model specified in ``load_on_stage_end``.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">runner</span><span class="o">.</span><span class="n">stage_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">)</span>
@@ -1075,7 +1075,7 @@
 <span class="sd">        Reset iterations counter.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage_restart</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_counter</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1091,7 +1091,7 @@
 <span class="sd">        Save checkpoint based on batches count.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_counter</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_counter</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">period</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
@@ -1107,7 +1107,7 @@
 <span class="sd">        Load model specified in ``load_on_stage_end``.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_end</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="s2">&quot;best_full&quot;</span><span class="p">]:</span>
             <span class="n">resume</span> <span class="o">=</span> <span class="p">(</span>

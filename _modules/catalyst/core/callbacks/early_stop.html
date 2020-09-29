@@ -282,7 +282,7 @@
         <span class="sd">&quot;&quot;&quot;Check if iterated specified number of epochs.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">epoch</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_epoch_steps</span><span class="p">:</span>
             <span class="n">runner</span><span class="o">.</span><span class="n">need_early_stop</span> <span class="o">=</span> <span class="kc">True</span></div>
@@ -291,7 +291,7 @@
         <span class="sd">&quot;&quot;&quot;Check if iterated specified number of batches.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_batch_step</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_batch_steps</span><span class="p">:</span>
             <span class="n">runner</span><span class="o">.</span><span class="n">need_early_stop</span> <span class="o">=</span> <span class="kc">True</span></div></div>
@@ -377,7 +377,7 @@
         <span class="sd">&quot;&quot;&quot;Check if should be performed early stopping.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">stage_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">):</span>
             <span class="k">return</span>

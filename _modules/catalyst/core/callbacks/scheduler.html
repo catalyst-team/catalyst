@@ -387,7 +387,7 @@
         <span class="sd">&quot;&quot;&quot;Update learning rate and momentum in runner.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lr</span><span class="p">,</span> <span class="n">momentum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler_step</span><span class="p">(</span><span class="n">scheduler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="p">)</span>
 
@@ -406,7 +406,7 @@
         <span class="sd">&quot;&quot;&quot;Update momentum in runner.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">reduced_metric</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">valid_metrics</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">reduced_metric</span><span class="p">]</span>
         <span class="n">lr</span><span class="p">,</span> <span class="n">momentum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler_step</span><span class="p">(</span>
@@ -428,7 +428,7 @@
         <span class="sd">&quot;&quot;&quot;Stage start hook.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reduced_metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_metric</span> <span class="ow">or</span> <span class="n">runner</span><span class="o">.</span><span class="n">main_metric</span>
 
@@ -455,7 +455,7 @@
         <span class="sd">&quot;&quot;&quot;Loader start hook.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="n">runner</span><span class="o">.</span><span class="n">is_train_loader</span>
@@ -470,7 +470,7 @@
         <span class="sd">&quot;&quot;&quot;Batch end hook.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">is_train_loader</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;batch&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">step_batch</span><span class="p">(</span><span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">)</span></div>
@@ -479,7 +479,7 @@
         <span class="sd">&quot;&quot;&quot;Epoch end hook.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;epoch&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">step_epoch</span><span class="p">(</span><span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">)</span></div></div>
@@ -539,7 +539,7 @@
         <span class="sd">&quot;&quot;&quot;Update learning rate and momentum in runner.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lr</span><span class="p">,</span> <span class="n">momentum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_update_optimizer</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">)</span>
 
@@ -554,7 +554,7 @@
         <span class="sd">&quot;&quot;&quot;Stage start hook.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">optimizer</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span>
             <span class="n">key</span><span class="o">=</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="n">inner_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer_key</span>
@@ -567,7 +567,7 @@
         <span class="sd">&quot;&quot;&quot;Loader start hook.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">update_optimizer</span><span class="p">(</span><span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">)</span></div>
@@ -576,7 +576,7 @@
         <span class="sd">&quot;&quot;&quot;Batch end hook.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">update_optimizer</span><span class="p">(</span><span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">)</span></div></div>

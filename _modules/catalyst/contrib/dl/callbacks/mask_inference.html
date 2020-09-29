@@ -313,7 +313,7 @@
         <span class="sd">&quot;&quot;&quot;Stage start hook.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys_from_runner</span><span class="p">:</span>
             <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">runner</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -331,7 +331,7 @@
         <span class="sd">&quot;&quot;&quot;Loader start hook.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lm</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_name</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">out_prefix</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">lm</span><span class="si">}</span><span class="s2">/&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
@@ -340,7 +340,7 @@
         <span class="sd">&quot;&quot;&quot;Batch end hook.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">lm</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_name</span>
         <span class="n">names</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name_key</span><span class="p">,</span> <span class="p">[])</span>

@@ -355,7 +355,7 @@
         <span class="sd">&quot;&quot;&quot;Loader start hook.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reset_stats</span><span class="p">()</span></div>
 
@@ -363,7 +363,7 @@
         <span class="sd">&quot;&quot;&quot;Batch end hook.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_add_to_stats</span><span class="p">(</span>
             <span class="n">runner</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">(),</span>
@@ -374,7 +374,7 @@
         <span class="sd">&quot;&quot;&quot;Loader end hook.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">class_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">class_names</span> <span class="ow">or</span> <span class="p">[</span>
             <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span><span class="p">)</span>

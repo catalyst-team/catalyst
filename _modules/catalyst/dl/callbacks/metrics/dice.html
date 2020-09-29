@@ -338,7 +338,7 @@
         <span class="sd">&quot;&quot;&quot;Records the confusion matrix at the end of each batch.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">outputs</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">output</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">]</span>
         <span class="n">targets</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">]</span>
@@ -356,7 +356,7 @@
         <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">tp_fp_fn_dict</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">calculate_tp_fp_fn</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">confusion_matrix</span><span class="p">)</span>
 

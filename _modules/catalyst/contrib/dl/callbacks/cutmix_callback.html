@@ -319,7 +319,7 @@
 <span class="sd">        from ``CriterionCallback``, otherwise computes loss value.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">            criterion: that is used to compute loss</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_needed</span><span class="p">:</span>
@@ -365,7 +365,7 @@
         <span class="sd">&quot;&quot;&quot;Checks if it is needed for the loader.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_needed</span> <span class="o">=</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_train_only</span> <span class="ow">or</span> <span class="n">runner</span><span class="o">.</span><span class="n">is_train_loader</span></div>
 
@@ -373,7 +373,7 @@
         <span class="sd">&quot;&quot;&quot;Mixes data according to Cutmix algorithm.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_needed</span><span class="p">:</span>
             <span class="k">return</span>

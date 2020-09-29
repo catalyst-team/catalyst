@@ -353,7 +353,7 @@
 <span class="sd">        Performing model tracing on epoch end if condition metric is improved.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): Current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt_level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span>
@@ -393,7 +393,7 @@
 <span class="sd">        Performing model tracing on epoch end if condition metric is improved</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): Current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_once</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;best&quot;</span><span class="p">:</span>
@@ -415,7 +415,7 @@
 <span class="sd">        Performing model tracing on stage end if `do_once` is True.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): Current runner</span>
+<span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_once</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_trace</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div></div>
