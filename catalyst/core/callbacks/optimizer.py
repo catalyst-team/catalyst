@@ -307,7 +307,7 @@ class AMPOptimizerCallback(IOptimizerCallback):
             # Unscales the gradients of
             # optimizer's assigned params in-place
             self.scaler.unscale_(optimizer)
-            for group in zip(optimizer.param_groups):
+            for group in optimizer.param_groups:
                 # Since the gradients of optimizer's
                 # assigned params are unscaled, clips as usual:
                 grad_clip_fn(group["params"])
