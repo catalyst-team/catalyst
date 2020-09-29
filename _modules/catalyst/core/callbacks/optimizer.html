@@ -568,7 +568,7 @@
             <span class="c1"># Unscales the gradients of</span>
             <span class="c1"># optimizer&#39;s assigned params in-place</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="o">.</span><span class="n">unscale_</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
                 <span class="c1"># Since the gradients of optimizer&#39;s</span>
                 <span class="c1"># assigned params are unscaled, clips as usual:</span>
                 <span class="n">grad_clip_fn</span><span class="p">(</span><span class="n">group</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">])</span>
