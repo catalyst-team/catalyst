@@ -1,5 +1,4 @@
 import os
-import zipfile
 
 import torch
 
@@ -7,7 +6,9 @@ from catalyst.contrib.datasets import MovieLens
 
 
 def test_download():
-
+    """
+    Test movielense download
+    """
     data_path = "./data"
     try:
         os.rmdir(data_path)
@@ -19,30 +20,30 @@ def test_download():
     filename = "ml-100k"
 
     # check if data folder exists
-    assert os.path.isdir("./data") == True
+    assert os.path.isdir("./data") is True
 
     # cehck if class folder exists
-    assert os.path.isdir("./data/MovieLens") == True
+    assert os.path.isdir("./data/MovieLens") is True
 
     # check if raw folder exists
-    assert os.path.isdir("./data/MovieLens/raw") == True
+    assert os.path.isdir("./data/MovieLens/raw") is True
 
     # check if processed folder exists
-    assert os.path.isdir("./data/MovieLens/processed") == True
+    assert os.path.isdir("./data/MovieLens/processed") is True
 
     # check if raw folder exists
-    assert os.path.isdir("./data/MovieLens/raw") == True
+    assert os.path.isdir("./data/MovieLens/raw") is True
 
     # check some random file from MovieLens
     assert (
         os.path.isfile("./data/MovieLens/raw/{}/u.info".format(filename))
-        == True
+        is True
     )
 
     # check Readme file from MovieLens
     assert (
         os.path.isfile("./data/MovieLens/raw/{}/README".format(filename))
-        == True
+        is True
     )
 
     # check if data file is not Nulll
@@ -57,6 +58,9 @@ def test_download():
 
 
 def test_reading():
+    """
+    Test reading of the movielens dataset
+    """
     training_file = "training.pt"
     test_file = "test.pt"
     processed_folder = "data/MovieLens/processed"
@@ -70,8 +74,10 @@ def test_reading():
 
 
 def test_minimal_ranking():
-    train_dataL_laader_no_min = MovieLens("./data",)
-    train_dataL_laoder_min_two = MovieLens("./data", min_rating=2.0)
-    assert 1 not in train_dataL_laoder_min_two[0].unique()
-    assert 1 not in train_dataL_laoder_min_two[120].unique()
-    assert 3 in train_dataL_laoder_min_two[0].unique()
+    """
+    Tets retrieveing the minimal ranking
+    """
+    train_data_laoder_min_two = MovieLens("./data", min_rating=2.0)
+    assert 1 not in train_data_laoder_min_two[0].unique()
+    assert 1 not in train_data_laoder_min_two[120].unique()
+    assert 3 in train_data_laoder_min_two[0].unique()

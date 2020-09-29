@@ -1,7 +1,5 @@
 import itertools
-import logging
 import os
-import zipfile
 
 import numpy as np
 import scipy.sparse as sp
@@ -9,53 +7,47 @@ import scipy.sparse as sp
 import torch
 from torch.utils.data import Dataset
 
-from catalyst.contrib.datasets.functional import (
-    download_and_extract_archive,
-    download_url,
-)
+from catalyst.contrib.datasets.functional import download_and_extract_archive
 
 
 class MovieLens(Dataset):
     """
-        MovieLens data sets were collected by the GroupLens Research Project
-        at the University of Minnesota.
-        
-        This data set consists of:
-            * 100,000 ratings (1-5) from 943 users on 1682 movies. 
-            * Each user has rated at least 20 movies. 
-                * Simple demographic info for the users (age, gender, occupation, zip)
+    MovieLens data sets were collected by the GroupLens Research Project
+    at the University of Minnesota.
 
-        The data was collected through the MovieLens web site
-        (movielens.umn.edu) during the seven-month period from September 19th, 
-        1997 through April 22nd, 1998. This data has been cleaned up - users
-        who had less than 20 ratings or did not have complete demographic
-        information were removed from this data set. Detailed descriptions of
-        the data file can be found at the end of this file.
+    This data set consists of:
+    * 100,000 ratings (1-5) from 943 users on 1682 movies.
+    * Each user has rated at least 20 movies.
+    * Simple demographic info for the users
+    (age, gender, occupation, zip)
 
-        Neither the University of Minnesota nor any of the researchers
-        involved can guarantee the correctness of the data, its suitability
-        for any particular purpose, or the validity of results based on the
-        use of the data set.  The data set may be used for any research
-        purposes under the following conditions:
+    The data was collected through the MovieLens web site
+    (movielens.umn.edu) during the seven-month period from September 19th,
+    1997 through April 22nd, 1998. This data has been cleaned up - users
+    who had less than 20 ratings or did not have complete demographic
+    information were removed from this data set. Detailed descriptions of
+    the data file can be found at the end of this file.
 
-            * The user may not state or imply any endorsement from the
-            University of Minnesota or the GroupLens Research Group.
+    Neither the University of Minnesota nor any of the researchers
+    involved can guarantee the correctness of the data, its suitability
+    for any particular purpose, or the validity of results based on the
+    use of the data set.  The data set may be used for any research
+    purposes under the following conditions:
+    * The user may not state or imply any endorsement from the
+    University of Minnesota or the GroupLens Research Group.
+    * The user must acknowledge the use of the data set in
+    publications resulting from the use of the data set
+    (see below for citation information).
+    * The user may not redistribute the data without separate
+    permission.
+    * The user may not use this information for any commercial or
+    revenue-bearing purposes without first obtaining permission
+    from a faculty member of the GroupLens Research Project at the
+    University of Minnesota.
 
-            * The user must acknowledge the use of the data set in
-            publications resulting from the use of the data set
-            (see below for citation information).
-
-            * The user may not redistribute the data without separate
-            permission.
-
-            * The user may not use this information for any commercial or
-            revenue-bearing purposes without first obtaining permission
-            from a faculty member of the GroupLens Research Project at the
-            University of Minnesota.
-
-        If you have any further questions or comments, please contact GroupLens
-        <grouplens-info@cs.umn.edu>. 
-        http://files.grouplens.org/datasets/movielens/ml-100k-README.txt
+    If you have any further questions or comments, please contact GroupLens
+    <grouplens-info@cs.umn.edu>.
+    http://files.grouplens.org/datasets/movielens/ml-100k-README.txt
     """
 
     resources = (
@@ -77,10 +69,9 @@ class MovieLens(Dataset):
             download (bool, optional): If true, downloads the dataset from
                 the internet and puts it in root directory. If dataset
                 is already downloaded, it is not downloaded again.
-            min_rating (float, optional): Minimum rating to include in 
+            min_rating (float, optional): Minimum rating to include in
                 the interaction matrix
         """
-
         if isinstance(root, torch._six.string_classes):  # noqa: WPS437
             root = os.path.expanduser(root)
 
@@ -136,10 +127,9 @@ class MovieLens(Dataset):
 
     def _check_exists(self):
         """
-        Check if the path for tarining and testing data exists 
+        Check if the path for tarining and testing data exists
         in processed folder
         """
-
         return os.path.exists(
             os.path.join(self.processed_folder, self.training_file)
         ) and os.path.exists(
@@ -170,7 +160,6 @@ class MovieLens(Dataset):
         """
         Return the raw lines of the train and test files
         """
-
         path = self.raw_folder
 
         with open(path + "/ml-100k/ua.base") as datafile:
@@ -190,14 +179,14 @@ class MovieLens(Dataset):
     def _build_interaction_matrix(self, rows, cols, data):
         """
         Args:
-            rows (int): rows of the oevrall dataset 
+            rows (int): rows of the oevrall dataset
             cols (int): columns of the overall dataset
-            data (generator object): generator of the data object
-
-        Return:
-            interaction_matrix (torch.sparse.Float): sparse user2item interaction matrix
+            data (generator object): generator of
+            the data object
+        Returns:
+            interaction_matrix (torch.sparse.Float):
+            sparse user2item interaction matrix
         """
-
         mat = sp.lil_matrix((rows, cols), dtype=np.int32)
 
         for uid, iid, rating, _ in data:
@@ -218,14 +207,13 @@ class MovieLens(Dataset):
 
     def _parse(self, data):
         """
-        Parse the raw data. 
+        Parse the raw data.
         Substract one to shift to zero based indexing
         Args:
             data: raw data of the dataset
-        Return:
+        Returns:
             Generator iterator for parsed data
         """
-
         for line in data:
 
             if not line:
@@ -245,7 +233,6 @@ class MovieLens(Dataset):
         Returns:
             The total dimension of the dataset
         """
-
         uids = set()
         iids = set()
 
