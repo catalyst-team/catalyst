@@ -8,6 +8,39 @@ from omegaconf import OmegaConf
 
 def parse_config_args(*, config, args, unknown_args):
     """@TODO: Docs. Contribution is welcome."""
+    for arg in unknown_args:
+        if not arg.startswith("-"):
+            continue
+        arg_name, value = arg.split("=")
+        arg_name = arg_name.lstrip("-").strip("/")
+
+        value_content, value_type = value.rsplit(":", 1)
+
+        if "/" in arg_name:
+            arg_names = arg_name.split("/")
+            if value_type == "str":
+                arg_value = value_content
+
+                if arg_value.lower() == "none":
+                    arg_value = None
+            else:
+                arg_value = eval("%s(%s)" % (value_type, value_content))
+
+            config_copy = config
+            for arg_name in arg_names[:-1]:
+                if arg_name not in config_copy:
+                    config_copy[arg_name] = {}
+
+                config_copy = config_copy[arg_name]
+
+            config_copy[arg_names[-1]] = arg_value
+        else:
+            if value_type == "str":
+                arg_value = value_content
+            else:
+                arg_value = eval("%s(%s)" % (value_type, value_content))
+            args.__setattr__(arg_name, arg_value)
+
     config_args = config.get("args", None)
     if config_args is None:
         config["args"] = {}
@@ -62,6 +95,10 @@ def parse_args_uargs(args, unknown_args):
             ):
                 arg_value = value
             setattr(args_copy, key, arg_value)
+
+    print(config.pretty())
+
+    config = OmegaConf.to_container(config, resolve=True)
 
     return args_copy, config
 

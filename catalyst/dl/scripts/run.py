@@ -5,8 +5,6 @@ from argparse import ArgumentParser
 import os
 from pathlib import Path
 
-from omegaconf import OmegaConf
-
 from catalyst.dl import utils
 
 
@@ -106,8 +104,6 @@ def main_worker(args, unknown_args):
     args, config = utils.parse_args_uargs(args, unknown_args)
     utils.set_global_seed(args.seed)
     utils.prepare_cudnn(args.deterministic, args.benchmark)
-
-    config = OmegaConf.to_container(config, resolve=True)
 
     config.setdefault("distributed_params", {})["apex"] = args.apex
     config.setdefault("distributed_params", {})["amp"] = args.amp

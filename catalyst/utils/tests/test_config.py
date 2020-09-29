@@ -17,17 +17,15 @@ def test_parse_config_args():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--command")
-    parser.add_argument("--logdir", type=str, default=None)
-    parser.add_argument(
-        "--autoresume",
-        type=str,
-        required=False,
-        choices=["best", "last"],
-        default=None,
-    )
 
     args, uargs = parser.parse_known_args(
-        ["--command", "run", "--logdir", "logdir", "--autoresume", "last"]
+        [
+            "--command",
+            "run",
+            "--path=test.yml:str",
+            "--stages/zero=cero:str",
+            "-C=like:str",
+        ]
     )
 
     configuration, args = utils.parse_config_args(
@@ -35,11 +33,14 @@ def test_parse_config_args():
     )
 
     assert args.command == "run"
+    assert args.path == "test.yml"
     assert configuration.get("stages") is not None
-    assert "logdir" in configuration["args"]
-    assert configuration["args"]["logdir"] == "logdir"
-    assert "autoresume" in configuration["args"]
-    assert configuration["args"]["autoresume"] == "last"
+    assert "zero" in configuration["stages"]
+    assert configuration["stages"]["zero"] == "cero"
+    assert configuration.get("args") is not None
+    assert configuration["args"]["path"] == "test.yml"
+    assert configuration["args"]["C"] == "like"
+    assert configuration["args"]["command"] == "run"
 
     for key, value in args._get_kwargs():
         v = configuration["args"].get(key)
