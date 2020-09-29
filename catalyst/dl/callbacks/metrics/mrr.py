@@ -17,9 +17,9 @@ class MRRCallback(MetricCallback):
     ):
         """
         Args:
-            input_key (str): input key to use for auc calculation
+            input_key (str): input key to use for mrr calculation
                 specifies our ``y_true``
-            output_key (str): output key to use for auc calculation;
+            output_key (str): output key to use for mrr calculation;
                 specifies our ``y_pred``
             prefix (str): name to display for mrr when printing
         """
