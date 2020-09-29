@@ -184,8 +184,8 @@ def main_worker(args, unknown_args):
 
     study = optuna.create_study(
         direction=direction,
-        storage=args.storage,
-        study_name=args.study_name,
+        storage=args.storage or study_params.pop("storage", None),
+        study_name=args.study_name or study_params.pop("study_name", None),
         sampler=optuna_sampler,
         pruner=optuna_pruner,
     )

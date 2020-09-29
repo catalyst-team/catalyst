@@ -691,68 +691,11 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         """
         Inner method to prepare `Runner` for the specified stage.
 
-        Sets `Experiment` initial seed.
-        Prepares experiment components with `self._get_experiment_components`.
-        Prepares callbacks with `self._get_experiment_callbacks`.
-        Prepares inner state with `self._prepare_inner_state`
-
         Args:
             stage (str): stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
         """
-        utils.set_global_seed(self.experiment.initial_seed)
-        (
-            model,
-            criterion,
-            optimizer,
-            scheduler,
-            device,
-        ) = self._get_experiment_components(
-            experiment=self.experiment, stage=stage, device=self.device
-        )
-
-        utils.set_global_seed(self.experiment.initial_seed)
-        callbacks = self._get_experiment_callbacks(
-            experiment=self.experiment, stage=stage
-        )
-
-        migrating_params = dict(**self.experiment.get_stage_params(stage))
-        migrate_from_previous_stage = migrating_params.get(
-            "migrate_from_previous_stage", True
-        )
-        if (
-            migrate_from_previous_stage
-            and getattr(self, "callbacks", None) is not None
-        ):
-            for key, value in self.callbacks.items():
-                if value.scope == CallbackScope.experiment:
-                    callbacks[key] = value
-
-        callbacks = utils.sort_callbacks_by_order(callbacks)
-
-        if migrate_from_previous_stage:
-            migrating_params.update(
-                {
-                    "global_epoch": getattr(self, "global_epoch", 1),
-                    "global_batch_step": getattr(self, "global_batch_step", 0),
-                    "global_sample_step": getattr(
-                        self, "global_sample_step", 0
-                    ),
-                    "resume": getattr(self, "resume", None),
-                }
-            )
-
-        self._prepare_inner_state(
-            stage=stage,
-            model=model,
-            device=device,
-            criterion=criterion,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            callbacks=callbacks,
-            loaders=getattr(self, "loaders", None),
-            **migrating_params,
-        )
+        pass
 
     def _prepare_for_epoch(self, stage: str, epoch: int) -> None:
         """
@@ -1014,7 +957,59 @@ class IStageBasedRunner(IRunner):
         loaders = utils.validate_loaders(loaders)
         self.loaders = loaders
 
-        super()._prepare_for_stage(stage=stage)
+        utils.set_global_seed(self.experiment.initial_seed)
+        (
+            model,
+            criterion,
+            optimizer,
+            scheduler,
+            device,
+        ) = self._get_experiment_components(
+            experiment=self.experiment, stage=stage, device=self.device
+        )
+
+        utils.set_global_seed(self.experiment.initial_seed)
+        callbacks = self._get_experiment_callbacks(
+            experiment=self.experiment, stage=stage
+        )
+
+        migrating_params = dict(**self.experiment.get_stage_params(stage))
+        migrate_from_previous_stage = migrating_params.get(
+            "migrate_from_previous_stage", True
+        )
+        if (
+            migrate_from_previous_stage
+            and getattr(self, "callbacks", None) is not None
+        ):
+            for key, value in self.callbacks.items():
+                if value.scope == CallbackScope.experiment:
+                    callbacks[key] = value
+
+        callbacks = utils.sort_callbacks_by_order(callbacks)
+
+        if migrate_from_previous_stage:
+            migrating_params.update(
+                {
+                    "global_epoch": getattr(self, "global_epoch", 1),
+                    "global_batch_step": getattr(self, "global_batch_step", 0),
+                    "global_sample_step": getattr(
+                        self, "global_sample_step", 0
+                    ),
+                    "resume": getattr(self, "resume", None),
+                }
+            )
+
+        self._prepare_inner_state(
+            stage=stage,
+            model=model,
+            device=device,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            callbacks=callbacks,
+            loaders=getattr(self, "loaders", None),
+            **migrating_params,
+        )
 
 
 __all__ = ["IRunner", "IStageBasedRunner", "RunnerException"]
