@@ -61,7 +61,7 @@ class MeterMetricsCallback(Callback):
         """Loader start hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         self._reset_stats()
 
@@ -69,7 +69,7 @@ class MeterMetricsCallback(Callback):
         """Batch end hook. Computes batch metrics.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         logits = runner.output[self.output_key].detach().float()
         targets = runner.input[self.input_key].detach().float()
@@ -82,7 +82,7 @@ class MeterMetricsCallback(Callback):
         """Loader end hook. Computes loader metrics.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         metrics_tracker = defaultdict(list)
         loader_values = runner.loader_metrics

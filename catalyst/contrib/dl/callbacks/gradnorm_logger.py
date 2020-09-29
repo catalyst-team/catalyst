@@ -69,7 +69,7 @@ class GradNormLogger(Callback):
         """On batch end event
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if not runner.is_train_loader:
             return

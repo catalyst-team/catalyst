@@ -75,7 +75,7 @@ class LRFinder(LRUpdater):
         """@TODO: Docs. Contribution is welcome.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if runner.is_train_loader:
             lr_step = self.final_lr / self.init_lr
@@ -89,7 +89,7 @@ class LRFinder(LRUpdater):
         """@TODO: Docs. Contribution is welcome.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
 
         Raises:
             NotImplementedError: at the end of LRFinder

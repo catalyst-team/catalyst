@@ -9,10 +9,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- 
+- docs for MetricCallbacks ([#947](https://github.com/catalyst-team/catalyst/pull/947)) 
 
 ### Changed
 
+- `catalyst-dl tune` config specification - now optuna params are grouped under `study_params` ([#947](https://github.com/catalyst-team/catalyst/pull/947))
+- `IRunner._prepare_for_stage` logic moved to `IStageBasedRunner.prepare_for_stage` ([#947](https://github.com/catalyst-team/catalyst/pull/947))
+    - now we create components in the following order: datasets/loaders, model, criterion, optimizer, scheduler, callbacks
+- removed deprecated docs types ([#947](https://github.com/catalyst-team/catalyst/pull/947))
 - 
 
 ### Removed

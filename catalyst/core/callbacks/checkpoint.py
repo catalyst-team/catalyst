@@ -37,7 +37,7 @@ def _load_checkpoint(
 
     Arguments:
         filename (str): path to checkpoint
-        runner (IRunner): current runner
+        runner: current runner
         load_full (bool): if true (default) then will be performed
             loading states for criterion, optimizer and scheduler.
             File should contain keys required for
@@ -143,7 +143,7 @@ def _load_states_from_file_map(
     from files specified in ``load_map``.
 
     Arguments:
-        runner (IRunner): current runner
+        runner: current runner
         load_map (Dict[str, str]): dict with mappings to load.
             Expected keys - ``'model'``, ``'criterion'``
             ``'optimizer'``, ``'scheduler'``, other keys will be
@@ -524,7 +524,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         Selects a loading method based on type of mapping.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
             mapping (str or dict): mapping to use for loading
             load_full (bool): load a full model, used only
                 when mapping type is string
@@ -554,7 +554,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             then will be performed loading checkpoint.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if runner.device.type == "xla":
             from torch_xla.core.xla_model import save
@@ -611,7 +611,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         Collect and save checkpoint after epoch.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if (
             runner.stage_name.startswith("infer")
@@ -635,7 +635,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         load model specified in ``load_on_stage_end``.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if (
             runner.stage_name.startswith("infer")
@@ -814,7 +814,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         Reset iterations counter.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self.stage_restart:
             self._iteration_counter = 0
@@ -830,7 +830,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         Save checkpoint based on batches count.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         self._iteration_counter += 1
         if self._iteration_counter % self.period == 0:
@@ -846,7 +846,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         Load model specified in ``load_on_stage_end``.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self.load_on_stage_end in ["best", "best_full"]:
             resume = (

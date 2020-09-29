@@ -92,7 +92,7 @@ class TracerCallback(Callback):
         Performing model tracing on epoch end if condition metric is improved.
 
         Args:
-            runner (IRunner): Current runner
+            runner: current runner
         """
         if self.opt_level is not None:
             device = "cuda"
@@ -132,7 +132,7 @@ class TracerCallback(Callback):
         Performing model tracing on epoch end if condition metric is improved
 
         Args:
-            runner (IRunner): Current runner
+            runner: current runner
         """
         if not self.do_once:
             if self.mode == "best":
@@ -154,7 +154,7 @@ class TracerCallback(Callback):
         Performing model tracing on stage end if `do_once` is True.
 
         Args:
-            runner (IRunner): Current runner
+            runner: current runner
         """
         if self.do_once:
             self._trace(runner)

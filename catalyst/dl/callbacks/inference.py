@@ -25,7 +25,7 @@ class InferCallback(Callback):
         """Stage start hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         for key in self._keys_from_runner:
             value = getattr(runner, key, None)
@@ -41,7 +41,7 @@ class InferCallback(Callback):
         """Loader start hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         self.predictions = defaultdict(lambda: [])
 
@@ -49,7 +49,7 @@ class InferCallback(Callback):
         """Batch end hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         dct = runner.output
         dct = {key: value.detach().cpu().numpy() for key, value in dct.items()}
@@ -60,7 +60,7 @@ class InferCallback(Callback):
         """Loader end hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         self.predictions = {
             key: np.concatenate(value, axis=0)

@@ -256,7 +256,7 @@ def trace_model_from_runner(
     Traces model using created experiment and runner.
 
     Args:
-        runner (IRunner): Current runner.
+        runner: current runner.
         checkpoint_name (str): Name of model checkpoint to use, if None
             traces current model from runner
         method_name (str): Model's method name that will be

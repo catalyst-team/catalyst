@@ -161,8 +161,11 @@ def main_worker(args, unknown_args):
         else "maximize"
     )
 
+    # optuna study
+    study_params = config.pop("study_params", {})
+
     # optuna sampler
-    sampler_params = config.pop("optuna_sampler_params", {})
+    sampler_params = study_params.pop("sampler_params", {})
     optuna_sampler_type = sampler_params.pop("sampler", None)
     optuna_sampler = (
         optuna.samplers.__dict__[optuna_sampler_type](**sampler_params)
@@ -171,7 +174,7 @@ def main_worker(args, unknown_args):
     )
 
     # optuna pruner
-    pruner_params = config.pop("optuna_pruner_params", {})
+    pruner_params = study_params.pop("pruner_params", {})
     optuna_pruner_type = pruner_params.pop("pruner", None)
     optuna_pruner = (
         optuna.pruners.__dict__[optuna_pruner_type](**pruner_params)
@@ -181,8 +184,8 @@ def main_worker(args, unknown_args):
 
     study = optuna.create_study(
         direction=direction,
-        storage=args.storage,
-        study_name=args.study_name,
+        storage=args.storage or study_params.pop("storage", None),
+        study_name=args.study_name or study_params.pop("study_name", None),
         sampler=optuna_sampler,
         pruner=optuna_pruner,
     )
