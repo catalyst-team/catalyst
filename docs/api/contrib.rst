@@ -250,7 +250,7 @@ Wing
 Modules
 ~~~~~~~~~~~~~~~~
 
-ArcFace: Additive Angular Margin Loss for Deep Face Recognition
+ArcFace and SubCenterArcFace
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .. automodule:: catalyst.contrib.nn.modules.arcface
     :members:
