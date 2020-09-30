@@ -35,13 +35,13 @@ class CosFace(nn.Module):
 
     """
 
-    def __init__(
+    def __init__(  # noqa: D107
         self,
         in_features: int,
         out_features: int,
         s: float = 64.0,
         m: float = 0.35,
-    ):  # noqa: D107
+    ):
         super(CosFace, self).__init__()
         self.in_features = in_features
         self.out_features = out_features

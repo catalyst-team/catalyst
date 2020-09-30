@@ -39,14 +39,14 @@ class ArcFace(nn.Module):
 
     """
 
-    def __init__(
+    def __init__(  # noqa: D107
         self,
         in_features: int,
         out_features: int,
         s: float = 64.0,
         m: float = 0.5,
         eps: float = 1e-6,
-    ):  # noqa: D107
+    ):
         super(ArcFace, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
