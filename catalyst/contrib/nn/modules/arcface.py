@@ -190,6 +190,20 @@ class SubCenterArcFace(nn.Module):
         )
 
     def forward(self, input, label):
+        """
+        Args:
+            input (torch.Tensor): input features,
+                expected shapes ``BxF`` where ``B``
+                is batch dimension and ``F`` is an
+                input feature dimension.
+            target (torch.Tensor): target classes,
+                expected shapes ``B`` where
+                ``B`` is batch dimension.
+
+        Returns:
+            tensor (logits) with shapes ``BxC``
+            where ``C`` is a number of classes.
+        """
         cos_theta = torch.bmm(
             F.normalize(input)
             .unsqueeze(0)
