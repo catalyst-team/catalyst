@@ -1,8 +1,7 @@
-from typing import Any, Dict, Iterable, Mapping, Tuple
+from typing import Any, Dict, Iterable, Mapping
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 
-from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
 from catalyst.core.callback import Callback
@@ -234,36 +233,6 @@ class IExperiment(ABC):
             Scheduler: scheduler for a given stage and optimizer.
         """
         pass
-
-    def get_experiment_components(
-        self, stage: str, model: nn.Module = None,
-    ) -> Tuple[Model, Criterion, Optimizer, Scheduler]:
-        """
-        Returns the tuple containing criterion, optimizer and scheduler by
-        giving model and stage.
-
-        Aggregation method, based on,
-
-        - :py:mod:`catalyst.core.experiment.IExperiment.get_model`
-        - :py:mod:`catalyst.core.experiment.IExperiment.get_criterion`
-        - :py:mod:`catalyst.core.experiment.IExperiment.get_optimizer`
-        - :py:mod:`catalyst.core.experiment.IExperiment.get_scheduler`
-
-        Args:
-            stage (str): stage name of interest,
-                like "pretrain" / "train" / "finetune" / etc
-            model (Model): model to optimize with stage optimizer
-
-        Returns:
-            tuple: model, criterion, optimizer, scheduler
-                for a given stage and model
-        """
-        if model is None:
-            model = self.get_model(stage)
-        criterion = self.get_criterion(stage)
-        optimizer = self.get_optimizer(stage, model)
-        scheduler = self.get_scheduler(stage, optimizer)
-        return model, criterion, optimizer, scheduler
 
     def get_transforms(self, stage: str = None, dataset: str = None):
         """Returns the data transforms for a given stage and dataset.

@@ -86,7 +86,7 @@ class DynamicQuantizationCallback(Callback):
         improved
 
         Args:
-            runner (IRunner): Current runner
+            runner: current runner
         """
         if not self.do_once:
             if self.mode == "best":

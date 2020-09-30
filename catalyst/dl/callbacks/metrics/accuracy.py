@@ -10,6 +10,7 @@ from catalyst.utils.metrics.functional import (
 
 class AccuracyCallback(BatchMetricCallback):
     """Accuracy metric callback.
+
     Computes multi-class accuracy@topk for the specified values of `topk`.
 
     .. note::
@@ -30,18 +31,18 @@ class AccuracyCallback(BatchMetricCallback):
     ):
         """
         Args:
-            input_key (str): input key to use for accuracy calculation;
+            input_key: input key to use for accuracy calculation;
                 specifies our `y_true`
-            output_key (str): output key to use for accuracy calculation;
+            output_key: output key to use for accuracy calculation;
                 specifies our `y_pred`
-            prefix (str): key for the metric's name
-            topk_args (List[int]): specifies which accuracy@K to log:
+            prefix: key for the metric's name
+            topk_args: specifies which accuracy@K to log:
                 [1] - accuracy
                 [1, 3] - accuracy at 1 and 3
                 [1, 3, 5] - accuracy at 1, 3 and 5
             num_classes (int): number of classes to calculate ``topk_args``
                 if ``accuracy_args`` is None
-            activation (str): An torch.nn activation applied to the outputs.
+            activation: An torch.nn activation applied to the outputs.
                 Must be one of ``"none"``, ``"Sigmoid"``, or ``"Softmax"``
         """
         topk_args = (
@@ -79,13 +80,13 @@ class MultiLabelAccuracyCallback(BatchMetricCallback):
     ):
         """
         Args:
-            input_key (str): input key to use for accuracy calculation;
+            input_key: input key to use for accuracy calculation;
                 specifies our `y_true`
-            output_key (str): output key to use for accuracy calculation;
+            output_key: output key to use for accuracy calculation;
                 specifies our `y_pred`
-            prefix (str): key for the metric's name
-            threshold (float): threshold for for model output
-            activation (str): An torch.nn activation applied to the outputs.
+            prefix: key for the metric's name
+            threshold: threshold for for model output
+            activation: An torch.nn activation applied to the outputs.
                 Must be one of ``"none"``, ``"Sigmoid"``, or ``"Softmax"``
         """
         super().__init__(

@@ -147,7 +147,7 @@ class _OnStageEndCheckModelTracedCallback(Callback):
     def on_stage_end(self, runner: IRunner):
         """
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         assert self.path.exists(), "Traced model was not found"
 

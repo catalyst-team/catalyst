@@ -21,7 +21,7 @@ class CheckRunCallback(Callback):
         """Check if iterated specified number of epochs.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if runner.epoch >= self.num_epoch_steps:
             runner.need_early_stop = True
@@ -30,7 +30,7 @@ class CheckRunCallback(Callback):
         """Check if iterated specified number of batches.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if runner.loader_batch_step >= self.num_batch_steps:
             runner.need_early_stop = True
@@ -116,7 +116,7 @@ class EarlyStoppingCallback(Callback):
         """Check if should be performed early stopping.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if runner.stage_name.startswith("infer"):
             return

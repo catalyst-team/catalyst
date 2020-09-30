@@ -161,7 +161,7 @@ class OptimizerCallback(IOptimizerCallback):
         """On epoch start event.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self.decouple_weight_decay:
             self._optimizer_wd = [
@@ -177,7 +177,7 @@ class OptimizerCallback(IOptimizerCallback):
         """On batch end event
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if not runner.is_train_loader:
             return
@@ -224,7 +224,7 @@ class OptimizerCallback(IOptimizerCallback):
         """On epoch end event.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self.decouple_weight_decay:
             for i, wd in enumerate(self._optimizer_wd):
@@ -307,7 +307,7 @@ class AMPOptimizerCallback(IOptimizerCallback):
             # Unscales the gradients of
             # optimizer's assigned params in-place
             self.scaler.unscale_(optimizer)
-            for group in zip(optimizer.param_groups):
+            for group in optimizer.param_groups:
                 # Since the gradients of optimizer's
                 # assigned params are unscaled, clips as usual:
                 grad_clip_fn(group["params"])
@@ -333,7 +333,7 @@ class AMPOptimizerCallback(IOptimizerCallback):
         """On batch start event
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         self.prev_autocast_state = torch.is_autocast_enabled()
         torch.set_autocast_enabled(True)
@@ -343,7 +343,7 @@ class AMPOptimizerCallback(IOptimizerCallback):
         """On batch end event
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         # Drop the cache when we exit to a nesting level
         # that's outside any instance of autocast.
@@ -375,7 +375,7 @@ class AMPOptimizerCallback(IOptimizerCallback):
         """On epoch end event.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         lr = self._optimizer.param_groups[0]["lr"]
         lr_name = (
@@ -398,7 +398,7 @@ class AMPOptimizerCallback(IOptimizerCallback):
         """On stage end event.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         self.scaler = None
 

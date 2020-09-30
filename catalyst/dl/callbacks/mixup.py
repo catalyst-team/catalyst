@@ -76,7 +76,7 @@ class MixupCallback(CriterionCallback):
         """Loader start hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         self.is_needed = not self.on_train_only or runner.is_train_loader
 
@@ -84,7 +84,7 @@ class MixupCallback(CriterionCallback):
         """Batch start hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if not self.is_needed:
             return
