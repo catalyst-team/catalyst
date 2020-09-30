@@ -147,7 +147,7 @@ class SubCenterArcFace(nn.Module):
 
     """
 
-    def __init__(
+    def __init__(  # noqa: D107
         self,
         in_features: int,
         out_features: int,
@@ -155,7 +155,7 @@ class SubCenterArcFace(nn.Module):
         m: float = 0.5,
         k: int = 3,
         eps: float = 1e-6,
-    ):  # noqa: D107
+    ):
         super(SubCenterArcFace, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
