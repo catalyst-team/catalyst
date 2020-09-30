@@ -111,9 +111,11 @@ class ArcFace(nn.Module):
 
 class SubCenterArcFace(nn.Module):
     """Implementation of
-    `Sub-center ArcFace: Boosting Face Recognition by Large-scale Noisy Web Faces`_.
+    `Sub-center ArcFace: Boosting Face Recognition
+    by Large-scale Noisy Web Faces`_.
 
-    .. _Sub-center ArcFace\: Boosting Face Recognition by Large-scale Noisy Web Faces:
+    .. _Sub-center ArcFace\: Boosting Face Recognition \
+        by Large-scale Noisy Web Faces:
         https://ibug.doc.ic.ac.uk/media/uploads/documents/eccv_1445.pdf
 
     Args:
@@ -150,7 +152,7 @@ class SubCenterArcFace(nn.Module):
         in_features: int,
         out_features: int,
         s: float = 64.0,
-        m: float = 0.50,
+        m: float = 0.5,
         k: int = 3,
         eps: float = 1e-6,
     ):  # noqa: D107
