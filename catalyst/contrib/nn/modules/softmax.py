@@ -43,7 +43,7 @@ class SoftMax(nn.Module):
             self.in_features, self.out_features
         )
 
-    def forward(self, input: torch.Tensor) -> torch.Tensor:
+    def forward(self, input):
         """
         Args:
             input (torch.Tensor): input features,

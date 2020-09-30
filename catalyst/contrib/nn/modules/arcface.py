@@ -76,9 +76,7 @@ class ArcFace(nn.Module):
             + ")"
         )
 
-    def forward(
-        self, input: torch.Tensor, target: torch.Tensor
-    ) -> torch.Tensor:
+    def forward(self, input, target):
         """
         Args:
             input (torch.Tensor): input features,
@@ -196,7 +194,7 @@ class SubCenterArcFace(nn.Module):
                 expected shapes ``BxF`` where ``B``
                 is batch dimension and ``F`` is an
                 input feature dimension.
-            target (torch.Tensor): target classes,
+            label (torch.Tensor): target classes,
                 expected shapes ``B`` where
                 ``B`` is batch dimension.
 
