@@ -4,7 +4,8 @@ import torch.nn.functional as F
 
 
 class CosFace(nn.Module):
-    """Implementation of `CosFace\: Large Margin Cosine Loss for Deep Face Recognition`_.
+    """Implementation of
+    `CosFace\: Large Margin Cosine Loss for Deep Face Recognition`_.
 
     .. _CosFace\: Large Margin Cosine Loss for Deep Face Recognition:
         https://arxiv.org/abs/1801.09414
@@ -16,6 +17,12 @@ class CosFace(nn.Module):
             Default: ``64.0``.
         m: margin.
             Default: ``0.35``.
+
+    Shape:
+        - Input: :math:`(batch, H_{in})` where
+          :math:`H_{in} = in\_features`.
+        - Output: :math:`(batch, H_{out})` where
+          :math:`H_{out} = out\_features`.
 
     Example:
         >>> layer = CosFaceLoss(5, 10, s=1.31, m=0.1)
@@ -34,7 +41,7 @@ class CosFace(nn.Module):
         out_features: int,
         s: float = 64.0,
         m: float = 0.35,
-    ):
+    ):  # noqa: D107
         super(CosFace, self).__init__()
         self.in_features = in_features
         self.out_features = out_features

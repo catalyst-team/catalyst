@@ -6,7 +6,8 @@ import torch.nn.functional as F
 
 
 class ArcFace(nn.Module):
-    """Implementation of `ArcFace: Additive Angular Margin Loss for Deep Face Recognition`_.
+    """Implementation of
+    `ArcFace: Additive Angular Margin Loss for Deep Face Recognition`_.
 
     .. _ArcFace\: Additive Angular Margin Loss for Deep Face Recognition:
         https://arxiv.org/abs/1801.07698v1
@@ -20,6 +21,12 @@ class ArcFace(nn.Module):
             Default: ``0.5``.
         eps: operation accuracy.
             Default: ``1e-6``.
+
+    Shape:
+        - Input: :math:`(batch, H_{in})` where
+          :math:`H_{in} = in\_features`.
+        - Output: :math:`(batch, H_{out})` where
+          :math:`H_{out} = out\_features`.
 
     Example:
         >>> layer = ArcFace(5, 10, s=1.31, m=0.5)
@@ -39,7 +46,7 @@ class ArcFace(nn.Module):
         s: float = 64.0,
         m: float = 0.5,
         eps: float = 1e-6,
-    ):
+    ):  # noqa: D107
         super(ArcFace, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
@@ -105,7 +112,8 @@ class ArcFace(nn.Module):
 
 
 class SubCenterArcFace(nn.Module):
-    """Implementation of `Sub-center ArcFace: Boosting Face Recognition by Large-scale Noisy Web Faces`_.
+    """Implementation of
+    `Sub-center ArcFace: Boosting Face Recognition by Large-scale Noisy Web Faces`_.
 
     .. _Sub-center ArcFace\: Boosting Face Recognition by Large-scale Noisy Web Faces:
         https://ibug.doc.ic.ac.uk/media/uploads/documents/eccv_1445.pdf
@@ -121,6 +129,12 @@ class SubCenterArcFace(nn.Module):
             Default: ``3``.
         eps (float, optional): operation accuracy.
             Default: ``1e-6``.
+
+    Shape:
+        - Input: :math:`(batch, H_{in})` where
+          :math:`H_{in} = in\_features`.
+        - Output: :math:`(batch, H_{out})` where
+          :math:`H_{out} = out\_features`.
 
     Example:
         >>> layer = SubCenterArcFace(5, 10, s=1.31, m=0.35, k=2)
@@ -141,7 +155,7 @@ class SubCenterArcFace(nn.Module):
         m: float = 0.50,
         k: int = 3,
         eps: float = 1e-6,
-    ):
+    ):  # noqa: D107
         super(SubCenterArcFace, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
