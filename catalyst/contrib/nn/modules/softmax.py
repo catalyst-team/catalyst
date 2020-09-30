@@ -6,6 +6,10 @@ import torch.nn.functional as F
 class SoftMax(nn.Module):
     """Implementation of SoftMax head for metric learning.
 
+    Args:
+        in_features (int): size of each input sample.
+        num_classes (int): size of each output sample.
+
     Example:
         >>> layer = SoftMax()
         >>> loss_fn = nn.CrosEntropyLoss()
@@ -18,11 +22,6 @@ class SoftMax(nn.Module):
     """
 
     def __init__(self, in_features: int, num_classes: int):
-        """
-        Args:
-            in_features (int): size of each input sample.
-            num_classes (int): size of each output sample.
-        """
         super(SoftMax, self).__init__()
         self.in_features = in_features
         self.out_features = num_classes

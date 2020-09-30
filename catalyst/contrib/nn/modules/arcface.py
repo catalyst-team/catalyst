@@ -6,10 +6,20 @@ import torch.nn.functional as F
 
 
 class ArcFace(nn.Module):
-    """Implementation of ArcFace loss for metric learning.
+    """Implementation of `ArcFace: Additive Angular Margin Loss for Deep Face Recognition`_.
 
-    .. _ArcFace: Additive Angular Margin Loss for Deep Face Recognition:
+    .. _ArcFace\: Additive Angular Margin Loss for Deep Face Recognition:
         https://arxiv.org/abs/1801.07698v1
+
+    Args:
+        in_features: size of each input sample.
+        out_features: size of each output sample.
+        s: norm of input feature.
+            Default: ``64.0``.
+        m: margin.
+            Default: ``0.5``.
+        eps: operation accuracy.
+            Default: ``1e-6``.
 
     Example:
         >>> layer = ArcFace(5, 10, s=1.31, m=0.5)
@@ -30,17 +40,6 @@ class ArcFace(nn.Module):
         m: float = 0.5,
         eps: float = 1e-6,
     ):
-        """
-        Args:
-            in_features (int): size of each input sample.
-            out_features (int): size of each output sample.
-            s (float, optional): norm of input feature,
-                Default: ``64.0``.
-            m (float, optional): margin.
-                Default: ``0.5``.
-            eps (float, optional): operation accuracy.
-                Default: ``1e-6``.
-        """
         super(ArcFace, self).__init__()
         self.in_features = in_features
         self.out_features = out_features
@@ -103,3 +102,100 @@ class ArcFace(nn.Module):
         logits *= self.s
 
         return logits
+
+
+class SubCenterArcFace(nn.Module):
+    """Implementation of `Sub-center ArcFace: Boosting Face Recognition by Large-scale Noisy Web Faces`_.
+
+    .. _Sub-center ArcFace\: Boosting Face Recognition by Large-scale Noisy Web Faces:
+        https://ibug.doc.ic.ac.uk/media/uploads/documents/eccv_1445.pdf
+
+    Args:
+        in_features: size of each input sample.
+        out_features: size of each output sample.
+        s: norm of input feature,
+            Default: ``64.0``.
+        m: margin.
+            Default: ``0.5``.
+        k: number of possible class centroids.
+            Default: ``3``.
+        eps (float, optional): operation accuracy.
+            Default: ``1e-6``.
+
+    Example:
+        >>> layer = SubCenterArcFace(5, 10, s=1.31, m=0.35, k=2)
+        >>> loss_fn = nn.CrosEntropyLoss()
+        >>> embedding = torch.randn(3, 5, requires_grad=True)
+        >>> target = torch.empty(3, dtype=torch.long).random_(5)
+        >>> output = layer(embedding, target)
+        >>> loss = loss_fn(output, target)
+        >>> loss.backward()
+
+    """
+
+    def __init__(
+        self,
+        in_features: int,
+        out_features: int,
+        s: float = 64.0,
+        m: float = 0.50,
+        k: int = 3,
+        eps: float = 1e-6,
+    ):
+        super(SubCenterArcFace, self).__init__()
+        self.in_features = in_features
+        self.out_features = out_features
+
+        self.s = s
+        self.m = m
+        self.k = k
+        self.eps = eps
+
+        self.weight = nn.Parameter(
+            torch.FloatTensor(k, in_features, out_features)
+        )
+        nn.init.xavier_uniform_(self.weight)
+
+        self.threshold = math.pi - self.m
+
+    def __repr__(self) -> str:
+        """Object representation."""
+        return (
+            "SubCenterArcFace("
+            + ",".join(
+                [
+                    f"in_features={self.in_features}",
+                    f"out_features={self.out_features}",
+                    f"s={self.s}",
+                    f"m={self.m}",
+                    f"k={self.k}",
+                    f"eps={self.eps}",
+                ]
+            )
+            + ")"
+        )
+
+    def forward(self, input, label):
+        cos_theta = torch.bmm(
+            F.normalize(input)
+            .unsqueeze(0)
+            .expand(self.k, *input.shape),  # k*b*f
+            F.normalize(
+                self.weight, dim=1
+            ),  # normalize in_features dim   # k*f*c
+        )  # k*b*f
+        cos_theta = torch.max(cos_theta, dim=0)[0]  # b*f
+        theta = torch.acos(
+            torch.clamp(cos_theta, -1.0 + self.eps, 1.0 - self.eps)
+        )
+
+        one_hot = torch.zeros(cos_theta.size()).to(input.device)
+        one_hot.scatter_(1, label.view(-1, 1).long(), 1)
+
+        selected = torch.where(
+            theta > self.threshold, torch.zeros_like(one_hot), one_hot
+        )
+
+        output = torch.cos(torch.where(selected.bool(), theta + self.m, theta))
+        output *= self.s
+        return output
