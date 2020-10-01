@@ -4,11 +4,17 @@ import torch.nn.functional as F
 
 
 class SoftMax(nn.Module):
-    """Implementation of SoftMax head for metric learning.
+    """Implementation of
+    `Significance of Softmax-based Features in Comparison to
+    Distance Metric Learning-based Features`_.
+
+    .. _Significance of Softmax-based Features in Comparison to \
+        Distance Metric Learning-based Features:
+        https://arxiv.org/abs/1712.10151
 
     Args:
-        in_features (int): size of each input sample.
-        num_classes (int): size of each output sample.
+        in_features: size of each input sample.
+        out_features: size of each output sample.
 
     Shape:
         - Input: :math:`(batch, H_{in})` where
@@ -17,10 +23,10 @@ class SoftMax(nn.Module):
           :math:`H_{out} = out\_features`.
 
     Example:
-        >>> layer = SoftMax()
+        >>> layer = SoftMax(5, 10)
         >>> loss_fn = nn.CrosEntropyLoss()
         >>> embedding = torch.randn(3, 5, requires_grad=True)
-        >>> target = torch.empty(3, dtype=torch.long).random_(5)
+        >>> target = torch.empty(3, dtype=torch.long).random_(10)
         >>> output = layer(embedding, target)
         >>> loss = loss_fn(output, target)
         >>> loss.backward()

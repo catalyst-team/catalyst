@@ -32,7 +32,7 @@ class ArcFace(nn.Module):
         >>> layer = ArcFace(5, 10, s=1.31, m=0.5)
         >>> loss_fn = nn.CrosEntropyLoss()
         >>> embedding = torch.randn(3, 5, requires_grad=True)
-        >>> target = torch.empty(3, dtype=torch.long).random_(5)
+        >>> target = torch.empty(3, dtype=torch.long).random_(10)
         >>> output = layer(embedding, target)
         >>> loss = loss_fn(output, target)
         >>> loss.backward()
@@ -140,7 +140,7 @@ class SubCenterArcFace(nn.Module):
         >>> layer = SubCenterArcFace(5, 10, s=1.31, m=0.35, k=2)
         >>> loss_fn = nn.CrosEntropyLoss()
         >>> embedding = torch.randn(3, 5, requires_grad=True)
-        >>> target = torch.empty(3, dtype=torch.long).random_(5)
+        >>> target = torch.empty(3, dtype=torch.long).random_(10)
         >>> output = layer(embedding, target)
         >>> loss = loss_fn(output, target)
         >>> loss.backward()
@@ -224,6 +224,7 @@ class SubCenterArcFace(nn.Module):
             theta > self.threshold, torch.zeros_like(one_hot), one_hot
         )
 
-        output = torch.cos(torch.where(selected.bool(), theta + self.m, theta))
-        output *= self.s
-        return output
+        logits = torch.cos(torch.where(selected.bool(), theta + self.m, theta))
+        logits *= self.s
+
+        return logits

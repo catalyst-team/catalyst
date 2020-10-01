@@ -28,7 +28,7 @@ class CosFace(nn.Module):
         >>> layer = CosFaceLoss(5, 10, s=1.31, m=0.1)
         >>> loss_fn = nn.CrosEntropyLoss()
         >>> embedding = torch.randn(3, 5, requires_grad=True)
-        >>> target = torch.empty(3, dtype=torch.long).random_(5)
+        >>> target = torch.empty(3, dtype=torch.long).random_(10)
         >>> output = layer(embedding, target)
         >>> loss = loss_fn(output, target)
         >>> loss.backward()
