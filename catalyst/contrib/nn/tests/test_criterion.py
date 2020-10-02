@@ -1,3 +1,8 @@
+# flake8: noqa
+import numpy as np
+
+import torch
+
 from catalyst.contrib.nn import criterion as module
 from catalyst.contrib.nn.criterion import (
     CircleLoss,
