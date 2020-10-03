@@ -157,24 +157,8 @@ class MNIST(Dataset):
             os.path.join(self.processed_folder, self.test_file)
         )
 
-    def download(self):
-        """Download the MNIST data if it doesn't exist in processed_folder."""
-        if self._check_exists():
-            return
-
-        os.makedirs(self.raw_folder, exist_ok=True)
-        os.makedirs(self.processed_folder, exist_ok=True)
-
-        # download files
-        for url, md5 in self.resources:
-            filename = url.rpartition("/")[2]
-            download_and_extract_archive(
-                url, download_root=self.raw_folder, filename=filename, md5=md5
-            )
-
-        # process and save as torch files
-        print("Processing...")
-
+    def _train_test_split(self) -> None:
+        """Split the whole dataset to train and test sets."""
         training_set = (
             read_image_file(
                 os.path.join(self.raw_folder, "train-images-idx3-ubyte")
@@ -200,6 +184,24 @@ class MNIST(Dataset):
         ) as f:
             torch.save(test_set, f)
 
+    def download(self):
+        """Download the MNIST data if it doesn't exist in processed_folder."""
+        if self._check_exists():
+            return
+
+        os.makedirs(self.raw_folder, exist_ok=True)
+        os.makedirs(self.processed_folder, exist_ok=True)
+
+        # download files
+        for url, md5 in self.resources:
+            filename = url.rpartition("/")[2]
+            download_and_extract_archive(
+                url, download_root=self.raw_folder, filename=filename, md5=md5
+            )
+
+        # process and save as torch files
+        print("Processing...")
+        self._train_test_split()
         print("Done!")
 
     def extra_repr(self):
@@ -211,6 +213,7 @@ class MnistMLDataset(MetricLearningTrainDataset, MNIST):
     """
     Simple wrapper for MNIST dataset
     """
+    split = 5
 
     def get_labels(self) -> List[int]:
         """
@@ -218,6 +221,39 @@ class MnistMLDataset(MetricLearningTrainDataset, MNIST):
             labels of digits
         """
         return self.targets.tolist()
+
+    def _train_test_split(self) -> None:
+        images = torch.cat(
+            (
+                read_image_file(
+                    os.path.join(self.raw_folder, "train-images-idx3-ubyte")
+                ),
+                read_image_file(
+                    os.path.join(self.raw_folder, "t10k-images-idx3-ubyte")
+                ),
+            )
+        )
+        labels = torch.cat(
+            (
+                read_label_file(
+                    os.path.join(self.raw_folder, "train-labels-idx1-ubyte")
+                ),
+                read_label_file(
+                    os.path.join(self.raw_folder, "t10k-labels-idx1-ubyte")
+                ),
+            )
+        )
+        mask = labels < self.split
+        training_set = (images[mask], labels[mask])
+        test_set = (images[~mask], labels[~mask])
+        with open(
+            os.path.join(self.processed_folder, self.training_file), "wb"
+        ) as f:
+            torch.save(training_set, f)
+        with open(
+            os.path.join(self.processed_folder, self.test_file), "wb"
+        ) as f:
+            torch.save(test_set, f)
 
 
 class MnistQGDataset(QueryGalleryDataset):
@@ -235,7 +271,7 @@ class MnistQGDataset(QueryGalleryDataset):
             transform: transform
             gallery_fraq: gallery size
         """
-        self._mnist = MNIST(
+        self._mnist = MnistMLDataset(
             root, train=False, download=True, transform=transform
         )
 

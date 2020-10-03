@@ -79,7 +79,7 @@ def main() -> None:
     This function checks metric learning pipeline with
     different triplets samplers.
     """
-    cmc_score_th = 0.85
+    cmc_score_th = 0.75
 
     # Note! cmc_score should be > 0.97
     # after 600 epoch. Please check it mannually
