@@ -29,7 +29,7 @@ def run_ml_pipeline(sampler_inbatch: data.IInbatchTripletSampler) -> float:
         root=dataset_root, train=True, download=True, transform=transforms,
     )
     sampler = data.BalanceBatchSampler(
-        labels=dataset_train.get_labels(), p=10, k=10
+        labels=dataset_train.get_labels(), p=5, k=10
     )
     train_loader = DataLoader(
         dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size
