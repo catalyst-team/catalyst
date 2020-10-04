@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - docs for MetricCallbacks ([#947](https://github.com/catalyst-team/catalyst/pull/947)) 
 - SoftMax, CosFace, ArcFace layers to contrib ([#939](https://github.com/catalyst-team/catalyst/pull/939))
+- `OneOf` and `OneOfV2` batch transforms ([#951](https://github.com/catalyst-team/catalyst/pull/951))
 
 ### Changed
 
@@ -27,7 +28,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - `AMPOptimizerCallback` - fix grad clip fn support ([#948](https://github.com/catalyst-team/catalyst/pull/948))
--
+- `BatchTransformCallback` - add `nn.Module` transforms support ([#951](https://github.com/catalyst-team/catalyst/pull/951))
 
 
 ## [20.09.1] - 2020-09-25
