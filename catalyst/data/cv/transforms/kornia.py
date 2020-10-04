@@ -10,18 +10,18 @@ from torch import nn
 
 
 class OneOf(nn.Module):
-    """Select one of tensor transforms and apply it batch-wise.
-
-    Args:
-        transforms: list of kornia transformations to compose.
-            Actually, any ``nn.Module`` with defined ``p``(probability
-            of selecting transform) and ``p_batch`` attributes is allowed.
-    """
+    """Select one of tensor transforms and apply it batch-wise."""
 
     def __init__(
         self,
         transforms: Iterable[Union[AugmentationBase2D, AugmentationBase3D]],
     ) -> None:
+        """
+        Args:
+            transforms: list of kornia transformations to compose.
+                Actually, any ``nn.Module`` with defined ``p``(probability
+                of selecting transform) and ``p_batch`` attributes is allowed.
+        """
         super().__init__()
 
         probs = [transform.p for transform in transforms]
@@ -37,7 +37,7 @@ class OneOf(nn.Module):
         self,
         input: Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]],
         params: Optional[Dict[str, torch.Tensor]] = None,
-        return_transform: Optional[bool] = None
+        return_transform: Optional[bool] = None,
     ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
         """Apply transform.
 
@@ -62,18 +62,18 @@ class OneOf(nn.Module):
 
 
 class OneOfV2(nn.Module):
-    """Select one of tensor transforms to apply sample-wise.
-
-    Args:
-        transforms: list of kornia transformations to compose.
-            Actually, any ``nn.Module`` with defined ``p``(probability
-            of selecting transform) and ``p_batch`` attributes is allowed.
-    """
+    """Select one of tensor transforms to apply sample-wise."""
 
     def __init__(
         self,
         transforms: Iterable[Union[AugmentationBase2D, AugmentationBase3D]],
     ) -> None:
+        """
+        Args:
+            transforms: list of kornia transformations to compose.
+                Actually, any ``nn.Module`` with defined ``p``(probability
+                of selecting transform) and ``p_batch`` attributes is allowed.
+        """
         super().__init__()
 
         probs = [transform.p for transform in transforms]
@@ -91,7 +91,7 @@ class OneOfV2(nn.Module):
         self,
         input: Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]],
         params: Optional[Dict[str, torch.Tensor]] = None,
-        return_transform: Optional[bool] = None
+        return_transform: Optional[bool] = None,
     ) -> Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]:
         """Apply transform.
 
@@ -119,7 +119,7 @@ class OneOfV2(nn.Module):
                     batch=input,
                     mask=to_apply,
                     params=params,
-                    return_transform=return_transform
+                    return_transform=return_transform,
                 )
 
         return input
