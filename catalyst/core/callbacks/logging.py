@@ -158,7 +158,7 @@ class ConsoleLogger(ILoggerCallback):
         at the end of an epoch.
 
         Args:
-            runner (IRunner): current runner instance
+            runner: current runner instance
         """
         self.logger.info("", extra={"runner": runner})
 

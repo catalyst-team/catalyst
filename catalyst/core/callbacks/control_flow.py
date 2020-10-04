@@ -374,7 +374,7 @@ class ControlFlowCallback(WrapperCallback):
         Check if current epoch should be skipped.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         stage = runner.stage_name
         loader = runner.loader_name
@@ -391,7 +391,7 @@ class ControlFlowCallback(WrapperCallback):
         Reset status of callback
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self._is_enabled:
             self.callback.on_loader_end(runner)
