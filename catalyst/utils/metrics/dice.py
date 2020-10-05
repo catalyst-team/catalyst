@@ -19,11 +19,11 @@ def dice(
     """Computes the dice metric.
 
     Args:
-        outputs (list):  a list of predicted elements
-        targets (list): a list of elements that are to be predicted
-        eps (float): epsilon
-        threshold (float): threshold for outputs binarization
-        activation (str): An torch.nn activation applied to the outputs.
+        outputs:  a list of predicted elements
+        targets: a list of elements that are to be predicted
+        eps: epsilon
+        threshold: threshold for outputs binarization
+        activation: An torch.nn activation applied to the outputs.
             Must be one of ["none", "Sigmoid", "Softmax2d"]
 
     Returns:

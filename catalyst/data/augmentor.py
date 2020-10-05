@@ -16,10 +16,10 @@ class Augmentor:
         Augmentation abstraction to use with data dictionaries.
 
         Args:
-            dict_key (str): key to transform
-            augment_fn (Callable): augmentation function to use
-            input_key (str): ``augment_fn`` input key
-            output_key (str): ``augment_fn`` output key
+            dict_key: key to transform
+            augment_fn: augmentation function to use
+            input_key: ``augment_fn`` input key
+            output_key: ``augment_fn`` output key
             **kwargs: default kwargs for augmentations function
         """
         self.dict_key = dict_key
@@ -58,7 +58,7 @@ class AugmentorCompose:
     def __call__(self, dictionary: dict) -> dict:
         """
         Args:
-            dictionary (dict): item from dataset
+            dictionary: item from dataset
 
         Returns:
             dict: dictionaty with augmented data
@@ -94,7 +94,7 @@ class AugmentorKeys:
     def __call__(self, dictionary: dict) -> dict:
         """
         Args:
-            dictionary (dict): item from dataset
+            dictionary: item from dataset
 
         Returns:
             dict: dictionaty with augmented data

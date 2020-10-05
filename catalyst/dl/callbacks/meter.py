@@ -28,19 +28,19 @@ class MeterMetricsCallback(Callback):
     ):
         """
         Args:
-            metric_names (List[str]): of metrics to print
+            metric_names: of metrics to print
                 Make sure that they are in the same order that metrics
                 are outputted by the meters in `meter_list`
-            meter_list (list-like): List of meters.meter.Meter instances
+            meter_list: List of meters.meter.Meter instances
                 len(meter_list) == num_classes
-            input_key (str): input key to use for metric calculation
+            input_key: input key to use for metric calculation
                 specifies our ``y_true``.
-            output_key (str): output key to use for metric calculation;
+            output_key: output key to use for metric calculation;
                 specifies our ``y_pred``
-            class_names (List[str]): class names to display in the logs.
+            class_names: class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0.
-            num_classes (int): Number of classes; must be > 1
-            activation (str): An torch.nn activation applied to the logits.
+            num_classes: Number of classes; must be > 1
+            activation: An torch.nn activation applied to the logits.
                 Must be one of ['none', 'Sigmoid', 'Softmax2d']
         """
         super().__init__(CallbackOrder.metric)

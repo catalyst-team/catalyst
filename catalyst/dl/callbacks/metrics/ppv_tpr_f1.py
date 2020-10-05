@@ -24,15 +24,15 @@ class PrecisionRecallF1ScoreCallback(MeterMetricsCallback):
     ):
         """
         Args:
-            input_key (str): input key to use for metric calculation
+            input_key: input key to use for metric calculation
                 specifies our ``y_true``
-            output_key (str): output key to use for metric calculation;
+            output_key: output key to use for metric calculation;
                 specifies our ``y_pred``
-            class_names (List[str]): class names to display in the logs.
+            class_names: class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0.
-            num_classes (int): Number of classes; must be > 1
-            threshold (float): threshold for outputs binarization
-            activation (str): An torch.nn activation applied to the outputs.
+            num_classes: Number of classes; must be > 1
+            threshold: threshold for outputs binarization
+            activation: An torch.nn activation applied to the outputs.
                 Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
         """
         # adjusting num_classes automatically if class_names is not None

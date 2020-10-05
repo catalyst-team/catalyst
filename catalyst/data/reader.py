@@ -18,8 +18,8 @@ class ReaderSpec:
     def __init__(self, input_key: str, output_key: str):
         """
         Args:
-            input_key (str): input key to use from annotation dict
-            output_key (Optional[str]): output key to use to store the result,
+            input_key: input key to use from annotation dict
+            output_key: output key to use to store the result,
                 default: ``input_key``
         """
         self.input_key = input_key
@@ -59,12 +59,12 @@ class ScalarReader(ReaderSpec):
     ):
         """
         Args:
-            input_key (str): input key to use from annotation dict
-            output_key (Optional[str]): output key to use to store the result,
+            input_key: input key to use from annotation dict
+            output_key: output key to use to store the result,
                 default: ``input_key``
-            dtype (type): datatype of scalar values to use
+            dtype: datatype of scalar values to use
             default_value: default value to use if something goes wrong
-            one_hot_classes (int): number of one-hot classes
+            one_hot_classes: number of one-hot classes
             smoothing (float, optional): if specified applies label smoothing
                 to one_hot classes
         """
@@ -114,9 +114,9 @@ class LambdaReader(ReaderSpec):
     ):
         """
         Args:
-            input_key (str): input key to use from annotation dict
-            output_key (Optional[str]): output key to use to store the result
-            lambda_fn (callable): encode function to use to prepare your data
+            input_key: input key to use from annotation dict
+            output_key: output key to use to store the result
+            lambda_fn: encode function to use to prepare your data
               (for example convert chars/words/tokens to indices, etc)
             kwargs: kwargs for encode function
         """
@@ -149,8 +149,8 @@ class ReaderCompose(object):
     def __init__(self, readers: List[ReaderSpec], mixins: list = None):
         """
         Args:
-            readers (List[ReaderSpec]): list of reader to compose
-            mixins (list): list of mixins to use
+            readers: list of reader to compose
+            mixins: list of mixins to use
         """
         self.readers = readers
         self.mixins = mixins or []

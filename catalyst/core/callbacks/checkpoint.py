@@ -36,9 +36,9 @@ def _load_checkpoint(
     Load checkpoint from a file.
 
     Arguments:
-        filename (str): path to checkpoint
+        filename: path to checkpoint
         runner: current runner
-        load_full (bool): if true (default) then will be performed
+        load_full: if true (default) then will be performed
             loading states for criterion, optimizer and scheduler.
             File should contain keys required for
             loading model (``'model_state_dict'``),
@@ -97,7 +97,7 @@ def _required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]:
     Otherwise an empty dict will be generated.
 
     Arguments:
-        logdir (str): directory with logs
+        logdir: directory with logs
         load_map (Dict[str, str]): dict with specification
             what should be loaded
 
@@ -187,7 +187,7 @@ class BaseCheckpointCallback(ICheckpointCallback):
     def __init__(self, metrics_filename: str = "_metrics.json"):
         """
         Args:
-            metrics_filename (str): filename to save metrics
+            metrics_filename: filename to save metrics
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
         """
         super().__init__(
@@ -257,16 +257,16 @@ class CheckpointCallback(BaseCheckpointCallback):
     ):
         """
         Args:
-            save_n_best (int): number of best checkpoint to keep,
+            save_n_best: number of best checkpoint to keep,
                 if ``0`` then  store only last state of model and
                 ``load_on_stage_end`` should be one of
                 ``last`` or ``last_full``.
-            resume (str): path to checkpoint to load
+            resume: path to checkpoint to load
                 and initialize runner state
-            resume_dir (str): directory with checkpoints,
+            resume_dir: directory with checkpoints,
                 if specified in combination with ``resume``
                 than resume checkpoint will be loaded from ``resume_dir``
-            metrics_filename (str): filename to save metrics
+            metrics_filename: filename to save metrics
                 in checkpoint folder.
                 Must ends on ``.json`` or ``.yml``
             load_on_stage_start (str or Dict[str, str]): load specified
@@ -365,7 +365,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         Create checkpoint filename suffix based on checkpoint data.
 
         Args:
-            checkpoint (dict): checkpoint dict,
+            checkpoint: checkpoint dict,
                 should contain ``stage_name`` and ``epoch`` keys.
 
         Returns:
@@ -380,7 +380,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         and keep ``save_n_best`` metrics.
 
         Args:
-            last_valid_metrics (dict): dict with metrics
+            last_valid_metrics: dict with metrics
                 from last validation step.
 
         Returns:
@@ -412,7 +412,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         Keep ``save_n_best`` checkpoints based on main metric.
 
         Args:
-            minimize_metric (bool): if ``True`` then keep
+            minimize_metric: if ``True`` then keep
                 ``save_n_best`` checkpoints with the lowest/highest values
                 of the main metric.
         """
@@ -443,12 +443,12 @@ class CheckpointCallback(BaseCheckpointCallback):
 
         Args:
             logdir (str or Path object): directory for storing checkpoints
-            suffix (str): checkpoint suffix
-            checkpoint (dict): dict with checkpoint data
-            is_best (bool): indicator to save best checkpoint,
+            suffix: checkpoint suffix
+            checkpoint: dict with checkpoint data
+            is_best: indicator to save best checkpoint,
                 if true then will be saved two additional checkpoints -
                 ``best`` and ``best_full``.
-            is_last (bool): indicator to save the last checkpoint,
+            is_last: indicator to save the last checkpoint,
                 if true then will be saved two additional checkpoints -
                 ``last`` and ``last_full``.
         """
@@ -489,12 +489,12 @@ class CheckpointCallback(BaseCheckpointCallback):
 
         Args:
             logdir (str or Path object): directory for storing checkpoints
-            checkpoint (dict): dict with checkpoint data
-            is_best (bool): indicator to save best checkpoint,
+            checkpoint: dict with checkpoint data
+            is_best: indicator to save best checkpoint,
                 if true then will be saved two additional checkpoints -
                 ``best`` and ``best_full``.
-            main_metric (str): metric to use for selecting the best model
-            minimize_metric (bool): indicator for selecting best metric,
+            main_metric: metric to use for selecting the best model
+            minimize_metric: indicator for selecting best metric,
                 if true then best metric will be the metric with
                 the lowest value, otherwise with the greatest value.
         """
@@ -526,7 +526,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         Args:
             runner: current runner
             mapping (str or dict): mapping to use for loading
-            load_full (bool): load a full model, used only
+            load_full: load a full model, used only
                 when mapping type is string
         """
         if isinstance(mapping, str):
@@ -707,12 +707,12 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
     ):
         """
         Args:
-            save_n_last (int): number of last checkpoint to keep
-            period (int): save the checkpoint every `period`
-            stage_restart (bool): restart counter every stage or not
-            metrics_filename (str): filename to save metrics
+            save_n_last: number of last checkpoint to keep
+            period: save the checkpoint every `period`
+            stage_restart: restart counter every stage or not
+            metrics_filename: filename to save metrics
                 in checkpoint folder. Must ends on ``.json`` or ``.yml``
-            load_on_stage_end (str): name of the model to load
+            load_on_stage_end: name of the model to load
                 at the end of the stage.
                 You can use ``best``, ``best_full`` (default)
                 to load the best model according to validation metrics,
@@ -733,7 +733,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         Create checkpoint filename suffix based on checkpoint data.
 
         Args:
-            checkpoint (dict): checkpoint dict,
+            checkpoint: checkpoint dict,
                 should contain ``stage_name`` and ``epoch`` keys.
 
         Returns:
@@ -788,8 +788,8 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
 
         Args:
             logdir (str or Path object): directory for storing checkpoints
-            checkpoint (dict): dict with checkpoint data
-            batch_metrics (dict): dict with metrics based on a few batches
+            checkpoint: dict with checkpoint data
+            batch_metrics: dict with metrics based on a few batches
         """
         filepath = utils.save_checkpoint(
             logdir=Path(f"{logdir}/checkpoints/"),

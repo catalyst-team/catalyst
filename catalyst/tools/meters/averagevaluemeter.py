@@ -33,9 +33,9 @@ class AverageValueMeter(meter.Meter):
         <https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance>`_.
 
         Args:
-            value (float): value for update,
+            value: value for update,
                 can be scalar number or PyTorch tensor
-            batch_size (int): batch size for update
+            batch_size: batch size for update
 
         .. note::
             Because of algorithm design,

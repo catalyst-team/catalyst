@@ -20,10 +20,10 @@ class SegmentationDataset(Dataset):
         Segmentation dataset.
 
         Args:
-            images (List[Path]): list of paths to the images
-            masks (List[Path]): list of paths to the masks
+            images: list of paths to the images
+            masks: list of paths to the masks
             (names must be the same as in images)
-            transforms (optional): dict transforms
+            transforms: dict transforms
         """
         self.images = images
         self.masks = masks
@@ -40,7 +40,7 @@ class SegmentationDataset(Dataset):
         """Fetch a data sample for a given index.
 
         Args:
-            index (int): index of the element in the dataset
+            index: index of the element in the dataset
 
         Returns:
             Single element by index

@@ -14,7 +14,7 @@ class MNIST(_MNIST):
         """Fetches a sample for a given index from MNIST dataset.
 
         Args:
-            index (int): index of the element in the dataset
+            index: index of the element in the dataset
 
         Returns:
             tuple: (image, target) where target is index of the target class
@@ -36,7 +36,7 @@ class Experiment(ConfigExperiment):
         """Provides train/validation subsets from MNIST dataset.
 
         Args:
-            stage (str): stage name e.g. ``'stage1'`` or ``'infer'``
+            stage: stage name e.g. ``'stage1'`` or ``'infer'``
             **kwargs: extra params
 
         Returns:

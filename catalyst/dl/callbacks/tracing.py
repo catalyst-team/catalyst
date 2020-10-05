@@ -27,17 +27,17 @@ class TracerCallback(Callback):
     ):
         """
         Args:
-            metric (str): Metric key we should trace model based on
-            minimize (bool): Whether do we minimize metric or not
-            min_delta (float): Minimum value of change for metric to be
+            metric: Metric key we should trace model based on
+            minimize: Whether do we minimize metric or not
+            min_delta: Minimum value of change for metric to be
                 considered as improved
-            mode (str): One of `best` or `last`
-            do_once (str): Whether do we trace once per stage or every epoch
-            method_name (str): Model's method name that will be
+            mode: One of `best` or `last`
+            do_once: Whether do we trace once per stage or every epoch
+            method_name: Model's method name that will be
                 used as entrypoint during tracing
-            requires_grad (bool): Flag to use grads
-            opt_level (str): AMP FP16 init level
-            trace_mode (str): Mode for model to trace
+            requires_grad: Flag to use grads
+            opt_level: AMP FP16 init level
+            trace_mode: Mode for model to trace
                 (``train`` or ``eval``)
             out_dir (Union[str, Path]): Directory to save model to
             out_model (Union[str, Path]): Path to save model to

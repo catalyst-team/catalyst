@@ -51,10 +51,10 @@ class ImageClassificationDataset(ImageFolderDataset):
         """Constructor method for the ``ImageClassificationDataset`` class.
 
         Args:
-            root (str): root directory of dataset
-            train (bool): if ``True``, creates dataset from ``train/``
+            root: root directory of dataset
+            train: if ``True``, creates dataset from ``train/``
                 subfolder, otherwise from ``val/``
-            download (bool): if ``True``, downloads the dataset from
+            download: if ``True``, downloads the dataset from
                 the internet and puts it in root directory. If dataset
                 is already downloaded, it is not downloaded again
             **kwargs:
