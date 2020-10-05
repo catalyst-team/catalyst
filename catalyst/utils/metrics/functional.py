@@ -115,7 +115,7 @@ def wrap_class_metric2dict(
             default: None - class indexes will be used.
 
     Returns:
-       wrapped metric function with List[Dict] output
+        wrapped metric function with List[Dict] output
     """
 
     def class_metric_with_dict_output(*args, **kwargs):
@@ -148,7 +148,7 @@ def wrap_topk_metric2dict(
         topk_args: topk args to sync outputs with
 
     Returns:
-       wrapped metric function with List[Dict] output
+        wrapped metric function with List[Dict] output
 
     Raises:
         NotImplementedError: if metrics returned values are out of
