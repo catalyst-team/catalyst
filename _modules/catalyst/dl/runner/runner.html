@@ -320,10 +320,10 @@
 <span class="sd">        Starts the train stage of the model.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model (Model): model to train</span>
-<span class="sd">            criterion (Criterion): criterion function for training</span>
-<span class="sd">            optimizer (Optimizer): optimizer for training</span>
-<span class="sd">            scheduler (Scheduler): scheduler for training</span>
+<span class="sd">            model: model to train</span>
+<span class="sd">            criterion: criterion function for training</span>
+<span class="sd">            optimizer: optimizer for training</span>
+<span class="sd">            scheduler: scheduler for training</span>
 <span class="sd">            datasets (OrderedDict[str, Union[Dataset, Dict, Any]]): dictionary</span>
 <span class="sd">                with one or several  ``torch.utils.data.Dataset``</span>
 <span class="sd">                for training, validation or inference</span>
@@ -334,40 +334,40 @@
 <span class="sd">                for training, validation or inference</span>
 <span class="sd">            callbacks (Union[List[Callback], OrderedDict[str, Callback]]):</span>
 <span class="sd">                list or dictionary with Catalyst callbacks</span>
-<span class="sd">            logdir (str): path to output directory</span>
-<span class="sd">            resume (str): path to checkpoint for model</span>
-<span class="sd">            num_epochs (int): number of training epochs</span>
-<span class="sd">            valid_loader (str): loader name used to calculate</span>
+<span class="sd">            logdir: path to output directory</span>
+<span class="sd">            resume: path to checkpoint for model</span>
+<span class="sd">            num_epochs: number of training epochs</span>
+<span class="sd">            valid_loader: loader name used to calculate</span>
 <span class="sd">                the metrics and save the checkpoints. For example,</span>
 <span class="sd">                you can pass `train` and then</span>
 <span class="sd">                the metrics will be taken from `train` loader.</span>
-<span class="sd">            main_metric (str): the key to the name of the metric</span>
+<span class="sd">            main_metric: the key to the name of the metric</span>
 <span class="sd">                by which the checkpoints will be selected.</span>
-<span class="sd">            minimize_metric (bool): flag to indicate whether</span>
+<span class="sd">            minimize_metric: flag to indicate whether</span>
 <span class="sd">                the ``main_metric`` should be minimized.</span>
-<span class="sd">            verbose (bool): if `True`, it displays the status of the training</span>
+<span class="sd">            verbose: if `True`, it displays the status of the training</span>
 <span class="sd">                to the console.</span>
-<span class="sd">            stage_kwargs (dict): additional params for stage</span>
-<span class="sd">            checkpoint_data (dict): additional data to save in checkpoint,</span>
+<span class="sd">            stage_kwargs: additional params for stage</span>
+<span class="sd">            checkpoint_data: additional data to save in checkpoint,</span>
 <span class="sd">                for example: ``class_names``, ``date_of_training``, etc</span>
 <span class="sd">            fp16 (Union[Dict, bool]): If not None, then sets training to FP16.</span>
 <span class="sd">                See https://nvidia.github.io/apex/amp.html#properties</span>
 <span class="sd">                if fp16=True, params by default will be ``{&quot;opt_level&quot;: &quot;O1&quot;}``</span>
-<span class="sd">            distributed (bool): if `True` will start training</span>
+<span class="sd">            distributed: if `True` will start training</span>
 <span class="sd">                in distributed mode.</span>
 <span class="sd">                Note: Works only with python scripts. No jupyter support.</span>
-<span class="sd">            check (bool): if True, then only checks that pipeline is working</span>
+<span class="sd">            check: if True, then only checks that pipeline is working</span>
 <span class="sd">                (3 epochs only with 3 batches per loader)</span>
-<span class="sd">            overfit (bool): if True, then takes only one batch per loader</span>
+<span class="sd">            overfit: if True, then takes only one batch per loader</span>
 <span class="sd">                for model overfitting, for advance usage please check</span>
 <span class="sd">                ``BatchOverfitCallback``</span>
-<span class="sd">            timeit (bool): if True, computes the execution time</span>
+<span class="sd">            timeit: if True, computes the execution time</span>
 <span class="sd">                of training process and displays it to the console.</span>
-<span class="sd">            load_best_on_end (bool): if True, Runner will load</span>
+<span class="sd">            load_best_on_end: if True, Runner will load</span>
 <span class="sd">                best checkpoint state (model, optimizer, etc)</span>
 <span class="sd">                according to validation metrics. Requires specified ``logdir``.</span>
-<span class="sd">            initial_seed (int): experiment&#39;s initial seed value</span>
-<span class="sd">            state_kwargs (dict): deprecated, use `stage_kwargs` instead</span>
+<span class="sd">            initial_seed: experiment&#39;s initial seed value</span>
+<span class="sd">            state_kwargs: deprecated, use `stage_kwargs` instead</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            NotImplementedError: if both `resume` and `CheckpointCallback`</span>
@@ -444,7 +444,7 @@
 <span class="sd">        Starts the inference stage of the model.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model (Model): model for inference</span>
+<span class="sd">            model: model for inference</span>
 <span class="sd">            datasets (OrderedDict[str, Union[Dataset, Dict, Any]]): dictionary</span>
 <span class="sd">                with one or several  ``torch.utils.data.Dataset``</span>
 <span class="sd">                for training, validation or inference</span>
@@ -455,20 +455,20 @@
 <span class="sd">                for training, validation or inference</span>
 <span class="sd">            callbacks (Union[List[Callback], OrderedDict[str, Callback]]):</span>
 <span class="sd">                list or dictionary with Catalyst callbacks</span>
-<span class="sd">            logdir (str): path to output directory</span>
-<span class="sd">            resume (str): path to checkpoint to use for resume</span>
-<span class="sd">            verbose (bool): if `True`, it displays the status of the training</span>
+<span class="sd">            logdir: path to output directory</span>
+<span class="sd">            resume: path to checkpoint to use for resume</span>
+<span class="sd">            verbose: if `True`, it displays the status of the training</span>
 <span class="sd">                to the console.</span>
-<span class="sd">            stage_kwargs (dict): additional stage params</span>
+<span class="sd">            stage_kwargs: additional stage params</span>
 <span class="sd">            fp16 (Union[Dict, bool]): If not None, then sets training to FP16.</span>
 <span class="sd">                See https://nvidia.github.io/apex/amp.html#properties</span>
 <span class="sd">                if fp16=True, params by default will be ``{&quot;opt_level&quot;: &quot;O1&quot;}``</span>
-<span class="sd">            check (bool): if True, then only checks that pipeline is working</span>
+<span class="sd">            check: if True, then only checks that pipeline is working</span>
 <span class="sd">                (3 epochs only)</span>
-<span class="sd">            timeit (bool): if True, computes the execution time</span>
+<span class="sd">            timeit: if True, computes the execution time</span>
 <span class="sd">                of training process and displays it to the console.</span>
-<span class="sd">            initial_seed (int): experiment&#39;s initial seed value</span>
-<span class="sd">            state_kwargs (dict): deprecated, use `stage_kwargs` instead</span>
+<span class="sd">            initial_seed: experiment&#39;s initial seed value</span>
+<span class="sd">            state_kwargs: deprecated, use `stage_kwargs` instead</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            NotImplementedError: if both `resume` and `CheckpointCallback`</span>
@@ -546,11 +546,11 @@
 <span class="sd">        keeping `is_infer_loader` as True. Moves model to evaluation mode.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            loader (DataLoader): loader to predict</span>
-<span class="sd">            model (Model): model to use for prediction</span>
-<span class="sd">            resume (str): path to checkpoint to resume</span>
+<span class="sd">            loader: loader to predict</span>
+<span class="sd">            model: model to use for prediction</span>
+<span class="sd">            resume: path to checkpoint to resume</span>
 <span class="sd">            fp16 (Union[Dict, bool]): fp16 usage flag</span>
-<span class="sd">            initial_seed (int): seed to use before prediction</span>
+<span class="sd">            initial_seed: seed to use before prediction</span>
 
 <span class="sd">        Yields:</span>
 <span class="sd">            bathes with model predictions</span>
@@ -603,19 +603,19 @@
 <span class="sd">        Traces model using Torch Jit.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model (Model): model to trace</span>
+<span class="sd">            model: model to trace</span>
 <span class="sd">            batch: batch to forward through the model to trace</span>
 <span class="sd">            logdir (str, optional): If specified,</span>
 <span class="sd">                the result will be written to the directory</span>
 <span class="sd">            loader (DataLoader, optional): if batch is not specified, the batch</span>
 <span class="sd">                will be ``next(iter(loader))``</span>
-<span class="sd">            method_name (str): model&#39;s method name that will be traced</span>
-<span class="sd">            mode (str): ``train`` or ``eval``</span>
-<span class="sd">            requires_grad (bool): flag to trace with gradients</span>
+<span class="sd">            method_name: model&#39;s method name that will be traced</span>
+<span class="sd">            mode: ``train`` or ``eval``</span>
+<span class="sd">            requires_grad: flag to trace with gradients</span>
 <span class="sd">            fp16 (Union[Dict, bool]): If not None, then sets</span>
 <span class="sd">                tracing params to FP16</span>
-<span class="sd">            device (Device): Torch device or a string</span>
-<span class="sd">            predict_params (dict): additional parameters for model forward</span>
+<span class="sd">            device: Torch device or a string</span>
+<span class="sd">            predict_params: additional parameters for model forward</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            ScriptModule: traced model</span>

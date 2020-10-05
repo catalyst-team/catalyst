@@ -259,9 +259,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.core.callbacks.early_stop</h1><div class="highlight"><pre>
-<span></span><span class="c1"># flake8: noqa</span>
-<span class="c1"># @TODO: code formatting issue for 20.07 release</span>
-<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span>
+<span></span><span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>
 
 
@@ -271,8 +269,8 @@
 <div class="viewcode-block" id="CheckRunCallback.__init__"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.early_stop.CheckRunCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_batch_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">num_epoch_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            num_batch_steps (int): number of batches to iterate in epoch</span>
-<span class="sd">            num_epoch_steps (int): number of epoch to perform in a stage</span>
+<span class="sd">            num_batch_steps: number of batches to iterate in epoch</span>
+<span class="sd">            num_epoch_steps: number of epoch to perform in a stage</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">external</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">all</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_batch_steps</span> <span class="o">=</span> <span class="n">num_batch_steps</span>
@@ -348,15 +346,15 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            patience (int): number of epochs with no improvement</span>
+<span class="sd">            patience: number of epochs with no improvement</span>
 <span class="sd">                after which training will be stopped.</span>
-<span class="sd">            metric (str): metric name to use for early stopping, default</span>
+<span class="sd">            metric: metric name to use for early stopping, default</span>
 <span class="sd">                is ``&quot;loss&quot;``.</span>
-<span class="sd">            minimize (bool): if ``True`` then expected that metric should</span>
+<span class="sd">            minimize: if ``True`` then expected that metric should</span>
 <span class="sd">                decrease and early stopping will be performed only when metric</span>
 <span class="sd">                stops decreasing. If ``False`` then expected</span>
 <span class="sd">                that metric should increase. Default value ``True``.</span>
-<span class="sd">            min_delta (float): minimum change in the monitored metric</span>
+<span class="sd">            min_delta: minimum change in the monitored metric</span>
 <span class="sd">                to qualify as an improvement, i.e. an absolute change</span>
 <span class="sd">                of less than min_delta, will count as no improvement,</span>
 <span class="sd">                default value is ``1e-6``.</span>

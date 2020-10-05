@@ -401,7 +401,7 @@
         <span class="sd">&quot;&quot;&quot;Event handler for stage start.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (&quot;IRunner&quot;): IRunner instance.</span>
+<span class="sd">            runner: IRunner instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
@@ -409,7 +409,7 @@
         <span class="sd">&quot;&quot;&quot;Event handler for stage end.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (&quot;IRunner&quot;): IRunner instance.</span>
+<span class="sd">            runner: IRunner instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
@@ -417,7 +417,7 @@
         <span class="sd">&quot;&quot;&quot;Event handler for epoch start.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (&quot;IRunner&quot;): IRunner instance.</span>
+<span class="sd">            runner: IRunner instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
@@ -425,7 +425,7 @@
         <span class="sd">&quot;&quot;&quot;Event handler for epoch end.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (&quot;IRunner&quot;): IRunner instance.</span>
+<span class="sd">            runner: IRunner instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
@@ -433,7 +433,7 @@
         <span class="sd">&quot;&quot;&quot;Event handler for loader start.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (&quot;IRunner&quot;): IRunner instance.</span>
+<span class="sd">            runner: IRunner instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
@@ -441,7 +441,7 @@
         <span class="sd">&quot;&quot;&quot;Event handler for loader end.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (&quot;IRunner&quot;): IRunner instance.</span>
+<span class="sd">            runner: IRunner instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
@@ -449,7 +449,7 @@
         <span class="sd">&quot;&quot;&quot;Event handler for batch start.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (&quot;IRunner&quot;): IRunner instance.</span>
+<span class="sd">            runner: IRunner instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
@@ -457,7 +457,7 @@
         <span class="sd">&quot;&quot;&quot;Event handler for batch end.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (&quot;IRunner&quot;): IRunner instance.</span>
+<span class="sd">            runner: IRunner instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
@@ -465,7 +465,7 @@
         <span class="sd">&quot;&quot;&quot;Event handler for exception case.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (&quot;IRunner&quot;): IRunner instance.</span>
+<span class="sd">            runner: IRunner instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div></div>
 
@@ -476,8 +476,8 @@
 <div class="viewcode-block" id="WrapperCallback.__init__"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.callback.WrapperCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_callback</span><span class="p">:</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">enable_callback</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            base_callback (Callback): callback to wrap</span>
-<span class="sd">            enable_callback (boolean): indicator to enable/disable</span>
+<span class="sd">            base_callback: callback to wrap</span>
+<span class="sd">            enable_callback: indicator to enable/disable</span>
 <span class="sd">                callback, if ``True`` then callback will be enabled,</span>
 <span class="sd">                default ``True``</span>
 <span class="sd">        &quot;&quot;&quot;</span>

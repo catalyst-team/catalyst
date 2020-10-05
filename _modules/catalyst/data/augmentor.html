@@ -277,10 +277,10 @@
 <span class="sd">        Augmentation abstraction to use with data dictionaries.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            dict_key (str): key to transform</span>
-<span class="sd">            augment_fn (Callable): augmentation function to use</span>
-<span class="sd">            input_key (str): ``augment_fn`` input key</span>
-<span class="sd">            output_key (str): ``augment_fn`` output key</span>
+<span class="sd">            dict_key: key to transform</span>
+<span class="sd">            augment_fn: augmentation function to use</span>
+<span class="sd">            input_key: ``augment_fn`` input key</span>
+<span class="sd">            output_key: ``augment_fn`` output key</span>
 <span class="sd">            **kwargs: default kwargs for augmentations function</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dict_key</span> <span class="o">=</span> <span class="n">dict_key</span>
@@ -319,7 +319,7 @@
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            dictionary (dict): item from dataset</span>
+<span class="sd">            dictionary: item from dataset</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dict: dictionaty with augmented data</span>
@@ -355,7 +355,7 @@
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            dictionary (dict): item from dataset</span>
+<span class="sd">            dictionary: item from dataset</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dict: dictionaty with augmented data</span>

@@ -279,8 +279,8 @@
 <div class="viewcode-block" id="ConfusionMeter.__init__"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.confusionmeter.ConfusionMeter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">normalized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            k (int): number of classes in the classification problem</span>
-<span class="sd">            normalized (boolean): determines whether or not the confusion</span>
+<span class="sd">            k: number of classes in the classification problem</span>
+<span class="sd">            normalized: determines whether or not the confusion</span>
 <span class="sd">                matrix is normalized or not</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ConfusionMeter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -298,10 +298,10 @@
 <span class="sd">        where ``K`` is no of classes.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            predicted (tensor): Can be an N x K tensor of predicted scores</span>
+<span class="sd">            predicted: Can be an N x K tensor of predicted scores</span>
 <span class="sd">                obtained from the model for N examples and K classes</span>
 <span class="sd">                or an N-tensor of integer values between 0 and K-1</span>
-<span class="sd">            target (tensor): Can be a N-tensor of integer values assumed</span>
+<span class="sd">            target: Can be a N-tensor of integer values assumed</span>
 <span class="sd">                to be integer values between 0 and K-1 or N x K tensor, where</span>
 <span class="sd">                targets are assumed to be provided as one-hot vectors</span>
 <span class="sd">        &quot;&quot;&quot;</span>

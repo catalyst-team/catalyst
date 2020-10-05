@@ -408,9 +408,9 @@
 <span class="sd">            additional_input_key (Optional[Union[str, int]]): key of an</span>
 <span class="sd">                additional target in batch dict mapping to transform,</span>
 <span class="sd">                e.g. `&#39;mask&#39;`</span>
-<span class="sd">            output_key (Optional[str]): key to use to store the result</span>
+<span class="sd">            output_key: key to use to store the result</span>
 <span class="sd">                of the transform, defaults to `input_key` if not provided</span>
-<span class="sd">            additional_output_key (Optional[str]): key to use to store</span>
+<span class="sd">            additional_output_key: key to use to store</span>
 <span class="sd">                the result of additional target transformation,</span>
 <span class="sd">                defaults to `additional_input_key` if not provided</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -468,7 +468,7 @@
         <span class="sd">&quot;&quot;&quot;Apply transforms.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner (IRunner): сurrent runner</span>
+<span class="sd">            runner: сurrent runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">in_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_input</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">input</span><span class="p">)</span>
         <span class="n">out_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">in_batch</span><span class="p">)</span>

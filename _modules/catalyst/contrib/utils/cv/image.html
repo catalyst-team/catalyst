@@ -313,8 +313,8 @@
 <span class="sd">        uri (str, pathlib.Path, bytes, file): the resource to load the image</span>
 <span class="sd">          from, e.g. a filename, ``pathlib.Path``, http address or file object,</span>
 <span class="sd">          see ``imageio.imread`` docs for more info</span>
-<span class="sd">        grayscale (bool): if True, make all images grayscale</span>
-<span class="sd">        expand_dims (bool): if True, append channel axis to grayscale images</span>
+<span class="sd">        grayscale: if True, make all images grayscale</span>
+<span class="sd">        expand_dims: if True, append channel axis to grayscale images</span>
 <span class="sd">          rootpath (Union[str, pathlib.Path]): path to the resource with image</span>
 <span class="sd">          (allows to use relative path)</span>
 <span class="sd">        rootpath (Union[str, pathlib.Path]): path to the resource with image</span>
@@ -395,7 +395,7 @@
 <span class="sd">          see ``imageio.mimread`` docs for more info</span>
 <span class="sd">        clip_range (Tuple[int, int]): lower and upper interval edges,</span>
 <span class="sd">          image values outside the interval are clipped to the interval edges</span>
-<span class="sd">        expand_dims (bool): if True, append channel axis to grayscale images</span>
+<span class="sd">        expand_dims: if True, append channel axis to grayscale images</span>
 <span class="sd">          rootpath (Union[str, pathlib.Path]): path to the resource with image</span>
 <span class="sd">          (allows to use relative path)</span>
 <span class="sd">        rootpath (Union[str, pathlib.Path]): path to the resource with image</span>
@@ -436,10 +436,10 @@
     <span class="sd">&quot;&quot;&quot;Draws every mask for with some color over image.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        image (np.ndarray): RGB image used as underlay for masks</span>
-<span class="sd">        masks (List[np.ndarray]): list of masks</span>
-<span class="sd">        threshold (float): threshold for masks binarization</span>
-<span class="sd">        mask_strength (float): opacity of colorized masks</span>
+<span class="sd">        image: RGB image used as underlay for masks</span>
+<span class="sd">        masks: list of masks</span>
+<span class="sd">        threshold: threshold for masks binarization</span>
+<span class="sd">        mask_strength: opacity of colorized masks</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        np.ndarray: HxWx3 image with overlay</span>

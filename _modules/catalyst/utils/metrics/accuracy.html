@@ -284,12 +284,12 @@
 <span class="sd">    Computes multi-class accuracy@topk for the specified values of `topk`.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        outputs (torch.Tensor): model outputs, logits</span>
+<span class="sd">        outputs: model outputs, logits</span>
 <span class="sd">            with shape [bs; num_classes]</span>
-<span class="sd">        targets (torch.Tensor): ground truth, labels</span>
+<span class="sd">        targets: ground truth, labels</span>
 <span class="sd">            with shape [bs; 1]</span>
-<span class="sd">        activation (str): activation to use for model output</span>
-<span class="sd">        topk (Sequence[int]): `topk` for accuracy@topk computing</span>
+<span class="sd">        activation: activation to use for model output</span>
+<span class="sd">        topk: `topk` for accuracy@topk computing</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        list with computed accuracy@topk</span>
@@ -326,15 +326,15 @@
 <span class="sd">    Computes multi-label accuracy for the specified activation and threshold.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        outputs (torch.Tensor): NxK tensor that for each of the N examples</span>
+<span class="sd">        outputs: NxK tensor that for each of the N examples</span>
 <span class="sd">            indicates the probability of the example belonging to each of</span>
 <span class="sd">            the K classes, according to the model.</span>
-<span class="sd">        targets (torch.Tensor): binary NxK tensort that encodes which of the K</span>
+<span class="sd">        targets: binary NxK tensort that encodes which of the K</span>
 <span class="sd">            classes are associated with the N-th input</span>
 <span class="sd">            (eg: a row [0, 1, 0, 1] indicates that the example is</span>
 <span class="sd">            associated with classes 2 and 4)</span>
-<span class="sd">        threshold (float): threshold for for model output</span>
-<span class="sd">        activation (str): activation to use for model output</span>
+<span class="sd">        threshold: threshold for for model output</span>
+<span class="sd">        activation: activation to use for model output</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        computed multi-label accuracy</span>

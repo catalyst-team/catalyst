@@ -259,9 +259,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.core.callbacks.logging</h1><div class="highlight"><pre>
-<span></span><span class="c1"># flake8: noqa</span>
-<span class="c1"># @TODO: code formatting issue for 20.07 release</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
@@ -289,10 +287,10 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            always_show (List[str]): list of metrics to always show</span>
+<span class="sd">            always_show: list of metrics to always show</span>
 <span class="sd">                if None default is ``[&quot;_timer/_fps&quot;]``</span>
 <span class="sd">                to remove always_show metrics set it to an empty list ``[]``</span>
-<span class="sd">            never_show (List[str]): list of metrics which will not be shown</span>
+<span class="sd">            never_show: list of metrics which will not be shown</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">logging</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">master</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tqdm</span><span class="p">:</span> <span class="n">tqdm</span> <span class="o">=</span> <span class="kc">None</span>
@@ -439,10 +437,10 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            metric_names (List[str]): list of metric names to log,</span>
+<span class="sd">            metric_names: list of metric names to log,</span>
 <span class="sd">                if none - logs everything</span>
-<span class="sd">            log_on_batch_end (bool): logs per-batch metrics if set True</span>
-<span class="sd">            log_on_epoch_end (bool): logs per-epoch metrics if set True</span>
+<span class="sd">            log_on_batch_end: logs per-batch metrics if set True</span>
+<span class="sd">            log_on_epoch_end: logs per-epoch metrics if set True</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">logging</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">master</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metrics_to_log</span> <span class="o">=</span> <span class="n">metric_names</span>

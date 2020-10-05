@@ -298,15 +298,15 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            optimizer: PyTorch optimizer</span>
-<span class="sd">            num_steps (int): total number of steps</span>
+<span class="sd">            num_steps: total number of steps</span>
 <span class="sd">            lr_range: tuple with two or three elements</span>
 <span class="sd">                (max_lr, min_lr, [final_lr])</span>
 <span class="sd">            init_lr (float, optional): initial lr</span>
-<span class="sd">            warmup_steps (int): count of steps for warm-up stage</span>
+<span class="sd">            warmup_steps: count of steps for warm-up stage</span>
 <span class="sd">            warmup_fraction (float, optional): fraction in [0; 1) to calculate</span>
 <span class="sd">                number of warmup steps.</span>
 <span class="sd">                Cannot be set together with ``warmup_steps``</span>
-<span class="sd">            decay_steps (int): count of steps for lr decay stage</span>
+<span class="sd">            decay_steps: count of steps for lr decay stage</span>
 <span class="sd">            decay_fraction (float, optional): fraction in [0; 1) to calculate</span>
 <span class="sd">                number of decay steps.</span>
 <span class="sd">                Cannot be set together with ``decay_steps``</span>
@@ -463,8 +463,8 @@
         <span class="sd">&quot;&quot;&quot;Recalculates total num_steps for ``batch`` mode.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            loader_len (int): total count of batches in an epoch</span>
-<span class="sd">            current_step (int): current step</span>
+<span class="sd">            loader_len: total count of batches in an epoch</span>
+<span class="sd">            current_step: current step</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">warmup_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">warmup_steps</span> <span class="o">*</span> <span class="n">loader_len</span>
         <span class="n">lr_annealing_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lr_annealing_steps</span> <span class="o">*</span> <span class="n">loader_len</span>

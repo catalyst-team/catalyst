@@ -293,11 +293,11 @@
 <span class="sd">    when dtype is `np.uint8`.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        images (torch.Tensor): [B]xCxHxW float tensor</span>
-<span class="sd">        denormalize (bool): if True, multiply image(s) by std and add mean</span>
+<span class="sd">        images: [B]xCxHxW float tensor</span>
+<span class="sd">        denormalize: if True, multiply image(s) by std and add mean</span>
 <span class="sd">        mean (Tuple[float, float, float]): per channel mean to add</span>
 <span class="sd">        std (Tuple[float, float, float]): per channel std to multiply</span>
-<span class="sd">        move_channels_dim (bool): if True, convert tensor to [B]xHxWxC format</span>
+<span class="sd">        move_channels_dim: if True, convert tensor to [B]xHxWxC format</span>
 <span class="sd">        dtype: result ndarray dtype. Only float32 and uint8 are supported</span>
 
 <span class="sd">    Returns:</span>

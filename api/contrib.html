@@ -411,7 +411,7 @@
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>root</strong> (<em>string</em>) – Root directory of dataset where
+<li><p><strong>root</strong> – Root directory of dataset where
 <code class="docutils literal notranslate"><span class="pre">MNIST/processed/training.pt</span></code>
 and  <code class="docutils literal notranslate"><span class="pre">MNIST/processed/test.pt</span></code> exist.</p></li>
 <li><p><strong>train</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True, creates dataset from
@@ -589,10 +589,10 @@ that takes in the target and transforms it.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>root</strong> (<em>str</em>) – root directory of dataset</p></li>
-<li><p><strong>train</strong> (<em>bool</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, creates dataset from <code class="docutils literal notranslate"><span class="pre">train/</span></code>
+<li><p><strong>root</strong> – root directory of dataset</p></li>
+<li><p><strong>train</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, creates dataset from <code class="docutils literal notranslate"><span class="pre">train/</span></code>
 subfolder, otherwise from <code class="docutils literal notranslate"><span class="pre">val/</span></code></p></li>
-<li><p><strong>download</strong> (<em>bool</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, downloads the dataset from
+<li><p><strong>download</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, downloads the dataset from
 the internet and puts it in root directory. If dataset
 is already downloaded, it is not downloaded again</p></li>
 <li><p><strong>**kwargs</strong> – </p></li>
@@ -822,10 +822,10 @@ Read about Alchemy here <a class="reference external" href="https://alchemy.host
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>metric_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of metric names to log,
+<li><p><strong>metric_names</strong> – list of metric names to log,
 if none - logs everything</p></li>
-<li><p><strong>log_on_batch_end</strong> (<em>bool</em>) – logs per-batch metrics if set True</p></li>
-<li><p><strong>log_on_epoch_end</strong> (<em>bool</em>) – logs per-epoch metrics if set True</p></li>
+<li><p><strong>log_on_batch_end</strong> – logs per-batch metrics if set True</p></li>
+<li><p><strong>log_on_epoch_end</strong> – logs per-epoch metrics if set True</p></li>
 </ul>
 </dd>
 </dl>
@@ -873,9 +873,9 @@ You may not use them together.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fields</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of features which must be affected.</p></li>
-<li><p><strong>alpha</strong> (<em>float</em>) – beta distribution parameter.</p></li>
-<li><p><strong>on_train_only</strong> (<em>bool</em>) – Apply to train only.
+<li><p><strong>fields</strong> – list of features which must be affected.</p></li>
+<li><p><strong>alpha</strong> – beta distribution parameter.</p></li>
+<li><p><strong>on_train_only</strong> – Apply to train only.
 So, if on_train_only is True, use a standard output/metric
 for validation.</p></li>
 </ul>
@@ -921,11 +921,11 @@ for validation.</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>norm_type</strong> (<em>int</em>) – norm type used to calculate norm of gradients.
+<li><p><strong>norm_type</strong> – norm type used to calculate norm of gradients.
 If <cite>OptimizerCallback</cite> provides non-default argument
 <cite>grad_clip_params</cite> with custom norm type, then corresponding
 norm type should be used in this class.</p></li>
-<li><p><strong>accumulation_steps</strong> (<em>int</em>) – number of steps before
+<li><p><strong>accumulation_steps</strong> – number of steps before
 <code class="docutils literal notranslate"><span class="pre">model.zero_grad()</span></code>.
 Should be the same as in <cite>OptimizerCallback</cite>.</p></li>
 </ul>
@@ -940,9 +940,9 @@ Should be the same as in <cite>OptimizerCallback</cite>.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>Model</em>) – model which gradients to be saved.</p></li>
-<li><p><strong>prefix</strong> (<em>str</em>) – prefix for keys in resulting dictionary.</p></li>
-<li><p><strong>norm_type</strong> (<em>int</em>) – norm type of gradient norm.</p></li>
+<li><p><strong>model</strong> – model which gradients to be saved.</p></li>
+<li><p><strong>prefix</strong> – prefix for keys in resulting dictionary.</p></li>
+<li><p><strong>norm_type</strong> – norm type of gradient norm.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1166,9 +1166,9 @@ mapping to transform, e.g. <cite>‘image’</cite></p></li>
 <li><p><strong>additional_input_key</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em><em>]</em>) – key of an
 additional target in batch dict mapping to transform,
 e.g. <cite>‘mask’</cite></p></li>
-<li><p><strong>output_key</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – key to use to store the result
+<li><p><strong>output_key</strong> – key to use to store the result
 of the transform, defaults to <cite>input_key</cite> if not provided</p></li>
-<li><p><strong>additional_output_key</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – key to use to store
+<li><p><strong>additional_output_key</strong> – key to use to store
 the result of additional target transformation,
 defaults to <cite>additional_input_key</cite> if not provided</p></li>
 </ul>
@@ -1182,7 +1182,7 @@ defaults to <cite>additional_input_key</cite> if not provided</p></li>
 <dd><p>Apply transforms.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="core.html#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – сurrent runner</p>
+<dd class="field-odd"><p><strong>runner</strong> – сurrent runner</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1301,11 +1301,11 @@ Just use “ANONYMOUS” token:</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>metric_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of metric names to log,
+<li><p><strong>metric_names</strong> – list of metric names to log,
 if none - logs everything</p></li>
-<li><p><strong>log_on_batch_end</strong> (<em>bool</em>) – logs per-batch metrics if set True</p></li>
-<li><p><strong>log_on_epoch_end</strong> (<em>bool</em>) – logs per-epoch metrics if set True</p></li>
-<li><p><strong>offline_mode</strong> (<em>bool</em>) – whether logging to Neptune server should
+<li><p><strong>log_on_batch_end</strong> – logs per-batch metrics if set True</p></li>
+<li><p><strong>log_on_epoch_end</strong> – logs per-epoch metrics if set True</p></li>
+<li><p><strong>offline_mode</strong> – whether logging to Neptune server should
 be turned off. It is useful for debugging</p></li>
 </ul>
 </dd>
@@ -1428,11 +1428,11 @@ It is 2^cross_entropy.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – input key to use for perplexity calculation,
+<li><p><strong>input_key</strong> – input key to use for perplexity calculation,
 target tokens</p></li>
-<li><p><strong>output_key</strong> (<em>str</em>) – output key to use for perplexity calculation,
+<li><p><strong>output_key</strong> – output key to use for perplexity calculation,
 logits of the predicted tokens</p></li>
-<li><p><strong>ignore_index</strong> (<em>int</em>) – index to ignore, usually pad_index</p></li>
+<li><p><strong>ignore_index</strong> – index to ignore, usually pad_index</p></li>
 </ul>
 </dd>
 </dl>
@@ -1471,16 +1471,16 @@ logits of the predicted tokens</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>token</strong> (<em>str</em>) – telegram bot’s token,
+<li><p><strong>token</strong> – telegram bot’s token,
 see <a class="reference external" href="https://core.telegram.org/bots">https://core.telegram.org/bots</a></p></li>
-<li><p><strong>chat_id</strong> (<em>str</em>) – Chat unique identifier</p></li>
+<li><p><strong>chat_id</strong> – Chat unique identifier</p></li>
 <li><p><strong>metric_names</strong> – List of metric names to log.
 if none - logs everything.</p></li>
-<li><p><strong>log_on_stage_start</strong> (<em>bool</em>) – send notification on stage start</p></li>
-<li><p><strong>log_on_loader_start</strong> (<em>bool</em>) – send notification on loader start</p></li>
-<li><p><strong>log_on_loader_end</strong> (<em>bool</em>) – send notification on loader end</p></li>
-<li><p><strong>log_on_stage_end</strong> (<em>bool</em>) – send notification on stage end</p></li>
-<li><p><strong>log_on_exception</strong> (<em>bool</em>) – send notification on exception</p></li>
+<li><p><strong>log_on_stage_start</strong> – send notification on stage start</p></li>
+<li><p><strong>log_on_loader_start</strong> – send notification on loader start</p></li>
+<li><p><strong>log_on_loader_end</strong> – send notification on loader end</p></li>
+<li><p><strong>log_on_stage_end</strong> – send notification on stage end</p></li>
+<li><p><strong>log_on_exception</strong> – send notification on exception</p></li>
 </ul>
 </dd>
 </dl>
@@ -1556,10 +1556,10 @@ Read about Visdom here <a class="reference external" href="https://github.com/fa
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>metric_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of metric names to log,
+<li><p><strong>metric_names</strong> – list of metric names to log,
 if none - logs everything</p></li>
-<li><p><strong>log_on_batch_end</strong> (<em>bool</em>) – logs per-batch metrics if set True</p></li>
-<li><p><strong>log_on_epoch_end</strong> (<em>bool</em>) – logs per-epoch metrics if set True</p></li>
+<li><p><strong>log_on_batch_end</strong> – logs per-batch metrics if set True</p></li>
+<li><p><strong>log_on_epoch_end</strong> – logs per-epoch metrics if set True</p></li>
 </ul>
 </dd>
 </dl>
@@ -1634,11 +1634,11 @@ Read about Weights &amp; Biases here <a class="reference external" href="https:/
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>metric_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of metric names to log,
+<li><p><strong>metric_names</strong> – list of metric names to log,
 if None - logs everything</p></li>
-<li><p><strong>log_on_batch_end</strong> (<em>bool</em>) – logs per-batch metrics if set True</p></li>
-<li><p><strong>log_on_epoch_end</strong> (<em>bool</em>) – logs per-epoch metrics if set True</p></li>
-<li><p><strong>log</strong> (<em>str</em>) – wandb.watch parameter. Can be “all”, “gradients”
+<li><p><strong>log_on_batch_end</strong> – logs per-batch metrics if set True</p></li>
+<li><p><strong>log_on_epoch_end</strong> – logs per-epoch metrics if set True</p></li>
+<li><p><strong>log</strong> – wandb.watch parameter. Can be “all”, “gradients”
 or “parameters”</p></li>
 <li><p><strong>**logging_params</strong> – any parameters of function <cite>wandb.init</cite>
 except <cite>reinit</cite> which is automatically set to <cite>True</cite>
@@ -1754,9 +1754,9 @@ with Noisy Labels</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_</strong> (<em>torch.Tensor</em>) – input tensor of size
+<li><p><strong>input_</strong> – input tensor of size
 (batch_size, num_classes)</p></li>
-<li><p><strong>target</strong> (<em>torch.Tensor</em>) – target tensor of size (batch_size), where
+<li><p><strong>target</strong> – target tensor of size (batch_size), where
 values of a vector correspond to class index</p></li>
 </ul>
 </dd>
@@ -1789,8 +1789,8 @@ values of a vector correspond to class index</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_</strong> (<em>torch.Tensor</em>) – input tensor of shape …</p></li>
-<li><p><strong>target</strong> (<em>torch.Tensor</em>) – target tensor of shape …</p></li>
+<li><p><strong>input_</strong> – input tensor of shape …</p></li>
+<li><p><strong>target</strong> – target tensor of shape …</p></li>
 </ul>
 </dd>
 </dl>
@@ -1829,8 +1829,8 @@ by Learning an Invariant Mapping</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>embeddings_left</strong> (<em>torch.Tensor</em>) – left objects embeddings</p></li>
-<li><p><strong>embeddings_right</strong> (<em>torch.Tensor</em>) – right objects embeddings</p></li>
+<li><p><strong>embeddings_left</strong> – left objects embeddings</p></li>
+<li><p><strong>embeddings_right</strong> – right objects embeddings</p></li>
 <li><p><strong>distance_true</strong> – true distances</p></li>
 </ul>
 </dd>
@@ -1858,7 +1858,7 @@ by Learning an Invariant Mapping</a>.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>margin</strong> – margin parameter</p></li>
-<li><p><strong>reduction</strong> (<em>str</em>) – criterion reduction type</p></li>
+<li><p><strong>reduction</strong> – criterion reduction type</p></li>
 </ul>
 </dd>
 </dl>
@@ -2171,9 +2171,9 @@ Ignores targets having -1 label.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
-<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
+<li><p><strong>eps</strong> – epsilon to avoid zero division</p></li>
+<li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
+<li><p><strong>activation</strong> – An torch.nn activation applied to the outputs.
 Must be one of <code class="docutils literal notranslate"><span class="pre">'none'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Sigmoid'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Softmax2d'</span></code></p></li>
 </ul>
 </dd>
@@ -2200,11 +2200,11 @@ Must be one of <code class="docutils literal notranslate"><span class="pre">'non
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
-<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
+<li><p><strong>eps</strong> – epsilon to avoid zero division</p></li>
+<li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
+<li><p><strong>activation</strong> – An torch.nn activation applied to the outputs.
 Must be one of <code class="docutils literal notranslate"><span class="pre">'none'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Sigmoid'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Softmax2d'</span></code></p></li>
-<li><p><strong>reduction</strong> (<em>str</em>) – Specifies the reduction to apply
+<li><p><strong>reduction</strong> – Specifies the reduction to apply
 to the output of BCE</p></li>
 </ul>
 </dd>
@@ -2330,8 +2330,8 @@ in neural networks</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>alpha</strong> (<em>float</em>) – alpha</p></li>
-<li><p><strong>beta</strong> (<em>float</em>) – beta</p></li>
+<li><p><strong>alpha</strong> – alpha</p></li>
+<li><p><strong>beta</strong> – beta</p></li>
 <li><p><strong>skip_labels</strong> (<em>int</em><em> or </em><em>List</em><em>[</em><em>int</em><em>]</em>) – labels to skip</p></li>
 </ul>
 </dd>
@@ -2371,7 +2371,7 @@ in neural networks</a>.</p>
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">margin: float = 0.3</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/triplet.html#TripletLoss.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.triplet.TripletLoss.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>margin</strong> (<em>float</em>) – margin for triplet</p>
+<dd class="field-odd"><p><strong>margin</strong> – margin for triplet</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2408,7 +2408,7 @@ in neural networks</a>.</p>
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">margin=0.3</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/triplet.html#TripletLossV2.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.triplet.TripletLossV2.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>margin</strong> (<em>float</em>) – margin for triplet.</p>
+<dd class="field-odd"><p><strong>margin</strong> – margin for triplet.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2434,8 +2434,8 @@ in neural networks</a>.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>margin</strong> (<em>float</em>) – margin parameter</p></li>
-<li><p><strong>reduction</strong> (<em>str</em>) – criterion reduction type</p></li>
+<li><p><strong>margin</strong> – margin parameter</p></li>
+<li><p><strong>reduction</strong> – criterion reduction type</p></li>
 </ul>
 </dd>
 </dl>
@@ -2587,11 +2587,11 @@ Default: <code class="docutils literal notranslate"><span class="pre">1e-6</span
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>torch.Tensor</em>) – input features,
+<li><p><strong>input</strong> – input features,
 expected shapes <code class="docutils literal notranslate"><span class="pre">BxF</span></code> where <code class="docutils literal notranslate"><span class="pre">B</span></code>
 is batch dimension and <code class="docutils literal notranslate"><span class="pre">F</span></code> is an
 input feature dimension.</p></li>
-<li><p><strong>target</strong> (<em>torch.Tensor</em>) – target classes,
+<li><p><strong>target</strong> – target classes,
 expected shapes <code class="docutils literal notranslate"><span class="pre">B</span></code> where
 <code class="docutils literal notranslate"><span class="pre">B</span></code> is batch dimension.</p></li>
 </ul>
@@ -2653,11 +2653,11 @@ Default: <code class="docutils literal notranslate"><span class="pre">1e-6</span
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>torch.Tensor</em>) – input features,
+<li><p><strong>input</strong> – input features,
 expected shapes <code class="docutils literal notranslate"><span class="pre">BxF</span></code> where <code class="docutils literal notranslate"><span class="pre">B</span></code>
 is batch dimension and <code class="docutils literal notranslate"><span class="pre">F</span></code> is an
 input feature dimension.</p></li>
-<li><p><strong>label</strong> (<em>torch.Tensor</em>) – target classes,
+<li><p><strong>label</strong> – target classes,
 expected shapes <code class="docutils literal notranslate"><span class="pre">B</span></code> where
 <code class="docutils literal notranslate"><span class="pre">B</span></code> is batch dimension.</p></li>
 </ul>
@@ -2752,7 +2752,7 @@ where <code class="docutils literal notranslate"><span class="pre">C</span></cod
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">stddev: float = 0.1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/common.html#GaussianNoise.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.common.GaussianNoise.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stddev</strong> (<em>float</em>) – The standard deviation of the normal distribution.
+<dd class="field-odd"><p><strong>stddev</strong> – The standard deviation of the normal distribution.
 Default: 0.1.</p>
 </dd>
 </dl>
@@ -2812,11 +2812,11 @@ Default: <code class="docutils literal notranslate"><span class="pre">0.35</span
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>torch.Tensor</em>) – input features,
+<li><p><strong>input</strong> – input features,
 expected shapes <code class="docutils literal notranslate"><span class="pre">BxF</span></code> where <code class="docutils literal notranslate"><span class="pre">B</span></code>
 is batch dimension and <code class="docutils literal notranslate"><span class="pre">F</span></code> is an
 input feature dimension.</p></li>
-<li><p><strong>target</strong> (<em>torch.Tensor</em>) – target classes,
+<li><p><strong>target</strong> – target classes,
 expected shapes <code class="docutils literal notranslate"><span class="pre">B</span></code> where
 <code class="docutils literal notranslate"><span class="pre">B</span></code> is batch dimension.</p></li>
 </ul>
@@ -2909,7 +2909,7 @@ where <code class="docutils literal notranslate"><span class="pre">C</span></cod
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>torch.Tensor</em>) – tensor of size
+<li><p><strong>x</strong> – tensor of size
 (batch_size, history_len, feature_size)</p></li>
 <li><p><strong>mask</strong> – mask to use</p></li>
 </ul>
@@ -2945,7 +2945,7 @@ where <code class="docutils literal notranslate"><span class="pre">C</span></cod
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>torch.Tensor</em>) – tensor of size
+<li><p><strong>x</strong> – tensor of size
 (batch_size, history_len, feature_size)</p></li>
 <li><p><strong>mask</strong> – mask to use</p></li>
 </ul>
@@ -2981,9 +2981,9 @@ where <code class="docutils literal notranslate"><span class="pre">C</span></cod
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x</strong> (<em>torch.Tensor</em>) – tensor of size
+<li><p><strong>x</strong> – tensor of size
 (batch_size, history_len, feature_size)</p></li>
-<li><p><strong>mask</strong> (<em>torch.Tensor</em>) – mask to use for attention compute</p></li>
+<li><p><strong>mask</strong> – mask to use for attention compute</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -3250,10 +3250,10 @@ composed of several input planes.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dimension</strong> (<em>int</em>) – the dimension of the layer output to normalize</p></li>
-<li><p><strong>epsilon</strong> (<em>float</em>) – an epsilon to prevent dividing by zero
+<li><p><strong>dimension</strong> – the dimension of the layer output to normalize</p></li>
+<li><p><strong>epsilon</strong> – an epsilon to prevent dividing by zero
 in case the layer has zero variance. (default = 1e-8)</p></li>
-<li><p><strong>is_bias</strong> (<em>bool</em>) – a boolean value whether to include bias term
+<li><p><strong>is_bias</strong> – a boolean value whether to include bias term
 while normalization</p></li>
 </ul>
 </dd>
@@ -3290,7 +3290,7 @@ in Fully Convolutional Networks</a> paper.</p>
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">in_channels: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/se.html#sSE.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.se.sSE.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>in_channels</strong> (<em>int</em>) – The number of channels
+<dd class="field-odd"><p><strong>in_channels</strong> – The number of channels
 in the feature map of the input.</p>
 </dd>
 </dl>
@@ -3324,9 +3324,9 @@ in Fully Convolutional Networks</a> paper.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>in_channels</strong> (<em>int</em>) – The number of channels
+<li><p><strong>in_channels</strong> – The number of channels
 in the feature map of the input.</p></li>
-<li><p><strong>r</strong> (<em>int</em>) – The reduction ratio of the intermediate channels.
+<li><p><strong>r</strong> – The reduction ratio of the intermediate channels.
 Default: 16.</p></li>
 </ul>
 </dd>
@@ -3362,9 +3362,9 @@ and
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>in_channels</strong> (<em>int</em>) – The number of channels
+<li><p><strong>in_channels</strong> – The number of channels
 in the feature map of the input.</p></li>
-<li><p><strong>r</strong> (<em>int</em>) – The reduction ratio of the intermediate channels.
+<li><p><strong>r</strong> – The reduction ratio of the intermediate channels.
 Default: 16.</p></li>
 </ul>
 </dd>
@@ -3421,7 +3421,7 @@ Distance Metric Learning-based Features</a>.</p>
 <code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/softmax.html#SoftMax.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.softmax.SoftMax.forward" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>input</strong> (<em>torch.Tensor</em>) – input features,
+<dd class="field-odd"><p><strong>input</strong> – input features,
 expected shapes <code class="docutils literal notranslate"><span class="pre">BxF</span></code> where <code class="docutils literal notranslate"><span class="pre">B</span></code>
 is batch dimension and <code class="docutils literal notranslate"><span class="pre">F</span></code> is an
 input feature dimension.</p>
@@ -3457,7 +3457,7 @@ The AdamP variant was proposed in
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>params</strong> (<em>iterable</em>) – iterable of parameters to optimize or dicts defining
+<li><p><strong>params</strong> – iterable of parameters to optimize or dicts defining
 parameter groups</p></li>
 <li><p><strong>lr</strong> (<em>float</em><em>, </em><em>optional</em>) – learning rate (default: 1e-3)</p></li>
 <li><p><strong>betas</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – coefficients used for computing
@@ -3466,9 +3466,9 @@ running averages of gradient and its square (default: (0.9, 0.999))</p></li>
 numerical stability (default: 1e-8)</p></li>
 <li><p><strong>weight_decay</strong> (<em>float</em><em>, </em><em>optional</em>) – weight decay coefficient
 (default: 0)</p></li>
-<li><p><strong>delta</strong> (<em>float</em>) – threshold that determines whether
+<li><p><strong>delta</strong> – threshold that determines whether
 a set of parameters is scale invariant or not (default: 0.1)</p></li>
-<li><p><strong>wd_ratio</strong> (<em>float</em>) – relative weight decay applied on scale-invariant
+<li><p><strong>wd_ratio</strong> – relative weight decay applied on scale-invariant
 parameters compared to that applied on scale-variant parameters
 (default: 0.1)</p></li>
 <li><p><strong>nesterov</strong> (<em>boolean</em><em>, </em><em>optional</em>) – enables Nesterov momentum
@@ -3482,7 +3482,7 @@ parameters compared to that applied on scale-variant parameters
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>params</strong> (<em>iterable</em>) – iterable of parameters to optimize
+<li><p><strong>params</strong> – iterable of parameters to optimize
 or dicts defining parameter groups</p></li>
 <li><p><strong>lr</strong> (<em>float</em><em>, </em><em>optional</em>) – learning rate (default: 1e-3)</p></li>
 <li><p><strong>betas</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – coefficients
@@ -3492,9 +3492,9 @@ and its square (default: (0.9, 0.999))</p></li>
 numerical stability (default: 1e-8)</p></li>
 <li><p><strong>weight_decay</strong> (<em>float</em><em>, </em><em>optional</em>) – weight decay coefficient
 (default: 1e-2)</p></li>
-<li><p><strong>delta</strong> (<em>float</em>) – threshold that determines whether
+<li><p><strong>delta</strong> – threshold that determines whether
 a set of parameters is scale invariant or not (default: 0.1)</p></li>
-<li><p><strong>wd_ratio</strong> (<em>float</em>) – relative weight decay applied on scale-invariant
+<li><p><strong>wd_ratio</strong> – relative weight decay applied on scale-invariant
 parameters compared to that applied on scale-variant parameters
 (default: 0.1)</p></li>
 <li><p><strong>nesterov</strong> (<em>boolean</em><em>, </em><em>optional</em>) – enables Nesterov momentum
@@ -3510,7 +3510,7 @@ parameters compared to that applied on scale-variant parameters
 <dd><p>Performs a single optimization step (parameter update).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>closure</strong> (<em>callable</em>) – A closure that reevaluates the model and
+<dd class="field-odd"><p><strong>closure</strong> – A closure that reevaluates the model and
 returns the loss. Optional for most optimizers.</p>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -3536,7 +3536,7 @@ returns the loss. Optional for most optimizers.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>params</strong> (<em>iterable</em>) – iterable of parameters to optimize or dicts
+<li><p><strong>params</strong> – iterable of parameters to optimize or dicts
 defining parameter groups</p></li>
 <li><p><strong>lr</strong> (<em>float</em><em>, </em><em>optional</em>) – learning rate (default: 1e-3)</p></li>
 <li><p><strong>betas</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – coefficients used for
@@ -3770,7 +3770,7 @@ the model and returns the loss.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>params</strong> (<em>iterable</em>) – iterable of parameters to optimize
+<li><p><strong>params</strong> – iterable of parameters to optimize
 or dicts defining parameter groups</p></li>
 <li><p><strong>lr</strong> (<em>float</em><em>, </em><em>optional</em>) – learning rate (default: 1e-3)</p></li>
 <li><p><strong>betas</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>]</em><em>, </em><em>optional</em>) – coefficients used for
@@ -3822,18 +3822,18 @@ MIT license</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>params</strong> (<em>iterable</em>) – iterable of parameters to optimize or dicts defining
+<li><p><strong>params</strong> – iterable of parameters to optimize or dicts defining
 parameter groups</p></li>
-<li><p><strong>lr</strong> (<em>float</em>) – learning rate</p></li>
+<li><p><strong>lr</strong> – learning rate</p></li>
 <li><p><strong>momentum</strong> (<em>float</em><em>, </em><em>optional</em>) – momentum factor (default: 0)</p></li>
 <li><p><strong>weight_decay</strong> (<em>float</em><em>, </em><em>optional</em>) – weight decay (L2 penalty) (default: 0)</p></li>
 <li><p><strong>dampening</strong> (<em>float</em><em>, </em><em>optional</em>) – dampening for momentum (default: 0)</p></li>
 <li><p><strong>nesterov</strong> (<em>bool</em><em>, </em><em>optional</em>) – enables Nesterov momentum (default: False)</p></li>
 <li><p><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – term added to the denominator to improve
 numerical stability (default: 1e-8)</p></li>
-<li><p><strong>delta</strong> (<em>float</em>) – threshold that determines whether
+<li><p><strong>delta</strong> – threshold that determines whether
 a set of parameters is scale invariant or not (default: 0.1)</p></li>
-<li><p><strong>wd_ratio</strong> (<em>float</em>) – relative weight decay applied on scale-invariant
+<li><p><strong>wd_ratio</strong> – relative weight decay applied on scale-invariant
 parameters compared to that applied on scale-variant parameters
 (default: 0.1)</p></li>
 </ul>
@@ -3845,9 +3845,9 @@ parameters compared to that applied on scale-variant parameters
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>params</strong> (<em>iterable</em>) – iterable of parameters to optimize
+<li><p><strong>params</strong> – iterable of parameters to optimize
 or dicts defining parameter groups</p></li>
-<li><p><strong>lr</strong> (<em>float</em>) – learning rate</p></li>
+<li><p><strong>lr</strong> – learning rate</p></li>
 <li><p><strong>momentum</strong> (<em>float</em><em>, </em><em>optional</em>) – momentum factor (default: 0)</p></li>
 <li><p><strong>weight_decay</strong> (<em>float</em><em>, </em><em>optional</em>) – weight decay (L2 penalty)
 (default: 0)</p></li>
@@ -3856,9 +3856,9 @@ or dicts defining parameter groups</p></li>
 (default: False)</p></li>
 <li><p><strong>eps</strong> (<em>float</em><em>, </em><em>optional</em>) – term added to the denominator to improve
 numerical stability (default: 1e-8)</p></li>
-<li><p><strong>delta</strong> (<em>float</em>) – threshold that determines whether
+<li><p><strong>delta</strong> – threshold that determines whether
 a set of parameters is scale invariant or not (default: 0.1)</p></li>
-<li><p><strong>wd_ratio</strong> (<em>float</em>) – relative weight decay applied on scale-invariant
+<li><p><strong>wd_ratio</strong> – relative weight decay applied on scale-invariant
 parameters compared to that applied on scale-variant parameters
 (default: 0.1)</p></li>
 </ul>
@@ -3872,7 +3872,7 @@ parameters compared to that applied on scale-variant parameters
 <dd><p>Performs a single optimization step (parameter update).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>closure</strong> (<em>callable</em>) – A closure that reevaluates the model and
+<dd class="field-odd"><p><strong>closure</strong> – A closure that reevaluates the model and
 returns the loss. Optional for most optimizers.</p>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -3938,15 +3938,15 @@ Increase momentum from <code class="docutils literal notranslate"><span class="p
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>optimizer</strong> – PyTorch optimizer</p></li>
-<li><p><strong>num_steps</strong> (<em>int</em>) – total number of steps</p></li>
+<li><p><strong>num_steps</strong> – total number of steps</p></li>
 <li><p><strong>lr_range</strong> – tuple with two or three elements
 (max_lr, min_lr, [final_lr])</p></li>
 <li><p><strong>init_lr</strong> (<em>float</em><em>, </em><em>optional</em>) – initial lr</p></li>
-<li><p><strong>warmup_steps</strong> (<em>int</em>) – count of steps for warm-up stage</p></li>
+<li><p><strong>warmup_steps</strong> – count of steps for warm-up stage</p></li>
 <li><p><strong>warmup_fraction</strong> (<em>float</em><em>, </em><em>optional</em>) – fraction in [0; 1) to calculate
 number of warmup steps.
 Cannot be set together with <code class="docutils literal notranslate"><span class="pre">warmup_steps</span></code></p></li>
-<li><p><strong>decay_steps</strong> (<em>int</em>) – count of steps for lr decay stage</p></li>
+<li><p><strong>decay_steps</strong> – count of steps for lr decay stage</p></li>
 <li><p><strong>decay_fraction</strong> (<em>float</em><em>, </em><em>optional</em>) – fraction in [0; 1) to calculate
 number of decay steps.
 Cannot be set together with <code class="docutils literal notranslate"><span class="pre">decay_steps</span></code></p></li>
@@ -3993,8 +3993,8 @@ Cannot be set together with <code class="docutils literal notranslate"><span cla
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>loader_len</strong> (<em>int</em>) – total count of batches in an epoch</p></li>
-<li><p><strong>current_step</strong> (<em>int</em>) – current step</p></li>
+<li><p><strong>loader_len</strong> – total count of batches in an epoch</p></li>
+<li><p><strong>current_step</strong> – current step</p></li>
 </ul>
 </dd>
 </dl>
@@ -4207,13 +4207,13 @@ Cannot be set together with <code class="docutils literal notranslate"><span cla
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>parser</strong> (<em>argparse.ArgumentParser</em>) – parser to add the flag to</p></li>
-<li><p><strong>name</strong> (<em>str</em>) – argument name
+<li><p><strong>parser</strong> – parser to add the flag to</p></li>
+<li><p><strong>name</strong> – argument name
 –&lt;name&gt; will enable the flag,
 while –no-&lt;name&gt; will disable it</p></li>
 <li><p><strong>default</strong> (<em>bool</em><em>, </em><em>optional</em>) – default value of the flag</p></li>
-<li><p><strong>help</strong> (<em>str</em>) – help string for the flag</p></li>
-<li><p><strong>shorthand</strong> (<em>str</em>) – shorthand string for the argument</p></li>
+<li><p><strong>help</strong> – help string for the flag</p></li>
+<li><p><strong>shorthand</strong> – shorthand string for the argument</p></li>
 </ul>
 </dd>
 </dl>
@@ -4295,9 +4295,9 @@ If labels value is outside of the [0, num_classes) it is excluded.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>predictions</strong> (<em>np.ndarray</em>) – model predictions</p></li>
-<li><p><strong>labels</strong> (<em>np.ndarray</em>) – ground truth labels</p></li>
-<li><p><strong>num_classes</strong> (<em>int</em>) – number of classes</p></li>
+<li><p><strong>predictions</strong> – model predictions</p></li>
+<li><p><strong>labels</strong> – ground truth labels</p></li>
+<li><p><strong>num_classes</strong> – number of classes</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -4346,11 +4346,11 @@ If labels value is outside of the [0, num_classes) it is excluded.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dirs</strong> (<em>str</em>) – path to dirs, for example /home/user/data/**</p></li>
-<li><p><strong>extension</strong> (<em>str</em>) – data extension you are looking for</p></li>
+<li><p><strong>dirs</strong> – path to dirs, for example /home/user/data/**</p></li>
+<li><p><strong>extension</strong> – data extension you are looking for</p></li>
 <li><p><strong>process_fn</strong> (<em>Callable</em><em>[</em><em>[</em><em>str</em><em>]</em><em>, </em><em>object</em><em>]</em>) – function(path_to_file) -&gt; object
 process function for found files, by default</p></li>
-<li><p><strong>recursive</strong> (<em>bool</em>) – enables recursive globbing</p></li>
+<li><p><strong>recursive</strong> – enables recursive globbing</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -4439,7 +4439,7 @@ using this as the class labels.</p>
 <dd><p>Check that all arguments are not <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>*args</strong> (<em>Any</em>) – values  # noqa: RST213</p>
+<dd class="field-odd"><p><strong>*args</strong> – values  # noqa: RST213</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>True if all value were not None, False otherwise</p>
@@ -4511,7 +4511,7 @@ using this as the class labels.</p>
 <dd><p>Converts dataframe to a list of rows (without indexes).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>dataframe</strong> (<em>DataFrame</em>) – input dataframe</p>
+<dd class="field-odd"><p><strong>dataframe</strong> – input dataframe</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>list of rows</p>
@@ -4559,8 +4559,8 @@ pandas series</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dataframe</strong> (<em>pd.DataFrame</em>) – input dataframe</p></li>
-<li><p><strong>train_folds</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – train folds</p></li>
+<li><p><strong>dataframe</strong> – input dataframe</p></li>
+<li><p><strong>train_folds</strong> – train folds</p></li>
 <li><p><strong>valid_folds</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – valid folds.
 If none takes all folds not included in <code class="docutils literal notranslate"><span class="pre">train_folds</span></code></p></li>
 <li><p><strong>infer_folds</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – infer folds.
@@ -4569,8 +4569,8 @@ and <code class="docutils literal notranslate"><span class="pre">valid_folds</sp
 <li><p><strong>tag2class</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em><em>, </em><em>optional</em>) – mapping from label names into int</p></li>
 <li><p><strong>tag_column</strong> (<em>str</em><em>, </em><em>optional</em>) – column with label names</p></li>
 <li><p><strong>class_column</strong> (<em>str</em><em>, </em><em>optional</em>) – column to use for split</p></li>
-<li><p><strong>seed</strong> (<em>int</em>) – seed for split</p></li>
-<li><p><strong>n_folds</strong> (<em>int</em>) – number of folds</p></li>
+<li><p><strong>seed</strong> – seed for split</p></li>
+<li><p><strong>n_folds</strong> – number of folds</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -4639,7 +4639,7 @@ and <code class="docutils literal notranslate"><span class="pre">valid_folds</sp
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataframe</strong> – a dataset</p></li>
 <li><p><strong>class_column</strong> – which column to use for split</p></li>
-<li><p><strong>random_state</strong> (<em>int</em>) – seed for random shuffle</p></li>
+<li><p><strong>random_state</strong> – seed for random shuffle</p></li>
 <li><p><strong>n_folds</strong> – number of result folds</p></li>
 </ul>
 </dd>
@@ -4721,9 +4721,9 @@ using this as the class labels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>in_csv_train</strong> (<em>str</em>) – paths to train csv separated by commas</p></li>
-<li><p><strong>in_csv_valid</strong> (<em>str</em>) – paths to valid csv separated by commas</p></li>
-<li><p><strong>in_csv_infer</strong> (<em>str</em>) – paths to infer csv separated by commas</p></li>
+<li><p><strong>in_csv_train</strong> – paths to train csv separated by commas</p></li>
+<li><p><strong>in_csv_valid</strong> – paths to valid csv separated by commas</p></li>
+<li><p><strong>in_csv_infer</strong> – paths to infer csv separated by commas</p></li>
 <li><p><strong>tag2class</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em><em>, </em><em>optional</em>) – mapping from label names into int</p></li>
 <li><p><strong>tag_column</strong> (<em>str</em><em>, </em><em>optional</em>) – column with label names</p></li>
 <li><p><strong>class_column</strong> (<em>str</em><em>, </em><em>optional</em>) – column to use for split</p></li>
@@ -4750,8 +4750,8 @@ using this as the class labels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dataframe</strong> (<em>pd.DataFrame</em>) – input dataframe</p></li>
-<li><p><strong>tag_column</strong> (<em>str</em>) – column with tags</p></li>
+<li><p><strong>dataframe</strong> – input dataframe</p></li>
+<li><p><strong>tag_column</strong> – column with tags</p></li>
 <li><p><strong>class_column</strong> (<em>str</em>) – </p></li>
 <li><p><strong>tag2class</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – mapping from tags to class labels</p></li>
 <li><p><strong>verbose</strong> – flag if true, uses tqdm</p></li>
@@ -4801,8 +4801,8 @@ using this as the class labels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fold_name</strong> (<em>str</em>) – current fold name</p></li>
-<li><p><strong>paths</strong> (<em>str</em>) – paths to csv separated by commas</p></li>
+<li><p><strong>fold_name</strong> – current fold name</p></li>
+<li><p><strong>paths</strong> – paths to csv separated by commas</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -4838,21 +4838,21 @@ reads independent folds.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>in_csv</strong> (<em>str</em>) – paths to whole dataset</p></li>
-<li><p><strong>train_folds</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – train folds</p></li>
+<li><p><strong>in_csv</strong> – paths to whole dataset</p></li>
+<li><p><strong>train_folds</strong> – train folds</p></li>
 <li><p><strong>valid_folds</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – valid folds.
 If none takes all folds not included in <code class="docutils literal notranslate"><span class="pre">train_folds</span></code></p></li>
 <li><p><strong>infer_folds</strong> (<em>List</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – infer folds.
 If none takes all folds not included in <code class="docutils literal notranslate"><span class="pre">train_folds</span></code>
 and <code class="docutils literal notranslate"><span class="pre">valid_folds</span></code></p></li>
-<li><p><strong>seed</strong> (<em>int</em>) – seed for split</p></li>
-<li><p><strong>n_folds</strong> (<em>int</em>) – number of folds</p></li>
-<li><p><strong>in_csv_train</strong> (<em>str</em>) – paths to train csv separated by commas</p></li>
-<li><p><strong>in_csv_valid</strong> (<em>str</em>) – paths to valid csv separated by commas</p></li>
-<li><p><strong>in_csv_infer</strong> (<em>str</em>) – paths to infer csv separated by commas</p></li>
+<li><p><strong>seed</strong> – seed for split</p></li>
+<li><p><strong>n_folds</strong> – number of folds</p></li>
+<li><p><strong>in_csv_train</strong> – paths to train csv separated by commas</p></li>
+<li><p><strong>in_csv_valid</strong> – paths to valid csv separated by commas</p></li>
+<li><p><strong>in_csv_infer</strong> – paths to infer csv separated by commas</p></li>
 <li><p><strong>tag2class</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – mapping from label names into ints</p></li>
-<li><p><strong>tag_column</strong> (<em>str</em>) – column with label names</p></li>
-<li><p><strong>class_column</strong> (<em>str</em>) – column to use for split</p></li>
+<li><p><strong>tag_column</strong> – column with label names</p></li>
+<li><p><strong>class_column</strong> – column to use for split</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -4878,7 +4878,7 @@ and list with infer data)</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataframe</strong> – a dataset</p></li>
 <li><p><strong>class_column</strong> – which column to use for split</p></li>
-<li><p><strong>random_state</strong> (<em>int</em>) – seed for random shuffle</p></li>
+<li><p><strong>random_state</strong> – seed for random shuffle</p></li>
 <li><p><strong>how</strong> – strategy to sample, must be one on [“downsampling”, “upsampling”]</p></li>
 </ul>
 </dd>
@@ -5027,8 +5027,8 @@ Normalization can be applied by setting <cite>normalize=True</cite>.</p>
 <li><p><strong>uri</strong> (<em>str</em><em>, </em><em>pathlib.Path</em><em>, </em><em>bytes</em><em>, </em><em>file</em>) – the resource to load the image
 from, e.g. a filename, <code class="docutils literal notranslate"><span class="pre">pathlib.Path</span></code>, http address or file object,
 see <code class="docutils literal notranslate"><span class="pre">imageio.imread</span></code> docs for more info</p></li>
-<li><p><strong>grayscale</strong> (<em>bool</em>) – if True, make all images grayscale</p></li>
-<li><p><strong>expand_dims</strong> (<em>bool</em>) – if True, append channel axis to grayscale images
+<li><p><strong>grayscale</strong> – if True, make all images grayscale</p></li>
+<li><p><strong>expand_dims</strong> – if True, append channel axis to grayscale images
 rootpath (Union[str, pathlib.Path]): path to the resource with image
 (allows to use relative path)</p></li>
 <li><p><strong>rootpath</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>pathlib.Path</em><em>]</em>) – path to the resource with image
@@ -5084,10 +5084,10 @@ Alias for <code class="docutils literal notranslate"><span class="pre">imageio.i
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>image</strong> (<em>np.ndarray</em>) – RGB image used as underlay for masks</p></li>
-<li><p><strong>masks</strong> (<em>List</em><em>[</em><em>np.ndarray</em><em>]</em>) – list of masks</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – threshold for masks binarization</p></li>
-<li><p><strong>mask_strength</strong> (<em>float</em>) – opacity of colorized masks</p></li>
+<li><p><strong>image</strong> – RGB image used as underlay for masks</p></li>
+<li><p><strong>masks</strong> – list of masks</p></li>
+<li><p><strong>threshold</strong> – threshold for masks binarization</p></li>
+<li><p><strong>mask_strength</strong> – opacity of colorized masks</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -5111,7 +5111,7 @@ from, e.g. a filename, <code class="docutils literal notranslate"><span class="p
 see <code class="docutils literal notranslate"><span class="pre">imageio.mimread</span></code> docs for more info</p></li>
 <li><p><strong>clip_range</strong> (<em>Tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) – lower and upper interval edges,
 image values outside the interval are clipped to the interval edges</p></li>
-<li><p><strong>expand_dims</strong> (<em>bool</em>) – if True, append channel axis to grayscale images
+<li><p><strong>expand_dims</strong> – if True, append channel axis to grayscale images
 rootpath (Union[str, pathlib.Path]): path to the resource with image
 (allows to use relative path)</p></li>
 <li><p><strong>rootpath</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>pathlib.Path</em><em>]</em>) – path to the resource with image
@@ -5152,11 +5152,11 @@ when dtype is <cite>np.uint8</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>images</strong> (<em>torch.Tensor</em>) – [B]xCxHxW float tensor</p></li>
-<li><p><strong>denormalize</strong> (<em>bool</em>) – if True, multiply image(s) by std and add mean</p></li>
+<li><p><strong>images</strong> – [B]xCxHxW float tensor</p></li>
+<li><p><strong>denormalize</strong> – if True, multiply image(s) by std and add mean</p></li>
 <li><p><strong>mean</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – per channel mean to add</p></li>
 <li><p><strong>std</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – per channel std to multiply</p></li>
-<li><p><strong>move_channels_dim</strong> (<em>bool</em>) – if True, convert tensor to [B]xHxWxC format</p></li>
+<li><p><strong>move_channels_dim</strong> – if True, convert tensor to [B]xHxWxC format</p></li>
 <li><p><strong>dtype</strong> – result ndarray dtype. Only float32 and uint8 are supported</p></li>
 </ul>
 </dd>
@@ -5179,12 +5179,12 @@ when dtype is <cite>np.uint8</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>text</strong> (<em>str</em>) – text to tokenize</p></li>
+<li><p><strong>text</strong> – text to tokenize</p></li>
 <li><p><strong>tokenizer</strong> – Tokenizer instance from HuggingFace</p></li>
-<li><p><strong>max_length</strong> (<em>int</em>) – maximum length of tokens</p></li>
-<li><p><strong>strip</strong> (<em>bool</em>) – if true strips text before tokenizing</p></li>
-<li><p><strong>lowercase</strong> (<em>bool</em>) – if true makes text lowercase before tokenizing</p></li>
-<li><p><strong>remove_punctuation</strong> (<em>bool</em>) – if true
+<li><p><strong>max_length</strong> – maximum length of tokens</p></li>
+<li><p><strong>strip</strong> – if true strips text before tokenizing</p></li>
+<li><p><strong>lowercase</strong> – if true makes text lowercase before tokenizing</p></li>
+<li><p><strong>remove_punctuation</strong> – if true
 removes <code class="docutils literal notranslate"><span class="pre">string.punctuation</span></code> from text before tokenizing</p></li>
 </ul>
 </dd>
@@ -5197,7 +5197,22 @@ removes <code class="docutils literal notranslate"><span class="pre">string.punc
 <dl class="function">
 <dt id="catalyst.contrib.utils.nlp.text.process_bert_output">
 <code class="sig-prename descclassname">catalyst.contrib.utils.nlp.text.</code><code class="sig-name descname">process_bert_output</code><span class="sig-paren">(</span><em class="sig-param">bert_output</em>, <em class="sig-param">hidden_size: int</em>, <em class="sig-param">output_hidden_states: bool = False</em>, <em class="sig-param">pooling_groups: List[str] = None</em>, <em class="sig-param">mask: torch.Tensor = None</em>, <em class="sig-param">level: Union[int</em>, <em class="sig-param">str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/utils/nlp/text.html#process_bert_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.nlp.text.process_bert_output" title="Permalink to this definition">¶</a></dt>
-<dd><p>Processed the output.</p>
+<dd><p>Processed BERT output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bert_output</strong> – BERT output</p></li>
+<li><p><strong>hidden_size</strong> – hidden size of BERT layers</p></li>
+<li><p><strong>output_hidden_states</strong> – boolean flag if we need BERT hidden states</p></li>
+<li><p><strong>pooling_groups</strong> – list with pooling to use for sequence embedding</p></li>
+<li><p><strong>mask</strong> – boolean flag if we need mask <code class="docutils literal notranslate"><span class="pre">[PAD]</span></code> tokens</p></li>
+<li><p><strong>level</strong> – integer with specified level to use</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>processed output</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

@@ -306,16 +306,16 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            env_name (str): Environment name to plot to when</span>
+<span class="sd">            env_name: Environment name to plot to when</span>
 <span class="sd">                no env is provided (default: main)</span>
-<span class="sd">            batch_size (int): batch_size for log_on_batch_end</span>
-<span class="sd">            server (str): the hostname of your</span>
+<span class="sd">            batch_size: batch_size for log_on_batch_end</span>
+<span class="sd">            server: the hostname of your</span>
 <span class="sd">                visdom server (default: &#39;http://localhost&#39;)</span>
-<span class="sd">            port (str): the port for your visdom server (default: 8097)</span>
-<span class="sd">            log_to_filename (str): logs per-epoch metrics if set True</span>
-<span class="sd">            username (str): username to use for authentication,</span>
+<span class="sd">            port: the port for your visdom server (default: 8097)</span>
+<span class="sd">            log_to_filename: logs per-epoch metrics if set True</span>
+<span class="sd">            username: username to use for authentication,</span>
 <span class="sd">                if server started with -enable_login (default: None)</span>
-<span class="sd">            password (str): password to use for authentication,</span>
+<span class="sd">            password: password to use for authentication,</span>
 <span class="sd">                if server started with -enable_login (default: None)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_batch_size</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">batch_size</span> <span class="ow">or</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e3</span><span class="p">)),</span> <span class="mi">1</span><span class="p">)</span>
@@ -369,7 +369,7 @@
         <span class="sd">&quot;&quot;&quot;Plots vales from batch statistics.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            batch (List[Dict]): List with dictionaries from log_scalar</span>
+<span class="sd">            batch: List with dictionaries from log_scalar</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">:</span>
             <span class="n">opts</span> <span class="o">=</span> <span class="p">{</span>
@@ -393,10 +393,10 @@
         <span class="sd">&quot;&quot;&quot;Logs scalar.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            name (str): Environment name to plot to when</span>
+<span class="sd">            name: Environment name to plot to when</span>
 <span class="sd">                no env is provided (default: main)</span>
-<span class="sd">            mode (str): Metric&#39;s mode (example: train)</span>
-<span class="sd">            full_name (str): Full metric name</span>
+<span class="sd">            mode: Metric&#39;s mode (example: train)</span>
+<span class="sd">            full_name: Full metric name</span>
 <span class="sd">            value (Union[int, float]): Metric&#39;s value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
@@ -449,10 +449,10 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            metric_names (List[str]): list of metric names to log,</span>
+<span class="sd">            metric_names: list of metric names to log,</span>
 <span class="sd">                if none - logs everything</span>
-<span class="sd">            log_on_batch_end (bool): logs per-batch metrics if set True</span>
-<span class="sd">            log_on_epoch_end (bool): logs per-epoch metrics if set True</span>
+<span class="sd">            log_on_batch_end: logs per-batch metrics if set True</span>
+<span class="sd">            log_on_epoch_end: logs per-epoch metrics if set True</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">logging</span><span class="p">,</span>
@@ -483,9 +483,9 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            metrics (Dict[str, float]): Metrics from Catalyst</span>
-<span class="sd">            step (int): Iteration step from Catalyst</span>
-<span class="sd">            mode (str): Metric&#39;s mode (example: train)</span>
-<span class="sd">            suffix (str): Additional suffix</span>
+<span class="sd">            step: Iteration step from Catalyst</span>
+<span class="sd">            mode: Metric&#39;s mode (example: train)</span>
+<span class="sd">            suffix: Additional suffix</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics_to_log</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">metrics_to_log</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>

@@ -331,11 +331,11 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            metric_names (List[str]): list of metric names to log,</span>
+<span class="sd">            metric_names: list of metric names to log,</span>
 <span class="sd">                if None - logs everything</span>
-<span class="sd">            log_on_batch_end (bool): logs per-batch metrics if set True</span>
-<span class="sd">            log_on_epoch_end (bool): logs per-epoch metrics if set True</span>
-<span class="sd">            log (str): wandb.watch parameter. Can be &quot;all&quot;, &quot;gradients&quot;</span>
+<span class="sd">            log_on_batch_end: logs per-batch metrics if set True</span>
+<span class="sd">            log_on_epoch_end: logs per-epoch metrics if set True</span>
+<span class="sd">            log: wandb.watch parameter. Can be &quot;all&quot;, &quot;gradients&quot;</span>
 <span class="sd">                or &quot;parameters&quot;</span>
 <span class="sd">            **logging_params: any parameters of function `wandb.init`</span>
 <span class="sd">                except `reinit` which is automatically set to `True`</span>

@@ -284,7 +284,7 @@
 <span class="sd">    Imports python module by path.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        expdir (pathlib.Path): path to python module.</span>
+<span class="sd">        expdir: path to python module.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Imported module.</span>
@@ -311,8 +311,8 @@
 <span class="sd">    and ``config`` - experiment config.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        expdir (pathlib.Path): experiment directory path</span>
-<span class="sd">        config (Dict): dictionary with experiment Config</span>
+<span class="sd">        expdir: experiment directory path</span>
+<span class="sd">        config: dictionary with experiment Config</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Experiment, Runner, Config for Config API usage.</span>
@@ -380,8 +380,8 @@
 <span class="sd">    Dumps python code (``*.py`` and ``*.ipynb``) files.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        src (pathlib.Path): source code path</span>
-<span class="sd">        dst (pathlib.Path): destination code path</span>
+<span class="sd">        src: source code path</span>
+<span class="sd">        dst: destination code path</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">py_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.py&quot;</span><span class="p">))</span>
     <span class="n">ipynb_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;*.ipynb&quot;</span><span class="p">))</span>
@@ -397,8 +397,8 @@
 <span class="sd">    Dumps your experiment code for Config API use cases.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        src (pathlib.Path): source code path</span>
-<span class="sd">        dst (pathlib.Path): destination code path</span>
+<span class="sd">        src: source code path</span>
+<span class="sd">        dst: destination code path</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">utcnow</span> <span class="o">=</span> <span class="n">get_utcnow_time</span><span class="p">()</span>
     <span class="n">dst</span> <span class="o">=</span> <span class="n">dst</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;code&quot;</span><span class="p">)</span>
@@ -414,8 +414,8 @@
 <span class="sd">    Distributed run</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        worker_fn (Callable): worker fn to run in distributed mode</span>
-<span class="sd">        distributed (bool): distributed flag</span>
+<span class="sd">        worker_fn: worker fn to run in distributed mode</span>
+<span class="sd">        distributed: distributed flag</span>
 <span class="sd">        args: additional parameters for worker_fn</span>
 <span class="sd">        kwargs: additional key-value parameters for worker_fn</span>
 <span class="sd">    &quot;&quot;&quot;</span>

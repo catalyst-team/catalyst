@@ -301,7 +301,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        fn (Callable[..., Any]): Function to get argument names from</span>
-<span class="sd">        exclude (List[str]): List of string of names to exclude</span>
+<span class="sd">        exclude: List of string of names to exclude</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        List[str]: List of input argument names</span>
@@ -378,13 +378,13 @@
 <span class="sd">        predict_fn: Function to run prediction with the model provided,</span>
 <span class="sd">            takes model, inputs parameters</span>
 <span class="sd">        batch: Batch to trace the model</span>
-<span class="sd">        method_name (str): Model&#39;s method name that will be</span>
+<span class="sd">        method_name: Model&#39;s method name that will be</span>
 <span class="sd">            used as entrypoint during tracing</span>
-<span class="sd">        mode (str): Mode for model to trace (``train`` or ``eval``)</span>
-<span class="sd">        requires_grad (bool): Flag to use grads</span>
-<span class="sd">        opt_level (str): Apex FP16 init level, optional</span>
-<span class="sd">        device (str): Torch device</span>
-<span class="sd">        predict_params (dict): additional parameters for model forward</span>
+<span class="sd">        mode: Mode for model to trace (``train`` or ``eval``)</span>
+<span class="sd">        requires_grad: Flag to use grads</span>
+<span class="sd">        opt_level: Apex FP16 init level, optional</span>
+<span class="sd">        device: Torch device</span>
+<span class="sd">        predict_params: additional parameters for model forward</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        jit.ScriptModule: Traced model</span>
@@ -436,15 +436,15 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        logdir (Union[str, Path]): Path to Catalyst logdir with model</span>
-<span class="sd">        checkpoint_name (str): Name of model checkpoint to use</span>
-<span class="sd">        stage (str): experiment&#39;s stage name</span>
+<span class="sd">        checkpoint_name: Name of model checkpoint to use</span>
+<span class="sd">        stage: experiment&#39;s stage name</span>
 <span class="sd">        loader (Union[str, int]): experiment&#39;s loader name or its index</span>
-<span class="sd">        method_name (str): Model&#39;s method name that will be</span>
+<span class="sd">        method_name: Model&#39;s method name that will be</span>
 <span class="sd">            used as entrypoint during tracing</span>
-<span class="sd">        mode (str): Mode for model to trace (``train`` or ``eval``)</span>
-<span class="sd">        requires_grad (bool): Flag to use grads</span>
-<span class="sd">        opt_level (str): AMP FP16 init level</span>
-<span class="sd">        device (str): Torch device</span>
+<span class="sd">        mode: Mode for model to trace (``train`` or ``eval``)</span>
+<span class="sd">        requires_grad: Flag to use grads</span>
+<span class="sd">        opt_level: AMP FP16 init level</span>
+<span class="sd">        device: Torch device</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        the traced model</span>
@@ -518,14 +518,14 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        runner: current runner.</span>
-<span class="sd">        checkpoint_name (str): Name of model checkpoint to use, if None</span>
+<span class="sd">        checkpoint_name: Name of model checkpoint to use, if None</span>
 <span class="sd">            traces current model from runner</span>
-<span class="sd">        method_name (str): Model&#39;s method name that will be</span>
+<span class="sd">        method_name: Model&#39;s method name that will be</span>
 <span class="sd">            used as entrypoint during tracing</span>
-<span class="sd">        mode (str): Mode for model to trace (``train`` or ``eval``)</span>
-<span class="sd">        requires_grad (bool): Flag to use grads</span>
-<span class="sd">        opt_level (str): AMP FP16 init level</span>
-<span class="sd">        device (str): Torch device</span>
+<span class="sd">        mode: Mode for model to trace (``train`` or ``eval``)</span>
+<span class="sd">        requires_grad: Flag to use grads</span>
+<span class="sd">        opt_level: AMP FP16 init level</span>
+<span class="sd">        device: Torch device</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        ScriptModule: Traced model</span>
@@ -600,11 +600,11 @@
     <span class="sd">&quot;&quot;&quot;Creates a file name for the traced model.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        method_name (str): model&#39;s method name</span>
-<span class="sd">        mode (str): ``train`` or ``eval``</span>
-<span class="sd">        requires_grad (bool): flag if model was traced with gradients</span>
-<span class="sd">        opt_level (str): opt_level if model was traced in FP16</span>
-<span class="sd">        additional_string (str): any additional information</span>
+<span class="sd">        method_name: model&#39;s method name</span>
+<span class="sd">        mode: ``train`` or ``eval``</span>
+<span class="sd">        requires_grad: flag if model was traced with gradients</span>
+<span class="sd">        opt_level: opt_level if model was traced in FP16</span>
+<span class="sd">        additional_string: any additional information</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        str: Filename for traced model to be saved.</span>
@@ -642,17 +642,17 @@
     <span class="sd">&quot;&quot;&quot;Saves traced model.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model (ScriptModule): Traced model</span>
+<span class="sd">        model: Traced model</span>
 <span class="sd">        logdir (Union[str, Path]): Path to experiment</span>
-<span class="sd">        method_name (str): Name of the method was traced</span>
-<span class="sd">        mode (str): Model&#39;s mode - `train` or `eval`</span>
-<span class="sd">        requires_grad (bool): Whether model was traced with require_grad or not</span>
-<span class="sd">        opt_level (str): Apex FP16 init level used during tracing</span>
+<span class="sd">        method_name: Name of the method was traced</span>
+<span class="sd">        mode: Model&#39;s mode - `train` or `eval`</span>
+<span class="sd">        requires_grad: Whether model was traced with require_grad or not</span>
+<span class="sd">        opt_level: Apex FP16 init level used during tracing</span>
 <span class="sd">        out_dir (Union[str, Path]): Directory to save model to</span>
 <span class="sd">            (overrides logdir)</span>
 <span class="sd">        out_model (Union[str, Path]): Path to save model to</span>
 <span class="sd">            (overrides logdir &amp; out_dir)</span>
-<span class="sd">        checkpoint_name (str): Checkpoint name used to restore the model</span>
+<span class="sd">        checkpoint_name: Checkpoint name used to restore the model</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: if nothing out of `logdir`, `out_dir` or `out_model`</span>
@@ -694,8 +694,8 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        model_path: Path to traced model</span>
-<span class="sd">        device (str): Torch device</span>
-<span class="sd">        opt_level (str): Apex FP16 init level, optional</span>
+<span class="sd">        device: Torch device</span>
+<span class="sd">        opt_level: Apex FP16 init level, optional</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        ScriptModule: Traced model</span>

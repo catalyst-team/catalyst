@@ -283,7 +283,7 @@
 <span class="sd">    `Slowing Down the Weight Norm Increase in Momentum-based Optimizers`_.</span>
 
 <span class="sd">    Arguments:</span>
-<span class="sd">        params (iterable): iterable of parameters to optimize or dicts defining</span>
+<span class="sd">        params: iterable of parameters to optimize or dicts defining</span>
 <span class="sd">            parameter groups</span>
 <span class="sd">        lr (float, optional): learning rate (default: 1e-3)</span>
 <span class="sd">        betas (Tuple[float, float], optional): coefficients used for computing</span>
@@ -292,9 +292,9 @@
 <span class="sd">            numerical stability (default: 1e-8)</span>
 <span class="sd">        weight_decay (float, optional): weight decay coefficient</span>
 <span class="sd">            (default: 0)</span>
-<span class="sd">        delta (float): threshold that determines whether</span>
+<span class="sd">        delta: threshold that determines whether</span>
 <span class="sd">            a set of parameters is scale invariant or not (default: 0.1)</span>
-<span class="sd">        wd_ratio (float): relative weight decay applied on scale-invariant</span>
+<span class="sd">        wd_ratio: relative weight decay applied on scale-invariant</span>
 <span class="sd">            parameters compared to that applied on scale-variant parameters</span>
 <span class="sd">            (default: 0.1)</span>
 <span class="sd">        nesterov (boolean, optional): enables Nesterov momentum</span>
@@ -320,7 +320,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            params (iterable): iterable of parameters to optimize</span>
+<span class="sd">            params: iterable of parameters to optimize</span>
 <span class="sd">                or dicts defining parameter groups</span>
 <span class="sd">            lr (float, optional): learning rate (default: 1e-3)</span>
 <span class="sd">            betas (Tuple[float, float], optional): coefficients</span>
@@ -330,15 +330,15 @@
 <span class="sd">                numerical stability (default: 1e-8)</span>
 <span class="sd">            weight_decay (float, optional): weight decay coefficient</span>
 <span class="sd">                (default: 1e-2)</span>
-<span class="sd">            delta (float): threshold that determines whether</span>
+<span class="sd">            delta: threshold that determines whether</span>
 <span class="sd">                a set of parameters is scale invariant or not (default: 0.1)</span>
-<span class="sd">            wd_ratio (float): relative weight decay applied on scale-invariant</span>
+<span class="sd">            wd_ratio: relative weight decay applied on scale-invariant</span>
 <span class="sd">                parameters compared to that applied on scale-variant parameters</span>
 <span class="sd">                (default: 0.1)</span>
 <span class="sd">            nesterov (boolean, optional): enables Nesterov momentum</span>
 <span class="sd">                (default: False)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">defaults</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="n">defaults</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>  <span class="c1"># noqa: C408</span>
             <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">,</span>
             <span class="n">betas</span><span class="o">=</span><span class="n">betas</span><span class="p">,</span>
             <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">,</span>
@@ -386,7 +386,7 @@
 <span class="sd">        Performs a single optimization step (parameter update).</span>
 
 <span class="sd">        Arguments:</span>
-<span class="sd">            closure (callable): A closure that reevaluates the model and</span>
+<span class="sd">            closure: A closure that reevaluates the model and</span>
 <span class="sd">                returns the loss. Optional for most optimizers.</span>
 
 <span class="sd">        Returns:</span>

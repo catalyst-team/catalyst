@@ -293,8 +293,8 @@
         <span class="sd">&quot;&quot;&quot;Forward propagation method for the contrastive loss.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            embeddings_left (torch.Tensor): left objects embeddings</span>
-<span class="sd">            embeddings_right (torch.Tensor): right objects embeddings</span>
+<span class="sd">            embeddings_left: left objects embeddings</span>
+<span class="sd">            embeddings_right: right objects embeddings</span>
 <span class="sd">            distance_true: true distances</span>
 
 <span class="sd">        Returns:</span>
@@ -328,7 +328,7 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            margin: margin parameter</span>
-<span class="sd">            reduction (str): criterion reduction type</span>
+<span class="sd">            reduction: criterion reduction type</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="n">margin</span>

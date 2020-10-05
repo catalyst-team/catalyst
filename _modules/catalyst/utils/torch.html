@@ -259,9 +259,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.utils.torch</h1><div class="highlight"><pre>
-<span></span><span class="c1"># flake8: noqa</span>
-<span class="c1"># @TODO: code formatting issue for 20.07 release</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">collections</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
@@ -307,7 +305,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        optimizer: PyTorch optimizer</span>
-<span class="sd">        value (float): new value of momentum</span>
+<span class="sd">        value: new value of momentum</span>
 <span class="sd">        index (int, optional): integer index of optimizer&#39;s param groups,</span>
 <span class="sd">            default is 0</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -387,7 +385,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        value: Object to be moved</span>
-<span class="sd">        device (Device): target device ids</span>
+<span class="sd">        device: target device ids</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Same structure as value, but all tensors and np.arrays moved to device</span>
@@ -416,8 +414,8 @@
 <span class="sd">    to be deterministic/non-deterministic mode</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        deterministic (bool): deterministic mode if running in CuDNN backend.</span>
-<span class="sd">        benchmark (bool): If ``True`` use CuDNN heuristics to figure out</span>
+<span class="sd">        deterministic: deterministic mode if running in CuDNN backend.</span>
+<span class="sd">        benchmark: If ``True`` use CuDNN heuristics to figure out</span>
 <span class="sd">            which algorithm will be most performant</span>
 <span class="sd">            for your model architecture and input.</span>
 <span class="sd">            Setting it to ``False`` may slow down your training.</span>
@@ -446,13 +444,13 @@
     <span class="sd">&quot;&quot;&quot;Gains model parameters for ``torch.optim.Optimizer``.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model (torch.nn.Module): Model to process</span>
-<span class="sd">        layerwise_params (Dict): Order-sensitive dict where</span>
+<span class="sd">        model: Model to process</span>
+<span class="sd">        layerwise_params: Order-sensitive dict where</span>
 <span class="sd">            each key is regex pattern and values are layer-wise options</span>
 <span class="sd">            for layers matching with a pattern</span>
-<span class="sd">        no_bias_weight_decay (bool): If true, removes weight_decay</span>
+<span class="sd">        no_bias_weight_decay: If true, removes weight_decay</span>
 <span class="sd">            for all ``bias`` parameters in the model</span>
-<span class="sd">        lr_scaling (float): layer-wise learning rate scaling,</span>
+<span class="sd">        lr_scaling: layer-wise learning rate scaling,</span>
 <span class="sd">            if 1.0, learning rates will not be scaled</span>
 
 <span class="sd">    Returns:</span>
@@ -502,7 +500,7 @@
 <span class="sd">        &gt;&gt;&gt; requires_grad = get_requires_grad(model)</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model (torch.nn.Module): model</span>
+<span class="sd">        model: model</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        requires_grad (Dict[str, bool]): value</span>
@@ -527,7 +525,7 @@
 <span class="sd">        &gt;&gt;&gt; set_requires_grad(model, requires_grad={&quot;&quot;})</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model (torch.nn.Module): model</span>
+<span class="sd">        model: model</span>
 <span class="sd">        requires_grad (Union[bool, Dict[str, bool]]): value</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">requires_grad</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
@@ -552,7 +550,7 @@
 <span class="sd">        tensor([[[-0.2665,  0.5792,  0.9757, -0.5782,  0.1530]]])</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        net (Model): the model</span>
+<span class="sd">        net: the model</span>
 <span class="sd">        *input_shapes_args: variable length argument list of shapes</span>
 <span class="sd">        **input_shapes_kwargs: key-value arguemnts of shapes</span>
 
@@ -605,7 +603,7 @@
 <span class="sd">    Adapted from `Dynamic minibatch trimming to improve BERT training speed`_.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        tensors ([torch.tensor]): list of tensors to trim.</span>
+<span class="sd">        tensors: list of tensors to trim.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        List[torch.tensor]: list of trimmed tensors.</span>

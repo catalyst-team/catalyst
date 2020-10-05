@@ -316,8 +316,8 @@
 <span class="sd">    scheduler (if not None).</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        checkpoint (str): checkpoint to load</span>
-<span class="sd">        model (torch.nn.Module): model where should be updated state</span>
+<span class="sd">        checkpoint: checkpoint to load</span>
+<span class="sd">        model: model where should be updated state</span>
 <span class="sd">        criterion: criterion where should be updated state</span>
 <span class="sd">        optimizer: optimizer where should be updated state</span>
 <span class="sd">        scheduler: scheduler where should be updated state</span>
@@ -359,17 +359,17 @@
     <span class="sd">&quot;&quot;&quot;Saving checkpoint to a file.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        checkpoint (dict): data to save.</span>
-<span class="sd">        logdir (Path/str): directory where checkpoint</span>
+<span class="sd">        checkpoint: data to save.</span>
+<span class="sd">        logdir: directory where checkpoint</span>
 <span class="sd">            should be stored.</span>
-<span class="sd">        suffix (str): checkpoint file name.</span>
-<span class="sd">        is_best (bool): if ``True`` then also</span>
+<span class="sd">        suffix: checkpoint file name.</span>
+<span class="sd">        is_best: if ``True`` then also</span>
 <span class="sd">            will be generated best checkpoint file.</span>
-<span class="sd">        is_last (bool): if ``True`` then also</span>
+<span class="sd">        is_last: if ``True`` then also</span>
 <span class="sd">            will be generated last checkpoint file.</span>
-<span class="sd">        special_suffix (str): suffix to use for</span>
+<span class="sd">        special_suffix: suffix to use for</span>
 <span class="sd">            saving best/last checkpoints.</span>
-<span class="sd">        saver_fn (Callable): function to use for saving</span>
+<span class="sd">        saver_fn: function to use for saving</span>
 <span class="sd">            data to file, default is ``torch.save``</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">logdir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -385,7 +385,7 @@
 <div class="viewcode-block" id="load_checkpoint"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.checkpoint.load_checkpoint">[docs]</a><span class="k">def</span> <span class="nf">load_checkpoint</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Load checkpoint from path.</span>
 <span class="sd">    Args:</span>
-<span class="sd">        filepath (str): checkpoint file to load</span>
+<span class="sd">        filepath: checkpoint file to load</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        checkpoint content</span>

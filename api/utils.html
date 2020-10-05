@@ -367,7 +367,7 @@ Example of usage can be found in <a class="reference internal" href="core.html#c
 <dd><p>Starts timer <code class="docutils literal notranslate"><span class="pre">name</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – name of a timer</p>
+<dd class="field-odd"><p><strong>name</strong> – name of a timer</p>
 </dd>
 </dl>
 </dd></dl>
@@ -378,7 +378,7 @@ Example of usage can be found in <a class="reference internal" href="core.html#c
 <dd><p>Stops timer <code class="docutils literal notranslate"><span class="pre">name</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – name of a timer</p>
+<dd class="field-odd"><p><strong>name</strong> – name of a timer</p>
 </dd>
 </dl>
 </dd></dl>
@@ -587,11 +587,11 @@ for each sample.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>output</strong> (<em>Tensor</em>) – NxK tensor that for each of the N examples
+<li><p><strong>output</strong> – NxK tensor that for each of the N examples
 indicates the probability of the example belonging to each of
 the K classes, according to the model. The probabilities should
 sum to one over all classes</p></li>
-<li><p><strong>target</strong> (<em>Tensor</em>) – binary NxK tensort that encodes which of the K
+<li><p><strong>target</strong> – binary NxK tensort that encodes which of the K
 classes are associated with the N-th input
 (eg: a row [0, 1, 0, 1] indicates that the example is
 associated with classes 2 and 4)</p></li>
@@ -658,8 +658,8 @@ negative examples) and 1 (for positive examples).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>output</strong> (<em>Tensor</em>) – one-dimensional tensor <cite>output</cite></p></li>
-<li><p><strong>target</strong> (<em>Tensor</em>) – one-dimensional tensor <cite>target</cite></p></li>
+<li><p><strong>output</strong> – one-dimensional tensor <cite>output</cite></p></li>
+<li><p><strong>target</strong> – one-dimensional tensor <cite>target</cite></p></li>
 </ul>
 </dd>
 </dl>
@@ -714,9 +714,9 @@ Values are not cached, only the last added.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>value</strong> (<em>float</em>) – value for update,
+<li><p><strong>value</strong> – value for update,
 can be scalar number or PyTorch tensor</p></li>
-<li><p><strong>batch_size</strong> (<em>int</em>) – batch size for update</p></li>
+<li><p><strong>batch_size</strong> – batch size for update</p></li>
 </ul>
 </dd>
 </dl>
@@ -801,8 +801,8 @@ problems: for such problems, please use MultiLabelConfusionMeter.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>k</strong> (<em>int</em>) – number of classes in the classification problem</p></li>
-<li><p><strong>normalized</strong> (<em>boolean</em>) – determines whether or not the confusion
+<li><p><strong>k</strong> – number of classes in the classification problem</p></li>
+<li><p><strong>normalized</strong> – determines whether or not the confusion
 matrix is normalized or not</p></li>
 </ul>
 </dd>
@@ -817,10 +817,10 @@ where <code class="docutils literal notranslate"><span class="pre">K</span></cod
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>predicted</strong> (<em>tensor</em>) – Can be an N x K tensor of predicted scores
+<li><p><strong>predicted</strong> – Can be an N x K tensor of predicted scores
 obtained from the model for N examples and K classes
 or an N-tensor of integer values between 0 and K-1</p></li>
-<li><p><strong>target</strong> (<em>tensor</em>) – Can be a N-tensor of integer values assumed
+<li><p><strong>target</strong> – Can be a N-tensor of integer values assumed
 to be integer values between 0 and K-1 or N x K tensor, where
 targets are assumed to be provided as one-hot vectors</p></li>
 </ul>
@@ -882,8 +882,8 @@ for each sample.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>output</strong> (<em>Tensor</em>) – Model output scores as <cite>NxK</cite> tensor</p></li>
-<li><p><strong>target</strong> (<em>Tensor</em>) – Target scores as <cite>NxK</cite> tensor</p></li>
+<li><p><strong>output</strong> – Model output scores as <cite>NxK</cite> tensor</p></li>
+<li><p><strong>target</strong> – Target scores as <cite>NxK</cite> tensor</p></li>
 <li><p><strong>weight</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – Weight values for each sample
 as <cite>Nx1</cite> Tensor</p></li>
 </ul>
@@ -931,7 +931,7 @@ Meter values are moving average and moving standard deviation.</p>
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">windowsize</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/movingaveragevaluemeter.html#MovingAverageValueMeter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.movingaveragevaluemeter.MovingAverageValueMeter.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>windowsize</strong> (<em>int</em>) – size of window of values, which is continuous
+<dd class="field-odd"><p><strong>windowsize</strong> – size of window of values, which is continuous
 and ends on last updated element</p>
 </dd>
 </dl>
@@ -943,7 +943,7 @@ and ends on last updated element</p>
 <dd><p>Adds observation sample.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> (<em>float</em>) – scalar</p>
+<dd class="field-odd"><p><strong>value</strong> – scalar</p>
 </dd>
 </dl>
 </dd></dl>
@@ -985,7 +985,7 @@ Root calculation can be toggled(not calculated by default).</p>
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">root: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/msemeter.html#MSEMeter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.msemeter.MSEMeter.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>root</strong> (<em>bool</em>) – Toggle between calculation of
+<dd class="field-odd"><p><strong>root</strong> – Toggle between calculation of
 RMSE (True) and MSE (False)</p>
 </dd>
 </dl>
@@ -998,8 +998,8 @@ RMSE (True) and MSE (False)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>output</strong> (<em>Tensor</em>) – Model output tensor or numpy array</p></li>
-<li><p><strong>target</strong> (<em>Tensor</em>) – Target tensor or numpy array</p></li>
+<li><p><strong>output</strong> – Model output tensor or numpy array</p></li>
+<li><p><strong>target</strong> – Target tensor or numpy array</p></li>
 </ul>
 </dd>
 </dl>
@@ -1055,9 +1055,9 @@ false positives, and false negatives in comparison to the target.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>output</strong> (<em>torch.Tensor</em>) – prediction after activation function
+<li><p><strong>output</strong> – prediction after activation function
 shape should be (batch_size, …), but works with any shape</p></li>
-<li><p><strong>target</strong> (<em>torch.Tensor</em>) – label (binary),
+<li><p><strong>target</strong> – label (binary),
 shape should be the same as output’s shape</p></li>
 </ul>
 </dd>
@@ -1113,8 +1113,8 @@ scheduler (if not None).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>checkpoint</strong> (<em>str</em>) – checkpoint to load</p></li>
-<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – model where should be updated state</p></li>
+<li><p><strong>checkpoint</strong> – checkpoint to load</p></li>
+<li><p><strong>model</strong> – model where should be updated state</p></li>
 <li><p><strong>criterion</strong> – criterion where should be updated state</p></li>
 <li><p><strong>optimizer</strong> – optimizer where should be updated state</p></li>
 <li><p><strong>scheduler</strong> – scheduler where should be updated state</p></li>
@@ -1130,17 +1130,17 @@ scheduler (if not None).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>checkpoint</strong> (<em>dict</em>) – data to save.</p></li>
-<li><p><strong>logdir</strong> (<em>Path/str</em>) – directory where checkpoint
+<li><p><strong>checkpoint</strong> – data to save.</p></li>
+<li><p><strong>logdir</strong> – directory where checkpoint
 should be stored.</p></li>
-<li><p><strong>suffix</strong> (<em>str</em>) – checkpoint file name.</p></li>
-<li><p><strong>is_best</strong> (<em>bool</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> then also
+<li><p><strong>suffix</strong> – checkpoint file name.</p></li>
+<li><p><strong>is_best</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code> then also
 will be generated best checkpoint file.</p></li>
-<li><p><strong>is_last</strong> (<em>bool</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> then also
+<li><p><strong>is_last</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code> then also
 will be generated last checkpoint file.</p></li>
-<li><p><strong>special_suffix</strong> (<em>str</em>) – suffix to use for
+<li><p><strong>special_suffix</strong> – suffix to use for
 saving best/last checkpoints.</p></li>
-<li><p><strong>saver_fn</strong> (<em>Callable</em>) – function to use for saving
+<li><p><strong>saver_fn</strong> – function to use for saving
 data to file, default is <code class="docutils literal notranslate"><span class="pre">torch.save</span></code></p></li>
 </ul>
 </dd>
@@ -1151,8 +1151,7 @@ data to file, default is <code class="docutils literal notranslate"><span class=
 <dt id="catalyst.utils.checkpoint.load_checkpoint">
 <code class="sig-prename descclassname">catalyst.utils.checkpoint.</code><code class="sig-name descname">load_checkpoint</code><span class="sig-paren">(</span><em class="sig-param">filepath: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/checkpoint.html#load_checkpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.checkpoint.load_checkpoint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load checkpoint from path.
-:param filepath: checkpoint file to load
-:type filepath: str</p>
+:param filepath: checkpoint file to load</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>checkpoint content</p>
@@ -1170,10 +1169,10 @@ data to file, default is <code class="docutils literal notranslate"><span class=
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>Model</em>) – torch model</p></li>
-<li><p><strong>criterion</strong> (<em>Criterion</em>) – criterion function</p></li>
-<li><p><strong>optimizer</strong> (<a class="reference internal" href="#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer</p></li>
-<li><p><strong>scheduler</strong> (<em>Scheduler</em>) – scheduler</p></li>
+<li><p><strong>model</strong> – torch model</p></li>
+<li><p><strong>criterion</strong> – criterion function</p></li>
+<li><p><strong>optimizer</strong> – optimizer</p></li>
+<li><p><strong>scheduler</strong> – scheduler</p></li>
 <li><p><strong>distributed_params</strong> (<em>dict</em><em>, </em><em>optional</em>) – dict with the parameters
 for distributed and FP16 method</p></li>
 <li><p><strong>device</strong> (<em>Device</em><em>, </em><em>optional</em>) – device</p></li>
@@ -1208,10 +1207,10 @@ for distributed and FP16 method</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<em>str</em>) – path to config file (YAML or JSON)</p></li>
-<li><p><strong>ordered</strong> (<em>bool</em>) – if true the config will be loaded as <code class="docutils literal notranslate"><span class="pre">OrderedDict</span></code></p></li>
-<li><p><strong>data_format</strong> (<em>str</em>) – <code class="docutils literal notranslate"><span class="pre">yaml</span></code>, <code class="docutils literal notranslate"><span class="pre">yml</span></code> or <code class="docutils literal notranslate"><span class="pre">json</span></code>.</p></li>
-<li><p><strong>encoding</strong> (<em>str</em>) – encoding to read the config</p></li>
+<li><p><strong>path</strong> – path to config file (YAML or JSON)</p></li>
+<li><p><strong>ordered</strong> – if true the config will be loaded as <code class="docutils literal notranslate"><span class="pre">OrderedDict</span></code></p></li>
+<li><p><strong>data_format</strong> – <code class="docutils literal notranslate"><span class="pre">yaml</span></code>, <code class="docutils literal notranslate"><span class="pre">yml</span></code> or <code class="docutils literal notranslate"><span class="pre">json</span></code>.</p></li>
+<li><p><strong>encoding</strong> – encoding to read the config</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1240,11 +1239,11 @@ which was adapted from
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>config</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>List</em><em>]</em>) – config to save</p></li>
 <li><p><strong>path</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>]</em>) – path to save</p></li>
-<li><p><strong>data_format</strong> (<em>str</em>) – <code class="docutils literal notranslate"><span class="pre">yaml</span></code>, <code class="docutils literal notranslate"><span class="pre">yml</span></code> or <code class="docutils literal notranslate"><span class="pre">json</span></code>.</p></li>
-<li><p><strong>encoding</strong> (<em>str</em>) – Encoding to write file. Default is <code class="docutils literal notranslate"><span class="pre">utf-8</span></code></p></li>
-<li><p><strong>ensure_ascii</strong> (<em>bool</em>) – Used for JSON, if True non-ASCII</p></li>
+<li><p><strong>data_format</strong> – <code class="docutils literal notranslate"><span class="pre">yaml</span></code>, <code class="docutils literal notranslate"><span class="pre">yml</span></code> or <code class="docutils literal notranslate"><span class="pre">json</span></code>.</p></li>
+<li><p><strong>encoding</strong> – Encoding to write file. Default is <code class="docutils literal notranslate"><span class="pre">utf-8</span></code></p></li>
+<li><p><strong>ensure_ascii</strong> – Used for JSON, if True non-ASCII</p></li>
 <li><p><strong>are escaped in JSON strings.</strong> (<em>characters</em>) – </p></li>
-<li><p><strong>indent</strong> (<em>int</em>) – Used for JSON</p></li>
+<li><p><strong>indent</strong> – Used for JSON</p></li>
 </ul>
 </dd>
 </dl>
@@ -1473,8 +1472,8 @@ used in deep reinforcement learning literature.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_dir</strong> (<em>Path</em>) – input directory</p></li>
-<li><p><strong>output_dir</strong> (<em>Path</em>) – output directory</p></li>
+<li><p><strong>input_dir</strong> – input directory</p></li>
+<li><p><strong>output_dir</strong> – output directory</p></li>
 </ul>
 </dd>
 </dl>
@@ -1489,8 +1488,8 @@ decimal chars are not enough (metric value lower than 1e-4).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<em>str</em>) – metric name</p></li>
-<li><p><strong>value</strong> (<em>float</em>) – value of metric</p></li>
+<li><p><strong>name</strong> – metric name</p></li>
+<li><p><strong>value</strong> – value of metric</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1510,7 +1509,7 @@ decimal chars are not enough (metric value lower than 1e-4).</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fn</strong> (<em>Callable</em><em>[</em><em>..</em><em>, </em><em>Any</em><em>]</em>) – target Callable</p></li>
-<li><p><strong>exclude</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – exclude list of parameters</p></li>
+<li><p><strong>exclude</strong> – exclude list of parameters</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1530,7 +1529,7 @@ decimal chars are not enough (metric value lower than 1e-4).</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fn</strong> (<em>Callable</em><em>[</em><em>..</em><em>, </em><em>Any</em><em>]</em>) – target Callable</p></li>
-<li><p><strong>exclude</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – exclude list of parameters</p></li>
+<li><p><strong>exclude</strong> – exclude list of parameters</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1548,7 +1547,7 @@ decimal chars are not enough (metric value lower than 1e-4).</p>
 <dd><p>Return string with current utc time in chosen format.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>format</strong> (<em>str</em>) – format string. if None “%y%m%d.%H%M%S” will be used.</p>
+<dd class="field-odd"><p><strong>format</strong> – format string. if None “%y%m%d.%H%M%S” will be used.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>formatted utc time string</p>
@@ -1572,8 +1571,8 @@ decimal chars are not enough (metric value lower than 1e-4).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>object_or_dict</strong> (<em>Any</em>) – some object or a dictionary of objects</p></li>
-<li><p><strong>method</strong> (<em>str</em>) – method name to call</p></li>
+<li><p><strong>object_or_dict</strong> – some object or a dictionary of objects</p></li>
+<li><p><strong>method</strong> – method name to call</p></li>
 <li><p><strong>recursive_args</strong> – list of arguments to pass to the <code class="docutils literal notranslate"><span class="pre">method</span></code></p></li>
 <li><p><strong>recursive_kwargs</strong> – list of key-arguments to pass to the <code class="docutils literal notranslate"><span class="pre">method</span></code></p></li>
 <li><p><strong>**kwargs</strong> – Arbitrary keyword arguments</p></li>
@@ -1617,8 +1616,8 @@ with Convolutional Neural Networks</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>label</strong> (<em>int</em>) – scalar value to be vectorized</p></li>
-<li><p><strong>num_classes</strong> (<em>int</em>) – total number of classes</p></li>
+<li><p><strong>label</strong> – scalar value to be vectorized</p></li>
+<li><p><strong>num_classes</strong> – total number of classes</p></li>
 <li><p><strong>smoothing</strong> (<em>float</em><em>, </em><em>optional</em>) – if specified applies label smoothing
 from <code class="docutils literal notranslate"><span class="pre">Bag</span> <span class="pre">of</span> <span class="pre">Tricks</span> <span class="pre">for</span> <span class="pre">Image</span> <span class="pre">Classification</span>
 <span class="pre">with</span> <span class="pre">Convolutional</span> <span class="pre">Neural</span> <span class="pre">Networks</span></code> paper</p></li>
@@ -1671,7 +1670,7 @@ from <code class="docutils literal notranslate"><span class="pre">Bag</span> <sp
 <dd><p>Imports python module by path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>expdir</strong> (<em>pathlib.Path</em>) – path to python module.</p>
+<dd class="field-odd"><p><strong>expdir</strong> – path to python module.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Imported module.</p>
@@ -1700,8 +1699,8 @@ from <code class="docutils literal notranslate"><span class="pre">Bag</span> <sp
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>src</strong> (<em>pathlib.Path</em>) – source code path</p></li>
-<li><p><strong>dst</strong> (<em>pathlib.Path</em>) – destination code path</p></li>
+<li><p><strong>src</strong> – source code path</p></li>
+<li><p><strong>dst</strong> – destination code path</p></li>
 </ul>
 </dd>
 </dl>
@@ -1716,8 +1715,8 @@ and <code class="docutils literal notranslate"><span class="pre">config</span></
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>expdir</strong> (<em>pathlib.Path</em>) – experiment directory path</p></li>
-<li><p><strong>config</strong> (<em>Dict</em>) – dictionary with experiment Config</p></li>
+<li><p><strong>expdir</strong> – experiment directory path</p></li>
+<li><p><strong>config</strong> – dictionary with experiment Config</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1733,8 +1732,8 @@ and <code class="docutils literal notranslate"><span class="pre">config</span></
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>src</strong> (<em>pathlib.Path</em>) – source code path</p></li>
-<li><p><strong>dst</strong> (<em>pathlib.Path</em>) – destination code path</p></li>
+<li><p><strong>src</strong> – source code path</p></li>
+<li><p><strong>dst</strong> – destination code path</p></li>
 </ul>
 </dd>
 </dl>
@@ -1747,8 +1746,8 @@ and <code class="docutils literal notranslate"><span class="pre">config</span></
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>worker_fn</strong> (<em>Callable</em>) – worker fn to run in distributed mode</p></li>
-<li><p><strong>distributed</strong> (<em>bool</em>) – distributed flag</p></li>
+<li><p><strong>worker_fn</strong> – worker fn to run in distributed mode</p></li>
+<li><p><strong>distributed</strong> – distributed flag</p></li>
 <li><p><strong>args</strong> – additional parameters for worker_fn</p></li>
 <li><p><strong>kwargs</strong> – additional key-value parameters for worker_fn</p></li>
 </ul>
@@ -1822,8 +1821,8 @@ and <code class="docutils literal notranslate"><span class="pre">config</span></
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>experiment_config</strong> (<em>dict</em>) – experiment config</p></li>
-<li><p><strong>logdir</strong> (<em>str</em>) – path to logdir</p></li>
+<li><p><strong>experiment_config</strong> – experiment config</p></li>
+<li><p><strong>logdir</strong> – path to logdir</p></li>
 <li><p><strong>configs_path</strong> – path(s) to config</p></li>
 </ul>
 </dd>
@@ -1864,7 +1863,7 @@ and <code class="docutils literal notranslate"><span class="pre">config</span></
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>optimizer</strong> – PyTorch optimizer</p></li>
-<li><p><strong>value</strong> (<em>float</em>) – new value of momentum</p></li>
+<li><p><strong>value</strong> – new value of momentum</p></li>
 <li><p><strong>index</strong> (<em>int</em><em>, </em><em>optional</em>) – integer index of optimizer’s param groups,
 default is 0</p></li>
 </ul>
@@ -1928,7 +1927,7 @@ dict of tensors, tuple of tensors to target device.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>value</strong> – Object to be moved</p></li>
-<li><p><strong>device</strong> (<em>Device</em>) – target device ids</p></li>
+<li><p><strong>device</strong> – target device ids</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1945,8 +1944,8 @@ to be deterministic/non-deterministic mode</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>deterministic</strong> (<em>bool</em>) – deterministic mode if running in CuDNN backend.</p></li>
-<li><p><strong>benchmark</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> use CuDNN heuristics to figure out
+<li><p><strong>deterministic</strong> – deterministic mode if running in CuDNN backend.</p></li>
+<li><p><strong>benchmark</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code> use CuDNN heuristics to figure out
 which algorithm will be most performant
 for your model architecture and input.
 Setting it to <code class="docutils literal notranslate"><span class="pre">False</span></code> may slow down your training.</p></li>
@@ -1962,13 +1961,13 @@ Setting it to <code class="docutils literal notranslate"><span class="pre">False
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – Model to process</p></li>
-<li><p><strong>layerwise_params</strong> (<em>Dict</em>) – Order-sensitive dict where
+<li><p><strong>model</strong> – Model to process</p></li>
+<li><p><strong>layerwise_params</strong> – Order-sensitive dict where
 each key is regex pattern and values are layer-wise options
 for layers matching with a pattern</p></li>
-<li><p><strong>no_bias_weight_decay</strong> (<em>bool</em>) – If true, removes weight_decay
+<li><p><strong>no_bias_weight_decay</strong> – If true, removes weight_decay
 for all <code class="docutils literal notranslate"><span class="pre">bias</span></code> parameters in the model</p></li>
-<li><p><strong>lr_scaling</strong> (<em>float</em>) – layer-wise learning rate scaling,
+<li><p><strong>lr_scaling</strong> – layer-wise learning rate scaling,
 if 1.0, learning rates will not be scaled</p></li>
 </ul>
 </dd>
@@ -2002,7 +2001,7 @@ if 1.0, learning rates will not be scaled</p></li>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>model</strong> (<em>torch.nn.Module</em>) – model</p>
+<dd class="field-odd"><p><strong>model</strong> – model</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>value</p>
@@ -2028,7 +2027,7 @@ if 1.0, learning rates will not be scaled</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>torch.nn.Module</em>) – model</p></li>
+<li><p><strong>model</strong> – model</p></li>
 <li><p><strong>requires_grad</strong> (<em>Union</em><em>[</em><em>bool</em><em>, </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>bool</em><em>]</em><em>]</em>) – value</p></li>
 </ul>
 </dd>
@@ -2049,7 +2048,7 @@ For each input shape returns an output tensor</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>net</strong> (<em>Model</em>) – the model</p></li>
+<li><p><strong>net</strong> – the model</p></li>
 <li><p><strong>*input_shapes_args</strong> – variable length argument list of shapes</p></li>
 <li><p><strong>**input_shapes_kwargs</strong> – key-value arguemnts of shapes</p></li>
 </ul>
@@ -2083,7 +2082,7 @@ Should be used with <cite>catalyst.data.DynamicLenBatchSampler</cite>.</p>
 <p>Adapted from <a class="reference external" href="https://www.kaggle.com/c/jigsaw-unintended-bias-in-toxicity-classification/discussion/94779">Dynamic minibatch trimming to improve BERT training speed</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tensors</strong> (<em>[</em><em>torch.tensor</em><em>]</em>) – list of tensors to trim.</p>
+<dd class="field-odd"><p><strong>tensors</strong> – list of tensors to trim.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>list of trimmed tensors.</p>
@@ -2127,12 +2126,12 @@ Should be used with <cite>catalyst.data.DynamicLenBatchSampler</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – model outputs, logits
+<li><p><strong>outputs</strong> – model outputs, logits
 with shape [bs; num_classes]</p></li>
-<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – ground truth, labels
+<li><p><strong>targets</strong> – ground truth, labels
 with shape [bs; 1]</p></li>
-<li><p><strong>activation</strong> (<em>str</em>) – activation to use for model output</p></li>
-<li><p><strong>topk</strong> (<em>Sequence</em><em>[</em><em>int</em><em>]</em>) – <cite>topk</cite> for <a class="reference external" href="mailto:accuracy&#37;&#52;&#48;topk">accuracy<span>&#64;</span>topk</a> computing</p></li>
+<li><p><strong>activation</strong> – activation to use for model output</p></li>
+<li><p><strong>topk</strong> – <cite>topk</cite> for <a class="reference external" href="mailto:accuracy&#37;&#52;&#48;topk">accuracy<span>&#64;</span>topk</a> computing</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2148,15 +2147,15 @@ with shape [bs; 1]</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – NxK tensor that for each of the N examples
+<li><p><strong>outputs</strong> – NxK tensor that for each of the N examples
 indicates the probability of the example belonging to each of
 the K classes, according to the model.</p></li>
-<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – binary NxK tensort that encodes which of the K
+<li><p><strong>targets</strong> – binary NxK tensort that encodes which of the K
 classes are associated with the N-th input
 (eg: a row [0, 1, 0, 1] indicates that the example is
 associated with classes 2 and 4)</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – threshold for for model output</p></li>
-<li><p><strong>activation</strong> (<em>str</em>) – activation to use for model output</p></li>
+<li><p><strong>threshold</strong> – threshold for for model output</p></li>
+<li><p><strong>activation</strong> – activation to use for model output</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2172,29 +2171,17 @@ associated with classes 2 and 4)</p></li>
 indicates the probability of the example belonging to each of
 the K classes, according to the model.</p>
 </dd>
-<dt class="field-even">type outputs</dt>
-<dd class="field-even"><p>torch.Tensor</p>
-</dd>
-<dt class="field-odd">param targets</dt>
-<dd class="field-odd"><p>binary NxK tensort that encodes which of the K
+<dt class="field-even">param targets</dt>
+<dd class="field-even"><p>binary NxK tensort that encodes which of the K
 classes are associated with the N-th input
 (eg: a row [0, 1, 0, 1] indicates that the example is
 associated with classes 2 and 4)</p>
 </dd>
-<dt class="field-even">type targets</dt>
-<dd class="field-even"><p>torch.Tensor</p>
-</dd>
 <dt class="field-odd">param threshold</dt>
 <dd class="field-odd"><p>threshold for for model output</p>
 </dd>
-<dt class="field-even">type threshold</dt>
-<dd class="field-even"><p>float</p>
-</dd>
-<dt class="field-odd">param activation</dt>
-<dd class="field-odd"><p>activation to use for model output</p>
-</dd>
-<dt class="field-even">type activation</dt>
-<dd class="field-even"><p>str</p>
+<dt class="field-even">param activation</dt>
+<dd class="field-even"><p>activation to use for model output</p>
 </dd>
 <dt class="field-odd">returns</dt>
 <dd class="field-odd"><p>computed multi-label accuracy</p>
@@ -2294,11 +2281,11 @@ and 0 otherwise</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> (<em>list</em>) – a list of predicted elements</p></li>
-<li><p><strong>targets</strong> (<em>list</em>) – a list of elements that are to be predicted</p></li>
-<li><p><strong>eps</strong> (<em>float</em>) – epsilon</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
-<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
+<li><p><strong>outputs</strong> – a list of predicted elements</p></li>
+<li><p><strong>targets</strong> – a list of elements that are to be predicted</p></li>
+<li><p><strong>eps</strong> – epsilon</p></li>
+<li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
+<li><p><strong>activation</strong> – An torch.nn activation applied to the outputs.
 Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
 </ul>
 </dd>
@@ -2345,12 +2332,12 @@ Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – A list of predicted elements</p></li>
-<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – A list of elements that are to be predicted</p></li>
-<li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
-<li><p><strong>beta</strong> (<em>float</em>) – beta param for f_score</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
-<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
+<li><p><strong>outputs</strong> – A list of predicted elements</p></li>
+<li><p><strong>targets</strong> – A list of elements that are to be predicted</p></li>
+<li><p><strong>eps</strong> – epsilon to avoid zero division</p></li>
+<li><p><strong>beta</strong> – beta param for f_score</p></li>
+<li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
+<li><p><strong>activation</strong> – An torch.nn activation applied to the outputs.
 Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
 </ul>
 </dd>
@@ -2446,13 +2433,13 @@ Default: “mean”</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – A list of predicted elements</p></li>
-<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – A list of elements that are to be predicted</p></li>
-<li><p><strong>classes</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – if classes are specified
+<li><p><strong>outputs</strong> – A list of predicted elements</p></li>
+<li><p><strong>targets</strong> – A list of elements that are to be predicted</p></li>
+<li><p><strong>classes</strong> – if classes are specified
 we reduce across all dims except channels</p></li>
-<li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
-<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
+<li><p><strong>eps</strong> – epsilon to avoid zero division</p></li>
+<li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
+<li><p><strong>activation</strong> – An torch.nn activation applied to the outputs.
 Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
 </ul>
 </dd>
@@ -2471,13 +2458,13 @@ Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – A list of predicted elements</p></li>
-<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – A list of elements that are to be predicted</p></li>
-<li><p><strong>classes</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – if classes are specified
+<li><p><strong>outputs</strong> – A list of predicted elements</p></li>
+<li><p><strong>targets</strong> – A list of elements that are to be predicted</p></li>
+<li><p><strong>classes</strong> – if classes are specified
 we reduce across all dims except channels</p></li>
-<li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
-<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
+<li><p><strong>eps</strong> – epsilon to avoid zero division</p></li>
+<li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
+<li><p><strong>activation</strong> – An torch.nn activation applied to the outputs.
 Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
 </ul>
 </dd>
@@ -2500,30 +2487,21 @@ Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
 indicates the probability of the example belonging to each of
 the K classes, according to the model.</p>
 </dd>
-<dt class="field-even">type outputs</dt>
-<dd class="field-even"><p>torch.Tensor</p>
-</dd>
-<dt class="field-odd">param targets</dt>
-<dd class="field-odd"><p>binary NxK tensort that encodes which of the K
+<dt class="field-even">param targets</dt>
+<dd class="field-even"><p>binary NxK tensort that encodes which of the K
 classes are associated with the N-th input
 (eg: a row [0, 1, 0, 1] indicates that the example is
 associated with classes 2 and 4)</p>
 </dd>
-<dt class="field-even">type targets</dt>
-<dd class="field-even"><p>torch.Tensor</p>
-</dd>
 <dt class="field-odd">param weights</dt>
 <dd class="field-odd"><p>importance for each sample</p>
 </dd>
-<dt class="field-even">type weights</dt>
-<dd class="field-even"><p>torch.Tensor</p>
-</dd>
-<dt class="field-odd">returns</dt>
-<dd class="field-odd"><p>tensor of [K; ] shape,
+<dt class="field-even">returns</dt>
+<dd class="field-even"><p>tensor of [K; ] shape,
 with average precision for K classes</p>
 </dd>
-<dt class="field-even">rtype</dt>
-<dd class="field-even"><p>torch.Tensor</p>
+<dt class="field-odd">rtype</dt>
+<dd class="field-odd"><p>torch.Tensor</p>
 </dd>
 </dl>
 </div>
@@ -2542,7 +2520,7 @@ with average precision for K classes</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>num_classes</strong> (<em>int</em>) – number of classes</p>
+<dd class="field-odd"><p><strong>num_classes</strong> – number of classes</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>array of accuracy arguments</p>
@@ -2560,14 +2538,14 @@ with average precision for K classes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – NxK tensor that for each of the N examples
+<li><p><strong>outputs</strong> – NxK tensor that for each of the N examples
 indicates the probability of the example belonging to each of
 the K classes, according to the model.</p></li>
-<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – binary NxK tensor that encodes which of the K
+<li><p><strong>targets</strong> – binary NxK tensor that encodes which of the K
 classes are associated with the N-th input
 (eg: a row [0, 1, 0, 1] indicates that the example is
 associated with classes 2 and 4)</p></li>
-<li><p><strong>weights</strong> (<em>torch.Tensor</em>) – importance for each sample</p></li>
+<li><p><strong>weights</strong> – importance for each sample</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2588,16 +2566,13 @@ with passed <cite>class</cite> argument.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>metric_fn</strong> (<em>Callable</em>) – metric function to compute</p></li>
-<li><p><strong>class_args</strong> (<em>Sequence</em><em>[</em><em>str</em><em>]</em>) – class names for logging.
+<li><p><strong>metric_fn</strong> – metric function to compute</p></li>
+<li><p><strong>class_args</strong> – class names for logging.
 default: None - class indexes will be used.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>wrapped metric function with List[Dict] output</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Callable)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2612,18 +2587,15 @@ with passed <cite>topk</cite> argument.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>metric_fn</strong> (<em>Callable</em>) – metric function to compute</p></li>
-<li><p><strong>topk_args</strong> (<em>Sequence</em><em>[</em><em>int</em><em>]</em>) – topk args to sync outputs with</p></li>
+<li><p><strong>metric_fn</strong> – metric function to compute</p></li>
+<li><p><strong>topk_args</strong> – topk args to sync outputs with</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>wrapped metric function with List[Dict] output</p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>(Callable)</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>NotImplementedError</strong> – if metrics returned values are out of
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>NotImplementedError</strong> – if metrics returned values are out of
     torch.Tensor, int, float, Dict union.</p>
 </dd>
 </dl>

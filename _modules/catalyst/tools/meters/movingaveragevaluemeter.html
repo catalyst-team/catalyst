@@ -281,7 +281,7 @@
 <div class="viewcode-block" id="MovingAverageValueMeter.__init__"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.tools.meters.movingaveragevaluemeter.MovingAverageValueMeter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">windowsize</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            windowsize (int): size of window of values, which is continuous</span>
+<span class="sd">            windowsize: size of window of values, which is continuous</span>
 <span class="sd">                and ends on last updated element</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">MovingAverageValueMeter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
@@ -302,7 +302,7 @@
         <span class="sd">&quot;&quot;&quot;Adds observation sample.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            value (float): scalar</span>
+<span class="sd">            value: scalar</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">queueid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">windowsize</span>
         <span class="n">oldvalue</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">valuequeue</span><span class="p">[</span><span class="n">queueid</span><span class="p">]</span>

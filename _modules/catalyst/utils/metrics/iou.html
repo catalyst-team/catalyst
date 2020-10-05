@@ -283,13 +283,13 @@
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Args:</span>
-<span class="sd">        outputs (torch.Tensor): A list of predicted elements</span>
-<span class="sd">        targets (torch.Tensor):  A list of elements that are to be predicted</span>
-<span class="sd">        classes (List[str]): if classes are specified</span>
+<span class="sd">        outputs: A list of predicted elements</span>
+<span class="sd">        targets:  A list of elements that are to be predicted</span>
+<span class="sd">        classes: if classes are specified</span>
 <span class="sd">            we reduce across all dims except channels</span>
-<span class="sd">        eps (float): epsilon to avoid zero division</span>
-<span class="sd">        threshold (float): threshold for outputs binarization</span>
-<span class="sd">        activation (str): An torch.nn activation applied to the outputs.</span>
+<span class="sd">        eps: epsilon to avoid zero division</span>
+<span class="sd">        threshold: threshold for outputs binarization</span>
+<span class="sd">        activation: An torch.nn activation applied to the outputs.</span>
 <span class="sd">            Must be one of [&quot;none&quot;, &quot;Sigmoid&quot;, &quot;Softmax2d&quot;]</span>
 
 <span class="sd">    Returns:</span>

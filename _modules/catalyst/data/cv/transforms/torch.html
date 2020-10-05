@@ -308,9 +308,9 @@
 <span class="sd">            it does not mutates the input tensor.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        tensor (Tensor): Tensor image of size (C, H, W) to be normalized.</span>
-<span class="sd">        mean (sequence): Sequence of means for each channel.</span>
-<span class="sd">        std (sequence): Sequence of standard deviations for each channel.</span>
+<span class="sd">        tensor: Tensor image of size (C, H, W) to be normalized.</span>
+<span class="sd">        mean: Sequence of means for each channel.</span>
+<span class="sd">        std: Sequence of standard deviations for each channel.</span>
 <span class="sd">        inplace(bool,optional): Bool to make this operation inplace.</span>
 
 <span class="sd">    Returns:</span>
@@ -338,7 +338,7 @@
 <div class="viewcode-block" id="Compose.__init__"><a class="viewcode-back" href="../../../../../api/data.html#catalyst.data.cv.transforms.torch.Compose.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transforms</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            transforms (List): list of transforms to compose.</span>
+<span class="sd">            transforms: list of transforms to compose.</span>
 
 <span class="sd">        Example:</span>
 <span class="sd">            &gt;&gt;&gt; Compose([ToTensor(), Normalize()])</span>
@@ -400,8 +400,8 @@
 <div class="viewcode-block" id="Normalize.__init__"><a class="viewcode-back" href="../../../../../api/data.html#catalyst.data.cv.transforms.torch.Normalize.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">std</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            mean (sequence): Sequence of means for each channel.</span>
-<span class="sd">            std (sequence): Sequence of standard deviations for each channel.</span>
+<span class="sd">            mean: Sequence of means for each channel.</span>
+<span class="sd">            std: Sequence of standard deviations for each channel.</span>
 <span class="sd">            inplace(bool,optional): Bool to make this operation in-place.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">mean</span>
@@ -411,7 +411,7 @@
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            tensor (Tensor): Tensor image of size (C, H, W) to be normalized.</span>
+<span class="sd">            tensor: Tensor image of size (C, H, W) to be normalized.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Tensor: Normalized Tensor image.</span>

@@ -259,9 +259,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.dl.experiment.experiment</h1><div class="highlight"><pre>
-<span></span><span class="c1"># flake8: noqa</span>
-<span class="c1"># @TODO: code formatting issue for 20.07 release</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
@@ -321,7 +319,7 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            model (Model): model</span>
+<span class="sd">            model: model</span>
 <span class="sd">            datasets (OrderedDict[str, Union[Dataset, Dict, Any]]): dictionary</span>
 <span class="sd">                with one or several  ``torch.utils.data.Dataset``</span>
 <span class="sd">                for training, validation or inference</span>
@@ -332,37 +330,37 @@
 <span class="sd">                for training, validation or inference</span>
 <span class="sd">            callbacks (Union[List[Callback], OrderedDict[str, Callback]]):</span>
 <span class="sd">                list or dictionary with Catalyst callbacks</span>
-<span class="sd">            logdir (str): path to output directory</span>
-<span class="sd">            stage (str): current stage</span>
-<span class="sd">            criterion (Criterion): criterion function</span>
-<span class="sd">            optimizer (Optimizer): optimizer</span>
-<span class="sd">            scheduler (Scheduler): scheduler</span>
+<span class="sd">            logdir: path to output directory</span>
+<span class="sd">            stage: current stage</span>
+<span class="sd">            criterion: criterion function</span>
+<span class="sd">            optimizer: optimizer</span>
+<span class="sd">            scheduler: scheduler</span>
 <span class="sd">            trial : hyperparameters optimization trial.</span>
 <span class="sd">                Used for integrations with Optuna/HyperOpt/Ray.tune.</span>
-<span class="sd">            num_epochs (int): number of experiment&#39;s epochs</span>
-<span class="sd">            valid_loader (str): loader name used to calculate</span>
+<span class="sd">            num_epochs: number of experiment&#39;s epochs</span>
+<span class="sd">            valid_loader: loader name used to calculate</span>
 <span class="sd">                the metrics and save the checkpoints. For example,</span>
 <span class="sd">                you can pass `train` and then</span>
 <span class="sd">                the metrics will be taken from `train` loader.</span>
-<span class="sd">            main_metric (str): the key to the name of the metric</span>
+<span class="sd">            main_metric: the key to the name of the metric</span>
 <span class="sd">                by which the checkpoints will be selected.</span>
-<span class="sd">            minimize_metric (bool): flag to indicate whether</span>
+<span class="sd">            minimize_metric: flag to indicate whether</span>
 <span class="sd">                the ``main_metric`` should be minimized.</span>
-<span class="sd">            verbose (bool): if True, it displays the status of the training</span>
+<span class="sd">            verbose: if True, it displays the status of the training</span>
 <span class="sd">                to the console.</span>
-<span class="sd">            check_time (bool): if True, computes the execution time</span>
+<span class="sd">            check_time: if True, computes the execution time</span>
 <span class="sd">                of training process and displays it to the console.</span>
-<span class="sd">            check_run (bool): if True, we run only 3 batches per loader</span>
+<span class="sd">            check_run: if True, we run only 3 batches per loader</span>
 <span class="sd">                and 3 epochs per stage to check pipeline correctness</span>
-<span class="sd">            overfit (bool): if True, then takes only one batch per loader</span>
+<span class="sd">            overfit: if True, then takes only one batch per loader</span>
 <span class="sd">                for model overfitting, for advance usage please check</span>
 <span class="sd">                ``BatchOverfitCallback``</span>
-<span class="sd">            stage_kwargs (dict): additional stage params</span>
-<span class="sd">            checkpoint_data (dict): additional data to save in checkpoint,</span>
+<span class="sd">            stage_kwargs: additional stage params</span>
+<span class="sd">            checkpoint_data: additional data to save in checkpoint,</span>
 <span class="sd">                for example: ``class_names``, ``date_of_training``, etc</span>
-<span class="sd">            distributed_params (dict): dictionary with the parameters</span>
+<span class="sd">            distributed_params: dictionary with the parameters</span>
 <span class="sd">                for distributed and FP16 method</span>
-<span class="sd">            initial_seed (int): experiment&#39;s initial seed value</span>
+<span class="sd">            initial_seed: experiment&#39;s initial seed value</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="p">(</span>
             <span class="n">datasets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">loaders</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -436,6 +434,9 @@
 <span class="sd">        Returns hyperparameter trial for current experiment.</span>
 <span class="sd">        Could be usefull for Optuna/HyperOpt/Ray.tune</span>
 <span class="sd">        hyperparameters optimizers.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            trial</span>
 
 <span class="sd">        Example::</span>
 

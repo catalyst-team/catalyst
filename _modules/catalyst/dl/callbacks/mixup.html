@@ -295,11 +295,11 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            fields (List[str]): list of features which must be affected.</span>
-<span class="sd">            alpha (float): beta distribution a=b parameters.</span>
+<span class="sd">            fields: list of features which must be affected.</span>
+<span class="sd">            alpha: beta distribution a=b parameters.</span>
 <span class="sd">                Must be &gt;=0. The more alpha closer to zero</span>
 <span class="sd">                the less effect of the mixup.</span>
-<span class="sd">            on_train_only (bool): Apply to train only.</span>
+<span class="sd">            on_train_only: Apply to train only.</span>
 <span class="sd">                As the mixup use the proxy inputs, the targets are also proxy.</span>
 <span class="sd">                We are not interested in them, are we?</span>
 <span class="sd">                So, if on_train_only is True, use a standard output/metric</span>

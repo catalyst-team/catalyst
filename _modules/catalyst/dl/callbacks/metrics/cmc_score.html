@@ -304,16 +304,16 @@
 <span class="sd">        On batch end callback accumulate all embeddings</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            embeddings_key (str): embeddings key in output dict</span>
-<span class="sd">            labels_key (str): labels key in output dict</span>
-<span class="sd">            is_query_key (str): bool key True if current</span>
+<span class="sd">            embeddings_key: embeddings key in output dict</span>
+<span class="sd">            labels_key: labels key in output dict</span>
+<span class="sd">            is_query_key: bool key True if current</span>
 <span class="sd">                object is from query</span>
-<span class="sd">            prefix (str): key for the metric&#39;s name</span>
-<span class="sd">            topk_args (List[int]): specifies which cmc@K to log.</span>
+<span class="sd">            prefix: key for the metric&#39;s name</span>
+<span class="sd">            topk_args: specifies which cmc@K to log.</span>
 <span class="sd">                [1] - cmc@1</span>
 <span class="sd">                [1, 3] - cmc@1 and cmc@3</span>
 <span class="sd">                [1, 3, 5] - cmc@1, cmc@3 and cmc@5</span>
-<span class="sd">            num_classes (int): number of classes to calculate ``accuracy_args``</span>
+<span class="sd">            num_classes: number of classes to calculate ``accuracy_args``</span>
 <span class="sd">                if ``topk_args`` is None</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>

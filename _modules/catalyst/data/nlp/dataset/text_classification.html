@@ -280,14 +280,14 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            texts (List[str]): a list with texts to classify or to train the</span>
+<span class="sd">            texts: a list with texts to classify or to train the</span>
 <span class="sd">                classifier on</span>
 <span class="sd">            labels List[str]: a list with classification labels (optional)</span>
-<span class="sd">            label_dict (dict): a dictionary mapping class names to class ids,</span>
+<span class="sd">            label_dict: a dictionary mapping class names to class ids,</span>
 <span class="sd">                to be passed to the validation data (optional)</span>
-<span class="sd">            max_seq_length (int): maximal sequence length in tokens,</span>
+<span class="sd">            max_seq_length: maximal sequence length in tokens,</span>
 <span class="sd">                texts will be stripped to this length</span>
-<span class="sd">            model_name (str): transformer model name, needed to perform</span>
+<span class="sd">            model_name: transformer model name, needed to perform</span>
 <span class="sd">                appropriate tokenization</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">texts</span> <span class="o">=</span> <span class="n">texts</span>
@@ -328,7 +328,7 @@
         <span class="sd">&quot;&quot;&quot;Gets element of the dataset.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            index (int): index of the element in the dataset</span>
+<span class="sd">            index: index of the element in the dataset</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Single element by index</span>

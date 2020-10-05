@@ -280,11 +280,11 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            input_key (str): input key to use for perplexity calculation,</span>
+<span class="sd">            input_key: input key to use for perplexity calculation,</span>
 <span class="sd">                target tokens</span>
-<span class="sd">            output_key (str): output key to use for perplexity calculation,</span>
+<span class="sd">            output_key: output key to use for perplexity calculation,</span>
 <span class="sd">                logits of the predicted tokens</span>
-<span class="sd">            ignore_index (int): index to ignore, usually pad_index</span>
+<span class="sd">            ignore_index: index to ignore, usually pad_index</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ignore_index</span> <span class="o">=</span> <span class="n">ignore_index</span> <span class="ow">or</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span><span class="o">.</span><span class="n">ignore_index</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cross_entropy_loss</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">(</span>

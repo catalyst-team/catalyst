@@ -296,8 +296,8 @@
 <span class="sd">    classification and segmentation.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        tp (int): number of true positives</span>
-<span class="sd">        fp (int): number of false positives</span>
+<span class="sd">        tp: number of true positives</span>
+<span class="sd">        fp: number of false positives</span>
 <span class="sd">        eps: epsilon to use</span>
 
 <span class="sd">    Returns:</span>
@@ -356,9 +356,9 @@
 <span class="sd">        false positives, and false negatives in comparison to the target.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            output (torch.Tensor): prediction after activation function</span>
+<span class="sd">            output: prediction after activation function</span>
 <span class="sd">                shape should be (batch_size, ...), but works with any shape</span>
-<span class="sd">            target (torch.Tensor): label (binary),</span>
+<span class="sd">            target: label (binary),</span>
 <span class="sd">                shape should be the same as output&#39;s shape</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">output</span> <span class="o">=</span> <span class="p">(</span><span class="n">output</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>

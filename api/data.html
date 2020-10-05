@@ -461,10 +461,10 @@ or image directory with specified neural net architecture</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dict_key</strong> (<em>str</em>) – key to transform</p></li>
-<li><p><strong>augment_fn</strong> (<em>Callable</em>) – augmentation function to use</p></li>
-<li><p><strong>input_key</strong> (<em>str</em>) – <code class="docutils literal notranslate"><span class="pre">augment_fn</span></code> input key</p></li>
-<li><p><strong>output_key</strong> (<em>str</em>) – <code class="docutils literal notranslate"><span class="pre">augment_fn</span></code> output key</p></li>
+<li><p><strong>dict_key</strong> – key to transform</p></li>
+<li><p><strong>augment_fn</strong> – augmentation function to use</p></li>
+<li><p><strong>input_key</strong> – <code class="docutils literal notranslate"><span class="pre">augment_fn</span></code> input key</p></li>
+<li><p><strong>output_key</strong> – <code class="docutils literal notranslate"><span class="pre">augment_fn</span></code> output key</p></li>
 <li><p><strong>**kwargs</strong> – default kwargs for augmentations function</p></li>
 </ul>
 </dd>
@@ -575,7 +575,7 @@ converted to tensor and stacked</p>
 <dd><p>Gets element of the dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>index</strong> (<em>int</em>) – index of the element in the dataset</p>
+<dd class="field-odd"><p><strong>index</strong> – index of the element in the dataset</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Single element by index</p>
@@ -588,7 +588,7 @@ converted to tensor and stacked</p>
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">sampler: torch.utils.data.sampler.Sampler</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset/torch.html#DatasetFromSampler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.torch.DatasetFromSampler.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>sampler</strong> (<em>Sampler</em>) – &#64;TODO: Docs. Contribution is welcome</p>
+<dd class="field-odd"><p><strong>sampler</strong> – &#64;TODO: Docs. Contribution is welcome</p>
 </dd>
 </dl>
 </dd></dl>
@@ -622,7 +622,7 @@ converted to tensor and stacked</p>
 <dd><p>Gets element of the dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>index</strong> (<em>int</em>) – index of the element in the dataset</p>
+<dd class="field-odd"><p><strong>index</strong> – index of the element in the dataset</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Single element by index</p>
@@ -636,14 +636,14 @@ converted to tensor and stacked</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>list_data</strong> (<em>List</em><em>[</em><em>Dict</em><em>]</em>) – list of dicts, that stores
+<li><p><strong>list_data</strong> – list of dicts, that stores
 you data annotations,
 (for example path to images, labels, bboxes, etc.)</p></li>
-<li><p><strong>open_fn</strong> (<em>callable</em>) – function, that can open your
+<li><p><strong>open_fn</strong> – function, that can open your
 annotations dict and
 transfer it to data, needed by your network
 (for example open image by path, or tokenize read string.)</p></li>
-<li><p><strong>dict_transform</strong> (<em>callable</em>) – transforms to use on dict.
+<li><p><strong>dict_transform</strong> – transforms to use on dict.
 (for example normalize image, add blur, crop/resize/etc)</p></li>
 </ul>
 </dd>
@@ -679,7 +679,7 @@ transfer it to data, needed by your network
 <dd><p>Get item from all datasets.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>index</strong> (<em>int</em>) – index to value from all datasets</p>
+<dd class="field-odd"><p><strong>index</strong> – index to value from all datasets</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>list of value in every dataset</p>
@@ -696,8 +696,8 @@ transfer it to data, needed by your network
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>datasets</strong> (<em>List</em><em>[</em><a class="reference internal" href="utils.html#catalyst.tools.typing.Dataset" title="catalyst.tools.typing.Dataset"><em>Dataset</em></a><em>]</em>) – params count of datasets to merge</p></li>
-<li><p><strong>dict_transform</strong> (<em>callable</em>) – transforms common for all datasets.
+<li><p><strong>datasets</strong> – params count of datasets to merge</p></li>
+<li><p><strong>dict_transform</strong> – transforms common for all datasets.
 (for example normalize image, add blur, crop/resize/etc)</p></li>
 </ul>
 </dd>
@@ -733,7 +733,7 @@ transfer it to data, needed by your network
 <dd><p>Gets element of the dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>index</strong> (<em>int</em>) – index of the element in the dataset</p>
+<dd class="field-odd"><p><strong>index</strong> – index of the element in the dataset</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Single element by index</p>
@@ -748,10 +748,10 @@ transfer it to data, needed by your network
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>numpy_data</strong> (<em>np.ndarray</em>) – numpy data
+<li><p><strong>numpy_data</strong> – numpy data
 (for example path to embeddings, features, etc.)</p></li>
-<li><p><strong>numpy_key</strong> (<em>str</em>) – key to use for output dictionary</p></li>
-<li><p><strong>dict_transform</strong> (<em>callable</em>) – transforms to use on dict.
+<li><p><strong>numpy_key</strong> – key to use for output dictionary</p></li>
+<li><p><strong>dict_transform</strong> – transforms to use on dict.
 (for example normalize vector, etc)</p></li>
 </ul>
 </dd>
@@ -796,21 +796,21 @@ transfer it to data, needed by your network
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>filenames</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of file paths that store information
+<li><p><strong>filenames</strong> – list of file paths that store information
 about your dataset samples; it could be images, texts or
 any other files in general.</p></li>
-<li><p><strong>open_fn</strong> (<em>callable</em>) – function, that can open your
+<li><p><strong>open_fn</strong> – function, that can open your
 annotations dict and
 transfer it to data, needed by your network
 (for example open image by path, or tokenize read string)</p></li>
-<li><p><strong>label_fn</strong> (<em>callable</em>) – function, that can extract target
+<li><p><strong>label_fn</strong> – function, that can extract target
 value from sample path
 (for example, your sample could be an image file like
 <code class="docutils literal notranslate"><span class="pre">/path/to/your/image_1.png</span></code> where the target is encoded as
 a part of file path)</p></li>
-<li><p><strong>features_key</strong> (<em>str</em>) – key to use to store sample features</p></li>
-<li><p><strong>target_key</strong> (<em>str</em>) – key to use to store target label</p></li>
-<li><p><strong>list_dataset_params</strong> (<em>dict</em>) – base class initialization
+<li><p><strong>features_key</strong> – key to use to store sample features</p></li>
+<li><p><strong>target_key</strong> – key to use to store target label</p></li>
+<li><p><strong>list_dataset_params</strong> – base class initialization
 parameters.</p></li>
 </ul>
 </dd>
@@ -1126,7 +1126,7 @@ If could not found anything - raises <code class="docutils literal notranslate">
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>loader</strong> (<em>DataLoader</em>) – torch dataloader.</p></li>
+<li><p><strong>loader</strong> – torch dataloader.</p></li>
 <li><p><strong>num_batches</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>]</em>) – number of batches to use (int),
 or portion of iterator (float, should be in [0;1] range)</p></li>
 </ul>
@@ -1215,8 +1215,8 @@ or read string and tokenize it.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – input key to use from annotation dict</p></li>
-<li><p><strong>output_key</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – output key to use to store the result,
+<li><p><strong>input_key</strong> – input key to use from annotation dict</p></li>
+<li><p><strong>output_key</strong> – output key to use to store the result,
 default: <code class="docutils literal notranslate"><span class="pre">input_key</span></code></p></li>
 </ul>
 </dd>
@@ -1257,12 +1257,12 @@ transfer it to a single value</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – input key to use from annotation dict</p></li>
-<li><p><strong>output_key</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – output key to use to store the result,
+<li><p><strong>input_key</strong> – input key to use from annotation dict</p></li>
+<li><p><strong>output_key</strong> – output key to use to store the result,
 default: <code class="docutils literal notranslate"><span class="pre">input_key</span></code></p></li>
-<li><p><strong>dtype</strong> (<em>type</em>) – datatype of scalar values to use</p></li>
+<li><p><strong>dtype</strong> – datatype of scalar values to use</p></li>
 <li><p><strong>default_value</strong> – default value to use if something goes wrong</p></li>
-<li><p><strong>one_hot_classes</strong> (<em>int</em>) – number of one-hot classes</p></li>
+<li><p><strong>one_hot_classes</strong> – number of one-hot classes</p></li>
 <li><p><strong>smoothing</strong> (<em>float</em><em>, </em><em>optional</em>) – if specified applies label smoothing
 to one_hot classes</p></li>
 </ul>
@@ -1301,9 +1301,9 @@ and applies <cite>encode_fn</cite> function.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – input key to use from annotation dict</p></li>
-<li><p><strong>output_key</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – output key to use to store the result</p></li>
-<li><p><strong>lambda_fn</strong> (<em>callable</em>) – encode function to use to prepare your data
+<li><p><strong>input_key</strong> – input key to use from annotation dict</p></li>
+<li><p><strong>output_key</strong> – output key to use to store the result</p></li>
+<li><p><strong>lambda_fn</strong> – encode function to use to prepare your data
 (for example convert chars/words/tokens to indices, etc)</p></li>
 <li><p><strong>kwargs</strong> – kwargs for encode function</p></li>
 </ul>
@@ -1341,8 +1341,8 @@ and applies all readers and mixins</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>readers</strong> (<em>List</em><em>[</em><a class="reference internal" href="#catalyst.data.reader.ReaderSpec" title="catalyst.data.reader.ReaderSpec"><em>ReaderSpec</em></a><em>]</em>) – list of reader to compose</p></li>
-<li><p><strong>mixins</strong> (<em>list</em>) – list of mixins to use</p></li>
+<li><p><strong>readers</strong> – list of reader to compose</p></li>
+<li><p><strong>mixins</strong> – list of mixins to use</p></li>
 </ul>
 </dd>
 </dl>
@@ -1447,9 +1447,9 @@ number of batches in an epoch</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>labels</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – list of class label
+<li><p><strong>labels</strong> – list of class label
 for each elem in the dataset</p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – Strategy to balance classes.
+<li><p><strong>mode</strong> – Strategy to balance classes.
 Must be one of [downsampling, upsampling]</p></li>
 </ul>
 </dd>
@@ -1533,9 +1533,9 @@ Should be used with <cite>catalyst.utils.trim_tensors</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sampler</strong> (<em>torch.utils.data.Sampler</em>) – Base sampler.</p></li>
-<li><p><strong>batch_size</strong> (<em>int</em>) – Size of minibatch.</p></li>
-<li><p><strong>drop_last</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the sampler will drop the last batch</p></li>
+<li><p><strong>sampler</strong> – Base sampler.</p></li>
+<li><p><strong>batch_size</strong> – Size of minibatch.</p></li>
+<li><p><strong>drop_last</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the sampler will drop the last batch</p></li>
 <li><p><strong>its size would be less than batch_size.</strong> (<em>if</em>) – </p></li>
 </ul>
 </dd>
@@ -1591,12 +1591,12 @@ Should be used with <cite>catalyst.utils.trim_tensors</cite>.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data_len</strong> (<em>int</em>) – Size of the dataset</p></li>
-<li><p><strong>mini_epoch_len</strong> (<em>int</em>) – Num samples from the dataset used in one
+<li><p><strong>data_len</strong> – Size of the dataset</p></li>
+<li><p><strong>mini_epoch_len</strong> – Num samples from the dataset used in one
 mini epoch.</p></li>
-<li><p><strong>drop_last</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, sampler will drop the last batches
+<li><p><strong>drop_last</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, sampler will drop the last batches
 if its size would be less than <code class="docutils literal notranslate"><span class="pre">batches_per_epoch</span></code></p></li>
-<li><p><strong>shuffle</strong> (<em>str</em>) – one of  <code class="docutils literal notranslate"><span class="pre">&quot;always&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;real_epoch&quot;</span></code>, or <cite>None`</cite>.
+<li><p><strong>shuffle</strong> – one of  <code class="docutils literal notranslate"><span class="pre">&quot;always&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;real_epoch&quot;</span></code>, or <cite>None`</cite>.
 The sampler will shuffle indices
 &gt; “per_mini_epoch” - every mini epoch (every <code class="docutils literal notranslate"><span class="pre">__iter__</span></code> call)
 &gt; “per_epoch” – every real epoch
@@ -1668,8 +1668,8 @@ Dataset structure should be the following:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rootpath</strong> (<em>str</em>) – root directory of dataset</p></li>
-<li><p><strong>target_key</strong> (<em>str</em>) – key to use to store target label</p></li>
+<li><p><strong>rootpath</strong> – root directory of dataset</p></li>
+<li><p><strong>target_key</strong> – key to use to store target label</p></li>
 <li><p><strong>dir2class</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em><em>, </em><em>optional</em>) – mapping from folder name
 to class index</p></li>
 <li><p><strong>dict_transform</strong> (<em>Callable</em><em>[</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>Dict</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – transforms
@@ -1698,8 +1698,8 @@ to use on dict</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – input key to use from annotation dict</p></li>
-<li><p><strong>output_key</strong> (<em>str</em>) – output key to use to store the result</p></li>
+<li><p><strong>input_key</strong> – input key to use from annotation dict</p></li>
+<li><p><strong>output_key</strong> – output key to use to store the result</p></li>
 </ul>
 </dd>
 </dl>
@@ -1721,9 +1721,9 @@ to use on dict</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – input key to use from annotation dict</p></li>
-<li><p><strong>output_key</strong> (<em>str</em>) – output key to use to store the result</p></li>
-<li><p><strong>sunflare_params</strong> (<em>dict</em>) – params to init
+<li><p><strong>input_key</strong> – input key to use from annotation dict</p></li>
+<li><p><strong>output_key</strong> – output key to use to store the result</p></li>
+<li><p><strong>sunflare_params</strong> – params to init
 <code class="docutils literal notranslate"><span class="pre">albumentations.RandomSunFlare</span></code></p></li>
 </ul>
 </dd>
@@ -1746,8 +1746,8 @@ to use on dict</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – input key to use from annotation dict</p></li>
-<li><p><strong>output_key</strong> (<em>str</em>) – output key to use to store the result</p></li>
+<li><p><strong>input_key</strong> – input key to use from annotation dict</p></li>
+<li><p><strong>output_key</strong> – output key to use to store the result</p></li>
 </ul>
 </dd>
 </dl>
@@ -1772,12 +1772,12 @@ to use on dict</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – key to use from annotation dict</p></li>
-<li><p><strong>output_key</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – key to use to store the result,
+<li><p><strong>input_key</strong> – key to use from annotation dict</p></li>
+<li><p><strong>output_key</strong> – key to use to store the result,
 default: <code class="docutils literal notranslate"><span class="pre">input_key</span></code></p></li>
-<li><p><strong>rootpath</strong> (<em>str</em>) – path to images dataset root directory
+<li><p><strong>rootpath</strong> – path to images dataset root directory
 (so your can use relative paths in annotations)</p></li>
-<li><p><strong>grayscale</strong> (<em>bool</em>) – flag if you need to work only
+<li><p><strong>grayscale</strong> – flag if you need to work only
 with grayscale images</p></li>
 </ul>
 </dd>
@@ -1800,10 +1800,10 @@ with grayscale images</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – key to use from annotation dict</p></li>
-<li><p><strong>output_key</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – key to use to store the result,
+<li><p><strong>input_key</strong> – key to use from annotation dict</p></li>
+<li><p><strong>output_key</strong> – key to use to store the result,
 default: <code class="docutils literal notranslate"><span class="pre">input_key</span></code></p></li>
-<li><p><strong>rootpath</strong> (<em>str</em>) – path to images dataset root directory
+<li><p><strong>rootpath</strong> – path to images dataset root directory
 (so your can use relative paths in annotations)</p></li>
 <li><p><strong>clip_range</strong> (<em>Tuple</em><em>[</em><em>int</em><em>, </em><em>int</em><em>]</em>) – lower and upper interval edges,
 image values outside the interval are clipped
@@ -1832,12 +1832,12 @@ to the interval edges</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>denormalize</strong> (<em>bool</em>) – if True, multiply image(s) by ImageNet std and
+<li><p><strong>denormalize</strong> – if True, multiply image(s) by ImageNet std and
 add ImageNet mean</p></li>
-<li><p><strong>move_channels_dim</strong> (<em>bool</em>) – if True, convert [B]xCxHxW tensor
+<li><p><strong>move_channels_dim</strong> – if True, convert [B]xCxHxW tensor
 to [B]xHxWxC format</p></li>
-<li><p><strong>always_apply</strong> (<em>bool</em>) – need to apply this transform anyway</p></li>
-<li><p><strong>p</strong> (<em>float</em>) – probability for this transform</p></li>
+<li><p><strong>always_apply</strong> – need to apply this transform anyway</p></li>
+<li><p><strong>p</strong> – probability for this transform</p></li>
 </ul>
 </dd>
 </dl>
@@ -1865,10 +1865,10 @@ to [B]xHxWxC format</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>move_channels_dim</strong> (<em>bool</em>) – if <code class="docutils literal notranslate"><span class="pre">False</span></code>, casts numpy array
+<li><p><strong>move_channels_dim</strong> – if <code class="docutils literal notranslate"><span class="pre">False</span></code>, casts numpy array
 to <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code>, but do not move channels dim</p></li>
-<li><p><strong>always_apply</strong> (<em>bool</em>) – need to apply this transform anyway</p></li>
-<li><p><strong>p</strong> (<em>float</em>) – probability for this transform</p></li>
+<li><p><strong>always_apply</strong> – need to apply this transform anyway</p></li>
+<li><p><strong>p</strong> – probability for this transform</p></li>
 </ul>
 </dd>
 </dl>
@@ -1889,7 +1889,7 @@ to <code class="docutils literal notranslate"><span class="pre">torch.tensor</sp
 <dl class="method">
 <dt id="catalyst.data.cv.transforms.albumentations.ImageToTensor.get_transform_init_args_names">
 <code class="sig-name descname">get_transform_init_args_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; tuple<a class="reference internal" href="../_modules/catalyst/data/cv/transforms/albumentations.html#ImageToTensor.get_transform_init_args_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.albumentations.ImageToTensor.get_transform_init_args_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><p>Get transform init args names.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1907,7 +1907,7 @@ to <code class="docutils literal notranslate"><span class="pre">torch.tensor</sp
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">transforms</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/transforms/torch.html#Compose.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.torch.Compose.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>transforms</strong> (<em>List</em>) – list of transforms to compose.</p>
+<dd class="field-odd"><p><strong>transforms</strong> – list of transforms to compose.</p>
 </dd>
 </dl>
 <p class="rubric">Example</p>
@@ -1943,8 +1943,8 @@ for <code class="docutils literal notranslate"><span class="pre">n</span></code>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mean</strong> (<em>sequence</em>) – Sequence of means for each channel.</p></li>
-<li><p><strong>std</strong> (<em>sequence</em>) – Sequence of standard deviations for each channel.</p></li>
+<li><p><strong>mean</strong> – Sequence of means for each channel.</p></li>
+<li><p><strong>std</strong> – Sequence of standard deviations for each channel.</p></li>
 <li><p><strong>inplace</strong> (<em>bool</em><em>,</em><em>optional</em>) – Bool to make this operation in-place.</p></li>
 </ul>
 </dd>
@@ -1988,13 +1988,13 @@ Can sort sequnces for efficient padding.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>texts</strong> (<em>Iterable</em>) – Iterable object with text</p></li>
+<li><p><strong>texts</strong> – Iterable object with text</p></li>
 <li><p><strong>tokenizer</strong> (<em>str</em><em> or </em><em>tokenizer</em>) – pre trained
 huggingface tokenizer or model name</p></li>
-<li><p><strong>max_seq_length</strong> (<em>int</em>) – max sequence length to tokenize</p></li>
-<li><p><strong>sort</strong> (<em>bool</em>) – If True then sort all sequences by length
+<li><p><strong>max_seq_length</strong> – max sequence length to tokenize</p></li>
+<li><p><strong>sort</strong> – If True then sort all sequences by length
 for efficient padding</p></li>
-<li><p><strong>lazy</strong> (<em>bool</em>) – If True then tokenize and encode sequence
+<li><p><strong>lazy</strong> – If True then tokenize and encode sequence
 in __getitem__ method
 else will tokenize in __init__ also
 if set to true sorting is unavialible</p></li>
@@ -2019,14 +2019,14 @@ if set to true sorting is unavialible</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>texts</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – a list with texts to classify or to train the
+<li><p><strong>texts</strong> – a list with texts to classify or to train the
 classifier on</p></li>
 <li><p><strong>List</strong><strong>[</strong><strong>str</strong><strong>]</strong> (<em>labels</em>) – a list with classification labels (optional)</p></li>
-<li><p><strong>label_dict</strong> (<em>dict</em>) – a dictionary mapping class names to class ids,
+<li><p><strong>label_dict</strong> – a dictionary mapping class names to class ids,
 to be passed to the validation data (optional)</p></li>
-<li><p><strong>max_seq_length</strong> (<em>int</em>) – maximal sequence length in tokens,
+<li><p><strong>max_seq_length</strong> – maximal sequence length in tokens,
 texts will be stripped to this length</p></li>
-<li><p><strong>model_name</strong> (<em>str</em>) – transformer model name, needed to perform
+<li><p><strong>model_name</strong> – transformer model name, needed to perform
 appropriate tokenization</p></li>
 </ul>
 </dd>

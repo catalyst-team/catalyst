@@ -259,9 +259,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.utils.misc</h1><div class="highlight"><pre>
-<span></span><span class="c1"># flake8: noqa</span>
-<span class="c1"># @TODO: code formatting issue for 20.07 release</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
@@ -278,8 +276,8 @@
     <span class="sd">&quot;&quot;&quot;Calls the ``method`` recursively for the ``object_or_dict``.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        object_or_dict (Any): some object or a dictionary of objects</span>
-<span class="sd">        method (str): method name to call</span>
+<span class="sd">        object_or_dict: some object or a dictionary of objects</span>
+<span class="sd">        method: method name to call</span>
 <span class="sd">        recursive_args: list of arguments to pass to the ``method``</span>
 <span class="sd">        recursive_kwargs: list of key-arguments to pass to the ``method``</span>
 <span class="sd">        **kwargs: Arbitrary keyword arguments</span>
@@ -323,8 +321,8 @@
     <span class="sd">&quot;&quot;&quot;Recursively copies the input directory.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        input_dir (Path): input directory</span>
-<span class="sd">        output_dir (Path): output directory</span>
+<span class="sd">        input_dir: input directory</span>
+<span class="sd">        output_dir: output directory</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">output_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">path</span> <span class="ow">in</span> <span class="n">input_dir</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
@@ -339,7 +337,7 @@
     <span class="sd">&quot;&quot;&quot;Return string with current utc time in chosen format.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        format (str): format string. if None &quot;%y%m%d.%H%M%S&quot; will be used.</span>
+<span class="sd">        format: format string. if None &quot;%y%m%d.%H%M%S&quot; will be used.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        str: formatted utc time string</span>
@@ -357,8 +355,8 @@
 <span class="sd">    decimal chars are not enough (metric value lower than 1e-4).</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        name (str): metric name</span>
-<span class="sd">        value (float): value of metric</span>
+<span class="sd">        name: metric name</span>
+<span class="sd">        value: value of metric</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        str: formatted metric</span>
@@ -373,7 +371,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        fn (Callable[..., Any]): target Callable</span>
-<span class="sd">        exclude (List[str]): exclude list of parameters</span>
+<span class="sd">        exclude: exclude list of parameters</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        dict: contains default parameters of `fn`</span>
@@ -393,7 +391,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        fn (Callable[..., Any]): target Callable</span>
-<span class="sd">        exclude (List[str]): exclude list of parameters</span>
+<span class="sd">        exclude: exclude list of parameters</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        list: contains parameter names of `fn`</span>

@@ -275,8 +275,8 @@
     <span class="sd">&quot;&quot;&quot;Build ``filter_fn`` from epochs for ``ControlFlowCallback``</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        epochs (int/Sequence[int]): epochs description</span>
-<span class="sd">        reverse_condition (bool): indicator to use reversed</span>
+<span class="sd">        epochs: epochs description</span>
+<span class="sd">        reverse_condition: indicator to use reversed</span>
 <span class="sd">            condition in filter function</span>
 
 <span class="sd">    Raises:</span>
@@ -315,7 +315,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        loaders (str/Sequence[str]/Mapping[str, int/Sequence[str]]):</span>
 <span class="sd">            loaders description</span>
-<span class="sd">        reverse_condition (bool): indicator to use reversed</span>
+<span class="sd">        reverse_condition: indicator to use reversed</span>
 <span class="sd">            condition in filter function</span>
 
 <span class="sd">    Raises:</span>
@@ -500,8 +500,8 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            base_callback (Callback): callback to wrap</span>
-<span class="sd">            epochs (int/Sequence[int]): epochs where</span>
+<span class="sd">            base_callback: callback to wrap</span>
+<span class="sd">            epochs: epochs where</span>
 <span class="sd">                need to **enable** callback, on other epochs</span>
 <span class="sd">                callback will be disabled.</span>
 
@@ -514,7 +514,7 @@
 <span class="sd">                on specified epochs.</span>
 
 <span class="sd">                Default value is ``None``.</span>
-<span class="sd">            ignore_epochs: (int/Sequence[int]): epochs where</span>
+<span class="sd">            ignore_epochs:: epochs where</span>
 <span class="sd">                need to **disable** callback, on other epochs</span>
 <span class="sd">                callback will be enabled.</span>
 
@@ -595,7 +595,7 @@
 <span class="sd">                        ...</span>
 <span class="sd">                    )</span>
 
-<span class="sd">            use_global_epochs (bool): if ``True`` then</span>
+<span class="sd">            use_global_epochs: if ``True`` then</span>
 <span class="sd">                will be used global epochs instead of epochs in</span>
 <span class="sd">                a stage, the default value is ``False``</span>
 <span class="sd">        &quot;&quot;&quot;</span>

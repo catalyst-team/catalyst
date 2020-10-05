@@ -259,9 +259,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.data.cv.transforms.albumentations</h1><div class="highlight"><pre>
-<span></span><span class="c1"># flake8: noqa</span>
-<span class="c1"># @TODO: code formatting issue for 20.07 release</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">albumentations</span> <span class="kn">import</span> <span class="n">ImageOnlyTransform</span>
 <span class="kn">from</span> <span class="nn">albumentations.pytorch</span> <span class="kn">import</span> <span class="n">ToTensorV2</span>
@@ -282,12 +280,12 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            denormalize (bool): if True, multiply image(s) by ImageNet std and</span>
+<span class="sd">            denormalize: if True, multiply image(s) by ImageNet std and</span>
 <span class="sd">                add ImageNet mean</span>
-<span class="sd">            move_channels_dim (bool): if True, convert [B]xCxHxW tensor</span>
+<span class="sd">            move_channels_dim: if True, convert [B]xCxHxW tensor</span>
 <span class="sd">                to [B]xHxWxC format</span>
-<span class="sd">            always_apply (bool): need to apply this transform anyway</span>
-<span class="sd">            p (float): probability for this transform</span>
+<span class="sd">            always_apply: need to apply this transform anyway</span>
+<span class="sd">            p: probability for this transform</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">always_apply</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">denormalize</span> <span class="o">=</span> <span class="n">denormalize</span>
@@ -316,10 +314,10 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            move_channels_dim (bool): if ``False``, casts numpy array</span>
+<span class="sd">            move_channels_dim: if ``False``, casts numpy array</span>
 <span class="sd">                to ``torch.tensor``, but do not move channels dim</span>
-<span class="sd">            always_apply (bool): need to apply this transform anyway</span>
-<span class="sd">            p (float): probability for this transform</span>
+<span class="sd">            always_apply: need to apply this transform anyway</span>
+<span class="sd">            p: probability for this transform</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">always_apply</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">move_channels_dim</span> <span class="o">=</span> <span class="n">move_channels_dim</span></div>
@@ -337,7 +335,7 @@
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">apply_to_mask</span><span class="p">(</span><span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ImageToTensor.get_transform_init_args_names"><a class="viewcode-back" href="../../../../../api/data.html#catalyst.data.cv.transforms.albumentations.ImageToTensor.get_transform_init_args_names">[docs]</a>    <span class="k">def</span> <span class="nf">get_transform_init_args_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Get transform init args names.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;move_channels_dim&quot;</span><span class="p">,)</span></div></div>
 
 

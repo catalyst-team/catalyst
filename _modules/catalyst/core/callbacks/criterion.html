@@ -259,9 +259,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.core.callbacks.criterion</h1><div class="highlight"><pre>
-<span></span><span class="c1"># flake8: noqa</span>
-<span class="c1"># @TODO: code formatting issue for 20.07 release</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.core.callbacks.metrics</span> <span class="kn">import</span> <span class="n">IBatchMetricCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>
@@ -289,11 +287,11 @@
 <span class="sd">                of keys that takes values from the input dictionary</span>
 <span class="sd">                If &#39;__all__&#39;, the whole output will be passed to the criterion</span>
 <span class="sd">                If None, empty dict will be passed to the criterion.</span>
-<span class="sd">            prefix (str): prefix for metrics and output key for loss</span>
+<span class="sd">            prefix: prefix for metrics and output key for loss</span>
 <span class="sd">                in ``runner.batch_metrics`` dictionary</span>
-<span class="sd">            criterion_key (str): A key to take a criterion in case</span>
+<span class="sd">            criterion_key: A key to take a criterion in case</span>
 <span class="sd">                there are several of them and they are in a dictionary format.</span>
-<span class="sd">            multiplier (float): scale factor for the output loss.</span>
+<span class="sd">            multiplier: scale factor for the output loss.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>

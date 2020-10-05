@@ -279,7 +279,7 @@
     <span class="sd">&quot;&quot;&quot;Converts dataframe to a list of rows (without indexes).</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        dataframe (DataFrame): input dataframe</span>
+<span class="sd">        dataframe: input dataframe</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        List[dict]: list of rows</span>
@@ -393,7 +393,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        dataframe: a dataset</span>
 <span class="sd">        class_column: which column to use for split</span>
-<span class="sd">        random_state (int): seed for random shuffle</span>
+<span class="sd">        random_state: seed for random shuffle</span>
 <span class="sd">        n_folds: number of result folds</span>
 
 <span class="sd">    Returns:</span>
@@ -451,8 +451,8 @@
 <span class="sd">    ``class_column`` using ``tag2class`` dictionary.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        dataframe (pd.DataFrame): input dataframe</span>
-<span class="sd">        tag_column (str): column with tags</span>
+<span class="sd">        dataframe: input dataframe</span>
+<span class="sd">        tag_column: column with tags</span>
 <span class="sd">        class_column (str) output column with classes</span>
 <span class="sd">        tag2class (Dict[str, int]): mapping from tags to class labels</span>
 <span class="sd">        verbose: flag if true, uses tqdm</span>
@@ -539,8 +539,8 @@
     <span class="sd">&quot;&quot;&quot;Split a Pandas DataFrame into folds.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        dataframe (pd.DataFrame): input dataframe</span>
-<span class="sd">        train_folds (List[int]): train folds</span>
+<span class="sd">        dataframe: input dataframe</span>
+<span class="sd">        train_folds: train folds</span>
 <span class="sd">        valid_folds (List[int], optional): valid folds.</span>
 <span class="sd">            If none takes all folds not included in ``train_folds``</span>
 <span class="sd">        infer_folds (List[int], optional): infer folds.</span>
@@ -549,8 +549,8 @@
 <span class="sd">        tag2class (Dict[str, int], optional): mapping from label names into int</span>
 <span class="sd">        tag_column (str, optional): column with label names</span>
 <span class="sd">        class_column (str, optional): column to use for split</span>
-<span class="sd">        seed (int): seed for split</span>
-<span class="sd">        n_folds (int): number of folds</span>
+<span class="sd">        seed: seed for split</span>
+<span class="sd">        n_folds: number of folds</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple: tuple with 4 dataframes</span>
@@ -597,8 +597,8 @@
     <span class="sd">&quot;&quot;&quot;Reads csv into one DataFrame with column ``fold``.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        fold_name (str): current fold name</span>
-<span class="sd">        paths (str): paths to csv separated by commas</span>
+<span class="sd">        fold_name: current fold name</span>
+<span class="sd">        paths: paths to csv separated by commas</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">         pd.DataFrame: merged dataframes with column ``fold`` == ``fold_name``</span>
@@ -624,9 +624,9 @@
     <span class="sd">&quot;&quot;&quot;This function reads train/valid/infer dataframes from giving paths.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        in_csv_train (str): paths to train csv separated by commas</span>
-<span class="sd">        in_csv_valid (str): paths to valid csv separated by commas</span>
-<span class="sd">        in_csv_infer (str): paths to infer csv separated by commas</span>
+<span class="sd">        in_csv_train: paths to train csv separated by commas</span>
+<span class="sd">        in_csv_valid: paths to valid csv separated by commas</span>
+<span class="sd">        in_csv_infer: paths to infer csv separated by commas</span>
 <span class="sd">        tag2class (Dict[str, int], optional): mapping from label names into int</span>
 <span class="sd">        tag_column (str, optional): column with label names</span>
 <span class="sd">        class_column (str, optional): column to use for split</span>
@@ -700,23 +700,23 @@
 <span class="sd">            for any previous block</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        in_csv (str): paths to whole dataset</span>
-<span class="sd">        train_folds (List[int]): train folds</span>
+<span class="sd">        in_csv: paths to whole dataset</span>
+<span class="sd">        train_folds: train folds</span>
 <span class="sd">        valid_folds (List[int], optional): valid folds.</span>
 <span class="sd">            If none takes all folds not included in ``train_folds``</span>
 <span class="sd">        infer_folds (List[int], optional): infer folds.</span>
 <span class="sd">            If none takes all folds not included in ``train_folds``</span>
 <span class="sd">            and ``valid_folds``</span>
-<span class="sd">        seed (int): seed for split</span>
-<span class="sd">        n_folds (int): number of folds</span>
+<span class="sd">        seed: seed for split</span>
+<span class="sd">        n_folds: number of folds</span>
 
-<span class="sd">        in_csv_train (str): paths to train csv separated by commas</span>
-<span class="sd">        in_csv_valid (str): paths to valid csv separated by commas</span>
-<span class="sd">        in_csv_infer (str): paths to infer csv separated by commas</span>
+<span class="sd">        in_csv_train: paths to train csv separated by commas</span>
+<span class="sd">        in_csv_valid: paths to valid csv separated by commas</span>
+<span class="sd">        in_csv_infer: paths to infer csv separated by commas</span>
 
 <span class="sd">        tag2class (Dict[str, int]): mapping from label names into ints</span>
-<span class="sd">        tag_column (str): column with label names</span>
-<span class="sd">        class_column (str): column to use for split</span>
+<span class="sd">        tag_column: column with label names</span>
+<span class="sd">        class_column: column to use for split</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Tuple[pd.DataFrame, List[dict], List[dict], List[dict]]:</span>
@@ -789,7 +789,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        dataframe: a dataset</span>
 <span class="sd">        class_column: which column to use for split</span>
-<span class="sd">        random_state (int): seed for random shuffle</span>
+<span class="sd">        random_state: seed for random shuffle</span>
 <span class="sd">        how: strategy to sample, must be one on [&quot;downsampling&quot;, &quot;upsampling&quot;]</span>
 
 <span class="sd">    Returns:</span>

@@ -330,7 +330,7 @@
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">config: Dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/config.html#ConfigExperiment.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.ConfigExperiment.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>config</strong> (<em>dict</em>) – dictionary with parameters</p>
+<dd class="field-odd"><p><strong>config</strong> – dictionary with parameters</p>
 </dd>
 </dl>
 </dd></dl>
@@ -372,7 +372,7 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>stage</strong> (<em>str</em>) – stage name</p></li>
+<li><p><strong>stage</strong> – stage name</p></li>
 <li><p><strong>model</strong> (<em>Union</em><em>[</em><em>Model</em><em>, </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Model</em><em>]</em><em>]</em>) – model or a dict of models</p></li>
 </ul>
 </dd>
@@ -401,8 +401,8 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>stage</strong> (<em>str</em>) – stage name</p></li>
-<li><p><strong>dataset</strong> (<em>str</em>) – dataset name (e.g. “train”, “valid”),
+<li><p><strong>stage</strong> – stage name</p></li>
+<li><p><strong>dataset</strong> – dataset name (e.g. “train”, “valid”),
 will be used only if the value of <cite>_key_value`</cite> is <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
 </ul>
 </dd>
@@ -445,6 +445,11 @@ will be used only if the value of <cite>_key_value`</cite> is <code class="docut
 <dd><p>Returns hyperparameter trial for current experiment.
 Could be usefull for Optuna/HyperOpt/Ray.tune
 hyperparameters optimizers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>trial</p>
+</dd>
+</dl>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">experiment</span><span class="o">.</span><span class="n">trial</span>
 <span class="go">optuna.trial._trial.Trial  # Optuna variant</span>
@@ -466,7 +471,7 @@ you can use to declare experiment in code.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>Model</em>) – model</p></li>
+<li><p><strong>model</strong> – model</p></li>
 <li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="utils.html#catalyst.tools.typing.Dataset" title="catalyst.tools.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
 with one or several  <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code>
 for training, validation or inference
@@ -476,37 +481,37 @@ preferred way for distributed training setup</p></li>
 with one or several <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code>
 for training, validation or inference</p></li>
 <li><p><strong>callbacks</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>, </em><em>OrderedDict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>]</em>) – list or dictionary with Catalyst callbacks</p></li>
-<li><p><strong>logdir</strong> (<em>str</em>) – path to output directory</p></li>
-<li><p><strong>stage</strong> (<em>str</em>) – current stage</p></li>
-<li><p><strong>criterion</strong> (<em>Criterion</em>) – criterion function</p></li>
-<li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer</p></li>
-<li><p><strong>scheduler</strong> (<em>Scheduler</em>) – scheduler</p></li>
+<li><p><strong>logdir</strong> – path to output directory</p></li>
+<li><p><strong>stage</strong> – current stage</p></li>
+<li><p><strong>criterion</strong> – criterion function</p></li>
+<li><p><strong>optimizer</strong> – optimizer</p></li>
+<li><p><strong>scheduler</strong> – scheduler</p></li>
 <li><p><strong>trial</strong> – hyperparameters optimization trial.
 Used for integrations with Optuna/HyperOpt/Ray.tune.</p></li>
-<li><p><strong>num_epochs</strong> (<em>int</em>) – number of experiment’s epochs</p></li>
-<li><p><strong>valid_loader</strong> (<em>str</em>) – loader name used to calculate
+<li><p><strong>num_epochs</strong> – number of experiment’s epochs</p></li>
+<li><p><strong>valid_loader</strong> – loader name used to calculate
 the metrics and save the checkpoints. For example,
 you can pass <cite>train</cite> and then
 the metrics will be taken from <cite>train</cite> loader.</p></li>
-<li><p><strong>main_metric</strong> (<em>str</em>) – the key to the name of the metric
+<li><p><strong>main_metric</strong> – the key to the name of the metric
 by which the checkpoints will be selected.</p></li>
-<li><p><strong>minimize_metric</strong> (<em>bool</em>) – flag to indicate whether
+<li><p><strong>minimize_metric</strong> – flag to indicate whether
 the <code class="docutils literal notranslate"><span class="pre">main_metric</span></code> should be minimized.</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – if True, it displays the status of the training
+<li><p><strong>verbose</strong> – if True, it displays the status of the training
 to the console.</p></li>
-<li><p><strong>check_time</strong> (<em>bool</em>) – if True, computes the execution time
+<li><p><strong>check_time</strong> – if True, computes the execution time
 of training process and displays it to the console.</p></li>
-<li><p><strong>check_run</strong> (<em>bool</em>) – if True, we run only 3 batches per loader
+<li><p><strong>check_run</strong> – if True, we run only 3 batches per loader
 and 3 epochs per stage to check pipeline correctness</p></li>
-<li><p><strong>overfit</strong> (<em>bool</em>) – if True, then takes only one batch per loader
+<li><p><strong>overfit</strong> – if True, then takes only one batch per loader
 for model overfitting, for advance usage please check
 <code class="docutils literal notranslate"><span class="pre">BatchOverfitCallback</span></code></p></li>
-<li><p><strong>stage_kwargs</strong> (<em>dict</em>) – additional stage params</p></li>
-<li><p><strong>checkpoint_data</strong> (<em>dict</em>) – additional data to save in checkpoint,
+<li><p><strong>stage_kwargs</strong> – additional stage params</p></li>
+<li><p><strong>checkpoint_data</strong> – additional data to save in checkpoint,
 for example: <code class="docutils literal notranslate"><span class="pre">class_names</span></code>, <code class="docutils literal notranslate"><span class="pre">date_of_training</span></code>, etc</p></li>
-<li><p><strong>distributed_params</strong> (<em>dict</em>) – dictionary with the parameters
+<li><p><strong>distributed_params</strong> – dictionary with the parameters
 for distributed and FP16 method</p></li>
-<li><p><strong>initial_seed</strong> (<em>int</em>) – experiment’s initial seed value</p></li>
+<li><p><strong>initial_seed</strong> – experiment’s initial seed value</p></li>
 </ul>
 </dd>
 </dl>
@@ -590,6 +595,11 @@ for distributed and FP16 method</p></li>
 <dd><p>Returns hyperparameter trial for current experiment.
 Could be usefull for Optuna/HyperOpt/Ray.tune
 hyperparameters optimizers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>trial</p>
+</dd>
+</dl>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">experiment</span><span class="o">.</span><span class="n">trial</span>
 <span class="go">optuna.trial._trial.Trial  # Optuna variant</span>
@@ -634,7 +644,7 @@ your model/criterion/optimizer/metrics.</p>
 Will add several of callbacks by default in case they missed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – name of stage. It should start with <cite>infer</cite> if you
+<dd class="field-odd"><p><strong>stage</strong> – name of stage. It should start with <cite>infer</cite> if you
 don’t need default callbacks, as they required only for
 training stages.</p>
 </dd>
@@ -667,7 +677,7 @@ you can use to declare experiment in code.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>Model</em>) – model</p></li>
+<li><p><strong>model</strong> – model</p></li>
 <li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="utils.html#catalyst.tools.typing.Dataset" title="catalyst.tools.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
 with one or several  <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code>
 for training, validation or inference
@@ -677,37 +687,37 @@ preferred way for distributed training setup</p></li>
 with one or several <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code>
 for training, validation or inference</p></li>
 <li><p><strong>callbacks</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>, </em><em>OrderedDict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>]</em>) – list or dictionary with Catalyst callbacks</p></li>
-<li><p><strong>logdir</strong> (<em>str</em>) – path to output directory</p></li>
-<li><p><strong>stage</strong> (<em>str</em>) – current stage</p></li>
-<li><p><strong>criterion</strong> (<em>Criterion</em>) – criterion function</p></li>
-<li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer</p></li>
-<li><p><strong>scheduler</strong> (<em>Scheduler</em>) – scheduler</p></li>
+<li><p><strong>logdir</strong> – path to output directory</p></li>
+<li><p><strong>stage</strong> – current stage</p></li>
+<li><p><strong>criterion</strong> – criterion function</p></li>
+<li><p><strong>optimizer</strong> – optimizer</p></li>
+<li><p><strong>scheduler</strong> – scheduler</p></li>
 <li><p><strong>trial</strong> – hyperparameters optimization trial.
 Used for integrations with Optuna/HyperOpt/Ray.tune.</p></li>
-<li><p><strong>num_epochs</strong> (<em>int</em>) – number of experiment’s epochs</p></li>
-<li><p><strong>valid_loader</strong> (<em>str</em>) – loader name used to calculate
+<li><p><strong>num_epochs</strong> – number of experiment’s epochs</p></li>
+<li><p><strong>valid_loader</strong> – loader name used to calculate
 the metrics and save the checkpoints. For example,
 you can pass <cite>train</cite> and then
 the metrics will be taken from <cite>train</cite> loader.</p></li>
-<li><p><strong>main_metric</strong> (<em>str</em>) – the key to the name of the metric
+<li><p><strong>main_metric</strong> – the key to the name of the metric
 by which the checkpoints will be selected.</p></li>
-<li><p><strong>minimize_metric</strong> (<em>bool</em>) – flag to indicate whether
+<li><p><strong>minimize_metric</strong> – flag to indicate whether
 the <code class="docutils literal notranslate"><span class="pre">main_metric</span></code> should be minimized.</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – if True, it displays the status of the training
+<li><p><strong>verbose</strong> – if True, it displays the status of the training
 to the console.</p></li>
-<li><p><strong>check_time</strong> (<em>bool</em>) – if True, computes the execution time
+<li><p><strong>check_time</strong> – if True, computes the execution time
 of training process and displays it to the console.</p></li>
-<li><p><strong>check_run</strong> (<em>bool</em>) – if True, we run only 3 batches per loader
+<li><p><strong>check_run</strong> – if True, we run only 3 batches per loader
 and 3 epochs per stage to check pipeline correctness</p></li>
-<li><p><strong>overfit</strong> (<em>bool</em>) – if True, then takes only one batch per loader
+<li><p><strong>overfit</strong> – if True, then takes only one batch per loader
 for model overfitting, for advance usage please check
 <code class="docutils literal notranslate"><span class="pre">BatchOverfitCallback</span></code></p></li>
-<li><p><strong>stage_kwargs</strong> (<em>dict</em>) – additional stage params</p></li>
-<li><p><strong>checkpoint_data</strong> (<em>dict</em>) – additional data to save in checkpoint,
+<li><p><strong>stage_kwargs</strong> – additional stage params</p></li>
+<li><p><strong>checkpoint_data</strong> – additional data to save in checkpoint,
 for example: <code class="docutils literal notranslate"><span class="pre">class_names</span></code>, <code class="docutils literal notranslate"><span class="pre">date_of_training</span></code>, etc</p></li>
-<li><p><strong>distributed_params</strong> (<em>dict</em>) – dictionary with the parameters
+<li><p><strong>distributed_params</strong> – dictionary with the parameters
 for distributed and FP16 method</p></li>
-<li><p><strong>initial_seed</strong> (<em>int</em>) – experiment’s initial seed value</p></li>
+<li><p><strong>initial_seed</strong> – experiment’s initial seed value</p></li>
 </ul>
 </dd>
 </dl>
@@ -791,6 +801,11 @@ for distributed and FP16 method</p></li>
 <dd><p>Returns hyperparameter trial for current experiment.
 Could be usefull for Optuna/HyperOpt/Ray.tune
 hyperparameters optimizers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>trial</p>
+</dd>
+</dl>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">experiment</span><span class="o">.</span><span class="n">trial</span>
 <span class="go">optuna.trial._trial.Trial  # Optuna variant</span>
@@ -818,7 +833,7 @@ hyperparameters optimizers.</p>
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">config: Dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/dl/experiment/config.html#ConfigExperiment.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.dl.experiment.config.ConfigExperiment.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>config</strong> (<em>dict</em>) – dictionary with parameters</p>
+<dd class="field-odd"><p><strong>config</strong> – dictionary with parameters</p>
 </dd>
 </dl>
 </dd></dl>
@@ -860,7 +875,7 @@ hyperparameters optimizers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>stage</strong> (<em>str</em>) – stage name</p></li>
+<li><p><strong>stage</strong> – stage name</p></li>
 <li><p><strong>model</strong> (<em>Union</em><em>[</em><em>Model</em><em>, </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Model</em><em>]</em><em>]</em>) – model or a dict of models</p></li>
 </ul>
 </dd>
@@ -889,8 +904,8 @@ hyperparameters optimizers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>stage</strong> (<em>str</em>) – stage name</p></li>
-<li><p><strong>dataset</strong> (<em>str</em>) – dataset name (e.g. “train”, “valid”),
+<li><p><strong>stage</strong> – stage name</p></li>
+<li><p><strong>dataset</strong> – dataset name (e.g. “train”, “valid”),
 will be used only if the value of <cite>_key_value`</cite> is <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
 </ul>
 </dd>
@@ -933,6 +948,11 @@ will be used only if the value of <cite>_key_value`</cite> is <code class="docut
 <dd><p>Returns hyperparameter trial for current experiment.
 Could be usefull for Optuna/HyperOpt/Ray.tune
 hyperparameters optimizers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>trial</p>
+</dd>
+</dl>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">experiment</span><span class="o">.</span><span class="n">trial</span>
 <span class="go">optuna.trial._trial.Trial  # Optuna variant</span>
@@ -980,7 +1000,7 @@ your model/criterion/optimizer/metrics.</p>
 Will add several of callbacks by default in case they missed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – name of stage. It should start with <cite>infer</cite> if you
+<dd class="field-odd"><p><strong>stage</strong> – name of stage. It should start with <cite>infer</cite> if you
 don’t need default callbacks, as they required only for
 training stages.</p>
 </dd>
@@ -1015,7 +1035,7 @@ training stages.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>Model</em>) – model for inference</p></li>
+<li><p><strong>model</strong> – model for inference</p></li>
 <li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="utils.html#catalyst.tools.typing.Dataset" title="catalyst.tools.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
 with one or several  <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code>
 for training, validation or inference
@@ -1025,20 +1045,20 @@ preferred way for distributed training setup</p></li>
 with one or several <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code>
 for training, validation or inference</p></li>
 <li><p><strong>callbacks</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>, </em><em>OrderedDict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>]</em>) – list or dictionary with Catalyst callbacks</p></li>
-<li><p><strong>logdir</strong> (<em>str</em>) – path to output directory</p></li>
-<li><p><strong>resume</strong> (<em>str</em>) – path to checkpoint to use for resume</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – if <cite>True</cite>, it displays the status of the training
+<li><p><strong>logdir</strong> – path to output directory</p></li>
+<li><p><strong>resume</strong> – path to checkpoint to use for resume</p></li>
+<li><p><strong>verbose</strong> – if <cite>True</cite>, it displays the status of the training
 to the console.</p></li>
-<li><p><strong>stage_kwargs</strong> (<em>dict</em>) – additional stage params</p></li>
+<li><p><strong>stage_kwargs</strong> – additional stage params</p></li>
 <li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets training to FP16.
 See <a class="reference external" href="https://nvidia.github.io/apex/amp.html#properties">https://nvidia.github.io/apex/amp.html#properties</a>
 if fp16=True, params by default will be <code class="docutils literal notranslate"><span class="pre">{&quot;opt_level&quot;:</span> <span class="pre">&quot;O1&quot;}</span></code></p></li>
-<li><p><strong>check</strong> (<em>bool</em>) – if True, then only checks that pipeline is working
+<li><p><strong>check</strong> – if True, then only checks that pipeline is working
 (3 epochs only)</p></li>
-<li><p><strong>timeit</strong> (<em>bool</em>) – if True, computes the execution time
+<li><p><strong>timeit</strong> – if True, computes the execution time
 of training process and displays it to the console.</p></li>
-<li><p><strong>initial_seed</strong> (<em>int</em>) – experiment’s initial seed value</p></li>
-<li><p><strong>state_kwargs</strong> (<em>dict</em>) – deprecated, use <cite>stage_kwargs</cite> instead</p></li>
+<li><p><strong>initial_seed</strong> – experiment’s initial seed value</p></li>
+<li><p><strong>state_kwargs</strong> – deprecated, use <cite>stage_kwargs</cite> instead</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -1082,11 +1102,11 @@ keeping <cite>is_infer_loader</cite> as True. Moves model to evaluation mode.</p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>loader</strong> (<em>DataLoader</em>) – loader to predict</p></li>
-<li><p><strong>model</strong> (<em>Model</em>) – model to use for prediction</p></li>
-<li><p><strong>resume</strong> (<em>str</em>) – path to checkpoint to resume</p></li>
+<li><p><strong>loader</strong> – loader to predict</p></li>
+<li><p><strong>model</strong> – model to use for prediction</p></li>
+<li><p><strong>resume</strong> – path to checkpoint to resume</p></li>
 <li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – fp16 usage flag</p></li>
-<li><p><strong>initial_seed</strong> (<em>int</em>) – seed to use before prediction</p></li>
+<li><p><strong>initial_seed</strong> – seed to use before prediction</p></li>
 </ul>
 </dd>
 <dt class="field-even">Yields</dt>
@@ -1102,19 +1122,19 @@ keeping <cite>is_infer_loader</cite> as True. Moves model to evaluation mode.</p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>Model</em>) – model to trace</p></li>
+<li><p><strong>model</strong> – model to trace</p></li>
 <li><p><strong>batch</strong> – batch to forward through the model to trace</p></li>
 <li><p><strong>logdir</strong> (<em>str</em><em>, </em><em>optional</em>) – If specified,
 the result will be written to the directory</p></li>
 <li><p><strong>loader</strong> (<em>DataLoader</em><em>, </em><em>optional</em>) – if batch is not specified, the batch
 will be <code class="docutils literal notranslate"><span class="pre">next(iter(loader))</span></code></p></li>
-<li><p><strong>method_name</strong> (<em>str</em>) – model’s method name that will be traced</p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – <code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code></p></li>
-<li><p><strong>requires_grad</strong> (<em>bool</em>) – flag to trace with gradients</p></li>
+<li><p><strong>method_name</strong> – model’s method name that will be traced</p></li>
+<li><p><strong>mode</strong> – <code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code></p></li>
+<li><p><strong>requires_grad</strong> – flag to trace with gradients</p></li>
 <li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets
 tracing params to FP16</p></li>
-<li><p><strong>device</strong> (<em>Device</em>) – Torch device or a string</p></li>
-<li><p><strong>predict_params</strong> (<em>dict</em>) – additional parameters for model forward</p></li>
+<li><p><strong>device</strong> – Torch device or a string</p></li>
+<li><p><strong>predict_params</strong> – additional parameters for model forward</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1136,10 +1156,10 @@ tracing params to FP16</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>Model</em>) – model to train</p></li>
-<li><p><strong>criterion</strong> (<em>Criterion</em>) – criterion function for training</p></li>
-<li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer for training</p></li>
-<li><p><strong>scheduler</strong> (<em>Scheduler</em>) – scheduler for training</p></li>
+<li><p><strong>model</strong> – model to train</p></li>
+<li><p><strong>criterion</strong> – criterion function for training</p></li>
+<li><p><strong>optimizer</strong> – optimizer for training</p></li>
+<li><p><strong>scheduler</strong> – scheduler for training</p></li>
 <li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="utils.html#catalyst.tools.typing.Dataset" title="catalyst.tools.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
 with one or several  <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code>
 for training, validation or inference
@@ -1149,40 +1169,40 @@ preferred way for distributed training setup</p></li>
 with one or several <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code>
 for training, validation or inference</p></li>
 <li><p><strong>callbacks</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>, </em><em>OrderedDict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>]</em>) – list or dictionary with Catalyst callbacks</p></li>
-<li><p><strong>logdir</strong> (<em>str</em>) – path to output directory</p></li>
-<li><p><strong>resume</strong> (<em>str</em>) – path to checkpoint for model</p></li>
-<li><p><strong>num_epochs</strong> (<em>int</em>) – number of training epochs</p></li>
-<li><p><strong>valid_loader</strong> (<em>str</em>) – loader name used to calculate
+<li><p><strong>logdir</strong> – path to output directory</p></li>
+<li><p><strong>resume</strong> – path to checkpoint for model</p></li>
+<li><p><strong>num_epochs</strong> – number of training epochs</p></li>
+<li><p><strong>valid_loader</strong> – loader name used to calculate
 the metrics and save the checkpoints. For example,
 you can pass <cite>train</cite> and then
 the metrics will be taken from <cite>train</cite> loader.</p></li>
-<li><p><strong>main_metric</strong> (<em>str</em>) – the key to the name of the metric
+<li><p><strong>main_metric</strong> – the key to the name of the metric
 by which the checkpoints will be selected.</p></li>
-<li><p><strong>minimize_metric</strong> (<em>bool</em>) – flag to indicate whether
+<li><p><strong>minimize_metric</strong> – flag to indicate whether
 the <code class="docutils literal notranslate"><span class="pre">main_metric</span></code> should be minimized.</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – if <cite>True</cite>, it displays the status of the training
+<li><p><strong>verbose</strong> – if <cite>True</cite>, it displays the status of the training
 to the console.</p></li>
-<li><p><strong>stage_kwargs</strong> (<em>dict</em>) – additional params for stage</p></li>
-<li><p><strong>checkpoint_data</strong> (<em>dict</em>) – additional data to save in checkpoint,
+<li><p><strong>stage_kwargs</strong> – additional params for stage</p></li>
+<li><p><strong>checkpoint_data</strong> – additional data to save in checkpoint,
 for example: <code class="docutils literal notranslate"><span class="pre">class_names</span></code>, <code class="docutils literal notranslate"><span class="pre">date_of_training</span></code>, etc</p></li>
 <li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets training to FP16.
 See <a class="reference external" href="https://nvidia.github.io/apex/amp.html#properties">https://nvidia.github.io/apex/amp.html#properties</a>
 if fp16=True, params by default will be <code class="docutils literal notranslate"><span class="pre">{&quot;opt_level&quot;:</span> <span class="pre">&quot;O1&quot;}</span></code></p></li>
-<li><p><strong>distributed</strong> (<em>bool</em>) – if <cite>True</cite> will start training
+<li><p><strong>distributed</strong> – if <cite>True</cite> will start training
 in distributed mode.
 Note: Works only with python scripts. No jupyter support.</p></li>
-<li><p><strong>check</strong> (<em>bool</em>) – if True, then only checks that pipeline is working
+<li><p><strong>check</strong> – if True, then only checks that pipeline is working
 (3 epochs only with 3 batches per loader)</p></li>
-<li><p><strong>overfit</strong> (<em>bool</em>) – if True, then takes only one batch per loader
+<li><p><strong>overfit</strong> – if True, then takes only one batch per loader
 for model overfitting, for advance usage please check
 <code class="docutils literal notranslate"><span class="pre">BatchOverfitCallback</span></code></p></li>
-<li><p><strong>timeit</strong> (<em>bool</em>) – if True, computes the execution time
+<li><p><strong>timeit</strong> – if True, computes the execution time
 of training process and displays it to the console.</p></li>
-<li><p><strong>load_best_on_end</strong> (<em>bool</em>) – if True, Runner will load
+<li><p><strong>load_best_on_end</strong> – if True, Runner will load
 best checkpoint state (model, optimizer, etc)
 according to validation metrics. Requires specified <code class="docutils literal notranslate"><span class="pre">logdir</span></code>.</p></li>
-<li><p><strong>initial_seed</strong> (<em>int</em>) – experiment’s initial seed value</p></li>
-<li><p><strong>state_kwargs</strong> (<em>dict</em>) – deprecated, use <cite>stage_kwargs</cite> instead</p></li>
+<li><p><strong>initial_seed</strong> – experiment’s initial seed value</p></li>
+<li><p><strong>state_kwargs</strong> – deprecated, use <cite>stage_kwargs</cite> instead</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -1205,12 +1225,12 @@ according to validation metrics. Requires specified <code class="docutils litera
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>RunnerModel</em>) – Torch model object</p></li>
-<li><p><strong>device</strong> (<em>Device</em>) – Torch device</p></li>
-<li><p><strong>input_key</strong> (<em>Any</em>) – Key in batch dict mapping for model input</p></li>
-<li><p><strong>output_key</strong> (<em>Any</em>) – Key in output dict model output
+<li><p><strong>model</strong> – Torch model object</p></li>
+<li><p><strong>device</strong> – Torch device</p></li>
+<li><p><strong>input_key</strong> – Key in batch dict mapping for model input</p></li>
+<li><p><strong>output_key</strong> – Key in output dict model output
 will be stored under</p></li>
-<li><p><strong>input_target_key</strong> (<em>str</em>) – Key in batch dict mapping for target</p></li>
+<li><p><strong>input_target_key</strong> – Key in batch dict mapping for target</p></li>
 </ul>
 </dd>
 </dl>
@@ -1278,7 +1298,7 @@ from DataLoader.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>Model</em>) – model for inference</p></li>
+<li><p><strong>model</strong> – model for inference</p></li>
 <li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="utils.html#catalyst.tools.typing.Dataset" title="catalyst.tools.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
 with one or several  <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code>
 for training, validation or inference
@@ -1288,20 +1308,20 @@ preferred way for distributed training setup</p></li>
 with one or several <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code>
 for training, validation or inference</p></li>
 <li><p><strong>callbacks</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>, </em><em>OrderedDict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>]</em>) – list or dictionary with Catalyst callbacks</p></li>
-<li><p><strong>logdir</strong> (<em>str</em>) – path to output directory</p></li>
-<li><p><strong>resume</strong> (<em>str</em>) – path to checkpoint to use for resume</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – if <cite>True</cite>, it displays the status of the training
+<li><p><strong>logdir</strong> – path to output directory</p></li>
+<li><p><strong>resume</strong> – path to checkpoint to use for resume</p></li>
+<li><p><strong>verbose</strong> – if <cite>True</cite>, it displays the status of the training
 to the console.</p></li>
-<li><p><strong>stage_kwargs</strong> (<em>dict</em>) – additional stage params</p></li>
+<li><p><strong>stage_kwargs</strong> – additional stage params</p></li>
 <li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets training to FP16.
 See <a class="reference external" href="https://nvidia.github.io/apex/amp.html#properties">https://nvidia.github.io/apex/amp.html#properties</a>
 if fp16=True, params by default will be <code class="docutils literal notranslate"><span class="pre">{&quot;opt_level&quot;:</span> <span class="pre">&quot;O1&quot;}</span></code></p></li>
-<li><p><strong>check</strong> (<em>bool</em>) – if True, then only checks that pipeline is working
+<li><p><strong>check</strong> – if True, then only checks that pipeline is working
 (3 epochs only)</p></li>
-<li><p><strong>timeit</strong> (<em>bool</em>) – if True, computes the execution time
+<li><p><strong>timeit</strong> – if True, computes the execution time
 of training process and displays it to the console.</p></li>
-<li><p><strong>initial_seed</strong> (<em>int</em>) – experiment’s initial seed value</p></li>
-<li><p><strong>state_kwargs</strong> (<em>dict</em>) – deprecated, use <cite>stage_kwargs</cite> instead</p></li>
+<li><p><strong>initial_seed</strong> – experiment’s initial seed value</p></li>
+<li><p><strong>state_kwargs</strong> – deprecated, use <cite>stage_kwargs</cite> instead</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -1345,11 +1365,11 @@ keeping <cite>is_infer_loader</cite> as True. Moves model to evaluation mode.</p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>loader</strong> (<em>DataLoader</em>) – loader to predict</p></li>
-<li><p><strong>model</strong> (<em>Model</em>) – model to use for prediction</p></li>
-<li><p><strong>resume</strong> (<em>str</em>) – path to checkpoint to resume</p></li>
+<li><p><strong>loader</strong> – loader to predict</p></li>
+<li><p><strong>model</strong> – model to use for prediction</p></li>
+<li><p><strong>resume</strong> – path to checkpoint to resume</p></li>
 <li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – fp16 usage flag</p></li>
-<li><p><strong>initial_seed</strong> (<em>int</em>) – seed to use before prediction</p></li>
+<li><p><strong>initial_seed</strong> – seed to use before prediction</p></li>
 </ul>
 </dd>
 <dt class="field-even">Yields</dt>
@@ -1365,19 +1385,19 @@ keeping <cite>is_infer_loader</cite> as True. Moves model to evaluation mode.</p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>Model</em>) – model to trace</p></li>
+<li><p><strong>model</strong> – model to trace</p></li>
 <li><p><strong>batch</strong> – batch to forward through the model to trace</p></li>
 <li><p><strong>logdir</strong> (<em>str</em><em>, </em><em>optional</em>) – If specified,
 the result will be written to the directory</p></li>
 <li><p><strong>loader</strong> (<em>DataLoader</em><em>, </em><em>optional</em>) – if batch is not specified, the batch
 will be <code class="docutils literal notranslate"><span class="pre">next(iter(loader))</span></code></p></li>
-<li><p><strong>method_name</strong> (<em>str</em>) – model’s method name that will be traced</p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – <code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code></p></li>
-<li><p><strong>requires_grad</strong> (<em>bool</em>) – flag to trace with gradients</p></li>
+<li><p><strong>method_name</strong> – model’s method name that will be traced</p></li>
+<li><p><strong>mode</strong> – <code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code></p></li>
+<li><p><strong>requires_grad</strong> – flag to trace with gradients</p></li>
 <li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets
 tracing params to FP16</p></li>
-<li><p><strong>device</strong> (<em>Device</em>) – Torch device or a string</p></li>
-<li><p><strong>predict_params</strong> (<em>dict</em>) – additional parameters for model forward</p></li>
+<li><p><strong>device</strong> – Torch device or a string</p></li>
+<li><p><strong>predict_params</strong> – additional parameters for model forward</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1399,10 +1419,10 @@ tracing params to FP16</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>Model</em>) – model to train</p></li>
-<li><p><strong>criterion</strong> (<em>Criterion</em>) – criterion function for training</p></li>
-<li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer for training</p></li>
-<li><p><strong>scheduler</strong> (<em>Scheduler</em>) – scheduler for training</p></li>
+<li><p><strong>model</strong> – model to train</p></li>
+<li><p><strong>criterion</strong> – criterion function for training</p></li>
+<li><p><strong>optimizer</strong> – optimizer for training</p></li>
+<li><p><strong>scheduler</strong> – scheduler for training</p></li>
 <li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="utils.html#catalyst.tools.typing.Dataset" title="catalyst.tools.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
 with one or several  <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code>
 for training, validation or inference
@@ -1412,40 +1432,40 @@ preferred way for distributed training setup</p></li>
 with one or several <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code>
 for training, validation or inference</p></li>
 <li><p><strong>callbacks</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>, </em><em>OrderedDict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>]</em>) – list or dictionary with Catalyst callbacks</p></li>
-<li><p><strong>logdir</strong> (<em>str</em>) – path to output directory</p></li>
-<li><p><strong>resume</strong> (<em>str</em>) – path to checkpoint for model</p></li>
-<li><p><strong>num_epochs</strong> (<em>int</em>) – number of training epochs</p></li>
-<li><p><strong>valid_loader</strong> (<em>str</em>) – loader name used to calculate
+<li><p><strong>logdir</strong> – path to output directory</p></li>
+<li><p><strong>resume</strong> – path to checkpoint for model</p></li>
+<li><p><strong>num_epochs</strong> – number of training epochs</p></li>
+<li><p><strong>valid_loader</strong> – loader name used to calculate
 the metrics and save the checkpoints. For example,
 you can pass <cite>train</cite> and then
 the metrics will be taken from <cite>train</cite> loader.</p></li>
-<li><p><strong>main_metric</strong> (<em>str</em>) – the key to the name of the metric
+<li><p><strong>main_metric</strong> – the key to the name of the metric
 by which the checkpoints will be selected.</p></li>
-<li><p><strong>minimize_metric</strong> (<em>bool</em>) – flag to indicate whether
+<li><p><strong>minimize_metric</strong> – flag to indicate whether
 the <code class="docutils literal notranslate"><span class="pre">main_metric</span></code> should be minimized.</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – if <cite>True</cite>, it displays the status of the training
+<li><p><strong>verbose</strong> – if <cite>True</cite>, it displays the status of the training
 to the console.</p></li>
-<li><p><strong>stage_kwargs</strong> (<em>dict</em>) – additional params for stage</p></li>
-<li><p><strong>checkpoint_data</strong> (<em>dict</em>) – additional data to save in checkpoint,
+<li><p><strong>stage_kwargs</strong> – additional params for stage</p></li>
+<li><p><strong>checkpoint_data</strong> – additional data to save in checkpoint,
 for example: <code class="docutils literal notranslate"><span class="pre">class_names</span></code>, <code class="docutils literal notranslate"><span class="pre">date_of_training</span></code>, etc</p></li>
 <li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets training to FP16.
 See <a class="reference external" href="https://nvidia.github.io/apex/amp.html#properties">https://nvidia.github.io/apex/amp.html#properties</a>
 if fp16=True, params by default will be <code class="docutils literal notranslate"><span class="pre">{&quot;opt_level&quot;:</span> <span class="pre">&quot;O1&quot;}</span></code></p></li>
-<li><p><strong>distributed</strong> (<em>bool</em>) – if <cite>True</cite> will start training
+<li><p><strong>distributed</strong> – if <cite>True</cite> will start training
 in distributed mode.
 Note: Works only with python scripts. No jupyter support.</p></li>
-<li><p><strong>check</strong> (<em>bool</em>) – if True, then only checks that pipeline is working
+<li><p><strong>check</strong> – if True, then only checks that pipeline is working
 (3 epochs only with 3 batches per loader)</p></li>
-<li><p><strong>overfit</strong> (<em>bool</em>) – if True, then takes only one batch per loader
+<li><p><strong>overfit</strong> – if True, then takes only one batch per loader
 for model overfitting, for advance usage please check
 <code class="docutils literal notranslate"><span class="pre">BatchOverfitCallback</span></code></p></li>
-<li><p><strong>timeit</strong> (<em>bool</em>) – if True, computes the execution time
+<li><p><strong>timeit</strong> – if True, computes the execution time
 of training process and displays it to the console.</p></li>
-<li><p><strong>load_best_on_end</strong> (<em>bool</em>) – if True, Runner will load
+<li><p><strong>load_best_on_end</strong> – if True, Runner will load
 best checkpoint state (model, optimizer, etc)
 according to validation metrics. Requires specified <code class="docutils literal notranslate"><span class="pre">logdir</span></code>.</p></li>
-<li><p><strong>initial_seed</strong> (<em>int</em>) – experiment’s initial seed value</p></li>
-<li><p><strong>state_kwargs</strong> (<em>dict</em>) – deprecated, use <cite>stage_kwargs</cite> instead</p></li>
+<li><p><strong>initial_seed</strong> – experiment’s initial seed value</p></li>
+<li><p><strong>state_kwargs</strong> – deprecated, use <cite>stage_kwargs</cite> instead</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -1471,12 +1491,12 @@ according to validation metrics. Requires specified <code class="docutils litera
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>RunnerModel</em>) – Torch model object</p></li>
-<li><p><strong>device</strong> (<em>Device</em>) – Torch device</p></li>
-<li><p><strong>input_key</strong> (<em>Any</em>) – Key in batch dict mapping for model input</p></li>
-<li><p><strong>output_key</strong> (<em>Any</em>) – Key in output dict model output
+<li><p><strong>model</strong> – Torch model object</p></li>
+<li><p><strong>device</strong> – Torch device</p></li>
+<li><p><strong>input_key</strong> – Key in batch dict mapping for model input</p></li>
+<li><p><strong>output_key</strong> – Key in output dict model output
 will be stored under</p></li>
-<li><p><strong>input_target_key</strong> (<em>str</em>) – Key in batch dict mapping for target</p></li>
+<li><p><strong>input_target_key</strong> – Key in batch dict mapping for target</p></li>
 </ul>
 </dd>
 </dl>
@@ -1669,19 +1689,19 @@ each class on <cite>runner.on_loader_end</cite>.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>metric_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – of metrics to print
+<li><p><strong>metric_names</strong> – of metrics to print
 Make sure that they are in the same order that metrics
 are outputted by the meters in <cite>meter_list</cite></p></li>
-<li><p><strong>meter_list</strong> (<em>list-like</em>) – List of meters.meter.Meter instances
+<li><p><strong>meter_list</strong> – List of meters.meter.Meter instances
 len(meter_list) == num_classes</p></li>
-<li><p><strong>input_key</strong> (<em>str</em>) – input key to use for metric calculation
+<li><p><strong>input_key</strong> – input key to use for metric calculation
 specifies our <code class="docutils literal notranslate"><span class="pre">y_true</span></code>.</p></li>
-<li><p><strong>output_key</strong> (<em>str</em>) – output key to use for metric calculation;
+<li><p><strong>output_key</strong> – output key to use for metric calculation;
 specifies our <code class="docutils literal notranslate"><span class="pre">y_pred</span></code></p></li>
-<li><p><strong>class_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – class names to display in the logs.
+<li><p><strong>class_names</strong> – class names to display in the logs.
 If None, defaults to indices for each class, starting from 0.</p></li>
-<li><p><strong>num_classes</strong> (<em>int</em>) – Number of classes; must be &gt; 1</p></li>
-<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the logits.
+<li><p><strong>num_classes</strong> – Number of classes; must be &gt; 1</p></li>
+<li><p><strong>activation</strong> – An torch.nn activation applied to the logits.
 Must be one of [‘none’, ‘Sigmoid’, ‘Softmax2d’]</p></li>
 </ul>
 </dd>
@@ -1745,11 +1765,11 @@ You may not use them together.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fields</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of features which must be affected.</p></li>
-<li><p><strong>alpha</strong> (<em>float</em>) – beta distribution a=b parameters.
+<li><p><strong>fields</strong> – list of features which must be affected.</p></li>
+<li><p><strong>alpha</strong> – beta distribution a=b parameters.
 Must be &gt;=0. The more alpha closer to zero
 the less effect of the mixup.</p></li>
-<li><p><strong>on_train_only</strong> (<em>bool</em>) – Apply to train only.
+<li><p><strong>on_train_only</strong> – Apply to train only.
 As the mixup use the proxy inputs, the targets are also proxy.
 We are not interested in them, are we?
 So, if on_train_only is True, use a standard output/metric
@@ -1801,10 +1821,10 @@ Learning rate is increased in linear or log scale, depending on user input.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>final_lr</strong> – final learning rate to try with</p></li>
-<li><p><strong>scale</strong> (<em>str</em>) – learning rate increasing scale (“log” or “linear”)</p></li>
-<li><p><strong>num_steps</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – number of batches to try;
+<li><p><strong>scale</strong> – learning rate increasing scale (“log” or “linear”)</p></li>
+<li><p><strong>num_steps</strong> – number of batches to try;
 if None - whole loader would be used.</p></li>
-<li><p><strong>optimizer_key</strong> (<em>str</em>) – which optimizer key to use
+<li><p><strong>optimizer_key</strong> – which optimizer key to use
 for learning rate scheduling</p></li>
 </ul>
 </dd>
@@ -1868,17 +1888,17 @@ for learning rate scheduling</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>metric</strong> (<em>str</em>) – Metric key we should trace model based on</p></li>
-<li><p><strong>minimize</strong> (<em>bool</em>) – Whether do we minimize metric or not</p></li>
-<li><p><strong>min_delta</strong> (<em>float</em>) – Minimum value of change for metric to be
+<li><p><strong>metric</strong> – Metric key we should trace model based on</p></li>
+<li><p><strong>minimize</strong> – Whether do we minimize metric or not</p></li>
+<li><p><strong>min_delta</strong> – Minimum value of change for metric to be
 considered as improved</p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – One of <cite>best</cite> or <cite>last</cite></p></li>
-<li><p><strong>do_once</strong> (<em>str</em>) – Whether do we trace once per stage or every epoch</p></li>
-<li><p><strong>method_name</strong> (<em>str</em>) – Model’s method name that will be
+<li><p><strong>mode</strong> – One of <cite>best</cite> or <cite>last</cite></p></li>
+<li><p><strong>do_once</strong> – Whether do we trace once per stage or every epoch</p></li>
+<li><p><strong>method_name</strong> – Model’s method name that will be
 used as entrypoint during tracing</p></li>
-<li><p><strong>requires_grad</strong> (<em>bool</em>) – Flag to use grads</p></li>
-<li><p><strong>opt_level</strong> (<em>str</em>) – AMP FP16 init level</p></li>
-<li><p><strong>trace_mode</strong> (<em>str</em>) – Mode for model to trace
+<li><p><strong>requires_grad</strong> – Flag to use grads</p></li>
+<li><p><strong>opt_level</strong> – AMP FP16 init level</p></li>
+<li><p><strong>trace_mode</strong> – Mode for model to trace
 (<code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code>)</p></li>
 <li><p><strong>out_dir</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>]</em>) – Directory to save model to</p></li>
 <li><p><strong>out_model</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>]</em>) – Path to save model to
@@ -1945,7 +1965,7 @@ specifies our <cite>y_pred</cite></p></li>
 [1] - accuracy
 [1, 3] - accuracy at 1 and 3
 [1, 3, 5] - accuracy at 1, 3 and 5</p></li>
-<li><p><strong>num_classes</strong> (<em>int</em>) – number of classes to calculate <code class="docutils literal notranslate"><span class="pre">topk_args</span></code>
+<li><p><strong>num_classes</strong> – number of classes to calculate <code class="docutils literal notranslate"><span class="pre">topk_args</span></code>
 if <code class="docutils literal notranslate"><span class="pre">accuracy_args</span></code> is None</p></li>
 <li><p><strong>activation</strong> – An torch.nn activation applied to the outputs.
 Must be one of <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Sigmoid&quot;</span></code>, or <code class="docutils literal notranslate"><span class="pre">&quot;Softmax&quot;</span></code></p></li>
@@ -2006,13 +2026,13 @@ Must be one of <code class="docutils literal notranslate"><span class="pre">&quo
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – input key to use for auc calculation
+<li><p><strong>input_key</strong> – input key to use for auc calculation
 specifies our <code class="docutils literal notranslate"><span class="pre">y_true</span></code>.</p></li>
-<li><p><strong>output_key</strong> (<em>str</em>) – output key to use for auc calculation;
+<li><p><strong>output_key</strong> – output key to use for auc calculation;
 specifies our <code class="docutils literal notranslate"><span class="pre">y_pred</span></code>.</p></li>
-<li><p><strong>prefix</strong> (<em>str</em>) – metric’s name.</p></li>
-<li><p><strong>multiplier</strong> (<em>float</em>) – scale factor for the metric.</p></li>
-<li><p><strong>class_args</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – class names to display in the logs.
+<li><p><strong>prefix</strong> – metric’s name.</p></li>
+<li><p><strong>multiplier</strong> – scale factor for the metric.</p></li>
+<li><p><strong>class_args</strong> – class names to display in the logs.
 If None, defaults to indices for each class, starting from 0</p></li>
 </ul>
 </dd>
@@ -2051,16 +2071,16 @@ On batch end callback accumulate all embeddings</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>embeddings_key</strong> (<em>str</em>) – embeddings key in output dict</p></li>
-<li><p><strong>labels_key</strong> (<em>str</em>) – labels key in output dict</p></li>
-<li><p><strong>is_query_key</strong> (<em>str</em>) – bool key True if current
+<li><p><strong>embeddings_key</strong> – embeddings key in output dict</p></li>
+<li><p><strong>labels_key</strong> – labels key in output dict</p></li>
+<li><p><strong>is_query_key</strong> – bool key True if current
 object is from query</p></li>
-<li><p><strong>prefix</strong> (<em>str</em>) – key for the metric’s name</p></li>
-<li><p><strong>topk_args</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – specifies which cmc&#64;K to log.
+<li><p><strong>prefix</strong> – key for the metric’s name</p></li>
+<li><p><strong>topk_args</strong> – specifies which cmc&#64;K to log.
 [1] - cmc&#64;1
 [1, 3] - cmc&#64;1 and cmc&#64;3
 [1, 3, 5] - cmc&#64;1, cmc&#64;3 and cmc&#64;5</p></li>
-<li><p><strong>num_classes</strong> (<em>int</em>) – number of classes to calculate <code class="docutils literal notranslate"><span class="pre">accuracy_args</span></code>
+<li><p><strong>num_classes</strong> – number of classes to calculate <code class="docutils literal notranslate"><span class="pre">accuracy_args</span></code>
 if <code class="docutils literal notranslate"><span class="pre">topk_args</span></code> is None</p></li>
 </ul>
 </dd>
@@ -2101,9 +2121,9 @@ if <code class="docutils literal notranslate"><span class="pre">topk_args</span>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – input key to use for dice calculation;
+<li><p><strong>input_key</strong> – input key to use for dice calculation;
 specifies our <cite>y_true</cite></p></li>
-<li><p><strong>output_key</strong> (<em>str</em>) – output key to use for dice calculation;
+<li><p><strong>output_key</strong> – output key to use for dice calculation;
 specifies our <cite>y_pred</cite></p></li>
 </ul>
 </dd>
@@ -2125,12 +2145,12 @@ the dice score with small batch sizes where the batchwise dice is noisier.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – input key to use for dice calculation;
+<li><p><strong>input_key</strong> – input key to use for dice calculation;
 specifies our <cite>y_true</cite></p></li>
-<li><p><strong>output_key</strong> (<em>str</em>) – output key to use for dice calculation;
+<li><p><strong>output_key</strong> – output key to use for dice calculation;
 specifies our <cite>y_pred</cite></p></li>
-<li><p><strong>prefix</strong> (<em>str</em>) – prefix for printing the metric</p></li>
-<li><p><strong>class_names</strong> (<em>dict/List</em>) – if dictionary, should be:
+<li><p><strong>prefix</strong> – prefix for printing the metric</p></li>
+<li><p><strong>class_names</strong> – if dictionary, should be:
 {class_id: class_name, …} where class_id is an integer
 This allows you to ignore class indices.
 if list, make sure it corresponds to the number of classes</p></li>
@@ -2183,15 +2203,15 @@ if list, make sure it corresponds to the number of classes</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – input key to use for iou calculation
+<li><p><strong>input_key</strong> – input key to use for iou calculation
 specifies our <code class="docutils literal notranslate"><span class="pre">y_true</span></code></p></li>
-<li><p><strong>output_key</strong> (<em>str</em>) – output key to use for iou calculation;
+<li><p><strong>output_key</strong> – output key to use for iou calculation;
 specifies our <code class="docutils literal notranslate"><span class="pre">y_pred</span></code></p></li>
-<li><p><strong>prefix</strong> (<em>str</em>) – key to store in logs</p></li>
-<li><p><strong>beta</strong> (<em>float</em>) – beta param for f_score</p></li>
-<li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
-<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
+<li><p><strong>prefix</strong> – key to store in logs</p></li>
+<li><p><strong>beta</strong> – beta param for f_score</p></li>
+<li><p><strong>eps</strong> – epsilon to avoid zero division</p></li>
+<li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
+<li><p><strong>activation</strong> – An torch.nn activation applied to the outputs.
 Must be one of <code class="docutils literal notranslate"><span class="pre">'none'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Sigmoid'</span></code>, or <code class="docutils literal notranslate"><span class="pre">'Softmax2d'</span></code></p></li>
 </ul>
 </dd>
@@ -2214,14 +2234,14 @@ Must be one of <code class="docutils literal notranslate"><span class="pre">'non
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – input key to use for iou calculation
+<li><p><strong>input_key</strong> – input key to use for iou calculation
 specifies our <code class="docutils literal notranslate"><span class="pre">y_true</span></code></p></li>
-<li><p><strong>output_key</strong> (<em>str</em>) – output key to use for iou calculation;
+<li><p><strong>output_key</strong> – output key to use for iou calculation;
 specifies our <code class="docutils literal notranslate"><span class="pre">y_pred</span></code></p></li>
-<li><p><strong>prefix</strong> (<em>str</em>) – key to store in logs</p></li>
-<li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
-<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
+<li><p><strong>prefix</strong> – key to store in logs</p></li>
+<li><p><strong>eps</strong> – epsilon to avoid zero division</p></li>
+<li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
+<li><p><strong>activation</strong> – An torch.nn activation applied to the outputs.
 Must be one of <code class="docutils literal notranslate"><span class="pre">'none'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Sigmoid'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Softmax2d'</span></code></p></li>
 </ul>
 </dd>
@@ -2247,18 +2267,18 @@ Must be one of <code class="docutils literal notranslate"><span class="pre">'non
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – input key to use for iou calculation
+<li><p><strong>input_key</strong> – input key to use for iou calculation
 specifies our <code class="docutils literal notranslate"><span class="pre">y_true</span></code></p></li>
-<li><p><strong>output_key</strong> (<em>str</em>) – output key to use for iou calculation;
+<li><p><strong>output_key</strong> – output key to use for iou calculation;
 specifies our <code class="docutils literal notranslate"><span class="pre">y_pred</span></code></p></li>
-<li><p><strong>prefix</strong> (<em>str</em>) – key to store in logs (will be prefix_class_name)</p></li>
-<li><p><strong>classes</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of class names
+<li><p><strong>prefix</strong> – key to store in logs (will be prefix_class_name)</p></li>
+<li><p><strong>classes</strong> – list of class names
 You should specify either ‘classes’ or ‘num_classes’</p></li>
-<li><p><strong>num_classes</strong> (<em>int</em>) – number of classes
+<li><p><strong>num_classes</strong> – number of classes
 You should specify either ‘classes’ or ‘num_classes’</p></li>
-<li><p><strong>eps</strong> (<em>float</em>) – epsilon to avoid zero division</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
-<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
+<li><p><strong>eps</strong> – epsilon to avoid zero division</p></li>
+<li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
+<li><p><strong>activation</strong> – An torch.nn activation applied to the outputs.
 Must be one of <code class="docutils literal notranslate"><span class="pre">'none'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Sigmoid'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Softmax2d'</span></code></p></li>
 </ul>
 </dd>
@@ -2292,15 +2312,15 @@ recall (true positive rate or tpr), and F1-score per class for each loader.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – input key to use for metric calculation
+<li><p><strong>input_key</strong> – input key to use for metric calculation
 specifies our <code class="docutils literal notranslate"><span class="pre">y_true</span></code></p></li>
-<li><p><strong>output_key</strong> (<em>str</em>) – output key to use for metric calculation;
+<li><p><strong>output_key</strong> – output key to use for metric calculation;
 specifies our <code class="docutils literal notranslate"><span class="pre">y_pred</span></code></p></li>
-<li><p><strong>class_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – class names to display in the logs.
+<li><p><strong>class_names</strong> – class names to display in the logs.
 If None, defaults to indices for each class, starting from 0.</p></li>
-<li><p><strong>num_classes</strong> (<em>int</em>) – Number of classes; must be &gt; 1</p></li>
-<li><p><strong>threshold</strong> (<em>float</em>) – threshold for outputs binarization</p></li>
-<li><p><strong>activation</strong> (<em>str</em>) – An torch.nn activation applied to the outputs.
+<li><p><strong>num_classes</strong> – Number of classes; must be &gt; 1</p></li>
+<li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
+<li><p><strong>activation</strong> – An torch.nn activation applied to the outputs.
 Must be one of <code class="docutils literal notranslate"><span class="pre">'none'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Sigmoid'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Softmax2d'</span></code></p></li>
 </ul>
 </dd>
@@ -2323,15 +2343,15 @@ Must be one of <code class="docutils literal notranslate"><span class="pre">'non
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> (<em>str</em>) – input key to use for
+<li><p><strong>input_key</strong> – input key to use for
 calculation mean average precision;
 specifies our <cite>y_true</cite>.</p></li>
-<li><p><strong>output_key</strong> (<em>str</em>) – output key to use for
+<li><p><strong>output_key</strong> – output key to use for
 calculation mean average precision;
 specifies our <cite>y_pred</cite>.</p></li>
-<li><p><strong>prefix</strong> (<em>str</em>) – metric’s name.</p></li>
-<li><p><strong>multiplier</strong> (<em>float</em>) – scale factor for the metric.</p></li>
-<li><p><strong>class_args</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – class names to display in the logs.
+<li><p><strong>prefix</strong> – metric’s name.</p></li>
+<li><p><strong>multiplier</strong> – scale factor for the metric.</p></li>
+<li><p><strong>class_args</strong> – class names to display in the logs.
 If None, defaults to indices for each class, starting from 0</p></li>
 </ul>
 </dd>
@@ -2353,14 +2373,14 @@ If None, defaults to indices for each class, starting from 0</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data_source</strong> (<em>Iterable</em><em>[</em><em>dict</em><em>]</em>) – and iterable containing your
+<li><p><strong>data_source</strong> – and iterable containing your
 data annotations,
 (for example path to images, labels, bboxes, etc)</p></li>
-<li><p><strong>open_fn</strong> (<em>Callable</em>) – function, that can open your
+<li><p><strong>open_fn</strong> – function, that can open your
 annotations dict and
 transfer it to data, needed by your network
 (for example open image by path, or tokenize read string)</p></li>
-<li><p><strong>dict_transform</strong> (<em>callable</em>) – transforms to use on dict
+<li><p><strong>dict_transform</strong> – transforms to use on dict
 (for example normalize image, add blur, crop/resize/etc)</p></li>
 <li><p><strong>sampler</strong> (<em>Sampler</em><em>, </em><em>optional</em>) – defines the strategy to draw samples from
 the dataset</p></li>
@@ -2400,13 +2420,13 @@ will be smaller. (default: <code class="docutils literal notranslate"><span clas
 <li><p><strong>predict_fn</strong> – Function to run prediction with the model provided,
 takes model, inputs parameters</p></li>
 <li><p><strong>batch</strong> – Batch to trace the model</p></li>
-<li><p><strong>method_name</strong> (<em>str</em>) – Model’s method name that will be
+<li><p><strong>method_name</strong> – Model’s method name that will be
 used as entrypoint during tracing</p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – Mode for model to trace (<code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code>)</p></li>
-<li><p><strong>requires_grad</strong> (<em>bool</em>) – Flag to use grads</p></li>
-<li><p><strong>opt_level</strong> (<em>str</em>) – Apex FP16 init level, optional</p></li>
-<li><p><strong>device</strong> (<em>str</em>) – Torch device</p></li>
-<li><p><strong>predict_params</strong> (<em>dict</em>) – additional parameters for model forward</p></li>
+<li><p><strong>mode</strong> – Mode for model to trace (<code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code>)</p></li>
+<li><p><strong>requires_grad</strong> – Flag to use grads</p></li>
+<li><p><strong>opt_level</strong> – Apex FP16 init level, optional</p></li>
+<li><p><strong>device</strong> – Torch device</p></li>
+<li><p><strong>predict_params</strong> – additional parameters for model forward</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2430,15 +2450,15 @@ used as entrypoint during tracing</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>logdir</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>]</em>) – Path to Catalyst logdir with model</p></li>
-<li><p><strong>checkpoint_name</strong> (<em>str</em>) – Name of model checkpoint to use</p></li>
-<li><p><strong>stage</strong> (<em>str</em>) – experiment’s stage name</p></li>
+<li><p><strong>checkpoint_name</strong> – Name of model checkpoint to use</p></li>
+<li><p><strong>stage</strong> – experiment’s stage name</p></li>
 <li><p><strong>loader</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – experiment’s loader name or its index</p></li>
-<li><p><strong>method_name</strong> (<em>str</em>) – Model’s method name that will be
+<li><p><strong>method_name</strong> – Model’s method name that will be
 used as entrypoint during tracing</p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – Mode for model to trace (<code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code>)</p></li>
-<li><p><strong>requires_grad</strong> (<em>bool</em>) – Flag to use grads</p></li>
-<li><p><strong>opt_level</strong> (<em>str</em>) – AMP FP16 init level</p></li>
-<li><p><strong>device</strong> (<em>str</em>) – Torch device</p></li>
+<li><p><strong>mode</strong> – Mode for model to trace (<code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code>)</p></li>
+<li><p><strong>requires_grad</strong> – Flag to use grads</p></li>
+<li><p><strong>opt_level</strong> – AMP FP16 init level</p></li>
+<li><p><strong>device</strong> – Torch device</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2455,14 +2475,14 @@ used as entrypoint during tracing</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>runner</strong> – current runner.</p></li>
-<li><p><strong>checkpoint_name</strong> (<em>str</em>) – Name of model checkpoint to use, if None
+<li><p><strong>checkpoint_name</strong> – Name of model checkpoint to use, if None
 traces current model from runner</p></li>
-<li><p><strong>method_name</strong> (<em>str</em>) – Model’s method name that will be
+<li><p><strong>method_name</strong> – Model’s method name that will be
 used as entrypoint during tracing</p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – Mode for model to trace (<code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code>)</p></li>
-<li><p><strong>requires_grad</strong> (<em>bool</em>) – Flag to use grads</p></li>
-<li><p><strong>opt_level</strong> (<em>str</em>) – AMP FP16 init level</p></li>
-<li><p><strong>device</strong> (<em>str</em>) – Torch device</p></li>
+<li><p><strong>mode</strong> – Mode for model to trace (<code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code>)</p></li>
+<li><p><strong>requires_grad</strong> – Flag to use grads</p></li>
+<li><p><strong>opt_level</strong> – AMP FP16 init level</p></li>
+<li><p><strong>device</strong> – Torch device</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2481,11 +2501,11 @@ used as entrypoint during tracing</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>method_name</strong> (<em>str</em>) – model’s method name</p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – <code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code></p></li>
-<li><p><strong>requires_grad</strong> (<em>bool</em>) – flag if model was traced with gradients</p></li>
-<li><p><strong>opt_level</strong> (<em>str</em>) – opt_level if model was traced in FP16</p></li>
-<li><p><strong>additional_string</strong> (<em>str</em>) – any additional information</p></li>
+<li><p><strong>method_name</strong> – model’s method name</p></li>
+<li><p><strong>mode</strong> – <code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code></p></li>
+<li><p><strong>requires_grad</strong> – flag if model was traced with gradients</p></li>
+<li><p><strong>opt_level</strong> – opt_level if model was traced in FP16</p></li>
+<li><p><strong>additional_string</strong> – any additional information</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2504,17 +2524,17 @@ used as entrypoint during tracing</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>ScriptModule</em>) – Traced model</p></li>
+<li><p><strong>model</strong> – Traced model</p></li>
 <li><p><strong>logdir</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>]</em>) – Path to experiment</p></li>
-<li><p><strong>method_name</strong> (<em>str</em>) – Name of the method was traced</p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – Model’s mode - <cite>train</cite> or <cite>eval</cite></p></li>
-<li><p><strong>requires_grad</strong> (<em>bool</em>) – Whether model was traced with require_grad or not</p></li>
-<li><p><strong>opt_level</strong> (<em>str</em>) – Apex FP16 init level used during tracing</p></li>
+<li><p><strong>method_name</strong> – Name of the method was traced</p></li>
+<li><p><strong>mode</strong> – Model’s mode - <cite>train</cite> or <cite>eval</cite></p></li>
+<li><p><strong>requires_grad</strong> – Whether model was traced with require_grad or not</p></li>
+<li><p><strong>opt_level</strong> – Apex FP16 init level used during tracing</p></li>
 <li><p><strong>out_dir</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>]</em>) – Directory to save model to
 (overrides logdir)</p></li>
 <li><p><strong>out_model</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>Path</em><em>]</em>) – Path to save model to
 (overrides logdir &amp; out_dir)</p></li>
-<li><p><strong>checkpoint_name</strong> (<em>str</em>) – Checkpoint name used to restore the model</p></li>
+<li><p><strong>checkpoint_name</strong> – Checkpoint name used to restore the model</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -2532,8 +2552,8 @@ used as entrypoint during tracing</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model_path</strong> – Path to traced model</p></li>
-<li><p><strong>device</strong> (<em>str</em>) – Torch device</p></li>
-<li><p><strong>opt_level</strong> (<em>str</em>) – Apex FP16 init level, optional</p></li>
+<li><p><strong>device</strong> – Torch device</p></li>
+<li><p><strong>opt_level</strong> – Apex FP16 init level, optional</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

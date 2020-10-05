@@ -316,10 +316,10 @@
 <span class="sd">        &gt;&gt;&gt; load(path=&quot;./config.yml&quot;, ordered=True)</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        path (str): path to config file (YAML or JSON)</span>
-<span class="sd">        ordered (bool): if true the config will be loaded as ``OrderedDict``</span>
-<span class="sd">        data_format (str): ``yaml``, ``yml`` or ``json``.</span>
-<span class="sd">        encoding (str): encoding to read the config</span>
+<span class="sd">        path: path to config file (YAML or JSON)</span>
+<span class="sd">        ordered: if true the config will be loaded as ``OrderedDict``</span>
+<span class="sd">        data_format: ``yaml``, ``yml`` or ``json``.</span>
+<span class="sd">        encoding: encoding to read the config</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Union[Dict, List]: config</span>
@@ -383,11 +383,11 @@
 <span class="sd">    Args:</span>
 <span class="sd">        config (Union[Dict, List]): config to save</span>
 <span class="sd">        path (Union[str, Path]): path to save</span>
-<span class="sd">        data_format (str): ``yaml``, ``yml`` or ``json``.</span>
-<span class="sd">        encoding (str): Encoding to write file. Default is ``utf-8``</span>
-<span class="sd">        ensure_ascii (bool): Used for JSON, if True non-ASCII</span>
+<span class="sd">        data_format: ``yaml``, ``yml`` or ``json``.</span>
+<span class="sd">        encoding: Encoding to write file. Default is ``utf-8``</span>
+<span class="sd">        ensure_ascii: Used for JSON, if True non-ASCII</span>
 <span class="sd">        characters are escaped in JSON strings.</span>
-<span class="sd">        indent (int): Used for JSON</span>
+<span class="sd">        indent: Used for JSON</span>
 
 <span class="sd">    Adapted from</span>
 <span class="sd">    https://github.com/TezRomacH/safitty/blob/v1.2.0/safitty/parser.py#L110</span>

@@ -304,8 +304,8 @@
         <span class="sd">&quot;&quot;&quot;Update stored scores and targets.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            output (Tensor): one-dimensional tensor `output`</span>
-<span class="sd">            target (Tensor): one-dimensional tensor `target`</span>
+<span class="sd">            output: one-dimensional tensor `output`</span>
+<span class="sd">            target: one-dimensional tensor `target`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
             <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>

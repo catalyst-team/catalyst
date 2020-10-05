@@ -281,14 +281,14 @@
     <span class="sd">&quot;&quot;&quot;Creates a DataLoader from given source and its open/transform params.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        data_source (Iterable[dict]): and iterable containing your</span>
+<span class="sd">        data_source: and iterable containing your</span>
 <span class="sd">            data annotations,</span>
 <span class="sd">            (for example path to images, labels, bboxes, etc)</span>
-<span class="sd">        open_fn (Callable): function, that can open your</span>
+<span class="sd">        open_fn: function, that can open your</span>
 <span class="sd">            annotations dict and</span>
 <span class="sd">            transfer it to data, needed by your network</span>
 <span class="sd">            (for example open image by path, or tokenize read string)</span>
-<span class="sd">        dict_transform (callable): transforms to use on dict</span>
+<span class="sd">        dict_transform: transforms to use on dict</span>
 <span class="sd">            (for example normalize image, add blur, crop/resize/etc)</span>
 <span class="sd">        sampler (Sampler, optional): defines the strategy to draw samples from</span>
 <span class="sd">            the dataset</span>

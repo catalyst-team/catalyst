@@ -316,10 +316,10 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            metric_names (List[str]): list of metric names to log,</span>
+<span class="sd">            metric_names: list of metric names to log,</span>
 <span class="sd">                if none - logs everything</span>
-<span class="sd">            log_on_batch_end (bool): logs per-batch metrics if set True</span>
-<span class="sd">            log_on_epoch_end (bool): logs per-epoch metrics if set True</span>
+<span class="sd">            log_on_batch_end: logs per-batch metrics if set True</span>
+<span class="sd">            log_on_epoch_end: logs per-epoch metrics if set True</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">logging</span><span class="p">,</span>

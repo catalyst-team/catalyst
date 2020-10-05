@@ -283,7 +283,7 @@
     <span class="sd">&quot;&quot;&quot;Perform an hacky way to zero gradients.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        optimizer (Optimizer): optimizer with model parameters.</span>
+<span class="sd">        optimizer: optimizer with model parameters.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">group</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">]:</span>
@@ -312,17 +312,17 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            loss_key (str): key to get loss from ``runner.batch_metrics``</span>
-<span class="sd">            optimizer_key (str): A key to take a optimizer in case</span>
+<span class="sd">            loss_key: key to get loss from ``runner.batch_metrics``</span>
+<span class="sd">            optimizer_key: A key to take a optimizer in case</span>
 <span class="sd">                there are several of them and they are in a dictionary format.</span>
-<span class="sd">            accumulation_steps (int): number of steps before</span>
+<span class="sd">            accumulation_steps: number of steps before</span>
 <span class="sd">                ``model.zero_grad()``</span>
-<span class="sd">            grad_clip_params (dict): params for gradient clipping</span>
-<span class="sd">            decouple_weight_decay (bool): If ``True`` - decouple weight decay</span>
+<span class="sd">            grad_clip_params: params for gradient clipping</span>
+<span class="sd">            decouple_weight_decay: If ``True`` - decouple weight decay</span>
 <span class="sd">                regularization.</span>
-<span class="sd">            use_fast_zero_grad (bool): boost ``optiomizer.zero_grad()``,</span>
+<span class="sd">            use_fast_zero_grad: boost ``optiomizer.zero_grad()``,</span>
 <span class="sd">                default is ``False``.</span>
-<span class="sd">            xla_barrier (bool): barrier option for xla. Here you can find</span>
+<span class="sd">            xla_barrier: barrier option for xla. Here you can find</span>
 <span class="sd">                more about usage of `barrier flag</span>
 <span class="sd">                &lt;https://pytorch.org/xla/release/1.5/index.html?</span>
 <span class="sd">                highlight=optimizer_step#torch_xla.core.xla_model.optimizer_step&gt;`_</span>
@@ -362,7 +362,7 @@
         <span class="sd">&quot;&quot;&quot;CPU and GPU optimization step.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            optimizer (Optimizer): optimizer object</span>
+<span class="sd">            optimizer: optimizer object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
@@ -370,7 +370,7 @@
         <span class="sd">&quot;&quot;&quot;TPU optimization step.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            optimizer (Optimizer): optimizer object</span>
+<span class="sd">            optimizer: optimizer object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_xla_barrier</span><span class="p">:</span>
             <span class="n">xm</span><span class="o">.</span><span class="n">optimizer_step</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">barrier</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -387,10 +387,10 @@
         <span class="sd">&quot;&quot;&quot;Makes a gradient step for a given optimizer.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            optimizer (Optimizer): the optimizer</span>
-<span class="sd">            optimizer_wds (List[float]): list of weight decay parameters</span>
+<span class="sd">            optimizer: the optimizer</span>
+<span class="sd">            optimizer_wds: list of weight decay parameters</span>
 <span class="sd">                for each param group</span>
-<span class="sd">            grad_clip_fn (Callable): function for gradient clipping</span>
+<span class="sd">            grad_clip_fn: function for gradient clipping</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">group</span><span class="p">,</span> <span class="n">wd</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">,</span> <span class="n">optimizer_wds</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">wd</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -524,13 +524,13 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            loss_key (str): key to get loss from ``runner.batch_metrics``</span>
-<span class="sd">            optimizer_key (str): A key to take a optimizer in case</span>
+<span class="sd">            loss_key: key to get loss from ``runner.batch_metrics``</span>
+<span class="sd">            optimizer_key: A key to take a optimizer in case</span>
 <span class="sd">                there are several of them and they are in a dictionary format.</span>
-<span class="sd">            accumulation_steps (int): number of steps before</span>
+<span class="sd">            accumulation_steps: number of steps before</span>
 <span class="sd">                ``model.zero_grad()``</span>
-<span class="sd">            grad_clip_params (dict): params for gradient clipping</span>
-<span class="sd">            decouple_weight_decay (bool): If True - decouple weight decay</span>
+<span class="sd">            grad_clip_params: params for gradient clipping</span>
+<span class="sd">            decouple_weight_decay: If True - decouple weight decay</span>
 <span class="sd">                regularization.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">all</span><span class="p">)</span>
@@ -561,8 +561,8 @@
         <span class="sd">&quot;&quot;&quot;Makes a gradient step for a given optimizer.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            optimizer (Optimizer): the optimizer</span>
-<span class="sd">            grad_clip_fn (Callable): function for gradient clipping</span>
+<span class="sd">            optimizer: the optimizer</span>
+<span class="sd">            grad_clip_fn: function for gradient clipping</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">grad_clip_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="c1"># Unscales the gradients of</span>

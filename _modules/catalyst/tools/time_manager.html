@@ -277,7 +277,7 @@
         <span class="sd">&quot;&quot;&quot;Starts timer ``name``.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            name (str): name of a timer</span>
+<span class="sd">            name: name of a timer</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span></div>
 
@@ -285,7 +285,7 @@
         <span class="sd">&quot;&quot;&quot;Stops timer ``name``.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            name (str): name of a timer</span>
+<span class="sd">            name: name of a timer</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_starts</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Timer &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; wasn&#39;t started&quot;</span>
 

@@ -408,7 +408,7 @@
 <span class="sd">            }</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            stage (str): stage name of interest</span>
+<span class="sd">            stage: stage name of interest</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
 <span class="sd">        Returns:  # noqa: DAR202</span>
@@ -426,12 +426,12 @@
 <span class="sd">            # nn.Sequential(nn.Linear(28*28, 128), nn.Linear(128, 10))</span>
 <span class="sd">            &gt;&gt;&gt; experiment.get_model(stage=&quot;training&quot;)</span>
 <span class="sd">            Sequential(</span>
-<span class="sd">              (0): Linear(in_features=784, out_features=128, bias=True)</span>
-<span class="sd">              (1): Linear(in_features=128, out_features=10, bias=True)</span>
+<span class="sd">             : Linear(in_features=784, out_features=128, bias=True)</span>
+<span class="sd">             : Linear(in_features=128, out_features=10, bias=True)</span>
 <span class="sd">            )</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            stage (str): stage name of interest</span>
+<span class="sd">            stage: stage name of interest</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
 <span class="sd">        Returns:  # noqa: DAR202</span>
@@ -450,7 +450,7 @@
 <span class="sd">            nn.CrossEntropyLoss()</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            stage (str): stage name of interest</span>
+<span class="sd">            stage: stage name of interest</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
 <span class="sd">        Returns:  # noqa: DAR202</span>
@@ -468,9 +468,9 @@
 <span class="sd">            torch.optim.Adam(model.parameters())</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            stage (str): stage name of interest</span>
+<span class="sd">            stage: stage name of interest</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
-<span class="sd">            model (Model): model to optimize with stage optimizer</span>
+<span class="sd">            model: model to optimize with stage optimizer</span>
 
 <span class="sd">        Returns:  # noqa: DAR202</span>
 <span class="sd">            Optimizer: optimizer for a given stage and model.</span>
@@ -486,9 +486,9 @@
 <span class="sd">            torch.optim.lr_scheduler.StepLR(optimizer)</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            stage (str): stage name of interest</span>
+<span class="sd">            stage: stage name of interest</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
-<span class="sd">            optimizer (Optimizer): optimizer to schedule with stage scheduler</span>
+<span class="sd">            optimizer: optimizer to schedule with stage scheduler</span>
 
 <span class="sd">        Returns:  # noqa: DAR202</span>
 <span class="sd">            Scheduler: scheduler for a given stage and optimizer.</span>
@@ -501,9 +501,9 @@
 <span class="sd">        # noqa: DAR401, W505</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            stage (str): stage name of interest,</span>
+<span class="sd">            stage: stage name of interest,</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
-<span class="sd">            dataset (str): dataset name of interest,</span>
+<span class="sd">            dataset: dataset name of interest,</span>
 <span class="sd">                like &quot;train&quot; / &quot;valid&quot; / &quot;infer&quot;</span>
 
 <span class="sd">        .. note::</span>
@@ -529,10 +529,10 @@
 <span class="sd">            (experiment) every training epoch.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            stage (str): stage name of interest,</span>
+<span class="sd">            stage: stage name of interest,</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
-<span class="sd">            epoch (int): epoch index</span>
-<span class="sd">            **kwargs (dict): additional parameters to use during</span>
+<span class="sd">            epoch: epoch index</span>
+<span class="sd">            **kwargs: additional parameters to use during</span>
 <span class="sd">                dataset creation</span>
 
 <span class="sd">        Returns:  # noqa: DAR202</span>
@@ -573,9 +573,9 @@
 <span class="sd">            method only.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            stage (str): stage name of interest,</span>
+<span class="sd">            stage: stage name of interest,</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
-<span class="sd">            epoch (int): epoch index</span>
+<span class="sd">            epoch: epoch index</span>
 
 <span class="sd">        Returns:  # noqa: DAR202</span>
 <span class="sd">            OrderedDict[str, DataLoader]: Ordered dictionary</span>
@@ -599,7 +599,7 @@
 <span class="sd">            or to compute all the metrics before logging :)</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            stage (str): stage name of interest</span>
+<span class="sd">            stage: stage name of interest</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
 <span class="sd">        Returns:  # noqa: DAR202</span>
@@ -614,7 +614,7 @@
 <span class="sd">                - :py:mod:`catalyst.core.callback.Callback`</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            stage (str): stage name of interest,</span>
+<span class="sd">            stage: stage name of interest,</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
 <span class="sd">        Returns:</span>

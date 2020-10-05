@@ -277,11 +277,11 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            norm_type (int): norm type used to calculate norm of gradients.</span>
+<span class="sd">            norm_type: norm type used to calculate norm of gradients.</span>
 <span class="sd">                If `OptimizerCallback` provides non-default argument</span>
 <span class="sd">                `grad_clip_params` with custom norm type, then corresponding</span>
 <span class="sd">                norm type should be used in this class.</span>
-<span class="sd">            accumulation_steps (int): number of steps before</span>
+<span class="sd">            accumulation_steps: number of steps before</span>
 <span class="sd">                ``model.zero_grad()``.</span>
 <span class="sd">                Should be the same as in `OptimizerCallback`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -300,9 +300,9 @@
         <span class="sd">&quot;&quot;&quot;Computes gradient norms for a given model.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            model (Model): model which gradients to be saved.</span>
-<span class="sd">            prefix (str): prefix for keys in resulting dictionary.</span>
-<span class="sd">            norm_type (int): norm type of gradient norm.</span>
+<span class="sd">            model: model which gradients to be saved.</span>
+<span class="sd">            prefix: prefix for keys in resulting dictionary.</span>
+<span class="sd">            norm_type: norm type of gradient norm.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Dict: dictionary in which gradient norms are stored.</span>

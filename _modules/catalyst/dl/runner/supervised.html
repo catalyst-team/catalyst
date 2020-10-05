@@ -286,12 +286,12 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            model (RunnerModel): Torch model object</span>
-<span class="sd">            device (Device): Torch device</span>
-<span class="sd">            input_key (Any): Key in batch dict mapping for model input</span>
-<span class="sd">            output_key (Any): Key in output dict model output</span>
+<span class="sd">            model: Torch model object</span>
+<span class="sd">            device: Torch device</span>
+<span class="sd">            input_key: Key in batch dict mapping for model input</span>
+<span class="sd">            output_key: Key in output dict model output</span>
 <span class="sd">                will be stored under</span>
-<span class="sd">            input_target_key (str): Key in batch dict mapping for target</span>
+<span class="sd">            input_target_key: Key in batch dict mapping for target</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
@@ -309,10 +309,10 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            input_key (Any): Key in batch dict mapping for model input</span>
-<span class="sd">            output_key (Any): Key in output dict model output</span>
+<span class="sd">            input_key: Key in batch dict mapping for model input</span>
+<span class="sd">            output_key: Key in output dict model output</span>
 <span class="sd">                will be stored under</span>
-<span class="sd">            input_target_key (str): Key in batch dict mapping for target</span>
+<span class="sd">            input_target_key: Key in batch dict mapping for target</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">:</span> <span class="n">SupervisedExperiment</span> <span class="o">=</span> <span class="kc">None</span>
 

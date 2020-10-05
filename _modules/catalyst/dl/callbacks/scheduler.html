@@ -289,10 +289,10 @@
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
 <span class="sd">            final_lr: final learning rate to try with</span>
-<span class="sd">            scale (str): learning rate increasing scale (&quot;log&quot; or &quot;linear&quot;)</span>
-<span class="sd">            num_steps (Optional[int]):  number of batches to try;</span>
+<span class="sd">            scale: learning rate increasing scale (&quot;log&quot; or &quot;linear&quot;)</span>
+<span class="sd">            num_steps:  number of batches to try;</span>
 <span class="sd">                if None - whole loader would be used.</span>
-<span class="sd">            optimizer_key (str): which optimizer key to use</span>
+<span class="sd">            optimizer_key: which optimizer key to use</span>
 <span class="sd">                for learning rate scheduling</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">optimizer_key</span><span class="o">=</span><span class="n">optimizer_key</span><span class="p">)</span>

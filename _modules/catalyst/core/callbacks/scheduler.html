@@ -352,14 +352,14 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            scheduler_key (str): scheduler name, if ``None``,</span>
+<span class="sd">            scheduler_key: scheduler name, if ``None``,</span>
 <span class="sd">                default is ``None``.</span>
-<span class="sd">            mode (str): scheduler mode, should be one of</span>
+<span class="sd">            mode: scheduler mode, should be one of</span>
 <span class="sd">                ``&quot;epoch&quot;`` or ``&quot;batch&quot;``, default is ``None``.</span>
 <span class="sd">                If ``None`` and object is instance of ``BatchScheduler``</span>
 <span class="sd">                or ``OneCycleLRWithWarmup`` then will be used ``&quot;batch&quot;``</span>
 <span class="sd">                otherwise - ``&quot;epoch&quot;``.</span>
-<span class="sd">            reduced_metric (str): metric name to forward to scheduler</span>
+<span class="sd">            reduced_metric: metric name to forward to scheduler</span>
 <span class="sd">                object, if ``None`` then will be used main metric</span>
 <span class="sd">                specified in experiment.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -491,7 +491,7 @@
 <div class="viewcode-block" id="LRUpdater.__init__"><a class="viewcode-back" href="../../../../api/core.html#catalyst.core.callbacks.scheduler.LRUpdater.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optimizer_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            optimizer_key (str): which optimizer key to use</span>
+<span class="sd">            optimizer_key: which optimizer key to use</span>
 <span class="sd">                for learning rate scheduling</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">scheduler</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">all</span><span class="p">)</span>

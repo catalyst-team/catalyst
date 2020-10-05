@@ -369,7 +369,7 @@ or to compute all the metrics before logging :)</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
+<dd class="field-odd"><p><strong>stage</strong> – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
 </dl>
@@ -391,7 +391,7 @@ with callbacks for current stage.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest,
+<dd class="field-odd"><p><strong>stage</strong> – stage name of interest,
 like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -419,7 +419,7 @@ like “pretrain” / “train” / “finetune” / etc</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
+<dd class="field-odd"><p><strong>stage</strong> – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
 </dl>
@@ -443,10 +443,10 @@ during whole stage.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>stage</strong> (<em>str</em>) – stage name of interest,
+<li><p><strong>stage</strong> – stage name of interest,
 like “pretrain” / “train” / “finetune” / etc</p></li>
-<li><p><strong>epoch</strong> (<em>int</em>) – epoch index</p></li>
-<li><p><strong>**kwargs</strong> (<em>dict</em>) – additional parameters to use during
+<li><p><strong>epoch</strong> – epoch index</p></li>
+<li><p><strong>**kwargs</strong> – additional parameters to use during
 dataset creation</p></li>
 </ul>
 </dd>
@@ -492,9 +492,9 @@ method only.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>stage</strong> (<em>str</em>) – stage name of interest,
+<li><p><strong>stage</strong> – stage name of interest,
 like “pretrain” / “train” / “finetune” / etc</p></li>
-<li><p><strong>epoch</strong> (<em>int</em>) – epoch index</p></li>
+<li><p><strong>epoch</strong> – epoch index</p></li>
 </ul>
 </dd>
 </dl>
@@ -516,14 +516,14 @@ like “pretrain” / “train” / “finetune” / etc</p></li>
 <span class="c1"># nn.Sequential(nn.Linear(28*28, 128), nn.Linear(128, 10))</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">experiment</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="s2">&quot;training&quot;</span><span class="p">)</span>
 <span class="n">Sequential</span><span class="p">(</span>
-  <span class="p">(</span><span class="mi">0</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">784</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-  <span class="p">(</span><span class="mi">1</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+ <span class="p">:</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">784</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+ <span class="p">:</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
+<dd class="field-odd"><p><strong>stage</strong> – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
 </dl>
@@ -545,9 +545,9 @@ like “pretrain” / “train” / “finetune” / etc</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>stage</strong> (<em>str</em>) – stage name of interest
+<li><p><strong>stage</strong> – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p></li>
-<li><p><strong>model</strong> (<em>Model</em>) – model to optimize with stage optimizer</p></li>
+<li><p><strong>model</strong> – model to optimize with stage optimizer</p></li>
 </ul>
 </dd>
 </dl>
@@ -571,9 +571,9 @@ like “pretrain” / “train” / “finetune” / etc</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>stage</strong> (<em>str</em>) – stage name of interest
+<li><p><strong>stage</strong> – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p></li>
-<li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer to schedule with stage scheduler</p></li>
+<li><p><strong>optimizer</strong> – optimizer to schedule with stage scheduler</p></li>
 </ul>
 </dd>
 </dl>
@@ -603,7 +603,7 @@ like “pretrain” / “train” / “finetune” / etc</p></li>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
+<dd class="field-odd"><p><strong>stage</strong> – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
 </dl>
@@ -621,9 +621,9 @@ like “pretrain” / “train” / “finetune” / etc</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>stage</strong> (<em>str</em>) – stage name of interest,
+<li><p><strong>stage</strong> – stage name of interest,
 like “pretrain” / “train” / “finetune” / etc</p></li>
-<li><p><strong>dataset</strong> (<em>str</em>) – dataset name of interest,
+<li><p><strong>dataset</strong> – dataset name of interest,
 like “train” / “valid” / “infer”</p></li>
 </ul>
 </dd>
@@ -775,7 +775,7 @@ or to compute all the metrics before logging :)</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
+<dd class="field-odd"><p><strong>stage</strong> – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
 </dl>
@@ -797,7 +797,7 @@ with callbacks for current stage.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest,
+<dd class="field-odd"><p><strong>stage</strong> – stage name of interest,
 like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -825,7 +825,7 @@ like “pretrain” / “train” / “finetune” / etc</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
+<dd class="field-odd"><p><strong>stage</strong> – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
 </dl>
@@ -849,10 +849,10 @@ during whole stage.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>stage</strong> (<em>str</em>) – stage name of interest,
+<li><p><strong>stage</strong> – stage name of interest,
 like “pretrain” / “train” / “finetune” / etc</p></li>
-<li><p><strong>epoch</strong> (<em>int</em>) – epoch index</p></li>
-<li><p><strong>**kwargs</strong> (<em>dict</em>) – additional parameters to use during
+<li><p><strong>epoch</strong> – epoch index</p></li>
+<li><p><strong>**kwargs</strong> – additional parameters to use during
 dataset creation</p></li>
 </ul>
 </dd>
@@ -898,9 +898,9 @@ method only.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>stage</strong> (<em>str</em>) – stage name of interest,
+<li><p><strong>stage</strong> – stage name of interest,
 like “pretrain” / “train” / “finetune” / etc</p></li>
-<li><p><strong>epoch</strong> (<em>int</em>) – epoch index</p></li>
+<li><p><strong>epoch</strong> – epoch index</p></li>
 </ul>
 </dd>
 </dl>
@@ -922,14 +922,14 @@ like “pretrain” / “train” / “finetune” / etc</p></li>
 <span class="c1"># nn.Sequential(nn.Linear(28*28, 128), nn.Linear(128, 10))</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="n">experiment</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="s2">&quot;training&quot;</span><span class="p">)</span>
 <span class="n">Sequential</span><span class="p">(</span>
-  <span class="p">(</span><span class="mi">0</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">784</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-  <span class="p">(</span><span class="mi">1</span><span class="p">):</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+ <span class="p">:</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">784</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+ <span class="p">:</span> <span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">out_features</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="p">)</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
+<dd class="field-odd"><p><strong>stage</strong> – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
 </dl>
@@ -951,9 +951,9 @@ like “pretrain” / “train” / “finetune” / etc</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>stage</strong> (<em>str</em>) – stage name of interest
+<li><p><strong>stage</strong> – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p></li>
-<li><p><strong>model</strong> (<em>Model</em>) – model to optimize with stage optimizer</p></li>
+<li><p><strong>model</strong> – model to optimize with stage optimizer</p></li>
 </ul>
 </dd>
 </dl>
@@ -977,9 +977,9 @@ like “pretrain” / “train” / “finetune” / etc</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>stage</strong> (<em>str</em>) – stage name of interest
+<li><p><strong>stage</strong> – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p></li>
-<li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer"><em>Optimizer</em></a>) – optimizer to schedule with stage scheduler</p></li>
+<li><p><strong>optimizer</strong> – optimizer to schedule with stage scheduler</p></li>
 </ul>
 </dd>
 </dl>
@@ -1009,7 +1009,7 @@ like “pretrain” / “train” / “finetune” / etc</p></li>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stage</strong> (<em>str</em>) – stage name of interest
+<dd class="field-odd"><p><strong>stage</strong> – stage name of interest
 like “pretrain” / “train” / “finetune” / etc</p>
 </dd>
 </dl>
@@ -1027,9 +1027,9 @@ like “pretrain” / “train” / “finetune” / etc</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>stage</strong> (<em>str</em>) – stage name of interest,
+<li><p><strong>stage</strong> – stage name of interest,
 like “pretrain” / “train” / “finetune” / etc</p></li>
-<li><p><strong>dataset</strong> (<em>str</em>) – dataset name of interest,
+<li><p><strong>dataset</strong> – dataset name of interest,
 like “train” / “valid” / “infer”</p></li>
 </ul>
 </dd>
@@ -1356,8 +1356,8 @@ counter for all epochs,    that have passed during model training, validation an
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>RunnerModel</em>) – Torch model object</p></li>
-<li><p><strong>device</strong> (<em>Device</em>) – Torch device</p></li>
+<li><p><strong>model</strong> – Torch model object</p></li>
+<li><p><strong>device</strong> – Torch device</p></li>
 </ul>
 </dd>
 </dl>
@@ -1413,9 +1413,9 @@ for example</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<em>str</em>) – name for attribute of interest,
+<li><p><strong>key</strong> – name for attribute of interest,
 like <cite>criterion</cite>, <cite>optimizer</cite>, <cite>scheduler</cite></p></li>
-<li><p><strong>inner_key</strong> (<em>str</em>) – name of inner dictionary key</p></li>
+<li><p><strong>inner_key</strong> – name of inner dictionary key</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1436,7 +1436,7 @@ like <cite>criterion</cite>, <cite>optimizer</cite>, <cite>scheduler</cite></p><
 <dd><p>Starts the experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>experiment</strong> (<a class="reference internal" href="#catalyst.core.experiment.IExperiment" title="catalyst.core.experiment.IExperiment"><em>IExperiment</em></a>) – Experiment instance to use for Runner.</p>
+<dd class="field-odd"><p><strong>experiment</strong> – Experiment instance to use for Runner.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>self, <cite>IRunner</cite> instance after the experiment</p>
@@ -1693,8 +1693,8 @@ counter for all epochs,    that have passed during model training, validation an
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<em>RunnerModel</em>) – Torch model object</p></li>
-<li><p><strong>device</strong> (<em>Device</em>) – Torch device</p></li>
+<li><p><strong>model</strong> – Torch model object</p></li>
+<li><p><strong>device</strong> – Torch device</p></li>
 </ul>
 </dd>
 </dl>
@@ -1750,9 +1750,9 @@ for example</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<em>str</em>) – name for attribute of interest,
+<li><p><strong>key</strong> – name for attribute of interest,
 like <cite>criterion</cite>, <cite>optimizer</cite>, <cite>scheduler</cite></p></li>
-<li><p><strong>inner_key</strong> (<em>str</em>) – name of inner dictionary key</p></li>
+<li><p><strong>inner_key</strong> – name of inner dictionary key</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1773,7 +1773,7 @@ like <cite>criterion</cite>, <cite>optimizer</cite>, <cite>scheduler</cite></p><
 <dd><p>Starts the experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>experiment</strong> (<a class="reference internal" href="#catalyst.core.experiment.IExperiment" title="catalyst.core.experiment.IExperiment"><em>IExperiment</em></a>) – Experiment instance to use for Runner.</p>
+<dd class="field-odd"><p><strong>experiment</strong> – Experiment instance to use for Runner.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>self, <cite>IRunner</cite> instance after the experiment</p>
@@ -1889,7 +1889,7 @@ exception – <span class="k">if</span> an Exception was raised
 <dd><p>Event handler for batch end.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<em>&quot;IRunner&quot;</em>) – IRunner instance.</p>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1900,7 +1900,7 @@ exception – <span class="k">if</span> an Exception was raised
 <dd><p>Event handler for batch start.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<em>&quot;IRunner&quot;</em>) – IRunner instance.</p>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1911,7 +1911,7 @@ exception – <span class="k">if</span> an Exception was raised
 <dd><p>Event handler for epoch end.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<em>&quot;IRunner&quot;</em>) – IRunner instance.</p>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1922,7 +1922,7 @@ exception – <span class="k">if</span> an Exception was raised
 <dd><p>Event handler for epoch start.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<em>&quot;IRunner&quot;</em>) – IRunner instance.</p>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1933,7 +1933,7 @@ exception – <span class="k">if</span> an Exception was raised
 <dd><p>Event handler for exception case.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<em>&quot;IRunner&quot;</em>) – IRunner instance.</p>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1944,7 +1944,7 @@ exception – <span class="k">if</span> an Exception was raised
 <dd><p>Event handler for loader end.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<em>&quot;IRunner&quot;</em>) – IRunner instance.</p>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1955,7 +1955,7 @@ exception – <span class="k">if</span> an Exception was raised
 <dd><p>Event handler for loader start.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<em>&quot;IRunner&quot;</em>) – IRunner instance.</p>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1966,7 +1966,7 @@ exception – <span class="k">if</span> an Exception was raised
 <dd><p>Event handler for stage end.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<em>&quot;IRunner&quot;</em>) – IRunner instance.</p>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1977,7 +1977,7 @@ exception – <span class="k">if</span> an Exception was raised
 <dd><p>Event handler for stage start.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<em>&quot;IRunner&quot;</em>) – IRunner instance.</p>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2187,8 +2187,8 @@ for example:</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>base_callback</strong> (<a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a>) – callback to wrap</p></li>
-<li><p><strong>enable_callback</strong> (<em>boolean</em>) – indicator to enable/disable
+<li><p><strong>base_callback</strong> – callback to wrap</p></li>
+<li><p><strong>enable_callback</strong> – indicator to enable/disable
 callback, if <code class="docutils literal notranslate"><span class="pre">True</span></code> then callback will be enabled,
 default <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
 </ul>
@@ -2425,16 +2425,16 @@ model/criterion/optimizer/scheduler.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>save_n_best</strong> (<em>int</em>) – number of best checkpoint to keep,
+<li><p><strong>save_n_best</strong> – number of best checkpoint to keep,
 if <code class="docutils literal notranslate"><span class="pre">0</span></code> then  store only last state of model and
 <code class="docutils literal notranslate"><span class="pre">load_on_stage_end</span></code> should be one of
 <code class="docutils literal notranslate"><span class="pre">last</span></code> or <code class="docutils literal notranslate"><span class="pre">last_full</span></code>.</p></li>
-<li><p><strong>resume</strong> (<em>str</em>) – path to checkpoint to load
+<li><p><strong>resume</strong> – path to checkpoint to load
 and initialize runner state</p></li>
-<li><p><strong>resume_dir</strong> (<em>str</em>) – directory with checkpoints,
+<li><p><strong>resume_dir</strong> – directory with checkpoints,
 if specified in combination with <code class="docutils literal notranslate"><span class="pre">resume</span></code>
 than resume checkpoint will be loaded from <code class="docutils literal notranslate"><span class="pre">resume_dir</span></code></p></li>
-<li><p><strong>metrics_filename</strong> (<em>str</em>) – filename to save metrics
+<li><p><strong>metrics_filename</strong> – filename to save metrics
 in checkpoint folder.
 Must ends on <code class="docutils literal notranslate"><span class="pre">.json</span></code> or <code class="docutils literal notranslate"><span class="pre">.yml</span></code></p></li>
 <li><p><strong>load_on_stage_start</strong> (<em>str</em><em> or </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – <p>load specified
@@ -2543,12 +2543,12 @@ then will be performed loading checkpoint.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>logdir</strong> (<em>str</em><em> or </em><em>Path object</em>) – directory for storing checkpoints</p></li>
-<li><p><strong>checkpoint</strong> (<em>dict</em>) – dict with checkpoint data</p></li>
-<li><p><strong>is_best</strong> (<em>bool</em>) – indicator to save best checkpoint,
+<li><p><strong>checkpoint</strong> – dict with checkpoint data</p></li>
+<li><p><strong>is_best</strong> – indicator to save best checkpoint,
 if true then will be saved two additional checkpoints -
 <code class="docutils literal notranslate"><span class="pre">best</span></code> and <code class="docutils literal notranslate"><span class="pre">best_full</span></code>.</p></li>
-<li><p><strong>main_metric</strong> (<em>str</em>) – metric to use for selecting the best model</p></li>
-<li><p><strong>minimize_metric</strong> (<em>bool</em>) – indicator for selecting best metric,
+<li><p><strong>main_metric</strong> – metric to use for selecting the best model</p></li>
+<li><p><strong>minimize_metric</strong> – indicator for selecting best metric,
 if true then best metric will be the metric with
 the lowest value, otherwise with the greatest value.</p></li>
 </ul>
@@ -2563,7 +2563,7 @@ the lowest value, otherwise with the greatest value.</p></li>
 and keep <code class="docutils literal notranslate"><span class="pre">save_n_best</span></code> metrics.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>last_valid_metrics</strong> (<em>dict</em>) – dict with metrics
+<dd class="field-odd"><p><strong>last_valid_metrics</strong> – dict with metrics
 from last validation step.</p>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2581,7 +2581,7 @@ from last validation step.</p>
 <dd><p>Keep <code class="docutils literal notranslate"><span class="pre">save_n_best</span></code> checkpoints based on main metric.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>minimize_metric</strong> (<em>bool</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> then keep
+<dd class="field-odd"><p><strong>minimize_metric</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code> then keep
 <code class="docutils literal notranslate"><span class="pre">save_n_best</span></code> checkpoints with the lowest/highest values
 of the main metric.</p>
 </dd>
@@ -2601,12 +2601,12 @@ of the main metric.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>save_n_last</strong> (<em>int</em>) – number of last checkpoint to keep</p></li>
-<li><p><strong>period</strong> (<em>int</em>) – save the checkpoint every <cite>period</cite></p></li>
-<li><p><strong>stage_restart</strong> (<em>bool</em>) – restart counter every stage or not</p></li>
-<li><p><strong>metrics_filename</strong> (<em>str</em>) – filename to save metrics
+<li><p><strong>save_n_last</strong> – number of last checkpoint to keep</p></li>
+<li><p><strong>period</strong> – save the checkpoint every <cite>period</cite></p></li>
+<li><p><strong>stage_restart</strong> – restart counter every stage or not</p></li>
+<li><p><strong>metrics_filename</strong> – filename to save metrics
 in checkpoint folder. Must ends on <code class="docutils literal notranslate"><span class="pre">.json</span></code> or <code class="docutils literal notranslate"><span class="pre">.yml</span></code></p></li>
-<li><p><strong>load_on_stage_end</strong> (<em>str</em>) – name of the model to load
+<li><p><strong>load_on_stage_end</strong> – name of the model to load
 at the end of the stage.
 You can use <code class="docutils literal notranslate"><span class="pre">best</span></code>, <code class="docutils literal notranslate"><span class="pre">best_full</span></code> (default)
 to load the best model according to validation metrics,
@@ -2657,8 +2657,8 @@ or <code class="docutils literal notranslate"><span class="pre">last</span></cod
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>logdir</strong> (<em>str</em><em> or </em><em>Path object</em>) – directory for storing checkpoints</p></li>
-<li><p><strong>checkpoint</strong> (<em>dict</em>) – dict with checkpoint data</p></li>
-<li><p><strong>batch_metrics</strong> (<em>dict</em>) – dict with metrics based on a few batches</p></li>
+<li><p><strong>checkpoint</strong> – dict with checkpoint data</p></li>
+<li><p><strong>batch_metrics</strong> – dict with metrics based on a few batches</p></li>
 </ul>
 </dd>
 </dl>
@@ -2705,7 +2705,7 @@ or <code class="docutils literal notranslate"><span class="pre">last</span></cod
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">metrics_filename: str = '_metrics.json'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/checkpoint.html#BaseCheckpointCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.checkpoint.BaseCheckpointCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>metrics_filename</strong> (<em>str</em>) – filename to save metrics
+<dd class="field-odd"><p><strong>metrics_filename</strong> – filename to save metrics
 in checkpoint folder. Must ends on <code class="docutils literal notranslate"><span class="pre">.json</span></code> or <code class="docutils literal notranslate"><span class="pre">.yml</span></code></p>
 </dd>
 </dl>
@@ -2803,8 +2803,8 @@ for <strong>notebook API</strong> need to wrap callback:</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>base_callback</strong> (<a class="reference internal" href="#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a>) – callback to wrap</p></li>
-<li><p><strong>epochs</strong> (<em>int/Sequence</em><em>[</em><em>int</em><em>]</em>) – <p>epochs where
+<li><p><strong>base_callback</strong> – callback to wrap</p></li>
+<li><p><strong>epochs</strong> – <p>epochs where
 need to <strong>enable</strong> callback, on other epochs
 callback will be disabled.</p>
 <p>If passed int/float then callback will be enabled
@@ -2815,8 +2815,7 @@ and disabled on other epochs.</p>
 on specified epochs.</p>
 <p>Default value is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </p></li>
-<li><p><strong>ignore_epochs</strong> – <p>(int/Sequence[int]): epochs where
-need to <strong>disable</strong> callback, on other epochs
+<li><p><strong>ignore_epochs:</strong> – <p>epochs where: need to <strong>disable</strong> callback, on other epochs
 callback will be enabled.</p>
 <p>If passed int/float then callback will be disabled
 with period specified as epochs value
@@ -2880,7 +2879,7 @@ return <code class="docutils literal notranslate"><span class="pre">False</span>
 </pre></div>
 </div>
 </p></li>
-<li><p><strong>use_global_epochs</strong> (<em>bool</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> then
+<li><p><strong>use_global_epochs</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code> then
 will be used global epochs instead of epochs in
 a stage, the default value is <code class="docutils literal notranslate"><span class="pre">False</span></code></p></li>
 </ul>
@@ -2934,11 +2933,11 @@ If None, empty dict will be passed to the criterion.</p></li>
 of keys that takes values from the input dictionary
 If ‘__all__’, the whole output will be passed to the criterion
 If None, empty dict will be passed to the criterion.</p></li>
-<li><p><strong>prefix</strong> (<em>str</em>) – prefix for metrics and output key for loss
+<li><p><strong>prefix</strong> – prefix for metrics and output key for loss
 in <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code> dictionary</p></li>
-<li><p><strong>criterion_key</strong> (<em>str</em>) – A key to take a criterion in case
+<li><p><strong>criterion_key</strong> – A key to take a criterion in case
 there are several of them and they are in a dictionary format.</p></li>
-<li><p><strong>multiplier</strong> (<em>float</em>) – scale factor for the output loss.</p></li>
+<li><p><strong>multiplier</strong> – scale factor for the output loss.</p></li>
 </ul>
 </dd>
 </dl>
@@ -2977,8 +2976,8 @@ there are several of them and they are in a dictionary format.</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>num_batch_steps</strong> (<em>int</em>) – number of batches to iterate in epoch</p></li>
-<li><p><strong>num_epoch_steps</strong> (<em>int</em>) – number of epoch to perform in a stage</p></li>
+<li><p><strong>num_batch_steps</strong> – number of batches to iterate in epoch</p></li>
+<li><p><strong>num_epoch_steps</strong> – number of epoch to perform in a stage</p></li>
 </ul>
 </dd>
 </dl>
@@ -3052,15 +3051,15 @@ there are several of them and they are in a dictionary format.</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>patience</strong> (<em>int</em>) – number of epochs with no improvement
+<li><p><strong>patience</strong> – number of epochs with no improvement
 after which training will be stopped.</p></li>
-<li><p><strong>metric</strong> (<em>str</em>) – metric name to use for early stopping, default
+<li><p><strong>metric</strong> – metric name to use for early stopping, default
 is <code class="docutils literal notranslate"><span class="pre">&quot;loss&quot;</span></code>.</p></li>
-<li><p><strong>minimize</strong> (<em>bool</em>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code> then expected that metric should
+<li><p><strong>minimize</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code> then expected that metric should
 decrease and early stopping will be performed only when metric
 stops decreasing. If <code class="docutils literal notranslate"><span class="pre">False</span></code> then expected
 that metric should increase. Default value <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
-<li><p><strong>min_delta</strong> (<em>float</em>) – minimum change in the monitored metric
+<li><p><strong>min_delta</strong> – minimum change in the monitored metric
 to qualify as an improvement, i.e. an absolute change
 of less than min_delta, will count as no improvement,
 default value is <code class="docutils literal notranslate"><span class="pre">1e-6</span></code>.</p></li>
@@ -3163,10 +3162,10 @@ at the end of an epoch.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>metric_names</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of metric names to log,
+<li><p><strong>metric_names</strong> – list of metric names to log,
 if none - logs everything</p></li>
-<li><p><strong>log_on_batch_end</strong> (<em>bool</em>) – logs per-batch metrics if set True</p></li>
-<li><p><strong>log_on_epoch_end</strong> (<em>bool</em>) – logs per-epoch metrics if set True</p></li>
+<li><p><strong>log_on_batch_end</strong> – logs per-batch metrics if set True</p></li>
+<li><p><strong>log_on_epoch_end</strong> – logs per-epoch metrics if set True</p></li>
 </ul>
 </dd>
 </dl>
@@ -3215,10 +3214,10 @@ if none - logs everything</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>always_show</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of metrics to always show
+<li><p><strong>always_show</strong> – list of metrics to always show
 if None default is <code class="docutils literal notranslate"><span class="pre">[&quot;_timer/_fps&quot;]</span></code>
 to remove always_show metrics set it to an empty list <code class="docutils literal notranslate"><span class="pre">[]</span></code></p></li>
-<li><p><strong>never_show</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – list of metrics which will not be shown</p></li>
+<li><p><strong>never_show</strong> – list of metrics which will not be shown</p></li>
 </ul>
 </dd>
 </dl>
@@ -3578,13 +3577,13 @@ Must be either <code class="docutils literal notranslate"><span class="pre">sum<
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>loss_key</strong> (<em>str</em>) – key to get loss from <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code></p></li>
-<li><p><strong>optimizer_key</strong> (<em>str</em>) – A key to take a optimizer in case
+<li><p><strong>loss_key</strong> – key to get loss from <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code></p></li>
+<li><p><strong>optimizer_key</strong> – A key to take a optimizer in case
 there are several of them and they are in a dictionary format.</p></li>
-<li><p><strong>accumulation_steps</strong> (<em>int</em>) – number of steps before
+<li><p><strong>accumulation_steps</strong> – number of steps before
 <code class="docutils literal notranslate"><span class="pre">model.zero_grad()</span></code></p></li>
-<li><p><strong>grad_clip_params</strong> (<em>dict</em>) – params for gradient clipping</p></li>
-<li><p><strong>decouple_weight_decay</strong> (<em>bool</em>) – If True - decouple weight decay
+<li><p><strong>grad_clip_params</strong> – params for gradient clipping</p></li>
+<li><p><strong>decouple_weight_decay</strong> – If True - decouple weight decay
 regularization.</p></li>
 </ul>
 </dd>
@@ -3598,8 +3597,8 @@ regularization.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer"><em>Optimizer</em></a>) – the optimizer</p></li>
-<li><p><strong>grad_clip_fn</strong> (<em>Callable</em>) – function for gradient clipping</p></li>
+<li><p><strong>optimizer</strong> – the optimizer</p></li>
+<li><p><strong>grad_clip_fn</strong> – function for gradient clipping</p></li>
 </ul>
 </dd>
 </dl>
@@ -3673,17 +3672,17 @@ regularization.</p></li>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>loss_key</strong> (<em>str</em>) – key to get loss from <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code></p></li>
-<li><p><strong>optimizer_key</strong> (<em>str</em>) – A key to take a optimizer in case
+<li><p><strong>loss_key</strong> – key to get loss from <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code></p></li>
+<li><p><strong>optimizer_key</strong> – A key to take a optimizer in case
 there are several of them and they are in a dictionary format.</p></li>
-<li><p><strong>accumulation_steps</strong> (<em>int</em>) – number of steps before
+<li><p><strong>accumulation_steps</strong> – number of steps before
 <code class="docutils literal notranslate"><span class="pre">model.zero_grad()</span></code></p></li>
-<li><p><strong>grad_clip_params</strong> (<em>dict</em>) – params for gradient clipping</p></li>
-<li><p><strong>decouple_weight_decay</strong> (<em>bool</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> - decouple weight decay
+<li><p><strong>grad_clip_params</strong> – params for gradient clipping</p></li>
+<li><p><strong>decouple_weight_decay</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code> - decouple weight decay
 regularization.</p></li>
-<li><p><strong>use_fast_zero_grad</strong> (<em>bool</em>) – boost <code class="docutils literal notranslate"><span class="pre">optiomizer.zero_grad()</span></code>,
+<li><p><strong>use_fast_zero_grad</strong> – boost <code class="docutils literal notranslate"><span class="pre">optiomizer.zero_grad()</span></code>,
 default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
-<li><p><strong>xla_barrier</strong> (<em>bool</em>) – <p>barrier option for xla. Here you can find
+<li><p><strong>xla_barrier</strong> – <p>barrier option for xla. Here you can find
 more about usage of <a class="reference external" href="https://pytorch.org/xla/release/1.5/index.html?highlight=optimizer_step#torch_xla.core.xla_model.optimizer_step">barrier flag</a>
 and <a class="reference external" href="https://pytorch.org/xla/release/1.5/index.html#running-on-a-single-xla-device">examples</a>.</p>
 <p>Default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
@@ -3700,10 +3699,10 @@ and <a class="reference external" href="https://pytorch.org/xla/release/1.5/inde
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>optimizer</strong> (<a class="reference internal" href="utils.html#catalyst.tools.typing.Optimizer" title="catalyst.tools.typing.Optimizer"><em>Optimizer</em></a>) – the optimizer</p></li>
-<li><p><strong>optimizer_wds</strong> (<em>List</em><em>[</em><em>float</em><em>]</em>) – list of weight decay parameters
+<li><p><strong>optimizer</strong> – the optimizer</p></li>
+<li><p><strong>optimizer_wds</strong> – list of weight decay parameters
 for each param group</p></li>
-<li><p><strong>grad_clip_fn</strong> (<em>Callable</em>) – function for gradient clipping</p></li>
+<li><p><strong>grad_clip_fn</strong> – function for gradient clipping</p></li>
 </ul>
 </dd>
 </dl>
@@ -3935,14 +3934,14 @@ in the epochs where this loader is missing.</p>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>scheduler_key</strong> (<em>str</em>) – scheduler name, if <code class="docutils literal notranslate"><span class="pre">None</span></code>,
+<li><p><strong>scheduler_key</strong> – scheduler name, if <code class="docutils literal notranslate"><span class="pre">None</span></code>,
 default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
-<li><p><strong>mode</strong> (<em>str</em>) – scheduler mode, should be one of
+<li><p><strong>mode</strong> – scheduler mode, should be one of
 <code class="docutils literal notranslate"><span class="pre">&quot;epoch&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;batch&quot;</span></code>, default is <code class="docutils literal notranslate"><span class="pre">None</span></code>.
 If <code class="docutils literal notranslate"><span class="pre">None</span></code> and object is instance of <code class="docutils literal notranslate"><span class="pre">BatchScheduler</span></code>
 or <code class="docutils literal notranslate"><span class="pre">OneCycleLRWithWarmup</span></code> then will be used <code class="docutils literal notranslate"><span class="pre">&quot;batch&quot;</span></code>
 otherwise - <code class="docutils literal notranslate"><span class="pre">&quot;epoch&quot;</span></code>.</p></li>
-<li><p><strong>reduced_metric</strong> (<em>str</em>) – metric name to forward to scheduler
+<li><p><strong>reduced_metric</strong> – metric name to forward to scheduler
 object, if <code class="docutils literal notranslate"><span class="pre">None</span></code> then will be used main metric
 specified in experiment.</p></li>
 </ul>
@@ -4028,7 +4027,7 @@ specified in experiment.</p></li>
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">optimizer_key: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callbacks/scheduler.html#LRUpdater.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callbacks.scheduler.LRUpdater.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>optimizer_key</strong> (<em>str</em>) – which optimizer key to use
+<dd class="field-odd"><p><strong>optimizer_key</strong> – which optimizer key to use
 for learning rate scheduling</p>
 </dd>
 </dl>

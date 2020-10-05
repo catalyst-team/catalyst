@@ -259,9 +259,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.core.runner</h1><div class="highlight"><pre>
-<span></span><span class="c1"># flake8: noqa</span>
-<span class="c1"># @TODO: code formatting issue for 20.07 release</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span><span class="p">,</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
@@ -621,8 +619,8 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            model (RunnerModel): Torch model object</span>
-<span class="sd">            device (Device): Torch device</span>
+<span class="sd">            model: Torch model object</span>
+<span class="sd">            device: Torch device</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="kc">None</span>
@@ -808,7 +806,7 @@
 <span class="sd">        Setter for the runner&#39;s device.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            value (Device): new torch device.</span>
+<span class="sd">            value: new torch device.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            TypeError: if `value` is out of `torch.device`, `str` or `None`</span>
@@ -842,7 +840,7 @@
 <span class="sd">        and creates stage-specified criterion, optimizer, scheduler for it.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            stage (str): experiment stage name of interest</span>
+<span class="sd">            stage: experiment stage name of interest</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
 <span class="sd">        Returns:</span>
@@ -879,7 +877,7 @@
 <span class="sd">        and filters them for distributed master/worker cases.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            stage (str): stage name of interest,</span>
+<span class="sd">            stage: stage name of interest,</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
 <span class="sd">        Returns:</span>
@@ -936,9 +934,9 @@
 <span class="sd">            runner.scheduler[&quot;adam&quot;]</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            key (str): name for attribute of interest,</span>
+<span class="sd">            key: name for attribute of interest,</span>
 <span class="sd">                like `criterion`, `optimizer`, `scheduler`</span>
-<span class="sd">            inner_key (str): name of inner dictionary key</span>
+<span class="sd">            inner_key: name of inner dictionary key</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            inner attribute</span>
@@ -953,7 +951,7 @@
 <span class="sd">        Inner method to prepare `Runner` for the specified stage.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            stage (str): stage name of interest,</span>
+<span class="sd">            stage: stage name of interest,</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
@@ -963,9 +961,9 @@
 <span class="sd">        Inner method to prepare `Runner` for the specified stage and epoch.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            stage (str): stage name of interest,</span>
+<span class="sd">            stage: stage name of interest,</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
-<span class="sd">            epoch (int): epoch index</span>
+<span class="sd">            epoch: epoch index</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
@@ -992,7 +990,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            batch (Mapping[str, Any]): dictionary with data batches</span>
 <span class="sd">                from DataLoader.</span>
-<span class="sd">            device (Device): torch device</span>
+<span class="sd">            device: torch device</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            Mapping[str, Any]: same structure as value,</span>
@@ -1041,7 +1039,7 @@
 <span class="sd">        with loader callbacks events.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            loader (DataLoader): dataloader to iterate</span>
+<span class="sd">            loader: dataloader to iterate</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">RunnerException</span><span class="p">(</span>
@@ -1069,9 +1067,9 @@
 <span class="sd">        with epoch callbacks events.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            stage (str): stage name of interest,</span>
+<span class="sd">            stage: stage name of interest,</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
-<span class="sd">            epoch (int): epoch index</span>
+<span class="sd">            epoch: epoch index</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_for_epoch</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">,</span> <span class="n">epoch</span><span class="o">=</span><span class="n">epoch</span><span class="p">)</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaders</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -1130,7 +1128,7 @@
 <span class="sd">        with stage callbacks events.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            stage (str): stage name of interest,</span>
+<span class="sd">            stage: stage name of interest,</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1158,7 +1156,7 @@
 <span class="sd">        Starts the experiment.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            experiment (IExperiment): Experiment instance to use for Runner.</span>
+<span class="sd">            experiment: Experiment instance to use for Runner.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            self, `IRunner` instance after the experiment</span>
@@ -1210,7 +1208,7 @@
 <span class="sd">        Additionally sets `Experiment` datasources for specified stage.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            stage (str): stage name of interest,</span>
+<span class="sd">            stage: stage name of interest,</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">utils</span><span class="o">.</span><span class="n">set_global_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">initial_seed</span><span class="p">)</span>

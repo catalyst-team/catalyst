@@ -290,16 +290,16 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            token (str): telegram bot&#39;s token,</span>
+<span class="sd">            token: telegram bot&#39;s token,</span>
 <span class="sd">                see https://core.telegram.org/bots</span>
-<span class="sd">            chat_id (str): Chat unique identifier</span>
+<span class="sd">            chat_id: Chat unique identifier</span>
 <span class="sd">            metric_names: List of metric names to log.</span>
 <span class="sd">                if none - logs everything.</span>
-<span class="sd">            log_on_stage_start (bool): send notification on stage start</span>
-<span class="sd">            log_on_loader_start (bool): send notification on loader start</span>
-<span class="sd">            log_on_loader_end (bool): send notification on loader end</span>
-<span class="sd">            log_on_stage_end (bool): send notification on stage end</span>
-<span class="sd">            log_on_exception (bool): send notification on exception</span>
+<span class="sd">            log_on_stage_start: send notification on stage start</span>
+<span class="sd">            log_on_loader_start: send notification on loader start</span>
+<span class="sd">            log_on_loader_end: send notification on loader end</span>
+<span class="sd">            log_on_stage_end: send notification on stage end</span>
+<span class="sd">            log_on_exception: send notification on exception</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">logging</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">master</span><span class="p">)</span>
         <span class="c1"># @TODO: replace this logic with global catalyst config at ~/.catalyst</span>

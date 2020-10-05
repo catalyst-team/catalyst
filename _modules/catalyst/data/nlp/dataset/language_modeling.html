@@ -285,13 +285,13 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            texts (Iterable): Iterable object with text</span>
+<span class="sd">            texts: Iterable object with text</span>
 <span class="sd">            tokenizer (str or tokenizer): pre trained</span>
 <span class="sd">                huggingface tokenizer or model name</span>
-<span class="sd">            max_seq_length (int): max sequence length to tokenize</span>
-<span class="sd">            sort (bool): If True then sort all sequences by length</span>
+<span class="sd">            max_seq_length: max sequence length to tokenize</span>
+<span class="sd">            sort: If True then sort all sequences by length</span>
 <span class="sd">                for efficient padding</span>
-<span class="sd">            lazy (bool): If True then tokenize and encode sequence</span>
+<span class="sd">            lazy: If True then tokenize and encode sequence</span>
 <span class="sd">                in __getitem__ method</span>
 <span class="sd">                else will tokenize in __init__ also</span>
 <span class="sd">                if set to true sorting is unavialible</span>

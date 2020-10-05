@@ -275,14 +275,14 @@
 <span class="sd">    General preprocessing and check for multi-label-based metrics.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        outputs (torch.Tensor): NxK tensor that for each of the N examples</span>
+<span class="sd">        outputs: NxK tensor that for each of the N examples</span>
 <span class="sd">            indicates the probability of the example belonging to each of</span>
 <span class="sd">            the K classes, according to the model.</span>
-<span class="sd">        targets (torch.Tensor): binary NxK tensor that encodes which of the K</span>
+<span class="sd">        targets: binary NxK tensor that encodes which of the K</span>
 <span class="sd">            classes are associated with the N-th input</span>
 <span class="sd">            (eg: a row [0, 1, 0, 1] indicates that the example is</span>
 <span class="sd">            associated with classes 2 and 4)</span>
-<span class="sd">        weights (torch.Tensor): importance for each sample</span>
+<span class="sd">        weights: importance for each sample</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        processed ``outputs`` and ``targets``</span>
@@ -343,7 +343,7 @@
 <span class="sd">        &gt;&gt;&gt; [1, 3, 5]</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        num_classes (int): number of classes</span>
+<span class="sd">        num_classes: number of classes</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        iterable: array of accuracy arguments</span>
@@ -371,12 +371,12 @@
 <span class="sd">    with passed `class` argument.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        metric_fn (Callable): metric function to compute</span>
-<span class="sd">        class_args (Sequence[str]): class names for logging.</span>
+<span class="sd">        metric_fn: metric function to compute</span>
+<span class="sd">        class_args: class names for logging.</span>
 <span class="sd">            default: None - class indexes will be used.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (Callable): wrapped metric function with List[Dict] output</span>
+<span class="sd">        wrapped metric function with List[Dict] output</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">class_metric_with_dict_output</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -405,11 +405,11 @@
 <span class="sd">    with passed `topk` argument.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        metric_fn (Callable): metric function to compute</span>
-<span class="sd">        topk_args (Sequence[int]): topk args to sync outputs with</span>
+<span class="sd">        metric_fn: metric function to compute</span>
+<span class="sd">        topk_args: topk args to sync outputs with</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        (Callable): wrapped metric function with List[Dict] output</span>
+<span class="sd">        wrapped metric function with List[Dict] output</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        NotImplementedError: if metrics returned values are out of</span>
