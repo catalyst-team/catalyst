@@ -1,5 +1,3 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 from typing import Any, Dict, Iterable, List, Mapping, Tuple, Union
 from collections import OrderedDict
 import warnings
@@ -175,6 +173,9 @@ class Experiment(IExperiment):
         Returns hyperparameter trial for current experiment.
         Could be usefull for Optuna/HyperOpt/Ray.tune
         hyperparameters optimizers.
+
+        Returns:
+            trial
 
         Example::
 

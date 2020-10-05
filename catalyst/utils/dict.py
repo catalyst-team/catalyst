@@ -1,5 +1,3 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 from typing import Any, Callable, Dict, List, Optional, Union
 import collections
 import copy

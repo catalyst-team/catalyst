@@ -1,5 +1,3 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 from typing import Any, Callable, Dict, Mapping, Optional, Tuple, Union
 from abc import ABC, abstractmethod
 from collections import defaultdict, OrderedDict

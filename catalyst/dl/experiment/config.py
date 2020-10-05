@@ -1,5 +1,3 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 from typing import Any, Callable, Dict, List, Mapping, Union
 from collections import OrderedDict
 from copy import deepcopy
@@ -170,6 +168,9 @@ class ConfigExperiment(IExperiment):
         Returns hyperparameter trial for current experiment.
         Could be usefull for Optuna/HyperOpt/Ray.tune
         hyperparameters optimizers.
+
+        Returns:
+            trial
 
         Example::
 
@@ -365,8 +366,8 @@ class ConfigExperiment(IExperiment):
         *, optimizer: Union[Optimizer, Dict[str, Optimizer]], **params: Any
     ) -> Union[Scheduler, Dict[str, Scheduler]]:
         optimizer_key = params.pop("_optimizer", None)
-        optimizer_ = optimizer[optimizer_key] if optimizer_key else optimizer
-        scheduler = SCHEDULERS.get_from_params(**params, optimizer=optimizer_)
+        optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
+        scheduler = SCHEDULERS.get_from_params(**params, optimizer=optimizer)
 
         return scheduler
 
