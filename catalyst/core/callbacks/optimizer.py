@@ -22,7 +22,7 @@ def zero_grad(optimizer: Optimizer) -> None:
     """Perform an hacky way to zero gradients.
 
     Args:
-        optimizer (Optimizer): optimizer with model parameters.
+        optimizer: optimizer with model parameters.
     """
     for group in optimizer.param_groups:
         for p in group["params"]:
@@ -51,17 +51,17 @@ class OptimizerCallback(IOptimizerCallback):
     ):
         """
         Args:
-            loss_key (str): key to get loss from ``runner.batch_metrics``
-            optimizer_key (str): A key to take a optimizer in case
+            loss_key: key to get loss from ``runner.batch_metrics``
+            optimizer_key: A key to take a optimizer in case
                 there are several of them and they are in a dictionary format.
-            accumulation_steps (int): number of steps before
+            accumulation_steps: number of steps before
                 ``model.zero_grad()``
-            grad_clip_params (dict): params for gradient clipping
-            decouple_weight_decay (bool): If ``True`` - decouple weight decay
+            grad_clip_params: params for gradient clipping
+            decouple_weight_decay: If ``True`` - decouple weight decay
                 regularization.
-            use_fast_zero_grad (bool): boost ``optiomizer.zero_grad()``,
+            use_fast_zero_grad: boost ``optiomizer.zero_grad()``,
                 default is ``False``.
-            xla_barrier (bool): barrier option for xla. Here you can find
+            xla_barrier: barrier option for xla. Here you can find
                 more about usage of `barrier flag
                 <https://pytorch.org/xla/release/1.5/index.html?
                 highlight=optimizer_step#torch_xla.core.xla_model.optimizer_step>`_
@@ -101,7 +101,7 @@ class OptimizerCallback(IOptimizerCallback):
         """CPU and GPU optimization step.
 
         Args:
-            optimizer (Optimizer): optimizer object
+            optimizer: optimizer object
         """
         optimizer.step()
 
@@ -109,7 +109,7 @@ class OptimizerCallback(IOptimizerCallback):
         """TPU optimization step.
 
         Args:
-            optimizer (Optimizer): optimizer object
+            optimizer: optimizer object
         """
         if self.use_xla_barrier:
             xm.optimizer_step(optimizer, barrier=True)
@@ -126,10 +126,10 @@ class OptimizerCallback(IOptimizerCallback):
         """Makes a gradient step for a given optimizer.
 
         Args:
-            optimizer (Optimizer): the optimizer
+            optimizer: the optimizer
             optimizer_wds (List[float]): list of weight decay parameters
                 for each param group
-            grad_clip_fn (Callable): function for gradient clipping
+            grad_clip_fn: function for gradient clipping
         """
         for group, wd in zip(optimizer.param_groups, optimizer_wds):
             if wd > 0:
@@ -263,13 +263,13 @@ class AMPOptimizerCallback(IOptimizerCallback):
     ):
         """
         Args:
-            loss_key (str): key to get loss from ``runner.batch_metrics``
-            optimizer_key (str): A key to take a optimizer in case
+            loss_key: key to get loss from ``runner.batch_metrics``
+            optimizer_key: A key to take a optimizer in case
                 there are several of them and they are in a dictionary format.
-            accumulation_steps (int): number of steps before
+            accumulation_steps: number of steps before
                 ``model.zero_grad()``
-            grad_clip_params (dict): params for gradient clipping
-            decouple_weight_decay (bool): If True - decouple weight decay
+            grad_clip_params: params for gradient clipping
+            decouple_weight_decay: If True - decouple weight decay
                 regularization.
         """
         super().__init__(order=CallbackOrder.optimizer, node=CallbackNode.all)
@@ -300,8 +300,8 @@ class AMPOptimizerCallback(IOptimizerCallback):
         """Makes a gradient step for a given optimizer.
 
         Args:
-            optimizer (Optimizer): the optimizer
-            grad_clip_fn (Callable): function for gradient clipping
+            optimizer: the optimizer
+            grad_clip_fn: function for gradient clipping
         """
         if grad_clip_fn is not None:
             # Unscales the gradients of

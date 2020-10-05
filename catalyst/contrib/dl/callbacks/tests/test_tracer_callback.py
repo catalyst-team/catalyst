@@ -101,9 +101,9 @@ def _get_loaders(
     Function to get loaders just for testing.
 
     Args:
-        root (str): Path to root of dataset.
-        batch_size (int): Batch size.
-        num_workers (int): Num of workers.
+        root: Path to root of dataset.
+        batch_size: Batch size.
+        num_workers: Num of workers.
 
     Returns:
         Dict[str, DataLoader]: Dict of loaders.

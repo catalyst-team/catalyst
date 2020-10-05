@@ -46,7 +46,7 @@ def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
 
     Args:
         optimizer: PyTorch optimizer
-        value (float): new value of momentum
+        value: new value of momentum
         index (int, optional): integer index of optimizer's param groups,
             default is 0
     """
@@ -126,7 +126,7 @@ def any2device(value, device: Device):
 
     Args:
         value: Object to be moved
-        device (Device): target device ids
+        device: target device ids
 
     Returns:
         Same structure as value, but all tensors and np.arrays moved to device
@@ -155,8 +155,8 @@ def prepare_cudnn(deterministic: bool = None, benchmark: bool = None) -> None:
     to be deterministic/non-deterministic mode
 
     Args:
-        deterministic (bool): deterministic mode if running in CuDNN backend.
-        benchmark (bool): If ``True`` use CuDNN heuristics to figure out
+        deterministic: deterministic mode if running in CuDNN backend.
+        benchmark: If ``True`` use CuDNN heuristics to figure out
             which algorithm will be most performant
             for your model architecture and input.
             Setting it to ``False`` may slow down your training.
@@ -186,12 +186,12 @@ def process_model_params(
 
     Args:
         model (torch.nn.Module): Model to process
-        layerwise_params (Dict): Order-sensitive dict where
+        layerwise_params: Order-sensitive dict where
             each key is regex pattern and values are layer-wise options
             for layers matching with a pattern
-        no_bias_weight_decay (bool): If true, removes weight_decay
+        no_bias_weight_decay: If true, removes weight_decay
             for all ``bias`` parameters in the model
-        lr_scaling (float): layer-wise learning rate scaling,
+        lr_scaling: layer-wise learning rate scaling,
             if 1.0, learning rates will not be scaled
 
     Returns:
@@ -291,7 +291,7 @@ def get_network_output(net: Model, *input_shapes_args, **input_shapes_kwargs):
         tensor([[[-0.2665,  0.5792,  0.9757, -0.5782,  0.1530]]])
 
     Args:
-        net (Model): the model
+        net: the model
         *input_shapes_args: variable length argument list of shapes
         **input_shapes_kwargs: key-value arguemnts of shapes
 

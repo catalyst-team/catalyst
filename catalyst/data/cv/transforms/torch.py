@@ -47,9 +47,9 @@ def normalize(tensor: torch.Tensor, mean, std, inplace=False):
             it does not mutates the input tensor.
 
     Args:
-        tensor (Tensor): Tensor image of size (C, H, W) to be normalized.
-        mean (sequence): Sequence of means for each channel.
-        std (sequence): Sequence of standard deviations for each channel.
+        tensor: Tensor image of size (C, H, W) to be normalized.
+        mean: Sequence of means for each channel.
+        std: Sequence of standard deviations for each channel.
         inplace(bool,optional): Bool to make this operation inplace.
 
     Returns:
@@ -77,7 +77,7 @@ class Compose:
     def __init__(self, transforms):
         """
         Args:
-            transforms (List): list of transforms to compose.
+            transforms: list of transforms to compose.
 
         Example:
             >>> Compose([ToTensor(), Normalize()])
@@ -139,8 +139,8 @@ class Normalize(object):
     def __init__(self, mean, std, inplace=False):
         """
         Args:
-            mean (sequence): Sequence of means for each channel.
-            std (sequence): Sequence of standard deviations for each channel.
+            mean: Sequence of means for each channel.
+            std: Sequence of standard deviations for each channel.
             inplace(bool,optional): Bool to make this operation in-place.
         """
         self.mean = mean
@@ -150,7 +150,7 @@ class Normalize(object):
     def __call__(self, tensor):
         """
         Args:
-            tensor (Tensor): Tensor image of size (C, H, W) to be normalized.
+            tensor: Tensor image of size (C, H, W) to be normalized.
 
         Returns:
             torch.Tensor: Normalized Tensor image.

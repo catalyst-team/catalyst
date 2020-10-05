@@ -60,7 +60,7 @@ class Experiment(IExperiment):
     ):
         """
         Args:
-            model (Model): model
+            model: model
             datasets (OrderedDict[str, Union[Dataset, Dict, Any]]): dictionary
                 with one or several  ``torch.utils.data.Dataset``
                 for training, validation or inference
@@ -71,37 +71,37 @@ class Experiment(IExperiment):
                 for training, validation or inference
             callbacks (Union[List[Callback], OrderedDict[str, Callback]]):
                 list or dictionary with Catalyst callbacks
-            logdir (str): path to output directory
-            stage (str): current stage
-            criterion (Criterion): criterion function
-            optimizer (Optimizer): optimizer
-            scheduler (Scheduler): scheduler
+            logdir: path to output directory
+            stage: current stage
+            criterion: criterion function
+            optimizer: optimizer
+            scheduler: scheduler
             trial : hyperparameters optimization trial.
                 Used for integrations with Optuna/HyperOpt/Ray.tune.
-            num_epochs (int): number of experiment's epochs
-            valid_loader (str): loader name used to calculate
+            num_epochs: number of experiment's epochs
+            valid_loader: loader name used to calculate
                 the metrics and save the checkpoints. For example,
                 you can pass `train` and then
                 the metrics will be taken from `train` loader.
-            main_metric (str): the key to the name of the metric
+            main_metric: the key to the name of the metric
                 by which the checkpoints will be selected.
-            minimize_metric (bool): flag to indicate whether
+            minimize_metric: flag to indicate whether
                 the ``main_metric`` should be minimized.
-            verbose (bool): if True, it displays the status of the training
+            verbose: if True, it displays the status of the training
                 to the console.
-            check_time (bool): if True, computes the execution time
+            check_time: if True, computes the execution time
                 of training process and displays it to the console.
-            check_run (bool): if True, we run only 3 batches per loader
+            check_run: if True, we run only 3 batches per loader
                 and 3 epochs per stage to check pipeline correctness
-            overfit (bool): if True, then takes only one batch per loader
+            overfit: if True, then takes only one batch per loader
                 for model overfitting, for advance usage please check
                 ``BatchOverfitCallback``
-            stage_kwargs (dict): additional stage params
-            checkpoint_data (dict): additional data to save in checkpoint,
+            stage_kwargs: additional stage params
+            checkpoint_data: additional data to save in checkpoint,
                 for example: ``class_names``, ``date_of_training``, etc
-            distributed_params (dict): dictionary with the parameters
+            distributed_params: dictionary with the parameters
                 for distributed and FP16 method
-            initial_seed (int): experiment's initial seed value
+            initial_seed: experiment's initial seed value
         """
         assert (
             datasets is not None or loaders is not None

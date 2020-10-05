@@ -20,7 +20,7 @@ class MovingAverageValueMeter(meter.Meter):
     def __init__(self, windowsize):
         """
         Args:
-            windowsize (int): size of window of values, which is continuous
+            windowsize: size of window of values, which is continuous
                 and ends on last updated element
         """
         super(MovingAverageValueMeter, self).__init__()
@@ -41,7 +41,7 @@ class MovingAverageValueMeter(meter.Meter):
         """Adds observation sample.
 
         Args:
-            value (float): scalar
+            value: scalar
         """
         queueid = self.n % self.windowsize
         oldvalue = self.valuequeue[queueid]

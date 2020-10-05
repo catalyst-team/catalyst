@@ -1,5 +1,3 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 from typing import List, Union
 from collections import OrderedDict
 from pathlib import Path
@@ -59,10 +57,10 @@ class ResnetEncoder(EncoderSpec):
     ):
         """
         Args:
-            arch (str): Name for resnet. Have to be one of
+            arch: Name for resnet. Have to be one of
                 resnet18, resnet34, resnet50, resnet101, resnet152
-            pretrained (bool): If True, returns a model pre-trained on ImageNet
-            requires_grad (bool): Flag for set_requires_grad.
+            pretrained: If True, returns a model pre-trained on ImageNet
+            requires_grad: Flag for set_requires_grad.
                 If None, calculates as ``not requires_grad``
             layers_indices (List[int]): layers of encoders
                 used for segmentation
@@ -118,7 +116,7 @@ class ResnetEncoder(EncoderSpec):
 
     @property
     def out_strides(self) -> List[int]:
-        """@TODO: Docs. Contribution is welcome."""
+        """Number of strides produced by the block."""
         return self._strides
 
     def forward(self, x: torch.Tensor) -> List[torch.Tensor]:

@@ -12,7 +12,7 @@ class SomeDataset(Dataset):
         """Fetch a data sample for a given index.
 
         Args:
-            index (int): index of the element in the dataset
+            index: index of the element in the dataset
 
         Returns:
             Single element by index

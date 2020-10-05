@@ -40,8 +40,8 @@ class ImageFolderDataset(PathsDataset):
         """Constructor method for the :class:`ImageFolderDataset` class.
 
         Args:
-            rootpath (str): root directory of dataset
-            target_key (str): key to use to store target label
+            rootpath: root directory of dataset
+            target_key: key to use to store target label
             dir2class (Mapping[str, int], optional): mapping from folder name
                 to class index
             dict_transform (Callable[[Dict], Dict]], optional): transforms

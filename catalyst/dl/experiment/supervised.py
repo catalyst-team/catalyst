@@ -48,7 +48,7 @@ class SupervisedExperiment(Experiment):
         Will add several of callbacks by default in case they missed.
 
         Args:
-            stage (str): name of stage. It should start with `infer` if you
+            stage: name of stage. It should start with `infer` if you
                 don't need default callbacks, as they required only for
                 training stages.
 

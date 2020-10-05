@@ -180,8 +180,8 @@ class TensorboardLogger(ILoggerCallback):
         Args:
             metric_names (List[str]): list of metric names to log,
                 if none - logs everything
-            log_on_batch_end (bool): logs per-batch metrics if set True
-            log_on_epoch_end (bool): logs per-epoch metrics if set True
+            log_on_batch_end: logs per-batch metrics if set True
+            log_on_epoch_end: logs per-epoch metrics if set True
         """
         super().__init__(order=CallbackOrder.logging, node=CallbackNode.master)
         self.metrics_to_log = metric_names

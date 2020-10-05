@@ -26,7 +26,7 @@ def calculate_confusion_matrix_from_arrays(
     Args:
         predictions (np.ndarray): model predictions
         labels (np.ndarray): ground truth labels
-        num_classes (int): number of classes
+        num_classes: number of classes
 
     Returns:
         np.ndarray: confusion matrix

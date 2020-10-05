@@ -19,14 +19,14 @@ class AveragePrecisionCallback(LoaderMetricCallback):
     ):
         """
         Args:
-            input_key (str): input key to use for
+            input_key: input key to use for
                 calculation mean average precision;
                 specifies our `y_true`.
-            output_key (str): output key to use for
+            output_key: output key to use for
                 calculation mean average precision;
                 specifies our `y_pred`.
-            prefix (str): metric's name.
-            multiplier (float): scale factor for the metric.
+            prefix: metric's name.
+            multiplier: scale factor for the metric.
             class_args (List[str]): class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0
         """

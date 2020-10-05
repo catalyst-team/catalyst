@@ -22,7 +22,7 @@ class AdamP(Optimizer):
     `Slowing Down the Weight Norm Increase in Momentum-based Optimizers`_.
 
     Arguments:
-        params (iterable): iterable of parameters to optimize or dicts defining
+        params: iterable of parameters to optimize or dicts defining
             parameter groups
         lr (float, optional): learning rate (default: 1e-3)
         betas (Tuple[float, float], optional): coefficients used for computing
@@ -31,9 +31,9 @@ class AdamP(Optimizer):
             numerical stability (default: 1e-8)
         weight_decay (float, optional): weight decay coefficient
             (default: 0)
-        delta (float): threshold that determines whether
+        delta: threshold that determines whether
             a set of parameters is scale invariant or not (default: 0.1)
-        wd_ratio (float): relative weight decay applied on scale-invariant
+        wd_ratio: relative weight decay applied on scale-invariant
             parameters compared to that applied on scale-variant parameters
             (default: 0.1)
         nesterov (boolean, optional): enables Nesterov momentum
@@ -59,7 +59,7 @@ class AdamP(Optimizer):
         """
 
         Args:
-            params (iterable): iterable of parameters to optimize
+            params: iterable of parameters to optimize
                 or dicts defining parameter groups
             lr (float, optional): learning rate (default: 1e-3)
             betas (Tuple[float, float], optional): coefficients
@@ -69,15 +69,15 @@ class AdamP(Optimizer):
                 numerical stability (default: 1e-8)
             weight_decay (float, optional): weight decay coefficient
                 (default: 1e-2)
-            delta (float): threshold that determines whether
+            delta: threshold that determines whether
                 a set of parameters is scale invariant or not (default: 0.1)
-            wd_ratio (float): relative weight decay applied on scale-invariant
+            wd_ratio: relative weight decay applied on scale-invariant
                 parameters compared to that applied on scale-variant parameters
                 (default: 0.1)
             nesterov (boolean, optional): enables Nesterov momentum
                 (default: False)
         """
-        defaults = dict(
+        defaults = dict(  # noqa: C408
             lr=lr,
             betas=betas,
             eps=eps,
@@ -125,7 +125,7 @@ class AdamP(Optimizer):
         Performs a single optimization step (parameter update).
 
         Arguments:
-            closure (callable): A closure that reevaluates the model and
+            closure: A closure that reevaluates the model and
                 returns the loss. Optional for most optimizers.
 
         Returns:

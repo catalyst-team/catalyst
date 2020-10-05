@@ -82,7 +82,7 @@ def get_default_topk_args(num_classes: int) -> Sequence[int]:
         >>> [1, 3, 5]
 
     Args:
-        num_classes (int): number of classes
+        num_classes: number of classes
 
     Returns:
         iterable: array of accuracy arguments
@@ -110,12 +110,12 @@ def wrap_class_metric2dict(
     with passed `class` argument.
 
     Args:
-        metric_fn (Callable): metric function to compute
+        metric_fn: metric function to compute
         class_args (Sequence[str]): class names for logging.
             default: None - class indexes will be used.
 
     Returns:
-        (Callable): wrapped metric function with List[Dict] output
+       wrapped metric function with List[Dict] output
     """
 
     def class_metric_with_dict_output(*args, **kwargs):
@@ -144,11 +144,11 @@ def wrap_topk_metric2dict(
     with passed `topk` argument.
 
     Args:
-        metric_fn (Callable): metric function to compute
+        metric_fn: metric function to compute
         topk_args (Sequence[int]): topk args to sync outputs with
 
     Returns:
-        (Callable): wrapped metric function with List[Dict] output
+       wrapped metric function with List[Dict] output
 
     Raises:
         NotImplementedError: if metrics returned values are out of

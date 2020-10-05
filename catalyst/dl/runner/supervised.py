@@ -25,12 +25,12 @@ class SupervisedRunner(Runner):
     ):
         """
         Args:
-            model (RunnerModel): Torch model object
-            device (Device): Torch device
-            input_key (Any): Key in batch dict mapping for model input
-            output_key (Any): Key in output dict model output
+            model: Torch model object
+            device: Torch device
+            input_key: Key in batch dict mapping for model input
+            output_key: Key in output dict model output
                 will be stored under
-            input_target_key (str): Key in batch dict mapping for target
+            input_target_key: Key in batch dict mapping for target
         """
         super().__init__(
             model=model,
@@ -48,10 +48,10 @@ class SupervisedRunner(Runner):
     ):
         """
         Args:
-            input_key (Any): Key in batch dict mapping for model input
-            output_key (Any): Key in output dict model output
+            input_key: Key in batch dict mapping for model input
+            output_key: Key in output dict model output
                 will be stored under
-            input_target_key (str): Key in batch dict mapping for target
+            input_target_key: Key in batch dict mapping for target
         """
         self.experiment: SupervisedExperiment = None
 

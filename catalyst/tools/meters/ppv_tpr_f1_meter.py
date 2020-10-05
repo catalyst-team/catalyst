@@ -35,8 +35,8 @@ def precision(tp, fp, eps: float = 1e-5) -> float:
     classification and segmentation.
 
     Args:
-        tp (int): number of true positives
-        fp (int): number of false positives
+        tp: number of true positives
+        fp: number of false positives
         eps: epsilon to use
 
     Returns:

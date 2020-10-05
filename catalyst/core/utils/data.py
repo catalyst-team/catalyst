@@ -16,7 +16,7 @@ def _force_make_distributed_loader(loader: DataLoader) -> DataLoader:
     Transfers loader to distributed mode. Experimental feature.
 
     Args:
-        loader (DataLoader): pytorch dataloder
+        loader: pytorch dataloder
 
     Returns:
         DataLoader: pytorch dataloder with distributed sampler.
@@ -83,17 +83,17 @@ def get_loaders_from_params(
     Creates pytorch dataloaders from datasets and additional parameters.
 
     Args:
-        batch_size (int): ``batch_size`` parameter
+        batch_size: ``batch_size`` parameter
             from ``torch.utils.data.DataLoader``
-        num_workers (int): ``num_workers`` parameter
+        num_workers: ``num_workers`` parameter
             from ``torch.utils.data.DataLoader``
-        drop_last (bool): ``drop_last`` parameter
+        drop_last: ``drop_last`` parameter
             from ``torch.utils.data.DataLoader``
-        per_gpu_scaling (bool): boolean flag,
+        per_gpu_scaling: boolean flag,
             if ``True``, uses ``batch_size=batch_size*num_available_gpus``
         loaders_params (Dict[str, Any]): additional loaders parameters
         samplers_params (Dict[str, Any]): additional sampler parameters
-        initial_seed (int): initial seed for ``torch.utils.data.DataLoader``
+        initial_seed: initial seed for ``torch.utils.data.DataLoader``
             workers
         get_datasets_fn(Callable): callable function to get dictionary with
             ``torch.utils.data.Datasets``

@@ -360,8 +360,8 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
     ):
         """
         Args:
-            model (RunnerModel): Torch model object
-            device (Device): Torch device
+            model: Torch model object
+            device: Torch device
         """
         self._device = None
         self._model = None
@@ -547,7 +547,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         Setter for the runner's device.
 
         Args:
-            value (Device): new torch device.
+            value: new torch device.
 
         Raises:
             TypeError: if `value` is out of `torch.device`, `str` or `None`
@@ -581,7 +581,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         and creates stage-specified criterion, optimizer, scheduler for it.
 
         Args:
-            stage (str): experiment stage name of interest
+            stage: experiment stage name of interest
                 like "pretrain" / "train" / "finetune" / etc
 
         Returns:
@@ -618,7 +618,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         and filters them for distributed master/worker cases.
 
         Args:
-            stage (str): stage name of interest,
+            stage: stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
 
         Returns:
@@ -675,9 +675,9 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
             runner.scheduler["adam"]
 
         Args:
-            key (str): name for attribute of interest,
+            key: name for attribute of interest,
                 like `criterion`, `optimizer`, `scheduler`
-            inner_key (str): name of inner dictionary key
+            inner_key: name of inner dictionary key
 
         Returns:
             inner attribute
@@ -692,7 +692,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         Inner method to prepare `Runner` for the specified stage.
 
         Args:
-            stage (str): stage name of interest,
+            stage: stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
         """
         pass
@@ -702,9 +702,9 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         Inner method to prepare `Runner` for the specified stage and epoch.
 
         Args:
-            stage (str): stage name of interest,
+            stage: stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
-            epoch (int): epoch index
+            epoch: epoch index
         """
         pass
 
@@ -731,7 +731,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         Args:
             batch (Mapping[str, Any]): dictionary with data batches
                 from DataLoader.
-            device (Device): torch device
+            device: torch device
 
         Returns:
             Mapping[str, Any]: same structure as value,
@@ -780,7 +780,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         with loader callbacks events.
 
         Args:
-            loader (DataLoader): dataloader to iterate
+            loader: dataloader to iterate
         """
         if len(loader) == 0:
             raise RunnerException(
@@ -808,9 +808,9 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         with epoch callbacks events.
 
         Args:
-            stage (str): stage name of interest,
+            stage: stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
-            epoch (int): epoch index
+            epoch: epoch index
         """
         self._prepare_for_epoch(stage=stage, epoch=epoch)
         assert self.loaders is not None
@@ -869,7 +869,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         with stage callbacks events.
 
         Args:
-            stage (str): stage name of interest,
+            stage: stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
 
         """
@@ -897,7 +897,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         Starts the experiment.
 
         Args:
-            experiment (IExperiment): Experiment instance to use for Runner.
+            experiment: Experiment instance to use for Runner.
 
         Returns:
             self, `IRunner` instance after the experiment
@@ -949,7 +949,7 @@ class IStageBasedRunner(IRunner):
         Additionally sets `Experiment` datasources for specified stage.
 
         Args:
-            stage (str): stage name of interest,
+            stage: stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
         """
         utils.set_global_seed(self.experiment.initial_seed)

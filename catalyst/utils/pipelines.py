@@ -20,7 +20,7 @@ def clone_pipeline(template: str, out_dir: Path) -> None:
     available in Git repos of Catalyst Team.
 
     Args:
-        template (str): type of pipeline you want to clone.
+        template: type of pipeline you want to clone.
             empty/classification/segmentation
         out_dir (pathlib.Path): path where pipeline directory should be cloned
     """

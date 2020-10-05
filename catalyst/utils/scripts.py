@@ -51,7 +51,7 @@ def prepare_config_api_components(expdir: pathlib.Path, config: Dict):
 
     Args:
         expdir (pathlib.Path): experiment directory path
-        config (Dict): dictionary with experiment Config
+        config: dictionary with experiment Config
 
     Returns:
         Experiment, Runner, Config for Config API usage.
@@ -153,8 +153,8 @@ def distributed_cmd_run(
     Distributed run
 
     Args:
-        worker_fn (Callable): worker fn to run in distributed mode
-        distributed (bool): distributed flag
+        worker_fn: worker fn to run in distributed mode
+        distributed: distributed flag
         args: additional parameters for worker_fn
         kwargs: additional key-value parameters for worker_fn
     """

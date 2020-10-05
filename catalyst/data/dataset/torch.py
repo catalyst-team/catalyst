@@ -24,11 +24,11 @@ class ListDataset(Dataset):
             list_data (List[Dict]): list of dicts, that stores
                 you data annotations,
                 (for example path to images, labels, bboxes, etc.)
-            open_fn (callable): function, that can open your
+            open_fn: function, that can open your
                 annotations dict and
                 transfer it to data, needed by your network
                 (for example open image by path, or tokenize read string.)
-            dict_transform (callable): transforms to use on dict.
+            dict_transform: transforms to use on dict.
                 (for example normalize image, add blur, crop/resize/etc)
         """
         self.data = list_data
@@ -41,7 +41,7 @@ class ListDataset(Dataset):
         """Gets element of the dataset.
 
         Args:
-            index (int): index of the element in the dataset
+            index: index of the element in the dataset
 
         Returns:
             Single element by index
@@ -69,7 +69,7 @@ class MergeDataset(Dataset):
         """
         Args:
             datasets (List[Dataset]): params count of datasets to merge
-            dict_transform (callable): transforms common for all datasets.
+            dict_transform: transforms common for all datasets.
                 (for example normalize image, add blur, crop/resize/etc)
         """
         self.length = len(datasets[0])
@@ -81,7 +81,7 @@ class MergeDataset(Dataset):
         """Get item from all datasets.
 
         Args:
-            index (int): index to value from all datasets
+            index: index to value from all datasets
 
         Returns:
             list: list of value in every dataset
@@ -117,8 +117,8 @@ class NumpyDataset(Dataset):
         Args:
             numpy_data (np.ndarray): numpy data
               (for example path to embeddings, features, etc.)
-            numpy_key (str): key to use for output dictionary
-            dict_transform (callable): transforms to use on dict.
+            numpy_key: key to use for output dictionary
+            dict_transform: transforms to use on dict.
               (for example normalize vector, etc)
         """
         super().__init__()
@@ -132,7 +132,7 @@ class NumpyDataset(Dataset):
         """Gets element of the dataset.
 
         Args:
-            index (int): index of the element in the dataset
+            index: index of the element in the dataset
 
         Returns:
             Single element by index
@@ -176,18 +176,18 @@ class PathsDataset(ListDataset):
             filenames (List[str]): list of file paths that store information
                 about your dataset samples; it could be images, texts or
                 any other files in general.
-            open_fn (callable): function, that can open your
+            open_fn: function, that can open your
                 annotations dict and
                 transfer it to data, needed by your network
                 (for example open image by path, or tokenize read string)
-            label_fn (callable): function, that can extract target
+            label_fn: function, that can extract target
                 value from sample path
                 (for example, your sample could be an image file like
                 ``/path/to/your/image_1.png`` where the target is encoded as
                 a part of file path)
-            features_key (str): key to use to store sample features
-            target_key (str): key to use to store target label
-            list_dataset_params (dict): base class initialization
+            features_key: key to use to store sample features
+            target_key: key to use to store target label
+            list_dataset_params: base class initialization
                 parameters.
         """
         list_data = [
@@ -206,7 +206,7 @@ class DatasetFromSampler(Dataset):
     def __init__(self, sampler: Sampler):
         """
         Args:
-            sampler (Sampler): @TODO: Docs. Contribution is welcome
+            sampler: @TODO: Docs. Contribution is welcome
         """
         self.sampler = sampler
         self.sampler_list = None
@@ -215,7 +215,7 @@ class DatasetFromSampler(Dataset):
         """Gets element of the dataset.
 
         Args:
-            index (int): index of the element in the dataset
+            index: index of the element in the dataset
 
         Returns:
             Single element by index

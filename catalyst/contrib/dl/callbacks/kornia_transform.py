@@ -207,7 +207,7 @@ class BatchTransformCallback(Callback):
         """Apply transforms.
 
         Args:
-            runner (IRunner): сurrent runner
+            runner: сurrent runner
         """
         in_batch = self._process_input(runner.input)
         out_batch = self.transform(in_batch)

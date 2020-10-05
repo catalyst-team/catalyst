@@ -15,7 +15,7 @@ class CIFAR10(torchvision.datasets.CIFAR10):
         """Fetch a data sample for a given index.
 
         Args:
-            index (int): index of the element in the dataset
+            index: index of the element in the dataset
 
         Returns:
             Single element by index
@@ -57,7 +57,7 @@ class Experiment(ConfigExperiment):
         """Provides train/validation subsets from CIFAR10 dataset.
 
         Args:
-            stage (str): stage name e.g. ``'stage1'`` or ``'infer'``
+            stage: stage name e.g. ``'stage1'`` or ``'infer'``
         """
         datasets = OrderedDict()
         for mode in ("train", "valid"):

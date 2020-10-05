@@ -8,8 +8,8 @@ def get_native_batch_from_loader(loader: DataLoader, batch_index: int = 0):
     Returns a batch from experiment loader
 
     Args:
-        loader (DataLoader): Loader to get batch from
-        batch_index (int): Index of batch to take from dataset of the loader
+        loader: Loader to get batch from
+        batch_index: Index of batch to take from dataset of the loader
 
     Returns:
         batch from loader
@@ -30,7 +30,7 @@ def get_native_batch_from_loaders(
     Args:
         loaders (Dict[str, DataLoader]): Loaders list to get loader from
         loader (Union[str, int]): Loader name or its index, default is zero
-        batch_index (int): Index of batch to take from dataset of the loader
+        batch_index: Index of batch to take from dataset of the loader
 
     Returns:
         batch from loader

@@ -161,7 +161,7 @@ class ConfigFileFinder:
         """Initialize object to find config files.
 
         Args:
-            program_name (str): Name of the current program (e.g., catalyst).
+            program_name: Name of the current program (e.g., catalyst).
         """
         # user configuration file
         self.program_name = program_name
@@ -274,7 +274,7 @@ class MergedConfigParser:
         """Initialize the MergedConfigParser instance.
 
         Args:
-            config_finder (ConfigFileFinder): Initialized ConfigFileFinder.
+            config_finder: Initialized ConfigFileFinder.
         """
         self.program_name = config_finder.program_name
         self.config_finder = config_finder

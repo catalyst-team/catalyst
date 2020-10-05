@@ -16,12 +16,12 @@ class ImageReader(ReaderSpec):
     ):
         """
         Args:
-            input_key (str): key to use from annotation dict
+            input_key: key to use from annotation dict
             output_key (Optional[str]): key to use to store the result,
                 default: ``input_key``
-            rootpath (str): path to images dataset root directory
+            rootpath: path to images dataset root directory
                 (so your can use relative paths in annotations)
-            grayscale (bool): flag if you need to work only
+            grayscale: flag if you need to work only
                 with grayscale images
         """
         super().__init__(input_key, output_key or input_key)
@@ -59,10 +59,10 @@ class MaskReader(ReaderSpec):
     ):
         """
         Args:
-            input_key (str): key to use from annotation dict
+            input_key: key to use from annotation dict
             output_key (Optional[str]): key to use to store the result,
                 default: ``input_key``
-            rootpath (str): path to images dataset root directory
+            rootpath: path to images dataset root directory
                 (so your can use relative paths in annotations)
             clip_range (Tuple[int, int]): lower and upper interval edges,
                 image values outside the interval are clipped

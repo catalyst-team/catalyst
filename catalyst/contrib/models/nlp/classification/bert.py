@@ -16,7 +16,7 @@ class BertClassifier(nn.Module):
     ):
         """
         Args:
-            pretrained_model_name (str): HuggingFace model name.
+            pretrained_model_name: HuggingFace model name.
                 See transformers/modeling_auto.py
             num_classes (int, optional): the number of class labels
                 in the classification task

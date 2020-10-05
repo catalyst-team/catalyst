@@ -15,7 +15,7 @@ def _filter_fn_from_epochs(
 
     Args:
         epochs (int/Sequence[int]): epochs description
-        reverse_condition (bool): indicator to use reversed
+        reverse_condition: indicator to use reversed
             condition in filter function
 
     Raises:
@@ -54,7 +54,7 @@ def _filter_fn_from_loaders(
     Args:
         loaders (str/Sequence[str]/Mapping[str, int/Sequence[str]]):
             loaders description
-        reverse_condition (bool): indicator to use reversed
+        reverse_condition: indicator to use reversed
             condition in filter function
 
     Raises:
@@ -239,7 +239,7 @@ class ControlFlowCallback(WrapperCallback):
     ):
         """
         Args:
-            base_callback (Callback): callback to wrap
+            base_callback: callback to wrap
             epochs (int/Sequence[int]): epochs where
                 need to **enable** callback, on other epochs
                 callback will be disabled.
@@ -334,7 +334,7 @@ class ControlFlowCallback(WrapperCallback):
                         ...
                     )
 
-            use_global_epochs (bool): if ``True`` then
+            use_global_epochs: if ``True`` then
                 will be used global epochs instead of epochs in
                 a stage, the default value is ``False``
         """

@@ -20,9 +20,9 @@ class DiceCallback(BatchMetricCallback):
     ):
         """
         Args:
-            input_key (str): input key to use for dice calculation;
+            input_key: input key to use for dice calculation;
                 specifies our `y_true`
-            output_key (str): output key to use for dice calculation;
+            output_key: output key to use for dice calculation;
                 specifies our `y_pred`
         """
         super().__init__(
@@ -52,11 +52,11 @@ class MultiClassDiceMetricCallback(Callback):
     ):
         """
         Args:
-            input_key (str): input key to use for dice calculation;
+            input_key: input key to use for dice calculation;
                 specifies our `y_true`
-            output_key (str): output key to use for dice calculation;
+            output_key: output key to use for dice calculation;
                 specifies our `y_pred`
-            prefix (str): prefix for printing the metric
+            prefix: prefix for printing the metric
             class_names (dict/List): if dictionary, should be:
                 {class_id: class_name, ...} where class_id is an integer
                 This allows you to ignore class indices.

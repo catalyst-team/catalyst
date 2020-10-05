@@ -10,8 +10,8 @@ def get_one_hot(
     with Convolutional Neural Networks`_.
 
     Args:
-        label (int): scalar value to be vectorized
-        num_classes (int): total number of classes
+        label: scalar value to be vectorized
+        num_classes: total number of classes
         smoothing (float, optional): if specified applies label smoothing
             from ``Bag of Tricks for Image Classification
             with Convolutional Neural Networks`` paper

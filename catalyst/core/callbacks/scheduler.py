@@ -91,14 +91,14 @@ class SchedulerCallback(ISchedulerCallback):
     ):
         """
         Args:
-            scheduler_key (str): scheduler name, if ``None``,
+            scheduler_key: scheduler name, if ``None``,
                 default is ``None``.
-            mode (str): scheduler mode, should be one of
+            mode: scheduler mode, should be one of
                 ``"epoch"`` or ``"batch"``, default is ``None``.
                 If ``None`` and object is instance of ``BatchScheduler``
                 or ``OneCycleLRWithWarmup`` then will be used ``"batch"``
                 otherwise - ``"epoch"``.
-            reduced_metric (str): metric name to forward to scheduler
+            reduced_metric: metric name to forward to scheduler
                 object, if ``None`` then will be used main metric
                 specified in experiment.
         """
@@ -230,7 +230,7 @@ class LRUpdater(ABC, Callback):
     def __init__(self, optimizer_key: str = None):
         """
         Args:
-            optimizer_key (str): which optimizer key to use
+            optimizer_key: which optimizer key to use
                 for learning rate scheduling
         """
         super().__init__(order=CallbackOrder.scheduler, node=CallbackNode.all)

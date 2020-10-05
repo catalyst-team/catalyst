@@ -33,10 +33,10 @@ def tensor_to_ndimage(
 
     Args:
         images (torch.Tensor): [B]xCxHxW float tensor
-        denormalize (bool): if True, multiply image(s) by std and add mean
+        denormalize: if True, multiply image(s) by std and add mean
         mean (Tuple[float, float, float]): per channel mean to add
         std (Tuple[float, float, float]): per channel std to multiply
-        move_channels_dim (bool): if True, convert tensor to [B]xHxWxC format
+        move_channels_dim: if True, convert tensor to [B]xHxWxC format
         dtype: result ndarray dtype. Only float32 and uint8 are supported
 
     Returns:

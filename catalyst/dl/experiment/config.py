@@ -60,7 +60,7 @@ class ConfigExperiment(IExperiment):
     def __init__(self, config: Dict):
         """
         Args:
-            config (dict): dictionary with parameters
+            config: dictionary with parameters
         """
         self._config: Dict = deepcopy(config)
         self._trial = None
@@ -335,7 +335,7 @@ class ConfigExperiment(IExperiment):
         Returns the optimizer for a given stage.
 
         Args:
-            stage (str): stage name
+            stage: stage name
             model (Union[Model, Dict[str, Model]]): model or a dict of models
 
         Returns:
@@ -432,8 +432,8 @@ class ConfigExperiment(IExperiment):
         Returns transform for a given stage and dataset.
 
         Args:
-            stage (str): stage name
-            dataset (str): dataset name (e.g. "train", "valid"),
+            stage: stage name
+            dataset: dataset name (e.g. "train", "valid"),
                 will be used only if the value of `_key_value`` is ``True``
 
         Returns:
@@ -495,8 +495,8 @@ class ConfigExperiment(IExperiment):
         run of config experiment.
 
         Arguments:
-            callbacks (OrderedDict): finalized order of callbacks.
-            stage_index (int): number of a current stage
+            callbacks: finalized order of callbacks.
+            stage_index: number of a current stage
         """
         if stage_index is None:
             stage_index = -float("inf")

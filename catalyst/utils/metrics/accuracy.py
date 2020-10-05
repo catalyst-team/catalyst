@@ -27,7 +27,7 @@ def accuracy(
             with shape [bs; num_classes]
         targets (torch.Tensor): ground truth, labels
             with shape [bs; 1]
-        activation (str): activation to use for model output
+        activation: activation to use for model output
         topk (Sequence[int]): `topk` for accuracy@topk computing
 
     Returns:
@@ -72,8 +72,8 @@ def multi_label_accuracy(
             classes are associated with the N-th input
             (eg: a row [0, 1, 0, 1] indicates that the example is
             associated with classes 2 and 4)
-        threshold (float): threshold for for model output
-        activation (str): activation to use for model output
+        threshold: threshold for for model output
+        activation: activation to use for model output
 
     Returns:
         computed multi-label accuracy

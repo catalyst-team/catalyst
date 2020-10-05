@@ -215,8 +215,8 @@ class WrapperCallback(Callback):
     def __init__(self, base_callback: Callback, enable_callback: bool = True):
         """
         Args:
-            base_callback (Callback): callback to wrap
-            enable_callback (boolean): indicator to enable/disable
+            base_callback: callback to wrap
+            enable_callback: indicator to enable/disable
                 callback, if ``True`` then callback will be enabled,
                 default ``True``
         """

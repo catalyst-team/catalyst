@@ -32,8 +32,8 @@ class CutmixCallback(CriterionCallback):
         """
         Args:
             fields (List[str]): list of features which must be affected.
-            alpha (float): beta distribution parameter.
-            on_train_only (bool): Apply to train only.
+            alpha: beta distribution parameter.
+            on_train_only: Apply to train only.
                 So, if on_train_only is True, use a standard output/metric
                 for validation.
         """

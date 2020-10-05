@@ -10,8 +10,8 @@ class CheckRunCallback(Callback):
     def __init__(self, num_batch_steps: int = 3, num_epoch_steps: int = 2):
         """
         Args:
-            num_batch_steps (int): number of batches to iterate in epoch
-            num_epoch_steps (int): number of epoch to perform in a stage
+            num_batch_steps: number of batches to iterate in epoch
+            num_epoch_steps: number of epoch to perform in a stage
         """
         super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         self.num_batch_steps = num_batch_steps
@@ -87,15 +87,15 @@ class EarlyStoppingCallback(Callback):
     ):
         """
         Args:
-            patience (int): number of epochs with no improvement
+            patience: number of epochs with no improvement
                 after which training will be stopped.
-            metric (str): metric name to use for early stopping, default
+            metric: metric name to use for early stopping, default
                 is ``"loss"``.
-            minimize (bool): if ``True`` then expected that metric should
+            minimize: if ``True`` then expected that metric should
                 decrease and early stopping will be performed only when metric
                 stops decreasing. If ``False`` then expected
                 that metric should increase. Default value ``True``.
-            min_delta (float): minimum change in the monitored metric
+            min_delta: minimum change in the monitored metric
                 to qualify as an improvement, i.e. an absolute change
                 of less than min_delta, will count as no improvement,
                 default value is ``1e-6``.

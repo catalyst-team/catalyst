@@ -26,7 +26,7 @@ class BalanceClassSampler(Sampler):
         Args:
             labels (List[int]): list of class label
                 for each elem in the dataset
-            mode (str): Strategy to balance classes.
+            mode: Strategy to balance classes.
                 Must be one of [downsampling, upsampling]
         """
         super().__init__(labels)
@@ -215,12 +215,12 @@ class MiniEpochSampler(Sampler):
     ):
         """
         Args:
-            data_len (int): Size of the dataset
-            mini_epoch_len (int): Num samples from the dataset used in one
+            data_len: Size of the dataset
+            mini_epoch_len: Num samples from the dataset used in one
               mini epoch.
-            drop_last (bool): If ``True``, sampler will drop the last batches
+            drop_last: If ``True``, sampler will drop the last batches
               if its size would be less than ``batches_per_epoch``
-            shuffle (str): one of  ``"always"``, ``"real_epoch"``, or `None``.
+            shuffle: one of  ``"always"``, ``"real_epoch"``, or `None``.
               The sampler will shuffle indices
               > "per_mini_epoch" - every mini epoch (every ``__iter__`` call)
               > "per_epoch" -- every real epoch
@@ -299,8 +299,8 @@ class DynamicLenBatchSampler(BatchSampler):
 
     Args:
         sampler (torch.utils.data.Sampler): Base sampler.
-        batch_size (int): Size of minibatch.
-        drop_last (bool): If ``True``, the sampler will drop the last batch
+        batch_size: Size of minibatch.
+        drop_last: If ``True``, the sampler will drop the last batch
         if its size would be less than ``batch_size``.
 
     Usage example:

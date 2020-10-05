@@ -18,7 +18,7 @@ def dataframe_to_list(dataframe: pd.DataFrame) -> List[dict]:
     """Converts dataframe to a list of rows (without indexes).
 
     Args:
-        dataframe (DataFrame): input dataframe
+        dataframe: input dataframe
 
     Returns:
         List[dict]: list of rows
@@ -132,7 +132,7 @@ def split_dataframe_on_stratified_folds(
     Args:
         dataframe: a dataset
         class_column: which column to use for split
-        random_state (int): seed for random shuffle
+        random_state: seed for random shuffle
         n_folds: number of result folds
 
     Returns:
@@ -191,7 +191,7 @@ def map_dataframe(
 
     Args:
         dataframe (pd.DataFrame): input dataframe
-        tag_column (str): column with tags
+        tag_column: column with tags
         class_column (str) output column with classes
         tag2class (Dict[str, int]): mapping from tags to class labels
         verbose: flag if true, uses tqdm
@@ -288,8 +288,8 @@ def split_dataframe(
         tag2class (Dict[str, int], optional): mapping from label names into int
         tag_column (str, optional): column with label names
         class_column (str, optional): column to use for split
-        seed (int): seed for split
-        n_folds (int): number of folds
+        seed: seed for split
+        n_folds: number of folds
 
     Returns:
         tuple: tuple with 4 dataframes
@@ -336,8 +336,8 @@ def merge_multiple_fold_csv(
     """Reads csv into one DataFrame with column ``fold``.
 
     Args:
-        fold_name (str): current fold name
-        paths (str): paths to csv separated by commas
+        fold_name: current fold name
+        paths: paths to csv separated by commas
 
     Returns:
          pd.DataFrame: merged dataframes with column ``fold`` == ``fold_name``
@@ -363,9 +363,9 @@ def read_multiple_dataframes(
     """This function reads train/valid/infer dataframes from giving paths.
 
     Args:
-        in_csv_train (str): paths to train csv separated by commas
-        in_csv_valid (str): paths to valid csv separated by commas
-        in_csv_infer (str): paths to infer csv separated by commas
+        in_csv_train: paths to train csv separated by commas
+        in_csv_valid: paths to valid csv separated by commas
+        in_csv_infer: paths to infer csv separated by commas
         tag2class (Dict[str, int], optional): mapping from label names into int
         tag_column (str, optional): column with label names
         class_column (str, optional): column to use for split
@@ -439,23 +439,23 @@ def read_csv_data(
             for any previous block
 
     Args:
-        in_csv (str): paths to whole dataset
+        in_csv: paths to whole dataset
         train_folds (List[int]): train folds
         valid_folds (List[int], optional): valid folds.
             If none takes all folds not included in ``train_folds``
         infer_folds (List[int], optional): infer folds.
             If none takes all folds not included in ``train_folds``
             and ``valid_folds``
-        seed (int): seed for split
-        n_folds (int): number of folds
+        seed: seed for split
+        n_folds: number of folds
 
-        in_csv_train (str): paths to train csv separated by commas
-        in_csv_valid (str): paths to valid csv separated by commas
-        in_csv_infer (str): paths to infer csv separated by commas
+        in_csv_train: paths to train csv separated by commas
+        in_csv_valid: paths to valid csv separated by commas
+        in_csv_infer: paths to infer csv separated by commas
 
         tag2class (Dict[str, int]): mapping from label names into ints
-        tag_column (str): column with label names
-        class_column (str): column to use for split
+        tag_column: column with label names
+        class_column: column to use for split
 
     Returns:
         Tuple[pd.DataFrame, List[dict], List[dict], List[dict]]:
@@ -528,7 +528,7 @@ def balance_classes(
     Args:
         dataframe: a dataset
         class_column: which column to use for split
-        random_state (int): seed for random shuffle
+        random_state: seed for random shuffle
         how: strategy to sample, must be one on ["downsampling", "upsampling"]
 
     Returns:

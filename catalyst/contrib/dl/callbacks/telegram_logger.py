@@ -29,16 +29,16 @@ class TelegramLogger(Callback):
     ):
         """
         Args:
-            token (str): telegram bot's token,
+            token: telegram bot's token,
                 see https://core.telegram.org/bots
-            chat_id (str): Chat unique identifier
+            chat_id: Chat unique identifier
             metric_names: List of metric names to log.
                 if none - logs everything.
-            log_on_stage_start (bool): send notification on stage start
-            log_on_loader_start (bool): send notification on loader start
-            log_on_loader_end (bool): send notification on loader end
-            log_on_stage_end (bool): send notification on stage end
-            log_on_exception (bool): send notification on exception
+            log_on_stage_start: send notification on stage start
+            log_on_loader_start: send notification on loader start
+            log_on_loader_end: send notification on loader end
+            log_on_stage_end: send notification on stage end
+            log_on_exception: send notification on exception
         """
         super().__init__(order=CallbackOrder.logging, node=CallbackNode.master)
         # @TODO: replace this logic with global catalyst config at ~/.catalyst

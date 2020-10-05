@@ -67,7 +67,7 @@ class ContrastiveDistanceLoss(nn.Module):
         """
         Args:
             margin: margin parameter
-            reduction (str): criterion reduction type
+            reduction: criterion reduction type
         """
         super().__init__()
         self.margin = margin

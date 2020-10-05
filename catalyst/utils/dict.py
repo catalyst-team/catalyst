@@ -148,7 +148,7 @@ def flatten_dict(
     """Make the given dictionary flatten.
 
     Args:
-        dictionary (dict): giving dictionary
+        dictionary: giving dictionary
         parent_key (str, optional): prefix nested keys with
             string ``parent_key``
         separator (str, optional): delimiter between

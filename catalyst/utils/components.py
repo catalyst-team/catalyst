@@ -37,10 +37,10 @@ def process_components(
     Returns the processed model, criterion, optimizer, scheduler and device.
 
     Args:
-        model (Model): torch model
-        criterion (Criterion): criterion function
-        optimizer (Optimizer): optimizer
-        scheduler (Scheduler): scheduler
+        model: torch model
+        criterion: criterion function
+        optimizer: optimizer
+        scheduler: scheduler
         distributed_params (dict, optional): dict with the parameters
             for distributed and FP16 method
         device (Device, optional): device
