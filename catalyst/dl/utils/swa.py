@@ -45,12 +45,15 @@ def load_weight(path: str) -> dict:
     return weights
 
 
-def generate_averaged_weights(logdir: Path, models_mask: str) -> OrderedDict:
+def generate_averaged_weights(
+    logdir: Path, models_mask: str, save_path: Path
+) -> OrderedDict:
     """
     Averaging of input weights and saving them.
     Args:
         logdir (Path): Path to logs directory
         models_mask (str): globe-like pattern for models to average
+        save_path (Path): Path to save averaged model
     Returns:
         Averaged weights
     """
@@ -63,6 +66,6 @@ def generate_averaged_weights(logdir: Path, models_mask: str) -> OrderedDict:
     all_weights = [load_weight(path) for path in models_pathes]
     averaged_dict = average_weights(all_weights)
 
-    torch.save(averaged_dict, str(logdir / "checkpoints" / "swa_weights.pth"))
+    torch.save(averaged_dict, str(save_path / "swa_weights.pth"))
 
     return averaged_dict
