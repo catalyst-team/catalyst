@@ -46,7 +46,7 @@ class BertClassifier(nn.Module):
         """Compute class probabilities for the input sequence.
 
         Args:
-            features (torch.Tensor): ids of each token,
+            features: ids of each token,
                 size ([bs, seq_length]
             attention_mask (torch.Tensor, optional): binary tensor,
                 used to select tokens which are used to compute attention

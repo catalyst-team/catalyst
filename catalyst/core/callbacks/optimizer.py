@@ -127,7 +127,7 @@ class OptimizerCallback(IOptimizerCallback):
 
         Args:
             optimizer: the optimizer
-            optimizer_wds (List[float]): list of weight decay parameters
+            optimizer_wds: list of weight decay parameters
                 for each param group
             grad_clip_fn: function for gradient clipping
         """

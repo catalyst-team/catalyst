@@ -23,7 +23,7 @@ def import_module(expdir: Union[str, pathlib.Path]):
     Imports python module by path.
 
     Args:
-        expdir (pathlib.Path): path to python module.
+        expdir: path to python module.
 
     Returns:
         Imported module.
@@ -50,7 +50,7 @@ def prepare_config_api_components(expdir: pathlib.Path, config: Dict):
     and ``config`` - experiment config.
 
     Args:
-        expdir (pathlib.Path): experiment directory path
+        expdir: experiment directory path
         config: dictionary with experiment Config
 
     Returns:
@@ -119,8 +119,8 @@ def dump_python_files(src: pathlib.Path, dst: pathlib.Path) -> None:
     Dumps python code (``*.py`` and ``*.ipynb``) files.
 
     Args:
-        src (pathlib.Path): source code path
-        dst (pathlib.Path): destination code path
+        src: source code path
+        dst: destination code path
     """
     py_files = list(src.glob("*.py"))
     ipynb_files = list(src.glob("*.ipynb"))
@@ -136,8 +136,8 @@ def dump_experiment_code(src: pathlib.Path, dst: pathlib.Path) -> None:
     Dumps your experiment code for Config API use cases.
 
     Args:
-        src (pathlib.Path): source code path
-        dst (pathlib.Path): destination code path
+        src: source code path
+        dst: destination code path
     """
     utcnow = get_utcnow_time()
     dst = dst.joinpath("code")

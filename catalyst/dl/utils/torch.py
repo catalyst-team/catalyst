@@ -20,7 +20,7 @@ def get_loader(
     """Creates a DataLoader from given source and its open/transform params.
 
     Args:
-        data_source (Iterable[dict]): and iterable containing your
+        data_source: and iterable containing your
             data annotations,
             (for example path to images, labels, bboxes, etc)
         open_fn: function, that can open your

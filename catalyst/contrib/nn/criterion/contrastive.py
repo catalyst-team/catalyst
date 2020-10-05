@@ -32,8 +32,8 @@ class ContrastiveEmbeddingLoss(nn.Module):
         """Forward propagation method for the contrastive loss.
 
         Args:
-            embeddings_left (torch.Tensor): left objects embeddings
-            embeddings_right (torch.Tensor): right objects embeddings
+            embeddings_left: left objects embeddings
+            embeddings_right: right objects embeddings
             distance_true: true distances
 
         Returns:

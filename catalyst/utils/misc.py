@@ -112,7 +112,7 @@ def get_fn_default_params(fn: Callable[..., Any], exclude: List[str] = None):
 
     Args:
         fn (Callable[..., Any]): target Callable
-        exclude (List[str]): exclude list of parameters
+        exclude: exclude list of parameters
 
     Returns:
         dict: contains default parameters of `fn`
@@ -132,7 +132,7 @@ def get_fn_argsnames(fn: Callable[..., Any], exclude: List[str] = None):
 
     Args:
         fn (Callable[..., Any]): target Callable
-        exclude (List[str]): exclude list of parameters
+        exclude: exclude list of parameters
 
     Returns:
         list: contains parameter names of `fn`

@@ -17,7 +17,7 @@ class ImageReader(ReaderSpec):
         """
         Args:
             input_key: key to use from annotation dict
-            output_key (Optional[str]): key to use to store the result,
+            output_key: key to use to store the result,
                 default: ``input_key``
             rootpath: path to images dataset root directory
                 (so your can use relative paths in annotations)
@@ -60,7 +60,7 @@ class MaskReader(ReaderSpec):
         """
         Args:
             input_key: key to use from annotation dict
-            output_key (Optional[str]): key to use to store the result,
+            output_key: key to use to store the result,
                 default: ``input_key``
             rootpath: path to images dataset root directory
                 (so your can use relative paths in annotations)

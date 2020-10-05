@@ -28,7 +28,7 @@ class PrecisionRecallF1ScoreCallback(MeterMetricsCallback):
                 specifies our ``y_true``
             output_key: output key to use for metric calculation;
                 specifies our ``y_pred``
-            class_names (List[str]): class names to display in the logs.
+            class_names: class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0.
             num_classes: Number of classes; must be > 1
             threshold: threshold for outputs binarization

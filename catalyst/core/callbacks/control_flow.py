@@ -14,7 +14,7 @@ def _filter_fn_from_epochs(
     """Build ``filter_fn`` from epochs for ``ControlFlowCallback``
 
     Args:
-        epochs (int/Sequence[int]): epochs description
+        epochs: epochs description
         reverse_condition: indicator to use reversed
             condition in filter function
 
@@ -240,7 +240,7 @@ class ControlFlowCallback(WrapperCallback):
         """
         Args:
             base_callback: callback to wrap
-            epochs (int/Sequence[int]): epochs where
+            epochs: epochs where
                 need to **enable** callback, on other epochs
                 callback will be disabled.
 
@@ -253,7 +253,7 @@ class ControlFlowCallback(WrapperCallback):
                 on specified epochs.
 
                 Default value is ``None``.
-            ignore_epochs: (int/Sequence[int]): epochs where
+            ignore_epochs:: epochs where
                 need to **disable** callback, on other epochs
                 callback will be enabled.
 

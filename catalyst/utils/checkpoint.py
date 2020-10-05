@@ -56,7 +56,7 @@ def unpack_checkpoint(
 
     Args:
         checkpoint: checkpoint to load
-        model (torch.nn.Module): model where should be updated state
+        model: model where should be updated state
         criterion: criterion where should be updated state
         optimizer: optimizer where should be updated state
         scheduler: scheduler where should be updated state
@@ -99,7 +99,7 @@ def save_checkpoint(
 
     Args:
         checkpoint: data to save.
-        logdir (Path/str): directory where checkpoint
+        logdir: directory where checkpoint
             should be stored.
         suffix: checkpoint file name.
         is_best: if ``True`` then also

@@ -185,7 +185,7 @@ def process_model_params(
     """Gains model parameters for ``torch.optim.Optimizer``.
 
     Args:
-        model (torch.nn.Module): Model to process
+        model: Model to process
         layerwise_params: Order-sensitive dict where
             each key is regex pattern and values are layer-wise options
             for layers matching with a pattern
@@ -241,7 +241,7 @@ def get_requires_grad(model: Model):
         >>> requires_grad = get_requires_grad(model)
 
     Args:
-        model (torch.nn.Module): model
+        model: model
 
     Returns:
         requires_grad (Dict[str, bool]): value
@@ -266,7 +266,7 @@ def set_requires_grad(
         >>> set_requires_grad(model, requires_grad={""})
 
     Args:
-        model (torch.nn.Module): model
+        model: model
         requires_grad (Union[bool, Dict[str, bool]]): value
     """
     if isinstance(requires_grad, dict):
@@ -344,7 +344,7 @@ def trim_tensors(tensors):
     Adapted from `Dynamic minibatch trimming to improve BERT training speed`_.
 
     Args:
-        tensors ([torch.tensor]): list of tensors to trim.
+        tensors: list of tensors to trim.
 
     Returns:
         List[torch.tensor]: list of trimmed tensors.

@@ -55,7 +55,7 @@ class AlchemyLogger(Callback):
     ):
         """
         Args:
-            metric_names (List[str]): list of metric names to log,
+            metric_names: list of metric names to log,
                 if none - logs everything
             log_on_batch_end: logs per-batch metrics if set True
             log_on_epoch_end: logs per-epoch metrics if set True

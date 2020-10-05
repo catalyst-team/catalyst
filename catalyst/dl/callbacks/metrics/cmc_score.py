@@ -48,7 +48,7 @@ class CMCScoreCallback(Callback):
             is_query_key: bool key True if current
                 object is from query
             prefix: key for the metric's name
-            topk_args (List[int]): specifies which cmc@K to log.
+            topk_args: specifies which cmc@K to log.
                 [1] - cmc@1
                 [1, 3] - cmc@1 and cmc@3
                 [1, 3, 5] - cmc@1, cmc@3 and cmc@5

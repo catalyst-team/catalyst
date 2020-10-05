@@ -18,7 +18,7 @@ def boolean_flag(
         >>> )
 
     Args:
-        parser (argparse.ArgumentParser): parser to add the flag to
+        parser: parser to add the flag to
         name: argument name
             --<name> will enable the flag,
             while --no-<name> will disable it

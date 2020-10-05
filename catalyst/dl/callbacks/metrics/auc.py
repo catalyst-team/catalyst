@@ -29,7 +29,7 @@ class AUCCallback(LoaderMetricCallback):
                 specifies our ``y_pred``.
             prefix: metric's name.
             multiplier: scale factor for the metric.
-            class_args (List[str]): class names to display in the logs.
+            class_args: class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0
         """
         super().__init__(

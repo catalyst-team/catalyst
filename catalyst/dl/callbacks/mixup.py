@@ -34,7 +34,7 @@ class MixupCallback(CriterionCallback):
     ):
         """
         Args:
-            fields (List[str]): list of features which must be affected.
+            fields: list of features which must be affected.
             alpha: beta distribution a=b parameters.
                 Must be >=0. The more alpha closer to zero
                 the less effect of the mixup.

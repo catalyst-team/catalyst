@@ -140,7 +140,7 @@ class Callback:
         """Event handler for stage start.
 
         Args:
-            runner ("IRunner"): IRunner instance.
+            runner: IRunner instance.
         """
         pass
 
@@ -148,7 +148,7 @@ class Callback:
         """Event handler for stage end.
 
         Args:
-            runner ("IRunner"): IRunner instance.
+            runner: IRunner instance.
         """
         pass
 
@@ -156,7 +156,7 @@ class Callback:
         """Event handler for epoch start.
 
         Args:
-            runner ("IRunner"): IRunner instance.
+            runner: IRunner instance.
         """
         pass
 
@@ -164,7 +164,7 @@ class Callback:
         """Event handler for epoch end.
 
         Args:
-            runner ("IRunner"): IRunner instance.
+            runner: IRunner instance.
         """
         pass
 
@@ -172,7 +172,7 @@ class Callback:
         """Event handler for loader start.
 
         Args:
-            runner ("IRunner"): IRunner instance.
+            runner: IRunner instance.
         """
         pass
 
@@ -180,7 +180,7 @@ class Callback:
         """Event handler for loader end.
 
         Args:
-            runner ("IRunner"): IRunner instance.
+            runner: IRunner instance.
         """
         pass
 
@@ -188,7 +188,7 @@ class Callback:
         """Event handler for batch start.
 
         Args:
-            runner ("IRunner"): IRunner instance.
+            runner: IRunner instance.
         """
         pass
 
@@ -196,7 +196,7 @@ class Callback:
         """Event handler for batch end.
 
         Args:
-            runner ("IRunner"): IRunner instance.
+            runner: IRunner instance.
         """
         pass
 
@@ -204,7 +204,7 @@ class Callback:
         """Event handler for exception case.
 
         Args:
-            runner ("IRunner"): IRunner instance.
+            runner: IRunner instance.
         """
         pass
 

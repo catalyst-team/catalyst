@@ -14,14 +14,14 @@ def preprocess_multi_label_metrics(
     General preprocessing and check for multi-label-based metrics.
 
     Args:
-        outputs (torch.Tensor): NxK tensor that for each of the N examples
+        outputs: NxK tensor that for each of the N examples
             indicates the probability of the example belonging to each of
             the K classes, according to the model.
-        targets (torch.Tensor): binary NxK tensor that encodes which of the K
+        targets: binary NxK tensor that encodes which of the K
             classes are associated with the N-th input
             (eg: a row [0, 1, 0, 1] indicates that the example is
             associated with classes 2 and 4)
-        weights (torch.Tensor): importance for each sample
+        weights: importance for each sample
 
     Returns:
         processed ``outputs`` and ``targets``
@@ -111,7 +111,7 @@ def wrap_class_metric2dict(
 
     Args:
         metric_fn: metric function to compute
-        class_args (Sequence[str]): class names for logging.
+        class_args: class names for logging.
             default: None - class indexes will be used.
 
     Returns:
@@ -145,7 +145,7 @@ def wrap_topk_metric2dict(
 
     Args:
         metric_fn: metric function to compute
-        topk_args (Sequence[int]): topk args to sync outputs with
+        topk_args: topk args to sync outputs with
 
     Returns:
        wrapped metric function with List[Dict] output

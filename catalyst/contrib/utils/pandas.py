@@ -190,7 +190,7 @@ def map_dataframe(
     ``class_column`` using ``tag2class`` dictionary.
 
     Args:
-        dataframe (pd.DataFrame): input dataframe
+        dataframe: input dataframe
         tag_column: column with tags
         class_column (str) output column with classes
         tag2class (Dict[str, int]): mapping from tags to class labels
@@ -278,8 +278,8 @@ def split_dataframe(
     """Split a Pandas DataFrame into folds.
 
     Args:
-        dataframe (pd.DataFrame): input dataframe
-        train_folds (List[int]): train folds
+        dataframe: input dataframe
+        train_folds: train folds
         valid_folds (List[int], optional): valid folds.
             If none takes all folds not included in ``train_folds``
         infer_folds (List[int], optional): infer folds.
@@ -440,7 +440,7 @@ def read_csv_data(
 
     Args:
         in_csv: paths to whole dataset
-        train_folds (List[int]): train folds
+        train_folds: train folds
         valid_folds (List[int], optional): valid folds.
             If none takes all folds not included in ``train_folds``
         infer_folds (List[int], optional): infer folds.

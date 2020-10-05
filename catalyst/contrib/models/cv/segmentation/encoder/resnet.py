@@ -62,7 +62,7 @@ class ResnetEncoder(EncoderSpec):
             pretrained: If True, returns a model pre-trained on ImageNet
             requires_grad: Flag for set_requires_grad.
                 If None, calculates as ``not requires_grad``
-            layers_indices (List[int]): layers of encoders
+            layers_indices: layers of encoders
                 used for segmentation
                 If None, calculates as ``[1, 2, 3, 4]``
             state_dict (Union[dict, str, Path]): Path to ``torch.Model``

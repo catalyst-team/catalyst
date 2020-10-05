@@ -32,7 +32,7 @@ def tensor_to_ndimage(
     when dtype is `np.uint8`.
 
     Args:
-        images (torch.Tensor): [B]xCxHxW float tensor
+        images: [B]xCxHxW float tensor
         denormalize: if True, multiply image(s) by std and add mean
         mean (Tuple[float, float, float]): per channel mean to add
         std (Tuple[float, float, float]): per channel std to multiply

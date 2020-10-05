@@ -19,7 +19,7 @@ class TextClassificationDataset(Dataset):
     ):
         """
         Args:
-            texts (List[str]): a list with texts to classify or to train the
+            texts: a list with texts to classify or to train the
                 classifier on
             labels List[str]: a list with classification labels (optional)
             label_dict: a dictionary mapping class names to class ids,

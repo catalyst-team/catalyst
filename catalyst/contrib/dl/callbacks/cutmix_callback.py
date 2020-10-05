@@ -31,7 +31,7 @@ class CutmixCallback(CriterionCallback):
     ):
         """
         Args:
-            fields (List[str]): list of features which must be affected.
+            fields: list of features which must be affected.
             alpha: beta distribution parameter.
             on_train_only: Apply to train only.
                 So, if on_train_only is True, use a standard output/metric

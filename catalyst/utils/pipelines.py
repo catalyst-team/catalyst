@@ -22,7 +22,7 @@ def clone_pipeline(template: str, out_dir: Path) -> None:
     Args:
         template: type of pipeline you want to clone.
             empty/classification/segmentation
-        out_dir (pathlib.Path): path where pipeline directory should be cloned
+        out_dir: path where pipeline directory should be cloned
     """
     if template == "empty" or template is None:
         copy_directory(PATH_TO_TEMPLATE, out_dir)

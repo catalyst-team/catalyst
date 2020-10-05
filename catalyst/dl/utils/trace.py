@@ -40,7 +40,7 @@ def _get_input_argnames(
 
     Args:
         fn (Callable[..., Any]): Function to get argument names from
-        exclude (List[str]): List of string of names to exclude
+        exclude: List of string of names to exclude
 
     Returns:
         List[str]: List of input argument names

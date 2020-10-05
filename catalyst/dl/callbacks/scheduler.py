@@ -29,7 +29,7 @@ class LRFinder(LRUpdater):
         Args:
             final_lr: final learning rate to try with
             scale: learning rate increasing scale ("log" or "linear")
-            num_steps (Optional[int]):  number of batches to try;
+            num_steps:  number of batches to try;
                 if None - whole loader would be used.
             optimizer_key: which optimizer key to use
                 for learning rate scheduling

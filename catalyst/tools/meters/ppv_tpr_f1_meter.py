@@ -95,9 +95,9 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
         false positives, and false negatives in comparison to the target.
 
         Args:
-            output (torch.Tensor): prediction after activation function
+            output: prediction after activation function
                 shape should be (batch_size, ...), but works with any shape
-            target (torch.Tensor): label (binary),
+            target: label (binary),
                 shape should be the same as output's shape
         """
         output = (output > self.threshold).float()

@@ -28,7 +28,7 @@ class _TracedNet(nn.Module):
     def __init__(self, input_shape: Tuple[int]):
         """
         Args:
-            input_shape (Tuple[int]): Shape of input tensor.
+            input_shape: Shape of input tensor.
         """
         super().__init__()
         assert len(input_shape) == 3
@@ -53,7 +53,7 @@ class _TracedNet(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Args:
-            x (torch.Tensor): Input tensor
+            x: Input tensor
 
         Returns:
             torch.Tensor: Output tensor
@@ -77,9 +77,9 @@ class _TracedNet(nn.Module):
         to understand the shape for dense layer's input.
 
         Args:
-            size (Tuple[int]): size of input.
-            kernel_size (Tuple[int]): size of convolution kernel.
-            stride (Tuple[int]): size of convolution stride.
+            size: size of input.
+            kernel_size: size of convolution kernel.
+            stride: size of convolution stride.
 
         Returns:
             Tuple[int, int]: output size
@@ -137,7 +137,7 @@ class _OnStageEndCheckModelTracedCallback(Callback):
         """
         Args:
             path (Union[str, Path]): Path to traced model.
-            inputs (torch.Tensor): Input samples.
+            inputs: Input samples.
         """
         super().__init__(CallbackOrder.external)
         self.path: Path = Path(path)

@@ -21,7 +21,7 @@ class ListDataset(Dataset):
     ):
         """
         Args:
-            list_data (List[Dict]): list of dicts, that stores
+            list_data: list of dicts, that stores
                 you data annotations,
                 (for example path to images, labels, bboxes, etc.)
             open_fn: function, that can open your
@@ -68,7 +68,7 @@ class MergeDataset(Dataset):
     ):
         """
         Args:
-            datasets (List[Dataset]): params count of datasets to merge
+            datasets: params count of datasets to merge
             dict_transform: transforms common for all datasets.
                 (for example normalize image, add blur, crop/resize/etc)
         """
@@ -115,7 +115,7 @@ class NumpyDataset(Dataset):
         General purpose dataset class to use with `numpy_data`.
 
         Args:
-            numpy_data (np.ndarray): numpy data
+            numpy_data: numpy data
               (for example path to embeddings, features, etc.)
             numpy_key: key to use for output dictionary
             dict_transform: transforms to use on dict.
@@ -173,7 +173,7 @@ class PathsDataset(ListDataset):
     ):
         """
         Args:
-            filenames (List[str]): list of file paths that store information
+            filenames: list of file paths that store information
                 about your dataset samples; it could be images, texts or
                 any other files in general.
             open_fn: function, that can open your

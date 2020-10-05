@@ -24,7 +24,7 @@ class BalanceClassSampler(Sampler):
     ):
         """
         Args:
-            labels (List[int]): list of class label
+            labels: list of class label
                 for each elem in the dataset
             mode: Strategy to balance classes.
                 Must be one of [downsampling, upsampling]
@@ -298,7 +298,7 @@ class DynamicLenBatchSampler(BatchSampler):
     Adapted from `Dynamic minibatch trimming to improve BERT training speed`_.
 
     Args:
-        sampler (torch.utils.data.Sampler): Base sampler.
+        sampler: Base sampler.
         batch_size: Size of minibatch.
         drop_last: If ``True``, the sampler will drop the last batch
         if its size would be less than ``batch_size``.

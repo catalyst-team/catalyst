@@ -175,8 +175,8 @@ def mask_to_overlay_image(
     """Draws every mask for with some color over image.
 
     Args:
-        image (np.ndarray): RGB image used as underlay for masks
-        masks (List[np.ndarray]): list of masks
+        image: RGB image used as underlay for masks
+        masks: list of masks
         threshold: threshold for masks binarization
         mask_strength: opacity of colorized masks
 

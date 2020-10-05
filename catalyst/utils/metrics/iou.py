@@ -22,9 +22,9 @@ def iou(
 ) -> torch.Tensor:
     """
     Args:
-        outputs (torch.Tensor): A list of predicted elements
-        targets (torch.Tensor):  A list of elements that are to be predicted
-        classes (List[str]): if classes are specified
+        outputs: A list of predicted elements
+        targets:  A list of elements that are to be predicted
+        classes: if classes are specified
             we reduce across all dims except channels
         eps: epsilon to avoid zero division
         threshold: threshold for outputs binarization

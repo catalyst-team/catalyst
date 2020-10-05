@@ -52,7 +52,7 @@ class SoftMax(nn.Module):
     def forward(self, input):
         """
         Args:
-            input (torch.Tensor): input features,
+            input: input features,
                 expected shapes ``BxF`` where ``B``
                 is batch dimension and ``F`` is an
                 input feature dimension.

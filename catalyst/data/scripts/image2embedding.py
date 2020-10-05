@@ -29,9 +29,9 @@ def normalize(
     """Normalize a tensor image with mean and standard deviation.
 
     Args:
-        tensor (torch.Tensor): Tensor image of size (C, H, W) to be normalized
-        mean (Sequence[float]): Sequence of means for each channel
-        std (Sequence[float]): Sequence of standard deviations for each channel
+        tensor: Tensor image of size (C, H, W) to be normalized
+        mean: Sequence of means for each channel
+        std: Sequence of standard deviations for each channel
 
     Returns:
         torch.Tensor: Normalized Tensor image

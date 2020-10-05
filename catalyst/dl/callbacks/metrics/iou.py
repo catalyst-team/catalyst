@@ -68,7 +68,7 @@ class ClasswiseIouCallback(BatchMetricCallback):
             output_key: output key to use for iou calculation;
                 specifies our ``y_pred``
             prefix: key to store in logs (will be prefix_class_name)
-            classes (List[str]): list of class names
+            classes: list of class names
                 You should specify either 'classes' or 'num_classes'
             num_classes: number of classes
                 You should specify either 'classes' or 'num_classes'
