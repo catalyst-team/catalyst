@@ -205,8 +205,12 @@ class TensorboardLogger(ILoggerCallback):
                     f"{name}{suffix}", metrics[name], step
                 )
 
-    def on_stage_start(self, runner: IRunner):
-        """@TODO: Docs. Contribution is welcome."""
+    def on_stage_start(self, runner: IRunner) -> None:
+        """Stage start hook. Check ``logdir`` correctness.
+
+        Args:
+            runner: current runner
+        """
         assert runner.logdir is not None
 
         extra_mode = "_base"

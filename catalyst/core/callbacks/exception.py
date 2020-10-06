@@ -4,16 +4,23 @@ from catalyst.core.runner import IRunner
 
 
 class ExceptionCallback(Callback):
-    """@TODO: Docs. Contribution is welcome."""
+    """Handles python exceptions during run."""
 
     def __init__(self):
-        """@TODO: Docs. Contribution is welcome."""
+        """Initialisation for ExceptionCallback."""
         super().__init__(
             order=CallbackOrder.external + 1, node=CallbackNode.all
         )
 
-    def on_exception(self, runner: IRunner):
-        """@TODO: Docs. Contribution is welcome."""
+    def on_exception(self, runner: IRunner) -> None:
+        """Exception handle hook.
+
+        Args:
+            runner: experiment runner
+
+        Raises:
+            Exception
+        """
         exception = runner.exception
         if not utils.is_exception(exception):
             return

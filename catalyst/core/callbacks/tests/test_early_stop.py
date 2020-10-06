@@ -4,7 +4,7 @@ from catalyst.core import EarlyStoppingCallback
 
 
 def test_patience1():
-    """@TODO: Docs. Contribution is welcome."""
+    """Tests EarlyStoppingCallback."""
     early_stop = EarlyStoppingCallback(1)
     runner = MagicMock()
     type(runner).stage_name = PropertyMock(return_value="training")

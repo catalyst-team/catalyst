@@ -58,7 +58,7 @@ class LRFinder(LRUpdater):
         return self.init_lr + self.lr_step * self.find_iter
 
     def calc_lr(self):
-        """Calculates learning reate.
+        """Calculates learning rate.
 
         Returns:
             learning rate.
@@ -68,11 +68,11 @@ class LRFinder(LRUpdater):
         return res
 
     def calc_momentum(self):
-        """@TODO: Docs. Contribution is welcome."""
+        """Calculates new momentum."""
         pass
 
     def on_loader_start(self, runner: IRunner):
-        """@TODO: Docs. Contribution is welcome.
+        """Loader start hook. Updates scheduler statistics.
 
         Args:
             runner: current runner
@@ -86,7 +86,7 @@ class LRFinder(LRUpdater):
         super().on_loader_start(runner=runner)
 
     def on_batch_end(self, runner: IRunner):
-        """@TODO: Docs. Contribution is welcome.
+        """Batch end hook. Make scheduler step and stops iterating if needed.
 
         Args:
             runner: current runner

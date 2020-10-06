@@ -12,31 +12,42 @@ from catalyst.tools import meters
 
 
 class ConfusionMatrixCallback(Callback):
-    """@TODO: Docs. Contribution is welcome."""
+    """Callback to plot your confusion matrix to the Tensorboard.
+
+    Args:
+        input_key: key to use from ``runner.input``, specifies our ``y_true``
+        output_key: key to use from ``runner.output``, specifies our ``y_pred``
+        prefix: tensorboard plot name
+        mode: Strategy to compute confusion matrix.
+            Must be one of [tnt, sklearn]
+        class_names: list with class names
+        num_classes: number of classes
+        plot_params: extra params for plt.figure rendering
+        tensorboard_callback_name: name of the tensorboard logger callback
+    """
 
     def __init__(
         self,
         input_key: str = "targets",
         output_key: str = "logits",
         prefix: str = "confusion_matrix",
-        version: str = "tnt",
+        mode: str = "tnt",
         class_names: List[str] = None,
         num_classes: int = None,
         plot_params: Dict = None,
         tensorboard_callback_name: str = "_tensorboard",
+        version: str = None,
     ):
-        """
-        Args:
-            @TODO: Docs. Contribution is welcome
-        """
+        """Callback initialisation."""
         super().__init__(CallbackOrder.metric, CallbackNode.all)
         self.prefix = prefix
         self.output_key = output_key
         self.input_key = input_key
         self.tensorboard_callback_name = tensorboard_callback_name
 
-        assert version in ["tnt", "sklearn"]
-        self._version = version
+        assert mode in ["tnt", "sklearn"]
+        assert version in [None, "tnt", "sklearn"]
+        self._mode = version or mode
         self._plot_params = plot_params or {}
 
         self.class_names = class_names
@@ -48,16 +59,16 @@ class ConfusionMatrixCallback(Callback):
         self._reset_stats()
 
     def _reset_stats(self):
-        if self._version == "tnt":
+        if self._mode == "tnt":
             self.confusion_matrix = meters.ConfusionMeter(self.num_classes)
-        elif self._version == "sklearn":
+        elif self._mode == "sklearn":
             self.outputs = []
             self.targets = []
 
     def _add_to_stats(self, outputs, targets):
-        if self._version == "tnt":
+        if self._mode == "tnt":
             self.confusion_matrix.add(predicted=outputs, target=targets)
-        elif self._version == "sklearn":
+        elif self._mode == "sklearn":
             outputs = outputs.cpu().numpy()
             targets = targets.cpu().numpy()
 
@@ -67,9 +78,9 @@ class ConfusionMatrixCallback(Callback):
             self.targets.extend(targets)
 
     def _compute_confusion_matrix(self):
-        if self._version == "tnt":
+        if self._mode == "tnt":
             confusion_matrix = self.confusion_matrix.value()
-        elif self._version == "sklearn":
+        elif self._mode == "sklearn":
             confusion_matrix = confusion_matrix_fn(
                 y_true=self.targets, y_pred=self.outputs
             )

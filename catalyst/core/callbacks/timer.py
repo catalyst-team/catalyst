@@ -9,7 +9,7 @@ class TimerCallback(Callback):
     """Logs pipeline execution time."""
 
     def __init__(self):
-        """@TODO: Docs. Contribution is welcome."""
+        """Initialisation for TimerCallback."""
         super().__init__(order=CallbackOrder.metric + 1, node=CallbackNode.all)
         self.timer = TimeManager()
 

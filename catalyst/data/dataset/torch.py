@@ -201,13 +201,14 @@ class PathsDataset(ListDataset):
 
 
 class DatasetFromSampler(Dataset):
-    """Dataset of indexes from `Sampler`."""
+    """Dataset to create indexes from `Sampler`.
+
+    Args:
+        sampler: PyTorch sampler
+    """
 
     def __init__(self, sampler: Sampler):
-        """
-        Args:
-            sampler: @TODO: Docs. Contribution is welcome
-        """
+        """Initialisation for DatasetFromSampler."""
         self.sampler = sampler
         self.sampler_list = None
 

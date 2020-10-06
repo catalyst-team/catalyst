@@ -14,21 +14,18 @@ from catalyst.data import DatasetFromSampler
 
 
 class BalanceClassSampler(Sampler):
-    """Abstraction over data sampler.
+    """Allows you to create stratified sample on unbalanced classes.
 
-    Allows you to create stratified sample on unbalanced classes.
+    Args:
+        labels: list of class label for each elem in the dataset
+        mode: Strategy to balance classes.
+            Must be one of [downsampling, upsampling]
     """
 
     def __init__(
         self, labels: List[int], mode: Union[str, int] = "downsampling"
     ):
-        """
-        Args:
-            labels: list of class label
-                for each elem in the dataset
-            mode: Strategy to balance classes.
-                Must be one of [downsampling, upsampling]
-        """
+        """Sampler initialisation."""
         super().__init__(labels)
 
         labels = np.array(labels)
@@ -113,17 +110,17 @@ class BalanceBatchSampler(Sampler):
     where P equals 32 and K equals 4:
     `In Defense of the Triplet Loss for Person Re-Identification`_.
 
+    Args:
+        labels: list of classes labeles for each elem in the dataset
+        p: number of classes in a batch, should be > 1
+        k: number of instances of each class in a batch, should be > 1
+
     .. _In Defense of the Triplet Loss for Person Re-Identification:
         https://arxiv.org/abs/1703.07737
     """
 
     def __init__(self, labels: Union[List[int], np.ndarray], p: int, k: int):
-        """
-        Args:
-            labels: list of classes labeles for each elem in the dataset
-            p: number of classes in a batch, should be > 1
-            k: number of instances of each class in a batch, should be > 1
-        """
+        """Sampler initialisation."""
         super().__init__(self)
         classes = set(labels)
 
@@ -199,6 +196,18 @@ class MiniEpochSampler(Sampler):
     """
     Sampler iterates mini epochs from the dataset used by ``mini_epoch_len``.
 
+    Args:
+        data_len: Size of the dataset
+        mini_epoch_len: Num samples from the dataset used in one
+          mini epoch.
+        drop_last: If ``True``, sampler will drop the last batches
+          if its size would be less than ``batches_per_epoch``
+        shuffle: one of  ``"always"``, ``"real_epoch"``, or `None``.
+          The sampler will shuffle indices
+          > "per_mini_epoch" - every mini epoch (every ``__iter__`` call)
+          > "per_epoch" -- every real epoch
+          > None -- don't shuffle
+
     Example:
         >>> MiniEpochSampler(len(dataset), mini_epoch_len=100)
         >>> MiniEpochSampler(len(dataset), mini_epoch_len=100, drop_last=True)
@@ -213,19 +222,7 @@ class MiniEpochSampler(Sampler):
         drop_last: bool = False,
         shuffle: str = None,
     ):
-        """
-        Args:
-            data_len: Size of the dataset
-            mini_epoch_len: Num samples from the dataset used in one
-              mini epoch.
-            drop_last: If ``True``, sampler will drop the last batches
-              if its size would be less than ``batches_per_epoch``
-            shuffle: one of  ``"always"``, ``"real_epoch"``, or `None``.
-              The sampler will shuffle indices
-              > "per_mini_epoch" - every mini epoch (every ``__iter__`` call)
-              > "per_epoch" -- every real epoch
-              > None -- don't shuffle
-        """
+        """Sampler initialisation."""
         super().__init__(None)
 
         self.data_len = int(data_len)
@@ -254,7 +251,7 @@ class MiniEpochSampler(Sampler):
         self.shuffle_type = shuffle
 
     def shuffle(self) -> None:
-        """@TODO: Docs. Contribution is welcome."""
+        """Shuffle sampler indices."""
         if self.shuffle_type == "per_mini_epoch" or (
             self.shuffle_type == "per_epoch" and self.state_i == 0
         ):
@@ -267,7 +264,11 @@ class MiniEpochSampler(Sampler):
                 )
 
     def __iter__(self) -> Iterator[int]:
-        """@TODO: Docs. Contribution is welcome."""
+        """Iterate over sampler.
+
+        Returns:
+            python iterator
+        """
         self.state_i = self.state_i % self.divider
         self.shuffle()
 

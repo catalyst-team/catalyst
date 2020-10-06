@@ -10,7 +10,7 @@ class ValidationManagerCallback(Callback):
     """
 
     def __init__(self):
-        """@TODO: Docs. Contribution is welcome."""
+        """Initialisation for ValidationManagerCallback."""
         super().__init__(
             order=CallbackOrder.validation, node=CallbackNode.all,
         )

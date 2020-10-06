@@ -151,9 +151,7 @@ def build_parser() -> ArgumentParser:
 
 
 def main():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """catalyst-data entry point."""
     parser = build_parser()
 
     args, uargs = parser.parse_known_args()
