@@ -173,7 +173,7 @@ def _experiments_loader(r: Registry):
     r.add(IExperiment)
     r.add(IStageBasedRunner)
 
-    from catalyst.dl import experiment as m  # noqa: WPS347
+    from catalyst import experiment as m
 
     r.add_from_module(m)
 
@@ -193,7 +193,7 @@ def _runners_loader(r: Registry):
     r.add(IRunner)
     r.add(IStageBasedRunner)
 
-    from catalyst.dl import runner as m  # noqa: WPS347
+    from catalyst import runner as m
 
     r.add_from_module(m)
 
@@ -216,7 +216,7 @@ def _callbacks_loader(r: Registry):
 
     r.add_from_module(m)
 
-    from catalyst.contrib.dl import callbacks as m  # noqa: WPS347
+    from catalyst.contrib import callbacks as m
 
     r.add_from_module(m)
 

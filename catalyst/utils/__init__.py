@@ -6,8 +6,6 @@ All utils are gathered in :py:mod:`catalyst.utils` for easier access.
     Everything from :py:mod:`catalyst.contrib.utils` is included in :py:mod:`catalyst.utils`
 """
 
-from catalyst.contrib.utils import *
-
 from catalyst.utils.checkpoint import (
     load_checkpoint,
     pack_checkpoint,
@@ -99,12 +97,12 @@ from catalyst.utils.torch import (
     detach,
     trim_tensors,
 )
-from catalyst.tools.settings import IS_PRUNING_AVAILABLE
+from catalyst.settings import IS_PRUNING_AVAILABLE
 
 if IS_PRUNING_AVAILABLE:
     from catalyst.utils.pruning import prune_model, remove_reparametrization
 
-from catalyst.tools.settings import IS_GIT_AVAILABLE
+from catalyst.settings import IS_GIT_AVAILABLE
 
 if IS_GIT_AVAILABLE:
     from catalyst.utils.pipelines import clone_pipeline

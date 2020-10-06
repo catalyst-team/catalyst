@@ -13,7 +13,7 @@ from catalyst.core.experiment import IExperiment
 from catalyst.core.legacy import IRunnerLegacy
 from catalyst.tools import settings
 from catalyst.tools.frozen_class import FrozenClass
-from catalyst.tools.typing import (
+from catalyst.typing import (
     Criterion,
     Device,
     Model,
@@ -913,7 +913,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
             for stage in self.experiment.stages:
                 self._run_stage(stage)
         except (Exception, KeyboardInterrupt) as ex:
-            from catalyst.core.callbacks.exception import ExceptionCallback
+            from catalyst.callbacks.exception import ExceptionCallback
 
             def _exception_handler_check(callbacks: Union[OrderedDict, Dict]):
                 return callbacks is not None and any(
