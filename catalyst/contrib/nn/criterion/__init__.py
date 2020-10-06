@@ -1,6 +1,5 @@
 # flake8: noqa
 
-from torch.nn.modules.loss import *
 from catalyst.contrib.nn.criterion.circle import CircleLoss
 from catalyst.contrib.nn.criterion.contrastive import (
     ContrastiveDistanceLoss,
@@ -12,7 +11,7 @@ from catalyst.contrib.nn.criterion.focal import (
     FocalLossBinary,
     FocalLossMultiClass,
 )
-from catalyst.contrib.criterion.gan import (
+from catalyst.contrib.nn.criterion.gan import (
     GradientPenaltyLoss,
     MeanOutputLoss,
 )
