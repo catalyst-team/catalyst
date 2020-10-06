@@ -11,10 +11,17 @@ def build_args(parser: ArgumentParser):
     """Builds the command line parameters."""
     parser.add_argument("--logdir", type=Path, help="Path to models logdir")
     parser.add_argument(
-        "--models_mask", "-m", type=str, help="Pattern for models to average"
+        "--models-mask",
+        "-m",
+        type=str,
+        default="train*",
+        help="Pattern for models to average",
     )
     parser.add_argument(
-        "--save_path", type=Path, help="Path to save averaged model"
+        "--output-path",
+        type=Path,
+        default="./swa.pth",
+        help="Path to save averaged model",
     )
 
     return parser
@@ -32,13 +39,11 @@ def main(args, _):
     """Main method for ``catalyst-dl swa``."""
     logdir: Path = args.logdir
     models_mask: str = args.models_mask
-    save_path: Path = args.save_path
+    output_path: Path = args.output_path
 
-    averaged_weights = generate_averaged_weights(
-        logdir, models_mask, save_path
-    )
+    averaged_weights = generate_averaged_weights(logdir, models_mask)
 
-    torch.save(averaged_weights, str(save_path / "swa_weights.pth"))
+    torch.save(averaged_weights, str(output_path))
 
 
 if __name__ == "__main__":
