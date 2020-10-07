@@ -1,13 +1,15 @@
 import os
 from pathlib import Path
 import shutil
+import sys
 import unittest
 
 import torch
 import torch.nn as nn
-import sys
-sys.path.append('.')
+
 from catalyst.dl.utils.swa import generate_averaged_weights
+
+sys.path.append(".")
 
 
 class Net(nn.Module):
@@ -26,8 +28,8 @@ class TestSwa(unittest.TestCase):
 
     def setUp(self):
         """Test set up."""
-        net1 = Net(init_weight=2.)
-        net2 = Net(init_weight=5.)
+        net1 = Net(init_weight=2.0)
+        net2 = Net(init_weight=5.0)
         os.mkdir("./checkpoints")
         torch.save(net1.state_dict(), "./checkpoints/net1.pth")
         torch.save(net2.state_dict(), "./checkpoints/net2.pth")
