@@ -1,13 +1,10 @@
 from typing import List
 from collections import OrderedDict
 import glob
-import logging
 import os
 from pathlib import Path
 
 import torch
-
-logger = logging.getLogger(__name__)
 
 
 def average_weights(state_dicts: List[dict]) -> OrderedDict:
@@ -24,7 +21,7 @@ def average_weights(state_dicts: List[dict]) -> OrderedDict:
 
     average_dict = OrderedDict()
     for k in state_dicts[0].keys():
-        average_dict[k] = torch.true_divide(
+        average_dict[k] = torch.div(
             sum(state_dict[k] for state_dict in state_dicts), len(state_dicts),
         )
     return average_dict

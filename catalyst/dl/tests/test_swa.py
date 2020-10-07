@@ -5,7 +5,8 @@ import unittest
 
 import torch
 import torch.nn as nn
-
+import sys
+sys.path.append('.')
 from catalyst.dl.utils.swa import generate_averaged_weights
 
 
@@ -25,8 +26,8 @@ class TestSwa(unittest.TestCase):
 
     def setUp(self):
         """Test set up."""
-        net1 = Net(init_weight=2)
-        net2 = Net(init_weight=4)
+        net1 = Net(init_weight=2.)
+        net2 = Net(init_weight=5.)
         os.mkdir("./checkpoints")
         torch.save(net1.state_dict(), "./checkpoints/net1.pth")
         torch.save(net2.state_dict(), "./checkpoints/net2.pth")
@@ -44,9 +45,9 @@ class TestSwa(unittest.TestCase):
         model = Net()
         model.load_state_dict(torch.load("./checkpoints/swa_weights.pth"))
 
-        self.assertEqual(int(model.fc.weight.data[0][0]), 3)
-        self.assertEqual(int(model.fc.weight.data[0][1]), 3)
-        self.assertEqual(int(model.fc.bias.data[0]), 3)
+        self.assertEqual(float(model.fc.weight.data[0][0]), 3.5)
+        self.assertEqual(float(model.fc.weight.data[0][1]), 3.5)
+        self.assertEqual(float(model.fc.bias.data[0]), 3.5)
 
 
 if __name__ == "__main__":
