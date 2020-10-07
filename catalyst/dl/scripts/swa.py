@@ -14,7 +14,7 @@ def build_args(parser: ArgumentParser):
         "--models-mask",
         "-m",
         type=str,
-        default="train*",
+        default="*.pth",
         help="Pattern for models to average",
     )
     parser.add_argument(
