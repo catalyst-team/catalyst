@@ -195,6 +195,100 @@ class BalanceBatchSampler(Sampler):
         return iter(inds)
 
 
+class DynamicBalanceClassSampler(Sampler):
+    """
+    This kind of sampler can be used for classification tasks with significant
+    class imbalance.
+
+    The idea of this sampler that we start with the original class distribution
+    and gradually move to uniform class distribution like with downsampling.
+
+    Let's define D_i = #C_i/ #C_min where #C_i is a size of class i and #C_min
+    is a size of the rarest class, so D_i define class distribution.
+    Also define g(n_epoch) is a exponential scheduler. On each epoch
+    current D_i  calculated as currend D_i  = D_i ^ g(n_epoch),
+    after this data samples according this distribution.
+
+    Sampler was inspired by https://arxiv.org/pdf/1901.06783.pdf
+    """
+
+    def __init__(
+        self, labels: List[Union[int, str]], exp_lambda=0.9, epoch=0, max_d=200
+    ):
+        """
+        Args:
+            labels: list of classes labeles for each elem in the dataset
+            exp_lambda: exponent figure for schedule
+            epoch: start epoch number can be useful for many stage experiments
+            max_d: limit on the difference between the most frequent and the
+            rarest classes, heuristic
+        """
+        assert isinstance(epoch, int) and isinstance(max_d, int)
+        assert 0 < exp_lambda < 1, "exp_lambda must be in (0, 1)"
+        super().__init__(labels)
+        self.exp_lambda = exp_lambda
+        self.max_d = max_d
+        self.epoch = epoch
+        labels = np.array(labels)
+        samples_per_class = Counter(labels)
+        self.min_class_size = min(list(samples_per_class.values()))
+
+        self.original_d = {
+            key: value / self.min_class_size
+            for key, value in samples_per_class.items()
+        }
+        self.label2idxes = {
+            label: np.arange(len(labels))[labels == label].tolist()
+            for label in set(labels)
+        }
+        self.labels = labels
+        self._update()
+
+    def _update(self) -> None:
+        """
+        Update d coefficients
+        Returns: None
+        """
+        current_d = {
+            key: min(value ** self._exp_scheduler(), self.max_d)
+            for key, value in self.original_d.items()
+        }
+        samples_per_classes = {
+            key: int(value * self.min_class_size)
+            for key, value in current_d.items()
+        }
+        self.samples_per_classes = samples_per_classes
+        self.length = np.sum(list(samples_per_classes.values()))
+        self.epoch += 1
+
+    def _exp_scheduler(self) -> float:
+        return self.exp_lambda ** self.epoch
+
+    def __iter__(self) -> Iterator[int]:
+        """
+        Yields:
+            indices of stratified sample
+        """
+        indices = []
+        for key in sorted(self.label2idxes):
+            samples_per_class = self.samples_per_classes[key]
+            replace_flag = samples_per_class > len(self.label2idxes[key])
+            indices += np.random.choice(
+                self.label2idxes[key], samples_per_class, replace=replace_flag
+            ).tolist()
+        assert len(indices) == self.length
+        np.random.shuffle(indices)
+        self._update()
+        return iter(indices)
+
+    def __len__(self) -> int:
+        """
+        Returns:
+             length of result sample
+        """
+        return self.length
+
+
 class MiniEpochSampler(Sampler):
     """
     Sampler iterates mini epochs from the dataset used by ``mini_epoch_len``.
@@ -424,4 +518,5 @@ __all__ = [
     "MiniEpochSampler",
     "DistributedSamplerWrapper",
     "DynamicLenBatchSampler",
+    "DynamicBalanceClassSampler",
 ]
