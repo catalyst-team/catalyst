@@ -4,6 +4,7 @@ Hitrate metric:
 """
 import torch
 
+
 def hitrate(
     outputs: torch.Tensor, targets: torch.Tensor, k=100
 ) -> torch.Tensor:
