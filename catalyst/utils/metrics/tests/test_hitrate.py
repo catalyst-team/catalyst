@@ -3,16 +3,21 @@ import torch
 from catalyst.utils import metrics
 
 
-def test_dice():
+def test_hitrate():
     """
     Tests for catalyst.utils.metrics.hitrate metric.
     """
-    assert metrics.hitrate(torch.tensor([[1], [2], [3]]), torch.tensor([2, 3, 4])) == 0
-    assert metrics.hitrate(torch.tensor([[1], [2], [3]]), torch.tensor([1, 2, 3])) == 1
 
-    assert metrics.hitrate(torch.tensor([[2, 0], [1, 3], [4, 6]]), torch.tensor([2, 3, 6])) == 1
-    assert metrics.hitrate(torch.tensor([[1, 2], [3, 4], [5, 6], [7, 8]]), torch.tensor([1, 3, 1, 2])) == 0.5
+    y_pred = [0.5, 0.2]
+    y_true = [1.0, 0.0]
 
-    assert metrics.hitrate(torch.tensor([[2, 1], [4, 3], [6, 5], [8, 7]]), torch.tensor([1, 3, 1, 2])) == 0.5
+    mrr = metrics.hitrate(torch.Tensor([y_pred]), torch.Tensor([y_true]))
+    assert mrr == 0.5
 
-    assert metrics.hitrate(torch.tensor([[2, 1], [4, 3], [6, 5], [8, 7]]), torch.tensor([1, 3, 1, 2])) == 0.5
+    # check 1 simple case
+    y_pred = [0.5, 0.2]
+    y_true = [0.0, 0.0]
+
+    mrr = metrics.hitrate(torch.Tensor([y_pred]), torch.Tensor([y_true]))
+    # mrr = metrics.mrr(torch.Tensor(y_pred), torch.Tensor(y_true))
+    assert mrr == 0.0
