@@ -157,8 +157,24 @@ class MNIST(Dataset):
             os.path.join(self.processed_folder, self.test_file)
         )
 
-    def _train_test_split(self) -> None:
-        """Split the whole dataset to train and test sets."""
+    def download(self):
+        """Download the MNIST data if it doesn't exist in processed_folder."""
+        if self._check_exists():
+            return
+
+        os.makedirs(self.raw_folder, exist_ok=True)
+        os.makedirs(self.processed_folder, exist_ok=True)
+
+        # download files
+        for url, md5 in self.resources:
+            filename = url.rpartition("/")[2]
+            download_and_extract_archive(
+                url, download_root=self.raw_folder, filename=filename, md5=md5
+            )
+
+        # process and save as torch files
+        print("Processing...")
+
         training_set = (
             read_image_file(
                 os.path.join(self.raw_folder, "train-images-idx3-ubyte")
@@ -184,24 +200,6 @@ class MNIST(Dataset):
         ) as f:
             torch.save(test_set, f)
 
-    def download(self):
-        """Download the MNIST data if it doesn't exist in processed_folder."""
-        if self._check_exists():
-            return
-
-        os.makedirs(self.raw_folder, exist_ok=True)
-        os.makedirs(self.processed_folder, exist_ok=True)
-
-        # download files
-        for url, md5 in self.resources:
-            filename = url.rpartition("/")[2]
-            download_and_extract_archive(
-                url, download_root=self.raw_folder, filename=filename, md5=md5
-            )
-
-        # process and save as torch files
-        print("Processing...")
-        self._train_test_split()
         print("Done!")
 
     def extra_repr(self):
@@ -211,9 +209,40 @@ class MNIST(Dataset):
 
 class MnistMLDataset(MetricLearningTrainDataset, MNIST):
     """
-    Simple wrapper for MNIST dataset
+    Simple wrapper for MNIST dataset for metric learning train stage.
+    This dataset can be used only for training. For test stage
+    use MnistQGDataset.
+
+    For this dataset we use only training part of the MNIST and only
+    those images that are labeled as 0, 1, 2, 3, 4.
     """
-    split = 5
+
+    _split = 5
+    classes = [
+        "0 - zero",
+        "1 - one",
+        "2 - two",
+        "3 - three",
+        "4 - four",
+    ]
+
+    def __init__(self, root: str, train: bool = True, **kwargs):
+        """
+
+        Args:
+            root: root directory of the dataset
+            train: for MnistMLDataset should always be True
+
+        Raises:
+            ValueError: if train is False (because the dataset
+                should be used only for training)
+        """
+        if train is False:
+            raise ValueError(
+                "MnistMLDataset can be used only for training stage."
+            )
+        super(MnistMLDataset, self).__init__(root=root, train=train, **kwargs)
+        self._filter()
 
     def get_labels(self) -> List[int]:
         """
@@ -222,42 +251,32 @@ class MnistMLDataset(MetricLearningTrainDataset, MNIST):
         """
         return self.targets.tolist()
 
-    def _train_test_split(self) -> None:
-        images = torch.cat(
-            (
-                read_image_file(
-                    os.path.join(self.raw_folder, "train-images-idx3-ubyte")
-                ),
-                read_image_file(
-                    os.path.join(self.raw_folder, "t10k-images-idx3-ubyte")
-                ),
-            )
-        )
-        labels = torch.cat(
-            (
-                read_label_file(
-                    os.path.join(self.raw_folder, "train-labels-idx1-ubyte")
-                ),
-                read_label_file(
-                    os.path.join(self.raw_folder, "t10k-labels-idx1-ubyte")
-                ),
-            )
-        )
-        mask = labels < self.split
-        training_set = (images[mask], labels[mask])
-        test_set = (images[~mask], labels[~mask])
-        with open(
-            os.path.join(self.processed_folder, self.training_file), "wb"
-        ) as f:
-            torch.save(training_set, f)
-        with open(
-            os.path.join(self.processed_folder, self.test_file), "wb"
-        ) as f:
-            torch.save(test_set, f)
+    def _filter(self) -> None:
+        """
+        Filter MNIST dataset: select images of 0, 1, 2, 3, 4 classes.
+        """
+        mask = self.targets < self._split
+        self.data = self.data[mask]
+        self.targets = self.targets[mask]
 
 
 class MnistQGDataset(QueryGalleryDataset):
-    """MNIST for metric learning with query and gallery split"""
+    """
+    MNIST for metric learning with query and gallery split.
+    MnistQGDataset should be used for test stage.
+
+    For this dataset we used only test part of the MNIST and only
+    those images that are labeled as 5, 6, 7, 8, 9.
+    """
+
+    _split = 5
+    classes = [
+        "5 - five",
+        "6 - six",
+        "7 - seven",
+        "8 - eight",
+        "9 - nine",
+    ]
 
     def __init__(
         self,
@@ -271,15 +290,24 @@ class MnistQGDataset(QueryGalleryDataset):
             transform: transform
             gallery_fraq: gallery size
         """
-        self._mnist = MnistMLDataset(
+        self._mnist = MNIST(
             root, train=False, download=True, transform=transform
         )
+        self._filter()
 
         self._gallery_size = int(gallery_fraq * len(self._mnist))
         self._query_size = len(self._mnist) - self._gallery_size
 
         self._is_query = torch.zeros(len(self._mnist)).type(torch.bool)
         self._is_query[: self._query_size] = True
+
+    def _filter(self) -> None:
+        """
+        Filter MNIST dataset: select images of 5, 6, 7, 8, 9 classes.
+        """
+        mask = self._mnist.targets >= self._split
+        self._mnist.data = self._mnist.data[mask]
+        self._mnist.targets = self._mnist.targets[mask]
 
     def __getitem__(self, idx: int) -> Dict[str, Any]:
         """
@@ -303,6 +331,10 @@ class MnistQGDataset(QueryGalleryDataset):
         """Length"""
         return len(self._mnist)
 
+    def __repr__(self) -> None:
+        """Print info about the dataset"""
+        return self._mnist.__repr__()
+
     @property
     def gallery_size(self) -> int:
         """Query Gallery dataset should have gallery_size property"""
@@ -312,6 +344,16 @@ class MnistQGDataset(QueryGalleryDataset):
     def query_size(self) -> int:
         """Query Gallery dataset should have query_size property"""
         return self._query_size
+
+    @property
+    def data(self) -> torch.Tensor:
+        """Images from MNIST"""
+        return self._mnist.data
+
+    @property
+    def targets(self) -> torch.Tensor:
+        """Labels of digits"""
+        return self._mnist.targets
 
 
 __all__ = ["MNIST", "MnistMLDataset", "MnistQGDataset"]
