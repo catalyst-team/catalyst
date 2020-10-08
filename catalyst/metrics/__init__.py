@@ -1,2 +1,2 @@
 # flake8: noqa
-from catalyst.utils.metrics.mrr import mrr
+from catalyst.metrics.mrr import mrr

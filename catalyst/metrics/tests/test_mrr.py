@@ -5,7 +5,7 @@ from catalyst import metrics
 
 def test_mrr():
     """
-    Tests for catalyst.utils.metrics.mrr metric.
+    Tests for catalyst.metrics.mrr metric.
     """
     # # check 0 simple case
     y_pred = [0.5, 0.2]
