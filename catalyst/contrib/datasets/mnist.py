@@ -226,22 +226,17 @@ class MnistMLDataset(MetricLearningTrainDataset, MNIST):
         "4 - four",
     ]
 
-    def __init__(self, root: str, train: bool = True, **kwargs):
+    def __init__(self, **kwargs):
         """
-
-        Args:
-            root: root directory of the dataset
-            train: for MnistMLDataset should always be True
-
         Raises:
-            ValueError: if train is False (because the dataset
+            ValueError: if train argument is False (MnistMLDataset
                 should be used only for training)
         """
-        if train is False:
+        if "train" in kwargs and kwargs["train"] is False:
             raise ValueError(
                 "MnistMLDataset can be used only for training stage."
             )
-        super(MnistMLDataset, self).__init__(root=root, train=train, **kwargs)
+        super(MnistMLDataset, self).__init__(**kwargs)
         self._filter()
 
     def get_labels(self) -> List[int]:
@@ -252,9 +247,7 @@ class MnistMLDataset(MetricLearningTrainDataset, MNIST):
         return self.targets.tolist()
 
     def _filter(self) -> None:
-        """
-        Filter MNIST dataset: select images of 0, 1, 2, 3, 4 classes.
-        """
+        """Filter MNIST dataset: select images of 0, 1, 2, 3, 4 classes."""
         mask = self.targets < self._split
         self.data = self.data[mask]
         self.targets = self.targets[mask]
@@ -302,9 +295,7 @@ class MnistQGDataset(QueryGalleryDataset):
         self._is_query[: self._query_size] = True
 
     def _filter(self) -> None:
-        """
-        Filter MNIST dataset: select images of 5, 6, 7, 8, 9 classes.
-        """
+        """Filter MNIST dataset: select images of 5, 6, 7, 8, 9 classes."""
         mask = self._mnist.targets >= self._split
         self._mnist.data = self._mnist.data[mask]
         self._mnist.targets = self._mnist.targets[mask]
