@@ -1,15 +1,12 @@
 import os
 from pathlib import Path
 import shutil
-import sys
 import unittest
 
 import torch
 import torch.nn as nn
 
 from catalyst.dl.utils.swa import generate_averaged_weights
-
-sys.path.append(".")
 
 
 class Net(nn.Module):
