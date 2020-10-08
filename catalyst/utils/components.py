@@ -37,10 +37,10 @@ def process_components(
     Returns the processed model, criterion, optimizer, scheduler and device.
 
     Args:
-        model (Model): torch model
-        criterion (Criterion): criterion function
-        optimizer (Optimizer): optimizer
-        scheduler (Scheduler): scheduler
+        model: torch model
+        criterion: criterion function
+        optimizer: optimizer
+        scheduler: scheduler
         distributed_params (dict, optional): dict with the parameters
             for distributed and FP16 method
         device (Device, optional): device
@@ -112,9 +112,6 @@ def process_components(
             )
             model = apex.parallel.DistributedDataParallel(model)
         else:
-            if is_amp_enabled:
-                pass
-
             if syncbn:
                 model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
 

@@ -23,14 +23,14 @@ class IouCallback(BatchMetricCallback):
     ):
         """
         Args:
-            input_key (str): input key to use for iou calculation
+            input_key: input key to use for iou calculation
                 specifies our ``y_true``
-            output_key (str): output key to use for iou calculation;
+            output_key: output key to use for iou calculation;
                 specifies our ``y_pred``
-            prefix (str): key to store in logs
-            eps (float): epsilon to avoid zero division
-            threshold (float): threshold for outputs binarization
-            activation (str): An torch.nn activation applied to the outputs.
+            prefix: key to store in logs
+            eps: epsilon to avoid zero division
+            threshold: threshold for outputs binarization
+            activation: An torch.nn activation applied to the outputs.
                 Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
         """
         super().__init__(
@@ -63,18 +63,18 @@ class ClasswiseIouCallback(BatchMetricCallback):
     ):
         """
         Args:
-            input_key (str): input key to use for iou calculation
+            input_key: input key to use for iou calculation
                 specifies our ``y_true``
-            output_key (str): output key to use for iou calculation;
+            output_key: output key to use for iou calculation;
                 specifies our ``y_pred``
-            prefix (str): key to store in logs (will be prefix_class_name)
-            classes (List[str]): list of class names
+            prefix: key to store in logs (will be prefix_class_name)
+            classes: list of class names
                 You should specify either 'classes' or 'num_classes'
-            num_classes (int): number of classes
+            num_classes: number of classes
                 You should specify either 'classes' or 'num_classes'
-            eps (float): epsilon to avoid zero division
-            threshold (float): threshold for outputs binarization
-            activation (str): An torch.nn activation applied to the outputs.
+            eps: epsilon to avoid zero division
+            threshold: threshold for outputs binarization
+            activation: An torch.nn activation applied to the outputs.
                 Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
         """
         assert (

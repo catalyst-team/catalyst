@@ -19,14 +19,14 @@ class TextClassificationDataset(Dataset):
     ):
         """
         Args:
-            texts (List[str]): a list with texts to classify or to train the
+            texts: a list with texts to classify or to train the
                 classifier on
             labels List[str]: a list with classification labels (optional)
-            label_dict (dict): a dictionary mapping class names to class ids,
+            label_dict: a dictionary mapping class names to class ids,
                 to be passed to the validation data (optional)
-            max_seq_length (int): maximal sequence length in tokens,
+            max_seq_length: maximal sequence length in tokens,
                 texts will be stripped to this length
-            model_name (str): transformer model name, needed to perform
+            model_name: transformer model name, needed to perform
                 appropriate tokenization
         """
         self.texts = texts
@@ -67,7 +67,7 @@ class TextClassificationDataset(Dataset):
         """Gets element of the dataset.
 
         Args:
-            index (int): index of the element in the dataset
+            index: index of the element in the dataset
 
         Returns:
             Single element by index

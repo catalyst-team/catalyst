@@ -33,12 +33,12 @@ class DynamicQuantizationCallback(Callback):
         """
         Init method for callback
         Args:
-            metric (str): Metric key we should trace model based on
-            minimize (bool): Whether do we minimize metric or not
-            min_delta (float): Minimum value of change for metric to be
+            metric: Metric key we should trace model based on
+            minimize: Whether do we minimize metric or not
+            min_delta: Minimum value of change for metric to be
                 considered as improved
-            mode (str): One of `best` or `last`
-            do_once (str): Whether do we trace once per stage or every epoch
+            mode: One of `best` or `last`
+            do_once: Whether do we trace once per stage or every epoch
             qconfig_spec: torch.quantization.quantize_dynamic
                 parameter, you can define layers to be quantize
             dtype: type of the model parameters, default int8
@@ -86,7 +86,7 @@ class DynamicQuantizationCallback(Callback):
         improved
 
         Args:
-            runner (IRunner): Current runner
+            runner: current runner
         """
         if not self.do_once:
             if self.mode == "best":

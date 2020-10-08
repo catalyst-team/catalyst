@@ -20,9 +20,9 @@ class DiceCallback(BatchMetricCallback):
     ):
         """
         Args:
-            input_key (str): input key to use for dice calculation;
+            input_key: input key to use for dice calculation;
                 specifies our `y_true`
-            output_key (str): output key to use for dice calculation;
+            output_key: output key to use for dice calculation;
                 specifies our `y_pred`
         """
         super().__init__(
@@ -52,12 +52,12 @@ class MultiClassDiceMetricCallback(Callback):
     ):
         """
         Args:
-            input_key (str): input key to use for dice calculation;
+            input_key: input key to use for dice calculation;
                 specifies our `y_true`
-            output_key (str): output key to use for dice calculation;
+            output_key: output key to use for dice calculation;
                 specifies our `y_pred`
-            prefix (str): prefix for printing the metric
-            class_names (dict/List): if dictionary, should be:
+            prefix: prefix for printing the metric
+            class_names: if dictionary, should be:
                 {class_id: class_name, ...} where class_id is an integer
                 This allows you to ignore class indices.
                 if list, make sure it corresponds to the number of classes
@@ -77,7 +77,7 @@ class MultiClassDiceMetricCallback(Callback):
         """Records the confusion matrix at the end of each batch.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         outputs = runner.output[self.output_key]
         targets = runner.input[self.input_key]
@@ -95,7 +95,7 @@ class MultiClassDiceMetricCallback(Callback):
         """@TODO: Docs. Contribution is welcome.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         tp_fp_fn_dict = utils.calculate_tp_fp_fn(self.confusion_matrix)
 

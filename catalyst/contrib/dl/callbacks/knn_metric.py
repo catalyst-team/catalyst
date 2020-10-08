@@ -169,7 +169,7 @@ class KNNMetricCallback(Callback):
         """Batch end hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         features: torch.Tensor = runner.output[
             self.features_key
@@ -185,7 +185,7 @@ class KNNMetricCallback(Callback):
         """Loader end hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
 
         Raises:
             Warning: if targets has more classes than num classes
@@ -223,7 +223,7 @@ class KNNMetricCallback(Callback):
         """Epoch end hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self.cv_loader_names is not None:
             for k, vs in self.cv_loader_names.items():

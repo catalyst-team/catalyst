@@ -1,5 +1,3 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 from typing import Any, Dict, List, Optional, Tuple
 import configparser
 import logging
@@ -10,36 +8,45 @@ from catalyst.tools.frozen_class import FrozenClass
 logger = logging.getLogger(__name__)
 
 try:
-    import torch_xla.core.xla_model as xm
-
-    IS_XLA_AVAILABLE = True
-except ModuleNotFoundError:
-    IS_XLA_AVAILABLE = False
-
-try:
-    import torch.nn.utils.prune as prune
-
-    IS_PRUNING_AVAILABLE = True
-except ModuleNotFoundError:
-    IS_PRUNING_AVAILABLE = False
-
-try:
-    from git import Repo as repo
+    from git import Repo  # noqa: F401
 
     IS_GIT_AVAILABLE = True
 except ImportError:
     IS_GIT_AVAILABLE = False
 
 try:
-    import torch.quantization
+    import torch_xla.core.xla_model as xm  # noqa: F401
+
+    IS_XLA_AVAILABLE = True
+except ModuleNotFoundError:
+    IS_XLA_AVAILABLE = False
+
+try:
+    import torch.nn.utils.prune as prune  # noqa: F401
+
+    IS_PRUNING_AVAILABLE = True
+except ModuleNotFoundError:
+    IS_PRUNING_AVAILABLE = False
+
+try:
+    import torch.quantization  # noqa: F401
 
     IS_QUANTIZATION_AVAILABLE = True
 except ModuleNotFoundError:
     IS_QUANTIZATION_AVAILABLE = False
 
+try:
+    import optuna  # noqa: F401
+
+    IS_OPTUNA_AVAILABLE = True
+except ModuleNotFoundError:
+    IS_OPTUNA_AVAILABLE = False
+
 
 class Settings(FrozenClass):
-    def __init__(
+    """Catalyst settings."""
+
+    def __init__(  # noqa: D107
         self,
         contrib_required: bool = False,
         cv_required: bool = False,
@@ -129,11 +136,24 @@ class Settings(FrozenClass):
         return value if value is not None else default
 
     def type_hint(self, key: str):
+        """Returns type hint for the specified ``key``.
+
+        Args:
+            key: key of interest
+
+        Returns:
+            type hint for the specified key
+        """
         # return get_type_hints(self).get(key, None)
         return type(getattr(self, key, None))
 
     @staticmethod
     def parse() -> "Settings":
+        """Parse and return the settings.
+
+        Returns:
+            Settings: Dictionary of the parsed and merged Settings.
+        """
         kwargrs = MergedConfigParser(ConfigFileFinder("catalyst")).parse()
         return Settings(**kwargrs)
 
@@ -154,7 +174,7 @@ class ConfigFileFinder:
         """Initialize object to find config files.
 
         Args:
-            program_name (str): Name of the current program (e.g., catalyst).
+            program_name: Name of the current program (e.g., catalyst).
         """
         # user configuration file
         self.program_name = program_name
@@ -267,7 +287,7 @@ class MergedConfigParser:
         """Initialize the MergedConfigParser instance.
 
         Args:
-            config_finder (ConfigFileFinder): Initialized ConfigFileFinder.
+            config_finder: Initialized ConfigFileFinder.
         """
         self.program_name = config_finder.program_name
         self.config_finder = config_finder

@@ -52,7 +52,7 @@ class InferMaskCallback(Callback):
         """Stage start hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         for key in self._keys_from_runner:
             value = getattr(runner, key, None)
@@ -70,7 +70,7 @@ class InferMaskCallback(Callback):
         """Loader start hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         lm = runner.loader_name
         os.makedirs(f"{self.out_prefix}/{lm}/", exist_ok=True)
@@ -79,7 +79,7 @@ class InferMaskCallback(Callback):
         """Batch end hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         lm = runner.loader_name
         names = runner.input.get(self.name_key, [])

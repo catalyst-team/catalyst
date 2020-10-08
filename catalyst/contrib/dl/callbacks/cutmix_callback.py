@@ -31,9 +31,9 @@ class CutmixCallback(CriterionCallback):
     ):
         """
         Args:
-            fields (List[str]): list of features which must be affected.
-            alpha (float): beta distribution parameter.
-            on_train_only (bool): Apply to train only.
+            fields: list of features which must be affected.
+            alpha: beta distribution parameter.
+            on_train_only: Apply to train only.
                 So, if on_train_only is True, use a standard output/metric
                 for validation.
         """
@@ -58,7 +58,7 @@ class CutmixCallback(CriterionCallback):
         from ``CriterionCallback``, otherwise computes loss value.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
             criterion: that is used to compute loss
         """
         if not self.is_needed:
@@ -104,7 +104,7 @@ class CutmixCallback(CriterionCallback):
         """Checks if it is needed for the loader.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         self.is_needed = not self.on_train_only or runner.is_train_loader
 
@@ -112,7 +112,7 @@ class CutmixCallback(CriterionCallback):
         """Mixes data according to Cutmix algorithm.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if not self.is_needed:
             return

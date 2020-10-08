@@ -5,7 +5,7 @@ def get_original_callback(callback: Callback) -> Callback:
     """Get original callback (if it has wrapper)
 
     Args:
-        callback (Callback): callback to unpack
+        callback: callback to unpack
 
     Returns:
         callback inside wrapper
@@ -15,19 +15,18 @@ def get_original_callback(callback: Callback) -> Callback:
     return callback
 
 
-def check_callback_isinstance(first: Callback, second: Callback) -> bool:
-    """Check if first callback is the same type as second callback
+def check_callback_isinstance(callback: Callback, class_or_tuple) -> bool:
+    """Check if callback is the same type as required ``class_or_tuple``
 
     Args:
-        first (Callback): callback to check
-        second (Callback): callback onject to compare with
+        callback: callback to check
+        class_or_tuple: class_or_tuple to compare with
 
     Returns:
-        bool: true if first object has the same type as second
+        bool: true if first object has the required type
     """
-    first = get_original_callback(first)
-    second = get_original_callback(second)
-    return isinstance(first, second)
+    callback = get_original_callback(callback)
+    return isinstance(callback, class_or_tuple)
 
 
 __all__ = ["get_original_callback", "check_callback_isinstance"]

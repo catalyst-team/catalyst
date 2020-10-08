@@ -45,16 +45,16 @@ class Visdom(Logger):
     ):
         """
         Args:
-            env_name (str): Environment name to plot to when
+            env_name: Environment name to plot to when
                 no env is provided (default: main)
-            batch_size (int): batch_size for log_on_batch_end
-            server (str): the hostname of your
+            batch_size: batch_size for log_on_batch_end
+            server: the hostname of your
                 visdom server (default: 'http://localhost')
-            port (str): the port for your visdom server (default: 8097)
-            log_to_filename (str): logs per-epoch metrics if set True
-            username (str): username to use for authentication,
+            port: the port for your visdom server (default: 8097)
+            log_to_filename: logs per-epoch metrics if set True
+            username: username to use for authentication,
                 if server started with -enable_login (default: None)
-            password (str): password to use for authentication,
+            password: password to use for authentication,
                 if server started with -enable_login (default: None)
         """
         self._batch_size = max(int(batch_size or int(1e3)), 1)
@@ -108,7 +108,7 @@ class Visdom(Logger):
         """Plots vales from batch statistics.
 
         Args:
-            batch (List[Dict]): List with dictionaries from log_scalar
+            batch: List with dictionaries from log_scalar
         """
         for msg in batch:
             opts = {
@@ -132,10 +132,10 @@ class Visdom(Logger):
         """Logs scalar.
 
         Args:
-            name (str): Environment name to plot to when
+            name: Environment name to plot to when
                 no env is provided (default: main)
-            mode (str): Metric's mode (example: train)
-            full_name (str): Full metric name
+            mode: Metric's mode (example: train)
+            full_name: Full metric name
             value (Union[int, float]): Metric's value
         """
         self._queue.put(
@@ -188,10 +188,10 @@ class VisdomLogger(Callback):
     ):
         """
         Args:
-            metric_names (List[str]): list of metric names to log,
+            metric_names: list of metric names to log,
                 if none - logs everything
-            log_on_batch_end (bool): logs per-batch metrics if set True
-            log_on_epoch_end (bool): logs per-epoch metrics if set True
+            log_on_batch_end: logs per-batch metrics if set True
+            log_on_epoch_end: logs per-epoch metrics if set True
         """
         super().__init__(
             order=CallbackOrder.logging,
@@ -222,9 +222,9 @@ class VisdomLogger(Callback):
 
         Args:
             metrics (Dict[str, float]): Metrics from Catalyst
-            step (int): Iteration step from Catalyst
-            mode (str): Metric's mode (example: train)
-            suffix (str): Additional suffix
+            step: Iteration step from Catalyst
+            mode: Metric's mode (example: train)
+            suffix: Additional suffix
         """
         if self.metrics_to_log is None:
             metrics_to_log = sorted(metrics.keys())

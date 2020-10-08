@@ -28,7 +28,7 @@ class _TracedNet(nn.Module):
     def __init__(self, input_shape: Tuple[int]):
         """
         Args:
-            input_shape (Tuple[int]): Shape of input tensor.
+            input_shape: Shape of input tensor.
         """
         super().__init__()
         assert len(input_shape) == 3
@@ -53,7 +53,7 @@ class _TracedNet(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Args:
-            x (torch.Tensor): Input tensor
+            x: Input tensor
 
         Returns:
             torch.Tensor: Output tensor
@@ -77,9 +77,9 @@ class _TracedNet(nn.Module):
         to understand the shape for dense layer's input.
 
         Args:
-            size (Tuple[int]): size of input.
-            kernel_size (Tuple[int]): size of convolution kernel.
-            stride (Tuple[int]): size of convolution stride.
+            size: size of input.
+            kernel_size: size of convolution kernel.
+            stride: size of convolution stride.
 
         Returns:
             Tuple[int, int]: output size
@@ -101,9 +101,9 @@ def _get_loaders(
     Function to get loaders just for testing.
 
     Args:
-        root (str): Path to root of dataset.
-        batch_size (int): Batch size.
-        num_workers (int): Num of workers.
+        root: Path to root of dataset.
+        batch_size: Batch size.
+        num_workers: Num of workers.
 
     Returns:
         Dict[str, DataLoader]: Dict of loaders.
@@ -137,7 +137,7 @@ class _OnStageEndCheckModelTracedCallback(Callback):
         """
         Args:
             path (Union[str, Path]): Path to traced model.
-            inputs (torch.Tensor): Input samples.
+            inputs: Input samples.
         """
         super().__init__(CallbackOrder.external)
         self.path: Path = Path(path)
@@ -147,7 +147,7 @@ class _OnStageEndCheckModelTracedCallback(Callback):
     def on_stage_end(self, runner: IRunner):
         """
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         assert self.path.exists(), "Traced model was not found"
 

@@ -391,8 +391,8 @@ rm -rf ${LOGDIR}
 
 ################################  pipeline 17  ################################
 echo 'pipeline 17'
-EXPDIR=./tests/_tests_cv_classification_experiment_registry/test1
-LOGDIR=./tests/logs/_tests_cv_classification_experiment_registry/test1
+EXPDIR=./tests/_tests_cv_classification_registry/test1
+LOGDIR=./tests/logs/_tests_cv_classification_registry/test1
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
@@ -422,8 +422,8 @@ rm -rf ${LOGDIR}
 
 ################################  pipeline 18  ################################
 echo 'pipeline 18'
-EXPDIR=./tests/_tests_cv_classification_experiment_registry/test2
-LOGDIR=./tests/logs/_tests_cv_classification_experiment_registry/test2
+EXPDIR=./tests/_tests_cv_classification_registry/test2
+LOGDIR=./tests/logs/_tests_cv_classification_registry/test2
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
@@ -453,8 +453,8 @@ rm -rf ${LOGDIR}
 
 ################################  pipeline 19  ################################
 echo 'pipeline 19'
-EXPDIR=./tests/_tests_cv_classification_experiment_registry/test2
-LOGDIR=./tests/logs/_tests_cv_classification_experiment_registry/test2
+EXPDIR=./tests/_tests_cv_classification_registry/test2
+LOGDIR=./tests/logs/_tests_cv_classification_registry/test2
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
@@ -471,6 +471,35 @@ fi
 
 cat $LOGFILE
 echo 'pipeline 19'
+python -c """
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
+assert metrics['stage1.1']['loss'] < 3.3
+assert metrics['stage1.2']['loss'] < 3.3
+"""
+
+rm -rf ${LOGDIR}
+
+################################  pipeline 20  ################################
+echo 'pipeline 20'
+EXPDIR=./tests/_tests_cv_classification_registry/test3
+LOGDIR=./tests/logs/_tests_cv_classification_registry/test3
+LOGFILE=${LOGDIR}/checkpoints/_metrics.json
+
+PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config1.yml \
+  --logdir=${LOGDIR} \
+  --check
+
+if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
+    echo "File $LOGFILE does not exist"
+    exit 1
+fi
+
+cat $LOGFILE
+echo 'pipeline 20'
 python -c """
 from catalyst import utils
 metrics = utils.load_config('$LOGFILE')

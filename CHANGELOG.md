@@ -5,7 +5,56 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 
-## [20.09] - YYYY-MM-DD
+## [YY.MM.R] - YYYY-MM-DD
+
+### Added
+
+- docs for MetricCallbacks ([#947](https://github.com/catalyst-team/catalyst/pull/947)) 
+- SoftMax, CosFace, ArcFace layers to contrib ([#939](https://github.com/catalyst-team/catalyst/pull/939))
+
+### Changed
+
+- `catalyst-dl tune` config specification - now optuna params are grouped under `study_params` ([#947](https://github.com/catalyst-team/catalyst/pull/947))
+- `IRunner._prepare_for_stage` logic moved to `IStageBasedRunner.prepare_for_stage` ([#947](https://github.com/catalyst-team/catalyst/pull/947))
+    - now we create components in the following order: datasets/loaders, model, criterion, optimizer, scheduler, callbacks
+- 
+
+### Removed
+
+- 
+
+### Fixed
+
+- `AMPOptimizerCallback` - fix grad clip fn support ([#948](https://github.com/catalyst-team/catalyst/pull/948))
+- removed deprecated docs types ([#947](https://github.com/catalyst-team/catalyst/pull/947)) ([#952](https://github.com/catalyst-team/catalyst/pull/952))
+- docs for a few files ([#952](https://github.com/catalyst-team/catalyst/pull/952))
+
+
+## [20.09.1] - 2020-09-25
+
+### Added
+
+- Runner registry support for Config API ([#936](https://github.com/catalyst-team/catalyst/pull/936))
+
+- `catalyst-dl tune` command - Optuna with Config API integration for AutoML hyperparameters optimization ([#937](https://github.com/catalyst-team/catalyst/pull/937))
+- `OptunaPruningCallback` alias for `OptunaCallback` ([#937](https://github.com/catalyst-team/catalyst/pull/937))
+- AdamP and SGDP to `catalyst.contrib.nn.criterion` ([#942](https://github.com/catalyst-team/catalyst/pull/942))
+
+### Changed
+
+- Config API components preparation logic moved to ``utils.prepare_config_api_components`` ([#936](https://github.com/catalyst-team/catalyst/pull/936))
+
+### Removed
+
+- 
+
+### Fixed
+
+- Logging double logging :) ([#936](https://github.com/catalyst-team/catalyst/pull/936))
+
+- CMCCallback ([#941](https://github.com/catalyst-team/catalyst/pull/941))
+
+## [20.09] - 2020-09-07
 
 ### Added
 
@@ -15,10 +64,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Multi-scheduler support for multi-optimizer case ([#923](https://github.com/catalyst-team/catalyst/pull/923))
 - Native mixed-precision training support ([#740](https://github.com/catalyst-team/catalyst/issues/740))
 - `OptiomizerCallback` - flag `use_fast_zero_grad` for faster (and hacky) version of `optimizer.zero_grad()` ([#927](https://github.com/catalyst-team/catalyst/pull/927))
+- `IOptiomizerCallback`, `ISchedulerCallback`, `ICheckpointCallback`, `ILoggerCallback` as core abstractions for Callbacks ([#933](https://github.com/catalyst-team/catalyst/pull/933))
+- flag `USE_AMP` for PyTorch AMP usage ([#933](https://github.com/catalyst-team/catalyst/pull/933))
 
 ### Changed
 
-- 
+- Pruning moved to `catalyst.dl` ([#933](https://github.com/catalyst-team/catalyst/pull/933))
+- default `USE_APEX` changed to 0 ([#933](https://github.com/catalyst-team/catalyst/pull/933))
 
 ### Removed
 
@@ -33,7 +85,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - runtime warning for PyTorch 1.6 ([920](https://github.com/catalyst-team/catalyst/pull/920))
 - Apex synbn usage ([920](https://github.com/catalyst-team/catalyst/pull/920))
 - Catalyst dependency on system git ([922](https://github.com/catalyst-team/catalyst/pull/922))
-
 
 
 ## [20.08] - 2020-08-09

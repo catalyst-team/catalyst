@@ -59,10 +59,10 @@ class Runner(IStageBasedRunner):
         Starts the train stage of the model.
 
         Args:
-            model (Model): model to train
-            criterion (Criterion): criterion function for training
-            optimizer (Optimizer): optimizer for training
-            scheduler (Scheduler): scheduler for training
+            model: model to train
+            criterion: criterion function for training
+            optimizer: optimizer for training
+            scheduler: scheduler for training
             datasets (OrderedDict[str, Union[Dataset, Dict, Any]]): dictionary
                 with one or several  ``torch.utils.data.Dataset``
                 for training, validation or inference
@@ -73,40 +73,40 @@ class Runner(IStageBasedRunner):
                 for training, validation or inference
             callbacks (Union[List[Callback], OrderedDict[str, Callback]]):
                 list or dictionary with Catalyst callbacks
-            logdir (str): path to output directory
-            resume (str): path to checkpoint for model
-            num_epochs (int): number of training epochs
-            valid_loader (str): loader name used to calculate
+            logdir: path to output directory
+            resume: path to checkpoint for model
+            num_epochs: number of training epochs
+            valid_loader: loader name used to calculate
                 the metrics and save the checkpoints. For example,
                 you can pass `train` and then
                 the metrics will be taken from `train` loader.
-            main_metric (str): the key to the name of the metric
+            main_metric: the key to the name of the metric
                 by which the checkpoints will be selected.
-            minimize_metric (bool): flag to indicate whether
+            minimize_metric: flag to indicate whether
                 the ``main_metric`` should be minimized.
-            verbose (bool): if `True`, it displays the status of the training
+            verbose: if `True`, it displays the status of the training
                 to the console.
-            stage_kwargs (dict): additional params for stage
-            checkpoint_data (dict): additional data to save in checkpoint,
+            stage_kwargs: additional params for stage
+            checkpoint_data: additional data to save in checkpoint,
                 for example: ``class_names``, ``date_of_training``, etc
             fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
                 See https://nvidia.github.io/apex/amp.html#properties
                 if fp16=True, params by default will be ``{"opt_level": "O1"}``
-            distributed (bool): if `True` will start training
+            distributed: if `True` will start training
                 in distributed mode.
                 Note: Works only with python scripts. No jupyter support.
-            check (bool): if True, then only checks that pipeline is working
+            check: if True, then only checks that pipeline is working
                 (3 epochs only with 3 batches per loader)
-            overfit (bool): if True, then takes only one batch per loader
+            overfit: if True, then takes only one batch per loader
                 for model overfitting, for advance usage please check
                 ``BatchOverfitCallback``
-            timeit (bool): if True, computes the execution time
+            timeit: if True, computes the execution time
                 of training process and displays it to the console.
-            load_best_on_end (bool): if True, Runner will load
+            load_best_on_end: if True, Runner will load
                 best checkpoint state (model, optimizer, etc)
                 according to validation metrics. Requires specified ``logdir``.
-            initial_seed (int): experiment's initial seed value
-            state_kwargs (dict): deprecated, use `stage_kwargs` instead
+            initial_seed: experiment's initial seed value
+            state_kwargs: deprecated, use `stage_kwargs` instead
 
         Raises:
             NotImplementedError: if both `resume` and `CheckpointCallback`
@@ -183,7 +183,7 @@ class Runner(IStageBasedRunner):
         Starts the inference stage of the model.
 
         Args:
-            model (Model): model for inference
+            model: model for inference
             datasets (OrderedDict[str, Union[Dataset, Dict, Any]]): dictionary
                 with one or several  ``torch.utils.data.Dataset``
                 for training, validation or inference
@@ -194,20 +194,20 @@ class Runner(IStageBasedRunner):
                 for training, validation or inference
             callbacks (Union[List[Callback], OrderedDict[str, Callback]]):
                 list or dictionary with Catalyst callbacks
-            logdir (str): path to output directory
-            resume (str): path to checkpoint to use for resume
-            verbose (bool): if `True`, it displays the status of the training
+            logdir: path to output directory
+            resume: path to checkpoint to use for resume
+            verbose: if `True`, it displays the status of the training
                 to the console.
-            stage_kwargs (dict): additional stage params
+            stage_kwargs: additional stage params
             fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
                 See https://nvidia.github.io/apex/amp.html#properties
                 if fp16=True, params by default will be ``{"opt_level": "O1"}``
-            check (bool): if True, then only checks that pipeline is working
+            check: if True, then only checks that pipeline is working
                 (3 epochs only)
-            timeit (bool): if True, computes the execution time
+            timeit: if True, computes the execution time
                 of training process and displays it to the console.
-            initial_seed (int): experiment's initial seed value
-            state_kwargs (dict): deprecated, use `stage_kwargs` instead
+            initial_seed: experiment's initial seed value
+            state_kwargs: deprecated, use `stage_kwargs` instead
 
         Raises:
             NotImplementedError: if both `resume` and `CheckpointCallback`
@@ -285,11 +285,11 @@ class Runner(IStageBasedRunner):
         keeping `is_infer_loader` as True. Moves model to evaluation mode.
 
         Args:
-            loader (DataLoader): loader to predict
-            model (Model): model to use for prediction
-            resume (str): path to checkpoint to resume
+            loader: loader to predict
+            model: model to use for prediction
+            resume: path to checkpoint to resume
             fp16 (Union[Dict, bool]): fp16 usage flag
-            initial_seed (int): seed to use before prediction
+            initial_seed: seed to use before prediction
 
         Yields:
             bathes with model predictions
@@ -342,19 +342,19 @@ class Runner(IStageBasedRunner):
         Traces model using Torch Jit.
 
         Args:
-            model (Model): model to trace
+            model: model to trace
             batch: batch to forward through the model to trace
             logdir (str, optional): If specified,
                 the result will be written to the directory
             loader (DataLoader, optional): if batch is not specified, the batch
                 will be ``next(iter(loader))``
-            method_name (str): model's method name that will be traced
-            mode (str): ``train`` or ``eval``
-            requires_grad (bool): flag to trace with gradients
+            method_name: model's method name that will be traced
+            mode: ``train`` or ``eval``
+            requires_grad: flag to trace with gradients
             fp16 (Union[Dict, bool]): If not None, then sets
                 tracing params to FP16
-            device (Device): Torch device or a string
-            predict_params (dict): additional parameters for model forward
+            device: Torch device or a string
+            predict_params: additional parameters for model forward
 
         Returns:
             ScriptModule: traced model

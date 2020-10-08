@@ -34,11 +34,11 @@ class MixupCallback(CriterionCallback):
     ):
         """
         Args:
-            fields (List[str]): list of features which must be affected.
-            alpha (float): beta distribution a=b parameters.
+            fields: list of features which must be affected.
+            alpha: beta distribution a=b parameters.
                 Must be >=0. The more alpha closer to zero
                 the less effect of the mixup.
-            on_train_only (bool): Apply to train only.
+            on_train_only: Apply to train only.
                 As the mixup use the proxy inputs, the targets are also proxy.
                 We are not interested in them, are we?
                 So, if on_train_only is True, use a standard output/metric
@@ -76,7 +76,7 @@ class MixupCallback(CriterionCallback):
         """Loader start hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         self.is_needed = not self.on_train_only or runner.is_train_loader
 
@@ -84,7 +84,7 @@ class MixupCallback(CriterionCallback):
         """Batch start hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if not self.is_needed:
             return
