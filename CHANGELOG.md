@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- MRR metrics calculation ([#886](https://github.com/catalyst-team/catalyst/pull/886))
 - docs for MetricCallbacks ([#947](https://github.com/catalyst-team/catalyst/pull/947)) 
 - SoftMax, CosFace, ArcFace layers to contrib ([#939](https://github.com/catalyst-team/catalyst/pull/939))
 
@@ -90,7 +91,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [20.08] - 2020-08-09
 
 ### Added
-- MRR metrics calculation ([#886](https://github.com/catalyst-team/catalyst/pull/886))
 - `CMCScoreCallback` ([#880](https://github.com/catalyst-team/catalyst/pull/880))
 - kornia augmentations `BatchTransformCallback` ([#862](https://github.com/catalyst-team/catalyst/issues/862))
 - `average_precision` and `mean_average_precision` metrics ([#883](https://github.com/catalyst-team/catalyst/pull/883))
