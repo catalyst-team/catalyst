@@ -72,7 +72,8 @@ class CosFace(nn.Module):
 
         Returns:
             tensor (logits) with shapes ``BxC``
-            where ``C`` is a number of classes.
+            where ``C`` is a number of classes
+            (out_features).
         """
         cosine = F.linear(F.normalize(input), F.normalize(self.weight))
         phi = cosine - self.m

@@ -59,6 +59,7 @@ class SoftMax(nn.Module):
 
         Returns:
             tensor (logits) with shapes ``BxC``
-            where ``C`` is a number of classes.
+            where ``C`` is a number of classes
+            (out_features).
         """
         return F.linear(input, self.weight, self.bias)
