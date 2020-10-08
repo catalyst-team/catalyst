@@ -9,7 +9,6 @@
 - [ ] Did you check that your code passes the unit tests `pytest .` ? 
 - [ ] Did you add your new functionality to the docs?
 - [ ] Did you update the [CHANGELOG](https://github.com/catalyst-team/catalyst/blob/master/CHANGELOG.md)?
-- [x] **You can use 'Login as guest' to see Teamcity build logs.**
 
 <!-- For CHANGELOG separate each item in unreleased section by blank line to reduce collisions -->
 
