@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - docs for MetricCallbacks ([#947](https://github.com/catalyst-team/catalyst/pull/947)) 
 - SoftMax, CosFace, ArcFace layers to contrib ([#939](https://github.com/catalyst-team/catalyst/pull/939))
+- ArcMargin layer to contrib ([#957](https://github.com/catalyst-team/catalyst/pull/957))
 
 ### Changed
 
