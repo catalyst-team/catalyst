@@ -6,6 +6,7 @@ from typing import (  # isort:skip
     Union,
 )
 import inspect
+import logging
 from pathlib import Path
 
 from torch import jit, nn
@@ -20,13 +21,15 @@ from catalyst.utils import (
     get_native_batch_from_loaders,
     get_nn_from_ddp_module,
     get_requires_grad,
-    import_experiment_and_runner,
     load_checkpoint,
     load_config,
     pack_checkpoint,
+    prepare_config_api_components,
     set_requires_grad,
     unpack_checkpoint,
 )
+
+logger = logging.getLogger(__name__)
 
 
 def _get_input_argnames(
@@ -37,7 +40,7 @@ def _get_input_argnames(
 
     Args:
         fn (Callable[..., Any]): Function to get argument names from
-        exclude (List[str]): List of string of names to exclude
+        exclude: List of string of names to exclude
 
     Returns:
         List[str]: List of input argument names
@@ -114,13 +117,13 @@ def trace_model(
         predict_fn: Function to run prediction with the model provided,
             takes model, inputs parameters
         batch: Batch to trace the model
-        method_name (str): Model's method name that will be
+        method_name: Model's method name that will be
             used as entrypoint during tracing
-        mode (str): Mode for model to trace (``train`` or ``eval``)
-        requires_grad (bool): Flag to use grads
-        opt_level (str): Apex FP16 init level, optional
-        device (str): Torch device
-        predict_params (dict): additional parameters for model forward
+        mode: Mode for model to trace (``train`` or ``eval``)
+        requires_grad: Flag to use grads
+        opt_level: Apex FP16 init level, optional
+        device: Torch device
+        predict_params: additional parameters for model forward
 
     Returns:
         jit.ScriptModule: Traced model
@@ -172,43 +175,42 @@ def trace_model_from_checkpoint(
 
     Args:
         logdir (Union[str, Path]): Path to Catalyst logdir with model
-        checkpoint_name (str): Name of model checkpoint to use
-        stage (str): experiment's stage name
+        checkpoint_name: Name of model checkpoint to use
+        stage: experiment's stage name
         loader (Union[str, int]): experiment's loader name or its index
-        method_name (str): Model's method name that will be
+        method_name: Model's method name that will be
             used as entrypoint during tracing
-        mode (str): Mode for model to trace (``train`` or ``eval``)
-        requires_grad (bool): Flag to use grads
-        opt_level (str): AMP FP16 init level
-        device (str): Torch device
+        mode: Mode for model to trace (``train`` or ``eval``)
+        requires_grad: Flag to use grads
+        opt_level: AMP FP16 init level
+        device: Torch device
 
     Returns:
         the traced model
     """
     config_path = logdir / "configs" / "_config.json"
     checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
-    print("Load config")
+    logging.info("Load config")
     config: Dict[str, dict] = load_config(config_path)
-    runner_params = config.get("runner_params", {}) or {}
 
     # Get expdir name
     config_expdir = Path(config["args"]["expdir"])
     # We will use copy of expdir from logs for reproducibility
     expdir = Path(logdir) / "code" / config_expdir.name
 
-    print("Import experiment and runner from logdir")
-    experiment_fn, runner_fn = import_experiment_and_runner(expdir)
-    experiment: ConfigExperiment = experiment_fn(config)
+    logger.info("Import experiment and runner from logdir")
+    experiment: ConfigExperiment = None
+    experiment, runner, _ = prepare_config_api_components(
+        expdir=expdir, config=config
+    )
 
-    print(f"Load model state from checkpoints/{checkpoint_name}.pth")
+    logger.info(f"Load model state from checkpoints/{checkpoint_name}.pth")
     if stage is None:
         stage = list(experiment.stages)[0]
 
     model = experiment.get_model(stage)
     checkpoint = load_checkpoint(checkpoint_path)
     unpack_checkpoint(checkpoint, model=model)
-
-    runner: runner_fn = runner_fn(**runner_params)
     runner.model, runner.device = model, device
 
     if loader is None:
@@ -225,7 +227,7 @@ def trace_model_from_checkpoint(
         runner.model = model_dump
         return result
 
-    print("Tracing")
+    logger.info("Tracing is running...")
     traced_model = trace_model(
         model=model,
         predict_fn=predict_fn,
@@ -237,7 +239,7 @@ def trace_model_from_checkpoint(
         device=device,
     )
 
-    print("Done")
+    logger.info("Done")
     return traced_model
 
 
@@ -254,15 +256,15 @@ def trace_model_from_runner(
     Traces model using created experiment and runner.
 
     Args:
-        runner (Runner): Current runner.
-        checkpoint_name (str): Name of model checkpoint to use, if None
+        runner: current runner.
+        checkpoint_name: Name of model checkpoint to use, if None
             traces current model from runner
-        method_name (str): Model's method name that will be
+        method_name: Model's method name that will be
             used as entrypoint during tracing
-        mode (str): Mode for model to trace (``train`` or ``eval``)
-        requires_grad (bool): Flag to use grads
-        opt_level (str): AMP FP16 init level
-        device (str): Torch device
+        mode: Mode for model to trace (``train`` or ``eval``)
+        requires_grad: Flag to use grads
+        opt_level: AMP FP16 init level
+        device: Torch device
 
     Returns:
         ScriptModule: Traced model
@@ -337,11 +339,11 @@ def get_trace_name(
     """Creates a file name for the traced model.
 
     Args:
-        method_name (str): model's method name
-        mode (str): ``train`` or ``eval``
-        requires_grad (bool): flag if model was traced with gradients
-        opt_level (str): opt_level if model was traced in FP16
-        additional_string (str): any additional information
+        method_name: model's method name
+        mode: ``train`` or ``eval``
+        requires_grad: flag if model was traced with gradients
+        opt_level: opt_level if model was traced in FP16
+        additional_string: any additional information
 
     Returns:
         str: Filename for traced model to be saved.
@@ -379,17 +381,17 @@ def save_traced_model(
     """Saves traced model.
 
     Args:
-        model (ScriptModule): Traced model
+        model: Traced model
         logdir (Union[str, Path]): Path to experiment
-        method_name (str): Name of the method was traced
-        mode (str): Model's mode - `train` or `eval`
-        requires_grad (bool): Whether model was traced with require_grad or not
-        opt_level (str): Apex FP16 init level used during tracing
+        method_name: Name of the method was traced
+        mode: Model's mode - `train` or `eval`
+        requires_grad: Whether model was traced with require_grad or not
+        opt_level: Apex FP16 init level used during tracing
         out_dir (Union[str, Path]): Directory to save model to
             (overrides logdir)
         out_model (Union[str, Path]): Path to save model to
             (overrides logdir & out_dir)
-        checkpoint_name (str): Checkpoint name used to restore the model
+        checkpoint_name: Checkpoint name used to restore the model
 
     Raises:
         ValueError: if nothing out of `logdir`, `out_dir` or `out_model`
@@ -431,8 +433,8 @@ def load_traced_model(
 
     Args:
         model_path: Path to traced model
-        device (str): Torch device
-        opt_level (str): Apex FP16 init level, optional
+        device: Torch device
+        opt_level: Apex FP16 init level, optional
 
     Returns:
         ScriptModule: Traced model

@@ -250,9 +250,23 @@ Wing
 Modules
 ~~~~~~~~~~~~~~~~
 
+ArcFace and SubCenterArcFace
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.. automodule:: catalyst.contrib.nn.modules.arcface
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Common modules
 """"""""""""""""""""""""""""""""""""""""""
 .. automodule:: catalyst.contrib.nn.modules.common
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+CosFace: Large Margin Cosine Loss for Deep Face Recognition
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.. automodule:: catalyst.contrib.nn.modules.cosface
     :members:
     :undoc-members:
     :show-inheritance:
@@ -285,10 +299,22 @@ SqueezeAndExcitation
     :undoc-members:
     :show-inheritance:
 
-
+SoftMax
+""""""""""""""""""""""""""""""""""""""""""
+.. automodule:: catalyst.contrib.nn.modules.softmax
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Optimizers
 ~~~~~~~~~~~~~~~~
+
+AdamP
+"""""""""""""
+.. automodule:: catalyst.contrib.nn.optimizers.adamp
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Lamb
 """"""""""""""""""""
@@ -321,6 +347,13 @@ RAdam
 Ralamb
 """"""""""""""""""""
 .. automodule:: catalyst.contrib.nn.optimizers.ralamb
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+SGDP
+"""""""""""""
+.. automodule:: catalyst.contrib.nn.optimizers.sgdp
     :members:
     :undoc-members:
     :show-inheritance:

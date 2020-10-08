@@ -46,8 +46,8 @@ class mAPMeter(meter.Meter):  # noqa: N801
         """Update `self.apmeter`.
 
         Args:
-            output (Tensor): Model output scores as `NxK` tensor
-            target (Tensor): Target scores as `NxK` tensor
+            output: Model output scores as `NxK` tensor
+            target: Target scores as `NxK` tensor
             weight (Tensor, optional): Weight values for each sample
                 as `Nx1` Tensor
         """

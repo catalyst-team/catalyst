@@ -1,5 +1,5 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
+#!/usr/bin/env python
+
 import argparse
 from pathlib import Path
 
@@ -38,7 +38,7 @@ def parse_args():
 
 
 def main(args, _):
-    """Run the ``catalyst-dl init`` script."""
+    """Runs the ``catalyst-dl init`` script."""
     if args.interactive:
         utils.run_wizard()
     else:

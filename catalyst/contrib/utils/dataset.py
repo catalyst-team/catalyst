@@ -26,11 +26,11 @@ def create_dataset(
                 *.ext
 
     Args:
-        dirs (str): path to dirs, for example /home/user/data/**
-        extension (str): data extension you are looking for
+        dirs: path to dirs, for example /home/user/data/**
+        extension: data extension you are looking for
         process_fn (Callable[[str], object]): function(path_to_file) -> object
             process function for found files, by default
-        recursive (bool): enables recursive globbing
+        recursive: enables recursive globbing
 
     Returns:
         dict: dataset

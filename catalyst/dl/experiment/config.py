@@ -1,5 +1,3 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 from typing import Any, Callable, Dict, List, Mapping, Union
 from collections import OrderedDict
 from copy import deepcopy
@@ -19,6 +17,8 @@ from catalyst.dl import (
     ConsoleLogger,
     CriterionCallback,
     ExceptionCallback,
+    IOptimizerCallback,
+    ISchedulerCallback,
     MetricManagerCallback,
     OptimizerCallback,
     SchedulerCallback,
@@ -28,7 +28,7 @@ from catalyst.dl import (
     ValidationManagerCallback,
     VerboseLogger,
 )
-from catalyst.dl.utils import check_callback_isinstance
+from catalyst.dl.utils import check_amp_available, check_callback_isinstance
 from catalyst.registry import (
     CALLBACKS,
     CRITERIONS,
@@ -58,9 +58,10 @@ class ConfigExperiment(IExperiment):
     def __init__(self, config: Dict):
         """
         Args:
-            config (dict): dictionary with parameters
+            config: dictionary with parameters
         """
         self._config: Dict = deepcopy(config)
+        self._trial = None
         self._initial_seed: int = self._config.get("args", {}).get("seed", 42)
         self._verbose: bool = self._config.get("args", {}).get(
             "verbose", False
@@ -75,7 +76,7 @@ class ConfigExperiment(IExperiment):
             "overfit", False
         )
 
-        self.__prepare_logdir()
+        self._prepare_logdir()
 
         self._config["stages"]["stage_params"] = utils.merge_dicts(
             deepcopy(
@@ -89,7 +90,13 @@ class ConfigExperiment(IExperiment):
             self._config["stages"]
         )
 
-    def __prepare_logdir(self):  # noqa: WPS112
+    def _get_logdir(self, config: Dict) -> str:
+        timestamp = utils.get_utcnow_time()
+        config_hash = utils.get_short_hash(config)
+        logdir = f"{timestamp}.{config_hash}"
+        return logdir
+
+    def _prepare_logdir(self):  # noqa: WPS112
         exclude_tag = "none"
 
         logdir = self._config.get("args", {}).get("logdir", None)
@@ -102,11 +109,6 @@ class ConfigExperiment(IExperiment):
             self._logdir = f"{baselogdir}/{logdir_postfix}"
         else:
             self._logdir = None
-
-    @property
-    def hparams(self) -> OrderedDict:
-        """Returns hyperparameters"""
-        return OrderedDict(self._config)
 
     def _get_stages_config(self, stages_config: Dict):
         stages_defaults = {}
@@ -145,12 +147,6 @@ class ConfigExperiment(IExperiment):
 
         return stages_config_out
 
-    def _get_logdir(self, config: Dict) -> str:
-        timestamp = utils.get_utcnow_time()
-        config_hash = utils.get_short_hash(config)
-        logdir = f"{timestamp}.{config_hash}"
-        return logdir
-
     @property
     def initial_seed(self) -> int:
         """Experiment's initial seed value."""
@@ -162,15 +158,37 @@ class ConfigExperiment(IExperiment):
         return self._logdir
 
     @property
-    def stages(self) -> List[str]:
-        """Experiment's stage names."""
-        stages_keys = list(self.stages_config.keys())
-        return stages_keys
+    def hparams(self) -> OrderedDict:
+        """Returns hyperparameters"""
+        return OrderedDict(self._config)
+
+    @property
+    def trial(self) -> Any:
+        """
+        Returns hyperparameter trial for current experiment.
+        Could be usefull for Optuna/HyperOpt/Ray.tune
+        hyperparameters optimizers.
+
+        Returns:
+            trial
+
+        Example::
+
+            >>> experiment.trial
+            optuna.trial._trial.Trial  # Optuna variant
+        """
+        return self._trial
 
     @property
     def distributed_params(self) -> Dict:
         """Dict with the parameters for distributed and FP16 methond."""
         return self._config.get("distributed_params", {})
+
+    @property
+    def stages(self) -> List[str]:
+        """Experiment's stage names."""
+        stages_keys = list(self.stages_config.keys())
+        return stages_keys
 
     def get_stage_params(self, stage: str) -> Mapping[str, Any]:
         """Returns the state parameters for a given stage."""
@@ -318,7 +336,7 @@ class ConfigExperiment(IExperiment):
         Returns the optimizer for a given stage.
 
         Args:
-            stage (str): stage name
+            stage: stage name
             model (Union[Model, Dict[str, Model]]): model or a dict of models
 
         Returns:
@@ -348,8 +366,8 @@ class ConfigExperiment(IExperiment):
         *, optimizer: Union[Optimizer, Dict[str, Optimizer]], **params: Any
     ) -> Union[Scheduler, Dict[str, Scheduler]]:
         optimizer_key = params.pop("_optimizer", None)
-        optimizer_ = optimizer[optimizer_key] if optimizer_key else optimizer
-        scheduler = SCHEDULERS.get_from_params(**params, optimizer=optimizer_)
+        optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
+        scheduler = SCHEDULERS.get_from_params(**params, optimizer=optimizer)
 
         return scheduler
 
@@ -415,8 +433,8 @@ class ConfigExperiment(IExperiment):
         Returns transform for a given stage and dataset.
 
         Args:
-            stage (str): stage name
-            dataset (str): dataset name (e.g. "train", "valid"),
+            stage: stage name
+            dataset: dataset name (e.g. "train", "valid"),
                 will be used only if the value of `_key_value`` is ``True``
 
         Returns:
@@ -478,8 +496,8 @@ class ConfigExperiment(IExperiment):
         run of config experiment.
 
         Arguments:
-            callbacks (OrderedDict): finalized order of callbacks.
-            stage_index (int): number of a current stage
+            callbacks: finalized order of callbacks.
+            stage_index: number of a current stage
         """
         if stage_index is None:
             stage_index = -float("inf")
@@ -488,6 +506,7 @@ class ConfigExperiment(IExperiment):
             #       loading of a best model state for the first stage
             #       but for the other stages by default should
             #       load best state of a model
+            # @TODO: move this logic to ``CheckpointCallback``
             if isinstance(callback, CheckpointCallback) and stage_index > 0:
                 if callback.load_on_stage_start is None:
                     callback.load_on_stage_start = "best"
@@ -508,52 +527,63 @@ class ConfigExperiment(IExperiment):
             callback = self._get_callback(**callback_params)
             callbacks[key] = callback
 
+        # default_callbacks = [(Name, InterfaceClass, InstanceFactory)]
         default_callbacks = []
+
+        is_amp_enabled = (
+            self.distributed_params.get("amp", False) and check_amp_available()
+        )
+        optimizer_cls = (
+            AMPOptimizerCallback if is_amp_enabled else OptimizerCallback
+        )
+
         if self._verbose:
-            default_callbacks.append(("_verbose", VerboseLogger))
+            default_callbacks.append(("_verbose", None, VerboseLogger))
         if self._check_time:
-            default_callbacks.append(("_timer", TimerCallback))
+            default_callbacks.append(("_timer", None, TimerCallback))
         if self._check_run:
-            default_callbacks.append(("_check", CheckRunCallback))
+            default_callbacks.append(("_check", None, CheckRunCallback))
         if self._overfit:
-            default_callbacks.append(("_overfit", BatchOverfitCallback))
+            default_callbacks.append(("_overfit", None, BatchOverfitCallback))
 
         if not stage.startswith("infer"):
-            default_callbacks.append(("_metrics", MetricManagerCallback))
+            default_callbacks.append(("_metrics", None, MetricManagerCallback))
             default_callbacks.append(
-                ("_validation", ValidationManagerCallback)
+                ("_validation", None, ValidationManagerCallback)
             )
-            default_callbacks.append(("_console", ConsoleLogger))
+            default_callbacks.append(("_console", None, ConsoleLogger))
 
             if self.logdir is not None:
-                default_callbacks.append(("_saver", CheckpointCallback))
-                default_callbacks.append(("_tensorboard", TensorboardLogger))
-
-            from catalyst.utils.distributed import check_amp_available
-
-            is_amp_enabled = (
-                self.distributed_params.get("amp", False)
-                and check_amp_available()
-            )
-            optimizer_cls = OptimizerCallback
-            if is_amp_enabled:
-                optimizer_cls = AMPOptimizerCallback
+                default_callbacks.append(("_saver", None, CheckpointCallback))
+                default_callbacks.append(
+                    ("_tensorboard", None, TensorboardLogger)
+                )
 
             if self.stages_config[stage].get("criterion_params", {}):
-                default_callbacks.append(("_criterion", CriterionCallback))
+                default_callbacks.append(
+                    ("_criterion", None, CriterionCallback)
+                )
             if self.stages_config[stage].get("optimizer_params", {}):
-                default_callbacks.append(("_optimizer", optimizer_cls))
+                default_callbacks.append(
+                    ("_optimizer", IOptimizerCallback, optimizer_cls)
+                )
             if self.stages_config[stage].get("scheduler_params", {}):
-                default_callbacks.append(("_scheduler", SchedulerCallback))
+                default_callbacks.append(
+                    ("_scheduler", ISchedulerCallback, SchedulerCallback)
+                )
 
-        default_callbacks.append(("_exception", ExceptionCallback))
+        default_callbacks.append(("_exception", None, ExceptionCallback))
 
-        for callback_name, callback_fn in default_callbacks:
-            is_already_present = False
-            for x in callbacks.values():
-                if check_callback_isinstance(x, callback_fn):
-                    is_already_present = True
-                    break
+        for (
+            callback_name,
+            callback_interface,
+            callback_fn,
+        ) in default_callbacks:
+            callback_interface = callback_interface or callback_fn
+            is_already_present = any(
+                check_callback_isinstance(x, callback_interface)
+                for x in callbacks.values()
+            )
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()
 

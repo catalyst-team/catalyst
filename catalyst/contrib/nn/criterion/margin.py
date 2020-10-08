@@ -19,8 +19,8 @@ class MarginLoss(nn.Module):
         Margin loss constructor.
 
         Args:
-            alpha (float): alpha
-            beta (float): beta
+            alpha: alpha
+            beta: beta
             skip_labels (int or List[int]): labels to skip
         """
         super().__init__()

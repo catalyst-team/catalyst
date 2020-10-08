@@ -35,8 +35,8 @@ def precision(tp, fp, eps: float = 1e-5) -> float:
     classification and segmentation.
 
     Args:
-        tp (int): number of true positives
-        fp (int): number of false positives
+        tp: number of true positives
+        fp: number of false positives
         eps: epsilon to use
 
     Returns:
@@ -95,9 +95,9 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
         false positives, and false negatives in comparison to the target.
 
         Args:
-            output (torch.Tensor): prediction after activation function
+            output: prediction after activation function
                 shape should be (batch_size, ...), but works with any shape
-            target (torch.Tensor): label (binary),
+            target: label (binary),
                 shape should be the same as output's shape
         """
         output = (output > self.threshold).float()

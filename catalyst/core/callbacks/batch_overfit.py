@@ -103,7 +103,7 @@ class BatchOverfitCallback(Callback):
         from loader will be used for overfitting.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         epoch_loaders = OrderedDict()
 
@@ -122,7 +122,7 @@ class BatchOverfitCallback(Callback):
         Unwraps loaders for current epoch.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         runner.loaders = {
             key: value.origin

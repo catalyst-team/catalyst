@@ -80,7 +80,7 @@ class TemporalAttentionPooling(nn.Module):
         Forward call.
 
         Args:
-            x (torch.Tensor): tensor of size
+            x: tensor of size
                 (batch_size, history_len, feature_size)
             mask: mask to use
 
@@ -113,7 +113,7 @@ class TemporalConcatPooling(nn.Module):
         Concat pooling forward.
 
         Args:
-            x (torch.Tensor): tensor of size
+            x: tensor of size
                 (batch_size, history_len, feature_size)
             mask: mask to use
 
@@ -210,9 +210,9 @@ class LamaPooling(nn.Module):
         Forward method of the LAMA.
 
         Args:
-            x (torch.Tensor): tensor of size
+            x: tensor of size
                 (batch_size, history_len, feature_size)
-            mask (torch.Tensor): mask to use for attention compute
+            mask: mask to use for attention compute
 
         Returns:
             torch.Tensor: LAMA pooling result

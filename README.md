@@ -115,6 +115,8 @@ traced_model = runner.trace(loader=loaders["valid"])
 5. Go through advanced  [classification](https://github.com/catalyst-team/classification), [detection](https://github.com/catalyst-team/detection) and [segmentation](https://github.com/catalyst-team/segmentation) pipelines with Config API. More pipelines available under [projects section](#projects). 
 6. Want more? See [Alchemy](https://github.com/catalyst-team/alchemy) and [Reaction](https://github.com/catalyst-team/reaction) packages.
 7. For Catalyst.RL introduction, please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
+8. If you would like to contribute to the project, follow our [contribution guidelines](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md). 
+If you want to support the project, feel free to donate on [patreon page](https://patreon.com/catalyst_team) or [write us]((#user-feedback)) with your proposals.
 
 
 ## Table of Contents
@@ -441,23 +443,17 @@ from catalyst.utils import metrics
 LOG_SCALE_MAX = 2
 LOG_SCALE_MIN = -10
 
-def normal_sample(mu, sigma):
-    return mu + sigma * torch.randn_like(sigma)
-
-def normal_logprob(mu, sigma, z):
-    normalization_constant = (-sigma.log() - 0.5 * np.log(2 * np.pi))
-    square_term = -0.5 * ((z - mu) / sigma)**2
-    logprob_vec = normalization_constant + square_term
-    logprob = logprob_vec.sum(1)
-    return logprob
+def normal_sample(loc, log_scale):
+    scale = torch.exp(0.5 * log_scale)
+    return loc + scale * torch.randn_like(scale)
 
 class ClassifyVAE(torch.nn.Module):
 
     def __init__(self, in_features, hid_features, out_features):
         super().__init__()
-        self.encoder = torch.nn.Linear(in_features, hid_features * 2)
+        self.encoder = nn.Linear(in_features, hid_features * 2)
         self.decoder = nn.Sequential(nn.Linear(hid_features, in_features), nn.Sigmoid())
-        self.clf = torch.nn.Linear(hid_features, out_features)
+        self.clf = nn.Linear(hid_features, out_features)
 
     def forward(self, x, deterministic=False):
         z = self.encoder(x)
@@ -465,14 +461,14 @@ class ClassifyVAE(torch.nn.Module):
 
         loc, log_scale = z[:, :z_dim // 2], z[:, z_dim // 2:]
         log_scale = torch.clamp(log_scale, LOG_SCALE_MIN, LOG_SCALE_MAX)
-        scale = torch.exp(log_scale)
-        z_ = loc if deterministic else normal_sample(loc, scale)
-        z_logprob = normal_logprob(loc, scale, z_)
+
+        z_ = loc if deterministic else normal_sample(loc, log_scale)
         z_ = z_.view(bs, -1)
         x_ = self.decoder(z_)
+
         y_hat = self.clf(z_)
 
-        return y_hat, x_, z_logprob, loc, log_scale
+        return y_hat, x_, loc, log_scale
 
 model = ClassifyVAE(28 * 28, 64, 10)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
@@ -487,19 +483,17 @@ class CustomRunner(dl.Runner):
     def _handle_batch(self, batch):
         x, y = batch
         x = x.view(x.size(0), -1)
-        y_hat, x_, z_logprob, loc, log_scale = self.model(x)
+        y_hat, x_, loc, log_scale = self.model(x, deterministic=not self.is_train_loader)
 
         loss_clf = F.cross_entropy(y_hat, y)
         loss_ae = F.mse_loss(x_, x)
-        loss_kld = -0.5 * torch.mean(1 + log_scale - loc.pow(2) - log_scale.exp()) * 0.1
-        loss_logprob = torch.mean(z_logprob) * 0.01
-        loss = loss_clf + loss_ae + loss_kld + loss_logprob
+        loss_kld = (-0.5 * torch.sum(1 + log_scale - loc.pow(2) - log_scale.exp(), dim=1)).mean()
+        loss = loss_clf + loss_ae + loss_kld
         accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
         self.batch_metrics = {
             "loss_clf": loss_clf,
             "loss_ae": loss_ae,
             "loss_kld": loss_kld,
-            "loss_logprob": loss_logprob,
             "loss": loss,
             "accuracy01": accuracy01,
             "accuracy03": accuracy03,
@@ -1029,6 +1023,66 @@ runner.train(
 </p>
 </details>
 
+<details>
+<summary>AutoML - hyperparameters optimization with Optuna</summary>
+<p>
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/14njbSYUESZPc0iCnECTG4hkbDuEnGJTi?usp=sharing)
+
+```python
+import os
+import optuna
+import torch
+from torch import nn
+from torch.utils.data import DataLoader
+from catalyst import dl
+from catalyst.data.cv import ToTensor
+from catalyst.contrib.datasets import MNIST
+from catalyst.contrib.nn import Flatten
+    
+
+def objective(trial):
+    lr = trial.suggest_loguniform("lr", 1e-3, 1e-1)
+    num_hidden = int(trial.suggest_loguniform("num_hidden", 32, 128))
+
+    loaders = {
+        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
+        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+    }
+    model = nn.Sequential(
+        Flatten(), nn.Linear(784, num_hidden), nn.ReLU(), nn.Linear(num_hidden, 10)
+    )
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+    criterion = nn.CrossEntropyLoss()
+
+    runner = dl.SupervisedRunner()
+    runner.train(
+        model=model,
+        loaders=loaders,
+        criterion=criterion,
+        optimizer=optimizer,
+        callbacks=[
+            dl.OptunaCallback(trial),
+            dl.AccuracyCallback(num_classes=10),
+        ],
+        num_epochs=10,
+        main_metric="accuracy01",
+        minimize_metric=False,
+    )
+    return runner.best_valid_metrics[runner.main_metric]
+
+study = optuna.create_study(
+    direction="maximize",
+    pruner=optuna.pruners.MedianPruner(
+        n_startup_trials=1, n_warmup_steps=0, interval_steps=1
+    ),
+)
+study.optimize(objective, n_trials=10, timeout=300)
+print(study.best_value, study.best_params)
+```
+</p>
+</details>
+
 
 ### Features
 - Universal train/inference loop.
@@ -1092,6 +1146,7 @@ best practices for your deep learning research.
 ### Docs
 
 - [master](https://catalyst-team.github.io/catalyst/)
+- [20.09](https://catalyst-team.github.io/catalyst/v20.09/index.html)
 - [20.08.2](https://catalyst-team.github.io/catalyst/v20.08.2/index.html)
 - [20.07](https://catalyst-team.github.io/catalyst/v20.07/index.html) - [dev blog: 20.07 release](https://medium.com/pytorch/catalyst-dev-blog-20-07-release-fb489cd23e14?source=friends_link&sk=7ab92169658fe9a9e1c44068f28cc36c)
 - [20.06](https://catalyst-team.github.io/catalyst/v20.06/index.html)

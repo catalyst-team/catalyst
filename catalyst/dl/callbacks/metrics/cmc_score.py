@@ -43,16 +43,16 @@ class CMCScoreCallback(Callback):
         On batch end callback accumulate all embeddings
 
         Args:
-            embeddings_key (str): embeddings key in output dict
-            labels_key (str): labels key in output dict
-            is_query_key (str): bool key True if current
+            embeddings_key: embeddings key in output dict
+            labels_key: labels key in output dict
+            is_query_key: bool key True if current
                 object is from query
-            prefix (str): key for the metric's name
-            topk_args (List[int]): specifies which cmc@K to log.
+            prefix: key for the metric's name
+            topk_args: specifies which cmc@K to log.
                 [1] - cmc@1
                 [1, 3] - cmc@1 and cmc@3
                 [1, 3, 5] - cmc@1, cmc@3 and cmc@5
-            num_classes (int): number of classes to calculate ``accuracy_args``
+            num_classes: number of classes to calculate ``accuracy_args``
                 if ``topk_args`` is None
 
         """
@@ -138,15 +138,15 @@ class CMCScoreCallback(Callback):
             self._query_idx == self._query_size
         ), "An error occurred during the accumulation process."
 
-        conformity_matrix = self._query_labels == self._gallery_labels.reshape(
+        conformity_matrix = self._gallery_labels == self._query_labels.reshape(
             -1, 1
         )
         for key in self.list_args:
             metric = self._metric_fn(
-                self._gallery_embeddings,
-                self._query_embeddings,
-                conformity_matrix,
-                key,
+                query_embeddings=self._query_embeddings,
+                gallery_embeddings=self._gallery_embeddings,
+                conformity_matrix=conformity_matrix,
+                topk=key,
             )
             runner.loader_metrics[f"{self._prefix}{key:02}"] = metric
         self._gallery_embeddings = None

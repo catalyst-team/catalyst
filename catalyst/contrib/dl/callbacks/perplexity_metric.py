@@ -19,11 +19,11 @@ class PerplexityMetricCallback(BatchMetricCallback):
     ):
         """
         Args:
-            input_key (str): input key to use for perplexity calculation,
+            input_key: input key to use for perplexity calculation,
                 target tokens
-            output_key (str): output key to use for perplexity calculation,
+            output_key: output key to use for perplexity calculation,
                 logits of the predicted tokens
-            ignore_index (int): index to ignore, usually pad_index
+            ignore_index: index to ignore, usually pad_index
         """
         self.ignore_index = ignore_index or nn.CrossEntropyLoss().ignore_index
         self.cross_entropy_loss = nn.CrossEntropyLoss(

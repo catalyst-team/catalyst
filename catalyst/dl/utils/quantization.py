@@ -8,9 +8,9 @@ from torch.nn import Module
 
 from catalyst.tools import Model
 from catalyst.utils import (
-    import_experiment_and_runner,
     load_checkpoint,
     load_config,
+    prepare_config_api_components,
     unpack_checkpoint,
 )
 
@@ -31,9 +31,9 @@ def save_quantized_model(
     """Saves quantized model.
 
     Args:
-        model (ScriptModule): Traced model
+        model: Traced model
         logdir (Union[str, Path]): Path to experiment
-        checkpoint_name (str): name for the checkpoint
+        checkpoint_name: name for the checkpoint
         out_dir (Union[str, Path]): Directory to save model to
             (overrides logdir)
         out_model (Union[str, Path]): Path to save model to
@@ -77,8 +77,8 @@ def quantize_model_from_checkpoint(
 
     Args:
         logdir (Union[str, Path]): Path to Catalyst logdir with model
-        checkpoint_name (str): Name of model checkpoint to use
-        stage (str): experiment's stage name
+        checkpoint_name: Name of model checkpoint to use
+        stage: experiment's stage name
         qconfig_spec: torch.quantization.quantize_dynamic
                 parameter, you can define layers to be quantize
         dtype: type of the model parameters, default int8
@@ -101,8 +101,10 @@ def quantize_model_from_checkpoint(
     expdir = Path(logdir) / "code" / config_expdir.name
 
     logger.info("Import experiment and runner from logdir")
-    experiment_fn, runner_fn = import_experiment_and_runner(expdir)
-    experiment: ConfigExperiment = experiment_fn(config)
+    experiment: ConfigExperiment = None
+    experiment, _, _ = prepare_config_api_components(
+        expdir=expdir, config=config
+    )
 
     logger.info(f"Load model state from checkpoints/{checkpoint_name}.pth")
     if stage is None:

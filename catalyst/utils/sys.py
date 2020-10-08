@@ -164,8 +164,8 @@ def dump_environment(
     Saves config, environment variables and package list in JSON into logdir.
 
     Args:
-        experiment_config (dict): experiment config
-        logdir (str): path to logdir
+        experiment_config: experiment config
+        logdir: path to logdir
         configs_path: path(s) to config
     """
     configs_path = configs_path or []

@@ -75,7 +75,7 @@ class PeriodicLoaderCallback(Callback):
         """Collect information about loaders.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
 
         Raises:
             ValueError: if there are no loaders in epoch
@@ -125,7 +125,7 @@ class PeriodicLoaderCallback(Callback):
         in the epochs where this loader is missing.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
 
         Raises:
             ValueError: if there are no loaders in epoch
@@ -153,7 +153,7 @@ class PeriodicLoaderCallback(Callback):
         dropped for current epoch.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         valid_metric_name = f"{runner.valid_loader}_{runner.main_metric}"
         if self.valid_loader not in runner.loaders:

@@ -22,13 +22,13 @@ def iou(
 ) -> torch.Tensor:
     """
     Args:
-        outputs (torch.Tensor): A list of predicted elements
-        targets (torch.Tensor):  A list of elements that are to be predicted
-        classes (List[str]): if classes are specified
+        outputs: A list of predicted elements
+        targets:  A list of elements that are to be predicted
+        classes: if classes are specified
             we reduce across all dims except channels
-        eps (float): epsilon to avoid zero division
-        threshold (float): threshold for outputs binarization
-        activation (str): An torch.nn activation applied to the outputs.
+        eps: epsilon to avoid zero division
+        threshold: threshold for outputs binarization
+        activation: An torch.nn activation applied to the outputs.
             Must be one of ["none", "Sigmoid", "Softmax2d"]
 
     Returns:
