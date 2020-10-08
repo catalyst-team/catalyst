@@ -1,20 +1,30 @@
 import os
+import shutil
 
 import torch
 
 from catalyst.contrib.datasets import MovieLens
 
 
+def setup_module():
+    """
+    Remove the temp folder if exists
+    """
+    data_path = "./data"
+    try:
+        shutil.rmtree(data_path)
+    except Exception as e:
+        print(
+            "Error! Code: {c}, Message, {m}".format(
+                c=type(e).__name__, m=str(e)
+            )
+        )
+
+
 def test_download():
     """
     Test movielense download
     """
-    data_path = "./data"
-    try:
-        os.rmdir(data_path)
-    except OSError as e:
-        print("Error: %s : %s" % (data_path, e.strerror))
-
     MovieLens("./data", download=True)
 
     filename = "ml-100k"
@@ -81,3 +91,18 @@ def test_minimal_ranking():
     assert 1 not in train_data_laoder_min_two[0].unique()
     assert 1 not in train_data_laoder_min_two[120].unique()
     assert 3 in train_data_laoder_min_two[0].unique()
+
+
+def teardown_module():
+    """
+    Remove tempoary files after test execution
+    """
+    data_path = "./data"
+    try:
+        shutil.rmtree(data_path)
+    except Exception as e:
+        print(
+            "Error! Code: {c}, Message, {m}".format(
+                c=type(e).__name__, m=str(e)
+            )
+        )
