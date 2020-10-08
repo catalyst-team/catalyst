@@ -232,10 +232,13 @@ class MnistMLDataset(MetricLearningTrainDataset, MNIST):
             ValueError: if train argument is False (MnistMLDataset
                 should be used only for training)
         """
-        if "train" in kwargs and kwargs["train"] is False:
-            raise ValueError(
-                "MnistMLDataset can be used only for training stage."
-            )
+        if "train" in kwargs:
+            if kwargs["train"] is False:
+                raise ValueError(
+                    "MnistMLDataset can be used only for training stage."
+                )
+        else:
+            kwargs["train"] = True
         super(MnistMLDataset, self).__init__(**kwargs)
         self._filter()
 
