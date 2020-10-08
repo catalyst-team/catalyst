@@ -76,7 +76,9 @@ class ArcFace(nn.Module):
             + ")"
         )
 
-    def forward(self, input, target):
+    def forward(
+        self, input: torch.FloatTensor, target: torch.LongTensor
+    ) -> torch.FloatTensor:
         """
         Args:
             input: input features,
@@ -190,7 +192,9 @@ class SubCenterArcFace(nn.Module):
             + ")"
         )
 
-    def forward(self, input, label):
+    def forward(
+        self, input: torch.FloatTensor, label: torch.LongTensor
+    ) -> torch.FloatTensor:
         """
         Args:
             input: input features,

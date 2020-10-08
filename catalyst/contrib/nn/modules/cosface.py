@@ -59,7 +59,9 @@ class CosFace(nn.Module):
             self.in_features, self.out_features, self.s, self.m
         )
 
-    def forward(self, input, target):
+    def forward(
+        self, input: torch.FloatTensor, target: torch.LongTensor
+    ) -> torch.LongTensor:
         """
         Args:
             input: input features,

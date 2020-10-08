@@ -3,14 +3,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class SoftMax(nn.Module):
-    """Implementation of
-    `Significance of Softmax-based Features in Comparison to
-    Distance Metric Learning-based Features`_.
-
-    .. _Significance of Softmax-based Features in Comparison to \
-        Distance Metric Learning-based Features:
-        https://arxiv.org/abs/1712.10151
+class ArcMarginProduct(nn.Module):
+    """Implementation of Arc Margin Product.
 
     Args:
         in_features: size of each input sample.
@@ -23,31 +17,20 @@ class SoftMax(nn.Module):
           :math:`H_{out} = out\_features`.
 
     Example:
-        >>> layer = SoftMax(5, 10)
+        >>> layer = ArcMarginProduct(5, 10)
         >>> loss_fn = nn.CrosEntropyLoss()
         >>> embedding = torch.randn(3, 5, requires_grad=True)
         >>> target = torch.empty(3, dtype=torch.long).random_(10)
-        >>> output = layer(embedding, target)
+        >>> output = layer(embedding)
         >>> loss = loss_fn(output, target)
         >>> loss.backward()
 
     """
 
-    def __init__(self, in_features: int, num_classes: int):  # noqa: D107
-        super(SoftMax, self).__init__()
-        self.in_features = in_features
-        self.out_features = num_classes
-        self.weight = nn.Parameter(torch.FloatTensor(num_classes, in_features))
-        self.bias = nn.Parameter(torch.FloatTensor(num_classes))
-
+    def __init__(self, in_features: int, out_features: int):  # noqa: D107
+        super(ArcMarginProduct, self).__init__()
+        self.weight = nn.Parameter(torch.Tensor(out_features, in_features))
         nn.init.xavier_uniform_(self.weight)
-        nn.init.zeros_(self.bias)
-
-    def __repr__(self) -> str:
-        """Object representation."""
-        return "SoftMax(in_features={},out_features={})".format(
-            self.in_features, self.out_features
-        )
 
     def forward(self, input: torch.FloatTensor) -> torch.FloatTensor:
         """
@@ -62,4 +45,5 @@ class SoftMax(nn.Module):
             where ``C`` is a number of classes
             (out_features).
         """
-        return F.linear(input, self.weight, self.bias)
+        cosine = F.linear(F.normalize(input), F.normalize(self.weight))
+        return cosine
