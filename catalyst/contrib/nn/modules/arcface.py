@@ -64,16 +64,12 @@ class ArcFace(nn.Module):
         """Object representation."""
         rep = (
             "ArcFace("
-            + ",".join(
-                [
-                    f"in_features={self.in_features}",
-                    f"out_features={self.out_features}",
-                    f"s={self.s}",
-                    f"m={self.m}",
-                    f"eps={self.eps}",
-                ]
-            )
-            + ")"
+            f"in_features={self.in_features},"
+            f"out_features={self.out_features},"
+            f"s={self.s},"
+            f"m={self.m},"
+            f"eps={self.eps}"
+            ")"
         )
         return rep
 
@@ -180,17 +176,13 @@ class SubCenterArcFace(nn.Module):
         """Object representation."""
         rep = (
             "SubCenterArcFace("
-            + ",".join(
-                [
-                    f"in_features={self.in_features}",
-                    f"out_features={self.out_features}",
-                    f"s={self.s}",
-                    f"m={self.m}",
-                    f"k={self.k}",
-                    f"eps={self.eps}",
-                ]
-            )
-            + ")"
+            f"in_features={self.in_features},"
+            f"out_features={self.out_features},"
+            f"s={self.s},"
+            f"m={self.m},"
+            f"k={self.k},"
+            f"eps={self.eps}"
+            ")"
         )
         return rep
 
