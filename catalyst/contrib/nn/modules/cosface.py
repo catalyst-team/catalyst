@@ -60,8 +60,8 @@ class CosFace(nn.Module):
         )
 
     def forward(
-        self, input: torch.FloatTensor, target: torch.LongTensor
-    ) -> torch.LongTensor:
+        self, input: torch.Tensor, target: torch.LongTensor
+    ) -> torch.Tensor:
         """
         Args:
             input: input features,
@@ -79,8 +79,10 @@ class CosFace(nn.Module):
         """
         cosine = F.linear(F.normalize(input), F.normalize(self.weight))
         phi = cosine - self.m
-        one_hot = torch.zeros(cosine.size()).to(input.device)
+
+        one_hot = torch.zeros_like(cosine)
         one_hot.scatter_(1, target.view(-1, 1).long(), 1)
+
         logits = (one_hot * phi) + ((1.0 - one_hot) * cosine)
         logits *= self.s
 

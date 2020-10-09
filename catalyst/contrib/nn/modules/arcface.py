@@ -77,8 +77,8 @@ class ArcFace(nn.Module):
         )
 
     def forward(
-        self, input: torch.FloatTensor, target: torch.LongTensor
-    ) -> torch.FloatTensor:
+        self, input: torch.Tensor, target: torch.LongTensor
+    ) -> torch.Tensor:
         """
         Args:
             input: input features,
@@ -99,7 +99,7 @@ class ArcFace(nn.Module):
             torch.clamp(cos_theta, -1.0 + self.eps, 1.0 - self.eps)
         )
 
-        one_hot = torch.zeros_like(cos_theta, device=input.device)
+        one_hot = torch.zeros_like(cos_theta)
         one_hot.scatter_(1, target.view(-1, 1).long(), 1)
 
         mask = torch.where(
@@ -193,8 +193,8 @@ class SubCenterArcFace(nn.Module):
         )
 
     def forward(
-        self, input: torch.FloatTensor, label: torch.LongTensor
-    ) -> torch.FloatTensor:
+        self, input: torch.Tensor, label: torch.LongTensor
+    ) -> torch.Tensor:
         """
         Args:
             input: input features,
@@ -222,7 +222,7 @@ class SubCenterArcFace(nn.Module):
             torch.clamp(cos_theta, -1.0 + self.eps, 1.0 - self.eps)
         )
 
-        one_hot = torch.zeros(cos_theta.size()).to(input.device)
+        one_hot = torch.zeros_like(cos_theta)
         one_hot.scatter_(1, label.view(-1, 1).long(), 1)
 
         selected = torch.where(

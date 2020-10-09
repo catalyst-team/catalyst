@@ -32,7 +32,7 @@ class ArcMarginProduct(nn.Module):
         self.weight = nn.Parameter(torch.Tensor(out_features, in_features))
         nn.init.xavier_uniform_(self.weight)
 
-    def forward(self, input: torch.FloatTensor) -> torch.FloatTensor:
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
         """
         Args:
             input: input features,
