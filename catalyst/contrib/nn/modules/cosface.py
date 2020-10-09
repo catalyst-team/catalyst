@@ -146,7 +146,7 @@ class AdaCos(nn.Module):
             f"in_features={self.in_features},"
             f"out_features={self.out_features},"
             f"s={self.s},"
-            f"eps={self.eps},"
+            f"eps={self.eps}"
             ")"
         )
         return rep
