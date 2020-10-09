@@ -141,22 +141,19 @@ class AdaCos(nn.Module):
 
     def __repr__(self) -> str:
         """Object representation."""
-        return (
+        rep = (
             "AdaCos("
-            + ",".join(
-                [
-                    f"in_features={self.in_features}",
-                    f"out_features={self.out_features}",
-                    f"s={self.s}",
-                    f"eps={self.eps}",
-                ]
-            )
-            + ")"
+            f"in_features={self.in_features},"
+            f"out_features={self.out_features},"
+            f"s={self.s},"
+            f"eps={self.eps},"
+            ")"
         )
+        return rep
 
     def forward(
-        self, input: torch.FloatTensor, target: torch.LongTensor
-    ) -> torch.FloatTensor:
+        self, input: torch.Tensor, target: torch.LongTensor
+    ) -> torch.Tensor:
         """
         Args:
             input: input features,
@@ -177,7 +174,7 @@ class AdaCos(nn.Module):
             torch.clamp(cos_theta, -1.0 + self.eps, 1.0 - self.eps)
         )
 
-        one_hot = torch.zeros_like(cos_theta, device=input.device)
+        one_hot = torch.zeros_like(cos_theta)
         one_hot.scatter_(1, target.view(-1, 1).long(), 1)
 
         if self.train:
