@@ -178,7 +178,7 @@ class SubCenterArcFace(nn.Module):
 
     def __repr__(self) -> str:
         """Object representation."""
-        return (
+        rep = (
             "SubCenterArcFace("
             + ",".join(
                 [
@@ -192,6 +192,7 @@ class SubCenterArcFace(nn.Module):
             )
             + ")"
         )
+        return rep
 
     def forward(
         self, input: torch.Tensor, label: torch.LongTensor
