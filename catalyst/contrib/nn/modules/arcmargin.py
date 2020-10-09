@@ -29,8 +29,17 @@ class ArcMarginProduct(nn.Module):
 
     def __init__(self, in_features: int, out_features: int):  # noqa: D107
         super(ArcMarginProduct, self).__init__()
+        self.in_features = in_features
+        self.out_features = out_features
         self.weight = nn.Parameter(torch.Tensor(out_features, in_features))
         nn.init.xavier_uniform_(self.weight)
+
+    def __repr__(self) -> str:
+        """Object representation."""
+        rep = "ArcMarginProduct(in_features={},out_features={})".format(
+            self.in_features, self.out_features
+        )
+        return rep
 
     def forward(self, input: torch.Tensor) -> torch.Tensor:
         """

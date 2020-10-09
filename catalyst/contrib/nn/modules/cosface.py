@@ -55,9 +55,10 @@ class CosFace(nn.Module):
 
     def __repr__(self) -> str:
         """Object representation."""
-        return "CosFace(in_features={},out_features={},s={},m={})".format(
+        rep = "CosFace(in_features={},out_features={},s={},m={})".format(
             self.in_features, self.out_features, self.s, self.m
         )
+        return rep
 
     def forward(
         self, input: torch.Tensor, target: torch.LongTensor

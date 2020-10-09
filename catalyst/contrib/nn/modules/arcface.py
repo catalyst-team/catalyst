@@ -62,7 +62,7 @@ class ArcFace(nn.Module):
 
     def __repr__(self) -> str:
         """Object representation."""
-        return (
+        rep = (
             "ArcFace("
             + ",".join(
                 [
@@ -75,6 +75,7 @@ class ArcFace(nn.Module):
             )
             + ")"
         )
+        return rep
 
     def forward(
         self, input: torch.Tensor, target: torch.LongTensor

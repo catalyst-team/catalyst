@@ -45,9 +45,10 @@ class SoftMax(nn.Module):
 
     def __repr__(self) -> str:
         """Object representation."""
-        return "SoftMax(in_features={},out_features={})".format(
+        rep = "SoftMax(in_features={},out_features={})".format(
             self.in_features, self.out_features
         )
+        return rep
 
     def forward(self, input: torch.Tensor) -> torch.Tensor:
         """
