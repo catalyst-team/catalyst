@@ -20,7 +20,7 @@ def text_publisher(writer: SummaryWriter, tag, sample):
 class LossInterpretationCallback(IMetricCallback):
     def __init__(
         self,
-        criterion=None,
+        criterion,
         loaders_to_skip: Container[str] = (),
         prefix: str = "",
         input_key: str = "targets",
@@ -75,14 +75,6 @@ class LossInterpretationCallback(IMetricCallback):
     def on_loader_start(self, runner: IRunner):
         if not self._should_interpret_loader(runner):
             return
-        if self.metric is None and runner.criterion is None:
-            message = f"""LossInterpretationCallback needs a criterion either
-from the runner, or from the "criterion" constructor parameter.
-Since neither was provided, skipping loader "{runner.loader_name}".
-            """
-            print(message)
-            return
-        self.metric = runner.criterion if self.metric is None else self.metric
         if runner.loader_name not in self.loggers:
             logdir = runner.logdir / f"{runner.loader_name}_log"
             self.loggers[runner.loader_name] = SummaryWriter(str(logdir))
@@ -94,8 +86,6 @@ Since neither was provided, skipping loader "{runner.loader_name}".
 
     def on_loader_end(self, runner: IRunner):
         if not self._should_interpret_loader(runner):
-            return
-        if self.metric is None:
             return
 
         self.interpretations[runner.loader_name] = {
@@ -114,7 +104,7 @@ Since neither was provided, skipping loader "{runner.loader_name}".
         ]
         indices = {
             "best": indices_sorted[: self.top_k],
-            "worst": indices_sorted[-self.top_k :],
+            "worst": indices_sorted[-self.top_k :][::-1],
         }
 
         writer: SummaryWriter = self.loggers[runner.loader_name]
@@ -133,7 +123,7 @@ Since neither was provided, skipping loader "{runner.loader_name}".
         loss_items: torch.Tensor = self._compute_metric_value(
             runner.output, runner.input
         )
-        loss_items = loss_items.unsqueeze(-1).unsqueeze(-1)
+        loss_items = loss_items
         if len(loss_items.shape) > 1:
             dims = tuple(range(1, len(loss_items.shape)))
             loss_items = loss_items.mean(dim=dims)
