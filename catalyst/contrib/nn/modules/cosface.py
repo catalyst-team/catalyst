@@ -57,11 +57,19 @@ class CosFace(nn.Module):
 
     def __repr__(self) -> str:
         """Object representation."""
-        return "CosFace(in_features={},out_features={},s={},m={})".format(
-            self.in_features, self.out_features, self.s, self.m
+        rep = (
+            "CosFace("
+            f"in_features={self.in_features},"
+            f"out_features={self.out_features},"
+            f"s={self.s},"
+            f"m={self.m}"
+            ")"
         )
+        return rep
 
-    def forward(self, input, target):
+    def forward(
+        self, input: torch.Tensor, target: torch.LongTensor
+    ) -> torch.Tensor:
         """
         Args:
             input: input features,
@@ -74,12 +82,15 @@ class CosFace(nn.Module):
 
         Returns:
             tensor (logits) with shapes ``BxC``
-            where ``C`` is a number of classes.
+            where ``C`` is a number of classes
+            (out_features).
         """
         cosine = F.linear(F.normalize(input), F.normalize(self.weight))
         phi = cosine - self.m
-        one_hot = torch.zeros(cosine.size()).to(input.device)
+
+        one_hot = torch.zeros_like(cosine)
         one_hot.scatter_(1, target.view(-1, 1).long(), 1)
+
         logits = (one_hot * phi) + ((1.0 - one_hot) * cosine)
         logits *= self.s
 
@@ -88,10 +99,9 @@ class CosFace(nn.Module):
 
 class AdaCos(nn.Module):
     """Implementation of
-    `AdaCos: Adaptively Scaling Cosine Logits for \
-        Effectively Learning Deep Face Representations`_.
+    `AdaCos\: Adaptively Scaling Cosine Logits for Effectively Learning Deep Face Representations`_.
 
-    .. _AdaCos\: Adaptively Scaling Cosine Logits for \
+    .. _AdaCos\: Adaptively Scaling Cosine Logits for\
         Effectively Learning Deep Face Representations:
         https://arxiv.org/abs/1905.00292
 
@@ -119,7 +129,7 @@ class AdaCos(nn.Module):
         >>> loss = loss_fn(output, target)
         >>> loss.backward()
 
-    """
+    """  # noqa: E501,W505
 
     def __init__(  # noqa: D107
         self,
@@ -179,7 +189,7 @@ class AdaCos(nn.Module):
 
         if self.train:
             with torch.no_grad():
-                B_avg = (
+                b_avg = (
                     torch.where(
                         one_hot < 1,
                         torch.exp(self.s * cos_theta),
@@ -192,7 +202,7 @@ class AdaCos(nn.Module):
                 theta_median = torch.min(
                     torch.full_like(theta_median, math.pi / 4), theta_median
                 )
-                self.s = (torch.log(B_avg) / torch.cos(theta_median)).item()
+                self.s = (torch.log(b_avg) / torch.cos(theta_median)).item()
 
         logits = self.s * cos_theta
         return logits
