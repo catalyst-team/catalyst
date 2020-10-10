@@ -264,7 +264,7 @@ Common modules
     :undoc-members:
     :show-inheritance:
 
-CosFace: Large Margin Cosine Loss for Deep Face Recognition
+CosFace and AdaCos
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .. automodule:: catalyst.contrib.nn.modules.cosface
     :members:
