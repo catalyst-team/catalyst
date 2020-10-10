@@ -57,8 +57,13 @@ class CosFace(nn.Module):
 
     def __repr__(self) -> str:
         """Object representation."""
-        rep = "CosFace(in_features={},out_features={},s={},m={})".format(
-            self.in_features, self.out_features, self.s, self.m
+        rep = (
+            "CosFace("
+            f"in_features={self.in_features},"
+            f"out_features={self.out_features},"
+            f"s={self.s},"
+            f"m={self.m}"
+            ")"
         )
         return rep
 
@@ -185,7 +190,7 @@ class AdaCos(nn.Module):
 
         if self.train:
             with torch.no_grad():
-                B_avg = (
+                b_avg = (
                     torch.where(
                         one_hot < 1,
                         torch.exp(self.s * cos_theta),
@@ -198,7 +203,7 @@ class AdaCos(nn.Module):
                 theta_median = torch.min(
                     torch.full_like(theta_median, math.pi / 4), theta_median
                 )
-                self.s = (torch.log(B_avg) / torch.cos(theta_median)).item()
+                self.s = (torch.log(b_avg) / torch.cos(theta_median)).item()
 
         logits = self.s * cos_theta
         return logits

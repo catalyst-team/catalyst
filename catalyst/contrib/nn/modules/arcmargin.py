@@ -36,8 +36,11 @@ class ArcMarginProduct(nn.Module):
 
     def __repr__(self) -> str:
         """Object representation."""
-        rep = "ArcMarginProduct(in_features={},out_features={})".format(
-            self.in_features, self.out_features
+        rep = (
+            "ArcMarginProduct("
+            f"in_features={self.in_features},"
+            f"out_features={self.out_features}"
+            ")"
         )
         return rep
 
