@@ -1,8 +1,8 @@
-import torch
+from typing import Any, Callable, Container, Sequence
+
 import numpy as np
 
-from typing import Container, Sequence, Callable, Any
-
+import torch
 from torch.utils.data import SequentialSampler
 
 from catalyst.contrib.tools import SummaryWriter
@@ -10,26 +10,29 @@ from catalyst.core import IMetricCallback, IRunner
 
 
 def img_publisher(writer: SummaryWriter, tag, sample):
-    writer.add_image(f'{tag}_images', sample)
+    writer.add_image(f"{tag}_images", sample)
 
 
 def text_publisher(writer: SummaryWriter, tag, sample):
-    writer.add_text(f'{tag}_text', sample)
+    writer.add_text(f"{tag}_text", sample)
 
 
 class LossInterpretationCallback(IMetricCallback):
-
-    def __init__(self,
-                 criterion=None,
-                 loaders_to_skip: Container[str] = (),
-                 prefix: str = '',
-                 input_key: str = "targets",
-                 output_key: str = "logits",
-                 idx_key=None,
-                 top_k=10,
-                 tensorboard_sequence: Sequence = None,
-                 tensorboard_publishers: Sequence[Callable[[SummaryWriter, str, Any], Any]] = (),
-                 **loss_kwargs):
+    def __init__(
+        self,
+        criterion=None,
+        loaders_to_skip: Container[str] = (),
+        prefix: str = "",
+        input_key: str = "targets",
+        output_key: str = "logits",
+        idx_key=None,
+        top_k=10,
+        tensorboard_sequence: Sequence = None,
+        tensorboard_publishers: Sequence[
+            Callable[[SummaryWriter, str, Any], Any]
+        ] = (),
+        **loss_kwargs,
+    ):
         """
         Serializes per-sample loss values, and logs the best and worst to the tensorboard.
         Args:
@@ -57,7 +60,9 @@ class LossInterpretationCallback(IMetricCallback):
     def _should_interpret_loader(self, runner: IRunner):
         if runner.loader_name in self._loaders_to_skip:
             return False
-        if isinstance(runner.loaders[runner.loader_name].sampler, SequentialSampler):
+        if isinstance(
+            runner.loaders[runner.loader_name].sampler, SequentialSampler
+        ):
             return True
 
         """
@@ -83,8 +88,8 @@ Since neither was provided, skipping loader "{runner.loader_name}".
             self.loggers[runner.loader_name] = SummaryWriter(str(logdir))
         if runner.loader_name not in self.interpretations:
             self.interpretations[runner.loader_name] = {
-                'loss': [],
-                'indices': []
+                "loss": [],
+                "indices": [],
             }
 
     def on_loader_end(self, runner: IRunner):
@@ -98,20 +103,24 @@ Since neither was provided, skipping loader "{runner.loader_name}".
             for key, value in self.interpretations[runner.loader_name].items()
         }
 
-        out_file = runner.logdir / f'{runner.loader_name}_interpretations.pkl'
+        out_file = runner.logdir / f"{runner.loader_name}_interpretations.pkl"
         torch.save(self.interpretations[runner.loader_name], out_file)
 
-        loss_sorter = self.interpretations[runner.loader_name]['loss'].argsort()
-        indices_sorted = self.interpretations[runner.loader_name]['indices'][loss_sorter]
+        loss_sorter = self.interpretations[runner.loader_name][
+            "loss"
+        ].argsort()
+        indices_sorted = self.interpretations[runner.loader_name]["indices"][
+            loss_sorter
+        ]
         indices = {
-            'best': indices_sorted[:self.top_k],
-            'worst': indices_sorted[-self.top_k:]
+            "best": indices_sorted[: self.top_k],
+            "worst": indices_sorted[-self.top_k :],
         }
 
         writer: SummaryWriter = self.loggers[runner.loader_name]
-        for type_prefix in ['best', 'worst']:
+        for type_prefix in ["best", "worst"]:
             for idx in indices[type_prefix]:
-                tag = f'{self.prefix}{type_prefix}'
+                tag = f"{self.prefix}{type_prefix}"
                 for tensorboard_publisher in self.tensorboard_publishers:
                     sample = self.tensorboard_sequence[idx]
                     tensorboard_publisher(writer, tag, sample)
@@ -121,7 +130,9 @@ Since neither was provided, skipping loader "{runner.loader_name}".
             return
         if self.metric is None:
             return
-        loss_items: torch.Tensor = self._compute_metric_value(runner.output, runner.input)
+        loss_items: torch.Tensor = self._compute_metric_value(
+            runner.output, runner.input
+        )
         loss_items = loss_items.unsqueeze(-1).unsqueeze(-1)
         if len(loss_items.shape) > 1:
             dims = tuple(range(1, len(loss_items.shape)))
@@ -129,14 +140,20 @@ Since neither was provided, skipping loader "{runner.loader_name}".
 
         if self._idx_key is None:
             bs = len(loss_items)
-            indices_so_far = self.interpretations[runner.loader_name]['indices']
-            start_idx = 0 if len(indices_so_far) == 0 else (indices_so_far[-1][-1] + 1)
+            indices_so_far = self.interpretations[runner.loader_name][
+                "indices"
+            ]
+            start_idx = (
+                0 if len(indices_so_far) == 0 else (indices_so_far[-1][-1] + 1)
+            )
             indices = np.arange(start_idx, start_idx + bs)
         else:
             indices = runner.input[self._idx_key].detach().cpu().numpy()
 
-        self.interpretations[runner.loader_name]['loss'].append(loss_items.detach().cpu().numpy())
-        self.interpretations[runner.loader_name]['indices'].append(indices)
+        self.interpretations[runner.loader_name]["loss"].append(
+            loss_items.detach().cpu().numpy()
+        )
+        self.interpretations[runner.loader_name]["indices"].append(indices)
 
     @property
     def metric_fn(self):
