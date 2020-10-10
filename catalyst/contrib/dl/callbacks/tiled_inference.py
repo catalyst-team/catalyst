@@ -101,8 +101,10 @@ class TiledInferenceCallback(Callback):
         On stage start hook.
         """
         self.save_dir.mkdir(parents=True, exist_ok=True)
-        self.probs_path.unlink(missing_ok=True)
-        self.masks_path.unlink(missing_ok=True)
+        if self.probs_path.exists():
+            self.probs_path.unlink()
+        if self.masks_path.exists():
+            self.masks_path.unlink()
 
     def on_loader_start(self, state: State):
         """
