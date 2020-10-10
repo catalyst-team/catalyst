@@ -99,10 +99,9 @@ class CosFace(nn.Module):
 
 class AdaCos(nn.Module):
     """Implementation of
-    `AdaCos: Adaptively Scaling Cosine Logits for \
-        Effectively Learning Deep Face Representations`_.
+    `AdaCos\: Adaptively Scaling Cosine Logits for Effectively Learning Deep Face Representations`_.
 
-    .. _AdaCos\: Adaptively Scaling Cosine Logits for \
+    .. _AdaCos\: Adaptively Scaling Cosine Logits for\
         Effectively Learning Deep Face Representations:
         https://arxiv.org/abs/1905.00292
 
@@ -130,7 +129,7 @@ class AdaCos(nn.Module):
         >>> loss = loss_fn(output, target)
         >>> loss.backward()
 
-    """
+    """  # noqa: E501,W505
 
     def __init__(  # noqa: D107
         self,
