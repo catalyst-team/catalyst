@@ -34,4 +34,5 @@ from catalyst.contrib.nn.modules.se import (
 
 from catalyst.contrib.nn.modules.softmax import SoftMax
 from catalyst.contrib.nn.modules.arcface import ArcFace, SubCenterArcFace
-from catalyst.contrib.nn.modules.cosface import CosFace
+from catalyst.contrib.nn.modules.cosface import CosFace, AdaCos
+from catalyst.contrib.nn.modules.arcmargin import ArcMarginProduct
