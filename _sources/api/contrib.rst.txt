@@ -257,6 +257,13 @@ ArcFace and SubCenterArcFace
     :undoc-members:
     :show-inheritance:
 
+Arc Margin Product
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.. automodule:: catalyst.contrib.nn.modules.arcmargin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Common modules
 """"""""""""""""""""""""""""""""""""""""""
 .. automodule:: catalyst.contrib.nn.modules.common
