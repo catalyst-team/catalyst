@@ -1,4 +1,4 @@
-Registry
+Runners
 ================================================
 
 .. toctree::
@@ -8,22 +8,25 @@ Registry
    :local:
 
 
-.. automodule:: catalyst.registry
+.. automodule:: catalyst.runners
     :members:
     :show-inheritance:
 
-Registry
+
+Runners (catalyst)
 ----------------------
 
-.. automodule:: catalyst.registry.registry
+Runner
+~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.runners.runner
     :members:
     :undoc-members:
     :show-inheritance:
 
-Registries
-----------------------
 
-.. automodule:: catalyst.registry.registries
+SupervisedRunner
+~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.runners.supervised
     :members:
     :undoc-members:
     :show-inheritance:
