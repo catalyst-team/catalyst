@@ -9,6 +9,8 @@ from catalyst.contrib.datasets.mnist import (
     MNIST,
 )
 
+from catalyst.contrib.datasets.movielens import MovieLens
+
 logger = logging.getLogger(__name__)
 
 try:

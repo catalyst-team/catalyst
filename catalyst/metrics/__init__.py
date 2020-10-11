@@ -11,4 +11,5 @@ from catalyst.metrics.functional import (
     wrap_topk_metric2dict,
 )
 from catalyst.metrics.iou import iou, jaccard
+from catalyst.metrics.mrr import mrr
 from catalyst.metrics.precision import average_precision

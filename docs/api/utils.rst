@@ -290,3 +290,10 @@ Functional
     :members:
     :undoc-members:
     :show-inheritance:
+
+MRR
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.metrics.mrr
+    :members:
+    :undoc-members:
+    :show-inheritance:

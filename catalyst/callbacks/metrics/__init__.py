@@ -18,6 +18,7 @@ from catalyst.callbacks.metrics.iou import (
     ClasswiseIouCallback,
     ClasswiseJaccardCallback,
 )
+from catalyst.callbacks.metrics.mrr import MRRCallback
 from catalyst.callbacks.metrics.ppv_tpr_f1 import (
     PrecisionRecallF1ScoreCallback,
 )
