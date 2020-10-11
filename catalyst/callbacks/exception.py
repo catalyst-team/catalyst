@@ -17,13 +17,13 @@ class ExceptionCallback(Callback):
         )
 
     def on_exception(self, runner: "IRunner") -> None:
-        """Exception handle hook.
+        """Exception handle hook.  # noqa: DAR401
 
         Args:
             runner: experiment runner
 
         Raises:
-            Exception: if during exception handling,
+            Exception: if during exception handling,  # noqa: DAR402
                 we still need to reraise exception
         """
         exception = runner.exception

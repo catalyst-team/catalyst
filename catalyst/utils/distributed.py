@@ -171,6 +171,12 @@ def get_distributed_mean(value: Union[float, torch.Tensor]):
 
 
 def get_slurm_params():
+    """Return slurm params for experiment run.
+
+    Returns:
+        tuple with current node index, number of nodes, master node
+            and master port
+    """
     cmd = "scontrol show hostnames '%s'" % os.environ["SLURM_JOB_NODELIST"]
     nodes = subprocess.getoutput(cmd).split()
     num_nodes = int(os.environ["SLURM_JOB_NUM_NODES"])
@@ -183,6 +189,11 @@ def get_slurm_params():
 
 
 def get_distributed_params():
+    """Returns distributed params for experiment run.
+
+    Returns:
+        dictionary with distributed params
+    """
     master_port = str(random.randint(5 * 10 ** 4, 6 * 10 ** 4))
     master_addr = "127.0.0.1"
     cur_node, num_nodes = 0, 1
@@ -214,8 +225,22 @@ def get_distributed_params():
 
 
 def get_distributed_env(
-    local_rank, rank, world_size, use_cuda_visible_devices=True
+    local_rank: int,
+    rank: int,
+    world_size: int,
+    use_cuda_visible_devices: bool = True,
 ):
+    """Returns environment copy with extra distributed settings.
+
+    Args:
+        local_rank: worker local rank
+        rank: worker global rank
+        world_size: worker world size
+        use_cuda_visible_devices: boolean flag to use available GPU devices
+
+    Returns:
+        updated environment copy
+    """
     env = os.environ.copy()
     env["RANK"] = str(rank)
     env["WORLD_SIZE"] = str(world_size)
