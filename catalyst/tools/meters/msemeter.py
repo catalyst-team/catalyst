@@ -17,7 +17,7 @@ class MSEMeter(meter.Meter):
     def __init__(self, root: bool = False):
         """
         Args:
-            root (bool): Toggle between calculation of
+            root: Toggle between calculation of
                 RMSE (True) and MSE (False)
         """
         super(MSEMeter, self).__init__()
@@ -33,8 +33,8 @@ class MSEMeter(meter.Meter):
         """Update squared error stored sum and number of elements.
 
         Args:
-            output (Tensor): Model output tensor or numpy array
-            target (Tensor): Target tensor or numpy array
+            output: Model output tensor or numpy array
+            target: Target tensor or numpy array
         """
         if not torch.is_tensor(output) and not torch.is_tensor(target):
             output = torch.from_numpy(output)

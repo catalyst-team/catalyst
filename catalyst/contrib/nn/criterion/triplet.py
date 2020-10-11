@@ -23,7 +23,7 @@ class TripletLoss(nn.Module):
     def __init__(self, margin: float = 0.3):
         """
         Args:
-            margin (float): margin for triplet
+            margin: margin for triplet
         """
         super().__init__()
         self.margin = margin
@@ -34,7 +34,7 @@ class TripletLoss(nn.Module):
 
         Args:
             embeddings: tensor of shape (batch_size, embed_dim)
-            squared (bool): if true, output is the pairwise squared euclidean
+            squared: if true, output is the pairwise squared euclidean
                 distance matrix. If false, output is the pairwise euclidean
                 distance matrix
 
@@ -191,7 +191,7 @@ class TripletLossV2(nn.Module):
     def __init__(self, margin=0.3):
         """
         Args:
-            margin (float): margin for triplet.
+            margin: margin for triplet.
         """
         super().__init__()
         self.margin = margin
@@ -212,8 +212,8 @@ class TripletPairwiseEmbeddingLoss(nn.Module):
     def __init__(self, margin: float = 0.3, reduction: str = "mean"):
         """
         Args:
-            margin (float): margin parameter
-            reduction (str): criterion reduction type
+            margin: margin parameter
+            reduction: criterion reduction type
         """
         super().__init__()
         self.margin = margin

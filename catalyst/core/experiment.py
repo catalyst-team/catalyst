@@ -1,8 +1,7 @@
-from typing import Any, Dict, Iterable, Mapping, Tuple
+from typing import Any, Dict, Iterable, Mapping
 from abc import ABC, abstractmethod
 from collections import OrderedDict
 
-from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
 from catalyst.core.callback import Callback
@@ -148,7 +147,7 @@ class IExperiment(ABC):
             }
 
         Args:
-            stage (str): stage name of interest
+            stage: stage name of interest
                 like "pretrain" / "train" / "finetune" / etc
 
         Returns:  # noqa: DAR202
@@ -166,12 +165,12 @@ class IExperiment(ABC):
             # nn.Sequential(nn.Linear(28*28, 128), nn.Linear(128, 10))
             >>> experiment.get_model(stage="training")
             Sequential(
-              (0): Linear(in_features=784, out_features=128, bias=True)
-              (1): Linear(in_features=128, out_features=10, bias=True)
+             : Linear(in_features=784, out_features=128, bias=True)
+             : Linear(in_features=128, out_features=10, bias=True)
             )
 
         Args:
-            stage (str): stage name of interest
+            stage: stage name of interest
                 like "pretrain" / "train" / "finetune" / etc
 
         Returns:  # noqa: DAR202
@@ -190,7 +189,7 @@ class IExperiment(ABC):
             nn.CrossEntropyLoss()
 
         Args:
-            stage (str): stage name of interest
+            stage: stage name of interest
                 like "pretrain" / "train" / "finetune" / etc
 
         Returns:  # noqa: DAR202
@@ -208,9 +207,9 @@ class IExperiment(ABC):
             torch.optim.Adam(model.parameters())
 
         Args:
-            stage (str): stage name of interest
+            stage: stage name of interest
                 like "pretrain" / "train" / "finetune" / etc
-            model (Model): model to optimize with stage optimizer
+            model: model to optimize with stage optimizer
 
         Returns:  # noqa: DAR202
             Optimizer: optimizer for a given stage and model.
@@ -226,44 +225,14 @@ class IExperiment(ABC):
             torch.optim.lr_scheduler.StepLR(optimizer)
 
         Args:
-            stage (str): stage name of interest
+            stage: stage name of interest
                 like "pretrain" / "train" / "finetune" / etc
-            optimizer (Optimizer): optimizer to schedule with stage scheduler
+            optimizer: optimizer to schedule with stage scheduler
 
         Returns:  # noqa: DAR202
             Scheduler: scheduler for a given stage and optimizer.
         """
         pass
-
-    def get_experiment_components(
-        self, stage: str, model: nn.Module = None,
-    ) -> Tuple[Model, Criterion, Optimizer, Scheduler]:
-        """
-        Returns the tuple containing criterion, optimizer and scheduler by
-        giving model and stage.
-
-        Aggregation method, based on,
-
-        - :py:mod:`catalyst.core.experiment.IExperiment.get_model`
-        - :py:mod:`catalyst.core.experiment.IExperiment.get_criterion`
-        - :py:mod:`catalyst.core.experiment.IExperiment.get_optimizer`
-        - :py:mod:`catalyst.core.experiment.IExperiment.get_scheduler`
-
-        Args:
-            stage (str): stage name of interest,
-                like "pretrain" / "train" / "finetune" / etc
-            model (Model): model to optimize with stage optimizer
-
-        Returns:
-            tuple: model, criterion, optimizer, scheduler
-                for a given stage and model
-        """
-        if model is None:
-            model = self.get_model(stage)
-        criterion = self.get_criterion(stage)
-        optimizer = self.get_optimizer(stage, model)
-        scheduler = self.get_scheduler(stage, optimizer)
-        return model, criterion, optimizer, scheduler
 
     def get_transforms(self, stage: str = None, dataset: str = None):
         """Returns the data transforms for a given stage and dataset.
@@ -271,9 +240,9 @@ class IExperiment(ABC):
         # noqa: DAR401, W505
 
         Args:
-            stage (str): stage name of interest,
+            stage: stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
-            dataset (str): dataset name of interest,
+            dataset: dataset name of interest,
                 like "train" / "valid" / "infer"
 
         .. note::
@@ -299,10 +268,10 @@ class IExperiment(ABC):
             (experiment) every training epoch.
 
         Args:
-            stage (str): stage name of interest,
+            stage: stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
-            epoch (int): epoch index
-            **kwargs (dict): additional parameters to use during
+            epoch: epoch index
+            **kwargs: additional parameters to use during
                 dataset creation
 
         Returns:  # noqa: DAR202
@@ -343,9 +312,9 @@ class IExperiment(ABC):
             method only.
 
         Args:
-            stage (str): stage name of interest,
+            stage: stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
-            epoch (int): epoch index
+            epoch: epoch index
 
         Returns:  # noqa: DAR202
             OrderedDict[str, DataLoader]: Ordered dictionary
@@ -369,7 +338,7 @@ class IExperiment(ABC):
             or to compute all the metrics before logging :)
 
         Args:
-            stage (str): stage name of interest
+            stage: stage name of interest
                 like "pretrain" / "train" / "finetune" / etc
 
         Returns:  # noqa: DAR202
@@ -384,7 +353,7 @@ class IExperiment(ABC):
                 - :py:mod:`catalyst.core.callback.Callback`
 
         Args:
-            stage (str): stage name of interest,
+            stage: stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
 
         Returns:

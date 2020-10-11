@@ -91,14 +91,14 @@ class SchedulerCallback(ISchedulerCallback):
     ):
         """
         Args:
-            scheduler_key (str): scheduler name, if ``None``,
+            scheduler_key: scheduler name, if ``None``,
                 default is ``None``.
-            mode (str): scheduler mode, should be one of
+            mode: scheduler mode, should be one of
                 ``"epoch"`` or ``"batch"``, default is ``None``.
                 If ``None`` and object is instance of ``BatchScheduler``
                 or ``OneCycleLRWithWarmup`` then will be used ``"batch"``
                 otherwise - ``"epoch"``.
-            reduced_metric (str): metric name to forward to scheduler
+            reduced_metric: metric name to forward to scheduler
                 object, if ``None`` then will be used main metric
                 specified in experiment.
         """
@@ -126,7 +126,7 @@ class SchedulerCallback(ISchedulerCallback):
         """Update learning rate and momentum in runner.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         lr, momentum = self._scheduler_step(scheduler=self._scheduler)
 
@@ -145,7 +145,7 @@ class SchedulerCallback(ISchedulerCallback):
         """Update momentum in runner.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         reduced_metric = runner.valid_metrics[self.reduced_metric]
         lr, momentum = self._scheduler_step(
@@ -167,7 +167,7 @@ class SchedulerCallback(ISchedulerCallback):
         """Stage start hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         self.reduced_metric = self.reduced_metric or runner.main_metric
 
@@ -194,7 +194,7 @@ class SchedulerCallback(ISchedulerCallback):
         """Loader start hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if (
             runner.is_train_loader
@@ -209,7 +209,7 @@ class SchedulerCallback(ISchedulerCallback):
         """Batch end hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if runner.is_train_loader and self.mode == "batch":
             self.step_batch(runner=runner)
@@ -218,7 +218,7 @@ class SchedulerCallback(ISchedulerCallback):
         """Epoch end hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self.mode == "epoch":
             self.step_epoch(runner=runner)
@@ -230,7 +230,7 @@ class LRUpdater(ABC, Callback):
     def __init__(self, optimizer_key: str = None):
         """
         Args:
-            optimizer_key (str): which optimizer key to use
+            optimizer_key: which optimizer key to use
                 for learning rate scheduling
         """
         super().__init__(order=CallbackOrder.scheduler, node=CallbackNode.all)
@@ -278,7 +278,7 @@ class LRUpdater(ABC, Callback):
         """Update learning rate and momentum in runner.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         lr, momentum = self._update_optimizer(optimizer=self._optimizer)
 
@@ -293,7 +293,7 @@ class LRUpdater(ABC, Callback):
         """Stage start hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         optimizer = runner.get_attr(
             key="optimizer", inner_key=self.optimizer_key
@@ -306,7 +306,7 @@ class LRUpdater(ABC, Callback):
         """Loader start hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if runner.is_train_loader:
             self.update_optimizer(runner=runner)
@@ -315,7 +315,7 @@ class LRUpdater(ABC, Callback):
         """Batch end hook.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if runner.is_train_loader:
             self.update_optimizer(runner=runner)

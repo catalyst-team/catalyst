@@ -140,7 +140,7 @@ class Callback:
         """Event handler for stage start.
 
         Args:
-            runner ("IRunner"): IRunner instance.
+            runner: IRunner instance.
         """
         pass
 
@@ -148,7 +148,7 @@ class Callback:
         """Event handler for stage end.
 
         Args:
-            runner ("IRunner"): IRunner instance.
+            runner: IRunner instance.
         """
         pass
 
@@ -156,7 +156,7 @@ class Callback:
         """Event handler for epoch start.
 
         Args:
-            runner ("IRunner"): IRunner instance.
+            runner: IRunner instance.
         """
         pass
 
@@ -164,7 +164,7 @@ class Callback:
         """Event handler for epoch end.
 
         Args:
-            runner ("IRunner"): IRunner instance.
+            runner: IRunner instance.
         """
         pass
 
@@ -172,7 +172,7 @@ class Callback:
         """Event handler for loader start.
 
         Args:
-            runner ("IRunner"): IRunner instance.
+            runner: IRunner instance.
         """
         pass
 
@@ -180,7 +180,7 @@ class Callback:
         """Event handler for loader end.
 
         Args:
-            runner ("IRunner"): IRunner instance.
+            runner: IRunner instance.
         """
         pass
 
@@ -188,7 +188,7 @@ class Callback:
         """Event handler for batch start.
 
         Args:
-            runner ("IRunner"): IRunner instance.
+            runner: IRunner instance.
         """
         pass
 
@@ -196,7 +196,7 @@ class Callback:
         """Event handler for batch end.
 
         Args:
-            runner ("IRunner"): IRunner instance.
+            runner: IRunner instance.
         """
         pass
 
@@ -204,7 +204,7 @@ class Callback:
         """Event handler for exception case.
 
         Args:
-            runner ("IRunner"): IRunner instance.
+            runner: IRunner instance.
         """
         pass
 
@@ -215,8 +215,8 @@ class WrapperCallback(Callback):
     def __init__(self, base_callback: Callback, enable_callback: bool = True):
         """
         Args:
-            base_callback (Callback): callback to wrap
-            enable_callback (boolean): indicator to enable/disable
+            base_callback: callback to wrap
+            enable_callback: indicator to enable/disable
                 callback, if ``True`` then callback will be enabled,
                 default ``True``
         """
@@ -237,7 +237,7 @@ class WrapperCallback(Callback):
         Check if current epoch should be skipped.
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self._is_enabled:
             self.callback.on_loader_start(runner)
@@ -247,7 +247,7 @@ class WrapperCallback(Callback):
         Reset status of callback
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self._is_enabled:
             self.callback.on_loader_end(runner)
@@ -256,7 +256,7 @@ class WrapperCallback(Callback):
         """Run base_callback (if possible)
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self._is_enabled:
             self.callback.on_stage_start(runner)
@@ -265,7 +265,7 @@ class WrapperCallback(Callback):
         """Run base_callback (if possible)
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self._is_enabled:
             self.callback.on_stage_end(runner)
@@ -274,7 +274,7 @@ class WrapperCallback(Callback):
         """Run base_callback (if possible)
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self._is_enabled:
             self.callback.on_epoch_start(runner)
@@ -283,7 +283,7 @@ class WrapperCallback(Callback):
         """Run base_callback (if possible)
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self._is_enabled:
             self.callback.on_epoch_end(runner)
@@ -292,7 +292,7 @@ class WrapperCallback(Callback):
         """Run base_callback (if possible)
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self._is_enabled:
             self.callback.on_batch_start(runner)
@@ -301,7 +301,7 @@ class WrapperCallback(Callback):
         """Run base_callback (if possible)
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self._is_enabled:
             self.callback.on_batch_end(runner)
@@ -310,7 +310,7 @@ class WrapperCallback(Callback):
         """Run base_callback (if possible)
 
         Args:
-            runner (IRunner): current runner
+            runner: current runner
         """
         if self._is_enabled:
             self.callback.on_exception(runner)

@@ -20,18 +20,18 @@ class SGDP(Optimizer):
     `Slowing Down the Weight Norm Increase in Momentum-based Optimizers`_.
 
     Args:
-        params (iterable): iterable of parameters to optimize or dicts defining
+        params: iterable of parameters to optimize or dicts defining
             parameter groups
-        lr (float): learning rate
+        lr: learning rate
         momentum (float, optional): momentum factor (default: 0)
         weight_decay (float, optional): weight decay (L2 penalty) (default: 0)
         dampening (float, optional): dampening for momentum (default: 0)
         nesterov (bool, optional): enables Nesterov momentum (default: False)
         eps (float, optional): term added to the denominator to improve
             numerical stability (default: 1e-8)
-        delta (float): threshold that determines whether
+        delta: threshold that determines whether
             a set of parameters is scale invariant or not (default: 0.1)
-        wd_ratio (float): relative weight decay applied on scale-invariant
+        wd_ratio: relative weight decay applied on scale-invariant
             parameters compared to that applied on scale-variant parameters
             (default: 0.1)
 
@@ -54,9 +54,9 @@ class SGDP(Optimizer):
         """
 
         Args:
-            params (iterable): iterable of parameters to optimize
+            params: iterable of parameters to optimize
                 or dicts defining parameter groups
-            lr (float): learning rate
+            lr: learning rate
             momentum (float, optional): momentum factor (default: 0)
             weight_decay (float, optional): weight decay (L2 penalty)
                 (default: 0)
@@ -65,13 +65,13 @@ class SGDP(Optimizer):
                 (default: False)
             eps (float, optional): term added to the denominator to improve
                 numerical stability (default: 1e-8)
-            delta (float): threshold that determines whether
+            delta: threshold that determines whether
                 a set of parameters is scale invariant or not (default: 0.1)
-            wd_ratio (float): relative weight decay applied on scale-invariant
+            wd_ratio: relative weight decay applied on scale-invariant
                 parameters compared to that applied on scale-variant parameters
                 (default: 0.1)
         """
-        defaults = dict(
+        defaults = dict(  # noqa: C408
             lr=lr,
             momentum=momentum,
             dampening=dampening,
@@ -120,7 +120,7 @@ class SGDP(Optimizer):
         Performs a single optimization step (parameter update).
 
         Arguments:
-            closure (callable): A closure that reevaluates the model and
+            closure: A closure that reevaluates the model and
                 returns the loss. Optional for most optimizers.
 
         Returns:

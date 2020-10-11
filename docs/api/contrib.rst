@@ -250,9 +250,30 @@ Wing
 Modules
 ~~~~~~~~~~~~~~~~
 
+ArcFace and SubCenterArcFace
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.. automodule:: catalyst.contrib.nn.modules.arcface
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Arc Margin Product
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.. automodule:: catalyst.contrib.nn.modules.arcmargin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Common modules
 """"""""""""""""""""""""""""""""""""""""""
 .. automodule:: catalyst.contrib.nn.modules.common
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+CosFace and AdaCos
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.. automodule:: catalyst.contrib.nn.modules.cosface
     :members:
     :undoc-members:
     :show-inheritance:
@@ -285,6 +306,12 @@ SqueezeAndExcitation
     :undoc-members:
     :show-inheritance:
 
+SoftMax
+""""""""""""""""""""""""""""""""""""""""""
+.. automodule:: catalyst.contrib.nn.modules.softmax
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 Optimizers
 ~~~~~~~~~~~~~~~~

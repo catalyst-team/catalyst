@@ -23,12 +23,12 @@ def accuracy(
     Computes multi-class accuracy@topk for the specified values of `topk`.
 
     Args:
-        outputs (torch.Tensor): model outputs, logits
+        outputs: model outputs, logits
             with shape [bs; num_classes]
-        targets (torch.Tensor): ground truth, labels
+        targets: ground truth, labels
             with shape [bs; 1]
-        activation (str): activation to use for model output
-        topk (Sequence[int]): `topk` for accuracy@topk computing
+        activation: activation to use for model output
+        topk: `topk` for accuracy@topk computing
 
     Returns:
         list with computed accuracy@topk
@@ -65,15 +65,15 @@ def multi_label_accuracy(
     Computes multi-label accuracy for the specified activation and threshold.
 
     Args:
-        outputs (torch.Tensor): NxK tensor that for each of the N examples
+        outputs: NxK tensor that for each of the N examples
             indicates the probability of the example belonging to each of
             the K classes, according to the model.
-        targets (torch.Tensor): binary NxK tensort that encodes which of the K
+        targets: binary NxK tensort that encodes which of the K
             classes are associated with the N-th input
             (eg: a row [0, 1, 0, 1] indicates that the example is
             associated with classes 2 and 4)
-        threshold (float): threshold for for model output
-        activation (str): activation to use for model output
+        threshold: threshold for for model output
+        activation: activation to use for model output
 
     Returns:
         computed multi-label accuracy

@@ -1,5 +1,3 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 from typing import Any, Callable, Dict, Mapping, Optional, Tuple, Union
 from abc import ABC, abstractmethod
 from collections import defaultdict, OrderedDict
@@ -360,8 +358,8 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
     ):
         """
         Args:
-            model (RunnerModel): Torch model object
-            device (Device): Torch device
+            model: Torch model object
+            device: Torch device
         """
         self._device = None
         self._model = None
@@ -379,6 +377,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         optimizer: RunnerOptimizer = None,
         scheduler: RunnerScheduler = None,
         callbacks: Dict[str, "Callback"] = None,
+        loaders: Dict[str, "DataLoader"] = None,
         logdir: str = None,
         num_epochs: int = 1,
         main_metric: str = "loss",
@@ -404,7 +403,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         self.callbacks: Dict[str, "Callback"] = callbacks or {}
 
         # the data
-        self.loaders: OrderedDict[str, DataLoader] = None
+        self.loaders: OrderedDict[str, DataLoader] = loaders
         # and the dataflow - model input, model output
         self.input = None
         self.output = None
@@ -546,7 +545,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         Setter for the runner's device.
 
         Args:
-            value (Device): new torch device.
+            value: new torch device.
 
         Raises:
             TypeError: if `value` is out of `torch.device`, `str` or `None`
@@ -580,19 +579,17 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         and creates stage-specified criterion, optimizer, scheduler for it.
 
         Args:
-            stage (str): experiment stage name of interest
+            stage: experiment stage name of interest
                 like "pretrain" / "train" / "finetune" / etc
 
         Returns:
             tuple: model, criterion, optimizer,
                 scheduler and device for a given stage and model
         """
-        (
-            model,
-            criterion,
-            optimizer,
-            scheduler,
-        ) = experiment.get_experiment_components(stage)
+        model = experiment.get_model(stage)
+        criterion = experiment.get_criterion(stage)
+        optimizer = experiment.get_optimizer(stage, model)
+        scheduler = experiment.get_scheduler(stage, optimizer)
         (
             model,
             criterion,
@@ -619,7 +616,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         and filters them for distributed master/worker cases.
 
         Args:
-            stage (str): stage name of interest,
+            stage: stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
 
         Returns:
@@ -676,9 +673,9 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
             runner.scheduler["adam"]
 
         Args:
-            key (str): name for attribute of interest,
+            key: name for attribute of interest,
                 like `criterion`, `optimizer`, `scheduler`
-            inner_key (str): name of inner dictionary key
+            inner_key: name of inner dictionary key
 
         Returns:
             inner attribute
@@ -692,76 +689,20 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         """
         Inner method to prepare `Runner` for the specified stage.
 
-        Sets `Experiment` initial seed.
-        Prepares experiment components with `self._get_experiment_components`.
-        Prepares callbacks with `self._get_experiment_callbacks`.
-        Prepares inner state with `self._prepare_inner_state`
-
         Args:
-            stage (str): stage name of interest,
+            stage: stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
         """
-        utils.set_global_seed(self.experiment.initial_seed)
-        (
-            model,
-            criterion,
-            optimizer,
-            scheduler,
-            device,
-        ) = self._get_experiment_components(
-            experiment=self.experiment, stage=stage, device=self.device
-        )
-
-        utils.set_global_seed(self.experiment.initial_seed)
-        callbacks = self._get_experiment_callbacks(
-            experiment=self.experiment, stage=stage
-        )
-
-        migrating_params = dict(**self.experiment.get_stage_params(stage))
-        migrate_from_previous_stage = migrating_params.get(
-            "migrate_from_previous_stage", True
-        )
-        if (
-            migrate_from_previous_stage
-            and getattr(self, "callbacks", None) is not None
-        ):
-            for key, value in self.callbacks.items():
-                if value.scope == CallbackScope.experiment:
-                    callbacks[key] = value
-
-        callbacks = utils.sort_callbacks_by_order(callbacks)
-
-        if migrate_from_previous_stage:
-            migrating_params.update(
-                {
-                    "global_epoch": getattr(self, "global_epoch", 1),
-                    "global_batch_step": getattr(self, "global_batch_step", 0),
-                    "global_sample_step": getattr(
-                        self, "global_sample_step", 0
-                    ),
-                    "resume": getattr(self, "resume", None),
-                }
-            )
-
-        self._prepare_inner_state(
-            stage=stage,
-            model=model,
-            device=device,
-            criterion=criterion,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            callbacks=callbacks,
-            **migrating_params,
-        )
+        pass
 
     def _prepare_for_epoch(self, stage: str, epoch: int) -> None:
         """
         Inner method to prepare `Runner` for the specified stage and epoch.
 
         Args:
-            stage (str): stage name of interest,
+            stage: stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
-            epoch (int): epoch index
+            epoch: epoch index
         """
         pass
 
@@ -788,7 +729,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         Args:
             batch (Mapping[str, Any]): dictionary with data batches
                 from DataLoader.
-            device (Device): torch device
+            device: torch device
 
         Returns:
             Mapping[str, Any]: same structure as value,
@@ -837,7 +778,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         with loader callbacks events.
 
         Args:
-            loader (DataLoader): dataloader to iterate
+            loader: dataloader to iterate
         """
         if len(loader) == 0:
             raise RunnerException(
@@ -865,9 +806,9 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         with epoch callbacks events.
 
         Args:
-            stage (str): stage name of interest,
+            stage: stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
-            epoch (int): epoch index
+            epoch: epoch index
         """
         self._prepare_for_epoch(stage=stage, epoch=epoch)
         assert self.loaders is not None
@@ -878,7 +819,6 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
                     f"DataLoader with name {loader_name} is empty."
                 )
 
-        # @TODO: better solution with train/inference handling ?
         self.is_infer_stage = self.stage_name.startswith("infer")
         if not self.is_infer_stage:
             assert self.valid_loader in self.loaders.keys(), (
@@ -886,7 +826,6 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
                 f"should be in provided loaders: {list(self.loaders.keys())}"
             )
         else:
-            # @TODO: add check for non distributed run for inference
             assert not any(
                 x.startswith(settings.loader_train_prefix)
                 for x in self.loaders.keys()
@@ -928,7 +867,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         with stage callbacks events.
 
         Args:
-            stage (str): stage name of interest,
+            stage: stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
 
         """
@@ -956,7 +895,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         Starts the experiment.
 
         Args:
-            experiment (IExperiment): Experiment instance to use for Runner.
+            experiment: Experiment instance to use for Runner.
 
         Returns:
             self, `IRunner` instance after the experiment
@@ -1008,15 +947,67 @@ class IStageBasedRunner(IRunner):
         Additionally sets `Experiment` datasources for specified stage.
 
         Args:
-            stage (str): stage name of interest,
+            stage: stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
         """
-        super()._prepare_for_stage(stage=stage)
-
         utils.set_global_seed(self.experiment.initial_seed)
         loaders = self.experiment.get_loaders(stage=stage)
         loaders = utils.validate_loaders(loaders)
         self.loaders = loaders
+
+        utils.set_global_seed(self.experiment.initial_seed)
+        (
+            model,
+            criterion,
+            optimizer,
+            scheduler,
+            device,
+        ) = self._get_experiment_components(
+            experiment=self.experiment, stage=stage, device=self.device
+        )
+
+        utils.set_global_seed(self.experiment.initial_seed)
+        callbacks = self._get_experiment_callbacks(
+            experiment=self.experiment, stage=stage
+        )
+
+        migrating_params = dict(**self.experiment.get_stage_params(stage))
+        migrate_from_previous_stage = migrating_params.get(
+            "migrate_from_previous_stage", True
+        )
+        if (
+            migrate_from_previous_stage
+            and getattr(self, "callbacks", None) is not None
+        ):
+            for key, value in self.callbacks.items():
+                if value.scope == CallbackScope.experiment:
+                    callbacks[key] = value
+
+        callbacks = utils.sort_callbacks_by_order(callbacks)
+
+        if migrate_from_previous_stage:
+            migrating_params.update(
+                {
+                    "global_epoch": getattr(self, "global_epoch", 1),
+                    "global_batch_step": getattr(self, "global_batch_step", 0),
+                    "global_sample_step": getattr(
+                        self, "global_sample_step", 0
+                    ),
+                    "resume": getattr(self, "resume", None),
+                }
+            )
+
+        self._prepare_inner_state(
+            stage=stage,
+            model=model,
+            device=device,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            callbacks=callbacks,
+            loaders=getattr(self, "loaders", None),
+            **migrating_params,
+        )
 
 
 __all__ = ["IRunner", "IStageBasedRunner", "RunnerException"]

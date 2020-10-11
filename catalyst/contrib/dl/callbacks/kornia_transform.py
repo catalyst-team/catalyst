@@ -147,9 +147,9 @@ class BatchTransformCallback(Callback):
             additional_input_key (Optional[Union[str, int]]): key of an
                 additional target in batch dict mapping to transform,
                 e.g. `'mask'`
-            output_key (Optional[str]): key to use to store the result
+            output_key: key to use to store the result
                 of the transform, defaults to `input_key` if not provided
-            additional_output_key (Optional[str]): key to use to store
+            additional_output_key: key to use to store
                 the result of additional target transformation,
                 defaults to `additional_input_key` if not provided
         """
@@ -207,7 +207,7 @@ class BatchTransformCallback(Callback):
         """Apply transforms.
 
         Args:
-            runner (IRunner): сurrent runner
+            runner: сurrent runner
         """
         in_batch = self._process_input(runner.input)
         out_batch = self.transform(in_batch)

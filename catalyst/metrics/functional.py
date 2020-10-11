@@ -12,8 +12,8 @@ def get_binary_statistics(
     false negative and support for a binary classification problem.
 
     Args:
-        predictions (Tensor): Estimated targets as predicted by a model.
-        targets (Tensor): Ground truth (correct) target values.
+        predictions: Estimated targets as predicted by a model.
+        targets: Ground truth (correct) target values.
 
     Returns:
         Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]: stats

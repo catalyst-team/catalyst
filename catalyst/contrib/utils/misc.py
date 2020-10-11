@@ -46,7 +46,7 @@ def args_are_not_none(*args: Optional[Any]) -> bool:
     """Check that all arguments are not ``None``.
 
     Args:
-        *args (Any): values  # noqa: RST213
+        *args: values  # noqa: RST213
 
     Returns:
          bool: True if all value were not None, False otherwise

@@ -16,12 +16,12 @@ def f1_score(
 ):
     """
     Args:
-        outputs (torch.Tensor): A list of predicted elements
-        targets (torch.Tensor):  A list of elements that are to be predicted
-        eps (float): epsilon to avoid zero division
-        beta (float): beta param for f_score
-        threshold (float): threshold for outputs binarization
-        activation (str): An torch.nn activation applied to the outputs.
+        outputs: A list of predicted elements
+        targets:  A list of elements that are to be predicted
+        eps: epsilon to avoid zero division
+        beta: beta param for f_score
+        threshold: threshold for outputs binarization
+        activation: An torch.nn activation applied to the outputs.
             Must be one of ["none", "Sigmoid", "Softmax2d"]
 
     Returns:

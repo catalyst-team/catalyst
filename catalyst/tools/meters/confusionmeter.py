@@ -18,8 +18,8 @@ class ConfusionMeter(meter.Meter):
     def __init__(self, k: int, normalized: bool = False):
         """
         Args:
-            k (int): number of classes in the classification problem
-            normalized (boolean): determines whether or not the confusion
+            k: number of classes in the classification problem
+            normalized: determines whether or not the confusion
                 matrix is normalized or not
         """
         super(ConfusionMeter, self).__init__()
@@ -37,10 +37,10 @@ class ConfusionMeter(meter.Meter):
         where ``K`` is no of classes.
 
         Args:
-            predicted (tensor): Can be an N x K tensor of predicted scores
+            predicted: Can be an N x K tensor of predicted scores
                 obtained from the model for N examples and K classes
                 or an N-tensor of integer values between 0 and K-1
-            target (tensor): Can be a N-tensor of integer values assumed
+            target: Can be a N-tensor of integer values assumed
                 to be integer values between 0 and K-1 or N x K tensor, where
                 targets are assumed to be provided as one-hot vectors
         """
