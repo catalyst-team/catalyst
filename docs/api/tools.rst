@@ -8,7 +8,7 @@ Tools
    :local:
 
 
-Tools (catalyst)
+Main API
 ----------------------
 .. automodule:: catalyst.tools
     :members:
@@ -30,7 +30,7 @@ Time Manager
     :show-inheritance:
 
 
-Tools (contrib)
+Contrib API
 ----------------------
 .. automodule:: catalyst.contrib.tools
     :members:

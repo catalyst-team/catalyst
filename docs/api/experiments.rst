@@ -13,11 +13,8 @@ Experiments
     :show-inheritance:
 
 
-Experiments (catalyst)
-----------------------
-
 ConfigExperiment
-~~~~~~~~~~~~~~~~~~~~
+----------------------
 .. automodule:: catalyst.experiments.config
     :members:
     :undoc-members:
@@ -25,7 +22,7 @@ ConfigExperiment
 
 
 Experiment
-~~~~~~~~~~~~~~~~~~~~
+----------------------
 .. automodule:: catalyst.experiments.experiment
     :members:
     :undoc-members:
@@ -33,7 +30,7 @@ Experiment
 
 
 SupervisedExperiment
-~~~~~~~~~~~~~~~~~~~~
+----------------------
 .. automodule:: catalyst.experiments.supervised
     :members:
     :undoc-members:

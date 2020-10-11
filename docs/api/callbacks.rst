@@ -8,7 +8,7 @@ Callbacks
    :local:
 
 
-Callbacks (catalyst)
+Main API
 ----------------------
 .. automodule:: catalyst.callbacks
     :members:
@@ -128,7 +128,7 @@ Validation
     :show-inheritance:
 
 
-Callbacks (metrics)
+Metrics API
 ----------------------
 .. automodule:: catalyst.callbacks.metrics
     :members:
@@ -199,7 +199,7 @@ Precision
     :show-inheritance:
 
 
-Callbacks (contrib)
+Contrib API
 ----------------------
 .. automodule:: catalyst.contrib.callbacks
     :members:

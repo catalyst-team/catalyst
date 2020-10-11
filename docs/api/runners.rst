@@ -13,11 +13,8 @@ Runners
     :show-inheritance:
 
 
-Runners (catalyst)
-----------------------
-
 Runner
-~~~~~~~~~~~~~~~~~~~~
+----------------------
 .. automodule:: catalyst.runners.runner
     :members:
     :undoc-members:
@@ -25,7 +22,7 @@ Runner
 
 
 SupervisedRunner
-~~~~~~~~~~~~~~~~~~~~
+----------------------
 .. automodule:: catalyst.runners.supervised
     :members:
     :undoc-members:
