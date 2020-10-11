@@ -62,3 +62,6 @@ class SoftMax(nn.Module):
             where ``C`` is a number of classes.
         """
         return F.linear(input, self.weight, self.bias)
+
+
+__all__ = ["SoftMax"]

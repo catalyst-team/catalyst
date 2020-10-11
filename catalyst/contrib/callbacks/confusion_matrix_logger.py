@@ -107,7 +107,7 @@ class ConfusionMatrixCallback(Callback):
         fig = render_figure_to_tensor(fig)
         logger.add_image(f"{self.prefix}/epoch", fig, global_step=epoch)
 
-    def on_loader_start(self, runner: IRunner):
+    def on_loader_start(self, runner: "IRunner"):
         """Loader start hook.
 
         Args:
@@ -115,7 +115,7 @@ class ConfusionMatrixCallback(Callback):
         """
         self._reset_stats()
 
-    def on_batch_end(self, runner: IRunner):
+    def on_batch_end(self, runner: "IRunner"):
         """Batch end hook.
 
         Args:
@@ -126,7 +126,7 @@ class ConfusionMatrixCallback(Callback):
             runner.input[self.input_key].detach(),
         )
 
-    def on_loader_end(self, runner: IRunner):
+    def on_loader_end(self, runner: "IRunner"):
         """Loader end hook.
 
         Args:

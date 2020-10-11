@@ -104,7 +104,7 @@ class _OnBatchEndCheckGradsCallback(Callback):
         super().__init__(CallbackOrder.external)
         self.prefix = prefix
 
-    def on_batch_end(self, runner: IRunner):
+    def on_batch_end(self, runner: "IRunner"):
         if not runner.is_train_loader:
             return
 

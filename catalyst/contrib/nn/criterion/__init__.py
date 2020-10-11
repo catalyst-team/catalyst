@@ -1,5 +1,12 @@
 # flake8: noqa
 
+from torch.nn.modules.loss import *
+
+from catalyst.contrib.nn.criterion.ce import (
+    MaskCrossEntropyLoss,
+    SymmetricCrossEntropyLoss,
+    NaiveCrossEntropyLoss,
+)
 from catalyst.contrib.nn.criterion.circle import CircleLoss
 from catalyst.contrib.nn.criterion.contrastive import (
     ContrastiveDistanceLoss,
@@ -23,4 +30,10 @@ from catalyst.contrib.nn.criterion.lovasz import (
     LovaszLossMultiLabel,
 )
 from catalyst.contrib.nn.criterion.margin import MarginLoss
+from catalyst.contrib.nn.criterion.triplet import (
+    TripletLoss,
+    TripletLossV2,
+    TripletPairwiseEmbeddingLoss,
+    TripletMarginLossWithSampler,
+)
 from catalyst.contrib.nn.criterion.wing import WingLoss

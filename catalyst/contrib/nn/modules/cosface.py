@@ -82,3 +82,6 @@ class CosFace(nn.Module):
         logits *= self.s
 
         return logits
+
+
+__all__ = ["CosFace"]

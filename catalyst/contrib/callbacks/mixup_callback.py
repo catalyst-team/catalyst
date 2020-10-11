@@ -59,7 +59,7 @@ class MixupCallback(CriterionCallback):
         self.index = None
         self.is_needed = True
 
-    def _compute_loss_value(self, runner: IRunner, criterion):
+    def _compute_loss_value(self, runner: "IRunner", criterion):
         if not self.is_needed:
             return super()._compute_loss_value(runner, criterion)
 
@@ -72,7 +72,7 @@ class MixupCallback(CriterionCallback):
         )
         return loss
 
-    def on_loader_start(self, runner: IRunner):
+    def on_loader_start(self, runner: "IRunner"):
         """Loader start hook.
 
         Args:
@@ -80,7 +80,7 @@ class MixupCallback(CriterionCallback):
         """
         self.is_needed = not self.on_train_only or runner.is_train_loader
 
-    def on_batch_start(self, runner: IRunner):
+    def on_batch_start(self, runner: "IRunner"):
         """Batch start hook.
 
         Args:

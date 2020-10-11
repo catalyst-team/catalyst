@@ -209,3 +209,10 @@ def wrap_topk_metric2dict(
         return output
 
     return topk_metric_with_dict_output
+
+
+__all__ = [
+    "get_binary_statistics",
+    "wrap_topk_metric2dict",
+    "wrap_class_metric2dict",
+]

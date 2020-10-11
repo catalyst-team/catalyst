@@ -58,3 +58,5 @@ if IS_QUANTIZATION_AVAILABLE:
 
 if IS_PRUNING_AVAILABLE:
     from catalyst.callbacks.pruning import PruningCallback
+
+from catalyst.contrib.callbacks import *

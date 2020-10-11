@@ -54,3 +54,6 @@ def cmc_score(
     """
     distances = torch.cdist(query_embeddings, gallery_embeddings)
     return cmc_score_count(distances, conformity_matrix, topk)
+
+
+__all__ = ["cmc_score_count", "cmc_score"]

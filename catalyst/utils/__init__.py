@@ -124,4 +124,3 @@ from catalyst.settings import IS_GIT_AVAILABLE
 if IS_GIT_AVAILABLE:
     from catalyst.utils.pipelines import clone_pipeline
     from catalyst.utils.wizard import run_wizard, Wizard
-

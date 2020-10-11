@@ -3,16 +3,16 @@ import logging
 
 from catalyst.settings import SETTINGS
 
-from catalyst.contrib.nn.models.functional import (
+from catalyst.contrib.models.functional import (
     get_convolution_net,
     get_linear_net,
 )
-from catalyst.contrib.nn.models.hydra import Hydra
-from catalyst.contrib.nn.models.sequential import (
+from catalyst.contrib.models.hydra import Hydra
+from catalyst.contrib.models.sequential import (
     ResidualWrapper,
     SequentialNet,
 )
-from catalyst.contrib.nn.models.simple_conv import SimpleConv
+from catalyst.contrib.models.simple_conv import SimpleConv
 
 logger = logging.getLogger(__name__)
 

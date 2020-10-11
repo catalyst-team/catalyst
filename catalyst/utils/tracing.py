@@ -5,7 +5,6 @@ from pathlib import Path
 
 from torch import jit, nn
 
-
 from catalyst.typing import Device, Model
 from catalyst.utils.checkpoint import (
     load_checkpoint,

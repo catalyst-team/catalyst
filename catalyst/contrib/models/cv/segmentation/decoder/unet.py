@@ -5,11 +5,9 @@ from typing import List
 import torch
 from torch import nn
 
+from catalyst.contrib.models.cv import DecoderConcatBlock
 from catalyst.contrib.models.cv.segmentation.blocks.core import DecoderBlock
 from catalyst.contrib.models.cv.segmentation.decoder.core import DecoderSpec
-from catalyst.contrib.nn.models.cv.segmentation.blocks.unet import (
-    DecoderConcatBlock,
-)
 
 
 class UNetDecoder(DecoderSpec):

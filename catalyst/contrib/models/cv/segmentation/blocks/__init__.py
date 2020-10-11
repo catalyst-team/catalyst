@@ -8,9 +8,3 @@ from catalyst.contrib.models.cv.segmentation.blocks.psp import (
     PyramidBlock,
     PSPBlock,
 )
-from catalyst.contrib.nn.models.cv.segmentation.blocks.unet import (
-    EncoderDownsampleBlock,
-    EncoderUpsampleBlock,
-    DecoderConcatBlock,
-    DecoderSumBlock,
-)

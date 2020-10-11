@@ -147,7 +147,7 @@ class _OnStageEndCheckModelTracedCallback(Callback):
         self.inputs: torch.Tensor = inputs
         self.device = get_device()
 
-    def on_stage_end(self, runner: IRunner):
+    def on_stage_end(self, runner: "IRunner"):
         """
         Args:
             runner: current runner

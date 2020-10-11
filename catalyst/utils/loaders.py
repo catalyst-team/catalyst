@@ -7,8 +7,6 @@ import torch
 from torch.utils.data import DataLoader, Dataset, DistributedSampler
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
-from catalyst.data.dataset import ListDataset
-from catalyst.data.sampler import DistributedSamplerWrapper
 from catalyst.registry import SAMPLER
 from catalyst.utils.dict import merge_dicts
 from catalyst.utils.distributed import get_rank
@@ -58,6 +56,8 @@ def get_loader(
     Returns:
         DataLoader with ``catalyst.data.ListDataset``
     """
+    from catalyst.data.dataset import ListDataset
+
     dataset = ListDataset(
         list_data=data_source, open_fn=open_fn, dict_transform=dict_transform,
     )
@@ -133,6 +133,8 @@ def _force_make_distributed_loader(loader: DataLoader) -> DataLoader:
     Returns:
         DataLoader: pytorch dataloder with distributed sampler.
     """
+    from catalyst.data.sampler import DistributedSamplerWrapper
+
     sampler = (
         DistributedSampler(dataset=loader.dataset)
         if getattr(loader, "sampler", None) is not None
@@ -165,6 +167,8 @@ def validate_loaders(loaders: Dict[str, DataLoader]) -> Dict[str, DataLoader]:
         Dict[str, DataLoader]: dictionery
             with pytorch dataloaders (with distributed samplers if necessary)
     """
+    from catalyst.data.sampler import DistributedSamplerWrapper
+
     rank = get_rank()
     if rank >= 0:
         for key, value in loaders.items():
@@ -321,9 +325,10 @@ def get_loaders_from_params(
 
 
 __all__ = [
-    "get_loaders_from_params",
-    "validate_loaders",
     "get_native_batch_from_loader",
     "get_native_batch_from_loaders",
     "get_loader",
+    "validate_loaders",
+    "get_loaders_from_params",
+    "validate_loaders",
 ]

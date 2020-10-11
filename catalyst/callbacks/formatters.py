@@ -19,7 +19,7 @@ class MetricsFormatter(ABC, logging.Formatter):
         super().__init__(f"{message_prefix}{{message}}", style="{")
 
     @abstractmethod
-    def _format_message(self, runner: IRunner):
+    def _format_message(self, runner: "IRunner"):
         pass
 
     def format(self, record: logging.LogRecord):
@@ -61,7 +61,7 @@ class TxtMetricsFormatter(MetricsFormatter):
 
         return metrics_formatted
 
-    def _format_message(self, runner: IRunner):
+    def _format_message(self, runner: "IRunner"):
         message = [""]
         mode_metrics = split_dict_to_subdicts(
             dct=runner.epoch_metrics,
