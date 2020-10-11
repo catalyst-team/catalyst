@@ -111,7 +111,7 @@ Module = MODULE.add
 
 
 def _model_loader(r: Registry):
-    from catalyst.contrib.nn import models as m
+    from catalyst.contrib import models as m
 
     r.add_from_module(m)
 
@@ -168,16 +168,13 @@ Scheduler = SCHEDULER.add
 
 
 def _experiments_loader(r: Registry):
-    from catalyst.core import IExperiment, IStageBasedRunner
+    from catalyst.core.experiment import IExperiment
 
     r.add(IExperiment)
-    r.add(IStageBasedRunner)
 
-    from catalyst import experiment as m
+    from catalyst import experiments as m
 
-    r.add_from_module(m)
-
-    from catalyst.contrib.dl import experiment as m  # noqa: WPS347
+    r.add_from_module(m)  # noqa: WPS347
 
     r.add_from_module(m)
 
@@ -188,16 +185,12 @@ Experiment = EXPERIMENT.add
 
 
 def _runners_loader(r: Registry):
-    from catalyst.core import IRunner, IStageBasedRunner
+    from catalyst.core.runner import IRunner, IStageBasedRunner
 
     r.add(IRunner)
     r.add(IStageBasedRunner)
 
-    from catalyst import runner as m
-
-    r.add_from_module(m)
-
-    from catalyst.contrib.dl import runner as m  # noqa: WPS347
+    from catalyst import runners as m  # noqa: WPS347
 
     r.add_from_module(m)
 
@@ -208,15 +201,12 @@ Runner = RUNNER.add
 
 
 def _callbacks_loader(r: Registry):
-    from catalyst.core import callbacks as m
+    from catalyst.core.callback import Callback, CallbackWrapper
 
-    r.add_from_module(m)
+    r.add(Callback)
+    r.add(CallbackWrapper)
 
-    from catalyst.dl import callbacks as m  # noqa: WPS347
-
-    r.add_from_module(m)
-
-    from catalyst.contrib import callbacks as m
+    from catalyst import callbacks as m  # noqa: WPS347
 
     r.add_from_module(m)
 
