@@ -1,4 +1,13 @@
-from typing import Any, Dict, Iterable, List, Mapping, Tuple, Union, TYPE_CHECKING
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Mapping,
+    Tuple,
+    TYPE_CHECKING,
+    Union,
+)
 from collections import OrderedDict
 import warnings
 
