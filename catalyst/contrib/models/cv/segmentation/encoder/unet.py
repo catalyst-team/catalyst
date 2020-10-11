@@ -5,7 +5,9 @@ from typing import List
 import torch
 from torch import nn
 
-from catalyst.contrib.models.cv import EncoderDownsampleBlock
+from catalyst.contrib.models.cv.segmentation.blocks.unet import (
+    EncoderDownsampleBlock,
+)
 from catalyst.contrib.models.cv.segmentation.encoder.core import (  # noqa: WPS450, E501
     _take,
     EncoderSpec,
