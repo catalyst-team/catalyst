@@ -3,8 +3,9 @@ import warnings
 
 from torch.nn.utils import prune
 
-from catalyst.core import Callback, CallbackOrder, IRunner
-from catalyst.utils import prune_model, remove_reparametrization
+from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.core.runner import IRunner
+from catalyst.utils.pruning import prune_model, remove_reparametrization
 
 PRUNING_FN = {  # noqa: WPS407
     "l1_unstructured": prune.l1_unstructured,

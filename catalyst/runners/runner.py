@@ -5,10 +5,23 @@ import torch
 from torch.jit import ScriptModule
 from torch.utils.data import DataLoader, Dataset
 
-from catalyst.core import Callback, CheckpointCallback, IStageBasedRunner
-from catalyst.dl import utils
-from catalyst.experiment import Experiment
+from catalyst.callbacks.checkpoint import CheckpointCallback
+from catalyst.core.callback import Callback
+from catalyst.core.runner import IStageBasedRunner
+from catalyst.experiments.experiment import Experiment
 from catalyst.typing import Criterion, Device, Model, Optimizer, Scheduler
+from catalyst.utils.callbacks import sort_callbacks_by_order
+from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
+from catalyst.utils.components import process_components
+from catalyst.utils.misc import maybe_recursive_call
+from catalyst.utils.scripts import distributed_cmd_run
+from catalyst.utils.seed import set_global_seed
+from catalyst.utils.torch import (
+    get_device,
+    get_requires_grad,
+    set_requires_grad,
+)
+from catalyst.utils.tracing import save_traced_model, trace_model
 
 
 class Runner(IStageBasedRunner):
@@ -119,7 +132,7 @@ class Runner(IStageBasedRunner):
                     "For ``load_best_on_end`` feature "
                     "you need to specify ``logdir``"
                 )
-            callbacks = utils.sort_callbacks_by_order(callbacks)
+            callbacks = sort_callbacks_by_order(callbacks)
             checkpoint_callback_flag = any(
                 isinstance(x, CheckpointCallback) for x in callbacks.values()
             )
@@ -154,7 +167,7 @@ class Runner(IStageBasedRunner):
             initial_seed=initial_seed,
         )
         self.experiment = experiment
-        utils.distributed_cmd_run(self.run_experiment, distributed)
+        distributed_cmd_run(self.run_experiment, distributed)
 
     def infer(
         self,
@@ -213,7 +226,7 @@ class Runner(IStageBasedRunner):
             fp16 = {"opt_level": "O1"}
 
         if resume is not None:
-            callbacks = utils.sort_callbacks_by_order(callbacks)
+            callbacks = sort_callbacks_by_order(callbacks)
             checkpoint_callback_flag = any(
                 isinstance(x, CheckpointCallback) for x in callbacks.values()
             )
@@ -296,12 +309,12 @@ class Runner(IStageBasedRunner):
         assert self.model is not None
 
         if resume is not None:
-            checkpoint = utils.load_checkpoint(resume)
-            utils.unpack_checkpoint(checkpoint, model=self.model)
+            checkpoint = load_checkpoint(resume)
+            unpack_checkpoint(checkpoint, model=self.model)
 
         self.experiment = None
-        utils.set_global_seed(initial_seed)
-        (model, _, _, _, device) = utils.process_components(  # noqa: WPS122
+        set_global_seed(initial_seed)
+        (model, _, _, _, device) = process_components(  # noqa: WPS122
             model=self.model, distributed_params=fp16, device=self.device,
         )
         self._prepare_inner_state(
@@ -312,9 +325,9 @@ class Runner(IStageBasedRunner):
             is_valid_loader=False,
             is_infer_loader=True,
         )
-        utils.maybe_recursive_call(self.model, "train", mode=False)
+        maybe_recursive_call(self.model, "train", mode=False)
 
-        utils.set_global_seed(initial_seed)
+        set_global_seed(initial_seed)
         for batch in loader:
             yield self.predict_batch(batch)
 
@@ -380,14 +393,14 @@ class Runner(IStageBasedRunner):
             device = "cuda"
         elif device is None:
             if self.device is None:
-                self.device = utils.get_device()
+                self.device = get_device()
             device = self.device
 
         # Dumping previous state of the model, we will need it to restore
         device_dump, is_training_dump, requires_grad_dump = (
             self.device,
             self.model.training,
-            utils.get_requires_grad(self.model),
+            get_requires_grad(self.model),
         )
 
         self.model.to(device)
@@ -400,7 +413,7 @@ class Runner(IStageBasedRunner):
             self.model = model_dump
             return result
 
-        traced_model = utils.trace_model(
+        traced_model = trace_model(
             model=self.model,
             predict_fn=predict_fn,
             batch=batch,
@@ -413,7 +426,7 @@ class Runner(IStageBasedRunner):
         )
 
         if logdir is not None:
-            utils.save_traced_model(
+            save_traced_model(
                 model=traced_model,
                 logdir=logdir,
                 method_name=method_name,
@@ -424,7 +437,7 @@ class Runner(IStageBasedRunner):
 
         # Restore previous state of the model
         getattr(self.model, "train" if is_training_dump else "eval")()
-        utils.set_requires_grad(self.model, requires_grad_dump)
+        set_requires_grad(self.model, requires_grad_dump)
         self.model.to(device_dump)
 
         return traced_model

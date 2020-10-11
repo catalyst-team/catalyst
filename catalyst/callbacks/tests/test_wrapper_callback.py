@@ -3,7 +3,7 @@ import random
 import unittest
 from unittest.mock import Mock
 
-from catalyst.core.callback import Callback, CallbackOrder, WrapperCallback
+from catalyst.core.callback import Callback, CallbackOrder, CallbackWrapper
 
 
 class Dummy(Exception):
@@ -50,7 +50,7 @@ class TestWrapperCallback(unittest.TestCase):
         for event in events:
             for order in orders:
                 callback = RaiserCallback(order, event)
-                wrapper = WrapperCallback(callback, enable_callback=True)
+                wrapper = CallbackWrapper(callback, enable_callback=True)
 
                 with self.assertRaises(Dummy):
                     wrapper.__getattribute__(event)(runner)
@@ -84,5 +84,5 @@ class TestWrapperCallback(unittest.TestCase):
         for event in events:
             for order in orders:
                 callback = RaiserCallback(order, event)
-                wrapper = WrapperCallback(callback, enable_callback=False)
+                wrapper = CallbackWrapper(callback, enable_callback=False)
                 wrapper.__getattribute__(event)(runner)

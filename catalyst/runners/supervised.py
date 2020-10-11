@@ -3,8 +3,8 @@ import logging
 
 import torch
 
-from catalyst.experiment.supervised import SupervisedExperiment
-from catalyst.runner.runner import Runner
+from catalyst.experiments.supervised import SupervisedExperiment
+from catalyst.runners.runner import Runner
 from catalyst.typing import Device, RunnerModel
 
 logger = logging.getLogger(__name__)

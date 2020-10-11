@@ -2,8 +2,9 @@ from typing import Dict
 from abc import ABC, abstractmethod
 import logging
 
-from catalyst.core import utils
 from catalyst.core.runner import IRunner
+from catalyst.utils.dict import split_dict_to_subdicts
+from catalyst.utils.misc import format_metric
 
 
 class MetricsFormatter(ABC, logging.Formatter):
@@ -52,7 +53,7 @@ class TxtMetricsFormatter(MetricsFormatter):
         metrics_formatted = {}
         for key, value in metrics.items():
             metrics_formatted_part = [
-                utils.format_metric(m_name, m_value)
+                format_metric(m_name, m_value)
                 for m_name, m_value in sorted(value.items())
             ]
             metrics_formatted_part = " | ".join(metrics_formatted_part)
@@ -62,7 +63,7 @@ class TxtMetricsFormatter(MetricsFormatter):
 
     def _format_message(self, runner: IRunner):
         message = [""]
-        mode_metrics = utils.split_dict_to_subdicts(
+        mode_metrics = split_dict_to_subdicts(
             dct=runner.epoch_metrics,
             prefixes=list(runner.loaders.keys()),
             extra_key="_base",

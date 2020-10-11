@@ -1,7 +1,7 @@
 from typing import Callable, Mapping, Sequence, Union
 from collections import OrderedDict
 
-from catalyst.core.callback import Callback, WrapperCallback
+from catalyst.core.callback import Callback, CallbackWrapper
 from catalyst.core.runner import IRunner
 
 LOADERS = Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]]
@@ -151,7 +151,7 @@ def _filter_fn_from_arg(filter_fn: Union[str, FILTER_FN]) -> FILTER_FN:
     return filter_fn
 
 
-class ControlFlowCallback(WrapperCallback):
+class ControlFlowCallback(CallbackWrapper):
     """Enable/disable callback execution on different
     stages, loaders and epochs.
 

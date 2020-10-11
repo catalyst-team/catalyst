@@ -6,6 +6,7 @@ All utils are gathered in :py:mod:`catalyst.utils` for easier access.
     Everything from :py:mod:`catalyst.contrib.utils` is included in :py:mod:`catalyst.utils`
 """
 
+
 from catalyst.utils.checkpoint import (
     load_checkpoint,
     pack_checkpoint,
@@ -39,10 +40,6 @@ from catalyst.utils.distributed import (
     check_amp_available,
     initialize_apex,
     assert_fp16_available,
-    is_wrapped_with_ddp,
-    is_torch_distributed_initialized,
-    is_slurm_available,
-    is_apex_available,
 )
 from catalyst.utils.hash import get_hash, get_short_hash
 from catalyst.utils.initialization import (
@@ -50,7 +47,10 @@ from catalyst.utils.initialization import (
     outer_init,
     reset_weights_if_possible,
 )
-from catalyst.utils.loader import (
+from catalyst.utils.loaders import (
+    get_loaders_from_params,
+    validate_loaders,
+    get_loader,
     get_native_batch_from_loader,
     get_native_batch_from_loaders,
 )
@@ -97,12 +97,37 @@ from catalyst.utils.torch import (
     detach,
     trim_tensors,
 )
+from catalyst.utils.tracing import (
+    trace_model,
+    trace_model_from_checkpoint,
+    trace_model_from_runner,
+    get_trace_name,
+    save_traced_model,
+    load_traced_model,
+)
+
 from catalyst.settings import IS_PRUNING_AVAILABLE
 
 if IS_PRUNING_AVAILABLE:
     from catalyst.utils.pruning import prune_model, remove_reparametrization
 
+from catalyst.settings import IS_QUANTIZATION_AVAILABLE
+
+if IS_QUANTIZATION_AVAILABLE:
+    from catalyst.utils.quantization import (
+        save_quantized_model,
+        quantize_model_from_checkpoint,
+    )
+
 from catalyst.settings import IS_GIT_AVAILABLE
 
 if IS_GIT_AVAILABLE:
     from catalyst.utils.pipelines import clone_pipeline
+    from catalyst.utils.wizard import run_wizard, Wizard
+
+from catalyst.utils.callbacks import (
+    sort_callbacks_by_order,
+    filter_callbacks_by_node,
+    get_original_callback,
+    check_callback_isinstance,
+)

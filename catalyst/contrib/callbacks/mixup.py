@@ -4,8 +4,8 @@ import numpy as np
 
 import torch
 
-from catalyst.core import IRunner
-from catalyst.dl import CriterionCallback
+from catalyst.callbacks.criterion import CriterionCallback
+from catalyst.core.runner import IRunner
 
 
 class MixupCallback(CriterionCallback):

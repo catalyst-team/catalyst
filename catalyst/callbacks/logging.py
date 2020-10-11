@@ -5,11 +5,12 @@ import sys
 
 from tqdm import tqdm
 
+from catalyst.callbacks.formatters import TxtMetricsFormatter
 from catalyst.contrib.tools.tensorboard import SummaryWriter
-from catalyst.core import utils
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.callbacks import formatters
 from catalyst.core.runner import IRunner
+from catalyst.utils.dict import split_dict_to_subdicts
+from catalyst.utils.misc import is_exception
 
 
 class ILoggerCallback(Callback):
@@ -93,7 +94,7 @@ class VerboseLogger(ILoggerCallback):
     def on_exception(self, runner: IRunner):
         """Called if an Exception was raised."""
         exception = runner.exception
-        if not utils.is_exception(exception):
+        if not is_exception(exception):
             return
 
         if isinstance(exception, KeyboardInterrupt):
@@ -123,7 +124,7 @@ class ConsoleLogger(ILoggerCallback):
         ch = logging.StreamHandler(sys.stdout)
         ch.setLevel(logging.INFO)
 
-        txt_formatter = formatters.TxtMetricsFormatter()
+        txt_formatter = TxtMetricsFormatter()
         ch.setFormatter(txt_formatter)
 
         # add the handlers to the logger
@@ -244,7 +245,7 @@ class TensorboardLogger(ILoggerCallback):
             return
 
         if self.log_on_epoch_end:
-            per_mode_metrics = utils.split_dict_to_subdicts(
+            per_mode_metrics = split_dict_to_subdicts(
                 dct=runner.epoch_metrics,
                 prefixes=list(runner.loaders.keys()),
                 extra_key="_base",

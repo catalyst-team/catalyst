@@ -10,7 +10,7 @@ from torch.utils.data import DistributedSampler
 from torch.utils.data.sampler import BatchSampler, Sampler
 
 from catalyst.contrib.utils.misc import find_value_ids
-from catalyst.data import DatasetFromSampler
+from catalyst.data.dataset.torch import DatasetFromSampler
 
 
 class BalanceClassSampler(Sampler):

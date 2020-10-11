@@ -3,13 +3,20 @@ from collections import OrderedDict
 import os
 from pathlib import Path
 
-from catalyst.core import utils
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
+from catalyst.utils.checkpoint import (
+    load_checkpoint,
+    pack_checkpoint,
+    save_checkpoint,
+    unpack_checkpoint,
+)
+from catalyst.utils.config import save_config
+from catalyst.utils.misc import is_exception
 
 
 def _pack_runner(runner: IRunner):
-    checkpoint = utils.pack_checkpoint(
+    checkpoint = pack_checkpoint(
         model=runner.model,
         criterion=runner.criterion,
         optimizer=runner.optimizer,
@@ -54,7 +61,7 @@ def _load_checkpoint(
         raise FileNotFoundError(f"No checkpoint found at {filename}!")
 
     print(f"=> Loading checkpoint {filename}")
-    checkpoint = utils.load_checkpoint(filename)
+    checkpoint = load_checkpoint(filename)
 
     if not runner.stage_name.startswith("infer") and load_full:
         runner.stage_name = checkpoint["stage_name"]
@@ -65,7 +72,7 @@ def _load_checkpoint(
         # epoch_metrics, valid_metrics ?
 
     if load_full:
-        utils.unpack_checkpoint(
+        unpack_checkpoint(
             checkpoint,
             model=runner.model,
             criterion=runner.criterion,
@@ -80,7 +87,7 @@ def _load_checkpoint(
             f"stage {checkpoint['stage_name']})"
         )
     else:
-        utils.unpack_checkpoint(
+        unpack_checkpoint(
             checkpoint, model=runner.model,
         )
 
@@ -167,9 +174,9 @@ def _load_states_from_file_map(
     # extracting parts from files
     for filename, parts_to_load in required_files.items():
         print(f"=> Loading {', '.join(parts_to_load)} from {filename}")
-        checkpoint = utils.load_checkpoint(filename)
+        checkpoint = load_checkpoint(filename)
         to_unpack = {part: getattr(runner, part) for part in parts_to_load}
-        utils.unpack_checkpoint(checkpoint, **to_unpack)
+        unpack_checkpoint(checkpoint, **to_unpack)
         print(f"   loaded: {', '.join(parts_to_load)}")
 
 
@@ -200,9 +207,7 @@ class BaseCheckpointCallback(ICheckpointCallback):
         return "checkpoint"
 
     def _save_metric(self, logdir: Union[str, Path], metrics: Dict) -> None:
-        utils.save_config(
-            metrics, f"{logdir}/checkpoints/{self.metrics_filename}"
-        )
+        save_config(metrics, f"{logdir}/checkpoints/{self.metrics_filename}")
 
     def on_exception(self, runner: IRunner):
         """
@@ -213,7 +218,7 @@ class BaseCheckpointCallback(ICheckpointCallback):
 
         """
         exception = runner.exception
-        if not utils.is_exception(exception):
+        if not is_exception(exception):
             return
 
         if runner.device.type == "xla":
@@ -225,7 +230,7 @@ class BaseCheckpointCallback(ICheckpointCallback):
             checkpoint = _pack_runner(runner)
             suffix = self._get_checkpoint_suffix(checkpoint)
             suffix = f"{suffix}.exception_{exception.__class__.__name__}"
-            utils.save_checkpoint(
+            save_checkpoint(
                 logdir=Path(f"{runner.logdir}/checkpoints/"),
                 checkpoint=checkpoint,
                 suffix=suffix,
@@ -452,7 +457,7 @@ class CheckpointCallback(BaseCheckpointCallback):
                 if true then will be saved two additional checkpoints -
                 ``last`` and ``last_full``.
         """
-        full_checkpoint_path = utils.save_checkpoint(
+        full_checkpoint_path = save_checkpoint(
             logdir=Path(f"{logdir}/checkpoints/"),
             checkpoint=checkpoint,
             suffix=f"{suffix}_full",
@@ -462,7 +467,7 @@ class CheckpointCallback(BaseCheckpointCallback):
             saver_fn=self._save_fn,
         )
         exclude = ["criterion", "optimizer", "scheduler"]
-        checkpoint_path = utils.save_checkpoint(
+        checkpoint_path = save_checkpoint(
             checkpoint={
                 key: value
                 for key, value in checkpoint.items()
@@ -791,7 +796,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
             checkpoint: dict with checkpoint data
             batch_metrics: dict with metrics based on a few batches
         """
-        filepath = utils.save_checkpoint(
+        filepath = save_checkpoint(
             logdir=Path(f"{logdir}/checkpoints/"),
             checkpoint=checkpoint,
             suffix=self._get_checkpoint_suffix(checkpoint),

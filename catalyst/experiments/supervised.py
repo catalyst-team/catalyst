@@ -2,18 +2,18 @@ from collections import OrderedDict
 
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
-from catalyst.dl import (
+from catalyst.callbacks.criterion import CriterionCallback
+from catalyst.callbacks.optimizer import (
     AMPOptimizerCallback,
-    Callback,
-    CriterionCallback,
     IOptimizerCallback,
-    ISchedulerCallback,
     OptimizerCallback,
-    SchedulerCallback,
 )
-from catalyst.dl.utils import check_amp_available, check_callback_isinstance
-from catalyst.experiment import Experiment
+from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
+from catalyst.core.callback import Callback
+from catalyst.experiments.experiment import Experiment
 from catalyst.typing import Criterion, Optimizer, Scheduler
+from catalyst.utils.callbacks import check_callback_isinstance
+from catalyst.utils.distributed import check_amp_available
 
 
 class SupervisedExperiment(Experiment):

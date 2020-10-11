@@ -5,10 +5,11 @@ import warnings
 import torch
 
 from catalyst import registry
-from catalyst.core import utils
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.typing import Optimizer
+from catalyst.utils.misc import maybe_recursive_call
+from catalyst.utils.torch import get_optimizer_momentum
 
 logger = logging.getLogger(__name__)
 
@@ -215,9 +216,9 @@ class OptimizerCallback(IOptimizerCallback):
                 grad_clip_fn=self.grad_clip_fn,
             )
             if not self.use_fast_zero_grad:
-                utils.maybe_recursive_call(self._optimizer, "zero_grad")
+                maybe_recursive_call(self._optimizer, "zero_grad")
             else:
-                utils.maybe_recursive_call(self._optimizer, zero_grad)
+                maybe_recursive_call(self._optimizer, zero_grad)
             self._accumulation_counter = 0
 
     def on_epoch_end(self, runner: IRunner) -> None:
@@ -238,7 +239,7 @@ class OptimizerCallback(IOptimizerCallback):
         )
         runner.epoch_metrics[lr_name] = lr
 
-        momentum = utils.get_optimizer_momentum(self._optimizer)
+        momentum = get_optimizer_momentum(self._optimizer)
         if momentum is not None:
             momentum_name = (
                 f"momentum/{self.optimizer_key}"
@@ -368,7 +369,7 @@ class AMPOptimizerCallback(IOptimizerCallback):
                 optimizer=self._optimizer, grad_clip_fn=self.grad_clip_fn,
             )
 
-            utils.maybe_recursive_call(self._optimizer, "zero_grad")
+            maybe_recursive_call(self._optimizer, "zero_grad")
             self._accumulation_counter = 0
 
     def on_epoch_end(self, runner: IRunner) -> None:
@@ -385,7 +386,7 @@ class AMPOptimizerCallback(IOptimizerCallback):
         )
         runner.epoch_metrics[lr_name] = lr
 
-        momentum = utils.get_optimizer_momentum(self._optimizer)
+        momentum = get_optimizer_momentum(self._optimizer)
         if momentum is not None:
             momentum_name = (
                 f"momentum/{self.optimizer_key}"

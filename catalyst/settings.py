@@ -158,7 +158,7 @@ class Settings(FrozenClass):
         return Settings(**kwargrs)
 
 
-default_settings = Settings()
+DEFAULT_SETTINGS = Settings()
 
 
 class ConfigFileFinder:
@@ -311,7 +311,7 @@ class MergedConfigParser:
         config_dict: Dict[str, Any] = {}
         if config_parser.has_section(self.program_name):
             for option_name in config_parser.options(self.program_name):
-                type_ = default_settings.type_hint(option_name)
+                type_ = DEFAULT_SETTINGS.type_hint(option_name)
                 method = type2method.get(type_, config_parser.get)
                 config_dict[option_name] = method(
                     self.program_name, option_name
@@ -338,11 +338,15 @@ class MergedConfigParser:
         return config
 
 
-settings = Settings.parse()
+SETTINGS = Settings.parse()
+setattr(SETTINGS, "IS_GIT_AVAILABLE", IS_GIT_AVAILABLE)
+setattr(SETTINGS, "IS_XLA_AVAILABLE", IS_XLA_AVAILABLE)
+setattr(SETTINGS, "IS_PRUNING_AVAILABLE", IS_PRUNING_AVAILABLE)
+setattr(SETTINGS, "IS_QUANTIZATION_AVAILABLE", IS_QUANTIZATION_AVAILABLE)
 
 
 __all__ = [
-    "settings",
+    "SETTINGS",
     "Settings",
     "ConfigFileFinder",
     "MergedConfigParser",

@@ -7,10 +7,11 @@ import numpy as np
 
 import torch
 
-from catalyst.core import utils
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.tools import meters
+from catalyst.tools.meters.averagevaluemeter import AverageValueMeter
+from catalyst.utils.dict import get_dictkey_auto_fn
+from catalyst.utils.distributed import get_distributed_mean
 
 logger = logging.getLogger(__name__)
 
@@ -45,8 +46,8 @@ class IMetricCallback(ABC, Callback):
         self.multiplier = multiplier
         self.metrics_kwargs = metrics_kwargs
 
-        self._get_input = utils.get_dictkey_auto_fn(self.input_key)
-        self._get_output = utils.get_dictkey_auto_fn(self.output_key)
+        self._get_input = get_dictkey_auto_fn(self.input_key)
+        self._get_output = get_dictkey_auto_fn(self.output_key)
 
         kv_types = (dict, tuple, list, type(None))
 
@@ -423,7 +424,7 @@ class MetricManagerCallback(Callback):
         super().__init__(
             order=CallbackOrder.logging - 1, node=CallbackNode.all,
         )
-        self.meters: Dict[str, meters.AverageValueMeter] = None
+        self.meters: Dict[str, AverageValueMeter] = None
 
     @staticmethod
     def to_single_value(value: Any) -> float:
@@ -445,7 +446,7 @@ class MetricManagerCallback(Callback):
     def _process_metrics(metrics: Dict[str, Any]):
         output = {}
         for key, value in metrics.items():
-            value = utils.get_distributed_mean(value)
+            value = get_distributed_mean(value)
             value = MetricManagerCallback.to_single_value(value)
             output[key] = value
         return output
@@ -465,7 +466,7 @@ class MetricManagerCallback(Callback):
             runner: current runner
         """
         runner.loader_metrics = defaultdict(None)
-        self.meters = defaultdict(meters.AverageValueMeter)
+        self.meters = defaultdict(AverageValueMeter)
 
     def on_batch_start(self, runner: IRunner) -> None:
         """Batch start hook.

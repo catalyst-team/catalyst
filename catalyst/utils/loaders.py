@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, Iterable
+from typing import Any, Callable, Dict, Iterable, Union
 from collections import OrderedDict
 from copy import copy
 import warnings
@@ -7,11 +7,12 @@ import torch
 from torch.utils.data import DataLoader, Dataset, DistributedSampler
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
-from catalyst.data import DistributedSamplerWrapper, ListDataset
+from catalyst.data.dataset import ListDataset
+from catalyst.data.sampler import DistributedSamplerWrapper
 from catalyst.registry import SAMPLER
-from catalyst.utils import get_rank, merge_dicts, set_global_seed
-
-from typing import Dict, Union  # isort:skip
+from catalyst.utils.dict import merge_dicts
+from catalyst.utils.distributed import get_rank
+from catalyst.utils.seed import set_global_seed
 
 
 def get_loader(

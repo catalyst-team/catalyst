@@ -6,7 +6,7 @@ import torch
 from torch import quantization
 from torch.nn import Module
 
-from catalyst.tools import Model
+from catalyst.typing import Model
 from catalyst.utils import (
     load_checkpoint,
     load_config,
@@ -15,7 +15,7 @@ from catalyst.utils import (
 )
 
 if TYPE_CHECKING:
-    from catalyst.experiment import ConfigExperiment
+    from catalyst.experiments import ConfigExperiment
 
 
 logger = logging.getLogger(__name__)

@@ -45,9 +45,9 @@ EOT
 
 # check if fail if requirements not installed
 python -c """
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
 
-assert settings.use_lz4 == False and settings.use_pyarrow == False
+assert SETTINGS.use_lz4 == False and SETTINGS.use_pyarrow == False
 
 try:
     from catalyst.contrib.dl.callbacks import AlchemyLogger, VisdomLogger
@@ -77,9 +77,9 @@ EOT
 
 # check if fail if requirements not installed
 python -c """
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
 
-assert settings.use_libjpeg_turbo == False
+assert SETTINGS.use_libjpeg_turbo == False
 
 try:
     from catalyst.contrib.data import cv as cv_data

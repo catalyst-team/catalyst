@@ -3,8 +3,9 @@ from collections import defaultdict
 
 import numpy as np
 
-from catalyst.core import Callback, CallbackOrder, IRunner
-from catalyst.dl.utils import get_activation_fn
+from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.core.runner import IRunner
+from catalyst.utils.torch import get_activation_fn
 
 
 class MeterMetricsCallback(Callback):

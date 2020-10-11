@@ -6,29 +6,28 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 
-from catalyst.core import IExperiment
-from catalyst.data import Augmentor, AugmentorCompose
-from catalyst.dl import (
-    AMPOptimizerCallback,
-    BatchOverfitCallback,
-    Callback,
-    CheckpointCallback,
-    CheckRunCallback,
+from catalyst.callbacks.batch_overfit import BatchOverfitCallback
+from catalyst.callbacks.checkpoint import CheckpointCallback
+from catalyst.callbacks.criterion import CriterionCallback
+from catalyst.callbacks.early_stop import CheckRunCallback
+from catalyst.callbacks.exception import ExceptionCallback
+from catalyst.callbacks.logging import (
     ConsoleLogger,
-    CriterionCallback,
-    ExceptionCallback,
-    IOptimizerCallback,
-    ISchedulerCallback,
-    MetricManagerCallback,
-    OptimizerCallback,
-    SchedulerCallback,
     TensorboardLogger,
-    TimerCallback,
-    utils,
-    ValidationManagerCallback,
     VerboseLogger,
 )
-from catalyst.dl.utils import check_amp_available, check_callback_isinstance
+from catalyst.callbacks.metric import MetricManagerCallback
+from catalyst.callbacks.optimizer import (
+    AMPOptimizerCallback,
+    IOptimizerCallback,
+    OptimizerCallback,
+)
+from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
+from catalyst.callbacks.timer import TimerCallback
+from catalyst.callbacks.validation import ValidationManagerCallback
+from catalyst.core.callback import Callback
+from catalyst.core.experiment import IExperiment
+from catalyst.data.augmentor import Augmentor, AugmentorCompose
 from catalyst.registry import (
     CALLBACKS,
     CRITERIONS,
@@ -38,6 +37,14 @@ from catalyst.registry import (
     TRANSFORMS,
 )
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
+from catalyst.utils.callbacks import check_callback_isinstance
+from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
+from catalyst.utils.dict import merge_dicts
+from catalyst.utils.distributed import check_amp_available, get_rank
+from catalyst.utils.hash import get_short_hash
+from catalyst.utils.loaders import get_loaders_from_params
+from catalyst.utils.misc import get_utcnow_time
+from catalyst.utils.torch import any2device, get_device, process_model_params
 
 
 class ConfigExperiment(IExperiment):
@@ -78,7 +85,7 @@ class ConfigExperiment(IExperiment):
 
         self._prepare_logdir()
 
-        self._config["stages"]["stage_params"] = utils.merge_dicts(
+        self._config["stages"]["stage_params"] = merge_dicts(
             deepcopy(
                 self._config["stages"].get("state_params", {})
             ),  # saved for backward compatibility
@@ -91,8 +98,8 @@ class ConfigExperiment(IExperiment):
         )
 
     def _get_logdir(self, config: Dict) -> str:
-        timestamp = utils.get_utcnow_time()
-        config_hash = utils.get_short_hash(config)
+        timestamp = get_utcnow_time()
+        config_hash = get_short_hash(config)
         logdir = f"{timestamp}.{config_hash}"
         return logdir
 
@@ -116,7 +123,7 @@ class ConfigExperiment(IExperiment):
         for key in self.STAGE_KEYWORDS:
             if key == "stage_params":
                 # backward compatibility
-                stages_defaults[key] = utils.merge_dicts(
+                stages_defaults[key] = merge_dicts(
                     deepcopy(stages_config.get("state_params", {})),
                     deepcopy(stages_config.get(key, {})),
                 )
@@ -133,14 +140,14 @@ class ConfigExperiment(IExperiment):
             for key2 in self.STAGE_KEYWORDS:
                 if key2 == "stage_params":
                     # backward compatibility
-                    stages_config_out[stage][key2] = utils.merge_dicts(
+                    stages_config_out[stage][key2] = merge_dicts(
                         deepcopy(stages_defaults.get("state_params", {})),
                         deepcopy(stages_defaults.get(key2, {})),
                         deepcopy(stages_config[stage].get("state_params", {})),
                         deepcopy(stages_config[stage].get(key2, {})),
                     )
                 else:
-                    stages_config_out[stage][key2] = utils.merge_dicts(
+                    stages_config_out[stage][key2] = merge_dicts(
                         deepcopy(stages_defaults.get(key2, {})),
                         deepcopy(stages_config[stage].get(key2, {})),
                     )
@@ -255,7 +262,7 @@ class ConfigExperiment(IExperiment):
             data_params = dict(self.stages_config[stage]["data_params"])
             batch_size = data_params.get("batch_size")
             per_gpu_scaling = data_params.get("per_gpu_scaling", False)
-            distributed_rank = utils.get_rank()
+            distributed_rank = get_rank()
             distributed = distributed_rank > -1
             if per_gpu_scaling and not distributed:
                 num_gpus = max(1, torch.cuda.device_count())
@@ -274,11 +281,11 @@ class ConfigExperiment(IExperiment):
             assert isinstance(
                 model, nn.Module
             ), "model is key-value, but optimizer has no specified model"
-            model_params = utils.process_model_params(
+            model_params = process_model_params(
                 model, layerwise_params, no_bias_weight_decay, lr_scaling
             )
         elif isinstance(model_key, str):
-            model_params = utils.process_model_params(
+            model_params = process_model_params(
                 model[model_key],
                 layerwise_params,
                 no_bias_weight_decay,
@@ -287,7 +294,7 @@ class ConfigExperiment(IExperiment):
         elif isinstance(model_key, (list, tuple)):
             model_params = []
             for model_key_el in model_key:
-                model_params_el = utils.process_model_params(
+                model_params_el = process_model_params(
                     model[model_key_el],
                     layerwise_params,
                     no_bias_weight_decay,
@@ -305,20 +312,20 @@ class ConfigExperiment(IExperiment):
 
         if load_from_previous_stage and self.stages.index(stage) != 0:
             checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
-            checkpoint = utils.load_checkpoint(checkpoint_path)
+            checkpoint = load_checkpoint(checkpoint_path)
 
             dict2load = optimizer
             if optimizer_key is not None:
                 dict2load = {optimizer_key: optimizer}
-            utils.unpack_checkpoint(checkpoint, optimizer=dict2load)
+            unpack_checkpoint(checkpoint, optimizer=dict2load)
 
             # move optimizer to device
-            device = utils.get_device()
+            device = get_device()
             for param in model_params:
                 param = param["params"][0]
                 optimizer_state = optimizer.state[param]
                 for state_key, state_value in optimizer_state.items():
-                    optimizer_state[state_key] = utils.any2device(
+                    optimizer_state[state_key] = any2device(
                         state_value, device
                     )
 
@@ -467,7 +474,7 @@ class ConfigExperiment(IExperiment):
     ) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage."""
         data_params = dict(self.stages_config[stage]["data_params"])
-        loaders = utils.get_loaders_from_params(
+        loaders = get_loaders_from_params(
             get_datasets_fn=self.get_datasets,
             initial_seed=self.initial_seed,
             stage=stage,

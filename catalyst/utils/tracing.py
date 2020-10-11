@@ -1,10 +1,4 @@
-from typing import (  # isort:skip
-    Any,
-    Callable,
-    Dict,
-    List,
-    Union,
-)
+from typing import Any, Callable, Dict, List, TYPE_CHECKING, Union
 import inspect
 import logging
 from pathlib import Path
@@ -12,22 +6,28 @@ from pathlib import Path
 from torch import jit, nn
 
 from catalyst.core.runner import IRunner
-from catalyst.experiment import ConfigExperiment
 from catalyst.typing import Device, Model
-from catalyst.utils import (
-    any2device,
-    assert_fp16_available,
-    get_fn_argsnames,
-    get_native_batch_from_loaders,
-    get_nn_from_ddp_module,
-    get_requires_grad,
+from catalyst.utils.checkpoint import (
     load_checkpoint,
-    load_config,
     pack_checkpoint,
-    prepare_config_api_components,
-    set_requires_grad,
     unpack_checkpoint,
 )
+from catalyst.utils.config import load_config
+from catalyst.utils.distributed import (
+    assert_fp16_available,
+    get_nn_from_ddp_module,
+)
+from catalyst.utils.loaders import get_native_batch_from_loaders
+from catalyst.utils.misc import get_fn_argsnames
+from catalyst.utils.scripts import prepare_config_api_components
+from catalyst.utils.torch import (
+    any2device,
+    get_requires_grad,
+    set_requires_grad,
+)
+
+if TYPE_CHECKING:
+    from catalyst.experiments import ConfigExperiment
 
 logger = logging.getLogger(__name__)
 

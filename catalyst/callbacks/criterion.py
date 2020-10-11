@@ -1,6 +1,6 @@
 from typing import Dict, List, Union
 
-from catalyst.core.callbacks.metrics import IBatchMetricCallback
+from catalyst.callbacks.metric import IBatchMetricCallback
 from catalyst.core.runner import IRunner
 
 

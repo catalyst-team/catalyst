@@ -4,9 +4,9 @@ from pathlib import Path
 import torch
 from torch import quantization
 
-from catalyst.core import IRunner
 from catalyst.core.callback import Callback, CallbackOrder
-from catalyst.dl.utils import save_quantized_model
+from catalyst.core.runner import IRunner
+from catalyst.utils.quantization import save_quantized_model
 
 
 class DynamicQuantizationCallback(Callback):

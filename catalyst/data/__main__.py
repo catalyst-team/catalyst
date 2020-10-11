@@ -80,7 +80,7 @@ from catalyst.data.scripts import (
     split_dataframe,
     tag2label,
 )
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
 
 logger = logging.getLogger(__name__)
 
@@ -102,7 +102,7 @@ try:
     COMMANDS["process-images"] = process_images
     COMMANDS["image2embedding"] = image2embedding
 except ImportError as ex:  # noqa: WPS440
-    if settings.cv_required:
+    if SETTINGS.cv_required:
         logger.warning(
             "some of catalyst-cv dependencies are not available,"
             + " to install dependencies, run `pip install catalyst[cv]`."
@@ -115,7 +115,7 @@ try:
 
     COMMANDS["text2embedding"] = text2embedding
 except ImportError as ex:  # noqa: WPS440
-    if settings.transformers_required:
+    if SETTINGS.transformers_required:
         logger.warning(
             "transformers not available, to install transformers,"
             + " run `pip install transformers`."

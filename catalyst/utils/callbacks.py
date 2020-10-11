@@ -1,9 +1,8 @@
 from typing import Dict, List, Union
 from collections import OrderedDict
 
-from catalyst.core.callback import CallbackNode
-from catalyst.core.utils import get_rank
-from catalyst.dl import Callback, WrapperCallback
+from catalyst.core.callback import Callback, CallbackNode, CallbackWrapper
+from catalyst.utils.distributed import get_rank
 
 
 def get_original_callback(callback: Callback) -> Callback:
@@ -15,7 +14,7 @@ def get_original_callback(callback: Callback) -> Callback:
     Returns:
         callback inside wrapper
     """
-    while isinstance(callback, WrapperCallback):
+    while isinstance(callback, CallbackWrapper):
         callback = callback.callback
     return callback
 

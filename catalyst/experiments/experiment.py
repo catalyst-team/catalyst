@@ -5,31 +5,30 @@ import warnings
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 
-from catalyst.core import IExperiment
-from catalyst.dl import (
-    BatchOverfitCallback,
-    Callback,
-    CheckpointCallback,
-    CheckRunCallback,
+from catalyst.callbacks.batch_overfit import BatchOverfitCallback
+from catalyst.callbacks.checkpoint import CheckpointCallback
+from catalyst.callbacks.early_stop import CheckRunCallback
+from catalyst.callbacks.exception import ExceptionCallback
+from catalyst.callbacks.logging import (
     ConsoleLogger,
-    ExceptionCallback,
-    MetricManagerCallback,
     TensorboardLogger,
-    TimerCallback,
-    utils,
-    ValidationManagerCallback,
     VerboseLogger,
 )
-from catalyst.dl.utils import check_callback_isinstance
-from catalyst.tools import settings
+from catalyst.callbacks.metric import MetricManagerCallback
+from catalyst.callbacks.timer import TimerCallback
+from catalyst.callbacks.validation import ValidationManagerCallback
+from catalyst.core.experiment import IExperiment
+from catalyst.settings import SETTINGS
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
+from catalyst.utils.callbacks import (
+    check_callback_isinstance,
+    sort_callbacks_by_order,
+)
+from catalyst.utils.loaders import get_loaders_from_params
 
 
 class Experiment(IExperiment):
-    """
-    Super-simple one-staged experiment,
-    you can use to declare experiment in code.
-    """
+    """One-staged experiment, you can use it to declare experiments in code."""
 
     def __init__(
         self,
@@ -113,7 +112,7 @@ class Experiment(IExperiment):
             valid_loader=valid_loader,
             initial_seed=initial_seed,
         )
-        self._callbacks = utils.sort_callbacks_by_order(callbacks)
+        self._callbacks = sort_callbacks_by_order(callbacks)
 
         self._criterion = criterion
         self._optimizer = optimizer
@@ -199,10 +198,10 @@ class Experiment(IExperiment):
     ) -> "Tuple[OrderedDict[str, DataLoader], str]":
         """Prepares loaders for a given stage."""
         if datasets is not None:
-            loaders = utils.get_loaders_from_params(
+            loaders = get_loaders_from_params(
                 initial_seed=initial_seed, **datasets,
             )
-        if not stage.startswith(settings.stage_infer_prefix):  # train stage
+        if not stage.startswith(SETTINGS.stage_infer_prefix):  # train stage
             if len(loaders) == 1:
                 valid_loader = list(loaders.keys())[0]
                 warnings.warn(

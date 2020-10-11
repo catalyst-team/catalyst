@@ -8,7 +8,7 @@ from urllib.request import Request, urlopen
 from catalyst import utils
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
 
 
 class TelegramLogger(Callback):
@@ -42,8 +42,8 @@ class TelegramLogger(Callback):
         """
         super().__init__(order=CallbackOrder.logging, node=CallbackNode.master)
         # @TODO: replace this logic with global catalyst config at ~/.catalyst
-        self._token = token or settings.telegram_logger_token
-        self._chat_id = chat_id or settings.telegram_logger_chat_id
+        self._token = token or SETTINGS.telegram_logger_token
+        self._chat_id = chat_id or SETTINGS.telegram_logger_chat_id
         assert self._token is not None and self._chat_id is not None
         self._base_url = (
             f"https://api.telegram.org/bot{self._token}/sendMessage"

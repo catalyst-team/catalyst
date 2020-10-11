@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, TYPE_CHECKING
 
 import numpy as np
 from sklearn.metrics import confusion_matrix as confusion_matrix_fn
@@ -6,9 +6,15 @@ from sklearn.metrics import confusion_matrix as confusion_matrix_fn
 import torch
 import torch.distributed  # noqa: WPS301
 
-from catalyst.core import Callback, CallbackNode, CallbackOrder, IRunner
-from catalyst.dl import utils
+from catalyst.contrib.utils.visualization import (
+    plot_confusion_matrix,
+    render_figure_to_tensor,
+)
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.tools import meters
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class ConfusionMatrixCallback(Callback):
@@ -91,14 +97,14 @@ class ConfusionMatrixCallback(Callback):
     def _plot_confusion_matrix(
         self, logger, epoch, confusion_matrix, class_names=None
     ):
-        fig = utils.plot_confusion_matrix(
+        fig = plot_confusion_matrix(
             confusion_matrix,
             class_names=class_names,
             normalize=True,
             show=False,
             **self._plot_params,
         )
-        fig = utils.render_figure_to_tensor(fig)
+        fig = render_figure_to_tensor(fig)
         logger.add_image(f"{self.prefix}/epoch", fig, global_step=epoch)
 
     def on_loader_start(self, runner: IRunner):

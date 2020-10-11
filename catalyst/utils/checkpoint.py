@@ -1,4 +1,3 @@
-# flake8: noqa
 from typing import Callable, Dict, Union
 from collections import OrderedDict
 import os
