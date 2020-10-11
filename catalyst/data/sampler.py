@@ -208,6 +208,23 @@ class DynamicBalanceClassSampler(Sampler):
     Also define g(n_epoch) is a exponential scheduler. On each epoch
     current D_i  calculated as currend D_i  = D_i ^ g(n_epoch),
     after this data samples according this distribution.
+    Usage example:
+
+        >>> import torch
+        >>> import numpy as np
+
+        >>> from catalyst.data.sampler import DynamicBalanceClassSampler
+        >>> from torch.utils import data
+
+        >>> features = torch.Tensor(np.random.random((200, 100)))
+        >>> labels = np.random.randint(0, 4, size=(200,))
+        >>> sampler = DynamicBalanceClassSampler(labels)
+        >>> labels = torch.LongTensor(labels)
+        >>> dataset = data.TensorDataset(features, labels)
+        >>> loader = data.dataloader.DataLoader(dataset, batch_size=8)
+
+        >>> for batch in loader:
+        >>>     b_features, b_labels = batch
 
     Sampler was inspired by https://arxiv.org/pdf/1901.06783.pdf
     """
@@ -217,7 +234,7 @@ class DynamicBalanceClassSampler(Sampler):
     ):
         """
         Args:
-            labels: list of classes labeles for each elem in the dataset
+            labels: list of labels for each elem in the dataset
             exp_lambda: exponent figure for schedule
             epoch: start epoch number can be useful for many stage experiments
             max_d: limit on the difference between the most frequent and the
