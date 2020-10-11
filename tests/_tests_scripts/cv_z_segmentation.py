@@ -41,7 +41,7 @@ import collections
 import numpy as np
 from catalyst.data.cv import Compose, Normalize
 from catalyst.data import Augmentor
-from catalyst.dl import utils
+from catalyst import utils
 from catalyst.contrib.nn.criterion import (
     LovaszLossBinary,
     LovaszLossMultiLabel,

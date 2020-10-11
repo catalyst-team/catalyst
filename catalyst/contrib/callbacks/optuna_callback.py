@@ -16,8 +16,7 @@ class OptunaPruningCallback(Callback):
 
         import optuna
 
-        from catalyst.dl import SupervisedRunner
-        from catalyst.dl.callbacks import OptunaCallback
+        from catalyst.dl import SupervisedRunner, OptunaPruningCallback
 
         # some python code ...
 

@@ -61,8 +61,8 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
 
     Abstraction, please check out the implementations:
 
-        - :py:mod:`catalyst.dl.runner.runner.Runner`
-        - :py:mod:`catalyst.dl.runner.supervised.SupervisedRunner`
+        - :py:mod:`catalyst.runners.runner.Runner`
+        - :py:mod:`catalyst.runners.supervised.SupervisedRunner`
 
     Runner also contains full information about experiment runner.
 

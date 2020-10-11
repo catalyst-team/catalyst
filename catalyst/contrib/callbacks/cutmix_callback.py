@@ -17,8 +17,8 @@ class CutmixCallback(CriterionCallback):
     with Localizable Features`_.
 
     .. warning::
-        `catalyst.contrib.dl.callbacks.CutmixCallback` is inherited from
-        `catalyst.dl.CriterionCallback` and does its work.
+        `catalyst.contrib.callbacks.CutmixCallback` is inherited from
+        `catalyst.callbacks.CriterionCallback` and does its work.
         You may not use them together.
 
     .. _CutMix\: Regularization Strategy to Train Strong Classifiers with Localizable Features: https://arxiv.org/abs/1905.04899  # noqa: W605, E501, W505

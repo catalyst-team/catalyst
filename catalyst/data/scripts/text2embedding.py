@@ -12,7 +12,7 @@ from transformers import BertConfig, BertModel, BertTokenizer
 
 from catalyst.contrib.utils import process_bert_output, tokenize_text
 from catalyst.data import LambdaReader
-from catalyst.dl import utils
+from catalyst import utils
 
 
 def build_args(parser):

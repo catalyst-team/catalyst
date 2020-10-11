@@ -24,9 +24,9 @@ class IExperiment(ABC):
 
     Abstraction, please check out the implementations:
 
-        - :py:mod:`catalyst.dl.experiment.base.BaseExperiment`
-        - :py:mod:`catalyst.dl.experiment.config.ConfigExperiment`
-        - :py:mod:`catalyst.dl.experiment.supervised.SupervisedExperiment`
+        - :py:mod:`catalyst.experiments.experiment.Experiment`
+        - :py:mod:`catalyst.experiments.config.ConfigExperiment`
+        - :py:mod:`catalyst.experiments.supervised.SupervisedExperiment`
     """
 
     @property

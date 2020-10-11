@@ -15,7 +15,7 @@ class AccuracyCallback(BatchMetricCallback):
 
     .. note::
         For multi-label accuracy please use
-        `catalyst.dl.callbacks.metrics.MultiLabelAccuracyCallback`
+        `catalyst.callbacks.metrics.MultiLabelAccuracyCallback`
     """
 
     def __init__(
@@ -65,7 +65,7 @@ class MultiLabelAccuracyCallback(BatchMetricCallback):
 
     .. note::
         For multi-label accuracy please use
-        `catalyst.dl.callbacks.metrics.MultiLabelAccuracyCallback`
+        `catalyst.callbacks.metrics.MultiLabelAccuracyCallback`
     """
 
     def __init__(
