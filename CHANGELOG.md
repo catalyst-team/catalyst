@@ -61,6 +61,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- `MovieLens dataset` loader ([#903](https://github.com/catalyst-team/catalyst/pull/903))
 - `force` and `bert-level` keywords to `catalyst-data text2embedding` ([#917](https://github.com/catalyst-team/catalyst/pull/917))
 - `OptunaCallback` to `catalyst.contrib` ([#915](https://github.com/catalyst-team/catalyst/pull/915))
 - `DynamicQuantizationCallback` and `catalyst-dl quantize` script for fast quantization of your model ([#890](https://github.com/catalyst-team/catalyst/pull/915))
