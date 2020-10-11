@@ -50,7 +50,7 @@ from catalyst.settings import SETTINGS
 assert SETTINGS.use_lz4 == False and SETTINGS.use_pyarrow == False
 
 try:
-    from catalyst.contrib.callbacks import AlchemyLogger, VisdomLogger
+    from catalyst.contrib.callbacks import AlchemyLogger
 except ImportError:
     pass  # Ok
 else:
@@ -61,7 +61,7 @@ pip install -r requirements/requirements-contrib.txt --quiet --find-links https:
 pip install -r requirements/requirements-ecosystem.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
 
 python -c """
-from catalyst.contrib.callbacks import AlchemyLogger, VisdomLogger
+from catalyst.contrib.callbacks import AlchemyLogger
 """
 
 

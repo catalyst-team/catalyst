@@ -137,13 +137,6 @@ TelegramLogger
     :undoc-members:
     :show-inheritance:
 
-VisdomLogger
-""""""""""""""""""""""
-.. automodule:: catalyst.contrib.dl.callbacks.visdom_logger
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 WandbLogger
 """"""""""""""""""""""
 .. automodule:: catalyst.contrib.dl.callbacks.wandb_logger
