@@ -293,7 +293,7 @@ Functional
 
 MRR
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.metrics.mrr
+.. automodule:: catalyst.metrics.mrr
     :members:
     :undoc-members:
     :show-inheritance:
