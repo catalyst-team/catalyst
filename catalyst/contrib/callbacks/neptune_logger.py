@@ -22,8 +22,8 @@ class NeptuneLogger(Callback):
     Example:
         .. code-block:: python
 
-            from catalyst.dl import SupervisedRunner
-            from catalyst.contrib.dl.callbacks.neptune import NeptuneLogger
+            from catalyst.runners import SupervisedRunner
+            from catalyst.contrib.callbacks import NeptuneLogger
 
             runner = SupervisedRunner()
 

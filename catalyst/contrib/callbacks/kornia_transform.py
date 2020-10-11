@@ -31,7 +31,7 @@ class BatchTransformCallback(Callback):
         from catalyst import dl
         from catalyst.contrib.data.transforms import ToTensor
         from catalyst.contrib.datasets import MNIST
-        from catalyst.contrib.dl.callbacks.kornia_transform import (
+        from catalyst.contrib.callbacks.kornia_transform import (
             BatchTransformCallback
         )
         from catalyst.utils import metrics
