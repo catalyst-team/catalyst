@@ -9,7 +9,7 @@ import numpy as np
 
 import torch
 
-from catalyst.utils.metrics.functional import preprocess_multi_label_metrics
+from catalyst.metrics.functional import preprocess_multi_label_metrics
 from catalyst.utils.torch import get_activation_fn
 
 

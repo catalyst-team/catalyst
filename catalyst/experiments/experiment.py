@@ -18,12 +18,12 @@ from catalyst.callbacks.metric import MetricManagerCallback
 from catalyst.callbacks.timer import TimerCallback
 from catalyst.callbacks.validation import ValidationManagerCallback
 from catalyst.core.experiment import IExperiment
-from catalyst.settings import SETTINGS
-from catalyst.typing import Criterion, Model, Optimizer, Scheduler
-from catalyst.utils.callbacks import (
+from catalyst.core.functional import (
     check_callback_isinstance,
     sort_callbacks_by_order,
 )
+from catalyst.settings import SETTINGS
+from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 from catalyst.utils.loaders import get_loaders_from_params
 
 

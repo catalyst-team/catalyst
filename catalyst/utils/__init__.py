@@ -125,9 +125,3 @@ if IS_GIT_AVAILABLE:
     from catalyst.utils.pipelines import clone_pipeline
     from catalyst.utils.wizard import run_wizard, Wizard
 
-from catalyst.utils.callbacks import (
-    sort_callbacks_by_order,
-    filter_callbacks_by_node,
-    get_original_callback,
-    check_callback_isinstance,
-)

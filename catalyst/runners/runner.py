@@ -7,10 +7,10 @@ from torch.utils.data import DataLoader, Dataset
 
 from catalyst.callbacks.checkpoint import CheckpointCallback
 from catalyst.core.callback import Callback
+from catalyst.core.functional import sort_callbacks_by_order
 from catalyst.core.runner import IStageBasedRunner
 from catalyst.experiments.experiment import Experiment
 from catalyst.typing import Criterion, Device, Model, Optimizer, Scheduler
-from catalyst.utils.callbacks import sort_callbacks_by_order
 from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
 from catalyst.utils.components import process_components
 from catalyst.utils.misc import maybe_recursive_call

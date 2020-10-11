@@ -9,6 +9,10 @@ from torch.utils.data import DataLoader, DistributedSampler
 
 from catalyst.core.callback import Callback, CallbackScope
 from catalyst.core.experiment import IExperiment
+from catalyst.core.functional import (
+    filter_callbacks_by_node,
+    sort_callbacks_by_order,
+)
 from catalyst.core.legacy import IRunnerLegacy
 from catalyst.settings import SETTINGS
 from catalyst.tools.frozen_class import FrozenClass
@@ -22,10 +26,6 @@ from catalyst.typing import (
     RunnerOptimizer,
     RunnerScheduler,
     Scheduler,
-)
-from catalyst.utils.callbacks import (
-    filter_callbacks_by_node,
-    sort_callbacks_by_order,
 )
 from catalyst.utils.components import process_components
 from catalyst.utils.distributed import get_rank

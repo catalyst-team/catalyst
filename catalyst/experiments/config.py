@@ -27,6 +27,7 @@ from catalyst.callbacks.timer import TimerCallback
 from catalyst.callbacks.validation import ValidationManagerCallback
 from catalyst.core.callback import Callback
 from catalyst.core.experiment import IExperiment
+from catalyst.core.functional import check_callback_isinstance
 from catalyst.data.augmentor import Augmentor, AugmentorCompose
 from catalyst.registry import (
     CALLBACKS,
@@ -37,7 +38,6 @@ from catalyst.registry import (
     TRANSFORMS,
 )
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
-from catalyst.utils.callbacks import check_callback_isinstance
 from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
 from catalyst.utils.dict import merge_dicts
 from catalyst.utils.distributed import check_amp_available, get_rank

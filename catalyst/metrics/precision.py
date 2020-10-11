@@ -2,7 +2,7 @@ from typing import Optional
 
 import torch
 
-from catalyst.utils.metrics.functional import preprocess_multi_label_metrics
+from catalyst.metrics.functional import preprocess_multi_label_metrics
 
 
 def average_precision(

@@ -5,7 +5,7 @@ from pathlib import Path
 
 from torch import jit, nn
 
-from catalyst.core.runner import IRunner
+
 from catalyst.typing import Device, Model
 from catalyst.utils.checkpoint import (
     load_checkpoint,
@@ -27,6 +27,7 @@ from catalyst.utils.torch import (
 )
 
 if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
     from catalyst.experiments import ConfigExperiment
 
 logger = logging.getLogger(__name__)
@@ -244,7 +245,7 @@ def trace_model_from_checkpoint(
 
 
 def trace_model_from_runner(
-    runner: IRunner,
+    runner: "IRunner",
     checkpoint_name: str = None,
     method_name: str = "forward",
     mode: str = "eval",
