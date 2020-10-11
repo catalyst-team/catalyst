@@ -226,6 +226,8 @@ def get_loaders_from_params(
         ValueError: if batch_sampler option is mutually
             exclusive with distributed
     """
+    from catalyst.data.sampler import DistributedSamplerWrapper
+
     default_batch_size = batch_size
     default_num_workers = num_workers
     loaders_params = loaders_params or {}

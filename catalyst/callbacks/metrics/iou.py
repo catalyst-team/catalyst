@@ -10,7 +10,19 @@ def _get_default_classwise_iou_args(num_classes: int) -> List[int]:
 
 
 class IouCallback(BatchMetricCallback):
-    """IoU (Jaccard) metric callback."""
+    """IoU (Jaccard) metric callback.
+
+    Args:
+        input_key: input key to use for iou calculation
+            specifies our ``y_true``
+        output_key: output key to use for iou calculation;
+            specifies our ``y_pred``
+        prefix: key to store in logs
+        eps: epsilon to avoid zero division
+        threshold: threshold for outputs binarization
+        activation: An torch.nn activation applied to the outputs.
+            Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
+    """
 
     def __init__(
         self,
@@ -84,7 +96,7 @@ class ClasswiseIouCallback(BatchMetricCallback):
 
         super().__init__(
             prefix=prefix,
-            metric_fn=metrics.iou,
+            metric_fn=iou,
             list_args=list_args,
             input_key=input_key,
             output_key=output_key,

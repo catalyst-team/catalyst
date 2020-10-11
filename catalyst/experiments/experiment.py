@@ -1,4 +1,4 @@
-from typing import Any, Dict, Iterable, List, Mapping, Tuple, Union
+from typing import Any, Dict, Iterable, List, Mapping, Tuple, Union, TYPE_CHECKING
 from collections import OrderedDict
 import warnings
 
@@ -25,6 +25,9 @@ from catalyst.core.functional import (
 from catalyst.settings import SETTINGS
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 from catalyst.utils.loaders import get_loaders_from_params
+
+if TYPE_CHECKING:
+    from catalyst.core.callback import Callback
 
 
 class Experiment(IExperiment):

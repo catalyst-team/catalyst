@@ -15,7 +15,19 @@ if TYPE_CHECKING:
 
 
 class DiceCallback(BatchMetricCallback):
-    """Dice metric callback."""
+    """Dice metric callback.
+
+    Args:
+        input_key: input key to use for iou calculation
+            specifies our ``y_true``
+        output_key: output key to use for iou calculation;
+            specifies our ``y_pred``
+        prefix: key to store in logs
+        eps: epsilon to avoid zero division
+        threshold: threshold for outputs binarization
+        activation: An torch.nn activation applied to the outputs.
+            Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
+    """
 
     def __init__(
         self,
@@ -28,10 +40,15 @@ class DiceCallback(BatchMetricCallback):
     ):
         """
         Args:
-            input_key: input key to use for dice calculation;
-                specifies our `y_true`
-            output_key: output key to use for dice calculation;
-                specifies our `y_pred`
+            input_key: input key to use for iou calculation
+                specifies our ``y_true``
+            output_key: output key to use for iou calculation;
+                specifies our ``y_pred``
+            prefix: key to store in logs
+            eps: epsilon to avoid zero division
+            threshold: threshold for outputs binarization
+            activation: An torch.nn activation applied to the outputs.
+                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
         """
         super().__init__(
             prefix=prefix,
@@ -110,7 +127,7 @@ class MultiClassDiceMetricCallback(Callback):
         dice_scores: np.ndarray = calculate_dice(**tp_fp_fn_dict)
 
         # logging the dice scores in the state
-        for i, dice in enumerate(dice_scores):
+        for i, dice_score in enumerate(dice_scores):
             if isinstance(self.class_names, dict) and i not in list(
                 self.class_names.keys()
             ):
@@ -119,7 +136,7 @@ class MultiClassDiceMetricCallback(Callback):
                 self.class_names[i] if self.class_names is not None else str(i)
             )
 
-            runner.loader_metrics[f"{self.prefix}_{postfix}"] = dice
+            runner.loader_metrics[f"{self.prefix}_{postfix}"] = dice_score
 
         # For supporting averaging of only classes specified in `class_names`
         values_to_avg = [

@@ -23,7 +23,8 @@ class ExceptionCallback(Callback):
             runner: experiment runner
 
         Raises:
-            Exception
+            Exception: if during exception handling,
+                we still need to reraise exception
         """
         exception = runner.exception
         if not is_exception(exception):

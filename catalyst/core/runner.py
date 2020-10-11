@@ -599,7 +599,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         criterion = experiment.get_criterion(stage)
         optimizer = experiment.get_optimizer(stage, model)
         scheduler = experiment.get_scheduler(stage, optimizer)
-        (model, criterion, optimizer, scheduler, device,) = process_components(
+        model, criterion, optimizer, scheduler, device = process_components(
             model=model,
             criterion=criterion,
             optimizer=optimizer,

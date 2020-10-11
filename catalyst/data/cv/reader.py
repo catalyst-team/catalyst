@@ -1,6 +1,6 @@
 from typing import Optional, Tuple, Union
 
-from catalyst.contrib.utils.cv.image import imread
+from catalyst.contrib.utils.cv.image import imread, mimread
 from catalyst.data.reader import ReaderSpec
 
 
