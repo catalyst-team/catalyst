@@ -10,7 +10,7 @@ echo 'pipeline 01'
 EXPDIR=./examples/cifar_stages_optuna
 BASELOGDIR=./examples/logs/cifar_stages_optuna
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/tune.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config.yml \
