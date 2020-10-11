@@ -209,8 +209,38 @@ class MNIST(Dataset):
 
 class MnistMLDataset(MetricLearningTrainDataset, MNIST):
     """
-    Simple wrapper for MNIST dataset
+    Simple wrapper for MNIST dataset for metric learning train stage.
+    This dataset can be used only for training. For test stage
+    use MnistQGDataset.
+
+    For this dataset we use only training part of the MNIST and only
+    those images that are labeled as 0, 1, 2, 3, 4.
     """
+
+    _split = 5
+    classes = [
+        "0 - zero",
+        "1 - one",
+        "2 - two",
+        "3 - three",
+        "4 - four",
+    ]
+
+    def __init__(self, **kwargs):
+        """
+        Raises:
+            ValueError: if train argument is False (MnistMLDataset
+                should be used only for training)
+        """
+        if "train" in kwargs:
+            if kwargs["train"] is False:
+                raise ValueError(
+                    "MnistMLDataset can be used only for training stage."
+                )
+        else:
+            kwargs["train"] = True
+        super(MnistMLDataset, self).__init__(**kwargs)
+        self._filter()
 
     def get_labels(self) -> List[int]:
         """
@@ -219,9 +249,30 @@ class MnistMLDataset(MetricLearningTrainDataset, MNIST):
         """
         return self.targets.tolist()
 
+    def _filter(self) -> None:
+        """Filter MNIST dataset: select images of 0, 1, 2, 3, 4 classes."""
+        mask = self.targets < self._split
+        self.data = self.data[mask]
+        self.targets = self.targets[mask]
+
 
 class MnistQGDataset(QueryGalleryDataset):
-    """MNIST for metric learning with query and gallery split"""
+    """
+    MNIST for metric learning with query and gallery split.
+    MnistQGDataset should be used for test stage.
+
+    For this dataset we used only test part of the MNIST and only
+    those images that are labeled as 5, 6, 7, 8, 9.
+    """
+
+    _split = 5
+    classes = [
+        "5 - five",
+        "6 - six",
+        "7 - seven",
+        "8 - eight",
+        "9 - nine",
+    ]
 
     def __init__(
         self,
@@ -238,12 +289,19 @@ class MnistQGDataset(QueryGalleryDataset):
         self._mnist = MNIST(
             root, train=False, download=True, transform=transform
         )
+        self._filter()
 
         self._gallery_size = int(gallery_fraq * len(self._mnist))
         self._query_size = len(self._mnist) - self._gallery_size
 
         self._is_query = torch.zeros(len(self._mnist)).type(torch.bool)
         self._is_query[: self._query_size] = True
+
+    def _filter(self) -> None:
+        """Filter MNIST dataset: select images of 5, 6, 7, 8, 9 classes."""
+        mask = self._mnist.targets >= self._split
+        self._mnist.data = self._mnist.data[mask]
+        self._mnist.targets = self._mnist.targets[mask]
 
     def __getitem__(self, idx: int) -> Dict[str, Any]:
         """
@@ -267,6 +325,10 @@ class MnistQGDataset(QueryGalleryDataset):
         """Length"""
         return len(self._mnist)
 
+    def __repr__(self) -> None:
+        """Print info about the dataset"""
+        return self._mnist.__repr__()
+
     @property
     def gallery_size(self) -> int:
         """Query Gallery dataset should have gallery_size property"""
@@ -276,6 +338,16 @@ class MnistQGDataset(QueryGalleryDataset):
     def query_size(self) -> int:
         """Query Gallery dataset should have query_size property"""
         return self._query_size
+
+    @property
+    def data(self) -> torch.Tensor:
+        """Images from MNIST"""
+        return self._mnist.data
+
+    @property
+    def targets(self) -> torch.Tensor:
+        """Labels of digits"""
+        return self._mnist.targets
 
 
 __all__ = ["MNIST", "MnistMLDataset", "MnistQGDataset"]

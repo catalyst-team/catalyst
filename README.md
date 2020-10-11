@@ -611,8 +611,8 @@ import catalyst.data.cv.transforms.torch as t
 dataset_root = "."
 transforms = t.Compose([t.ToTensor(), t.Normalize((0.1307,), (0.3081,))])
 
-dataset_train = datasets.MnistMLDataset(root=dataset_root, train=True, download=True, transform=transforms)
-sampler = data.BalanceBatchSampler(labels=dataset_train.get_labels(), p=10, k=10)
+dataset_train = datasets.MnistMLDataset(root=dataset_root, download=True, transform=transforms)
+sampler = data.BalanceBatchSampler(labels=dataset_train.get_labels(), p=5, k=10)
 train_loader = DataLoader(dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size)
 
 dataset_val = datasets.MnistQGDataset(root=dataset_root, transform=transforms, gallery_fraq=0.2)
