@@ -87,7 +87,7 @@ NUM_EPOCHS = 2
 
 # In[ ]:
 
-from catalyst.runner import SupervisedRunner
+from catalyst.runners import SupervisedRunner
 
 # experiment setup
 num_epochs = NUM_EPOCHS
@@ -122,7 +122,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.runner import SupervisedRunner
+from catalyst.runners import SupervisedRunner
 
 # experiment setup
 num_epochs = NUM_EPOCHS
@@ -158,7 +158,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.runner import SupervisedRunner
+from catalyst.runners import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback
 
 # experiment setup
@@ -197,7 +197,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.runner import SupervisedRunner
+from catalyst.runners import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
 
 # experiment setup
@@ -241,7 +241,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.runner import SupervisedRunner
+from catalyst.runners import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
 from catalyst.contrib.nn.schedulers import OneCycleLRWithWarmup
 
@@ -291,7 +291,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.runner import SupervisedRunner
+from catalyst.runners import SupervisedRunner
 from catalyst.dl.callbacks import AccuracyCallback
 
 # experiment setup
@@ -331,7 +331,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.runner import SupervisedRunner
+from catalyst.runners import SupervisedRunner
 
 # experiment setup
 num_epochs = NUM_EPOCHS
@@ -364,7 +364,7 @@ runner.train(
 
 # In[ ]:
 
-from catalyst.runner import SupervisedRunner
+from catalyst.runners import SupervisedRunner
 from catalyst.dl.callbacks import EarlyStoppingCallback, AccuracyCallback
 
 # experiment setup

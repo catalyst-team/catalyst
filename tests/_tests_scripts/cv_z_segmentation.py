@@ -113,7 +113,7 @@ from catalyst.contrib.models.cv import Unet
 
 import torch
 import torch.nn as nn
-from catalyst.runner import SupervisedRunner
+from catalyst.runners import SupervisedRunner
 
 # experiment setup
 num_epochs = 2

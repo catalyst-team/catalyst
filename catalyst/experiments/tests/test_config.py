@@ -16,7 +16,7 @@ from catalyst.dl import (
     TensorboardLogger,
     ValidationManagerCallback,
 )
-from catalyst.experiment import ConfigExperiment
+from catalyst.experiments import ConfigExperiment
 
 DEFAULT_MINIMAL_CONFIG = {  # noqa: WPS407
     "model_params": {"model": "SomeModel"},

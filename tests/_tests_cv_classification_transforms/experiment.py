@@ -4,7 +4,7 @@ from collections import OrderedDict
 from torch.utils.data import Dataset
 
 from catalyst.contrib.datasets import MNIST as _MNIST
-from catalyst.experiment import ConfigExperiment
+from catalyst.experiments import ConfigExperiment
 
 
 class MNIST(_MNIST):
