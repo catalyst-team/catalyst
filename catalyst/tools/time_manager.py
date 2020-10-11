@@ -16,7 +16,7 @@ class TimeManager(object):
         """Starts timer ``name``.
 
         Args:
-            name (str): name of a timer
+            name: name of a timer
         """
         self._starts[name] = time()
 
@@ -24,7 +24,7 @@ class TimeManager(object):
         """Stops timer ``name``.
 
         Args:
-            name (str): name of a timer
+            name: name of a timer
         """
         assert name in self._starts, f"Timer '{name}' wasn't started"
 

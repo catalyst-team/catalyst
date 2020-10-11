@@ -45,20 +45,25 @@ class SoftMax(nn.Module):
 
     def __repr__(self) -> str:
         """Object representation."""
-        return "SoftMax(in_features={},out_features={})".format(
-            self.in_features, self.out_features
+        rep = (
+            "SoftMax("
+            f"in_features={self.in_features},"
+            f"out_features={self.out_features}"
+            ")"
         )
+        return rep
 
-    def forward(self, input):
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
         """
         Args:
-            input (torch.Tensor): input features,
+            input: input features,
                 expected shapes ``BxF`` where ``B``
                 is batch dimension and ``F`` is an
                 input feature dimension.
 
         Returns:
             tensor (logits) with shapes ``BxC``
-            where ``C`` is a number of classes.
+            where ``C`` is a number of classes
+            (out_features).
         """
         return F.linear(input, self.weight, self.bias)

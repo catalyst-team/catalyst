@@ -20,14 +20,14 @@ def get_loader(
     """Creates a DataLoader from given source and its open/transform params.
 
     Args:
-        data_source (Iterable[dict]): and iterable containing your
+        data_source: and iterable containing your
             data annotations,
             (for example path to images, labels, bboxes, etc)
-        open_fn (Callable): function, that can open your
+        open_fn: function, that can open your
             annotations dict and
             transfer it to data, needed by your network
             (for example open image by path, or tokenize read string)
-        dict_transform (callable): transforms to use on dict
+        dict_transform: transforms to use on dict
             (for example normalize image, add blur, crop/resize/etc)
         sampler (Sampler, optional): defines the strategy to draw samples from
             the dataset

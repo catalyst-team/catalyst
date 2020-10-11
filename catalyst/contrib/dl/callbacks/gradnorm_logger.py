@@ -16,11 +16,11 @@ class GradNormLogger(Callback):
     ):
         """
         Args:
-            norm_type (int): norm type used to calculate norm of gradients.
+            norm_type: norm type used to calculate norm of gradients.
                 If `OptimizerCallback` provides non-default argument
                 `grad_clip_params` with custom norm type, then corresponding
                 norm type should be used in this class.
-            accumulation_steps (int): number of steps before
+            accumulation_steps: number of steps before
                 ``model.zero_grad()``.
                 Should be the same as in `OptimizerCallback`.
         """
@@ -39,9 +39,9 @@ class GradNormLogger(Callback):
         """Computes gradient norms for a given model.
 
         Args:
-            model (Model): model which gradients to be saved.
-            prefix (str): prefix for keys in resulting dictionary.
-            norm_type (int): norm type of gradient norm.
+            model: model which gradients to be saved.
+            prefix: prefix for keys in resulting dictionary.
+            norm_type: norm type of gradient norm.
 
         Returns:
             Dict: dictionary in which gradient norms are stored.

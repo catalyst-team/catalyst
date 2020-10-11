@@ -40,7 +40,7 @@ class AccuracyCallback(BatchMetricCallback):
                 [1] - accuracy
                 [1, 3] - accuracy at 1 and 3
                 [1, 3, 5] - accuracy at 1, 3 and 5
-            num_classes (int): number of classes to calculate ``topk_args``
+            num_classes: number of classes to calculate ``topk_args``
                 if ``accuracy_args`` is None
             activation: An torch.nn activation applied to the outputs.
                 Must be one of ``"none"``, ``"Sigmoid"``, or ``"Softmax"``

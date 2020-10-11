@@ -18,13 +18,13 @@ def boolean_flag(
         >>> )
 
     Args:
-        parser (argparse.ArgumentParser): parser to add the flag to
-        name (str): argument name
+        parser: parser to add the flag to
+        name: argument name
             --<name> will enable the flag,
             while --no-<name> will disable it
         default (bool, optional): default value of the flag
-        help (str): help string for the flag
-        shorthand (str): shorthand string for the argument
+        help: help string for the flag
+        shorthand: shorthand string for the argument
     """
     dest = name.replace("-", "_")
     names = ["--" + name]

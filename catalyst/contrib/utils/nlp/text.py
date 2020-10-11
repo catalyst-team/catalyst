@@ -1,5 +1,3 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 from typing import Dict, List, Union
 import string
 
@@ -21,12 +19,12 @@ def tokenize_text(
     """Tokenizes givin text.
 
     Args:
-        text (str): text to tokenize
+        text: text to tokenize
         tokenizer: Tokenizer instance from HuggingFace
-        max_length (int): maximum length of tokens
-        strip (bool): if true strips text before tokenizing
-        lowercase (bool): if true makes text lowercase before tokenizing
-        remove_punctuation (bool): if true
+        max_length: maximum length of tokens
+        strip: if true strips text before tokenizing
+        lowercase: if true makes text lowercase before tokenizing
+        remove_punctuation: if true
             removes ``string.punctuation`` from text before tokenizing
 
     Returns:
@@ -66,8 +64,19 @@ def process_bert_output(
     mask: torch.Tensor = None,
     level: Union[int, str] = None,
 ):
-    """Processed the output."""
-    # @TODO: make this functional
+    """Processed BERT output.
+
+    Args:
+        bert_output: BERT output
+        hidden_size: hidden size of BERT layers
+        output_hidden_states: boolean flag if we need BERT hidden states
+        pooling_groups: list with pooling to use for sequence embedding
+        mask: boolean flag if we need mask ``[PAD]`` tokens
+        level: integer with specified level to use
+
+    Returns:
+        processed output
+    """
     pooling = (
         LamaPooling(groups=pooling_groups, in_features=hidden_size)
         if pooling_groups is not None

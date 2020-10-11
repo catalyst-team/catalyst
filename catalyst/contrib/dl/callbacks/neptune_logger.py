@@ -74,11 +74,11 @@ class NeptuneLogger(Callback):
     ):
         """
         Args:
-            metric_names (List[str]): list of metric names to log,
+            metric_names: list of metric names to log,
                 if none - logs everything
-            log_on_batch_end (bool): logs per-batch metrics if set True
-            log_on_epoch_end (bool): logs per-epoch metrics if set True
-            offline_mode (bool): whether logging to Neptune server should
+            log_on_batch_end: logs per-batch metrics if set True
+            log_on_epoch_end: logs per-epoch metrics if set True
+            offline_mode: whether logging to Neptune server should
                  be turned off. It is useful for debugging
         """
         super().__init__(

@@ -60,9 +60,9 @@ class _SimpleNet(nn.Module):
         to understand the shape for dense layer's input.
 
         Args:
-            size (Tuple[int]): size of input.
-            kernel_size (Tuple[int]): size of convolution kernel.
-            stride (Tuple[int]): size of convolution stride.
+            size: size of input.
+            kernel_size: size of convolution kernel.
+            stride: size of convolution stride.
 
         Returns:
             int: output size

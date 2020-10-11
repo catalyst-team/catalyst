@@ -1,5 +1,3 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 import numpy as np
 
 from albumentations import ImageOnlyTransform
@@ -21,12 +19,12 @@ class TensorToImage(ImageOnlyTransform):
     ):
         """
         Args:
-            denormalize (bool): if True, multiply image(s) by ImageNet std and
+            denormalize: if True, multiply image(s) by ImageNet std and
                 add ImageNet mean
-            move_channels_dim (bool): if True, convert [B]xCxHxW tensor
+            move_channels_dim: if True, convert [B]xCxHxW tensor
                 to [B]xHxWxC format
-            always_apply (bool): need to apply this transform anyway
-            p (float): probability for this transform
+            always_apply: need to apply this transform anyway
+            p: probability for this transform
         """
         super().__init__(always_apply, p)
         self.denormalize = denormalize
@@ -55,10 +53,10 @@ class ImageToTensor(ToTensorV2):
     ):
         """
         Args:
-            move_channels_dim (bool): if ``False``, casts numpy array
+            move_channels_dim: if ``False``, casts numpy array
                 to ``torch.tensor``, but do not move channels dim
-            always_apply (bool): need to apply this transform anyway
-            p (float): probability for this transform
+            always_apply: need to apply this transform anyway
+            p: probability for this transform
         """
         super().__init__(always_apply, p)
         self.move_channels_dim = move_channels_dim
@@ -76,7 +74,7 @@ class ImageToTensor(ToTensorV2):
         return super().apply_to_mask(mask.astype(np.float32), **params)
 
     def get_transform_init_args_names(self) -> tuple:
-        """@TODO: Docs. Contribution is welcome."""
+        """Get transform init args names."""
         return ("move_channels_dim",)
 
 

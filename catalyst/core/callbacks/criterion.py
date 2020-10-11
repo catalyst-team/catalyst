@@ -1,5 +1,3 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 from typing import Dict, List, Union
 
 from catalyst.core.callbacks.metrics import IBatchMetricCallback
@@ -28,11 +26,11 @@ class CriterionCallback(IBatchMetricCallback):
                 of keys that takes values from the input dictionary
                 If '__all__', the whole output will be passed to the criterion
                 If None, empty dict will be passed to the criterion.
-            prefix (str): prefix for metrics and output key for loss
+            prefix: prefix for metrics and output key for loss
                 in ``runner.batch_metrics`` dictionary
-            criterion_key (str): A key to take a criterion in case
+            criterion_key: A key to take a criterion in case
                 there are several of them and they are in a dictionary format.
-            multiplier (float): scale factor for the output loss.
+            multiplier: scale factor for the output loss.
         """
         super().__init__(
             prefix=prefix,

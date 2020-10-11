@@ -257,6 +257,13 @@ ArcFace and SubCenterArcFace
     :undoc-members:
     :show-inheritance:
 
+Arc Margin Product
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.. automodule:: catalyst.contrib.nn.modules.arcmargin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Common modules
 """"""""""""""""""""""""""""""""""""""""""
 .. automodule:: catalyst.contrib.nn.modules.common
@@ -264,7 +271,7 @@ Common modules
     :undoc-members:
     :show-inheritance:
 
-CosFace: Large Margin Cosine Loss for Deep Face Recognition
+CosFace and AdaCos
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .. automodule:: catalyst.contrib.nn.modules.cosface
     :members:

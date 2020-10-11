@@ -16,7 +16,7 @@ class BertClassifier(nn.Module):
     ):
         """
         Args:
-            pretrained_model_name (str): HuggingFace model name.
+            pretrained_model_name: HuggingFace model name.
                 See transformers/modeling_auto.py
             num_classes (int, optional): the number of class labels
                 in the classification task
@@ -46,7 +46,7 @@ class BertClassifier(nn.Module):
         """Compute class probabilities for the input sequence.
 
         Args:
-            features (torch.Tensor): ids of each token,
+            features: ids of each token,
                 size ([bs, seq_length]
             attention_mask (torch.Tensor, optional): binary tensor,
                 used to select tokens which are used to compute attention

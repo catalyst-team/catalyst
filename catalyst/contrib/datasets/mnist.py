@@ -65,7 +65,7 @@ class MNIST(Dataset):
     ):
         """
         Args:
-            root (string): Root directory of dataset where
+            root: Root directory of dataset where
                 ``MNIST/processed/training.pt``
                 and  ``MNIST/processed/test.pt`` exist.
             train (bool, optional): If True, creates dataset from
@@ -104,7 +104,7 @@ class MNIST(Dataset):
     def __getitem__(self, index):
         """
         Args:
-            index (int): Index
+            index: Index
 
         Returns:
             tuple: (image, target) where target is index of the target class.

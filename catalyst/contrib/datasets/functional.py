@@ -53,8 +53,8 @@ def download_url(url, root, filename=None, md5=None):
     """Download a file from a url and place it in root.
 
     Args:
-        url (str): URL to download file from
-        root (str): Directory to place downloaded file in
+        url: URL to download file from
+        root: Directory to place downloaded file in
         filename (str, optional): Name to save the file under.
             If None, use the basename of the URL
         md5 (str, optional): MD5 checksum of the download.

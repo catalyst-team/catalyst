@@ -15,9 +15,9 @@ class FlareMixin:
     ):
         """
         Args:
-            input_key (str): input key to use from annotation dict
-            output_key (str): output key to use to store the result
-            sunflare_params (dict): params to init
+            input_key: input key to use from annotation dict
+            output_key: output key to use to store the result
+            sunflare_params: params to init
                 ``albumentations.RandomSunFlare``
         """
         self.input_key = input_key

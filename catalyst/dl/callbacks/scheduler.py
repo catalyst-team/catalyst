@@ -28,10 +28,10 @@ class LRFinder(LRUpdater):
         """
         Args:
             final_lr: final learning rate to try with
-            scale (str): learning rate increasing scale ("log" or "linear")
-            num_steps (Optional[int]):  number of batches to try;
+            scale: learning rate increasing scale ("log" or "linear")
+            num_steps:  number of batches to try;
                 if None - whole loader would be used.
-            optimizer_key (str): which optimizer key to use
+            optimizer_key: which optimizer key to use
                 for learning rate scheduling
         """
         super().__init__(optimizer_key=optimizer_key)

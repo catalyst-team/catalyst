@@ -23,13 +23,13 @@ class AUCCallback(LoaderMetricCallback):
     ):
         """
         Args:
-            input_key (str): input key to use for auc calculation
+            input_key: input key to use for auc calculation
                 specifies our ``y_true``.
-            output_key (str): output key to use for auc calculation;
+            output_key: output key to use for auc calculation;
                 specifies our ``y_pred``.
-            prefix (str): metric's name.
-            multiplier (float): scale factor for the metric.
-            class_args (List[str]): class names to display in the logs.
+            prefix: metric's name.
+            multiplier: scale factor for the metric.
+            class_args: class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0
         """
         super().__init__(

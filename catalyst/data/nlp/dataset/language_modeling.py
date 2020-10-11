@@ -24,13 +24,13 @@ class LanguageModelingDataset(Dataset):
     ):
         """
         Args:
-            texts (Iterable): Iterable object with text
+            texts: Iterable object with text
             tokenizer (str or tokenizer): pre trained
                 huggingface tokenizer or model name
-            max_seq_length (int): max sequence length to tokenize
-            sort (bool): If True then sort all sequences by length
+            max_seq_length: max sequence length to tokenize
+            sort: If True then sort all sequences by length
                 for efficient padding
-            lazy (bool): If True then tokenize and encode sequence
+            lazy: If True then tokenize and encode sequence
                 in __getitem__ method
                 else will tokenize in __init__ also
                 if set to true sorting is unavialible

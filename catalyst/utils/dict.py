@@ -1,5 +1,3 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 from typing import Any, Callable, Dict, List, Optional, Union
 import collections
 import copy
@@ -148,7 +146,7 @@ def flatten_dict(
     """Make the given dictionary flatten.
 
     Args:
-        dictionary (dict): giving dictionary
+        dictionary: giving dictionary
         parent_key (str, optional): prefix nested keys with
             string ``parent_key``
         separator (str, optional): delimiter between
