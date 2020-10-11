@@ -1,6 +1,10 @@
+from typing import TYPE_CHECKING
+
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.runner import IRunner
 from catalyst.utils.misc import is_exception
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class ExceptionCallback(Callback):
@@ -12,7 +16,7 @@ class ExceptionCallback(Callback):
             order=CallbackOrder.external + 1, node=CallbackNode.all
         )
 
-    def on_exception(self, runner: IRunner) -> None:
+    def on_exception(self, runner: "IRunner") -> None:
         """Exception handle hook.
 
         Args:

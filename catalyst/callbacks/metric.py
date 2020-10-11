@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Union
+from typing import Any, Callable, Dict, List, TYPE_CHECKING, Union
 from abc import ABC, abstractmethod
 from collections import defaultdict
 import logging
@@ -8,10 +8,12 @@ import numpy as np
 import torch
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.runner import IRunner
 from catalyst.tools.meters.averagevaluemeter import AverageValueMeter
 from catalyst.utils.dict import get_dictkey_auto_fn
 from catalyst.utils.distributed import get_distributed_mean
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 logger = logging.getLogger(__name__)
 
@@ -149,7 +151,7 @@ class IBatchMetricCallback(IMetricCallback):
     Computes metric on batch and saves for logging.
     """
 
-    def on_batch_end(self, runner: IRunner) -> None:
+    def on_batch_end(self, runner: "IRunner") -> None:
         """Computes metrics and add them to batch metrics."""
         metrics = self._compute_metric(runner.output, runner.input)
         metrics = self._process_computed_metric(metrics)
@@ -174,12 +176,12 @@ class ILoaderMetricCallback(IMetricCallback):
         self.input = defaultdict(lambda: [])
         self.output = defaultdict(lambda: [])
 
-    def on_loader_start(self, runner: IRunner):
+    def on_loader_start(self, runner: "IRunner"):
         """Reinitialises internal storage."""
         self.input = defaultdict(lambda: [])
         self.output = defaultdict(lambda: [])
 
-    def on_batch_end(self, runner: IRunner) -> None:
+    def on_batch_end(self, runner: "IRunner") -> None:
         """Stores new input/output for the metric computation."""
         output = self._get_output(runner.output, self.output_key)
         input = self._get_input(runner.input, self.input_key)
@@ -191,7 +193,7 @@ class ILoaderMetricCallback(IMetricCallback):
             else:
                 storage["_data"].append(data.detach().cpu().numpy())
 
-    def on_loader_end(self, runner: IRunner):
+    def on_loader_end(self, runner: "IRunner"):
         """Computes loader-based metric.
 
         Args:
@@ -386,7 +388,7 @@ class MetricAggregationCallback(Callback):
         metric_aggregated = self.aggregation_fn(metrics_processed)
         metrics[self.prefix] = metric_aggregated
 
-    def on_batch_end(self, runner: IRunner) -> None:
+    def on_batch_end(self, runner: "IRunner") -> None:
         """Computes the metric and add it to the batch metrics.
 
         Args:
@@ -395,7 +397,7 @@ class MetricAggregationCallback(Callback):
         if self.scope == "batch":
             self._process_metrics(runner.batch_metrics)
 
-    def on_loader_end(self, runner: IRunner):
+    def on_loader_end(self, runner: "IRunner"):
         """Computes the metric and add it to the loader metrics.
 
         Args:
@@ -404,7 +406,7 @@ class MetricAggregationCallback(Callback):
         if self.scope == "loader":
             self._process_metrics(runner.loader_metrics)
 
-    def on_epoch_end(self, runner: IRunner):
+    def on_epoch_end(self, runner: "IRunner"):
         """Computes the metric and add it to the epoch metrics.
 
         Args:
@@ -451,7 +453,7 @@ class MetricManagerCallback(Callback):
             output[key] = value
         return output
 
-    def on_epoch_start(self, runner: IRunner) -> None:
+    def on_epoch_start(self, runner: "IRunner") -> None:
         """Epoch start hook.
 
         Args:
@@ -459,7 +461,7 @@ class MetricManagerCallback(Callback):
         """
         runner.epoch_metrics = defaultdict(None)
 
-    def on_loader_start(self, runner: IRunner) -> None:
+    def on_loader_start(self, runner: "IRunner") -> None:
         """Loader start hook.
 
         Args:
@@ -468,7 +470,7 @@ class MetricManagerCallback(Callback):
         runner.loader_metrics = defaultdict(None)
         self.meters = defaultdict(AverageValueMeter)
 
-    def on_batch_start(self, runner: IRunner) -> None:
+    def on_batch_start(self, runner: "IRunner") -> None:
         """Batch start hook.
 
         Args:
@@ -476,7 +478,7 @@ class MetricManagerCallback(Callback):
         """
         runner.batch_metrics = defaultdict(None)
 
-    def on_batch_end(self, runner: IRunner) -> None:
+    def on_batch_end(self, runner: "IRunner") -> None:
         """Batch end hook.
 
         Args:
@@ -486,7 +488,7 @@ class MetricManagerCallback(Callback):
         for key, value in runner.batch_metrics.items():
             self.meters[key].add(value, runner.batch_size)
 
-    def on_loader_end(self, runner: IRunner) -> None:
+    def on_loader_end(self, runner: "IRunner") -> None:
         """Loader end hook.
 
         Args:

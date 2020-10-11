@@ -1,7 +1,7 @@
 from typing import List
 
-from catalyst.core import BatchMetricCallback
-from catalyst.utils import metrics
+from catalyst.callbacks.metric import BatchMetricCallback
+from catalyst.metrics.iou import iou
 
 
 def _get_default_classwise_iou_args(num_classes: int) -> List[int]:
@@ -35,7 +35,7 @@ class IouCallback(BatchMetricCallback):
         """
         super().__init__(
             prefix=prefix,
-            metric_fn=metrics.iou,
+            metric_fn=iou,
             input_key=input_key,
             output_key=output_key,
             eps=eps,

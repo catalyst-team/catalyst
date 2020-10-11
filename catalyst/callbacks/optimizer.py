@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, TYPE_CHECKING
 import logging
 import warnings
 
@@ -6,10 +6,12 @@ import torch
 
 from catalyst import registry
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.runner import IRunner
 from catalyst.typing import Optimizer
 from catalyst.utils.misc import maybe_recursive_call
 from catalyst.utils.torch import get_optimizer_momentum
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 logger = logging.getLogger(__name__)
 
@@ -141,7 +143,7 @@ class OptimizerCallback(IOptimizerCallback):
         # optimize parameters
         self._optimizer_step_fn(optimizer)
 
-    def on_stage_start(self, runner: IRunner) -> None:
+    def on_stage_start(self, runner: "IRunner") -> None:
         """Checks that the current stage has correct optimizer.
 
         Args:
@@ -158,7 +160,7 @@ class OptimizerCallback(IOptimizerCallback):
 
         assert self._optimizer is not None
 
-    def on_epoch_start(self, runner: IRunner) -> None:
+    def on_epoch_start(self, runner: "IRunner") -> None:
         """On epoch start event.
 
         Args:
@@ -174,7 +176,7 @@ class OptimizerCallback(IOptimizerCallback):
         else:
             self._optimizer_wd = [0.0] * len(self._optimizer.param_groups)
 
-    def on_batch_end(self, runner: IRunner) -> None:
+    def on_batch_end(self, runner: "IRunner") -> None:
         """On batch end event
 
         Args:
@@ -221,7 +223,7 @@ class OptimizerCallback(IOptimizerCallback):
                 maybe_recursive_call(self._optimizer, zero_grad)
             self._accumulation_counter = 0
 
-    def on_epoch_end(self, runner: IRunner) -> None:
+    def on_epoch_end(self, runner: "IRunner") -> None:
         """On epoch end event.
 
         Args:
@@ -316,7 +318,7 @@ class AMPOptimizerCallback(IOptimizerCallback):
         self.scaler.step(optimizer)
         self.scaler.update()
 
-    def on_stage_start(self, runner: IRunner) -> None:
+    def on_stage_start(self, runner: "IRunner") -> None:
         """Checks that the current stage has correct optimizer.
 
         Args:
@@ -330,7 +332,7 @@ class AMPOptimizerCallback(IOptimizerCallback):
         self.scaler = GradScaler()
         assert self._optimizer is not None
 
-    def on_batch_start(self, runner: IRunner) -> None:
+    def on_batch_start(self, runner: "IRunner") -> None:
         """On batch start event
 
         Args:
@@ -340,7 +342,7 @@ class AMPOptimizerCallback(IOptimizerCallback):
         torch.set_autocast_enabled(True)
         torch.autocast_increment_nesting()
 
-    def on_batch_end(self, runner: IRunner) -> None:
+    def on_batch_end(self, runner: "IRunner") -> None:
         """On batch end event
 
         Args:
@@ -372,7 +374,7 @@ class AMPOptimizerCallback(IOptimizerCallback):
             maybe_recursive_call(self._optimizer, "zero_grad")
             self._accumulation_counter = 0
 
-    def on_epoch_end(self, runner: IRunner) -> None:
+    def on_epoch_end(self, runner: "IRunner") -> None:
         """On epoch end event.
 
         Args:
@@ -395,7 +397,7 @@ class AMPOptimizerCallback(IOptimizerCallback):
             )
             runner.epoch_metrics[momentum_name] = momentum
 
-    def on_stage_end(self, runner: IRunner) -> None:
+    def on_stage_end(self, runner: "IRunner") -> None:
         """On stage end event.
 
         Args:

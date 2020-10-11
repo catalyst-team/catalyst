@@ -1,3 +1,4 @@
+from typing import TYPE_CHECKING
 import os
 
 import imageio
@@ -7,9 +8,11 @@ from skimage.color import label2rgb
 import torch
 import torch.nn.functional as F  # noqa: N812, WPS301
 
+from catalyst.contrib.utils.cv.tensor import tensor_to_ndimage
 from catalyst.core.callback import Callback, CallbackOrder
-from catalyst.core.runner import IRunner
-from catalyst.dl import utils
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class InferMaskCallback(Callback):
@@ -48,7 +51,7 @@ class InferMaskCallback(Callback):
         self.counter = 0
         self._keys_from_runner = ["out_dir", "out_prefix"]
 
-    def on_stage_start(self, runner: IRunner):
+    def on_stage_start(self, runner: "IRunner"):
         """Stage start hook.
 
         Args:
@@ -66,7 +69,7 @@ class InferMaskCallback(Callback):
             self.out_prefix = str(self.out_dir) + "/" + str(self.out_prefix)
         os.makedirs(os.path.dirname(self.out_prefix), exist_ok=True)
 
-    def on_loader_start(self, runner: IRunner):
+    def on_loader_start(self, runner: "IRunner"):
         """Loader start hook.
 
         Args:
@@ -75,7 +78,7 @@ class InferMaskCallback(Callback):
         lm = runner.loader_name
         os.makedirs(f"{self.out_prefix}/{lm}/", exist_ok=True)
 
-    def on_batch_end(self, runner: IRunner):
+    def on_batch_end(self, runner: "IRunner"):
         """Batch end hook.
 
         Args:
@@ -85,7 +88,7 @@ class InferMaskCallback(Callback):
         names = runner.input.get(self.name_key, [])
 
         features = runner.input[self.input_key].detach().cpu()
-        images = utils.tensor_to_ndimage(features)
+        images = tensor_to_ndimage(features)
 
         logits = runner.output[self.output_key]
         logits = (

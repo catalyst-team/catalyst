@@ -1,8 +1,8 @@
 from typing import List
 
-from catalyst.core.callbacks import LoaderMetricCallback
-from catalyst.utils import metrics
-from catalyst.utils.metrics.functional import wrap_class_metric2dict
+from catalyst.callbacks.metric import LoaderMetricCallback
+from catalyst.metrics.auc import auc
+from catalyst.metrics.functional import wrap_class_metric2dict
 
 
 class AUCCallback(LoaderMetricCallback):
@@ -34,9 +34,7 @@ class AUCCallback(LoaderMetricCallback):
         """
         super().__init__(
             prefix=prefix,
-            metric_fn=wrap_class_metric2dict(
-                metrics.auc, class_args=class_args
-            ),
+            metric_fn=wrap_class_metric2dict(auc, class_args=class_args),
             input_key=input_key,
             output_key=output_key,
             multiplier=multiplier,

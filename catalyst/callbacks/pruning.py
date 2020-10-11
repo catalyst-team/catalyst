@@ -1,11 +1,13 @@
-from typing import Callable, List, Optional, Union
+from typing import Callable, List, Optional, TYPE_CHECKING, Union
 import warnings
 
 from torch.nn.utils import prune
 
 from catalyst.core.callback import Callback, CallbackOrder
-from catalyst.core.runner import IRunner
 from catalyst.utils.pruning import prune_model, remove_reparametrization
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 PRUNING_FN = {  # noqa: WPS407
     "l1_unstructured": prune.l1_unstructured,
@@ -166,3 +168,6 @@ class PruningCallback(Callback):
                 keys_to_prune=self.keys_to_prune,
                 layers_to_prune=self.layers_to_prune,
             )
+
+
+__all__ = ["PruningCallback"]

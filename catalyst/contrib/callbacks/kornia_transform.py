@@ -1,12 +1,14 @@
-from typing import Dict, Optional, Sequence, Tuple, Union
+from typing import Dict, Optional, Sequence, Tuple, TYPE_CHECKING, Union
 
 from kornia.augmentation import AugmentationBase
 import torch
 from torch import nn
 
-from catalyst.contrib.registry import TRANSFORMS
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.runner import IRunner
+from catalyst.registry import TRANSFORMS
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class BatchTransformCallback(Callback):
@@ -192,18 +194,18 @@ class BatchTransformCallback(Callback):
         return input_[self.input_key], input_[self.additional_input]
 
     def _process_output_tensor(
-        self, runner: IRunner, batch: Tuple[torch.Tensor, torch.Tensor]
+        self, runner: "IRunner", batch: Tuple[torch.Tensor, torch.Tensor]
     ) -> Dict[str, torch.Tensor]:
         runner.input[self.output_key] = batch
 
     def _process_output_tuple(
-        self, runner: IRunner, batch: Tuple[torch.Tensor, torch.Tensor]
+        self, runner: "IRunner", batch: Tuple[torch.Tensor, torch.Tensor]
     ) -> None:
         out_t, additional_t = batch
         dict_ = {self.output_key: out_t, self.additional_output: additional_t}
         runner.input.update(dict_)
 
-    def on_batch_start(self, runner: IRunner) -> None:
+    def on_batch_start(self, runner: "IRunner") -> None:
         """Apply transforms.
 
         Args:

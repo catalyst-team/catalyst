@@ -1,10 +1,14 @@
-from typing import List
+from typing import List, TYPE_CHECKING
 
 import torch
 
-from catalyst.core import Callback, CallbackOrder, IRunner
+from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.data.dataset.metric_learning import QueryGalleryDataset
-from catalyst.utils.metrics import cmc_score, get_default_topk_args
+from catalyst.metrics.cmc_score import cmc_score
+from catalyst.metrics.functional import get_default_topk_args
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
 

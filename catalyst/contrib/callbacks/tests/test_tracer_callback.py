@@ -8,15 +8,18 @@ from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
+from catalyst.callbacks import (
+    CriterionCallback,
+    OptimizerCallback,
+    TracingCallback,
+)
 from catalyst.contrib.datasets import MNIST
 from catalyst.core.callback import Callback, CallbackOrder
-from catalyst.core.callbacks import CriterionCallback, OptimizerCallback
 from catalyst.core.runner import IRunner
 from catalyst.data.cv import ToTensor
 from catalyst.dl import SupervisedRunner
-from catalyst.dl.callbacks.tracing import TracerCallback
-from catalyst.dl.utils import get_device, get_trace_name
 from catalyst.registry import Model
+from catalyst.utils import get_device, get_trace_name
 
 
 @Model
@@ -163,7 +166,7 @@ class _OnStageEndCheckModelTracedCallback(Callback):
 
 def test_tracer_callback():
     """
-    Tests a feature of `TracerCallback` for model tracing during training
+    Tests a feature of `TracingCallback` for model tracing during training
     """
     logdir = "./logs"
     dataset_root = "./data"
@@ -191,7 +194,7 @@ def test_tracer_callback():
     tracing_path = Path(logdir) / "trace" / trace_name
     criterion_callback = CriterionCallback()
     optimizer_callback = OptimizerCallback()
-    tracer_callback = TracerCallback(
+    tracer_callback = TracingCallback(
         metric="loss",
         minimize=False,
         trace_mode=mode,

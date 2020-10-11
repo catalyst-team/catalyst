@@ -5,13 +5,24 @@ from torch.jit.frontend import UnsupportedNodeError
 
 from catalyst.settings import SETTINGS
 
+from catalyst.contrib.callbacks.confusion_matrix_logger import (
+    ConfusionMatrixCallback,
+)
+from catalyst.contrib.callbacks.cutmix_callback import CutmixCallback
 from catalyst.contrib.callbacks.gradnorm_logger import GradNormLogger
+from catalyst.contrib.callbacks.inference_callback import InferCallback
+from catalyst.contrib.callbacks.knn_metric import KNNMetricCallback
+from catalyst.contrib.callbacks.mixup_callback import MixupCallback
+from catalyst.contrib.callbacks.perplexity_metric import (
+    PerplexityMetricCallback,
+)
+from catalyst.contrib.callbacks.telegram_logger import TelegramLogger
 
 logger = logging.getLogger(__name__)
 
 try:
     import imageio
-    from catalyst.contrib.callbacks import InferMaskCallback
+    from catalyst.contrib.callbacks.mask_inference import InferMaskCallback
 except ImportError as ex:
     if SETTINGS.cv_required:
         logger.warning(
@@ -52,20 +63,10 @@ except ImportError as ex:
         )
         raise ex
 
-try:
-    import visdom
-    from catalyst.contrib.callbacks.visdom_logger import VisdomLogger
-except ImportError as ex:
-    if SETTINGS.visdom_logger_required:
-        logger.warning(
-            "visdom not available, to install visdom, "
-            "run `pip install visdom`."
-        )
-        raise ex
 
 try:
     import neptune
-    from catalyst.contrib.callbacks import NeptuneLogger
+    from catalyst.contrib.callbacks.neptune_logger import NeptuneLogger
 except ImportError as ex:
     if SETTINGS.neptune_logger_required:
         logger.warning(

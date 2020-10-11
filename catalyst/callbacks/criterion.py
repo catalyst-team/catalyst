@@ -1,7 +1,9 @@
-from typing import Dict, List, Union
+from typing import Dict, List, TYPE_CHECKING, Union
 
 from catalyst.callbacks.metric import IBatchMetricCallback
-from catalyst.core.runner import IRunner
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class CriterionCallback(IBatchMetricCallback):
@@ -47,7 +49,7 @@ class CriterionCallback(IBatchMetricCallback):
         """Criterion function."""
         return self._criterion
 
-    def on_stage_start(self, runner: IRunner):
+    def on_stage_start(self, runner: "IRunner"):
         """Checks that the current stage has correct criterion.
 
         Args:

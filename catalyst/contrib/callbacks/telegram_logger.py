@@ -1,14 +1,16 @@
 # flake8: noqa
 # @TODO: code formatting issue for 20.07 release
-from typing import List
+from typing import List, TYPE_CHECKING
 import logging
 from urllib.parse import quote_plus
 from urllib.request import Request, urlopen
 
-from catalyst import utils
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.runner import IRunner
 from catalyst.settings import SETTINGS
+from catalyst.utils.misc import format_metric, is_exception
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class TelegramLogger(Callback):
@@ -71,14 +73,14 @@ class TelegramLogger(Callback):
         except Exception as e:
             logging.getLogger(__name__).warning(f"telegram.send.error:{e}")
 
-    def on_stage_start(self, runner: IRunner):
+    def on_stage_start(self, runner: "IRunner"):
         """Notify about starting a new stage."""
         if self.log_on_stage_start:
             text = f"{runner.stage_name} stage was started"
 
             self._send_text(text)
 
-    def on_loader_start(self, runner: IRunner):
+    def on_loader_start(self, runner: "IRunner"):
         """Notify about starting running the new loader."""
         if self.log_on_loader_start:
             text = (
@@ -87,7 +89,7 @@ class TelegramLogger(Callback):
 
             self._send_text(text)
 
-    def on_loader_end(self, runner: IRunner):
+    def on_loader_end(self, runner: "IRunner"):
         """Translate ``runner.metric_manager`` to telegram channel."""
         if self.log_on_loader_end:
             metrics = runner.loader_metrics
@@ -104,24 +106,24 @@ class TelegramLogger(Callback):
 
             for name in metrics_to_log:
                 if name in metrics:
-                    rows.append(utils.format_metric(name, metrics[name]))
+                    rows.append(format_metric(name, metrics[name]))
 
             text = "\n".join(rows)
 
             self._send_text(text)
 
-    def on_stage_end(self, runner: IRunner):
+    def on_stage_end(self, runner: "IRunner"):
         """Notify about finishing a stage."""
         if self.log_on_stage_end:
             text = f"{runner.stage_name} stage was finished"
 
             self._send_text(text)
 
-    def on_exception(self, runner: IRunner):
+    def on_exception(self, runner: "IRunner"):
         """Notify about raised ``Exception``."""
         if self.log_on_exception:
             exception = runner.exception
-            if utils.is_exception(exception) and not isinstance(
+            if is_exception(exception) and not isinstance(
                 exception, KeyboardInterrupt
             ):
                 text = (

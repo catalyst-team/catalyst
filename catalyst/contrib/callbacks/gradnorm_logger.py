@@ -1,11 +1,13 @@
-from typing import Dict
+from typing import Dict, TYPE_CHECKING
 
 from torch.nn import DataParallel
 from torch.nn.parallel import DistributedDataParallel
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.runner import IRunner
 from catalyst.typing import Model
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class GradNormLogger(Callback):
@@ -65,7 +67,7 @@ class GradNormLogger(Callback):
 
         return grad_norm
 
-    def on_batch_end(self, runner: IRunner) -> None:
+    def on_batch_end(self, runner: "IRunner") -> None:
         """On batch end event
 
         Args:

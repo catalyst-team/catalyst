@@ -1,5 +1,9 @@
+from typing import TYPE_CHECKING
+
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.runner import IRunner
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class CheckRunCallback(Callback):
@@ -15,7 +19,7 @@ class CheckRunCallback(Callback):
         self.num_batch_steps = num_batch_steps
         self.num_epoch_steps = num_epoch_steps
 
-    def on_epoch_end(self, runner: IRunner):
+    def on_epoch_end(self, runner: "IRunner"):
         """Check if iterated specified number of epochs.
 
         Args:
@@ -24,7 +28,7 @@ class CheckRunCallback(Callback):
         if runner.epoch >= self.num_epoch_steps:
             runner.need_early_stop = True
 
-    def on_batch_end(self, runner: IRunner):
+    def on_batch_end(self, runner: "IRunner"):
         """Check if iterated specified number of batches.
 
         Args:
@@ -110,7 +114,7 @@ class EarlyStoppingCallback(Callback):
         else:
             self.is_better = lambda score, best: score >= (best + min_delta)
 
-    def on_epoch_end(self, runner: IRunner) -> None:
+    def on_epoch_end(self, runner: "IRunner") -> None:
         """Check if should be performed early stopping.
 
         Args:

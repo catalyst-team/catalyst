@@ -1,12 +1,14 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, TYPE_CHECKING
 from abc import ABC, abstractmethod
 
 import torch
 
 from catalyst.contrib.nn.schedulers import BatchScheduler, OneCycleLRWithWarmup
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.runner import IRunner
 from catalyst.utils.torch import get_optimizer_momentum
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class ISchedulerCallback(Callback):
@@ -122,7 +124,7 @@ class SchedulerCallback(ISchedulerCallback):
 
         return lr, momentum
 
-    def step_batch(self, runner: IRunner) -> None:
+    def step_batch(self, runner: "IRunner") -> None:
         """Update learning rate and momentum in runner.
 
         Args:
@@ -141,7 +143,7 @@ class SchedulerCallback(ISchedulerCallback):
             if momentum is not None:
                 runner.batch_metrics["momentum"] = momentum
 
-    def step_epoch(self, runner: IRunner) -> None:
+    def step_epoch(self, runner: "IRunner") -> None:
         """Update momentum in runner.
 
         Args:
@@ -163,7 +165,7 @@ class SchedulerCallback(ISchedulerCallback):
             if momentum is not None:
                 runner.epoch_metrics["momentum"] = momentum
 
-    def on_stage_start(self, runner: IRunner) -> None:
+    def on_stage_start(self, runner: "IRunner") -> None:
         """Stage start hook.
 
         Args:
@@ -190,7 +192,7 @@ class SchedulerCallback(ISchedulerCallback):
             scheduler.reset()
         assert self.mode is not None
 
-    def on_loader_start(self, runner: IRunner) -> None:
+    def on_loader_start(self, runner: "IRunner") -> None:
         """Loader start hook.
 
         Args:
@@ -205,7 +207,7 @@ class SchedulerCallback(ISchedulerCallback):
                 loader_len=runner.loader_len, current_step=runner.epoch - 1
             )
 
-    def on_batch_end(self, runner: IRunner) -> None:
+    def on_batch_end(self, runner: "IRunner") -> None:
         """Batch end hook.
 
         Args:
@@ -214,7 +216,7 @@ class SchedulerCallback(ISchedulerCallback):
         if runner.is_train_loader and self.mode == "batch":
             self.step_batch(runner=runner)
 
-    def on_epoch_end(self, runner: IRunner) -> None:
+    def on_epoch_end(self, runner: "IRunner") -> None:
         """Epoch end hook.
 
         Args:
@@ -224,7 +226,7 @@ class SchedulerCallback(ISchedulerCallback):
             self.step_epoch(runner=runner)
 
 
-class LRUpdater(ABC, Callback):
+class ILRUpdater(ABC, Callback):
     """Basic class that all Lr updaters inherit from."""
 
     def __init__(self, optimizer_key: str = None):
@@ -274,7 +276,7 @@ class LRUpdater(ABC, Callback):
 
         return new_lr, new_momentum
 
-    def update_optimizer(self, runner: IRunner) -> None:
+    def update_optimizer(self, runner: "IRunner") -> None:
         """Update learning rate and momentum in runner.
 
         Args:
@@ -289,7 +291,7 @@ class LRUpdater(ABC, Callback):
             runner.batch_metrics["lr"] = lr
             runner.batch_metrics["momentum"] = momentum
 
-    def on_stage_start(self, runner: IRunner) -> None:
+    def on_stage_start(self, runner: "IRunner") -> None:
         """Stage start hook.
 
         Args:
@@ -302,7 +304,7 @@ class LRUpdater(ABC, Callback):
         self._optimizer = optimizer
         self.init_lr = optimizer.defaults["lr"]
 
-    def on_loader_start(self, runner: IRunner) -> None:
+    def on_loader_start(self, runner: "IRunner") -> None:
         """Loader start hook.
 
         Args:
@@ -311,7 +313,7 @@ class LRUpdater(ABC, Callback):
         if runner.is_train_loader:
             self.update_optimizer(runner=runner)
 
-    def on_batch_end(self, runner: IRunner) -> None:
+    def on_batch_end(self, runner: "IRunner") -> None:
         """Batch end hook.
 
         Args:
@@ -321,7 +323,7 @@ class LRUpdater(ABC, Callback):
             self.update_optimizer(runner=runner)
 
 
-class LRFinder(LRUpdater):
+class LRFinder(ILRUpdater):
     """
     Helps you find an optimal learning rate for a model, as per suggestion of
     `Cyclical Learning Rates for Training Neural Networks`_ paper.
@@ -388,7 +390,7 @@ class LRFinder(LRUpdater):
         """Calculates new momentum."""
         pass
 
-    def on_loader_start(self, runner: IRunner):
+    def on_loader_start(self, runner: "IRunner"):
         """Loader start hook. Updates scheduler statistics.
 
         Args:
@@ -402,7 +404,7 @@ class LRFinder(LRUpdater):
 
         super().on_loader_start(runner=runner)
 
-    def on_batch_end(self, runner: IRunner):
+    def on_batch_end(self, runner: "IRunner"):
         """Batch end hook. Make scheduler step and stops iterating if needed.
 
         Args:
@@ -416,4 +418,4 @@ class LRFinder(LRUpdater):
             raise NotImplementedError("End of LRFinder")
 
 
-__all__ = ["ISchedulerCallback", "SchedulerCallback", "LRUpdater", "LRFinder"]
+__all__ = ["ISchedulerCallback", "SchedulerCallback", "ILRUpdater", "LRFinder"]

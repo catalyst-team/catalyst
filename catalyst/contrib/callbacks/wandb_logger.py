@@ -1,17 +1,19 @@
 # flake8: noqa
 # @TODO: code formatting issue for 20.07 release
-from typing import Dict, List
+from typing import Dict, List, TYPE_CHECKING
 
 import wandb
 
-from catalyst import utils
 from catalyst.core.callback import (
     Callback,
     CallbackNode,
     CallbackOrder,
     CallbackScope,
 )
-from catalyst.core.runner import IRunner
+from catalyst.utils.dict import split_dict_to_subdicts
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class WandbLogger(Callback):
@@ -139,18 +141,18 @@ class WandbLogger(Callback):
         }
         wandb.log(metrics, step=step, commit=commit)
 
-    def on_stage_start(self, runner: IRunner):
+    def on_stage_start(self, runner: "IRunner"):
         """Initialize Weights & Biases."""
         wandb.init(**self.logging_params, reinit=True, dir=str(runner.logdir))
         wandb.watch(
             models=runner.model, criterion=runner.criterion, log=self.log
         )
 
-    def on_stage_end(self, runner: IRunner):
+    def on_stage_end(self, runner: "IRunner"):
         """Finish logging to Weights & Biases."""
         wandb.join()
 
-    def on_batch_end(self, runner: IRunner):
+    def on_batch_end(self, runner: "IRunner"):
         """Translate batch metrics to Weights & Biases."""
         if self.log_on_batch_end:
             mode = runner.loader_name
@@ -163,7 +165,7 @@ class WandbLogger(Callback):
                 commit=True,
             )
 
-    def on_loader_end(self, runner: IRunner):
+    def on_loader_end(self, runner: "IRunner"):
         """Translate loader metrics to Weights & Biases."""
         if self.log_on_epoch_end:
             mode = runner.loader_name
@@ -176,10 +178,10 @@ class WandbLogger(Callback):
                 commit=False,
             )
 
-    def on_epoch_end(self, runner: IRunner):
+    def on_epoch_end(self, runner: "IRunner"):
         """Translate epoch metrics to Weights & Biases."""
         extra_mode = "_base"
-        splitted_epoch_metrics = utils.split_dict_to_subdicts(
+        splitted_epoch_metrics = split_dict_to_subdicts(
             dct=runner.epoch_metrics,
             prefixes=list(runner.loaders.keys()),
             extra_key=extra_mode,

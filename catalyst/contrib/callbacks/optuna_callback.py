@@ -1,6 +1,11 @@
+from typing import TYPE_CHECKING
+
 import optuna
 
-from catalyst.core import Callback, CallbackOrder, IRunner
+from catalyst.core.callback import Callback, CallbackOrder
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class OptunaPruningCallback(Callback):

@@ -1,6 +1,6 @@
 # flake8: noqa
 # @TODO: code formatting issue for 20.07 release
-from typing import Dict, List
+from typing import Dict, List, TYPE_CHECKING
 
 from alchemy import Logger
 
@@ -11,7 +11,9 @@ from catalyst.core.callback import (
     CallbackOrder,
     CallbackScope,
 )
-from catalyst.core.runner import IRunner
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class AlchemyLogger(Callback):
@@ -103,7 +105,7 @@ class AlchemyLogger(Callback):
                     name=metric_name, value=metric_value, step=step,
                 )
 
-    def on_batch_end(self, runner: IRunner):
+    def on_batch_end(self, runner: "IRunner"):
         """Translate batch metrics to Alchemy."""
         if self.log_on_batch_end:
             mode = runner.loader_name
@@ -115,7 +117,7 @@ class AlchemyLogger(Callback):
                 suffix=self.batch_log_suffix,
             )
 
-    def on_loader_end(self, runner: IRunner):
+    def on_loader_end(self, runner: "IRunner"):
         """Translate loader metrics to Alchemy."""
         if self.log_on_epoch_end:
             mode = runner.loader_name
@@ -127,7 +129,7 @@ class AlchemyLogger(Callback):
                 suffix=self.epoch_log_suffix,
             )
 
-    def on_epoch_end(self, runner: IRunner):
+    def on_epoch_end(self, runner: "IRunner"):
         """Translate epoch metrics to Alchemy."""
         extra_mode = "_base"
         splitted_epoch_metrics = utils.split_dict_to_subdicts(

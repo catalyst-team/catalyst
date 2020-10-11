@@ -100,7 +100,7 @@ LRFinder
     :undoc-members:
     :show-inheritance:
 
-TracerCallback
+TracingCallback
 """"""""""""""""""""""
 .. automodule:: catalyst.dl.callbacks.tracing
     :members:

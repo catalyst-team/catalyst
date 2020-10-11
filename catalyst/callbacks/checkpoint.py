@@ -1,10 +1,9 @@
-from typing import Callable, Dict, Tuple, Union
+from typing import Callable, Dict, Tuple, TYPE_CHECKING, Union
 from collections import OrderedDict
 import os
 from pathlib import Path
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.runner import IRunner
 from catalyst.utils.checkpoint import (
     load_checkpoint,
     pack_checkpoint,
@@ -14,8 +13,11 @@ from catalyst.utils.checkpoint import (
 from catalyst.utils.config import save_config
 from catalyst.utils.misc import is_exception
 
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
-def _pack_runner(runner: IRunner):
+
+def _pack_runner(runner: "IRunner"):
     checkpoint = pack_checkpoint(
         model=runner.model,
         criterion=runner.criterion,
@@ -37,7 +39,7 @@ def _pack_runner(runner: IRunner):
 
 
 def _load_checkpoint(
-    *, filename, runner: IRunner, load_full: bool = True
+    *, filename, runner: "IRunner", load_full: bool = True
 ) -> None:
     """
     Load checkpoint from a file.
@@ -143,7 +145,7 @@ def _required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]:
 
 
 def _load_states_from_file_map(
-    *, runner: IRunner, load_map: Dict[str, str]
+    *, runner: "IRunner", load_map: Dict[str, str]
 ) -> None:
     """
     Load state of a model, criterion, optimizer, scheduler
@@ -209,7 +211,7 @@ class BaseCheckpointCallback(ICheckpointCallback):
     def _save_metric(self, logdir: Union[str, Path], metrics: Dict) -> None:
         save_config(metrics, f"{logdir}/checkpoints/{self.metrics_filename}")
 
-    def on_exception(self, runner: IRunner):
+    def on_exception(self, runner: "IRunner"):
         """
         Expection handler.
 
@@ -521,7 +523,7 @@ class CheckpointCallback(BaseCheckpointCallback):
 
     @staticmethod
     def _load_runner(
-        runner: IRunner,
+        runner: "IRunner",
         mapping: Union[str, Dict[str, str]],
         load_full: bool = False,
     ) -> None:
@@ -547,7 +549,7 @@ class CheckpointCallback(BaseCheckpointCallback):
                 runner=runner, load_map=mapping,
             )
 
-    def on_stage_start(self, runner: IRunner) -> None:
+    def on_stage_start(self, runner: "IRunner") -> None:
         """Setup model for stage.
 
         .. note::
@@ -611,7 +613,7 @@ class CheckpointCallback(BaseCheckpointCallback):
                     load_full=need_load_full,
                 )
 
-    def on_epoch_end(self, runner: IRunner) -> None:
+    def on_epoch_end(self, runner: "IRunner") -> None:
         """
         Collect and save checkpoint after epoch.
 
@@ -634,7 +636,7 @@ class CheckpointCallback(BaseCheckpointCallback):
                 minimize_metric=runner.minimize_metric,
             )
 
-    def on_stage_end(self, runner: IRunner) -> None:
+    def on_stage_end(self, runner: "IRunner") -> None:
         """
         Show information about best checkpoints during the stage and
         load model specified in ``load_on_stage_end``.
@@ -814,7 +816,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
         self._save_metric(logdir, metrics)
         print(f"\nSaved checkpoint at {filepath}")
 
-    def on_stage_start(self, runner: IRunner):
+    def on_stage_start(self, runner: "IRunner"):
         """
         Reset iterations counter.
 
@@ -830,7 +832,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
             from torch import save
         self._save_fn = save
 
-    def on_batch_end(self, runner: IRunner):
+    def on_batch_end(self, runner: "IRunner"):
         """
         Save checkpoint based on batches count.
 
@@ -846,7 +848,7 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
                 batch_metrics=runner.batch_metrics,
             )
 
-    def on_stage_end(self, runner: IRunner):
+    def on_stage_end(self, runner: "IRunner"):
         """
         Load model specified in ``load_on_stage_end``.
 

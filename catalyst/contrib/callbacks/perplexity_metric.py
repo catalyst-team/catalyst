@@ -1,6 +1,6 @@
 from torch import nn
 
-from catalyst.core.callbacks import BatchMetricCallback
+from catalyst.callbacks.metric import BatchMetricCallback
 
 
 class PerplexityMetricCallback(BatchMetricCallback):

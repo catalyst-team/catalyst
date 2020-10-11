@@ -1,9 +1,13 @@
+from typing import TYPE_CHECKING
 from collections import defaultdict
 import os
 
 import numpy as np
 
-from catalyst.core import Callback, CallbackOrder, IRunner
+from catalyst.core.callback import Callback, CallbackOrder
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 # @TODO: refactor
@@ -21,7 +25,7 @@ class InferCallback(Callback):
         self.predictions = defaultdict(lambda: [])
         self._keys_from_runner = ["out_dir", "out_prefix"]
 
-    def on_stage_start(self, runner: IRunner):
+    def on_stage_start(self, runner: "IRunner"):
         """Stage start hook.
 
         Args:
@@ -37,7 +41,7 @@ class InferCallback(Callback):
         if self.out_prefix is not None:
             os.makedirs(os.path.dirname(self.out_prefix), exist_ok=True)
 
-    def on_loader_start(self, runner: IRunner):
+    def on_loader_start(self, runner: "IRunner"):
         """Loader start hook.
 
         Args:
@@ -45,7 +49,7 @@ class InferCallback(Callback):
         """
         self.predictions = defaultdict(lambda: [])
 
-    def on_batch_end(self, runner: IRunner):
+    def on_batch_end(self, runner: "IRunner"):
         """Batch end hook.
 
         Args:
@@ -56,7 +60,7 @@ class InferCallback(Callback):
         for key, value in dct.items():
             self.predictions[key].append(value)
 
-    def on_loader_end(self, runner: IRunner):
+    def on_loader_end(self, runner: "IRunner"):
         """Loader end hook.
 
         Args:

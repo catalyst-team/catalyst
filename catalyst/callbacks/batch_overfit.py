@@ -1,8 +1,11 @@
+from typing import TYPE_CHECKING
 from collections import OrderedDict
 
 from catalyst.core.callback import Callback, CallbackOrder
-from catalyst.core.runner import IRunner
 from catalyst.data.loader import BatchLimitLoaderWrapper
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class BatchOverfitCallback(Callback):
@@ -96,7 +99,7 @@ class BatchOverfitCallback(Callback):
                 )
             self.loader_batches[loader] = num_batches
 
-    def on_epoch_start(self, runner: IRunner) -> None:
+    def on_epoch_start(self, runner: "IRunner") -> None:
         """
         Wraps loaders for current epoch.
         If number-of-batches for loader is not provided then the first batch
@@ -117,7 +120,7 @@ class BatchOverfitCallback(Callback):
 
         runner.loaders = epoch_loaders
 
-    def on_epoch_end(self, runner: IRunner):
+    def on_epoch_end(self, runner: "IRunner"):
         """
         Unwraps loaders for current epoch.
 

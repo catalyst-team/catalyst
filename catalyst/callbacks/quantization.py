@@ -1,12 +1,14 @@
-from typing import Dict, Optional, Set, Union
+from typing import Dict, Optional, Set, TYPE_CHECKING, Union
 from pathlib import Path
 
 import torch
 from torch import quantization
 
 from catalyst.core.callback import Callback, CallbackOrder
-from catalyst.core.runner import IRunner
 from catalyst.utils.quantization import save_quantized_model
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class DynamicQuantizationCallback(Callback):
@@ -80,7 +82,7 @@ class DynamicQuantizationCallback(Callback):
         if backend is not None:
             torch.backends.quantized.engine = backend
 
-    def on_epoch_end(self, runner: IRunner):
+    def on_epoch_end(self, runner: "IRunner"):
         """
         Performing model quantization on epoch end if condition metric is
         improved
@@ -144,3 +146,6 @@ class DynamicQuantizationCallback(Callback):
                 out_model=self.out_model,
                 out_dir=self.out_dir,
             )
+
+
+__all__ = ["DynamicQuantizationCallback"]

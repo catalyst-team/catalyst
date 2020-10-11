@@ -1,9 +1,17 @@
+from typing import TYPE_CHECKING
+
 import numpy as np
 
-from catalyst.core import BatchMetricCallback, Callback, CallbackOrder, IRunner
-from catalyst.dl import utils
-from catalyst.utils import metrics
-from catalyst.utils.metrics.dice import calculate_dice
+from catalyst.callbacks.metric import BatchMetricCallback
+from catalyst.contrib.utils.confusion_matrix import (
+    calculate_confusion_matrix_from_tensors,
+    calculate_tp_fp_fn,
+)
+from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.metrics.dice import calculate_dice, dice
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class DiceCallback(BatchMetricCallback):
@@ -27,7 +35,7 @@ class DiceCallback(BatchMetricCallback):
         """
         super().__init__(
             prefix=prefix,
-            metric_fn=metrics.dice,
+            metric_fn=dice,
             input_key=input_key,
             output_key=output_key,
             eps=eps,
@@ -73,7 +81,7 @@ class MultiClassDiceMetricCallback(Callback):
         """Resets the confusion matrix holding the epoch-wise stats."""
         self.confusion_matrix = None
 
-    def on_batch_end(self, runner: IRunner):
+    def on_batch_end(self, runner: "IRunner"):
         """Records the confusion matrix at the end of each batch.
 
         Args:
@@ -82,7 +90,7 @@ class MultiClassDiceMetricCallback(Callback):
         outputs = runner.output[self.output_key]
         targets = runner.input[self.input_key]
 
-        confusion_matrix = utils.calculate_confusion_matrix_from_tensors(
+        confusion_matrix = calculate_confusion_matrix_from_tensors(
             outputs, targets
         )
 
@@ -91,13 +99,13 @@ class MultiClassDiceMetricCallback(Callback):
         else:
             self.confusion_matrix += confusion_matrix
 
-    def on_loader_end(self, runner: IRunner):
+    def on_loader_end(self, runner: "IRunner"):
         """@TODO: Docs. Contribution is welcome.
 
         Args:
             runner: current runner
         """
-        tp_fp_fn_dict = utils.calculate_tp_fp_fn(self.confusion_matrix)
+        tp_fp_fn_dict = calculate_tp_fp_fn(self.confusion_matrix)
 
         dice_scores: np.ndarray = calculate_dice(**tp_fp_fn_dict)
 

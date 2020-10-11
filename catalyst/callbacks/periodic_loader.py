@@ -1,11 +1,13 @@
-from typing import Mapping
+from typing import Mapping, TYPE_CHECKING
 from collections import OrderedDict
 import copy
 
 from torch.utils.data import DataLoader
 
 from catalyst.core.callback import Callback, CallbackOrder
-from catalyst.core.runner import IRunner
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class PeriodicLoaderCallback(Callback):
@@ -71,7 +73,7 @@ class PeriodicLoaderCallback(Callback):
                 raise ValueError(f"Period should be >= 0, but got - {period}!")
             self.loader_periods[loader] = period
 
-    def on_stage_start(self, runner: IRunner) -> None:
+    def on_stage_start(self, runner: "IRunner") -> None:
         """Collect information about loaders.
 
         Args:
@@ -114,7 +116,7 @@ class PeriodicLoaderCallback(Callback):
                 "should be > 0!"
             )
 
-    def on_epoch_start(self, runner: IRunner) -> None:
+    def on_epoch_start(self, runner: "IRunner") -> None:
         """
         Set loaders for current epoch.
         If validation is not required then the first loader
@@ -148,7 +150,7 @@ class PeriodicLoaderCallback(Callback):
         )
         runner.loaders = epoch_loaders
 
-    def on_epoch_end(self, runner: IRunner) -> None:
+    def on_epoch_end(self, runner: "IRunner") -> None:
         """Check if validation metric should be
         dropped for current epoch.
 

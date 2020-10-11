@@ -1,13 +1,15 @@
-from typing import Union
+from typing import TYPE_CHECKING, Union
 from pathlib import Path
 import warnings
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.runner import IRunner
 from catalyst.utils.tracing import save_traced_model, trace_model_from_runner
 
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
-class TracerCallback(Callback):
+
+class TracingCallback(Callback):
     """
     Traces model during training if `metric` provided is improved.
     """
@@ -59,7 +61,7 @@ class TracerCallback(Callback):
 
         if opt_level is not None:
             warnings.warn(
-                "TracerCallback: "
+                "TracingCallback: "
                 "`opt_level` is not supported yet, "
                 "model will be traced as is",
                 stacklevel=2,
@@ -88,7 +90,7 @@ class TracerCallback(Callback):
             out_dir = Path(out_dir)
         self.out_dir = out_dir
 
-    def _trace(self, runner: IRunner):
+    def _trace(self, runner: "IRunner"):
         """
         Performing model tracing on epoch end if condition metric is improved.
 
@@ -128,7 +130,7 @@ class TracerCallback(Callback):
             out_dir=self.out_dir,
         )
 
-    def on_epoch_end(self, runner: IRunner):
+    def on_epoch_end(self, runner: "IRunner"):
         """
         Performing model tracing on epoch end if condition metric is improved
 
@@ -142,7 +144,7 @@ class TracerCallback(Callback):
                 if self.best_score is None:
                     self.best_score = score
 
-                # TODO: EarlyStoppingCallback and TracerCallback
+                # TODO: EarlyStoppingCallback and TracingCallback
                 #  will never work very first epoch
                 if self.is_better(score, self.best_score):
                     self.best_score = score
@@ -150,7 +152,7 @@ class TracerCallback(Callback):
             else:
                 self._trace(runner)
 
-    def on_stage_end(self, runner: IRunner):
+    def on_stage_end(self, runner: "IRunner"):
         """
         Performing model tracing on stage end if `do_once` is True.
 
@@ -161,4 +163,7 @@ class TracerCallback(Callback):
             self._trace(runner)
 
 
-__all__ = ["TracerCallback"]
+# backward compatibility
+TracerCallback = TracingCallback
+
+__all__ = ["TracingCallback", "TracerCallback"]

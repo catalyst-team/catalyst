@@ -1,8 +1,8 @@
 from typing import List
 
-from catalyst.core import BatchMetricCallback
-from catalyst.utils import metrics
-from catalyst.utils.metrics.functional import (
+from catalyst.callbacks.metric import BatchMetricCallback
+from catalyst.metrics.accuracy import accuracy, multi_label_accuracy
+from catalyst.metrics.functional import (
     get_default_topk_args,
     wrap_topk_metric2dict,
 )
@@ -51,9 +51,7 @@ class AccuracyCallback(BatchMetricCallback):
 
         super().__init__(
             prefix=prefix,
-            metric_fn=wrap_topk_metric2dict(
-                metrics.accuracy, topk_args=topk_args
-            ),
+            metric_fn=wrap_topk_metric2dict(accuracy, topk_args=topk_args),
             input_key=input_key,
             output_key=output_key,
             multiplier=multiplier,
@@ -91,7 +89,7 @@ class MultiLabelAccuracyCallback(BatchMetricCallback):
         """
         super().__init__(
             prefix=prefix,
-            metric_fn=metrics.multi_label_accuracy,
+            metric_fn=multi_label_accuracy,
             input_key=input_key,
             output_key=output_key,
             threshold=threshold,

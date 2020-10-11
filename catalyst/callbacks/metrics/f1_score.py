@@ -1,5 +1,5 @@
-from catalyst.core import BatchMetricCallback
-from catalyst.utils import metrics
+from catalyst.callbacks.metric import BatchMetricCallback
+from catalyst.metrics.f1_score import f1_score
 
 
 class F1ScoreCallback(BatchMetricCallback):
@@ -30,7 +30,7 @@ class F1ScoreCallback(BatchMetricCallback):
         """
         super().__init__(
             prefix=prefix,
-            metric_fn=metrics.f1_score,
+            metric_fn=f1_score,
             input_key=input_key,
             output_key=output_key,
             beta=beta,

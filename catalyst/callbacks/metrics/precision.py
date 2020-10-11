@@ -1,8 +1,8 @@
 from typing import List
 
-from catalyst.core.callbacks import LoaderMetricCallback
-from catalyst.utils import metrics
-from catalyst.utils.metrics.functional import wrap_class_metric2dict
+from catalyst.callbacks.metric import LoaderMetricCallback
+from catalyst.metrics.functional import wrap_class_metric2dict
+from catalyst.metrics.precision import average_precision
 
 
 class AveragePrecisionCallback(LoaderMetricCallback):
@@ -33,7 +33,7 @@ class AveragePrecisionCallback(LoaderMetricCallback):
         super().__init__(
             prefix=prefix,
             metric_fn=wrap_class_metric2dict(
-                metrics.average_precision, class_args=class_args
+                average_precision, class_args=class_args
             ),
             input_key=input_key,
             output_key=output_key,

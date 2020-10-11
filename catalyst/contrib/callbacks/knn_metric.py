@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, TYPE_CHECKING
 from math import ceil
 
 import numpy as np
@@ -14,7 +14,9 @@ from sklearn.neighbors import NearestNeighbors
 import torch
 
 from catalyst.core.callback import Callback, CallbackOrder
-from catalyst.core.runner import IRunner
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class KNNMetricCallback(Callback):
@@ -165,7 +167,7 @@ class KNNMetricCallback(Callback):
 
         return result
 
-    def on_batch_end(self, runner: IRunner) -> None:
+    def on_batch_end(self, runner: "IRunner") -> None:
         """Batch end hook.
 
         Args:
@@ -181,7 +183,7 @@ class KNNMetricCallback(Callback):
         self.features.extend(features)
         self.targets.extend(targets)
 
-    def on_loader_end(self, runner: IRunner) -> None:
+    def on_loader_end(self, runner: "IRunner") -> None:
         """Loader end hook.
 
         Args:
@@ -219,7 +221,7 @@ class KNNMetricCallback(Callback):
 
         self._reset_cache()
 
-    def on_epoch_end(self, runner: IRunner) -> None:
+    def on_epoch_end(self, runner: "IRunner") -> None:
         """Epoch end hook.
 
         Args:

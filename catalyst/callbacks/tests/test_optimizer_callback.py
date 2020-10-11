@@ -4,7 +4,7 @@ import random
 import torch
 import torch.nn as nn
 
-from catalyst.core.callbacks import OptimizerCallback
+from catalyst.callbacks import OptimizerCallback
 
 
 class DummyRunner:

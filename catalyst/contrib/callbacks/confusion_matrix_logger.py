@@ -11,7 +11,7 @@ from catalyst.contrib.utils.visualization import (
     render_figure_to_tensor,
 )
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.tools import meters
+from catalyst.tools.meters.confusionmeter import ConfusionMeter
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -66,7 +66,7 @@ class ConfusionMatrixCallback(Callback):
 
     def _reset_stats(self):
         if self._mode == "tnt":
-            self.confusion_matrix = meters.ConfusionMeter(self.num_classes)
+            self.confusion_matrix = ConfusionMeter(self.num_classes)
         elif self._mode == "sklearn":
             self.outputs = []
             self.targets = []
@@ -139,7 +139,7 @@ class ConfusionMatrixCallback(Callback):
 
         if runner.distributed_rank >= 0:
             confusion_matrix = torch.from_numpy(confusion_matrix)
-            confusion_matrix = confusion_matrix.to(utils.get_device())
+            confusion_matrix = confusion_matrix.to(runner.device)
             torch.distributed.reduce(confusion_matrix, 0)
             confusion_matrix = confusion_matrix.cpu().numpy()
 

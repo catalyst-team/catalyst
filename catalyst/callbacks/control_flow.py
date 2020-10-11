@@ -1,11 +1,13 @@
-from typing import Callable, Mapping, Sequence, Union
+from typing import Callable, Mapping, Sequence, TYPE_CHECKING, Union
 from collections import OrderedDict
 
 from catalyst.core.callback import Callback, CallbackWrapper
-from catalyst.core.runner import IRunner
 
 LOADERS = Union[str, Sequence[str], Mapping[str, Union[int, Sequence[int]]]]
 FILTER_FN = Callable[[str, int, str], bool]
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 def _filter_fn_from_epochs(
@@ -369,7 +371,7 @@ class ControlFlowCallback(CallbackWrapper):
         elif filter_fn is not None:
             self.filter_fn = _filter_fn_from_arg(filter_fn)
 
-    def on_loader_start(self, runner: IRunner) -> None:
+    def on_loader_start(self, runner: "IRunner") -> None:
         """
         Check if current epoch should be skipped.
 
@@ -386,7 +388,7 @@ class ControlFlowCallback(CallbackWrapper):
         if self._is_enabled:
             self.callback.on_loader_start(runner)
 
-    def on_loader_end(self, runner: IRunner) -> None:
+    def on_loader_end(self, runner: "IRunner") -> None:
         """
         Reset status of callback
 

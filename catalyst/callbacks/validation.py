@@ -1,7 +1,10 @@
+from typing import TYPE_CHECKING
 from collections import defaultdict
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.runner import IRunner
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class ValidationManagerCallback(Callback):
@@ -15,7 +18,7 @@ class ValidationManagerCallback(Callback):
             order=CallbackOrder.validation, node=CallbackNode.all,
         )
 
-    def on_epoch_start(self, runner: IRunner) -> None:
+    def on_epoch_start(self, runner: "IRunner") -> None:
         """Epoch start hook.
 
         Args:
@@ -24,7 +27,7 @@ class ValidationManagerCallback(Callback):
         runner.valid_metrics = defaultdict(None)
         runner.is_best_valid = False
 
-    def on_epoch_end(self, runner: IRunner) -> None:
+    def on_epoch_end(self, runner: "IRunner") -> None:
         """Epoch end hook.
 
         Args:

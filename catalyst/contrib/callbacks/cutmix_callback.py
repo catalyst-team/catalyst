@@ -1,11 +1,13 @@
-from typing import List
+from typing import List, TYPE_CHECKING
 
 import numpy as np
 
 import torch
 
-from catalyst.core.callbacks import CriterionCallback
-from catalyst.core.runner import IRunner
+from catalyst.callbacks.criterion import CriterionCallback
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class CutmixCallback(CriterionCallback):
@@ -51,7 +53,7 @@ class CutmixCallback(CriterionCallback):
         self.index = None
         self.is_needed = True
 
-    def _compute_loss(self, runner: IRunner, criterion):
+    def _compute_loss(self, runner: "IRunner", criterion):
         """Computes loss.
 
         If self.is_needed is ``False`` then calls ``_compute_loss``
@@ -100,7 +102,7 @@ class CutmixCallback(CriterionCallback):
 
         return bbx1, bby1, bbx2, bby2
 
-    def on_loader_start(self, runner: IRunner) -> None:
+    def on_loader_start(self, runner: "IRunner") -> None:
         """Checks if it is needed for the loader.
 
         Args:
@@ -108,7 +110,7 @@ class CutmixCallback(CriterionCallback):
         """
         self.is_needed = not self.on_train_only or runner.is_train_loader
 
-    def on_batch_start(self, runner: IRunner) -> None:
+    def on_batch_start(self, runner: "IRunner") -> None:
         """Mixes data according to Cutmix algorithm.
 
         Args:

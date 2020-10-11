@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock, PropertyMock
 
-from catalyst.core import EarlyStoppingCallback
+from catalyst.callbacks import EarlyStoppingCallback
 
 
 def test_patience1():
