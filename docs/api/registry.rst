@@ -8,10 +8,6 @@ Registry
    :local:
 
 
-.. automodule:: catalyst.registry
-    :members:
-    :show-inheritance:
-
 Registry
 ----------------------
 

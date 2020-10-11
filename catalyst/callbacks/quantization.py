@@ -12,11 +12,24 @@ if TYPE_CHECKING:
 
 
 class DynamicQuantizationCallback(Callback):
-    """
-    Dynamic Quantization Callback
+    """Dynamic Quantization Callback
 
-    This callback applying dynamic quantization
-    to the model.
+    This callback applying dynamic quantization to the model.
+
+    Args:
+        metric: Metric key we should trace model based on
+        minimize: Whether do we minimize metric or not
+        min_delta: Minimum value of change for metric to be
+            considered as improved
+        mode: One of `best` or `last`
+        do_once: Whether do we trace once per stage or every epoch
+        qconfig_spec: torch.quantization.quantize_dynamic
+            parameter, you can define layers to be quantize
+        dtype: type of the model parameters, default int8
+        out_dir (Union[str, Path]): Directory to save model to
+        out_model (Union[str, Path]): Path to save model to
+            (overrides `out_dir` argument)
+        backend: defines backend for quantization
     """
 
     def __init__(
@@ -32,23 +45,7 @@ class DynamicQuantizationCallback(Callback):
         out_model: Union[str, Path] = None,
         backend: str = None,
     ):
-        """
-        Init method for callback
-        Args:
-            metric: Metric key we should trace model based on
-            minimize: Whether do we minimize metric or not
-            min_delta: Minimum value of change for metric to be
-                considered as improved
-            mode: One of `best` or `last`
-            do_once: Whether do we trace once per stage or every epoch
-            qconfig_spec: torch.quantization.quantize_dynamic
-                parameter, you can define layers to be quantize
-            dtype: type of the model parameters, default int8
-            out_dir (Union[str, Path]): Directory to save model to
-            out_model (Union[str, Path]): Path to save model to
-                (overrides `out_dir` argument)
-            backend: defines backend for quantization
-        """
+        """Init method for callback"""
         super().__init__(order=CallbackOrder.external)
 
         if mode not in ["best", "last"]:
