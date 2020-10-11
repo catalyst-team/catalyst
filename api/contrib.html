@@ -498,9 +498,29 @@ that takes in the target and transforms it.</p></li>
 
 <dl class="class">
 <dt id="catalyst.contrib.datasets.mnist.MnistMLDataset">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.datasets.mnist.</code><code class="sig-name descname">MnistMLDataset</code><span class="sig-paren">(</span><em class="sig-param">root</em>, <em class="sig-param">train=True</em>, <em class="sig-param">transform=None</em>, <em class="sig-param">target_transform=None</em>, <em class="sig-param">download=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/mnist.html#MnistMLDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MnistMLDataset" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.datasets.mnist.</code><code class="sig-name descname">MnistMLDataset</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/mnist.html#MnistMLDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MnistMLDataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="data.html#catalyst.data.dataset.metric_learning.MetricLearningTrainDataset" title="catalyst.data.dataset.metric_learning.MetricLearningTrainDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.data.dataset.metric_learning.MetricLearningTrainDataset</span></code></a>, <a class="reference internal" href="#catalyst.contrib.datasets.mnist.MNIST" title="catalyst.contrib.datasets.mnist.MNIST"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.mnist.MNIST</span></code></a></p>
-<p>Simple wrapper for MNIST dataset</p>
+<p>Simple wrapper for MNIST dataset for metric learning train stage.
+This dataset can be used only for training. For test stage
+use MnistQGDataset.</p>
+<p>For this dataset we use only training part of the MNIST and only
+those images that are labeled as 0, 1, 2, 3, 4.</p>
+<dl class="method">
+<dt id="catalyst.contrib.datasets.mnist.MnistMLDataset.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/mnist.html#MnistMLDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MnistMLDataset.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – if train argument is False (MnistMLDataset
+    should be used only for training)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.contrib.datasets.mnist.MnistMLDataset.classes">
+<code class="sig-name descname">classes</code><em class="property"> = ['0 - zero', '1 - one', '2 - two', '3 - three', '4 - four']</em><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MnistMLDataset.classes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
 <dt id="catalyst.contrib.datasets.mnist.MnistMLDataset.get_labels">
 <code class="sig-name descname">get_labels</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[int]<a class="reference internal" href="../_modules/catalyst/contrib/datasets/mnist.html#MnistMLDataset.get_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MnistMLDataset.get_labels" title="Permalink to this definition">¶</a></dt>
@@ -517,7 +537,10 @@ that takes in the target and transforms it.</p></li>
 <dt id="catalyst.contrib.datasets.mnist.MnistQGDataset">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.datasets.mnist.</code><code class="sig-name descname">MnistQGDataset</code><span class="sig-paren">(</span><em class="sig-param">root: str</em>, <em class="sig-param">transform: Optional[Callable] = None</em>, <em class="sig-param">gallery_fraq: Optional[float] = 0.2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/mnist.html#MnistQGDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MnistQGDataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="data.html#catalyst.data.dataset.metric_learning.QueryGalleryDataset" title="catalyst.data.dataset.metric_learning.QueryGalleryDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.data.dataset.metric_learning.QueryGalleryDataset</span></code></a></p>
-<p>MNIST for metric learning with query and gallery split</p>
+<p>MNIST for metric learning with query and gallery split.
+MnistQGDataset should be used for test stage.</p>
+<p>For this dataset we used only test part of the MNIST and only
+those images that are labeled as 5, 6, 7, 8, 9.</p>
 <dl class="method">
 <dt id="catalyst.contrib.datasets.mnist.MnistQGDataset.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">root: str</em>, <em class="sig-param">transform: Optional[Callable] = None</em>, <em class="sig-param">gallery_fraq: Optional[float] = 0.2</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/contrib/datasets/mnist.html#MnistQGDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MnistQGDataset.__init__" title="Permalink to this definition">¶</a></dt>
@@ -532,6 +555,17 @@ that takes in the target and transforms it.</p></li>
 </dl>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="catalyst.contrib.datasets.mnist.MnistQGDataset.classes">
+<code class="sig-name descname">classes</code><em class="property"> = ['5 - five', '6 - six', '7 - seven', '8 - eight', '9 - nine']</em><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MnistQGDataset.classes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.datasets.mnist.MnistQGDataset.data">
+<em class="property">property </em><code class="sig-name descname">data</code><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MnistQGDataset.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Images from MNIST</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="catalyst.contrib.datasets.mnist.MnistQGDataset.gallery_size">
 <em class="property">property </em><code class="sig-name descname">gallery_size</code><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MnistQGDataset.gallery_size" title="Permalink to this definition">¶</a></dt>
@@ -542,6 +576,12 @@ that takes in the target and transforms it.</p></li>
 <dt id="catalyst.contrib.datasets.mnist.MnistQGDataset.query_size">
 <em class="property">property </em><code class="sig-name descname">query_size</code><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MnistQGDataset.query_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Query Gallery dataset should have query_size property</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.datasets.mnist.MnistQGDataset.targets">
+<em class="property">property </em><code class="sig-name descname">targets</code><a class="headerlink" href="#catalyst.contrib.datasets.mnist.MnistQGDataset.targets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Labels of digits</p>
 </dd></dl>
 
 </dd></dl>
