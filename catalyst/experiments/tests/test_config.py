@@ -4,18 +4,18 @@ import pytest
 
 import torch
 
-from catalyst.dl import (
+from catalyst.callbacks import (
     CheckpointCallback,
     ConsoleLogger,
     CriterionCallback,
     ExceptionCallback,
     MetricManagerCallback,
     OptimizerCallback,
-    registry,
     SchedulerCallback,
     TensorboardLogger,
     ValidationManagerCallback,
 )
+from catalyst import registry
 from catalyst.experiments import ConfigExperiment
 
 DEFAULT_MINIMAL_CONFIG = {  # noqa: WPS407

@@ -6,7 +6,7 @@ import pytest
 
 import torch
 
-from catalyst.utils.metrics.cmc_score import cmc_score_count
+from catalyst.metrics.cmc_score import cmc_score_count
 
 EPS = 1e-4
 

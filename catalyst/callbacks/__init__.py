@@ -18,6 +18,7 @@ from catalyst.callbacks.early_stop import (
     EarlyStoppingCallback,
     CheckRunCallback,
 )
+from catalyst.callbacks.exception import ExceptionCallback
 from catalyst.callbacks.logging import (
     ILoggerCallback,
     VerboseLogger,

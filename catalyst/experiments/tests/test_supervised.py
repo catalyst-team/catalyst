@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 import torch
 
-from catalyst.dl import (
+from catalyst.callbacks import (
     CheckpointCallback,
     CheckRunCallback,
     ConsoleLogger,
@@ -16,7 +16,7 @@ from catalyst.dl import (
     ValidationManagerCallback,
     VerboseLogger,
 )
-from catalyst.experiment.supervised import SupervisedExperiment
+from catalyst.experiments.supervised import SupervisedExperiment
 
 
 def _test_callbacks(test_callbacks, exp, stage="train"):

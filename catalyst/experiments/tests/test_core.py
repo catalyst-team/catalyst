@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 import torch
 
-from catalyst.dl import (
+from catalyst.callbacks import (
     ConsoleLogger,
     ExceptionCallback,
     MetricManagerCallback,
