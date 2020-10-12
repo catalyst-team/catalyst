@@ -34,7 +34,7 @@ class BatchTransformCallback(Callback):
         from catalyst.contrib.callbacks.kornia_transform import (
             BatchTransformCallback
         )
-        from catalyst.utils import metrics
+        from catalyst import metrics
 
 
         class CustomRunner(dl.Runner):
