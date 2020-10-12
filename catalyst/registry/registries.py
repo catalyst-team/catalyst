@@ -1,7 +1,7 @@
 import logging
 
 from catalyst.registry.registry import Registry
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +26,7 @@ def _transforms_loader(r: Registry):
 
         r.add_from_module(t, prefix=["catalyst.", "C."])
     except ImportError as ex:
-        if settings.albumentations_required:
+        if SETTINGS.albumentations_required:
             logger.warning(
                 "albumentations not available, to install albumentations, "
                 "run `pip install albumentations`."
@@ -38,7 +38,7 @@ def _transforms_loader(r: Registry):
 
         r.add_from_module(k, prefix=["kornia."])
     except ImportError as ex:
-        if settings.kornia_required:
+        if SETTINGS.kornia_required:
             logger.warning(
                 "kornia not available, to install kornia, "
                 "run `pip install kornia`."
@@ -50,7 +50,7 @@ def _transforms_loader(r: Registry):
             " an old version of torch which is incompatible.\n"
             "To update pytorch, run `pip install -U 'torch>=1.5.0'`."
         )
-        if settings.kornia_required:
+        if SETTINGS.kornia_required:
             raise ex
 
 
@@ -120,7 +120,7 @@ def _model_loader(r: Registry):
 
         r.add_from_module(smp, prefix="smp.")
     except ImportError as ex:
-        if settings.segmentation_models_required:
+        if SETTINGS.segmentation_models_required:
             logger.warning(
                 "segmentation_models_pytorch not available,"
                 " to install segmentation_models_pytorch,"
@@ -168,16 +168,13 @@ Scheduler = SCHEDULER.add
 
 
 def _experiments_loader(r: Registry):
-    from catalyst.core import IExperiment, IStageBasedRunner
+    from catalyst.core.experiment import IExperiment
 
     r.add(IExperiment)
-    r.add(IStageBasedRunner)
 
-    from catalyst.dl import experiment as m  # noqa: WPS347
+    from catalyst import experiments as m
 
-    r.add_from_module(m)
-
-    from catalyst.contrib.dl import experiment as m  # noqa: WPS347
+    r.add_from_module(m)  # noqa: WPS347
 
     r.add_from_module(m)
 
@@ -188,16 +185,12 @@ Experiment = EXPERIMENT.add
 
 
 def _runners_loader(r: Registry):
-    from catalyst.core import IRunner, IStageBasedRunner
+    from catalyst.core.runner import IRunner, IStageBasedRunner
 
     r.add(IRunner)
     r.add(IStageBasedRunner)
 
-    from catalyst.dl import runner as m  # noqa: WPS347
-
-    r.add_from_module(m)
-
-    from catalyst.contrib.dl import runner as m  # noqa: WPS347
+    from catalyst import runners as m  # noqa: WPS347
 
     r.add_from_module(m)
 
@@ -208,15 +201,12 @@ Runner = RUNNER.add
 
 
 def _callbacks_loader(r: Registry):
-    from catalyst.core import callbacks as m
+    from catalyst.core.callback import Callback, CallbackWrapper
 
-    r.add_from_module(m)
+    r.add(Callback)
+    r.add(CallbackWrapper)
 
-    from catalyst.dl import callbacks as m  # noqa: WPS347
-
-    r.add_from_module(m)
-
-    from catalyst.contrib.dl import callbacks as m  # noqa: WPS347
+    from catalyst import callbacks as m  # noqa: WPS347
 
     r.add_from_module(m)
 

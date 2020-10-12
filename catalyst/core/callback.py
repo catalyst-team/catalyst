@@ -209,7 +209,7 @@ class Callback:
         pass
 
 
-class WrapperCallback(Callback):
+class CallbackWrapper(Callback):
     """Enable/disable callback execution."""
 
     def __init__(self, base_callback: Callback, enable_callback: bool = True):
@@ -316,10 +316,12 @@ class WrapperCallback(Callback):
             self.callback.on_exception(runner)
 
 
+WrapperCallback = CallbackWrapper
+
 __all__ = [
     "Callback",
     "CallbackNode",
     "CallbackOrder",
     "CallbackScope",
-    "WrapperCallback",
+    "CallbackWrapper",
 ]

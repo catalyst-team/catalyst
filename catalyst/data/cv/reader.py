@@ -1,6 +1,6 @@
 from typing import Optional, Tuple, Union
 
-from catalyst import utils
+from catalyst.contrib.utils.cv.image import imread, mimread
 from catalyst.data.reader import ReaderSpec
 
 
@@ -39,7 +39,7 @@ class ImageReader(ReaderSpec):
             np.ndarray: Image
         """
         image_name = str(element[self.input_key])
-        img = utils.imread(
+        img = imread(
             image_name, rootpath=self.rootpath, grayscale=self.grayscale
         )
 
@@ -83,9 +83,7 @@ class MaskReader(ReaderSpec):
             np.ndarray: Mask
         """
         mask_name = str(element[self.input_key])
-        mask = utils.mimread(
-            mask_name, rootpath=self.rootpath, clip_range=self.clip
-        )
+        mask = mimread(mask_name, rootpath=self.rootpath, clip_range=self.clip)
 
         output = {self.output_key: mask}
         return output

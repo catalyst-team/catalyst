@@ -64,7 +64,7 @@ function check_line_counts {
 LOG_MSG='pipeline 00'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config0.yml \
@@ -94,7 +94,7 @@ echo ${LOG_MSG}
 
 {
   # try
-  PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config1.yml \
@@ -117,7 +117,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 LOG_MSG='pipeline 02'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config2.yml \
@@ -147,7 +147,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 LOG_MSG='pipeline 03'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config3.yml \
@@ -182,7 +182,7 @@ echo ${LOG_MSG}
 
 {
   # try
-  PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config4.yml \
@@ -206,7 +206,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 LOG_MSG='pipeline 05'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config5.yml \

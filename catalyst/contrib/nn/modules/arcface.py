@@ -227,3 +227,6 @@ class SubCenterArcFace(nn.Module):
         logits *= self.s
 
         return logits
+
+
+__all__ = ["ArcFace", "SubCenterArcFace"]

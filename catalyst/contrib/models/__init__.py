@@ -1,7 +1,7 @@
 # flake8: noqa
 import logging
 
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
 
 from catalyst.contrib.models.functional import (
     get_convolution_net,
@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 try:
     from catalyst.contrib.models.cv import *
 except ImportError as ex:
-    if settings.cv_required:
+    if SETTINGS.cv_required:
         logger.warning(
             "some of catalyst-cv dependencies are not available,"
             " to install dependencies, run `pip install catalyst[cv]`."
@@ -30,7 +30,7 @@ except ImportError as ex:
 try:
     from catalyst.contrib.models.nlp import *
 except ImportError as ex:
-    if settings.nlp_required:
+    if SETTINGS.nlp_required:
         logger.warning(
             "some of catalyst-nlp dependencies not available,"
             " to install dependencies, run `pip install catalyst[nlp]`."

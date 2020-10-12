@@ -7,7 +7,7 @@ set -eo pipefail -v
 ################################  pipeline 00  ################################
 rm -rf ./tests/logs
 
-(set -e; for f in tests/_tests_scripts/cv_*.py; do PYTHONPATH=./catalyst:${PYTHONPATH} python "$f"; done)
+(set -e; for f in tests/_tests_scripts/cv_*.py; do PYTHONPATH=.:${PYTHONPATH} python "$f"; done)
 
 
 ################################  pipeline 01  ################################
@@ -16,7 +16,7 @@ EXPDIR=./tests/_tests_cv_classification
 LOGDIR=./tests/logs/_tests_cv_classification
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config1.yml \
@@ -39,7 +39,7 @@ assert metrics['stage1.2']['loss'] < 3.3
 """
 
 echo 'pipeline 01 - trace'
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/trace.py \
   ${LOGDIR}
 
@@ -52,7 +52,7 @@ EXPDIR=./tests/_tests_cv_classification
 LOGDIR=./tests/logs/_tests_cv_classification
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config2.yml \
@@ -74,7 +74,7 @@ assert metrics['stage1.2']['loss'] < 2.1
 """
 
 if [[ "$USE_DDP" != "1" ]]; then
-    PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+    PYTHONPATH=./examples:.:${PYTHONPATH} \
       python catalyst/dl/scripts/run.py \
       --expdir=${EXPDIR} \
       --config=${EXPDIR}/config2_infer.yml \
@@ -101,7 +101,7 @@ EXPDIR=./tests/_tests_cv_classification
 LOGDIR=./tests/logs/_tests_cv_classification
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config3.yml \
@@ -131,7 +131,7 @@ EXPDIR=./tests/_tests_cv_classification
 LOGDIR=./tests/logs/_tests_cv_classification
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config4.yml \
@@ -161,7 +161,7 @@ EXPDIR=./tests/_tests_cv_classification
 LOGDIR=./tests/logs/_tests_cv_classification
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config5.yml \
@@ -192,7 +192,7 @@ rm -rf ${LOGDIR}
 #    LOGDIR=./tests/logs/_tests_cv_classification
 #    LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 #
-#    PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+#    PYTHONPATH=./examples:.:${PYTHONPATH} \
 #      python catalyst/dl/scripts/run.py \
 #      --expdir=${EXPDIR} \
 #      --config=${EXPDIR}/config6_finder.yml \
@@ -216,7 +216,7 @@ EXPDIR=./tests/_tests_cv_classification_transforms
 LOGDIR=./tests/logs/_tests_cv_classification_transforms
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config1.yml \
@@ -246,7 +246,7 @@ EXPDIR=./tests/_tests_cv_classification_transforms
 LOGDIR=./tests/logs/_tests_cv_classification_transforms
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config2.yml \
@@ -276,7 +276,7 @@ EXPDIR=./tests/_tests_cv_classification_transforms
 LOGDIR=./tests/logs/_tests_cv_classification_transforms
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config3.yml \
@@ -307,7 +307,7 @@ if [[ "$USE_DDP" != "1" ]]; then
     LOGDIR=./tests/logs/_tests_cv_classification_transforms
     LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-    PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+    PYTHONPATH=./examples:.:${PYTHONPATH} \
       python catalyst/dl/scripts/run.py \
       --expdir=${EXPDIR} \
       --config=${EXPDIR}/config4_finder.yml \
@@ -331,7 +331,7 @@ EXPDIR=./tests/_tests_cv_classification_transforms
 LOGDIR=./tests/logs/_tests_cv_classification_transforms
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config5_fp16.yml \
@@ -363,7 +363,7 @@ LOGDIR=./tests/logs/_tests_cv_classification_transforms
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 if [[ "${REQUIREMENTS}" == 'latest' ]]; then
-  PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  PYTHONPATH=./examples:.:${PYTHONPATH} \
     python catalyst/dl/scripts/run.py \
     --expdir=${EXPDIR} \
     --config=${EXPDIR}/config6_kornia.yml \
@@ -395,7 +395,7 @@ EXPDIR=./tests/_tests_cv_classification_registry/test1
 LOGDIR=./tests/logs/_tests_cv_classification_registry/test1
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config1.yml \
@@ -426,7 +426,7 @@ EXPDIR=./tests/_tests_cv_classification_registry/test2
 LOGDIR=./tests/logs/_tests_cv_classification_registry/test2
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config1.yml \
@@ -457,7 +457,7 @@ EXPDIR=./tests/_tests_cv_classification_registry/test2
 LOGDIR=./tests/logs/_tests_cv_classification_registry/test2
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config2.yml \
@@ -486,7 +486,7 @@ EXPDIR=./tests/_tests_cv_classification_registry/test3
 LOGDIR=./tests/logs/_tests_cv_classification_registry/test3
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config1.yml \
@@ -518,7 +518,7 @@ LOGDIR=./tests/logs/_tests_cv_segmentation
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 ## train
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --configs ${EXPDIR}/config.yml ${EXPDIR}/transforms.yml \
@@ -561,7 +561,7 @@ LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
 if [[ "${REQUIREMENTS}" == 'latest' ]]; then
   ## train
-  PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+  PYTHONPATH=./examples:.:${PYTHONPATH} \
     python catalyst/dl/scripts/run.py \
     --expdir=${EXPDIR} \
     --configs ${EXPDIR}/config2_kornia.yml ${EXPDIR}/transforms.yml \
