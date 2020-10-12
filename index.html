@@ -293,8 +293,7 @@ so you can create something new rather than write another regular train loop.</p
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 <span class="kn">from</span> <span class="nn">torchvision.datasets</span> <span class="kn">import</span> <span class="n">MNIST</span>
 <span class="kn">from</span> <span class="nn">torchvision.transforms</span> <span class="kn">import</span> <span class="n">ToTensor</span>
-<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span><span class="p">,</span> <span class="n">metrics</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">28</span> <span class="o">*</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
@@ -383,12 +382,17 @@ pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 <div class="section" id="structure">
 <h3>Structure<a class="headerlink" href="#structure" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
+<li><p><strong>callbacks</strong> - a variety of callbacks for your train-loop customization.</p></li>
+<li><p><strong>contrib</strong> - additional modules contributed by Catalyst users.</p></li>
 <li><p><strong>core</strong> - framework core with main abstractions - Experiment, Runner and Callback.</p></li>
 <li><p><strong>data</strong> - useful tools and scripts for data processing.</p></li>
-<li><p><strong>dl</strong> – runner for training and inference, all of the classic ML and CV/NLP/RecSys metrics and a variety of callbacks for training, validation and inference of neural networks.</p></li>
+<li><p><strong>dl</strong> - entrypoint for your deep learning experiments.</p></li>
+<li><p><strong>experiments</strong> - a number of useful experiments extensions for Notebook and Config API.</p></li>
+<li><p><strong>metrics</strong> – classic ML and CV/NLP/RecSys metrics.</p></li>
+<li><p><strong>registry</strong> - Catalyst global registry for Config API.</p></li>
+<li><p><strong>runners</strong> - runners extensions for different deep learning tasks.</p></li>
 <li><p><strong>tools</strong> - extra tools for Deep Learning research, class-based helpers.</p></li>
 <li><p><strong>utils</strong> - typical utils for Deep Learning research, function-based helpers.</p></li>
-<li><p><strong>contrib</strong> - additional modules contributed by Catalyst users.</p></li>
 </ul>
 </div>
 <div class="section" id="tests">
