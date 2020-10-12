@@ -44,7 +44,7 @@ PYTHONPATH=./examples:.:${PYTHONPATH} \
   ${LOGDIR}
 
 echo 'pipeline 01 - swa'
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/swa.py \
   --logdir=${LOGDIR} --output-path=./swa.pth
 
