@@ -8,7 +8,7 @@ Utilities
    :local:
 
 
-Main API
+Main
 ----------------------
 .. automodule:: catalyst.utils
     :members:
@@ -148,7 +148,7 @@ Wizard
     :show-inheritance:
 
 
-Contrib API
+Contrib
 ----------------------
 .. automodule:: catalyst.contrib.utils
     :members:
@@ -225,7 +225,7 @@ Visualization
     :show-inheritance:
 
 
-CV API
+Computer Vision
 -------------------------
 .. automodule:: catalyst.contrib.utils.cv
     :members:
@@ -246,7 +246,7 @@ Tensor
     :show-inheritance:
 
 
-NLP API
+Natural language processing
 -------------------------------------
 .. automodule:: catalyst.contrib.utils.nlp
     :members:
