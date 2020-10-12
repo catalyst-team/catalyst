@@ -1,6 +1,6 @@
 import torch
 
-from catalyst.utils import metrics
+from catalyst import metrics
 
 
 def test_iou():

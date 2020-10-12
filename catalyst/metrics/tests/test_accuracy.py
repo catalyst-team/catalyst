@@ -2,7 +2,7 @@ import numpy as np
 
 import torch
 
-from catalyst.utils import metrics
+from catalyst import metrics
 
 BATCH_SIZE = 4
 NUM_CLASSES = 10
