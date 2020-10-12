@@ -8,7 +8,7 @@ Callbacks
    :local:
 
 
-Base callbacks
+Main
 ----------------------
 .. automodule:: catalyst.callbacks
     :members:
@@ -199,7 +199,7 @@ Precision
     :show-inheritance:
 
 
-Contributed
+Contrib
 ----------------------
 .. automodule:: catalyst.contrib.callbacks
     :members:

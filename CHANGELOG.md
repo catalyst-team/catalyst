@@ -22,7 +22,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `IRunner._prepare_for_stage` logic moved to `IStageBasedRunner.prepare_for_stage` ([#947](https://github.com/catalyst-team/catalyst/pull/947))
     - now we create components in the following order: datasets/loaders, model, criterion, optimizer, scheduler, callbacks
 - `MnistMLDataset` and `MnistQGDataset` data split logic - now targets of the datasets are disjoint ([#949](https://github.com/catalyst-team/catalyst/pull/949))
-- 
+- architecture redesign ([#953](https://github.com/catalyst-team/catalyst/pull/953))
+    - experiments, runners, callbacks grouped by primitives under `catalyst.experiments`/`catalyst.runners`/`catalyst.callbacks` respectively
+    - settings and typing moved from `catalyst.tools.*` to `catalyst.*`
+    - utils moved from `catalyst.*.utils` to `catalyst.utils`
 
 ### Removed
 
