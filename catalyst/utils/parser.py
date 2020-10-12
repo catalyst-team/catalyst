@@ -6,7 +6,16 @@ from catalyst.utils.dict import merge_dicts
 
 
 def parse_config_args(*, config, args, unknown_args):
-    """@TODO: Docs. Contribution is welcome."""
+    """Parse config and cli args.
+
+    Args:
+        config: dict-based experiment config
+        args: cli args
+        unknown_args: cli unknown args
+
+    Returns:
+        config, args: final experiment config and cli args
+    """
     for arg in unknown_args:
         arg_name, value = arg.split("=")
         arg_name = arg_name.lstrip("-").strip("/")

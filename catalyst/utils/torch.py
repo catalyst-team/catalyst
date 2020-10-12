@@ -10,8 +10,8 @@ from torch import nn, Tensor
 import torch.backends
 from torch.backends import cudnn
 
-from catalyst.tools.settings import IS_XLA_AVAILABLE
-from catalyst.tools.typing import Device, Model, Optimizer
+from catalyst.settings import IS_XLA_AVAILABLE
+from catalyst.typing import Device, Model, Optimizer
 from catalyst.utils.dict import merge_dicts
 
 

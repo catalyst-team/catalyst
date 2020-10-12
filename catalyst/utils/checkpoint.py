@@ -1,4 +1,3 @@
-# flake8: noqa
 from typing import Callable, Dict, Union
 from collections import OrderedDict
 import os
@@ -94,7 +93,7 @@ def save_checkpoint(
     is_last: bool = False,
     special_suffix: str = "",
     saver_fn: Callable = torch.save,
-):
+) -> Union[Path, str]:
     """Saving checkpoint to a file.
 
     Args:
@@ -110,6 +109,9 @@ def save_checkpoint(
             saving best/last checkpoints.
         saver_fn: function to use for saving
             data to file, default is ``torch.save``
+
+    Returns:
+        path to saved checkpoint
     """
     os.makedirs(logdir, exist_ok=True)
     filename = f"{logdir}/{suffix}.pth"
@@ -123,6 +125,7 @@ def save_checkpoint(
 
 def load_checkpoint(filepath: str):
     """Load checkpoint from path.
+
     Args:
         filepath: checkpoint file to load
 

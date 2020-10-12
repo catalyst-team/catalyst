@@ -206,3 +206,6 @@ class AdaCos(nn.Module):
 
         logits = self.s * cos_theta
         return logits
+
+
+__all__ = ["CosFace", "AdaCos"]
