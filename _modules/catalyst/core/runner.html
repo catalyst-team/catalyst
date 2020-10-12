@@ -184,12 +184,18 @@
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/registry.html">Registry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/data.html">Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Tools and Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/experiments.html">Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/registry.html">Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/runners.html">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/settings.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/typing.html">Typing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utilities</a></li>
 </ul>
 
             
@@ -268,13 +274,16 @@
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">DistributedSampler</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackScope</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.experiment</span> <span class="kn">import</span> <span class="n">IExperiment</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.functional</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">filter_callbacks_by_node</span><span class="p">,</span>
+    <span class="n">sort_callbacks_by_order</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.legacy</span> <span class="kn">import</span> <span class="n">IRunnerLegacy</span>
-<span class="kn">from</span> <span class="nn">catalyst.tools</span> <span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">catalyst.settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
 <span class="kn">from</span> <span class="nn">catalyst.tools.frozen_class</span> <span class="kn">import</span> <span class="n">FrozenClass</span>
-<span class="kn">from</span> <span class="nn">catalyst.tools.typing</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Criterion</span><span class="p">,</span>
     <span class="n">Device</span><span class="p">,</span>
     <span class="n">Model</span><span class="p">,</span>
@@ -285,6 +294,12 @@
     <span class="n">RunnerScheduler</span><span class="p">,</span>
     <span class="n">Scheduler</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.components</span> <span class="kn">import</span> <span class="n">process_components</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">get_rank</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.loaders</span> <span class="kn">import</span> <span class="n">validate_loaders</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">maybe_recursive_call</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.seed</span> <span class="kn">import</span> <span class="n">set_global_seed</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="n">any2device</span>
 
 
 <div class="viewcode-block" id="RunnerException"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.runner.RunnerException">[docs]</a><span class="k">class</span> <span class="nc">RunnerException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
@@ -313,8 +328,8 @@
 
 <span class="sd">    Abstraction, please check out the implementations:</span>
 
-<span class="sd">        - :py:mod:`catalyst.dl.runner.runner.Runner`</span>
-<span class="sd">        - :py:mod:`catalyst.dl.runner.supervised.SupervisedRunner`</span>
+<span class="sd">        - :py:mod:`catalyst.runners.runner.Runner`</span>
+<span class="sd">        - :py:mod:`catalyst.runners.supervised.SupervisedRunner`</span>
 
 <span class="sd">    Runner also contains full information about experiment runner.</span>
 
@@ -631,7 +646,7 @@
 
     <span class="k">def</span> <span class="nf">_prepare_inner_state</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">stage_infer_prefix</span><span class="p">,</span>
+        <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">stage_infer_prefix</span><span class="p">,</span>
         <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">criterion</span><span class="p">:</span> <span class="n">RunnerCriterion</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -643,7 +658,7 @@
         <span class="n">num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">main_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
         <span class="n">minimize_metric</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">valid_loader</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">loader_valid_prefix</span><span class="p">,</span>
+        <span class="n">valid_loader</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">loader_valid_prefix</span><span class="p">,</span>
         <span class="n">checkpoint_data</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">is_check_run</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -697,7 +712,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">best_valid_metrics</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 
         <span class="c1"># distributed info</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">distributed_rank</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distributed_rank</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">get_rank</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_distributed_master</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="o">~</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distributed_rank</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_distributed_worker</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">distributed_rank</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="c1"># experiment info</span>
@@ -712,7 +727,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">num_epochs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">stage_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">stage</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_infer_stage</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
-            <span class="n">settings</span><span class="o">.</span><span class="n">stage_infer_prefix</span>
+            <span class="n">SETTINGS</span><span class="o">.</span><span class="n">stage_infer_prefix</span>
         <span class="p">)</span>
         <span class="c1"># epoch info</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
@@ -789,7 +804,7 @@
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">maybe_recursive_call</span><span class="p">(</span>
+            <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">maybe_recursive_call</span><span class="p">(</span>
                 <span class="n">model</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span>
             <span class="p">)</span>
 
@@ -825,7 +840,7 @@
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">maybe_recursive_call</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">maybe_recursive_call</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="ow">or</span> <span class="s2">&quot;cpu&quot;</span>
             <span class="p">)</span>
 
@@ -851,13 +866,7 @@
         <span class="n">criterion</span> <span class="o">=</span> <span class="n">experiment</span><span class="o">.</span><span class="n">get_criterion</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
         <span class="n">optimizer</span> <span class="o">=</span> <span class="n">experiment</span><span class="o">.</span><span class="n">get_optimizer</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
         <span class="n">scheduler</span> <span class="o">=</span> <span class="n">experiment</span><span class="o">.</span><span class="n">get_scheduler</span><span class="p">(</span><span class="n">stage</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span>
-        <span class="p">(</span>
-            <span class="n">model</span><span class="p">,</span>
-            <span class="n">criterion</span><span class="p">,</span>
-            <span class="n">optimizer</span><span class="p">,</span>
-            <span class="n">scheduler</span><span class="p">,</span>
-            <span class="n">device</span><span class="p">,</span>
-        <span class="p">)</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">process_components</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span><span class="p">,</span> <span class="n">device</span> <span class="o">=</span> <span class="n">process_components</span><span class="p">(</span>
             <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
             <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
             <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
@@ -885,8 +894,8 @@
 <span class="sd">                with callbacks for current experiment stage.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">callbacks</span> <span class="o">=</span> <span class="n">experiment</span><span class="o">.</span><span class="n">get_callbacks</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
-        <span class="n">callbacks</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">filter_callbacks_by_node</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
-        <span class="n">callbacks</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">sort_callbacks_by_order</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
+        <span class="n">callbacks</span> <span class="o">=</span> <span class="n">filter_callbacks_by_node</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
+        <span class="n">callbacks</span> <span class="o">=</span> <span class="n">sort_callbacks_by_order</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">callbacks</span>
 
 <div class="viewcode-block" id="IRunner.get_attr"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.runner.IRunner.get_attr">[docs]</a>    <span class="k">def</span> <span class="nf">get_attr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inner_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
@@ -996,7 +1005,7 @@
 <span class="sd">            Mapping[str, Any]: same structure as value,</span>
 <span class="sd">                but all tensors and np.arrays moved to device</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">any2device</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">any2device</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">output</span>
 
     <span class="nd">@abstractmethod</span>
@@ -1088,7 +1097,7 @@
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span>
-                <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">settings</span><span class="o">.</span><span class="n">loader_train_prefix</span><span class="p">)</span>
+                <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">SETTINGS</span><span class="o">.</span><span class="n">loader_train_prefix</span><span class="p">)</span>
                 <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaders</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
             <span class="p">),</span> <span class="s2">&quot;for inference no train loader should be passed&quot;</span>
 
@@ -1096,15 +1105,15 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">loader_name</span> <span class="o">=</span> <span class="n">loader_name</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">loader_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span> <span class="o">=</span> <span class="n">loader_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
-                <span class="n">settings</span><span class="o">.</span><span class="n">loader_train_prefix</span>
+                <span class="n">SETTINGS</span><span class="o">.</span><span class="n">loader_train_prefix</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">is_valid_loader</span> <span class="o">=</span> <span class="n">loader_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
-                <span class="n">settings</span><span class="o">.</span><span class="n">loader_valid_prefix</span>
+                <span class="n">SETTINGS</span><span class="o">.</span><span class="n">loader_valid_prefix</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">is_infer_loader</span> <span class="o">=</span> <span class="n">loader_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span>
-                <span class="n">settings</span><span class="o">.</span><span class="n">loader_infer_prefix</span>
+                <span class="n">SETTINGS</span><span class="o">.</span><span class="n">loader_infer_prefix</span>
             <span class="p">)</span>
-            <span class="n">utils</span><span class="o">.</span><span class="n">maybe_recursive_call</span><span class="p">(</span>
+            <span class="n">maybe_recursive_call</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -1114,7 +1123,7 @@
             <span class="p">):</span>
                 <span class="n">loader</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">set_epoch</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="p">)</span>
 
-            <span class="n">utils</span><span class="o">.</span><span class="n">set_global_seed</span><span class="p">(</span>
+            <span class="n">set_global_seed</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">initial_seed</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_epoch</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;on_loader_start&quot;</span><span class="p">)</span>
@@ -1136,7 +1145,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;on_stage_start&quot;</span><span class="p">)</span>
         <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_epochs</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">utils</span><span class="o">.</span><span class="n">set_global_seed</span><span class="p">(</span>
+            <span class="n">set_global_seed</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">initial_seed</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_epoch</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_run_event</span><span class="p">(</span><span class="s2">&quot;on_epoch_start&quot;</span><span class="p">)</span>
@@ -1174,7 +1183,7 @@
             <span class="k">for</span> <span class="n">stage</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">stages</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_run_stage</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">Exception</span><span class="p">,</span> <span class="ne">KeyboardInterrupt</span><span class="p">)</span> <span class="k">as</span> <span class="n">ex</span><span class="p">:</span>
-            <span class="kn">from</span> <span class="nn">catalyst.core.callbacks.exception</span> <span class="kn">import</span> <span class="n">ExceptionCallback</span>
+            <span class="kn">from</span> <span class="nn">catalyst.callbacks.exception</span> <span class="kn">import</span> <span class="n">ExceptionCallback</span>
 
             <span class="k">def</span> <span class="nf">_exception_handler_check</span><span class="p">(</span><span class="n">callbacks</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">OrderedDict</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]):</span>
                 <span class="k">return</span> <span class="n">callbacks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">any</span><span class="p">(</span>
@@ -1198,8 +1207,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">_prepare_for_stage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Inner method to prepare `Runner` for the specified stage.</span>
+        <span class="sd">&quot;&quot;&quot;Inner method to prepare `Runner` for the specified stage.</span>
 
 <span class="sd">        Sets `Experiment` initial seed.</span>
 <span class="sd">        Prepares experiment components with `self._get_experiment_components`.</span>
@@ -1211,12 +1219,12 @@
 <span class="sd">            stage: stage name of interest,</span>
 <span class="sd">                like &quot;pretrain&quot; / &quot;train&quot; / &quot;finetune&quot; / etc</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">utils</span><span class="o">.</span><span class="n">set_global_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">initial_seed</span><span class="p">)</span>
+        <span class="n">set_global_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">initial_seed</span><span class="p">)</span>
         <span class="n">loaders</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">get_loaders</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">)</span>
-        <span class="n">loaders</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">validate_loaders</span><span class="p">(</span><span class="n">loaders</span><span class="p">)</span>
+        <span class="n">loaders</span> <span class="o">=</span> <span class="n">validate_loaders</span><span class="p">(</span><span class="n">loaders</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loaders</span> <span class="o">=</span> <span class="n">loaders</span>
 
-        <span class="n">utils</span><span class="o">.</span><span class="n">set_global_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">initial_seed</span><span class="p">)</span>
+        <span class="n">set_global_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">initial_seed</span><span class="p">)</span>
         <span class="p">(</span>
             <span class="n">model</span><span class="p">,</span>
             <span class="n">criterion</span><span class="p">,</span>
@@ -1227,7 +1235,7 @@
             <span class="n">experiment</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">,</span> <span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span>
         <span class="p">)</span>
 
-        <span class="n">utils</span><span class="o">.</span><span class="n">set_global_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">initial_seed</span><span class="p">)</span>
+        <span class="n">set_global_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">initial_seed</span><span class="p">)</span>
         <span class="n">callbacks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_experiment_callbacks</span><span class="p">(</span>
             <span class="n">experiment</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">,</span> <span class="n">stage</span><span class="o">=</span><span class="n">stage</span>
         <span class="p">)</span>
@@ -1244,7 +1252,7 @@
                 <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">scope</span> <span class="o">==</span> <span class="n">CallbackScope</span><span class="o">.</span><span class="n">experiment</span><span class="p">:</span>
                     <span class="n">callbacks</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
-        <span class="n">callbacks</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">sort_callbacks_by_order</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
+        <span class="n">callbacks</span> <span class="o">=</span> <span class="n">sort_callbacks_by_order</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">migrate_from_previous_stage</span><span class="p">:</span>
             <span class="n">migrating_params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>

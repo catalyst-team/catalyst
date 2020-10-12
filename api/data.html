@@ -29,8 +29,8 @@
   <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Tools and Utilities" href="utils.html" />
-    <link rel="prev" title="Registry" href="registry.html" /> 
+    <link rel="next" title="Experiments" href="experiments.html" />
+    <link rel="prev" title="Core" href="core.html" /> 
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
@@ -186,12 +186,18 @@
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="registry.html">Registry</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">Tools and Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">Core</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="experiments.html">Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="registry.html">Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="runners.html">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="typing.html">Typing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
 </ul>
 
             
@@ -568,7 +574,12 @@ converted to tensor and stacked</p>
 <dt id="catalyst.data.dataset.torch.DatasetFromSampler">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.dataset.torch.</code><code class="sig-name descname">DatasetFromSampler</code><span class="sig-paren">(</span><em class="sig-param">sampler: torch.utils.data.sampler.Sampler</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset/torch.html#DatasetFromSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.torch.DatasetFromSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
-<p>Dataset of indexes from <cite>Sampler</cite>.</p>
+<p>Dataset to create indexes from <cite>Sampler</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sampler</strong> – PyTorch sampler</p>
+</dd>
+</dl>
 <dl class="method">
 <dt id="catalyst.data.dataset.torch.DatasetFromSampler.__getitem__">
 <code class="sig-name descname">__getitem__</code><span class="sig-paren">(</span><em class="sig-param">index: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset/torch.html#DatasetFromSampler.__getitem__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.torch.DatasetFromSampler.__getitem__" title="Permalink to this definition">¶</a></dt>
@@ -586,11 +597,7 @@ converted to tensor and stacked</p>
 <dl class="method">
 <dt id="catalyst.data.dataset.torch.DatasetFromSampler.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">sampler: torch.utils.data.sampler.Sampler</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset/torch.html#DatasetFromSampler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.torch.DatasetFromSampler.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>sampler</strong> – &#64;TODO: Docs. Contribution is welcome</p>
-</dd>
-</dl>
+<dd><p>Initialisation for DatasetFromSampler.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1383,10 +1390,7 @@ otherwise statement (1) will not be met.</p>
 <p>This type of sampling can be found in the classical paper of Person Re-Id,
 where P equals 32 and K equals 4:
 <a class="reference external" href="https://arxiv.org/abs/1703.07737">In Defense of the Triplet Loss for Person Re-Identification</a>.</p>
-<dl class="method">
-<dt id="catalyst.data.sampler.BalanceBatchSampler.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">labels: Union[List[int], numpy.ndarray], p: int, k: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceBatchSampler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceBatchSampler.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>labels</strong> – list of classes labeles for each elem in the dataset</p></li>
@@ -1395,6 +1399,10 @@ where P equals 32 and K equals 4:
 </ul>
 </dd>
 </dl>
+<dl class="method">
+<dt id="catalyst.data.sampler.BalanceBatchSampler.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">labels: Union[List[int], numpy.ndarray], p: int, k: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceBatchSampler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceBatchSampler.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sampler initialisation.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1439,21 +1447,20 @@ number of batches in an epoch</p>
 <dl class="class">
 <dt id="catalyst.data.sampler.BalanceClassSampler">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler.</code><code class="sig-name descname">BalanceClassSampler</code><span class="sig-paren">(</span><em class="sig-param">labels: List[int], mode: Union[str, int] = 'downsampling'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceClassSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceClassSampler" title="Permalink to this definition">¶</a></dt>
-<dd><p>Abstraction over data sampler.</p>
-<p>Allows you to create stratified sample on unbalanced classes.</p>
-<dl class="method">
-<dt id="catalyst.data.sampler.BalanceClassSampler.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">labels: List[int], mode: Union[str, int] = 'downsampling'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceClassSampler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceClassSampler.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Allows you to create stratified sample on unbalanced classes.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>labels</strong> – list of class label
-for each elem in the dataset</p></li>
+<li><p><strong>labels</strong> – list of class label for each elem in the dataset</p></li>
 <li><p><strong>mode</strong> – Strategy to balance classes.
 Must be one of [downsampling, upsampling]</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="method">
+<dt id="catalyst.data.sampler.BalanceClassSampler.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">labels: List[int], mode: Union[str, int] = 'downsampling'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceClassSampler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceClassSampler.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sampler initialisation.</p>
 </dd></dl>
 
 <dl class="method">
@@ -1578,17 +1585,7 @@ Should be used with <cite>catalyst.utils.trim_tensors</cite>.</p>
 <dt id="catalyst.data.sampler.MiniEpochSampler">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler.</code><code class="sig-name descname">MiniEpochSampler</code><span class="sig-paren">(</span><em class="sig-param">data_len: int</em>, <em class="sig-param">mini_epoch_len: int</em>, <em class="sig-param">drop_last: bool = False</em>, <em class="sig-param">shuffle: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#MiniEpochSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.MiniEpochSampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sampler iterates mini epochs from the dataset used by <code class="docutils literal notranslate"><span class="pre">mini_epoch_len</span></code>.</p>
-<p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MiniEpochSampler</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">mini_epoch_len</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">MiniEpochSampler</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">mini_epoch_len</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">MiniEpochSampler</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">mini_epoch_len</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">shuffle</span><span class="o">=</span><span class="s2">&quot;per_epoch&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="method">
-<dt id="catalyst.data.sampler.MiniEpochSampler.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">data_len: int</em>, <em class="sig-param">mini_epoch_len: int</em>, <em class="sig-param">drop_last: bool = False</em>, <em class="sig-param">shuffle: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#MiniEpochSampler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.MiniEpochSampler.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_len</strong> – Size of the dataset</p></li>
@@ -1604,12 +1601,28 @@ The sampler will shuffle indices
 </ul>
 </dd>
 </dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MiniEpochSampler</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">mini_epoch_len</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MiniEpochSampler</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">mini_epoch_len</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">drop_last</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MiniEpochSampler</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dataset</span><span class="p">),</span> <span class="n">mini_epoch_len</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">shuffle</span><span class="o">=</span><span class="s2">&quot;per_epoch&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="catalyst.data.sampler.MiniEpochSampler.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">data_len: int</em>, <em class="sig-param">mini_epoch_len: int</em>, <em class="sig-param">drop_last: bool = False</em>, <em class="sig-param">shuffle: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#MiniEpochSampler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.MiniEpochSampler.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sampler initialisation.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.data.sampler.MiniEpochSampler.__iter__">
 <code class="sig-name descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Iterator[int]<a class="reference internal" href="../_modules/catalyst/data/sampler.html#MiniEpochSampler.__iter__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.MiniEpochSampler.__iter__" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><p>Iterate over sampler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>python iterator</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1628,7 +1641,7 @@ The sampler will shuffle indices
 <dl class="method">
 <dt id="catalyst.data.sampler.MiniEpochSampler.shuffle">
 <code class="sig-name descname">shuffle</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/data/sampler.html#MiniEpochSampler.shuffle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.MiniEpochSampler.shuffle" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><p>Shuffle sampler indices.</p>
 </dd></dl>
 
 </dd></dl>
@@ -2048,10 +2061,10 @@ appropriate tokenization</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="utils.html" class="btn btn-neutral float-right" title="Tools and Utilities" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="experiments.html" class="btn btn-neutral float-right" title="Experiments" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="registry.html" class="btn btn-neutral" title="Registry" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="core.html" class="btn btn-neutral" title="Core" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   

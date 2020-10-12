@@ -194,10 +194,17 @@ Indices and tables
 .. toctree::
     :caption: API
 
-    api/core
-    api/dl
-    api/registry
-
-    api/data
-    api/utils
+    api/callbacks
     api/contrib
+    api/core
+    api/data
+    api/experiments
+    api/metrics
+    api/registry
+    api/runners
+    api/settings
+    api/tools
+    api/typing
+    api/utils
+
+

@@ -184,12 +184,18 @@
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/registry.html">Registry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/data.html">Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Tools and Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/experiments.html">Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/registry.html">Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/runners.html">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/settings.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/typing.html">Typing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utilities</a></li>
 </ul>
 
             
@@ -275,7 +281,7 @@
 <span class="n">required</span> <span class="o">=</span> <span class="n">_RequiredParameter</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="Optimizer"><a class="viewcode-back" href="../../../api/utils.html#catalyst.tools.typing.Optimizer">[docs]</a><span class="k">class</span> <span class="nc">Optimizer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Optimizer"><a class="viewcode-back" href="../../../api/typing.html#catalyst.typing.Optimizer">[docs]</a><span class="k">class</span> <span class="nc">Optimizer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Base class for all optimizers.</span>
 
 <span class="sd">    .. warning::</span>
@@ -332,7 +338,7 @@
         <span class="n">format_string</span> <span class="o">+=</span> <span class="s1">&#39;)&#39;</span>
         <span class="k">return</span> <span class="n">format_string</span>
 
-<div class="viewcode-block" id="Optimizer.state_dict"><a class="viewcode-back" href="../../../api/utils.html#catalyst.tools.typing.Optimizer.state_dict">[docs]</a>    <span class="k">def</span> <span class="nf">state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Optimizer.state_dict"><a class="viewcode-back" href="../../../api/typing.html#catalyst.typing.Optimizer.state_dict">[docs]</a>    <span class="k">def</span> <span class="nf">state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns the state of the optimizer as a :class:`dict`.</span>
 
 <span class="sd">        It contains two entries:</span>
@@ -362,7 +368,7 @@
             <span class="s1">&#39;param_groups&#39;</span><span class="p">:</span> <span class="n">param_groups</span><span class="p">,</span>
         <span class="p">}</span></div>
 
-<div class="viewcode-block" id="Optimizer.load_state_dict"><a class="viewcode-back" href="../../../api/utils.html#catalyst.tools.typing.Optimizer.load_state_dict">[docs]</a>    <span class="k">def</span> <span class="nf">load_state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">):</span>
+<div class="viewcode-block" id="Optimizer.load_state_dict"><a class="viewcode-back" href="../../../api/typing.html#catalyst.typing.Optimizer.load_state_dict">[docs]</a>    <span class="k">def</span> <span class="nf">load_state_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Loads the optimizer state.</span>
 
 <span class="sd">        Arguments:</span>
@@ -424,7 +430,7 @@
             <span class="n">update_group</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">ng</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span><span class="p">,</span> <span class="n">ng</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">groups</span><span class="p">,</span> <span class="n">saved_groups</span><span class="p">)]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__setstate__</span><span class="p">({</span><span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="n">state</span><span class="p">,</span> <span class="s1">&#39;param_groups&#39;</span><span class="p">:</span> <span class="n">param_groups</span><span class="p">})</span></div>
 
-<div class="viewcode-block" id="Optimizer.zero_grad"><a class="viewcode-back" href="../../../api/utils.html#catalyst.tools.typing.Optimizer.zero_grad">[docs]</a>    <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Optimizer.zero_grad"><a class="viewcode-back" href="../../../api/typing.html#catalyst.typing.Optimizer.zero_grad">[docs]</a>    <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Clears the gradients of all optimized :class:`torch.Tensor` s.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">group</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]:</span>
@@ -432,7 +438,7 @@
                     <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">detach_</span><span class="p">()</span>
                     <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Optimizer.step"><a class="viewcode-back" href="../../../api/utils.html#catalyst.tools.typing.Optimizer.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closure</span><span class="p">):</span>
+<div class="viewcode-block" id="Optimizer.step"><a class="viewcode-back" href="../../../api/typing.html#catalyst.typing.Optimizer.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closure</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Performs a single optimization step (parameter update).</span>
 
 <span class="sd">        Arguments:</span>
@@ -445,7 +451,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="Optimizer.add_param_group"><a class="viewcode-back" href="../../../api/utils.html#catalyst.tools.typing.Optimizer.add_param_group">[docs]</a>    <span class="k">def</span> <span class="nf">add_param_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_group</span><span class="p">):</span>
+<div class="viewcode-block" id="Optimizer.add_param_group"><a class="viewcode-back" href="../../../api/typing.html#catalyst.typing.Optimizer.add_param_group">[docs]</a>    <span class="k">def</span> <span class="nf">add_param_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_group</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Add a param group to the :class:`Optimizer` s `param_groups`.</span>
 
 <span class="sd">        This can be useful when fine tuning a pre-trained network as frozen layers can be made</span>

@@ -184,12 +184,18 @@
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/registry.html">Registry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Tools and Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/experiments.html">Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/registry.html">Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/runners.html">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/settings.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/typing.html">Typing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api/utils.html">Utilities</a></li>
 </ul>
 
             
@@ -302,14 +308,14 @@
     <span class="k">return</span> <span class="n">_u32</span><span class="p">(((</span><span class="n">x</span> <span class="o">&gt;&gt;</span> <span class="mi">15</span><span class="p">)</span> <span class="o">|</span> <span class="n">_u32</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;&lt;</span> <span class="mi">17</span><span class="p">))</span> <span class="o">+</span> <span class="mh">0xA282EAD8</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="EventReadingException"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.tools.tensorboard.EventReadingException">[docs]</a><span class="k">class</span> <span class="nc">EventReadingException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+<div class="viewcode-block" id="EventReadingException"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.contrib.tools.tensorboard.EventReadingException">[docs]</a><span class="k">class</span> <span class="nc">EventReadingException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An exception that correspond to an event file reading error.&quot;&quot;&quot;</span></div>
 
 
-<div class="viewcode-block" id="EventsFileReader"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.tools.tensorboard.EventsFileReader">[docs]</a><span class="k">class</span> <span class="nc">EventsFileReader</span><span class="p">(</span><span class="n">Iterable</span><span class="p">):</span>
+<div class="viewcode-block" id="EventsFileReader"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.contrib.tools.tensorboard.EventsFileReader">[docs]</a><span class="k">class</span> <span class="nc">EventsFileReader</span><span class="p">(</span><span class="n">Iterable</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An iterator over a Tensorboard events file.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="EventsFileReader.__init__"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.tools.tensorboard.EventsFileReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events_file</span><span class="p">:</span> <span class="n">BinaryIO</span><span class="p">):</span>
+<div class="viewcode-block" id="EventsFileReader.__init__"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.contrib.tools.tensorboard.EventsFileReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events_file</span><span class="p">:</span> <span class="n">BinaryIO</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize an iterator over an events file.</span>
 
 <span class="sd">        Args:</span>
@@ -402,7 +408,7 @@
     <span class="k">return</span> <span class="kc">None</span>
 
 
-<div class="viewcode-block" id="SummaryReader"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.tools.tensorboard.SummaryReader">[docs]</a><span class="k">class</span> <span class="nc">SummaryReader</span><span class="p">(</span><span class="n">Iterable</span><span class="p">):</span>
+<div class="viewcode-block" id="SummaryReader"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.contrib.tools.tensorboard.SummaryReader">[docs]</a><span class="k">class</span> <span class="nc">SummaryReader</span><span class="p">(</span><span class="n">Iterable</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Iterates over events in all the files in the current logdir.</span>
 
 <span class="sd">    .. note::</span>
@@ -413,7 +419,7 @@
         <span class="s2">&quot;scalar&quot;</span><span class="p">:</span> <span class="n">_get_scalar</span><span class="p">,</span>
     <span class="p">}</span>
 
-<div class="viewcode-block" id="SummaryReader.__init__"><a class="viewcode-back" href="../../../../api/contrib.html#catalyst.contrib.tools.tensorboard.SummaryReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="SummaryReader.__init__"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.contrib.tools.tensorboard.SummaryReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">logdir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
         <span class="n">tag_filter</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Iterable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

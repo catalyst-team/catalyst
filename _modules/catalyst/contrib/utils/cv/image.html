@@ -184,12 +184,18 @@
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/registry.html">Registry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/data.html">Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/utils.html">Tools and Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/experiments.html">Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/registry.html">Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/runners.html">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/settings.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/typing.html">Typing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/utils.html">Utilities</a></li>
 </ul>
 
             
@@ -271,11 +277,11 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">skimage.color</span> <span class="kn">import</span> <span class="n">label2rgb</span><span class="p">,</span> <span class="n">rgb2gray</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.tools</span> <span class="kn">import</span> <span class="n">settings</span>
+<span class="kn">from</span> <span class="nn">catalyst.settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
-<span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">use_libjpeg_turbo</span><span class="p">:</span>
+<span class="k">if</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">use_libjpeg_turbo</span><span class="p">:</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="kn">import</span> <span class="nn">jpeg4py</span> <span class="k">as</span> <span class="nn">jpeg</span>
 
@@ -299,7 +305,7 @@
         <span class="k">raise</span> <span class="n">ex</span>
 
 
-<div class="viewcode-block" id="imread"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.utils.cv.image.imread">[docs]</a><span class="k">def</span> <span class="nf">imread</span><span class="p">(</span>
+<div class="viewcode-block" id="imread"><a class="viewcode-back" href="../../../../../api/utils.html#catalyst.contrib.utils.cv.image.imread">[docs]</a><span class="k">def</span> <span class="nf">imread</span><span class="p">(</span>
     <span class="n">uri</span><span class="p">,</span>
     <span class="n">grayscale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">expand_dims</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -330,7 +336,7 @@
         <span class="n">rootpath</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">rootpath</span><span class="p">)</span>
         <span class="n">uri</span> <span class="o">=</span> <span class="n">uri</span> <span class="k">if</span> <span class="n">uri</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">rootpath</span><span class="p">)</span> <span class="k">else</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rootpath</span><span class="p">,</span> <span class="n">uri</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">settings</span><span class="o">.</span><span class="n">use_libjpeg_turbo</span> <span class="ow">and</span> <span class="n">uri</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
+    <span class="k">if</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">use_libjpeg_turbo</span> <span class="ow">and</span> <span class="n">uri</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
         <span class="p">(</span><span class="s2">&quot;jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;JPG&quot;</span><span class="p">,</span> <span class="s2">&quot;jpeg&quot;</span><span class="p">,</span> <span class="s2">&quot;JPEG&quot;</span><span class="p">)</span>
     <span class="p">):</span>
         <span class="n">img</span> <span class="o">=</span> <span class="n">jpeg</span><span class="o">.</span><span class="n">JPEG</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
@@ -347,7 +353,7 @@
     <span class="k">return</span> <span class="n">img</span></div>
 
 
-<div class="viewcode-block" id="imwrite"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.utils.cv.image.imwrite">[docs]</a><span class="k">def</span> <span class="nf">imwrite</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="imwrite"><a class="viewcode-back" href="../../../../../api/utils.html#catalyst.contrib.utils.cv.image.imwrite">[docs]</a><span class="k">def</span> <span class="nf">imwrite</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    ``imwrite(uri, im, format=None, **kwargs)``</span>
 
@@ -363,7 +369,7 @@
     <span class="k">return</span> <span class="n">imageio</span><span class="o">.</span><span class="n">imwrite</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="imsave"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.utils.cv.image.imsave">[docs]</a><span class="k">def</span> <span class="nf">imsave</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="imsave"><a class="viewcode-back" href="../../../../../api/utils.html#catalyst.contrib.utils.cv.image.imsave">[docs]</a><span class="k">def</span> <span class="nf">imsave</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    ``imwrite(uri, im, format=None, **kwargs)``</span>
 
@@ -379,7 +385,7 @@
     <span class="k">return</span> <span class="n">imageio</span><span class="o">.</span><span class="n">imsave</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="mimread"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.utils.cv.image.mimread">[docs]</a><span class="k">def</span> <span class="nf">mimread</span><span class="p">(</span>
+<div class="viewcode-block" id="mimread"><a class="viewcode-back" href="../../../../../api/utils.html#catalyst.contrib.utils.cv.image.mimread">[docs]</a><span class="k">def</span> <span class="nf">mimread</span><span class="p">(</span>
     <span class="n">uri</span><span class="p">,</span>
     <span class="n">clip_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">expand_dims</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -418,7 +424,7 @@
     <span class="k">return</span> <span class="n">image</span></div>
 
 
-<div class="viewcode-block" id="mimwrite_with_meta"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.utils.cv.image.mimwrite_with_meta">[docs]</a><span class="k">def</span> <span class="nf">mimwrite_with_meta</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">ims</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="mimwrite_with_meta"><a class="viewcode-back" href="../../../../../api/utils.html#catalyst.contrib.utils.cv.image.mimwrite_with_meta">[docs]</a><span class="k">def</span> <span class="nf">mimwrite_with_meta</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">ims</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
     <span class="n">writer</span> <span class="o">=</span> <span class="n">imageio</span><span class="o">.</span><span class="n">get_writer</span><span class="p">(</span><span class="n">uri</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="n">writer</span><span class="o">.</span><span class="n">set_meta_data</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
@@ -427,7 +433,7 @@
             <span class="n">writer</span><span class="o">.</span><span class="n">append_data</span><span class="p">(</span><span class="n">i</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="mask_to_overlay_image"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.utils.cv.image.mask_to_overlay_image">[docs]</a><span class="k">def</span> <span class="nf">mask_to_overlay_image</span><span class="p">(</span>
+<div class="viewcode-block" id="mask_to_overlay_image"><a class="viewcode-back" href="../../../../../api/utils.html#catalyst.contrib.utils.cv.image.mask_to_overlay_image">[docs]</a><span class="k">def</span> <span class="nf">mask_to_overlay_image</span><span class="p">(</span>
     <span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
     <span class="n">masks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
     <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
@@ -461,7 +467,7 @@
     <span class="k">return</span> <span class="n">image_with_overlay</span></div>
 
 
-<div class="viewcode-block" id="has_image_extension"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.utils.cv.image.has_image_extension">[docs]</a><span class="k">def</span> <span class="nf">has_image_extension</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="has_image_extension"><a class="viewcode-back" href="../../../../../api/utils.html#catalyst.contrib.utils.cv.image.has_image_extension">[docs]</a><span class="k">def</span> <span class="nf">has_image_extension</span><span class="p">(</span><span class="n">uri</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Check that file has image extension.</span>
 
 <span class="sd">    Args:</span>

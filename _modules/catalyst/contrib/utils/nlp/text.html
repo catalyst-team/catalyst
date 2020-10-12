@@ -184,12 +184,18 @@
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/dl.html">DL</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/registry.html">Registry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/data.html">Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/utils.html">Tools and Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/experiments.html">Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/registry.html">Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/runners.html">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/settings.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/typing.html">Typing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api/utils.html">Utilities</a></li>
 </ul>
 
             
@@ -269,7 +275,7 @@
 <span class="kn">from</span> <span class="nn">catalyst.contrib.nn.modules</span> <span class="kn">import</span> <span class="n">LamaPooling</span>
 
 
-<div class="viewcode-block" id="tokenize_text"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.utils.nlp.text.tokenize_text">[docs]</a><span class="k">def</span> <span class="nf">tokenize_text</span><span class="p">(</span>
+<div class="viewcode-block" id="tokenize_text"><a class="viewcode-back" href="../../../../../api/utils.html#catalyst.contrib.utils.nlp.text.tokenize_text">[docs]</a><span class="k">def</span> <span class="nf">tokenize_text</span><span class="p">(</span>
     <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">tokenizer</span><span class="p">,</span>  <span class="c1"># HuggingFace tokenizer, ex: BertTokenizer</span>
     <span class="n">max_length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -317,7 +323,7 @@
     <span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="process_bert_output"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.utils.nlp.text.process_bert_output">[docs]</a><span class="k">def</span> <span class="nf">process_bert_output</span><span class="p">(</span>
+<div class="viewcode-block" id="process_bert_output"><a class="viewcode-back" href="../../../../../api/utils.html#catalyst.contrib.utils.nlp.text.process_bert_output">[docs]</a><span class="k">def</span> <span class="nf">process_bert_output</span><span class="p">(</span>
     <span class="n">bert_output</span><span class="p">,</span>
     <span class="n">hidden_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">output_hidden_states</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
