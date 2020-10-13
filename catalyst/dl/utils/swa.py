@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 from collections import OrderedDict
 import glob
 import os
@@ -12,7 +12,7 @@ def average_weights(state_dicts: List[dict]) -> OrderedDict:
     Averaging of input weights.
 
     Args:
-        state_dicts (List[dict]): Weights to average
+        state_dicts: Weights to average
 
     Raises:
         KeyError: If states do not match
@@ -37,6 +37,7 @@ def average_weights(state_dicts: List[dict]) -> OrderedDict:
         average_dict[k] = torch.div(
             sum(state_dict[k] for state_dict in state_dicts), len(state_dicts),
         )
+
     return average_dict
 
 
@@ -45,7 +46,7 @@ def load_weight(path: str) -> dict:
     Load weights of a model.
 
     Args:
-        path (str): Path to model weights
+        path: Path to model weights
 
     Returns:
         Weights
@@ -56,13 +57,15 @@ def load_weight(path: str) -> dict:
     return weights
 
 
-def generate_averaged_weights(logdir: Path, models_mask: str) -> OrderedDict:
+def generate_averaged_weights(
+    logdir: Union[str, Path], models_mask: str
+) -> OrderedDict:
     """
     Averaging of input weights and saving them.
 
     Args:
-        logdir (Path): Path to logs directory
-        models_mask (str): globe-like pattern for models to average
+        logdir: Path to logs directory
+        models_mask: globe-like pattern for models to average
 
     Returns:
         Averaged weights
