@@ -9,7 +9,9 @@ from catalyst.dl.utils.swa import generate_averaged_weights
 
 def build_args(parser: ArgumentParser):
     """Builds the command line parameters."""
-    parser.add_argument("--logdir", type=Path, help="Path to models logdir")
+    parser.add_argument(
+        "--logdir", type=Path, default=None, help="Path to models logdir"
+    )
     parser.add_argument(
         "--models-mask",
         "-m",

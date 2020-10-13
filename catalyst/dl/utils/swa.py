@@ -6,6 +6,8 @@ from pathlib import Path
 
 import torch
 
+from catalyst.utils.checkpoint import load_checkpoint
+
 
 def average_weights(state_dicts: List[dict]) -> OrderedDict:
     """
@@ -51,7 +53,7 @@ def load_weight(path: str) -> dict:
     Returns:
         Weights
     """
-    weights = torch.load(path)
+    weights = load_checkpoint(path)
     if "model_state_dict" in weights:
         weights = weights["model_state_dict"]
     return weights
@@ -70,7 +72,12 @@ def generate_averaged_weights(
     Returns:
         Averaged weights
     """
-    models_pathes = glob.glob(os.path.join(logdir, "checkpoints", models_mask))
+    if logdir is None:
+        models_pathes = glob.glob(models_mask)
+    else:
+        models_pathes = glob.glob(
+            os.path.join(logdir, "checkpoints", models_mask)
+        )
 
     all_weights = [load_weight(path) for path in models_pathes]
     averaged_dict = average_weights(all_weights)

@@ -7,6 +7,7 @@ import torch
 import torch.nn as nn
 
 from catalyst.dl.utils.swa import generate_averaged_weights
+from catalyst.utils.checkpoint import load_checkpoint
 
 
 class Net(nn.Module):
@@ -42,8 +43,7 @@ class TestSwa(unittest.TestCase):
         )
         torch.save(weights, str("./checkpoints/swa_weights.pth"))
         model = Net()
-        model.load_state_dict(torch.load("./checkpoints/swa_weights.pth"))
-
+        model.load_state_dict(load_checkpoint("./checkpoints/swa_weights.pth"))
         self.assertEqual(float(model.fc.weight.data[0][0]), 3.5)
         self.assertEqual(float(model.fc.weight.data[0][1]), 3.5)
         self.assertEqual(float(model.fc.bias.data[0]), 3.5)
