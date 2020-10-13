@@ -166,7 +166,7 @@ def check_dynamic_balance_class_sampler(labels: List, exp_l: float) -> None:
     current_d = {
         key: value / min_class_size for key, value in Counter(labels).items()
     }
-    for _epoch in range(10):
+    for _ in range(10):
         new_counter = Counter(labels[list(sampler.__iter__())])
         new_d = {
             key: value / min_class_size for key, value in new_counter.items()
