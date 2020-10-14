@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - SoftMax, CosFace, ArcFace layers to contrib ([#939](https://github.com/catalyst-team/catalyst/pull/939))
 - ArcMargin layer to contrib ([#957](https://github.com/catalyst-team/catalyst/pull/957))
 - AdaCos to contrib ([#958](https://github.com/catalyst-team/catalyst/pull/958))
+- Manual SWA to utils (https://github.com/catalyst-team/catalyst/pull/945)
 
 ### Changed
 

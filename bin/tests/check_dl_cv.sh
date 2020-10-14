@@ -43,6 +43,11 @@ PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/trace.py \
   ${LOGDIR}
 
+echo 'pipeline 01 - swa'
+PYTHONPATH=./examples:.:${PYTHONPATH} \
+  python catalyst/dl/scripts/swa.py \
+  --logdir=${LOGDIR} --output-path=./swa.pth
+
 rm -rf ${LOGDIR}
 
 
