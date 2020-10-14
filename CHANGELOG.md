@@ -9,12 +9,31 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- 
+
+### Changed
+
+- 
+
+### Removed
+
+- 
+
+### Fixed
+
+- 
+
+
+## [20.10] - 2020-10-14
+
+### Added
+
 - MRR metrics calculation ([#886](https://github.com/catalyst-team/catalyst/pull/886))
 - docs for MetricCallbacks ([#947](https://github.com/catalyst-team/catalyst/pull/947)) 
 - SoftMax, CosFace, ArcFace layers to contrib ([#939](https://github.com/catalyst-team/catalyst/pull/939))
 - ArcMargin layer to contrib ([#957](https://github.com/catalyst-team/catalyst/pull/957))
 - AdaCos to contrib ([#958](https://github.com/catalyst-team/catalyst/pull/958))
-- Manual SWA to utils (https://github.com/catalyst-team/catalyst/pull/945)
+- Manual SWA to utils ([#945](https://github.com/catalyst-team/catalyst/pull/945))
 
 ### Changed
 
