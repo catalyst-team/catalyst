@@ -177,11 +177,14 @@ def check_dynamic_balance_class_sampler(labels: List, exp_l: float) -> None:
         current_d = new_d
 
 
-def test_dynamic_balance_class_sampler() -> None:
+def test_dynamic_balance_class_sampler(
+    input_for_dynamic_balance_class_sampler,  # noqa: WPS442
+) -> None:
     """
     Tests for DynamicBalanceClassSampler
-    """
-    inputs = input_for_dynamic_balance_class_sampler()
 
-    for labels, exp_l in inputs:
+    Args:
+        input_for_dynamic_balance_class_sampler: list of (labels, exp_l)
+    """
+    for labels, exp_l in input_for_dynamic_balance_class_sampler:
         check_dynamic_balance_class_sampler(labels, exp_l)
