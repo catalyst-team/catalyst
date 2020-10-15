@@ -26,6 +26,9 @@ except ImportError as ex:
         raise ex
 
 
+COMMANDS = OrderedDict(sorted(COMMANDS.items()))
+
+
 def build_parser() -> ArgumentParser:
     """Builds parser.
 

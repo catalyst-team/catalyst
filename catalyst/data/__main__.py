@@ -123,6 +123,9 @@ except ImportError as ex:  # noqa: WPS440
         raise ex
 
 
+COMMANDS = OrderedDict(sorted(COMMANDS.items()))
+
+
 def build_parser() -> ArgumentParser:
     """Builds parser.
 

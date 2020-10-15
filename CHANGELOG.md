@@ -24,7 +24,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - 
 
 
-## [20.10] - 2020-10-14
+## [20.10.1] - 2020-10-15
 
 ### Added
 
@@ -46,6 +46,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
     - experiments, runners, callbacks grouped by primitives under `catalyst.experiments`/`catalyst.runners`/`catalyst.callbacks` respectively
     - settings and typing moved from `catalyst.tools.*` to `catalyst.*`
     - utils moved from `catalyst.*.utils` to `catalyst.utils`
+- swa moved to `catalyst.utils` ([#963](https://github.com/catalyst-team/catalyst/pull/963))
 
 ### Removed
 
@@ -56,6 +57,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `AMPOptimizerCallback` - fix grad clip fn support ([#948](https://github.com/catalyst-team/catalyst/pull/948))
 - removed deprecated docs types ([#947](https://github.com/catalyst-team/catalyst/pull/947)) ([#952](https://github.com/catalyst-team/catalyst/pull/952))
 - docs for a few files ([#952](https://github.com/catalyst-team/catalyst/pull/952))
+- extra backward compatibility fixes ([#963](https://github.com/catalyst-team/catalyst/pull/963))
 
 
 ## [20.09.1] - 2020-09-25
