@@ -4,20 +4,20 @@ from pathlib import Path
 
 import torch
 
-from catalyst.dl.utils.swa import generate_averaged_weights
+from catalyst.utils.swa import get_averaged_weights_by_path_mask
 
 
 def build_args(parser: ArgumentParser):
     """Builds the command line parameters."""
     parser.add_argument(
-        "--logdir", type=Path, default=None, help="Path to models logdir"
-    )
-    parser.add_argument(
-        "--models-mask",
+        "--model-mask",
         "-m",
         type=str,
         default="*.pth",
         help="Pattern for models to average",
+    )
+    parser.add_argument(
+        "--logdir", type=Path, default=None, help="Path to experiment logdir"
     )
     parser.add_argument(
         "--output-path",
@@ -43,7 +43,9 @@ def main(args, _):
     models_mask: str = args.models_mask
     output_path: Path = args.output_path
 
-    averaged_weights = generate_averaged_weights(logdir, models_mask)
+    averaged_weights = get_averaged_weights_by_path_mask(
+        path_mask=models_mask, logdir=logdir
+    )
 
     torch.save(averaged_weights, str(output_path))
 

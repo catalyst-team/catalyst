@@ -75,6 +75,10 @@ from catalyst.utils.scripts import (
     distributed_cmd_run,
 )
 from catalyst.utils.seed import set_global_seed
+from catalyst.utils.swa import (
+    average_weights,
+    get_averaged_weights_by_path_mask,
+)
 from catalyst.utils.sys import (
     get_environment_vars,
     list_conda_packages,

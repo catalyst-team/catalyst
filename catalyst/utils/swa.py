@@ -9,6 +9,22 @@ import torch
 from catalyst.utils.checkpoint import load_checkpoint
 
 
+def _load_weights(path: str) -> dict:
+    """
+    Load weights of a model.
+
+    Args:
+        path: Path to model weights
+
+    Returns:
+        Weights
+    """
+    weights = load_checkpoint(path)
+    if "model_state_dict" in weights:
+        weights = weights["model_state_dict"]
+    return weights
+
+
 def average_weights(state_dicts: List[dict]) -> OrderedDict:
     """
     Averaging of input weights.
@@ -43,43 +59,30 @@ def average_weights(state_dicts: List[dict]) -> OrderedDict:
     return average_dict
 
 
-def load_weight(path: str) -> dict:
-    """
-    Load weights of a model.
-
-    Args:
-        path: Path to model weights
-
-    Returns:
-        Weights
-    """
-    weights = load_checkpoint(path)
-    if "model_state_dict" in weights:
-        weights = weights["model_state_dict"]
-    return weights
-
-
-def generate_averaged_weights(
-    logdir: Union[str, Path], models_mask: str
+def get_averaged_weights_by_path_mask(
+    path_mask: str, logdir: Union[str, Path] = None,
 ) -> OrderedDict:
     """
     Averaging of input weights and saving them.
 
     Args:
+        path_mask: globe-like pattern for models to average
         logdir: Path to logs directory
-        models_mask: globe-like pattern for models to average
 
     Returns:
         Averaged weights
     """
     if logdir is None:
-        models_pathes = glob.glob(models_mask)
+        models_pathes = glob.glob(path_mask)
     else:
         models_pathes = glob.glob(
-            os.path.join(logdir, "checkpoints", models_mask)
+            os.path.join(logdir, "checkpoints", path_mask)
         )
 
-    all_weights = [load_weight(path) for path in models_pathes]
+    all_weights = [_load_weights(path) for path in models_pathes]
     averaged_dict = average_weights(all_weights)
 
     return averaged_dict
+
+
+__all__ = ["average_weights", "get_averaged_weights_by_path_mask"]

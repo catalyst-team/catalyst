@@ -6,8 +6,8 @@ import unittest
 import torch
 import torch.nn as nn
 
-from catalyst.dl.utils.swa import generate_averaged_weights
 from catalyst.utils.checkpoint import load_checkpoint
+from catalyst.utils.swa import get_averaged_weights_by_path_mask
 
 
 class Net(nn.Module):
@@ -38,8 +38,8 @@ class TestSwa(unittest.TestCase):
 
     def test_averaging(self):
         """Test SWA method."""
-        weights = generate_averaged_weights(
-            logdir=Path("./"), models_mask="net*"
+        weights = get_averaged_weights_by_path_mask(
+            logdir=Path("./"), path_mask="net*"
         )
         torch.save(weights, str("./checkpoints/swa_weights.pth"))
         model = Net()
