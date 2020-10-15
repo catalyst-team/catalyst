@@ -11,10 +11,12 @@ def build_args(parser: ArgumentParser):
     """Builds the command line parameters."""
     parser.add_argument(
         "--model-mask",
+        "--models-mask",
         "-m",
         type=str,
         default="*.pth",
         help="Pattern for models to average",
+        dest="models_mask",
     )
     parser.add_argument(
         "--logdir", type=Path, default=None, help="Path to experiment logdir"
