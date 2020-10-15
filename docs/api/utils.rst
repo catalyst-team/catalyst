@@ -120,7 +120,7 @@ Seed
     :show-inheritance:
 
 Stochastic Weights Averaging (SWA)
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.swa
     :members:
     :undoc-members:
