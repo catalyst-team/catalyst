@@ -88,8 +88,9 @@ def get_binary_statistics(
     Args:
         outputs: estimated targets as predicted by a model
             with shape [bs; ..., 1]
-        targets: sround truth (correct) target values
+        targets: ground truth (correct) target values
             with shape [bs; ..., 1]
+        label: integer, that specifies label of interest for statistics compute
 
     Returns:
         Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]: stats
@@ -126,6 +127,9 @@ def get_multiclass_statistics(
             with shape [bs; ..., (num_classes or 1)]
         targets: ground truth (correct) target values
             with shape [bs; ..., 1]
+        argmax_dim: int, that specifies dimention for argmax transformation
+            in case of scores/probabilites in ``outputs``
+        num_classes: int, that specifies number of classes if it known
 
     Returns:
         Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]: stats
@@ -227,15 +231,17 @@ def get_multilabel_statistics(
     support = torch.zeros((num_classes,), device=outputs.device)
 
     for class_index in range(num_classes):
-        outputs_ = outputs[..., class_index]
-        targets_ = targets[..., class_index]
+        class_outputs = outputs[..., class_index]
+        class_targets = targets[..., class_index]
         (
             tn[class_index],
             fp[class_index],
             fn[class_index],
             tp[class_index],
             support[class_index],
-        ) = get_binary_statistics(outputs=outputs_, targets=targets_, label=1)
+        ) = get_binary_statistics(
+            outputs=class_outputs, targets=class_targets, label=1
+        )
 
     return tn, fp, fn, tp, support
 
@@ -355,6 +361,7 @@ __all__ = [
     "get_binary_statistics",
     "get_multiclass_statistics",
     "get_multilabel_statistics",
+    "get_default_topk_args",
     "wrap_topk_metric2dict",
     "wrap_class_metric2dict",
 ]
