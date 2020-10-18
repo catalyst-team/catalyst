@@ -14,10 +14,10 @@ from catalyst.metrics.functional import (
     [
         "outputs",
         "targets",
-        "tp_true",
-        "fp_true",
         "tn_true",
+        "fp_true",
         "fn_true",
+        "tp_true",
         "support_true",
     ],
     [

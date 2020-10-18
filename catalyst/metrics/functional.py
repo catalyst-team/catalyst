@@ -147,7 +147,9 @@ def get_multiclass_statistics(
     if outputs.dim() == targets.dim() + 1:
         # looks like we have scores/probabilities in our outputs
         # let's convert them to final model predictions
-        num_classes = outputs.shape[argmax_dim]
+        num_classes = max(
+            outputs.shape[argmax_dim], int(targets.max().detach().item() + 1)
+        )
         outputs = torch.argmax(outputs, dim=argmax_dim)
     if num_classes is None:
         # as far as we expect the outputs/targets tensors to be int64

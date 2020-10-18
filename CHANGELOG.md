@@ -9,15 +9,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- 
+- extra functions for classification metrics ([#966](https://github.com/catalyst-team/catalyst/pull/966))
 
 ### Changed
 
-- 
+- update Catalyst version to `20.10.1` for tutorials ([#967](https://github.com/catalyst-team/catalyst/pull/967))
+- added link to dl-course ([#967](https://github.com/catalyst-team/catalyst/pull/967))
 
 ### Removed
 
-- 
+- several deprecated tutorials ([#967](https://github.com/catalyst-team/catalyst/pull/967))
 
 ### Fixed
 
