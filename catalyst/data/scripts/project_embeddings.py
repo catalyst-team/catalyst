@@ -10,7 +10,7 @@ import pandas as pd
 import torch
 
 from catalyst.contrib.tools.tensorboard import SummaryWriter
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
 
 logger = logging.getLogger(__name__)
 
@@ -103,7 +103,7 @@ def _load_image_data(rootpath: str, paths: List):
         img_data = torch.from_numpy(img_data)
 
     except ImportError as ex:
-        if settings.cv_required:
+        if SETTINGS.cv_required:
             logger.warning(
                 "some of catalyst-cv dependencies are not available,"
                 + " to install dependencies, run `pip install catalyst[cv]`."

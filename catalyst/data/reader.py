@@ -3,7 +3,7 @@ import functools
 
 import numpy as np
 
-from catalyst.utils import get_one_hot
+from catalyst.utils.numpy import get_one_hot
 
 
 class ReaderSpec:

@@ -54,10 +54,9 @@ import os
 import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from catalyst import dl
+from catalyst import dl, metrics
 from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
-from catalyst.utils import metrics
 
 model = torch.nn.Linear(28 * 28, 10)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
@@ -307,10 +306,9 @@ import os
 import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from catalyst import dl
+from catalyst import dl, metrics
 from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
-from catalyst.utils import metrics
 
 model = torch.nn.Linear(28 * 28, 10)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
@@ -361,10 +359,9 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from catalyst import dl
+from catalyst import dl, metrics
 from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
-from catalyst.utils import metrics
 
 class ClassifyAE(nn.Module):
 
@@ -435,10 +432,9 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from catalyst import dl
+from catalyst import dl, metrics
 from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
-from catalyst.utils import metrics
 
 LOG_SCALE_MAX = 2
 LOG_SCALE_MIN = -10
@@ -526,10 +522,9 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from catalyst import dl
+from catalyst import dl, metrics
 from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
-from catalyst.utils import metrics
 
 class ClassifyUnet(nn.Module):
 
@@ -611,8 +606,8 @@ import catalyst.data.cv.transforms.torch as t
 dataset_root = "."
 transforms = t.Compose([t.ToTensor(), t.Normalize((0.1307,), (0.3081,))])
 
-dataset_train = datasets.MnistMLDataset(root=dataset_root, train=True, download=True, transform=transforms)
-sampler = data.BalanceBatchSampler(labels=dataset_train.get_labels(), p=10, k=10)
+dataset_train = datasets.MnistMLDataset(root=dataset_root, download=True, transform=transforms)
+sampler = data.BalanceBatchSampler(labels=dataset_train.get_labels(), p=5, k=10)
 train_loader = DataLoader(dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size)
 
 dataset_val = datasets.MnistQGDataset(root=dataset_root, transform=transforms, gallery_fraq=0.2)
@@ -908,10 +903,9 @@ import os
 import torch
 from torch import nn
 from torch.nn import functional as F
-from catalyst import dl, utils
+from catalyst import dl, metrics, utils
 from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
-from catalyst.utils import metrics
 
 class ClassifyAE(nn.Module):
 
@@ -1095,16 +1089,18 @@ print(study.best_value, study.best_params)
 
 
 ### Structure
-- **core** - framework core with main abstractions - 
-    Experiment, Runner and Callback.
+- **callbacks** - a variety of callbacks for your train-loop customization.
+- **contrib** - additional modules contributed by Catalyst users.
+- **core** - framework core with main abstractions - Experiment, Runner and Callback.
 - **data** - useful tools and scripts for data processing.
-- **dl** – runner for training and inference,
-   all of the classic ML and CV/NLP/RecSys metrics
-   and a variety of callbacks for training, validation
-   and inference of neural networks.
+- **dl** - entrypoint for your deep learning experiments.
+- **experiments** - a number of useful experiments extensions for Notebook and Config API.
+- **metrics** – classic ML and CV/NLP/RecSys metrics.
+- **registry** - Catalyst global registry for Config API.
+- **runners** - runners extensions for different deep learning tasks.
 - **tools** - extra tools for Deep Learning research, class-based helpers.   
 - **utils** - typical utils for Deep Learning research, function-based helpers.
-- **contrib** - additional modules contributed by Catalyst users.
+
 
 
 ### Tests
@@ -1146,6 +1142,7 @@ best practices for your deep learning research.
 ### Docs
 
 - [master](https://catalyst-team.github.io/catalyst/)
+- [20.10](https://catalyst-team.github.io/catalyst/v20.10/index.html)
 - [20.09](https://catalyst-team.github.io/catalyst/v20.09/index.html)
 - [20.08.2](https://catalyst-team.github.io/catalyst/v20.08.2/index.html)
 - [20.07](https://catalyst-team.github.io/catalyst/v20.07/index.html) - [dev blog: 20.07 release](https://medium.com/pytorch/catalyst-dev-blog-20-07-release-fb489cd23e14?source=friends_link&sk=7ab92169658fe9a9e1c44068f28cc36c)

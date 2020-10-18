@@ -23,10 +23,8 @@ def convert_labels2list(labels: Union[Tensor, List[int]]) -> List[int]:
             labels.dtype in [short, tint, long]
         ), "Labels cannot be interpreted as indices."
         labels_list = labels.tolist()
-
     elif isinstance(labels, list):
         labels_list = labels.copy()
-
     else:
         raise TypeError(f"Unexpected type of labels: {type(labels)}).")
 

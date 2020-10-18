@@ -5,10 +5,9 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from catalyst import dl, utils
+from catalyst import dl, metrics, utils
 from catalyst.contrib.datasets import MNIST
 from catalyst.data.cv import ToTensor
-from catalyst.utils import metrics
 
 
 class ClassifyAE(nn.Module):
