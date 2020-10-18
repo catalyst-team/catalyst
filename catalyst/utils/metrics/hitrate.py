@@ -4,10 +4,8 @@ Hitrate metric:
 """
 import torch
 
-def hitrate(
-    outputs: torch.Tensor,
-    targets: torch.Tensor
-):
+
+def hitrate(outputs: torch.Tensor, targets: torch.Tensor):
     """
     Calculate the hit rate score given model outputs and targets
     Args:

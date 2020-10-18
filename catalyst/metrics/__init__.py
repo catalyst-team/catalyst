@@ -1,5 +1,6 @@
 # flake8: noqa
 from catalyst.metrics.accuracy import accuracy, multi_label_accuracy
+from catalyst.metrics.average_precision import average_precision
 from catalyst.metrics.auc import auc
 from catalyst.metrics.cmc_score import cmc_score, cmc_score_count
 from catalyst.metrics.dice import dice, calculate_dice
