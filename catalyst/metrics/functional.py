@@ -5,43 +5,18 @@ import torch
 from torch import Tensor
 from torch.nn import functional as F
 
-
-def get_binary_statistics(
-    predictions: Tensor, targets: Tensor
-) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
-    """
-    Computes the number of true positive, false positive, true negative,
-    false negative and support for a binary classification problem.
-
-    Args:
-        predictions: Estimated targets as predicted by a model.
-        targets: Ground truth (correct) target values.
-
-    Returns:
-        Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]: stats
-    """
-    true_positive = ((predictions == 1) * (targets == 1)).to(torch.long).sum()
-    false_positive = ((predictions == 1) * (targets != 1)).to(torch.long).sum()
-    true_negative = ((predictions != 1) * (targets != 1)).to(torch.long).sum()
-    false_negative = ((predictions != 1) * (targets == 1)).to(torch.long).sum()
-    support = (targets == 1).to(torch.long).sum()
-
-    return (
-        true_positive,
-        false_positive,
-        true_negative,
-        false_negative,
-        support,
-    )
+# @TODO:
+# after full classification metrics re-implementation, make a reference to
+# https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/metrics
+# as a baseline
 
 
-def preprocess_multi_label_metrics(
+def process_multilabel_components(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     weights: Optional[torch.Tensor] = None,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-    """
-    General preprocessing and check for multi-label-based metrics.
+    """General preprocessing for multi-label-based metrics.
 
     Args:
         outputs: NxK tensor that for each of the N examples
@@ -102,20 +77,184 @@ def preprocess_multi_label_metrics(
     return outputs, targets, weights
 
 
+def get_binary_statistics(
+    outputs: Tensor, targets: Tensor, label: int = 1,
+) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
+    """
+    Computes the number of true negative, false positive,
+    false negative, true negative and support
+    for a binary classification problem for a given label.
+
+    Args:
+        outputs: estimated targets as predicted by a model
+            with shape [bs; ..., 1]
+        targets: sround truth (correct) target values
+            with shape [bs; ..., 1]
+
+    Returns:
+        Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]: stats
+
+    Example:
+
+        >>> y_pred = torch.tensor([[0, 0, 1, 1, 0, 1, 0, 1]])
+        >>> y_true = torch.tensor([[0, 1, 0, 1, 0, 0, 1, 1]])
+        >>> tn, fp, fn, tp, support = get_binary_statistics(y_pred, y_true)
+        tensor(2) tensor(2) tensor(2) tensor(2) tensor(4)
+
+    """
+    tn = ((outputs != label) * (targets != label)).to(torch.long).sum()
+    fp = ((outputs == label) * (targets != label)).to(torch.long).sum()
+    fn = ((outputs != label) * (targets == label)).to(torch.long).sum()
+    tp = ((outputs == label) * (targets == label)).to(torch.long).sum()
+    support = (targets == label).to(torch.long).sum()
+    return tn, fp, fn, tp, support
+
+
+def get_multiclass_statistics(
+    outputs: Tensor,
+    targets: Tensor,
+    argmax_dim: int = -1,
+    num_classes: Optional[int] = None,
+) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
+    """
+    Computes the number of true negative, false positive,
+    false negative, true negative and support
+    for a multi-class classification problem.
+
+    Args:
+        outputs: estimated targets as predicted by a model
+            with shape [bs; ..., (num_classes or 1)]
+        targets: ground truth (correct) target values
+            with shape [bs; ..., 1]
+
+    Returns:
+        Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]: stats
+
+    Example:
+
+        >>> y_pred = torch.tensor([1, 2, 3, 0])
+        >>> y_true = torch.tensor([1, 3, 4, 0])
+        >>> tn, fp, fn, tp, support = get_multiclass_statistics(y_pred, y_true)
+        tensor([3., 3., 3., 2., 3.]), tensor([0., 0., 1., 1., 0.]),
+        tensor([0., 0., 0., 1., 1.]), tensor([1., 1., 0., 0., 0.]),
+        tensor([1., 1., 0., 1., 1.])
+    """
+    # @TODO: move to process_multiclass_components ?
+    if outputs.dim() == targets.dim() + 1:
+        # looks like we have scores/probabilities in our outputs
+        # let's convert them to final model predictions
+        num_classes = outputs.shape[argmax_dim]
+        outputs = torch.argmax(outputs, dim=argmax_dim)
+    if num_classes is None:
+        # as far as we expect the outputs/targets tensors to be int64
+        # we could find number of classes as max available number
+        num_classes = max(
+            int(outputs.max().detach().item() + 1),
+            int(targets.max().detach().item() + 1),
+        )
+
+    tn = torch.zeros((num_classes,), device=outputs.device)
+    fp = torch.zeros((num_classes,), device=outputs.device)
+    fn = torch.zeros((num_classes,), device=outputs.device)
+    tp = torch.zeros((num_classes,), device=outputs.device)
+    support = torch.zeros((num_classes,), device=outputs.device)
+
+    for class_index in range(num_classes):
+        (
+            tn[class_index],
+            fp[class_index],
+            fn[class_index],
+            tp[class_index],
+            support[class_index],
+        ) = get_binary_statistics(
+            outputs=outputs, targets=targets, label=class_index
+        )
+
+    return tn, fp, fn, tp, support
+
+
+def get_multilabel_statistics(
+    outputs: Tensor, targets: Tensor,
+) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
+    """
+    Computes the number of true negative, false positive,
+    false negative, true negative and support
+    for a multi-label classification problem.
+
+    Args:
+        outputs: estimated targets as predicted by a model
+            with shape [bs; ..., (num_classes or 1)]
+        targets: ground truth (correct) target values
+            with shape [bs; ..., 1]
+
+    Returns:
+        Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]: stats
+
+    Example:
+
+        >>> y_pred = torch.tensor([[0, 0, 1, 1], [0, 1, 0, 1]])
+        >>> y_true = torch.tensor([[0, 1, 0, 1], [0, 0, 1, 1]])
+        >>> tn, fp, fn, tp, support = get_multilabel_statistics(y_pred, y_true)
+        tensor([2., 0., 0., 0.]) tensor([0., 1., 1., 0.]),
+        tensor([0., 1., 1., 0.]) tensor([0., 0., 0., 2.]),
+        tensor([0., 1., 1., 2.])
+
+        >>> y_pred = torch.tensor([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+        >>> y_true = torch.tensor([0, 1, 2])
+        >>> tn, fp, fn, tp, support = get_multilabel_statistics(y_pred, y_true)
+        tensor([2., 2., 2.]) tensor([0., 0., 0.])
+        tensor([0., 0., 0.]) tensor([1., 1., 1.])
+        tensor([1., 1., 1.])
+
+        >>> y_pred = torch.tensor([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+        >>> y_true = torch.nn.functional.one_hot(torch.tensor([0, 1, 2]))
+        >>> tn, fp, fn, tp, support = get_multilabel_statistics(y_pred, y_true)
+        tensor([2., 2., 2.]) tensor([0., 0., 0.])
+        tensor([0., 0., 0.]) tensor([1., 1., 1.])
+        tensor([1., 1., 1.])
+
+    """
+    outputs, targets, _ = process_multilabel_components(
+        outputs=outputs, targets=targets
+    )
+    assert outputs.shape == targets.shape
+    num_classes = outputs.shape[-1]
+
+    tn = torch.zeros((num_classes,), device=outputs.device)
+    fp = torch.zeros((num_classes,), device=outputs.device)
+    fn = torch.zeros((num_classes,), device=outputs.device)
+    tp = torch.zeros((num_classes,), device=outputs.device)
+    support = torch.zeros((num_classes,), device=outputs.device)
+
+    for class_index in range(num_classes):
+        outputs_ = outputs[..., class_index]
+        targets_ = targets[..., class_index]
+        (
+            tn[class_index],
+            fp[class_index],
+            fn[class_index],
+            tp[class_index],
+            support[class_index],
+        ) = get_binary_statistics(outputs=outputs_, targets=targets_, label=1)
+
+    return tn, fp, fn, tp, support
+
+
 def get_default_topk_args(num_classes: int) -> Sequence[int]:
     """Calculate list params for ``Accuracy@k`` and ``mAP@k``.
-
-    Examples:
-        >>> get_default_topk_args(num_classes=4)
-        >>> [1, 3]
-        >>> get_default_topk_args(num_classes=8)
-        >>> [1, 3, 5]
 
     Args:
         num_classes: number of classes
 
     Returns:
         iterable: array of accuracy arguments
+
+    Examples:
+        >>> get_default_topk_args(num_classes=4)
+        [1, 3]
+
+        >>> get_default_topk_args(num_classes=8)
+        [1, 3, 5]
     """
     result = [1]
 
@@ -212,7 +351,10 @@ def wrap_topk_metric2dict(
 
 
 __all__ = [
+    "process_multilabel_components",
     "get_binary_statistics",
+    "get_multiclass_statistics",
+    "get_multilabel_statistics",
     "wrap_topk_metric2dict",
     "wrap_class_metric2dict",
 ]

@@ -9,7 +9,7 @@ import numpy as np
 
 import torch
 
-from catalyst.metrics.functional import preprocess_multi_label_metrics
+from catalyst.metrics.functional import process_multilabel_components
 from catalyst.utils.torch import get_activation_fn
 
 
@@ -78,7 +78,7 @@ def multi_label_accuracy(
     Returns:
         computed multi-label accuracy
     """
-    outputs, targets, _ = preprocess_multi_label_metrics(
+    outputs, targets, _ = process_multilabel_components(
         outputs=outputs, targets=targets
     )
     activation_fn = get_activation_fn(activation)
