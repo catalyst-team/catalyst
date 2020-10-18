@@ -108,14 +108,16 @@ traced_model = runner.trace(loader=loaders["valid"])
 
 ### Step by step guide
 1. Start with [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff) introduction.
-2. Check [minimal examples](#minimal-examples).
-3. Try [notebook tutorials with Google Colab](#tutorials).
-4. Read [blogposts](#blogposts) with use-cases and guides (and Config API intro).
-5. Go through advanced  [classification](https://github.com/catalyst-team/classification), [detection](https://github.com/catalyst-team/detection) and [segmentation](https://github.com/catalyst-team/segmentation) pipelines with Config API. More pipelines available under [projects section](#projects). 
-6. Want more? See [Alchemy](https://github.com/catalyst-team/alchemy) and [Reaction](https://github.com/catalyst-team/reaction) packages.
-7. For Catalyst.RL introduction, please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
-8. If you would like to contribute to the project, follow our [contribution guidelines](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md). 
-If you want to support the project, feel free to donate on [patreon page](https://patreon.com/catalyst_team) or [write us]((#user-feedback)) with your proposals.
+1. Check [minimal examples](#minimal-examples).
+1. Try [notebook tutorials with Google Colab](#tutorials).
+1. Read [blogposts](#blogposts) with use-cases and guides.
+1. Learn machine learning with our ["Deep Learning with Catalyst" course](https://github.com/catalyst-team/dl-course).
+1. Or go directly to advanced  [classification](https://github.com/catalyst-team/classification), [detection](https://github.com/catalyst-team/detection) or [segmentation](https://github.com/catalyst-team/segmentation) pipelines with Config API. 
+1. Want more? See [Alchemy](https://github.com/catalyst-team/alchemy) and [Reaction](https://github.com/catalyst-team/reaction) packages.
+1. RL fan? Please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
+1. If you would like to contribute to the project, follow our [contribution guidelines](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md). 
+1. If you want to support the project, feel free to donate on [patreon page](https://patreon.com/catalyst_team) or [write us]((#user-feedback)) with your proposals.
+1. **Finally, do not forget to [join our slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for collaboration**.
 
 
 ## Table of Contents
