@@ -60,5 +60,4 @@ def test_avg_precision():
     average_precision = metrics.avg_precision(y_pred_torch, y_true_torch, k=3)
 
     #TO-DO: discuss better assertions
-    # assert np.around(average_precision[0]) == 0.39
-    # assert np.around(average_precision[1]) == 0.11
+    assert np.allclose([average_precision[0], 0.39], [average_precision[1], 0.11], atol=0.3)
