@@ -107,7 +107,8 @@ traced_model = runner.trace(loader=loaders["valid"])
 ```
 
 ### Step by step guide
-1. Start with [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff) introduction.
+1. Start with [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff) introduction. 
+1. Go through [Kittylyst](https://github.com/Scitator/kittylyst) if you would like to dive into the core design concepts of the framework.
 1. Check [minimal examples](#minimal-examples).
 1. Try [notebook tutorials with Google Colab](#tutorials).
 1. Read [blogposts](#blogposts) with use-cases and guides.
