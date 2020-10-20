@@ -6,6 +6,10 @@ from catalyst.metrics.dice import dice, calculate_dice
 from catalyst.metrics.f1_score import f1_score
 from catalyst.metrics.focal import sigmoid_focal_loss, reduced_focal_loss
 from catalyst.metrics.functional import (
+    process_multilabel_components,
+    get_binary_statistics,
+    get_multiclass_statistics,
+    get_multilabel_statistics,
     get_default_topk_args,
     wrap_class_metric2dict,
     wrap_topk_metric2dict,
