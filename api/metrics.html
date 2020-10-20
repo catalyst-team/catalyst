@@ -687,15 +687,43 @@ with average precision for K classes</p>
 <div class="section" id="module-catalyst.metrics.functional">
 <span id="functional"></span><h2><a class="toc-backref" href="#id10">Functional</a><a class="headerlink" href="#module-catalyst.metrics.functional" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="catalyst.metrics.functional.get_binary_statistics">
-<code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">get_binary_statistics</code><span class="sig-paren">(</span><em class="sig-param">predictions: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/functional.html#get_binary_statistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.get_binary_statistics" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the number of true positive, false positive, true negative,
-false negative and support for a binary classification problem.</p>
+<dt id="catalyst.metrics.functional.process_multilabel_components">
+<code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">process_multilabel_components</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">weights: Optional[torch.Tensor] = None</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/functional.html#process_multilabel_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.process_multilabel_components" title="Permalink to this definition">¶</a></dt>
+<dd><p>General preprocessing for multi-label-based metrics.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>predictions</strong> – Estimated targets as predicted by a model.</p></li>
-<li><p><strong>targets</strong> – Ground truth (correct) target values.</p></li>
+<li><p><strong>outputs</strong> – NxK tensor that for each of the N examples
+indicates the probability of the example belonging to each of
+the K classes, according to the model.</p></li>
+<li><p><strong>targets</strong> – binary NxK tensor that encodes which of the K
+classes are associated with the N-th input
+(eg: a row [0, 1, 0, 1] indicates that the example is
+associated with classes 2 and 4)</p></li>
+<li><p><strong>weights</strong> – importance for each sample</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>processed <code class="docutils literal notranslate"><span class="pre">outputs</span></code> and <code class="docutils literal notranslate"><span class="pre">targets</span></code>
+with [batch_size; num_classes] shape</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.metrics.functional.get_binary_statistics">
+<code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">get_binary_statistics</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">label: int = 1</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/functional.html#get_binary_statistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.get_binary_statistics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the number of true negative, false positive,
+false negative, true negative and support
+for a binary classification problem for a given label.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> – estimated targets as predicted by a model
+with shape [bs; …, 1]</p></li>
+<li><p><strong>targets</strong> – ground truth (correct) target values
+with shape [bs; …, 1]</p></li>
+<li><p><strong>label</strong> – integer, that specifies label of interest for statistics compute</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -705,6 +733,124 @@ false negative and support for a binary classification problem.</p>
 <dd class="field-odd"><p>Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]</p>
 </dd>
 </dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="n">get_binary_statistics</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true</span><span class="p">)</span>
+<span class="go">tensor(2) tensor(2) tensor(2) tensor(2) tensor(4)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.metrics.functional.get_multiclass_statistics">
+<code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">get_multiclass_statistics</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">argmax_dim: int = -1</em>, <em class="sig-param">num_classes: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/functional.html#get_multiclass_statistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.get_multiclass_statistics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the number of true negative, false positive,
+false negative, true negative and support
+for a multi-class classification problem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> – estimated targets as predicted by a model
+with shape [bs; …, (num_classes or 1)]</p></li>
+<li><p><strong>targets</strong> – ground truth (correct) target values
+with shape [bs; …, 1]</p></li>
+<li><p><strong>argmax_dim</strong> – int, that specifies dimention for argmax transformation
+in case of scores/probabilites in <code class="docutils literal notranslate"><span class="pre">outputs</span></code></p></li>
+<li><p><strong>num_classes</strong> – int, that specifies number of classes if it known</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>stats</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="n">get_multiclass_statistics</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true</span><span class="p">)</span>
+<span class="go">tensor([3., 3., 3., 2., 3.]), tensor([0., 0., 1., 1., 0.]),</span>
+<span class="go">tensor([0., 0., 0., 1., 1.]), tensor([1., 1., 0., 0., 0.]),</span>
+<span class="go">tensor([1., 1., 0., 1., 1.])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.metrics.functional.get_multilabel_statistics">
+<code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">get_multilabel_statistics</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/functional.html#get_multilabel_statistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.get_multilabel_statistics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the number of true negative, false positive,
+false negative, true negative and support
+for a multi-label classification problem.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> – estimated targets as predicted by a model
+with shape [bs; …, (num_classes or 1)]</p></li>
+<li><p><strong>targets</strong> – ground truth (correct) target values
+with shape [bs; …, 1]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>stats</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="n">get_multilabel_statistics</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true</span><span class="p">)</span>
+<span class="go">tensor([2., 0., 0., 0.]) tensor([0., 1., 1., 0.]),</span>
+<span class="go">tensor([0., 1., 1., 0.]) tensor([0., 0., 0., 2.]),</span>
+<span class="go">tensor([0., 1., 1., 2.])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="n">get_multilabel_statistics</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true</span><span class="p">)</span>
+<span class="go">tensor([2., 2., 2.]) tensor([0., 0., 0.])</span>
+<span class="go">tensor([0., 0., 0.]) tensor([1., 1., 1.])</span>
+<span class="go">tensor([1., 1., 1.])</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">one_hot</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="n">get_multilabel_statistics</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true</span><span class="p">)</span>
+<span class="go">tensor([2., 2., 2.]) tensor([0., 0., 0.])</span>
+<span class="go">tensor([0., 0., 0.]) tensor([1., 1., 1.])</span>
+<span class="go">tensor([1., 1., 1.])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.metrics.functional.get_default_topk_args">
+<code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">get_default_topk_args</code><span class="sig-paren">(</span><em class="sig-param">num_classes: int</em><span class="sig-paren">)</span> &#x2192; Sequence[int]<a class="reference internal" href="../_modules/catalyst/metrics/functional.html#get_default_topk_args"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.get_default_topk_args" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate list params for <code class="docutils literal notranslate"><span class="pre">Accuracy&#64;k</span></code> and <code class="docutils literal notranslate"><span class="pre">mAP&#64;k</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>num_classes</strong> – number of classes</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>array of accuracy arguments</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>iterable</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_default_topk_args</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">[1, 3]</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">get_default_topk_args</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+<span class="go">[1, 3, 5]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">

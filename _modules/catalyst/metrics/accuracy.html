@@ -276,7 +276,7 @@
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.metrics.functional</span> <span class="kn">import</span> <span class="n">preprocess_multi_label_metrics</span>
+<span class="kn">from</span> <span class="nn">catalyst.metrics.functional</span> <span class="kn">import</span> <span class="n">process_multilabel_components</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="n">get_activation_fn</span>
 
 
@@ -345,7 +345,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        computed multi-label accuracy</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">preprocess_multi_label_metrics</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">process_multilabel_components</span><span class="p">(</span>
         <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span>
     <span class="p">)</span>
     <span class="n">activation_fn</span> <span class="o">=</span> <span class="n">get_activation_fn</span><span class="p">(</span><span class="n">activation</span><span class="p">)</span>
