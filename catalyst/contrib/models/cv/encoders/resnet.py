@@ -36,12 +36,12 @@ class ResnetEncoder(nn.Module):
     ):
         """
         Args:
-            arch (str): Name for resnet. Have to be one of
+            arch: Name for resnet. Have to be one of
                 resnet18, resnet34, resnet50, resnet101, resnet152
-            pretrained (bool): If True, returns a model pre-trained on ImageNet
-            frozen (bool): If frozen, sets requires_grad to False
-            pooling (str): pooling
-            pooling_kwargs (dict): params for pooling
+            pretrained: If True, returns a model pre-trained on ImageNet
+            frozen: If frozen, sets requires_grad to False
+            pooling: pooling
+            pooling_kwargs: params for pooling
             state_dict (Union[dict, str, Path]): Path to ``torch.Model``
                 or a dict containing parameters and persistent buffers.
         """

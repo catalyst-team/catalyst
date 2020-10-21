@@ -23,13 +23,13 @@ class ABN(nn.Module):
     ):
         """
         Args:
-            num_features (int): number of feature channels
+            num_features: number of feature channels
                 in the input and output
-            activation (str): name of the activation functions, one of:
+            activation: name of the activation functions, one of:
                 ``'leaky_relu'``, ``'elu'`` or ``'none'``.
-            batchnorm_params (dict): additional ``nn.BatchNorm2d`` params
-            activation_params (dict): additional params for activation fucntion
-            use_batchnorm (bool): @TODO: Docs. Contribution is welcome
+            batchnorm_params: additional ``nn.BatchNorm2d`` params
+            activation_params: additional params for activation fucntion
+            use_batchnorm: @TODO: Docs. Contribution is welcome
         """
         super().__init__()
         batchnorm_params = batchnorm_params or {}

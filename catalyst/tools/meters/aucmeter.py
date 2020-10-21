@@ -43,8 +43,8 @@ class AUCMeter(meter.Meter):
         """Update stored scores and targets.
 
         Args:
-            output (Tensor): one-dimensional tensor `output`
-            target (Tensor): one-dimensional tensor `target`
+            output: one-dimensional tensor `output`
+            target: one-dimensional tensor `target`
         """
         if torch.is_tensor(output):
             output = output.cpu().squeeze().numpy()

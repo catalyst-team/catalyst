@@ -63,7 +63,7 @@ function check_line_counts {
 LOG_MSG='pipeline 01'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config30.yml \

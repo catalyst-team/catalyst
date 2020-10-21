@@ -4,7 +4,10 @@ import argparse
 from argparse import ArgumentParser
 from pathlib import Path
 
-from catalyst.dl.utils import save_traced_model, trace_model_from_checkpoint
+from catalyst.utils.tracing import (
+    save_traced_model,
+    trace_model_from_checkpoint,
+)
 
 
 def build_args(parser: ArgumentParser):

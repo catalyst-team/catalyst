@@ -51,9 +51,9 @@ class Registry(collections.MutableMapping):
     ):
         """
         Args:
-            default_name_key (str): Default key containing factory name when
+            default_name_key: Default key containing factory name when
                 creating from config
-            default_meta_factory (MetaFactory): default object
+            default_meta_factory: default object
                 that calls factory. Optional. Default just calls factory.
         """
         self.meta_factory = default_meta_factory

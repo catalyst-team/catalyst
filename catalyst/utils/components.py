@@ -5,14 +5,8 @@ import torch
 from torch import nn
 import torch.distributed
 
-from catalyst.tools.settings import IS_XLA_AVAILABLE
-from catalyst.tools.typing import (
-    Criterion,
-    Device,
-    Model,
-    Optimizer,
-    Scheduler,
-)
+from catalyst.settings import IS_XLA_AVAILABLE
+from catalyst.typing import Criterion, Device, Model, Optimizer, Scheduler
 from catalyst.utils.distributed import (
     check_amp_available,
     check_apex_available,
@@ -37,10 +31,10 @@ def process_components(
     Returns the processed model, criterion, optimizer, scheduler and device.
 
     Args:
-        model (Model): torch model
-        criterion (Criterion): criterion function
-        optimizer (Optimizer): optimizer
-        scheduler (Scheduler): scheduler
+        model: torch model
+        criterion: criterion function
+        optimizer: optimizer
+        scheduler: scheduler
         distributed_params (dict, optional): dict with the parameters
             for distributed and FP16 method
         device (Device, optional): device

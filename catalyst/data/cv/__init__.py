@@ -1,7 +1,7 @@
 # flake8: noqa
 import logging
 
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
 
 from catalyst.data.cv.transforms.torch import (
     Compose,
@@ -25,7 +25,7 @@ try:
     )
     from catalyst.data.cv.transforms.kornia import OneOf, OneOfV2
 except ImportError as ex:
-    if settings.cv_required:
+    if SETTINGS.cv_required:
         logger.warning(
             "some of catalyst-cv dependencies are not available,"
             " to install dependencies, run `pip install catalyst[cv]`."
