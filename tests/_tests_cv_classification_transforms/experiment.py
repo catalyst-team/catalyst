@@ -20,6 +20,7 @@ class MNIST(_MNIST):
             tuple: (image, target) where target is index of the target class
         """
         image, target = self.data[index], self.targets[index]
+        print("++++++++++++++++++++", type(image), type(target))
 
         if self.transform is not None:
             image = self.transform({"image": image})["image"]
