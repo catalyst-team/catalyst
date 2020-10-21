@@ -9,19 +9,19 @@ import torch
 from torch import nn
 
 
-class OneOf(nn.Module):
-    """Select one of tensor transforms and apply it batch-wise."""
+class OneOfPerBatch(nn.Module):
+    """Select one of tensor transforms and apply it batch-wise.
+
+    Args:
+        transforms: list of kornia transformations to compose.
+            Actually, any ``nn.Module`` with defined ``p``(probability
+            of selecting transform) and ``p_batch`` attributes is allowed.
+    """
 
     def __init__(
         self,
         transforms: Iterable[Union[AugmentationBase2D, AugmentationBase3D]],
     ) -> None:
-        """
-        Args:
-            transforms: list of kornia transformations to compose.
-                Actually, any ``nn.Module`` with defined ``p``(probability
-                of selecting transform) and ``p_batch`` attributes is allowed.
-        """
         super().__init__()
 
         probs = [transform.p for transform in transforms]
@@ -61,19 +61,19 @@ class OneOf(nn.Module):
         return output
 
 
-class OneOfV2(nn.Module):
-    """Select one of tensor transforms to apply sample-wise."""
+class OneOfPerSample(nn.Module):
+    """Select one of tensor transforms to apply sample-wise.
+
+    Args:
+        transforms: list of kornia transformations to compose.
+            Actually, any ``nn.Module`` with defined ``p``(probability
+            of selecting transform) and ``p_batch`` attributes is allowed.
+    """
 
     def __init__(
         self,
         transforms: Iterable[Union[AugmentationBase2D, AugmentationBase3D]],
     ) -> None:
-        """
-        Args:
-            transforms: list of kornia transformations to compose.
-                Actually, any ``nn.Module`` with defined ``p``(probability
-                of selecting transform) and ``p_batch`` attributes is allowed.
-        """
         super().__init__()
 
         probs = [transform.p for transform in transforms]
@@ -157,4 +157,4 @@ class OneOfV2(nn.Module):
         return transform_matrix
 
 
-__all__ = ["OneOf", "OneOfV2"]
+__all__ = ["OneOfPerBatch", "OneOfPerSample"]

@@ -23,7 +23,10 @@ try:
         TensorToImage,
         ImageToTensor,
     )
-    from catalyst.data.cv.transforms.kornia import OneOf, OneOfV2
+    from catalyst.data.cv.transforms.kornia import (
+        OneOfPerBatch,
+        OneOfPerSample,
+    )
 except ImportError as ex:
     if SETTINGS.cv_required:
         logger.warning(
