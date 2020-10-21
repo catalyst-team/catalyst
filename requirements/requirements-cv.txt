@@ -1,6 +1,6 @@
 albumentations>=0.4.3
 imageio
-git+https://github.com/kornia/kornia.git@b9ffe7efcba7399daeeb8028f10c22941b55d32d#egg=kornia
+kornia==0.4.1
 opencv-python-headless
 scikit-image>=0.14.2
 segmentation-models-pytorch>=0.1.0
