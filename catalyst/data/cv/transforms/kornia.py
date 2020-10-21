@@ -10,18 +10,19 @@ from torch import nn
 
 
 class OneOfPerBatch(nn.Module):
-    """Select one of tensor transforms and apply it batch-wise.
-
-    Args:
-        transforms: list of kornia transformations to compose.
-            Actually, any ``nn.Module`` with defined ``p``(probability
-            of selecting transform) and ``p_batch`` attributes is allowed.
-    """
+    """Select one of tensor transforms and apply it batch-wise."""
 
     def __init__(
         self,
         transforms: Iterable[Union[AugmentationBase2D, AugmentationBase3D]],
     ) -> None:
+        """Constructor method for the :class:`OneOfPerBatch` transform.
+
+        Args:
+            transforms: list of kornia transformations to compose.
+                Actually, any ``nn.Module`` with defined ``p``(probability
+                of selecting transform) and ``p_batch`` attributes is allowed.
+        """
         super().__init__()
 
         probs = [transform.p for transform in transforms]
@@ -62,18 +63,19 @@ class OneOfPerBatch(nn.Module):
 
 
 class OneOfPerSample(nn.Module):
-    """Select one of tensor transforms to apply sample-wise.
-
-    Args:
-        transforms: list of kornia transformations to compose.
-            Actually, any ``nn.Module`` with defined ``p``(probability
-            of selecting transform) and ``p_batch`` attributes is allowed.
-    """
+    """Select one of tensor transforms to apply sample-wise."""
 
     def __init__(
         self,
         transforms: Iterable[Union[AugmentationBase2D, AugmentationBase3D]],
     ) -> None:
+        """Constructor method for the :class:`OneOfPerSample` transform.
+
+        Args:
+            transforms: list of kornia transformations to compose.
+                Actually, any ``nn.Module`` with defined ``p``(probability
+                of selecting transform) and ``p_batch`` attributes is allowed.
+        """
         super().__init__()
 
         probs = [transform.p for transform in transforms]
