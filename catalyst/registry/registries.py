@@ -37,6 +37,10 @@ def _transforms_loader(r: Registry):
         from kornia import augmentation as k
 
         r.add_from_module(k, prefix=["kornia."])
+
+        from catalyst.data.cv.transforms import kornia as t
+
+        r.add_from_module(t, prefix=["catalyst.", "C."])
     except ImportError as ex:
         if SETTINGS.kornia_required:
             logger.warning(
