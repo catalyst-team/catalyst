@@ -367,16 +367,18 @@
 <li><p><a class="reference internal" href="#compose" id="id52">Compose</a></p></li>
 <li><p><a class="reference internal" href="#normalize" id="id53">Normalize</a></p></li>
 <li><p><a class="reference internal" href="#totensor" id="id54">ToTensor</a></p></li>
+<li><p><a class="reference internal" href="#oneofperbatch" id="id55">OneOfPerBatch</a></p></li>
+<li><p><a class="reference internal" href="#oneofpersample" id="id56">OneOfPerSample</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#module-catalyst.data.nlp" id="id55">Natural Language Processing Extensions</a></p>
+<li><p><a class="reference internal" href="#module-catalyst.data.nlp" id="id57">Natural Language Processing Extensions</a></p>
 <ul>
-<li><p><a class="reference internal" href="#datasets" id="id56">Datasets</a></p>
+<li><p><a class="reference internal" href="#datasets" id="id58">Datasets</a></p>
 <ul>
-<li><p><a class="reference internal" href="#languagemodelingdataset" id="id57">LanguageModelingDataset</a></p></li>
-<li><p><a class="reference internal" href="#textclassificationdataset" id="id58">TextClassificationDataset</a></p></li>
+<li><p><a class="reference internal" href="#languagemodelingdataset" id="id59">LanguageModelingDataset</a></p></li>
+<li><p><a class="reference internal" href="#textclassificationdataset" id="id60">TextClassificationDataset</a></p></li>
 </ul>
 </li>
 </ul>
@@ -1981,14 +1983,100 @@ In the other cases, tensors are returned without scaling.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="oneofperbatch">
+<h4><a class="toc-backref" href="#id55">OneOfPerBatch</a><a class="headerlink" href="#oneofperbatch" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="catalyst.data.cv.transforms.kornia.OneOfPerBatch">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.cv.transforms.kornia.</code><code class="sig-name descname">OneOfPerBatch</code><span class="sig-paren">(</span><em class="sig-param">transforms: Iterable[Union[kornia.augmentation.base.AugmentationBase2D, kornia.augmentation.base.AugmentationBase3D]]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/transforms/kornia.html#OneOfPerBatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.kornia.OneOfPerBatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Select one of tensor transforms and apply it batch-wise.</p>
+<dl class="method">
+<dt id="catalyst.data.cv.transforms.kornia.OneOfPerBatch.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">transforms: Iterable[Union[kornia.augmentation.base.AugmentationBase2D, kornia.augmentation.base.AugmentationBase3D]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/data/cv/transforms/kornia.html#OneOfPerBatch.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.kornia.OneOfPerBatch.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor method for the <a class="reference internal" href="#catalyst.data.cv.transforms.kornia.OneOfPerBatch" title="catalyst.data.cv.transforms.kornia.OneOfPerBatch"><code class="xref py py-class docutils literal notranslate"><span class="pre">OneOfPerBatch</span></code></a> transform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>transforms</strong> – list of kornia transformations to compose.
+Actually, any <code class="docutils literal notranslate"><span class="pre">nn.Module</span></code> with defined <code class="docutils literal notranslate"><span class="pre">p``(probability</span>
+<span class="pre">of</span> <span class="pre">selecting</span> <span class="pre">transform)</span> <span class="pre">and</span> <span class="pre">``p_batch</span></code> attributes is allowed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.data.cv.transforms.kornia.OneOfPerBatch.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]], params: Optional[Dict[str, torch.Tensor]] = None, return_transform: Optional[bool] = None</em><span class="sig-paren">)</span> &#x2192; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]<a class="reference internal" href="../_modules/catalyst/data/cv/transforms/kornia.html#OneOfPerBatch.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.kornia.OneOfPerBatch.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> – input batch</p></li>
+<li><p><strong>params</strong> – transform params, please check kornia documentation</p></li>
+<li><p><strong>return_transform</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code> return the matrix describing
+the geometric transformation applied to each input tensor,
+please check kornia documentation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>augmented batch and, optionally, the transformation matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="oneofpersample">
+<h4><a class="toc-backref" href="#id56">OneOfPerSample</a><a class="headerlink" href="#oneofpersample" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="catalyst.data.cv.transforms.kornia.OneOfPerSample">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.cv.transforms.kornia.</code><code class="sig-name descname">OneOfPerSample</code><span class="sig-paren">(</span><em class="sig-param">transforms: Iterable[Union[kornia.augmentation.base.AugmentationBase2D, kornia.augmentation.base.AugmentationBase3D]]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/transforms/kornia.html#OneOfPerSample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.kornia.OneOfPerSample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Select one of tensor transforms to apply sample-wise.</p>
+<dl class="method">
+<dt id="catalyst.data.cv.transforms.kornia.OneOfPerSample.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">transforms: Iterable[Union[kornia.augmentation.base.AugmentationBase2D, kornia.augmentation.base.AugmentationBase3D]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/data/cv/transforms/kornia.html#OneOfPerSample.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.kornia.OneOfPerSample.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor method for the <a class="reference internal" href="#catalyst.data.cv.transforms.kornia.OneOfPerSample" title="catalyst.data.cv.transforms.kornia.OneOfPerSample"><code class="xref py py-class docutils literal notranslate"><span class="pre">OneOfPerSample</span></code></a> transform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>transforms</strong> – list of kornia transformations to compose.
+Actually, any <code class="docutils literal notranslate"><span class="pre">nn.Module</span></code> with defined <code class="docutils literal notranslate"><span class="pre">p``(probability</span>
+<span class="pre">of</span> <span class="pre">selecting</span> <span class="pre">transform)</span> <span class="pre">and</span> <span class="pre">``p_batch</span></code> attributes is allowed.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.data.cv.transforms.kornia.OneOfPerSample.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]], params: Optional[Dict[str, torch.Tensor]] = None, return_transform: Optional[bool] = None</em><span class="sig-paren">)</span> &#x2192; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]<a class="reference internal" href="../_modules/catalyst/data/cv/transforms/kornia.html#OneOfPerSample.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.kornia.OneOfPerSample.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply transform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> – input batch</p></li>
+<li><p><strong>params</strong> – transform params, please check kornia documentation</p></li>
+<li><p><strong>return_transform</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code> return the matrix describing
+the geometric transformation applied to each input tensor,
+please check kornia documentation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>augmented batch and, optionally, the transformation matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 </div>
 <div class="section" id="module-catalyst.data.nlp">
-<span id="natural-language-processing-extensions"></span><h2><a class="toc-backref" href="#id55">Natural Language Processing Extensions</a><a class="headerlink" href="#module-catalyst.data.nlp" title="Permalink to this headline">¶</a></h2>
+<span id="natural-language-processing-extensions"></span><h2><a class="toc-backref" href="#id57">Natural Language Processing Extensions</a><a class="headerlink" href="#module-catalyst.data.nlp" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="datasets">
-<h3><a class="toc-backref" href="#id56">Datasets</a><a class="headerlink" href="#datasets" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id58">Datasets</a><a class="headerlink" href="#datasets" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="languagemodelingdataset">
-<h4><a class="toc-backref" href="#id57">LanguageModelingDataset</a><a class="headerlink" href="#languagemodelingdataset" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id59">LanguageModelingDataset</a><a class="headerlink" href="#languagemodelingdataset" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.data.nlp.dataset.language_modeling.LanguageModelingDataset">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.nlp.dataset.language_modeling.</code><code class="sig-name descname">LanguageModelingDataset</code><span class="sig-paren">(</span><em class="sig-param">texts: Iterable[str], tokenizer: Union[str, transformers.tokenization_utils.PreTrainedTokenizer], max_seq_length: int = None, sort: bool = True, lazy: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/nlp/dataset/language_modeling.html#LanguageModelingDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.nlp.dataset.language_modeling.LanguageModelingDataset" title="Permalink to this definition">¶</a></dt>
@@ -2020,7 +2108,7 @@ if set to true sorting is unavialible</p></li>
 
 </div>
 <div class="section" id="textclassificationdataset">
-<h4><a class="toc-backref" href="#id58">TextClassificationDataset</a><a class="headerlink" href="#textclassificationdataset" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id60">TextClassificationDataset</a><a class="headerlink" href="#textclassificationdataset" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.data.nlp.dataset.text_classification.TextClassificationDataset">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.nlp.dataset.text_classification.</code><code class="sig-name descname">TextClassificationDataset</code><span class="sig-paren">(</span><em class="sig-param">texts: List[str], labels: List[str] = None, label_dict: Mapping[str, int] = None, max_seq_length: int = 512, model_name: str = 'distilbert-base-uncased'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/nlp/dataset/text_classification.html#TextClassificationDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.nlp.dataset.text_classification.TextClassificationDataset" title="Permalink to this definition">¶</a></dt>
@@ -2169,6 +2257,8 @@ appropriate tokenization</p></li>
 <li><a class="reference internal" href="#compose">Compose</a></li>
 <li><a class="reference internal" href="#normalize">Normalize</a></li>
 <li><a class="reference internal" href="#totensor">ToTensor</a></li>
+<li><a class="reference internal" href="#oneofperbatch">OneOfPerBatch</a></li>
+<li><a class="reference internal" href="#oneofpersample">OneOfPerSample</a></li>
 </ul>
 </li>
 </ul>

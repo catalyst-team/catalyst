@@ -3382,7 +3382,7 @@ default is <cite>f1-score</cite>.</p></li>
 <span id="batchtransformcallback"></span><h3><a class="toc-backref" href="#id35">BatchTransformCallback</a><a class="headerlink" href="#module-catalyst.contrib.callbacks.kornia_transform" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.contrib.callbacks.kornia_transform.BatchTransformCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.callbacks.kornia_transform.</code><code class="sig-name descname">BatchTransformCallback</code><span class="sig-paren">(</span><em class="sig-param">transform: Sequence[Union[dict, kornia.augmentation.augmentation.AugmentationBase]], input_key: Union[str, int] = 'image', additional_input_key: Optional[str] = None, output_key: Union[str, int, None] = None, additional_output_key: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/callbacks/kornia_transform.html#BatchTransformCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.kornia_transform.BatchTransformCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.callbacks.kornia_transform.</code><code class="sig-name descname">BatchTransformCallback</code><span class="sig-paren">(</span><em class="sig-param">transform: Sequence[Union[dict, torch.nn.modules.module.Module]], input_key: Union[str, int] = 'image', additional_input_key: Optional[str] = None, output_key: Union[str, int, None] = None, additional_output_key: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/callbacks/kornia_transform.html#BatchTransformCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.kornia_transform.BatchTransformCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
 <p>Callback to perform data augmentations on GPU using kornia library.</p>
 <p>Look at <a class="reference external" href="https://arxiv.org/pdf/1910.02190.pdf">Kornia: an Open Source Differentiable Computer Vision
@@ -3485,16 +3485,17 @@ callback can be used. For config API it can look like this:</p>
 </div>
 <dl class="method">
 <dt id="catalyst.contrib.callbacks.kornia_transform.BatchTransformCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">transform: Sequence[Union[dict, kornia.augmentation.augmentation.AugmentationBase]], input_key: Union[str, int] = 'image', additional_input_key: Optional[str] = None, output_key: Union[str, int, None] = None, additional_output_key: Optional[str] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/contrib/callbacks/kornia_transform.html#BatchTransformCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.kornia_transform.BatchTransformCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">transform: Sequence[Union[dict, torch.nn.modules.module.Module]], input_key: Union[str, int] = 'image', additional_input_key: Optional[str] = None, output_key: Union[str, int, None] = None, additional_output_key: Optional[str] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/contrib/callbacks/kornia_transform.html#BatchTransformCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.kornia_transform.BatchTransformCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constructor method for the <a class="reference internal" href="#catalyst.contrib.callbacks.kornia_transform.BatchTransformCallback" title="catalyst.contrib.callbacks.kornia_transform.BatchTransformCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">BatchTransformCallback</span></code></a> callback.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>transform</strong> (<em>Sequence</em><em>[</em><em>Union</em><em>[</em><em>dict</em><em>, </em><em>AugmentationBase</em><em>]</em><em>]</em>) – <p>define
+<li><p><strong>transform</strong> (<em>Sequence</em><em>[</em><em>Union</em><em>[</em><em>dict</em><em>, </em><em>nn.Module</em><em>]</em><em>]</em>) – <p>define
 augmentations to apply on a batch</p>
 <p>If a sequence of transforms passed, then each element
-should be either <code class="docutils literal notranslate"><span class="pre">kornia.augmentation.AugmentationBase</span></code> or
-<code class="docutils literal notranslate"><span class="pre">nn.Module</span></code> compatible with kornia interface.</p>
+should be either <code class="docutils literal notranslate"><span class="pre">kornia.augmentation.AugmentationBase2D</span></code>,
+<code class="docutils literal notranslate"><span class="pre">kornia.augmentation.AugmentationBase3D</span></code>, or <code class="docutils literal notranslate"><span class="pre">nn.Module</span></code>
+compatible with kornia interface.</p>
 <p>If a sequence of params (<code class="docutils literal notranslate"><span class="pre">dict</span></code>) passed, then each
 element of the sequence must contain <code class="docutils literal notranslate"><span class="pre">'transform'</span></code> key with
 an augmentation name as a value. Please note that in this case

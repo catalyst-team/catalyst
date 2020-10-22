@@ -267,7 +267,6 @@
   <h1>Source code for catalyst.contrib.callbacks.kornia_transform</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">kornia.augmentation</span> <span class="kn">import</span> <span class="n">AugmentationBase</span>
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 
@@ -390,7 +389,7 @@
 
 <div class="viewcode-block" id="BatchTransformCallback.__init__"><a class="viewcode-back" href="../../../../api/callbacks.html#catalyst.contrib.callbacks.kornia_transform.BatchTransformCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">transform</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">AugmentationBase</span><span class="p">]],</span>
+        <span class="n">transform</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">]],</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span>
         <span class="n">additional_input_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">output_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -399,12 +398,13 @@
         <span class="sd">&quot;&quot;&quot;Constructor method for the :class:`BatchTransformCallback` callback.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            transform (Sequence[Union[dict, AugmentationBase]]): define</span>
+<span class="sd">            transform (Sequence[Union[dict, nn.Module]]): define</span>
 <span class="sd">                augmentations to apply on a batch</span>
 
 <span class="sd">                If a sequence of transforms passed, then each element</span>
-<span class="sd">                should be either ``kornia.augmentation.AugmentationBase`` or</span>
-<span class="sd">                ``nn.Module`` compatible with kornia interface.</span>
+<span class="sd">                should be either ``kornia.augmentation.AugmentationBase2D``,</span>
+<span class="sd">                ``kornia.augmentation.AugmentationBase3D``, or ``nn.Module``</span>
+<span class="sd">                compatible with kornia interface.</span>
 
 <span class="sd">                If a sequence of params (``dict``) passed, then each</span>
 <span class="sd">                element of the sequence must contain ``&#39;transform&#39;`` key with</span>
@@ -440,15 +440,15 @@
             <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_output_tensor</span>
         <span class="p">)</span>
 
-        <span class="n">transforms</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">AugmentationBase</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">transforms</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">item</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">AugmentationBase</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span>
             <span class="k">else</span> <span class="n">TRANSFORMS</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">transform</span>
         <span class="p">]</span>
         <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
-            <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">AugmentationBase</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">transforms</span>
-        <span class="p">),</span> <span class="s2">&quot;`kornia.AugmentationBase` should be a base class for transforms&quot;</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">transforms</span>
+        <span class="p">),</span> <span class="s2">&quot;`nn.Module` should be a base class for transforms&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">transforms</span><span class="p">)</span></div>
 
