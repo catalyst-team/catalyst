@@ -209,7 +209,7 @@ def get_multiclass_statistics(
         outputs=outputs,
         targets=targets,
         argmax_dim=argmax_dim,
-        num_classes=num_classes
+        num_classes=num_classes,
     )
 
     tn = torch.zeros((num_classes,), device=outputs.device)
