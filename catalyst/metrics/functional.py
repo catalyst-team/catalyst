@@ -31,9 +31,7 @@ def process_multiclass_components(
 
     Returns:
         preprocessed outputs, targets and num_classes
-
     """
-
     # @TODO: better multiclass preprocessing, label -> class_id mapping
     if not torch.is_tensor(outputs):
         outputs = torch.from_numpy(outputs)
