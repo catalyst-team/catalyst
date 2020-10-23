@@ -1,6 +1,8 @@
 from typing import Callable, Dict, Optional, Sequence, Tuple
 from functools import partial
 
+import numpy as np
+
 import torch
 from torch import Tensor
 from torch.nn import functional as F
@@ -11,10 +13,61 @@ from torch.nn import functional as F
 # as a baseline
 
 
-def process_multilabel_components(
+def map_labels_to_classes(
+    outputs: torch.Tensor, targets: torch.Tensor,
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    label_to_class = {}
+    keys = torch.sort(torch.unique(targets))
+    values = torch.arange(len(torch.unique(targets)))
+    for k, v in zip(keys, values):
+        label_to_class[k] = v
+
+    list_outputs = [label_to_class[label] for label in outputs.flatten()]
+    list_targets = [label_to_class[label] for label in targets.flatten()]
+    tensor_outputs = torch.from_numpy(np.array(list_outputs)).view(-1, 1)
+    tensor_targets = torch.from_numpy(np.array(list_targets)).view(-1, 1)
+
+    return tensor_outputs, tensor_targets
+
+
+def process_multiclass_components(
     outputs: torch.Tensor,
     targets: torch.Tensor,
-    weights: Optional[torch.Tensor] = None,
+    raise_class_labels_mismatch: Optional[bool] = False,
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    if not torch.is_tensor(outputs):
+        outputs = torch.from_numpy(outputs)
+    if not torch.is_tensor(targets):
+        targets = torch.from_numpy(targets)
+
+    if outputs.dim() == 1:
+        outputs = outputs.view(-1, 1)
+    else:
+        assert outputs.size(1) == 1 and outputs.dim() == 2, (
+            "Wrong `outputs` shape, "
+            "expected 1D or 2D with size 1 in the second dim"
+        )
+
+    if targets.dim() == 1:
+        targets = targets.view(-1, 1)
+    else:
+        assert targets.size(1) == 1 and targets.dim() == 2, (
+            "Wrong `outputs` shape, "
+            "expected 1D or 2D with size 1 in the second dim"
+        )
+
+    if targets.max() != len(torch.unique(targets)) - 1:
+        if raise_class_labels_mismatch:
+            raise Exception(
+                "`targets` maximum does not represent number of classes"
+            )
+        # mapping classes
+        outputs, targets = map_labels_to_classes(outputs, targets)
+    return outputs, targets
+
+
+def process_multilabel_components(
+    outputs: torch.Tensor, targets: torch.Tensor, weights: torch.Tensor,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """General preprocessing for multi-label-based metrics.
 
