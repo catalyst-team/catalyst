@@ -9,12 +9,12 @@ from catalyst.contrib.tools import SummaryWriter
 from catalyst.core import IMetricCallback, IRunner
 
 
-def img_publisher(writer: SummaryWriter, tag, sample):
-    writer.add_image(f"{tag}_images", sample)
+def img_publisher(writer: SummaryWriter, tag, sample, idx):
+    writer.add_image(f"{tag}_images", sample, global_step=idx)
 
 
-def text_publisher(writer: SummaryWriter, tag, sample):
-    writer.add_text(f"{tag}_text", sample)
+def text_publisher(writer: SummaryWriter, tag, sample, idx):
+    writer.add_text(f"{tag}_text", sample, global_step=idx)
 
 
 class LossInterpretationCallback(IMetricCallback):
@@ -113,7 +113,7 @@ class LossInterpretationCallback(IMetricCallback):
                 tag = f"{self.prefix}{type_prefix}"
                 for tensorboard_publisher in self.tensorboard_publishers:
                     sample = self.tensorboard_sequence[idx]
-                    tensorboard_publisher(writer, tag, sample)
+                    tensorboard_publisher(writer, tag, sample, idx)
 
     def on_batch_end(self, runner: IRunner):
         if not self._should_interpret_loader(runner):
