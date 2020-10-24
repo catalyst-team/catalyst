@@ -59,3 +59,6 @@ class ArcMarginProduct(nn.Module):
         """
         cosine = F.linear(F.normalize(input), F.normalize(self.weight))
         return cosine
+
+
+__all__ = ["ArcMarginProduct"]

@@ -9,9 +9,9 @@ from tqdm import tqdm
 
 import torch
 
+from catalyst import utils
 from catalyst.contrib.models.cv import ResnetEncoder
 from catalyst.data.cv import ImageReader
-from catalyst.dl import utils
 
 cv2.setNumThreads(0)
 cv2.ocl.setUseOpenCL(False)
