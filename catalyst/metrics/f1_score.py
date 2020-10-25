@@ -17,6 +17,8 @@ def fbeta_score(
     num_classes: Optional[int] = None,
 ) -> torch.Tensor:
     """
+    Counts fbeta score for given ``outputs`` and ``targets``.
+
     Args:
         outputs: A list of predicted elements
         targets:  A list of elements that are to be predicted
@@ -26,8 +28,11 @@ def fbeta_score(
             in case of scores/probabilities in ``outputs``
         num_classes: int, that specifies number of classes if it known
 
+    Raises:
+        Exception: If ``beta`` is a negative number.
+
     Returns:
-        float: F_1 score
+        float: F_1 score.
      """
     if beta < 0:
         raise Exception("beta parameter should be non-negative")
