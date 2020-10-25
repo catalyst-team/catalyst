@@ -71,7 +71,7 @@ class CMCScoreCallback(Callback):
         self._metric_fn = cmc_score
         self._prefix = prefix
         self._extract_functions = {
-            name: operator.itemgetter(key) if isinstance(key, str) else key
+            name: operator.itemgetter(key) if isinstance(key, str) else key # добавить защиту от дурака на callable
             for name, key in (
                 ("embeddings", embeddings_key),
                 ("labels", labels_key),
@@ -87,14 +87,15 @@ class CMCScoreCallback(Callback):
         }
 
         # here we have {"query": {"embeddings": None, "labels": None}, ...}
-        self._accumulative_fields = {
-            data_split: {field: None for field in self._fields}
-            for data_split in self._data_splits
-        }
-        # how many samples there are in query and gallery sets now
-        self._indices = {key: 0 for key in self._data_splits}
-        # how many samples for query and gallery we expect to get
-        self._sizes = {key: None for key in self._data_splits}
+        # self._accumulative_fields = {
+        #     data_split: {field: None for field in self._fields}
+        #     for data_split in self._data_splits
+        # }
+        # # how many samples there are in query and gallery sets now
+        # self._indices = {key: 0 for key in self._data_splits} #_current_index
+        # # how many samples for query and gallery we expect to get
+        # self._sizes = {key: None for key in self._data_splits}
+        self._reset_fields()
 
     def _accumulate_batch(
         self, data_split: str, data: Dict[str, torch.Tensor]
@@ -113,15 +114,15 @@ class CMCScoreCallback(Callback):
             f"\"gallery\", got {data_split}"
 
         for field in self._fields:
-            assert field in data, f"Data should contain {field}"
+            assert field in data, f"Data should contain {field}" # error
 
-        n_features = data["embeddings"].shape[0]
-        add_indices = self._indices[data_split] + torch.arange(n_features)
+        n_samples = data["embeddings"].shape[0]
+        add_indices = self._indices[data_split] + torch.arange(n_samples)
         for key, value in data.items():
             self._accumulative_fields[data_split][key][
                 add_indices
             ] = value
-        self._indices[data_split] += n_features
+        self._indices[data_split] += n_samples
 
     def _get_batch_data(self, runner: "IRunner") -> Dict[str, torch.Tensor]:
         """
@@ -138,6 +139,11 @@ class CMCScoreCallback(Callback):
         }
         return batch_data
 
+    def _get(self):
+        embeddings = batch_data["embeddings"][mask].cpu()
+        labels = batch_data["labels"][mask].cpu()
+        return {}
+
     def on_batch_end(self, runner: "IRunner"):
         """On batch end action"""
         batch_data = self._get_batch_data(runner=runner)
@@ -148,19 +154,18 @@ class CMCScoreCallback(Callback):
         for data_split, mask in (
             ("query", query_mask), ("gallery", gallery_mask),
         ):
-            embeddings = batch_data["embeddings"][mask].cpu()
-            labels = batch_data["labels"][mask].cpu()
-
+            d = self._get()
             # Now we got some embeddings and can init fields for embeddings
             # accumulation if they haven't been initialized yet
-            if self._accumulative_fields[data_split]["embeddings"] is None:
+            is_first_step = self._accumulative_fields[data_split]["embeddings"] is None
+            if is_first_step:
                 self._accumulative_fields[data_split]["embeddings"] = torch.empty(
                     size=(self._sizes[data_split], embeddings.shape[1])
                 )
 
             self._accumulate_batch(
                 data_split=data_split,
-                data={"embeddings": embeddings, "labels": labels},
+                data=d,
             )
 
     def _init_accumulative_fields(self):
@@ -264,37 +269,13 @@ class ReidCMCScoreCallback(CMCScoreCallback):
             "pids": "input",
             "cids": "input",
         })
-        self._accumulative_fields = {
-            data_split: {field: None for field in self._fields}
-            for data_split in self._data_splits
-        }
-        self._indices = {key: 0 for key in self._data_splits}
-        self._sizes = {key: None for key in self._data_splits}
         self._metric_fn = masked_cmc_score
 
-    def on_batch_end(self, runner: "IRunner"):
-        """On batch end action"""
-        batch_data = self._get_batch_data(runner=runner)
-
-        query_mask = batch_data["is_query"].type(TORCH_BOOL)
-        gallery_mask = ~query_mask
-
-        for data_split, mask in (
-            ("query", query_mask), ("gallery", gallery_mask),
-        ):
-            embeddings = batch_data["embeddings"][mask].cpu()
-            pids = batch_data["pids"][mask].cpu()
-            cids = batch_data["cids"][mask].cpu()
-
-            if self._accumulative_fields[data_split]["embeddings"] is None:
-                self._accumulative_fields[data_split]["embeddings"] = torch.empty(
-                    size=(self._sizes[data_split], embeddings.shape[1])
-                )
-
-            self._accumulate_batch(
-                data_split=data_split,
-                data={"embeddings": embeddings, "pids": pids, "cids": cids},
-            )
+    def _get(self):
+        embeddings = batch_data["embeddings"][mask].cpu()
+        pids = batch_data["pids"][mask].cpu()
+        cids = batch_data["cids"][mask].cpu()
+        return {"emb...":}
 
     def on_loader_end(self, runner: "IRunner"):
         """On loader end action"""
