@@ -74,7 +74,9 @@ def process_multiclass_components(
 
 
 def process_multilabel_components(
-    outputs: torch.Tensor, targets: torch.Tensor, weights: torch.Tensor,
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    weights: Optional[torch.Tensor] = None,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """General preprocessing for multi-label-based metrics.
 
