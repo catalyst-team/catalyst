@@ -1,12 +1,10 @@
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple
-from pathlib import Path, PosixPath
+from pathlib import Path
 
-import gdown
 import numpy as np
 
 import torch
 
-from catalyst.contrib.datasets.functional import extract_archive
 from catalyst.data import MetricLearningTrainDataset, QueryGalleryDataset
 from catalyst.data.cv.reader import imread
 
@@ -17,53 +15,24 @@ class Market1501MLDataset(MetricLearningTrainDataset):
     stage of the metric learning pipeline.
     """
 
-    SOURCE_URL = "https://drive.google.com/uc?id=0B8-rUzbwVRk0c054eEozWG9COHM"
-
     def __init__(
         self,
         root: str,
-        transform: Optional[Callable] = None,
-        target_transform: Optional[Callable] = None,
-        download: bool = False,
+        transform: Optional[Callable[[torch.Tensor], torch.Tensor]] = None,
     ):
         """
-
+        Market1501 dataset for train stage of reid task.
         Args:
-            root:
-            transform:
-            target_transform:
-            download:
+            root: path to a directory that contains Market-1501-v15.09.15
+            transform: transformation that should be applied to images
         """
         self.root = Path(root)
         self._data_dir = self.root / "Market-1501-v15.09.15/bounding_box_train"
         self.transform = transform
-        self.target_transform = target_transform
-
-        if download:
-            self.download()
-
         self.data, self.targets = self._load_data(self._data_dir)
 
-    def download(self) -> None:
-        """
-        Download and unpack dataset's zip
-
-        Raises:
-            FileExistsError: if the dataset already exists in the self.root
-                directory
-        """
-        dest_path = self.root / "Market-1501-v15.09.15.zip"
-        if dest_path.is_dir():
-            raise FileExistsError(f"{dest_path} already exists")
-        gdown.download(url=self.SOURCE_URL, output=str(dest_path), quiet=False)
-        extract_archive(
-            from_path=str(dest_path),
-            to_path=str(self.root),
-            remove_finished=True,
-        )
-
     @staticmethod
-    def _load_data(data_dir: PosixPath) -> Tuple[torch.Tensor, Iterable]:
+    def _load_data(data_dir: Path) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Load data from train directory of the dataset.
         Parse names of images to get person id as labels.
@@ -88,7 +57,7 @@ class Market1501MLDataset(MetricLearningTrainDataset):
         )
         return data, targets
 
-    def __getitem__(self, index: int) -> Tuple[torch.Tensor, int]:
+    def __getitem__(self, index: int) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Get item from dataset.
         Args:
@@ -100,8 +69,6 @@ class Market1501MLDataset(MetricLearningTrainDataset):
         img, target = self.data[index], self.targets[index]
         if self.transform is not None:
             img = self.transform(img)
-        if self.target_transform is not None:
-            target = self.target_transform(target)
         return img, target
 
     def __len__(self) -> int:
@@ -113,20 +80,16 @@ class Market1501MLDataset(MetricLearningTrainDataset):
 
 
 class Market1501QGDataset(QueryGalleryDataset):
-    SOURCE_URL = "https://drive.google.com/uc?id=0B8-rUzbwVRk0c054eEozWG9COHM"
-
     def __init__(
         self,
         root: str,
-        transform: Optional[Callable] = None,
-        download: bool = False,
+        transform: Optional[Callable[[torch.Tensor], torch.Tensor]] = None,
     ):
         """
-
+        Market1501 dataset for testing stage of reid task.
         Args:
-            root:
-            transform:
-            download:
+            root: path to a directory that contains Market-1501-v15.09.15
+            transform: transformation that should be applied to images
         """
         self.root = Path(root)
         self._gallery_dir = (
@@ -134,10 +97,6 @@ class Market1501QGDataset(QueryGalleryDataset):
         )
         self._query_dir = self.root / "Market-1501-v15.09.15/query"
         self.transform = transform
-
-        if download:
-            self.download()
-
         query_data, query_targets, query_cameras = self._load_data(
             self._query_dir
         )
@@ -149,8 +108,8 @@ class Market1501QGDataset(QueryGalleryDataset):
         self._gallery_size = gallery_data.shape[0]
 
         self.data = torch.cat([gallery_data, query_data])
-        self.targets = np.concatenate([gallery_targets, query_targets])
-        self.cameras = np.concatenate([gallery_cameras, query_cameras])
+        self.pids = np.concatenate([gallery_targets, query_targets])
+        self.cids = np.concatenate([gallery_cameras, query_cameras])
         self._is_query = torch.cat(
             [
                 torch.zeros(size=(self._gallery_size,)),
@@ -159,28 +118,25 @@ class Market1501QGDataset(QueryGalleryDataset):
         )
 
     @property
-    def query_size(self):
+    def query_size(self) -> int:
+        """
+        Length of query part of the dataset
+        Returns:
+            query size
+        """
         return self._query_size
 
     @property
-    def gallery_size(self):
+    def gallery_size(self) -> int:
+        """
+        Length of gallery part of the dataset
+        Returns:
+            gallery size
+        """
         return self._gallery_size
 
-    def download(self):
-        dest_path = self.root / "Market-1501-v15.09.15.zip"
-        if dest_path.is_dir():
-            raise FileExistsError(f"{dest_path} already exists")
-        gdown.download(url=self.SOURCE_URL, output=str(dest_path), quiet=False)
-        extract_archive(
-            from_path=str(dest_path),
-            to_path=str(self.root),
-            remove_finished=True,
-        )
-
     @staticmethod
-    def _load_data(
-        data_dir: PosixPath,
-    ) -> Tuple[torch.Tensor, Iterable, Iterable]:
+    def _load_data(data_dir: Path,) -> Tuple[torch.Tensor, Iterable, Iterable]:
         """
         Load data from directory.
         Parse names of images to get person ids as labels and camera ids.
@@ -211,26 +167,25 @@ class Market1501QGDataset(QueryGalleryDataset):
 
     def __getitem__(self, index: int) -> Dict[str, Any]:
         """
-        Get
+        Get an item from dataset
         Args:
-            index:
+            index: index of the item to get
 
         Returns:
-
+            dict of features, label (contains knowledge about pid and cid)
+                and is_query flag that shows if the image should be used as
+                query or gallery sample.
         """
         img = self.data[index]
         if self.transform is not None:
             img = self.transform(img)
         item = {
             "features": img,
-            "targets": {
-                "pid": self.targets[index],
-                "cam_id": self.cameras[index],
-            },
+            "targets": {"pid": self.pids[index], "cid": self.cids[index],},
             "is_query": self._is_query[index],
         }
         return item
 
     def __len__(self):
         """Get len of the dataset"""
-        return len(self.targets)
+        return len(self.pids)
