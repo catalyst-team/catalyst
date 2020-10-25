@@ -12,7 +12,7 @@ def hitrate(
     Calculate the hit rate score given model outputs and targets.
     Hit-rate is a metric for evaluating ranking systems.
     Generate top-N recommendations and if one of the recommendation is
-    actually what user has rated, you consider that a hiy.
+    actually what user has rated, you consider that a hit.
     By rate we mean any explicit form of user's interactions.
     Add up all of the hits for all users and then divide by number of users
 
