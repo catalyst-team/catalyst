@@ -60,7 +60,7 @@ def masked_cmc_score(
     query_embeddings: torch.Tensor,
     gallery_embeddings: torch.Tensor,
     conformity_matrix: torch.Tensor,
-    mask: torch.Tensor,
+    available_samples: torch.Tensor,
     topk: int = 1,
 ) -> float:
     """
@@ -72,7 +72,7 @@ def masked_cmc_score(
             embeddings of the objects in gallery
         conformity_matrix: binary matrix with 1 on same label pos
             and 0 otherwise
-        mask: tensor of shape (query_size, gallery_size), mask[i][j] == 1
+        available_samples: tensor of shape (query_size, gallery_size), mask[i][j] == 1
             means that j-th element of gallery should be used while scoring
             i-th query one
         topk: number of top examples for cumulative score counting
@@ -80,19 +80,17 @@ def masked_cmc_score(
     Returns:
         cmc score with mask
     """
-    query_size = query_embeddings.shape[0]
-    score = torch.empty(size=(query_size,))
-    for i in range(query_size):
-        _query_embeddings = query_embeddings[i].reshape(1, -1)
-        _gallery_embeddings = gallery_embeddings[mask[i]]
-        _conformity_matrix = conformity_matrix[i, mask[i]].reshape(1, -1)
-        score[i] = cmc_score(
-            query_embeddings=_query_embeddings,
-            gallery_embeddings=_gallery_embeddings,
-            conformity_matrix=_conformity_matrix,
-            topk=topk,
+    if not (conformity_matrix == 0)[available_samples].all():
+        raise ValueError(
+            "In reid case we suppose that all the pids that are not"
+            "the same with query pid should be available while model scoring."
+            "It seems you have a gallery sample that should be available "
+            "in reid context marked as unavailable according to the "
+            "available samples mask."
         )
-    return score.mean().item()
+    distances = torch.cdist(query_embeddings, gallery_embeddings)
+    distances[~available_samples] = float("inf")
+    return cmc_score_count(distances, conformity_matrix, topk)
 
 
 __all__ = ["cmc_score_count", "cmc_score", "masked_cmc_score"]
