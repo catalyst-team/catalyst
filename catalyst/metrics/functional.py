@@ -1,7 +1,7 @@
-import numpy as np
-
 from typing import Callable, Dict, Optional, Sequence, Tuple
 from functools import partial
+
+import numpy as np
 
 import torch
 from torch import Tensor
@@ -220,10 +220,7 @@ def get_multiclass_statistics(
         num_classes=num_classes,
     )
     if num_classes <= 2:
-        return get_binary_statistics(
-            outputs=outputs,
-            targets=targets,
-        )
+        return get_binary_statistics(outputs=outputs, targets=targets,)
 
     tn = torch.zeros((num_classes,), device=outputs.device)
     fp = torch.zeros((num_classes,), device=outputs.device)

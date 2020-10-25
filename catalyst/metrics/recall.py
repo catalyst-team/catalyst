@@ -11,7 +11,6 @@ def recall(
     argmax_dim: int = -1,
     eps: float = 1e-7,
     num_classes: Optional[int] = None,
-
 ) -> torch.Tensor:
     """
     Multiclass precision metric.
@@ -36,4 +35,4 @@ def recall(
         num_classes=num_classes,
     )
 
-    return (tp + eps)/(fn + tp + eps)
+    return (tp + eps) / (fn + tp + eps)
