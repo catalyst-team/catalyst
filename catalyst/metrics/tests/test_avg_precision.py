@@ -27,7 +27,7 @@ def test_avg_precision():
         torch.Tensor([y_pred, y_pred, y_pred]),
         torch.Tensor([y_true, y_true, y_true]),
     )
-    assert torch.equal(average_precision,torch.ones(3))
+    assert torch.equal(average_precision, torch.ones(3))
 
     # check everything is irrelevant
     y_pred = [0.5, 0.2, 0.3, 0.8]
@@ -46,7 +46,7 @@ def test_avg_precision():
         torch.Tensor([y_pred, y_pred, y_pred]),
         torch.Tensor([y_true, y_true, y_true]),
     )
-    assert torch.equal(average_precision,torch.zeros(3))
+    assert torch.equal(average_precision, torch.zeros(3))
 
     # check 4 test with k
     y_pred1 = [4.0, 2.0, 3.0, 1.0]
@@ -59,5 +59,7 @@ def test_avg_precision():
 
     average_precision = metrics.avg_precision(y_pred_torch, y_true_torch, k=3)
 
-    #TO-DO: discuss better assertions
-    assert np.allclose([average_precision[0], 0.39], [average_precision[1], 0.11], atol=0.3)
+    # TO-DO: discuss better assertions
+    assert np.allclose(
+        [average_precision[0], 0.39], [average_precision[1], 0.11], atol=0.3
+    )

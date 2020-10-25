@@ -5,7 +5,9 @@ MAP metric.
 import torch
 
 
-def avg_precision(outputs: torch.Tensor, targets: torch.Tensor, k=100) -> torch.Tensor:
+def avg_precision(
+    outputs: torch.Tensor, targets: torch.Tensor, k=100
+) -> torch.Tensor:
     """
     Calculate the Mean Average Precision (MAP)
     The precision metric summarizes the fraction of relevant items
@@ -43,8 +45,7 @@ def avg_precision(outputs: torch.Tensor, targets: torch.Tensor, k=100) -> torch.
            <https://en.wikipedia.org/w/index.php?title=Information_retrieval&
            oldid=793358396#Average_precision>`
     """
-
-    k =  min(outputs.size(1), k)
+    k = min(outputs.size(1), k)
     _, indices_for_sort = outputs.sort(descending=True, dim=-1)
     true_sorted_by_preds = torch.gather(
         targets, dim=-1, index=indices_for_sort
@@ -54,7 +55,9 @@ def avg_precision(outputs: torch.Tensor, targets: torch.Tensor, k=100) -> torch.
     precisions = torch.zeros_like(true_sorted_by_pred_topk)
 
     for index in range(k):
-        precisions[:, index] = torch.sum(true_sorted_by_pred_topk[:, : (index+1)], dim=1) / float(index+1)
+        precisions[:, index] = torch.sum(
+            true_sorted_by_pred_topk[:, : (index + 1)], dim=1
+        ) / float(index + 1)
 
     ap = torch.mean(precisions, dim=1)
     return ap
