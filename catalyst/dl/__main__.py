@@ -2,11 +2,17 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
 
 from catalyst.__version__ import __version__
-from catalyst.dl.scripts import quantize, run, swa, trace
+from catalyst.dl.scripts import quantize, run, swa, trace, tune
 from catalyst.settings import IS_GIT_AVAILABLE, IS_OPTUNA_AVAILABLE
 
 COMMANDS = OrderedDict(
-    [("quantize", quantize), ("run", run), ("swa", swa), ("trace", trace)]
+    [
+        ("quantize", quantize),
+        ("run", run),
+        ("swa", swa),
+        ("trace", trace),
+        ("tune", tune)
+    ]
 )
 if IS_GIT_AVAILABLE:
     from catalyst.dl.scripts import init
