@@ -73,6 +73,7 @@ def precision(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     argmax_dim: int = -1,
+    eps: float = 1e-7,
     num_classes: Optional[int] = None,
 ) -> torch.Tensor:
     """
@@ -85,6 +86,7 @@ def precision(
             with shape [bs; ..., 1]
         argmax_dim: int, that specifies dimension for argmax transformation
             in case of scores/probabilities in ``outputs``
+        eps: float. Epsilon to avoid zero division.
         num_classes: int, that specifies number of classes if it known
 
     Returns:
@@ -96,7 +98,7 @@ def precision(
         argmax_dim=argmax_dim,
         num_classes=num_classes,
     )
-    return tp / (fp + tp)
+    return (tp + eps) / (fp + tp + eps)
 
 
-__all__ = ["average_precision"]
+__all__ = ["average_precision", "precision"]

@@ -1,3 +1,5 @@
+import numpy as np
+
 from typing import Callable, Dict, Optional, Sequence, Tuple
 from functools import partial
 
@@ -34,11 +36,10 @@ def process_multiclass_components(
     """
     # @TODO: better multiclass preprocessing, label -> class_id mapping
     if not torch.is_tensor(outputs):
-        outputs = torch.from_numpy(outputs)
+        outputs = torch.from_numpy(np.array(outputs))
     if not torch.is_tensor(targets):
-        targets = torch.from_numpy(targets)
+        targets = torch.from_numpy(np.array(targets))
 
-    # @TODO: move to process_multiclass_components ?
     if outputs.dim() == targets.dim() + 1:
         # looks like we have scores/probabilities in our outputs
         # let's convert them to final model predictions
@@ -56,14 +57,21 @@ def process_multiclass_components(
 
     if outputs.dim() == 1:
         outputs = outputs.view(-1, 1)
+    elif outputs.dim() == 2 and outputs.size(0) == 1:
+        # transpose case
+        outputs.permute(1, 0)
     else:
         assert outputs.size(1) == 1 and outputs.dim() == 2, (
             "Wrong `outputs` shape, "
-            "expected 1D or 2D with size 1 in the second dim"
+            "expected 1D or 2D with size 1 in the second dim "
+            "got {}".format(outputs.shape)
         )
 
     if targets.dim() == 1:
         targets = targets.view(-1, 1)
+    elif targets.dim() == 2 and targets.size(0) == 1:
+        # transpose case
+        targets.permute(1, 0)
     else:
         assert targets.size(1) == 1 and targets.dim() == 2, (
             "Wrong `outputs` shape, "
@@ -211,6 +219,11 @@ def get_multiclass_statistics(
         argmax_dim=argmax_dim,
         num_classes=num_classes,
     )
+    if num_classes <= 2:
+        return get_binary_statistics(
+            outputs=outputs,
+            targets=targets,
+        )
 
     tn = torch.zeros((num_classes,), device=outputs.device)
     fp = torch.zeros((num_classes,), device=outputs.device)
