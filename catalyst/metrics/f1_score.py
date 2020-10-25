@@ -15,7 +15,7 @@ def fbeta_score(
     eps: float = 1e-7,
     argmax_dim: int = -1,
     num_classes: Optional[int] = None,
-) -> torch.Tensor:
+) -> float:
     """
     Counts fbeta score for given ``outputs`` and ``targets``.
 
