@@ -12,10 +12,6 @@ if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
 TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
-
-DATA_SPLITS = ("query", "gallery")
-FIELDS = ("embeddings", "labels")
-REID_FIELDS = ("embeddings", "pids", "cids")
 TExtractKey = Union[str, Callable[[Dict[str, Any]], torch.Tensor]]
 
 
@@ -32,6 +28,8 @@ class CMCScoreCallback(Callback):
     An usage example can be found in Readme.md under
     "CV - MNIST with Metric Learning".
     """
+    _fields = ("embeddings", "labels")
+    _data_splits = ("query", "gallery")
 
     def __init__(
         self,
@@ -87,16 +85,16 @@ class CMCScoreCallback(Callback):
             "labels": "input",
             "is_query": "input",
         }
-        self._fields = FIELDS
+
         # here we have {"query": {"embeddings": None, "labels": None}, ...}
         self._accumulative_fields = {
             data_split: {field: None for field in self._fields}
-            for data_split in DATA_SPLITS
+            for data_split in self._data_splits
         }
         # how many samples there are in query and gallery sets now
-        self._indices = {key: 0 for key in DATA_SPLITS}
+        self._indices = {key: 0 for key in self._data_splits}
         # how many samples for query and gallery we expect to get
-        self._sizes = {key: None for key in DATA_SPLITS}
+        self._sizes = {key: None for key in self._data_splits}
 
     def _accumulate_batch(
         self, data_split: str, data: Dict[str, torch.Tensor]
@@ -110,7 +108,7 @@ class CMCScoreCallback(Callback):
                 batch; we except it to contain all the fields of
                 the following callback (callback._fields)
         """
-        assert data_split in DATA_SPLITS, \
+        assert data_split in self._data_splits, \
             f"Unexpected data split: should be one of \"query\" or " \
             f"\"gallery\", got {data_split}"
 
@@ -204,7 +202,7 @@ class CMCScoreCallback(Callback):
         """
         Check if we have accumulated all the samples for query and gallery
         """
-        for data_split in DATA_SPLITS:
+        for data_split in self._data_splits:
             assert (
                     self._indices[data_split] == self._sizes[data_split]
             ), f"An error occurred during the accumulation process: " \
@@ -213,7 +211,7 @@ class CMCScoreCallback(Callback):
 
     def _reset_fields(self):
         """Reset all the accumulated data"""
-        for data_split in DATA_SPLITS:
+        for data_split in self._data_splits:
             for field in self._fields:
                 self._accumulative_fields[data_split][field] = None
         self._indices = {key: 0 for key in self._indices}
@@ -242,45 +240,36 @@ class CMCScoreCallback(Callback):
 
 
 class ReidCMCScoreCallback(CMCScoreCallback):
+    """
+    """
+    _fields = ("embeddings", "pids", "cids")
+
     def __init__(
         self,
-        embeddings_key: TExtractKey = "logits",
-        is_query_key: TExtractKey = "is_query",
-        prefix: str = "cmc",
-        topk_args: List[int] = None,
-        num_classes: int = None,
-        person_key: TExtractKey = "pid",
-        camera_key: TExtractKey = "cid",
+        pid_key: TExtractKey = "pid",
+        cid_key: TExtractKey = "cid",
         **kwargs,
     ):
         """
         """
-        super().__init__()
-        self.list_args = topk_args or get_default_topk_args(num_classes)
-        self._metric_fn = masked_cmc_score
-        self._prefix = prefix
-        self._extract_functions = {
+        super().__init__(**kwargs)
+        self._extract_functions.update({
             name: operator.itemgetter(key) if isinstance(key, str) else key
             for name, key in (
-                ("embeddings", embeddings_key),
-                ("is_query", is_query_key),
-                ("pid", person_key),
-                ("cid", camera_key),
+                ("pid", pid_key),
+                ("cid", cid_key),
             )
-        }
-        self._extract_source = {
-            "embeddings": "output",
-            "is_query": "input",
+        })
+        self._extract_source.update({
             "pid": "input",
             "cid": "input",
-        }
-        self._fields = REID_FIELDS
+        })
         self._accumulative_fields = {
             data_split: {field: None for field in self._fields}
-            for data_split in DATA_SPLITS
+            for data_split in self._data_splits
         }
-        self._indices = {key: 0 for key in DATA_SPLITS}
-        self._sizes = {key: None for key in DATA_SPLITS}
+        self._indices = {key: 0 for key in self._data_splits}
+        self._sizes = {key: None for key in self._data_splits}
 
     def on_batch_end(self, runner: "IRunner"):
         """On batch end action"""
@@ -324,9 +313,9 @@ class ReidCMCScoreCallback(CMCScoreCallback):
         # if query sample is a photo of the person pid_i taken from camera
         # cam_j and the gallery sample is a photo of the same person pid_i
         # from the same camera cam_j. All another cases are available.
-        labels_available = ~(pid_conformity_matrix * cid_conformity_matrix)
+        available_samples = ~(pid_conformity_matrix * cid_conformity_matrix)
 
-        if (labels_available.max(dim=1).values == 0).any():
+        if (available_samples.max(dim=1).values == 0).any():
             ValueError(
                 "There is a sample in query that has no relevant samples "
                 "in gallery."
@@ -341,7 +330,7 @@ class ReidCMCScoreCallback(CMCScoreCallback):
                     "embeddings"
                 ],
                 conformity_matrix=pid_conformity_matrix,
-                mask=labels_available,
+                available_samples=available_samples,
                 topk=key,
             )
             runner.loader_metrics[f"{self._prefix}{key:02}"] = metric
