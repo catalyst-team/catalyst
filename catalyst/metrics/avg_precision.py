@@ -9,18 +9,20 @@ def avg_precision(
     outputs: torch.Tensor, targets: torch.Tensor, k=100
 ) -> torch.Tensor:
     """
-    Calculate the Mean Average Precision (MAP)
+    Calculate the Average Precision (AP) for recsys
     The precision metric summarizes the fraction of relevant items
     out of the whole the recommendation list.
     The average precision @ k (AP@k) metrics summarizes the average
     precision achieveid in every item up to k-th one.
-    The mean average precision calcultaes the mean over all users
 
     Example: targets labels [1,1,0], k = 3
-    Precsion@k:
-    [1/1, 2/2, 2/3]
-    Average Precision@k:
-    (1/3)[1 + 1 + 2/3] = 0.88
+    Precsion@k: [1/1, 2/2, 2/3]
+    Average Precision@k: (1/3)[1 + 1 + 2/3] = 0.88
+
+    References:
+    `Wikipedia entry for the Average precision
+           <https://en.wikipedia.org/w/index.php?title=Information_retrieval&
+           oldid=793358396#Average_precision>`
 
     Args:
         outputs (torch.Tensor):
@@ -40,10 +42,6 @@ def avg_precision(
         result (torch.Tensor):
             The mrr score for each user.
 
-    References:
-    `Wikipedia entry for the Average precision
-           <https://en.wikipedia.org/w/index.php?title=Information_retrieval&
-           oldid=793358396#Average_precision>`
     """
     k = min(outputs.size(1), k)
     _, indices_for_sort = outputs.sort(descending=True, dim=-1)

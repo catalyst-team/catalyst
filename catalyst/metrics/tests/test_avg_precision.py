@@ -9,7 +9,6 @@ def test_avg_precision():
     """
     Tets for catalyst.metrics.map metric.
     """
-
     # check everything is relevant
     y_pred = [0.5, 0.2, 0.3, 0.8]
     y_true = [1.0, 1.0, 1.0, 1.0]
