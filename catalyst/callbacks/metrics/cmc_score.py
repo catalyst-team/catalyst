@@ -168,7 +168,7 @@ class CMCScoreCallback(Callback):
         for data_split, size in self._sizes.items():
             for field in self._fields:
                 self._accumulative_fields[data_split][field] = torch.empty(
-                    size=size, dtype=torch.long
+                    size=(size,), dtype=torch.long
                 )
             self._accumulative_fields[data_split]["embeddings"] = None
 
@@ -256,13 +256,13 @@ class ReidCMCScoreCallback(CMCScoreCallback):
         self._extract_functions.update({
             name: operator.itemgetter(key) if isinstance(key, str) else key
             for name, key in (
-                ("pid", pid_key),
-                ("cid", cid_key),
+                ("pids", pid_key),
+                ("cids", cid_key),
             )
         })
         self._extract_source.update({
-            "pid": "input",
-            "cid": "input",
+            "pids": "input",
+            "cids": "input",
         })
         self._accumulative_fields = {
             data_split: {field: None for field in self._fields}
@@ -270,6 +270,7 @@ class ReidCMCScoreCallback(CMCScoreCallback):
         }
         self._indices = {key: 0 for key in self._data_splits}
         self._sizes = {key: None for key in self._data_splits}
+        self._metric_fn = masked_cmc_score
 
     def on_batch_end(self, runner: "IRunner"):
         """On batch end action"""
