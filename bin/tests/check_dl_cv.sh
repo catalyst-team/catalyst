@@ -7,11 +7,6 @@ set -eo pipefail -v
 ################################  pipeline 00  ################################
 rm -rf ./tests/logs
 
-if [[ "${REQUIREMENTS}" == "minimal" ]]; then
-  # kornia has requirement torch>=1.5.0, while in minimal tests torch==1.1.0 is used
-  rm -rf ./tests/_tests_scripts/cv_z_kornia.py
-fi
-
 (set -e; for f in tests/_tests_scripts/cv_*.py; do PYTHONPATH=.:${PYTHONPATH} python "$f"; done)
 
 

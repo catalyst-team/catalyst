@@ -125,6 +125,12 @@ jobs:
           bash bin/scripts/download-gdrive 1iYaNijLmzsrMlAdMoUEhhJuo-5bkeAuj ./data/segmentation_data.zip
           unzip -qqo ./data/segmentation_data.zip -d ./data
 
+      - name: remove incompatible tests
+        if: matrix.requirements == 'minimal'
+        run: |
+          # kornia has requirement torch>=1.5.0, while in minimal tests torch==1.1.0 is used
+          rm -rf ./tests/_tests_scripts/cv_z_kornia.py
+
       - name: check examples
         env:
           REQUIREMENTS: ${{ matrix.requirements }}
