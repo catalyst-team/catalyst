@@ -41,7 +41,7 @@ def dcg(
     gains = gain_function(true_sorted_by_preds)
     discounts = (torch.tensor(1) / torch.log2(torch.arange(true_sorted_by_preds.shape[1], dtype=torch.float) + 2.0))
     discounted_gains = (gains*discounts)[:, k]
-    cum_dcg =  torch.cumsum(discounted_gains, dim=1)
+    cum_dcg =  torch.sum(discounted_gains, dim=1)
     return cum_dcg
 
 

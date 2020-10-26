@@ -7,6 +7,32 @@ def test_zero_ndcg():
     """
     Tests for catalyst.utils.metrics.ndcg metric.
     """
+    ndcg_at3 = metrics.ndcg(
+        torch.tensor([6, 5, 4, 3, 2, 1, 0]),
+        torch.tensor([0, 0, 0, 0, 0, 0, 1]),
+        k=3
+    )
+
+    ndcg_at7 = metrics.ndcg(
+        torch.tensor([6, 5, 4, 3, 2, 1, 0]),
+        torch.tensor([0, 0, 0, 0, 0, 0, 1]),
+        k=1
+    )
+
+    ndcg_at1 = metrics.ndcg(
+        torch.tensor([6, 5, 4, 3, 2, 1, 0]),
+        torch.tensor([0, 0, 0, 0, 0, 0, 1]),
+        k=1
+    )
+
+    assert torch.isclose(ndcg_at1, torch.tensor(0.0))
+    assert torch.isclose(ndcg_at3, torch.tensor(0.0))
+    assert torch.isclose(ndcg_at7, torch.tensor(3.0))
+
+def test_zero_ndcg():
+    """
+    Tests for catalyst.utils.metrics.ndcg metric.
+    """
     ndcg_at1, ndcg_at3, ndcg_at7 = metrics.ndcg(
         torch.tensor([6, 5, 4, 3, 2, 1, 0]),
         torch.tensor([0, 0, 0, 0, 0, 0, 1]),
