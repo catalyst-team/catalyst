@@ -2,7 +2,7 @@ from typing import Optional
 
 import torch
 
-from catalyst.metrics.functional import preprocess_multi_label_metrics
+from catalyst.metrics.functional import process_multilabel_components
 
 
 def average_precision(
@@ -28,7 +28,7 @@ def average_precision(
     """
     # outputs - [bs; num_classes] with scores
     # targets - [bs; num_classes] with binary labels
-    outputs, targets, weights = preprocess_multi_label_metrics(
+    outputs, targets, weights = process_multilabel_components(
         outputs=outputs, targets=targets, weights=weights,
     )
     if outputs.numel() == 0:

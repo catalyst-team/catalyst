@@ -107,15 +107,18 @@ traced_model = runner.trace(loader=loaders["valid"])
 ```
 
 ### Step by step guide
-1. Start with [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff) introduction.
-2. Check [minimal examples](#minimal-examples).
-3. Try [notebook tutorials with Google Colab](#tutorials).
-4. Read [blogposts](#blogposts) with use-cases and guides (and Config API intro).
-5. Go through advanced  [classification](https://github.com/catalyst-team/classification), [detection](https://github.com/catalyst-team/detection) and [segmentation](https://github.com/catalyst-team/segmentation) pipelines with Config API. More pipelines available under [projects section](#projects). 
-6. Want more? See [Alchemy](https://github.com/catalyst-team/alchemy) and [Reaction](https://github.com/catalyst-team/reaction) packages.
-7. For Catalyst.RL introduction, please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
-8. If you would like to contribute to the project, follow our [contribution guidelines](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md). 
-If you want to support the project, feel free to donate on [patreon page](https://patreon.com/catalyst_team) or [write us]((#user-feedback)) with your proposals.
+1. Start with [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff) introduction. 
+1. Go through [Kittylyst](https://github.com/Scitator/kittylyst) if you would like to dive into the core design concepts of the framework.
+1. Check [minimal examples](#minimal-examples).
+1. Try [notebook tutorials with Google Colab](#tutorials).
+1. Read [blogposts](#blogposts) with use-cases and guides.
+1. Learn machine learning with our ["Deep Learning with Catalyst" course](https://github.com/catalyst-team/dl-course).
+1. Or go directly to advanced  [classification](https://github.com/catalyst-team/classification), [detection](https://github.com/catalyst-team/detection) or [segmentation](https://github.com/catalyst-team/segmentation) pipelines with Config API. 
+1. Want more? See [Alchemy](https://github.com/catalyst-team/alchemy) and [Reaction](https://github.com/catalyst-team/reaction) packages.
+1. RL fan? Please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
+1. If you would like to contribute to the project, follow our [contribution guidelines](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md). 
+1. If you want to support the project, feel free to donate on [patreon page](https://patreon.com/catalyst_team) or [write us]((#user-feedback)) with your proposals.
+1. **Finally, do not forget to [join our slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for collaboration**.
 
 
 ## Table of Contents
@@ -1133,6 +1136,7 @@ best practices for your deep learning research.
 - [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff)
 - [BERT Distillation with Catalyst](https://medium.com/pytorch/bert-distillation-with-catalyst-c6f30c985854?source=friends_link&sk=1a28469ac8c0e6e6ad35bd26dfd95dd9)
 - [Metric Learning with Catalyst](https://medium.com/pytorch/metric-learning-with-catalyst-8c8337dfab1a?source=friends_link&sk=320b95f9b2a9074aab8d916ed78912d6)
+- [Pruning with Catalyst](https://medium.com/pytorch/pruning-with-catalyst-50e98f2cef2d?source=friends_link&sk=688e7a2c2e963c69c7e022e3204de5ef)
 - [Distributed training best practices](https://catalyst-team.github.io/catalyst/info/distributed.html)
 - [Addressing the Cocktail Party Problem using PyTorch](https://medium.com/pytorch/addressing-the-cocktail-party-problem-using-pytorch-305fb74560ea)
 - [Beyond fashion: Deep Learning with Catalyst (Config API)](https://evilmartians.com/chronicles/beyond-fashion-deep-learning-with-catalyst)
