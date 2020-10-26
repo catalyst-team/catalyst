@@ -9,41 +9,46 @@ import torch
 
 
 def dcg(
-    outputs: torch.Tensor, targets: torch.Tensor, topk: Sequence[int] = (10,)
-) -> Sequence[torch.Tensor]:
+    outputs: torch.Tensor, targets: torch.Tensor, 
+    gain_function=lambda x: torch.pow(2, x) - 1, k=100
+) -> torch.Tensor:
     """
     Computes DCG@topk for the specified values of `topk`.
+    Reference:
+        https://en.wikipedia.org/wiki/Discounted_cumulative_gain
 
     Args:
         outputs (torch.Tensor): model outputs, logits
             with shape [batch_size; slate_length]
         targets (torch.Tensor): ground truth, labels
             with shape [batch_size; slate_length]
-        topk (Sequence[int]): `topk` for dcg@topk computing
+        gain_function: 
+            callable, gain function for the ground truth labels. 
+            on the deafult, the torch.pow(2, x) - 1 function used
+            to get emphasise on the retirvng the revelant documnets.
+        k (int):
+            Parameter fro evaluation on top-k items
 
     Returns:
         list with computed dcg@topk
     """
+    k = min(outputs.size(1), k)
     order = torch.argsort(outputs, descending=True, dim=-1)
+    true_sorted_by_preds = torch.gather(
+        targets, dim=-1, index=order
+    )
 
-    dcg_scores = []
-    for k in topk:
-        if len(outputs.shape) == 1:
-            targets_at_k = torch.take(targets, order[:k])
-        else:
-            targets_at_k = torch.take(
-                targets, order.narrow(-1, 0, min(k, order.shape[1]))
-            )
-
-        discounts_at_k = torch.log2(torch.arange(targets_at_k.shape[-1]) + 2.0)
-        dcg_scores.append(torch.sum(targets_at_k / discounts_at_k).mean())
-
-    return dcg_scores
+    gains = gain_function(true_sorted_by_preds)
+    discounts = (torch.tensor(1) / torch.log2(torch.arange(true_sorted_by_preds.shape[1], dtype=torch.float) + 2.0))
+    discounted_gains = (gains*discounts)[:, k]
+    cum_dcg =  torch.cumsum(discounted_gains, dim=1)
+    return cum_dcg
 
 
-def ndcg(
-    outputs: torch.Tensor, targets: torch.Tensor, topk: Sequence[int] = (10,),
-) -> Sequence[torch.Tensor]:
+def dcg(
+    outputs: torch.Tensor, targets: torch.Tensor, 
+    gain_function=lambda x: torch.pow(2, x) - 1, k=100
+) -> torch.Tensor:
     """
     Computes nDCG@topk for the specified values of `topk`.
 
@@ -52,31 +57,23 @@ def ndcg(
             with shape [batch_size; slate_size]
         targets (torch.Tensor): ground truth, labels
             with shape [batch_size; slate_size]
-        topk (Sequence[int]): `topk` for ndcg@topk computing
+        gain_function: 
+            callable, gain function for the ground truth labels. 
+            on the deafult, the torch.pow(2, x) - 1 function used
+            to get emphasise on the retirvng the revelant documnets.
+        k (int):
+            Parameter fro evaluation on top-k items
 
     Returns:
         list with computed ndcg@topk
     """
-<<<<<<< HEAD
-    ideal_dcgs = dcg(targets, targets, topk)
-    actual_dcgs = dcg(outputs, targets, topk)
+    ideal_dcgs = dcg(targets, targets, gain_function, k)
+    ndcg = dcg(outputs, targets, gain_function, k) / ideal_dcgs
 
-    ndcg_scores = []
-    for actual, ideal in zip(ideal_dcgs, actual_dcgs):
-        if ideal != 0:
-            ndcg_scores.append(actual / ideal)
-        else:
-            ndcg_scores.append(torch.tensor(0.0))
-    return ndcg_scores
-=======
-    ideal = dcg(targets, targets, k, gains)
-    actual = dcg(outputs, targets, k, gains)
+    idcg_mask = ideal_dcgs == 0
+    ndcg[idcg_mask] = 0.
 
-    ndcg_score = 0.0
-    if ideal != 0:
-        ndcg_score = actual / ideal
-    return ndcg_score
->>>>>>> 8ddd5ae6... Fix tiny mistake in ndcg
+    return ndcg
 
 
 __all__ = ["dcg", "ndcg"]
