@@ -15,10 +15,6 @@ def avg_precision(
     The average precision @ k (AP@k) metrics summarizes the average
     precision achieveid in every item up to k-th one.
 
-    Example: targets labels [1,1,0], k = 3
-    Precsion@k: [1/1, 2/2, 2/3]
-    Average Precision@k: (1/3)[1 + 1 + 2/3] = 0.88
-
     References:
     `Wikipedia entry for the Average precision
            <https://en.wikipedia.org/w/index.php?title=Information_retrieval&
