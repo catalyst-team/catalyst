@@ -45,7 +45,7 @@ def dcg(
     return cum_dcg
 
 
-def dcg(
+def ndcg(
     outputs: torch.Tensor, targets: torch.Tensor, 
     gain_function=lambda x: torch.pow(2, x) - 1, k=100
 ) -> torch.Tensor:
