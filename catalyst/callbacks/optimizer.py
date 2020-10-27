@@ -123,7 +123,7 @@ class OptimizerCallback(IOptimizerCallback):
         self,
         *,
         optimizer: Optimizer,
-        optimizer_wds: List[float] = 0,
+        optimizer_wds: List[float] = [0.0],
         grad_clip_fn: Callable = None,
     ) -> None:
         """Makes a gradient step for a given optimizer.
