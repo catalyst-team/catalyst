@@ -123,7 +123,7 @@ class OptimizerCallback(IOptimizerCallback):
         self,
         *,
         optimizer: Optimizer,
-        optimizer_wds: List[float] = [0.0],
+        optimizer_wds: List[float] = 0,
         grad_clip_fn: Callable = None,
     ) -> None:
         """Makes a gradient step for a given optimizer.
@@ -137,9 +137,7 @@ class OptimizerCallback(IOptimizerCallback):
         for group, wd in zip(optimizer.param_groups, optimizer_wds):
             if wd > 0:
                 for param in group["params"]:
-                    param.data = param.data.add(
-                        param.data, alpha=-wd * group["lr"]
-                    )
+                    param.data.add_(param.data, alpha=-wd * group["lr"])
             if grad_clip_fn is not None:
                 grad_clip_fn(group["params"])
         # optimize parameters
