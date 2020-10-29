@@ -2,9 +2,23 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
 
 from catalyst.__version__ import __version__
-from catalyst.dl.scripts import init, run, trace
+from catalyst.dl.scripts import quantize, run, swa, trace
+from catalyst.settings import IS_GIT_AVAILABLE, IS_OPTUNA_AVAILABLE
 
-COMMANDS = OrderedDict([("init", init), ("run", run), ("trace", trace)])
+COMMANDS = OrderedDict(
+    [("quantize", quantize), ("run", run), ("swa", swa), ("trace", trace)]
+)
+if IS_GIT_AVAILABLE:
+    from catalyst.dl.scripts import init
+
+    COMMANDS["init"] = init
+if IS_OPTUNA_AVAILABLE:
+    from catalyst.dl.scripts import tune
+
+    COMMANDS["tune"] = tune
+
+
+COMMANDS = OrderedDict(sorted(COMMANDS.items()))
 
 
 def build_parser() -> ArgumentParser:
@@ -35,7 +49,7 @@ def build_parser() -> ArgumentParser:
 
 
 def main():
-    """@TODO: Docs. Contribution is welcome."""
+    """catalyst-dl entry point."""
     parser = build_parser()
 
     args, uargs = parser.parse_known_args()

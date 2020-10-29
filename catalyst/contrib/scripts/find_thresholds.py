@@ -230,10 +230,10 @@ def get_model_confidences(
     @TODO: Docs (add description). Contribution is welcome
 
     Args:
-        confidences (np.ndarray): model predictions of shape
+        confidences: model predictions of shape
             [dataset_len; class_confidences]
         thresholds (Dict[int, float]): thresholds for each class
-        classes (List[int]): classes of interest for evaluation
+        classes: classes of interest for evaluation
 
     Returns:
         thresholded confidences

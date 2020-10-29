@@ -7,11 +7,11 @@ import numpy as np
 from six import string_types
 
 from catalyst.contrib.utils.serialization import deserialize, serialize
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
 
 logger = logging.getLogger(__name__)
 
-if settings.use_lz4:
+if SETTINGS.use_lz4:
     try:
         import lz4.frame
     except ImportError as ex:
@@ -28,7 +28,7 @@ def is_compressed(data):
 
 def compress(data):
     """@TODO: Docs. Contribution is welcome."""
-    if settings.use_lz4:
+    if SETTINGS.use_lz4:
         data = serialize(data)
         data = lz4.frame.compress(data)
         data = base64.b64encode(data).decode("ascii")
@@ -44,7 +44,7 @@ def compress_if_needed(data):
 
 def decompress(data):
     """@TODO: Docs. Contribution is welcome."""
-    if settings.use_lz4:
+    if SETTINGS.use_lz4:
         data = base64.b64decode(data)
         data = lz4.frame.decompress(data)
         data = deserialize(data)
@@ -58,7 +58,7 @@ def decompress_if_needed(data):
     return data
 
 
-if settings.use_lz4:
+if SETTINGS.use_lz4:
     pack = compress
     pack_if_needed = compress_if_needed
     unpack = decompress

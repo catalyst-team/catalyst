@@ -1,10 +1,13 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
+#!/usr/bin/env python
+
 import argparse
 from argparse import ArgumentParser
 from pathlib import Path
 
-from catalyst.dl.utils import save_traced_model, trace_model_from_checkpoint
+from catalyst.utils.tracing import (
+    save_traced_model,
+    trace_model_from_checkpoint,
+)
 
 
 def build_args(parser: ArgumentParser):

@@ -1,6 +1,4 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
-from typing import Any, Callable, List
+from typing import Any, Callable, List, Union
 from datetime import datetime
 import inspect
 from pathlib import Path
@@ -9,7 +7,7 @@ import shutil
 
 def maybe_recursive_call(
     object_or_dict,
-    method: str,
+    method: Union[str, Callable],
     recursive_args=None,
     recursive_kwargs=None,
     **kwargs,
@@ -17,8 +15,8 @@ def maybe_recursive_call(
     """Calls the ``method`` recursively for the ``object_or_dict``.
 
     Args:
-        object_or_dict (Any): some object or a dictionary of objects
-        method (str): method name to call
+        object_or_dict: some object or a dictionary of objects
+        method: method name to call
         recursive_args: list of arguments to pass to the ``method``
         recursive_kwargs: list of key-arguments to pass to the ``method``
         **kwargs: Arbitrary keyword arguments
@@ -46,7 +44,10 @@ def maybe_recursive_call(
     if not isinstance(r_args, (list, tuple)):
         r_args = [r_args]
     r_kwargs = recursive_kwargs or {}
-    return getattr(object_or_dict, method)(*r_args, **r_kwargs, **kwargs)
+    if isinstance(method, str):
+        return getattr(object_or_dict, method)(*r_args, **r_kwargs, **kwargs)
+    else:
+        return method(object_or_dict, *r_args, **r_kwargs, **kwargs)
 
 
 def is_exception(ex: Any) -> bool:
@@ -59,8 +60,8 @@ def copy_directory(input_dir: Path, output_dir: Path) -> None:
     """Recursively copies the input directory.
 
     Args:
-        input_dir (Path): input directory
-        output_dir (Path): output directory
+        input_dir: input directory
+        output_dir: output directory
     """
     output_dir.mkdir(exist_ok=True, parents=True)
     for path in input_dir.iterdir():
@@ -75,7 +76,7 @@ def get_utcnow_time(format: str = None) -> str:
     """Return string with current utc time in chosen format.
 
     Args:
-        format (str): format string. if None "%y%m%d.%H%M%S" will be used.
+        format: format string. if None "%y%m%d.%H%M%S" will be used.
 
     Returns:
         str: formatted utc time string
@@ -93,8 +94,8 @@ def format_metric(name: str, value: float) -> str:
     decimal chars are not enough (metric value lower than 1e-4).
 
     Args:
-        name (str): metric name
-        value (float): value of metric
+        name: metric name
+        value: value of metric
 
     Returns:
         str: formatted metric
@@ -109,7 +110,7 @@ def get_fn_default_params(fn: Callable[..., Any], exclude: List[str] = None):
 
     Args:
         fn (Callable[..., Any]): target Callable
-        exclude (List[str]): exclude list of parameters
+        exclude: exclude list of parameters
 
     Returns:
         dict: contains default parameters of `fn`
@@ -129,7 +130,7 @@ def get_fn_argsnames(fn: Callable[..., Any], exclude: List[str] = None):
 
     Args:
         fn (Callable[..., Any]): target Callable
-        exclude (List[str]): exclude list of parameters
+        exclude: exclude list of parameters
 
     Returns:
         list: contains parameter names of `fn`

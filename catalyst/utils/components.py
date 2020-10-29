@@ -5,15 +5,10 @@ import torch
 from torch import nn
 import torch.distributed
 
-from catalyst.tools.settings import IS_XLA_AVAILABLE
-from catalyst.tools.typing import (
-    Criterion,
-    Device,
-    Model,
-    Optimizer,
-    Scheduler,
-)
+from catalyst.settings import IS_XLA_AVAILABLE
+from catalyst.typing import Criterion, Device, Model, Optimizer, Scheduler
 from catalyst.utils.distributed import (
+    check_amp_available,
     check_apex_available,
     check_ddp_wrapped,
     get_distributed_params,
@@ -36,10 +31,10 @@ def process_components(
     Returns the processed model, criterion, optimizer, scheduler and device.
 
     Args:
-        model (Model): torch model
-        criterion (Criterion): criterion function
-        optimizer (Optimizer): optimizer
-        scheduler (Scheduler): scheduler
+        model: torch model
+        criterion: criterion function
+        optimizer: optimizer
+        scheduler: scheduler
         distributed_params (dict, optional): dict with the parameters
             for distributed and FP16 method
         device (Device, optional): device
@@ -71,10 +66,19 @@ def process_components(
     elif isinstance(device, str):
         device = torch.device(device)
 
-    is_apex_available = (
-        distributed_params.pop("apex", True) and check_apex_available()
+    is_apex_enabled = (
+        distributed_params.pop("apex", False) and check_apex_available()
     )
 
+    is_amp_enabled = (
+        distributed_params.get("amp", False) and check_amp_available()
+    )
+
+    if is_apex_enabled and is_amp_enabled:
+        raise ValueError(
+            "Both NVidia Apex and Torch.Amp are enabled. "
+            "You must choose only one mixed precision backend"
+        )
     model: Model = maybe_recursive_call(model, "to", device=device)
 
     if check_ddp_wrapped(model):
@@ -91,7 +95,7 @@ def process_components(
 
         syncbn = distributed_params.pop("syncbn", False)
 
-        if is_apex_available:
+        if is_apex_enabled:
             import apex
 
             if syncbn:
@@ -101,16 +105,18 @@ def process_components(
                 model, optimizer, **distributed_params
             )
             model = apex.parallel.DistributedDataParallel(model)
-
         else:
+            if syncbn:
+                model = torch.nn.SyncBatchNorm.convert_sync_batchnorm(model)
+
             model = nn.parallel.DistributedDataParallel(
                 model, device_ids=[local_rank], output_device=local_rank
             )
     # data parallel run (dp) (with apex support)
     else:
         # apex issue https://github.com/deepset-ai/FARM/issues/210
-        use_apex = (is_apex_available and torch.cuda.device_count() == 1) or (
-            is_apex_available
+        use_apex = (is_apex_enabled and torch.cuda.device_count() == 1) or (
+            is_apex_enabled
             and torch.cuda.device_count() > 1
             and distributed_params.get("opt_level", "O0") == "O1"
         )

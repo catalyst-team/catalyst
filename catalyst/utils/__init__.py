@@ -6,7 +6,6 @@ All utils are gathered in :py:mod:`catalyst.utils` for easier access.
     Everything from :py:mod:`catalyst.contrib.utils` is included in :py:mod:`catalyst.utils`
 """
 
-from catalyst.contrib.utils import *
 
 from catalyst.utils.checkpoint import (
     load_checkpoint,
@@ -38,12 +37,9 @@ from catalyst.utils.distributed import (
     check_torch_distributed_initialized,
     check_slurm_available,
     check_apex_available,
+    check_amp_available,
     initialize_apex,
     assert_fp16_available,
-    is_wrapped_with_ddp,
-    is_torch_distributed_initialized,
-    is_slurm_available,
-    is_apex_available,
 )
 from catalyst.utils.hash import get_hash, get_short_hash
 from catalyst.utils.initialization import (
@@ -51,7 +47,10 @@ from catalyst.utils.initialization import (
     outer_init,
     reset_weights_if_possible,
 )
-from catalyst.utils.loader import (
+from catalyst.utils.loaders import (
+    get_loaders_from_params,
+    validate_loaders,
+    get_loader,
     get_native_batch_from_loader,
     get_native_batch_from_loaders,
 )
@@ -67,16 +66,19 @@ from catalyst.utils.misc import (
 )
 from catalyst.utils.numpy import get_one_hot
 from catalyst.utils.parser import parse_config_args, parse_args_uargs
-from catalyst.utils.pipelines import clone_pipeline
 from catalyst.utils.scripts import (
     import_module,
     dump_code,
     dump_python_files,
-    import_experiment_and_runner,
-    dump_base_experiment_code,
+    prepare_config_api_components,
+    dump_experiment_code,
     distributed_cmd_run,
 )
 from catalyst.utils.seed import set_global_seed
+from catalyst.utils.swa import (
+    average_weights,
+    get_averaged_weights_by_path_mask,
+)
 from catalyst.utils.sys import (
     get_environment_vars,
     list_conda_packages,
@@ -99,7 +101,32 @@ from catalyst.utils.torch import (
     detach,
     trim_tensors,
 )
-from catalyst.tools.settings import IS_PRUNING_AVAILABLE
+from catalyst.utils.tracing import (
+    trace_model,
+    trace_model_from_checkpoint,
+    trace_model_from_runner,
+    get_trace_name,
+    save_traced_model,
+    load_traced_model,
+)
+
+from catalyst.settings import IS_PRUNING_AVAILABLE
 
 if IS_PRUNING_AVAILABLE:
     from catalyst.utils.pruning import prune_model, remove_reparametrization
+
+from catalyst.settings import IS_QUANTIZATION_AVAILABLE
+
+if IS_QUANTIZATION_AVAILABLE:
+    from catalyst.utils.quantization import (
+        save_quantized_model,
+        quantize_model_from_checkpoint,
+    )
+
+from catalyst.settings import IS_GIT_AVAILABLE
+
+if IS_GIT_AVAILABLE:
+    from catalyst.utils.pipelines import clone_pipeline
+    from catalyst.utils.wizard import run_wizard, Wizard
+
+from catalyst.contrib.utils import *

@@ -63,7 +63,7 @@ function check_line_counts {
 LOG_MSG='pipeline 00'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config0.yml \
@@ -81,6 +81,18 @@ check_checkpoints "${CHECKPOINTS}/last" 1
 check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
 check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
 
+############################# CHECK QUANTIZATION FEATURE ####################################
+
+quantization=$(python -c "from catalyst.settings import IS_QUANTIZATION_AVAILABLE; print(int(IS_QUANTIZATION_AVAILABLE))")
+
+echo "pytorch quantization available: ${quantization}"
+
+if [ "$quantization" = "1" ]; then
+PYTHONPATH=.:${PYTHONPATH} \
+python catalyst/dl/scripts/quantize.py --logdir ${LOGDIR} --out-dir ${LOGDIR} --backend "qnnpack"
+check_file_existence "${LOGDIR}/best_quantized.pth"
+fi
+
 rm -rf ${LOGDIR} ${EXP_OUTPUT}
 
 
@@ -89,7 +101,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 LOG_MSG='pipeline 01'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config1.yml \
@@ -115,7 +127,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 LOG_MSG='pipeline 02'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config2.yml \
@@ -144,7 +156,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 LOG_MSG='pipeline 03'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config3.yml \
@@ -170,7 +182,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 LOG_MSG='pipeline 04'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config4.yml \
@@ -199,7 +211,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 LOG_MSG='pipeline 05'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config5.yml \
@@ -226,7 +238,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 LOG_MSG='pipeline 06'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config6.yml \
@@ -252,7 +264,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 LOG_MSG='pipeline 07'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config7.yml \
@@ -278,7 +290,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 LOG_MSG='pipeline 08'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config8.yml \
@@ -309,7 +321,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 LOG_MSG='pipeline 09'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config9.yml \
@@ -338,7 +350,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 LOG_MSG='pipeline 10'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config10.yml \
@@ -367,7 +379,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 LOG_MSG='pipeline 11'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config11.yml \
@@ -398,7 +410,7 @@ LOGDIR=./tests/logs/_tests_dl_callbacks/for_resume
 CHECKPOINTS=${LOGDIR}/checkpoints
 LOGFILE=${CHECKPOINTS}/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config0.yml \
@@ -420,7 +432,7 @@ LOGDIR=./tests/logs/_tests_dl_callbacks/resumed
 CHECKPOINTS=${LOGDIR}/checkpoints
 LOGFILE=${CHECKPOINTS}/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config12.yml \
@@ -450,7 +462,7 @@ LOGDIR=./tests/logs/_tests_dl_callbacks/for_resume
 CHECKPOINTS=${LOGDIR}/checkpoints
 LOGFILE=${CHECKPOINTS}/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config0.yml \
@@ -472,7 +484,7 @@ LOGDIR=./tests/logs/_tests_dl_callbacks/resumed
 CHECKPOINTS=${LOGDIR}/checkpoints
 LOGFILE=${CHECKPOINTS}/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config13.yml \
@@ -501,7 +513,7 @@ LOGDIR=./tests/logs/_tests_dl_callbacks
 CHECKPOINTS=${LOGDIR}/checkpoints
 LOGFILE=${CHECKPOINTS}/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config14.yml \
@@ -530,7 +542,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 LOG_MSG='pipeline 15'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config15.yml \
@@ -561,7 +573,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 LOG_MSG='pipeline 16'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config16.yml \
@@ -592,7 +604,7 @@ rm -rf ${LOGDIR} ${EXP_OUTPUT}
 LOG_MSG='pipeline 17'
 echo ${LOG_MSG}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config17.yml \
@@ -624,7 +636,7 @@ LOGDIR=./tests/logs/_tests_dl_callbacks/for_resume
 CHECKPOINTS=${LOGDIR}/checkpoints
 LOGFILE=${CHECKPOINTS}/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config0.yml \
@@ -646,7 +658,7 @@ LOGDIR=./tests/logs/_tests_dl_callbacks/other
 CHECKPOINTS=${LOGDIR}/checkpoints
 LOGFILE=${CHECKPOINTS}/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config18.yml \
@@ -678,7 +690,7 @@ LOGDIR=./tests/logs/_tests_dl_callbacks/for_resume
 CHECKPOINTS=${LOGDIR}/checkpoints
 LOGFILE=${CHECKPOINTS}/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config0.yml \
@@ -700,7 +712,7 @@ LOGDIR=./tests/logs/_tests_dl_callbacks/other
 CHECKPOINTS=${LOGDIR}/checkpoints
 LOGFILE=${CHECKPOINTS}/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config19.yml \
@@ -736,7 +748,7 @@ rm -rf ./tests/logs/_tests_dl_callbacks ${EXP_OUTPUT}
 #TRACE=${LOGDIR}/trace
 #LOGFILE=${CHECKPOINTS}/_metrics.json
 #
-#PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+#PYTHONPATH=./examples:.:${PYTHONPATH} \
 #  python catalyst/dl/scripts/run.py \
 #  --expdir=${EXPDIR} \
 #  --config=${EXPDIR}/config20.yml \
@@ -766,7 +778,7 @@ EXPDIR=./tests/_tests_ml_cmcscore
 LOGDIR=./tests/logs/_tests_ml_cmcscore
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config1.yml \
@@ -786,7 +798,7 @@ metrics = utils.load_config('$LOGFILE')
 
 EPS = 0.00001
 assert metrics['last']['cmc01'] > 0.1  # slightly better then random
-assert metrics['last']['cmc05'] > 0.5
+assert metrics['last']['cmc05'] > 0.4
 """
 
 ################################  pipeline 22  ################################
@@ -802,7 +814,7 @@ LOGFILE=${CHECKPOINTS}/_metrics.json
 EXP_OUTPUT=./tests/output.txt
 
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --stages/stage1/stage_params/num_epochs='2:int' \
   --stages/stage1/callbacks_params/fast_run/num_epoch_steps='2:int' \
@@ -810,7 +822,7 @@ PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
   --config=${EXPDIR}/config0.yml \
   --logdir=${LOGDIR}
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --expdir=${EXPDIR} \
   --config=${EXPDIR}/config0.yml \
@@ -822,5 +834,31 @@ check_line_counts ${EXP_OUTPUT} "loaded state .*/last_full.pth (global epoch 2, 
 
 rm -rf ./tests/logs/_tests_dl_callbacks ${EXP_OUTPUT}
 
+################################  pipeline 23  ################################
+# checking optimizer use_fast_zero_grad
+LOG_MSG='pipeline 23'
+echo ${LOG_MSG}
+
+PYTHONPATH=./examples:.:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --stages/stage1/stage_params/num_epochs='2:int' \
+  --stages/stage1/callbacks_params/optimizer/use_fast_zero_grad='1:bool' \
+  --expdir=${EXPDIR} \
+  --config=${EXPDIR}/config0.yml \
+  --logdir=${LOGDIR} > ${EXP_OUTPUT}
+
+cat ${EXP_OUTPUT}
+check_line_counts ${EXP_OUTPUT} "=> Loading" 0
+
+check_file_existence ${LOGFILE}
+cat ${LOGFILE}
+echo ${LOG_MSG}
+
+check_checkpoints "${CHECKPOINTS}/best" 1
+check_checkpoints "${CHECKPOINTS}/last" 1
+check_checkpoints "${CHECKPOINTS}/stage1\.[[:digit:]]" 1
+check_num_files ${CHECKPOINTS} 7   # 3x2 checkpoints + metrics.json
+
+rm -rf ${LOGDIR} ${EXP_OUTPUT}
 
 rm -rf {LOGDIR}

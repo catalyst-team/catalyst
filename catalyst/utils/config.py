@@ -55,10 +55,10 @@ def load_config(
         >>> load(path="./config.yml", ordered=True)
 
     Args:
-        path (str): path to config file (YAML or JSON)
-        ordered (bool): if true the config will be loaded as ``OrderedDict``
-        data_format (str): ``yaml``, ``yml`` or ``json``.
-        encoding (str): encoding to read the config
+        path: path to config file (YAML or JSON)
+        ordered: if true the config will be loaded as ``OrderedDict``
+        data_format: ``yaml``, ``yml`` or ``json``.
+        encoding: encoding to read the config
 
     Returns:
         Union[Dict, List]: config
@@ -122,11 +122,11 @@ def save_config(
     Args:
         config (Union[Dict, List]): config to save
         path (Union[str, Path]): path to save
-        data_format (str): ``yaml``, ``yml`` or ``json``.
-        encoding (str): Encoding to write file. Default is ``utf-8``
-        ensure_ascii (bool): Used for JSON, if True non-ASCII
+        data_format: ``yaml``, ``yml`` or ``json``.
+        encoding: Encoding to write file. Default is ``utf-8``
+        ensure_ascii: Used for JSON, if True non-ASCII
         characters are escaped in JSON strings.
-        indent (int): Used for JSON
+        indent: Used for JSON
 
     Adapted from
     https://github.com/TezRomacH/safitty/blob/v1.2.0/safitty/parser.py#L110

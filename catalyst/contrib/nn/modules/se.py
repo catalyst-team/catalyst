@@ -26,9 +26,9 @@ class cSE(nn.Module):  # noqa: N801
     def __init__(self, in_channels: int, r: int = 16):
         """
         Args:
-            in_channels (int): The number of channels
+            in_channels: The number of channels
                 in the feature map of the input.
-            r (int): The reduction ratio of the intermediate channels.
+            r: The reduction ratio of the intermediate channels.
                 Default: 16.
         """
         super().__init__()
@@ -69,7 +69,7 @@ class sSE(nn.Module):  # noqa: N801
     def __init__(self, in_channels: int):
         """
         Args:
-            in_channels (int): The number of channels
+            in_channels: The number of channels
                 in the feature map of the input.
         """
         super().__init__()
@@ -106,9 +106,9 @@ class scSE(nn.Module):  # noqa: N801
     def __init__(self, in_channels: int, r: int = 16):
         """
         Args:
-            in_channels (int): The number of channels
+            in_channels: The number of channels
                 in the feature map of the input.
-            r (int): The reduction ratio of the intermediate channels.
+            r: The reduction ratio of the intermediate channels.
                 Default: 16.
         """
         super().__init__()

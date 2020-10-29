@@ -1,5 +1,3 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 import argparse
 from functools import partial
 from pathlib import Path
@@ -12,9 +10,9 @@ from tqdm import tqdm
 import torch
 from transformers import BertConfig, BertModel, BertTokenizer
 
+from catalyst import utils
 from catalyst.contrib.utils import process_bert_output, tokenize_text
 from catalyst.data import LambdaReader
-from catalyst.dl import utils
 
 
 def build_args(parser):

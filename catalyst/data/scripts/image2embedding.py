@@ -1,5 +1,3 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 from typing import Sequence
 import argparse
 from pathlib import Path
@@ -11,9 +9,9 @@ from tqdm import tqdm
 
 import torch
 
+from catalyst import utils
 from catalyst.contrib.models.cv import ResnetEncoder
 from catalyst.data.cv import ImageReader
-from catalyst.dl import utils
 
 cv2.setNumThreads(0)
 cv2.ocl.setUseOpenCL(False)
@@ -29,9 +27,9 @@ def normalize(
     """Normalize a tensor image with mean and standard deviation.
 
     Args:
-        tensor (torch.Tensor): Tensor image of size (C, H, W) to be normalized
-        mean (Sequence[float]): Sequence of means for each channel
-        std (Sequence[float]): Sequence of standard deviations for each channel
+        tensor: Tensor image of size (C, H, W) to be normalized
+        mean: Sequence of means for each channel
+        std: Sequence of standard deviations for each channel
 
     Returns:
         torch.Tensor: Normalized Tensor image

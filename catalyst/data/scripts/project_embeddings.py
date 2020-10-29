@@ -1,5 +1,3 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 from typing import List
 import argparse
 import logging
@@ -12,7 +10,7 @@ import pandas as pd
 import torch
 
 from catalyst.contrib.tools.tensorboard import SummaryWriter
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
 
 logger = logging.getLogger(__name__)
 
@@ -82,7 +80,7 @@ def parse_args():
     return args
 
 
-def _load_image_data(rootpath: str, paths: List):
+def _load_image_data(rootpath: str, paths: List, img_size: int):
     img_data = None
 
     try:
@@ -97,7 +95,7 @@ def _load_image_data(rootpath: str, paths: List):
 
         image_names = [path.join(rootpath, name) for name in paths]
         img_data = np.stack(
-            [_load_image(name, args.img_size) for name in image_names], axis=0
+            [_load_image(name, img_size) for name in image_names], axis=0
         )
         img_data = (
             img_data.transpose((0, 3, 1, 2)) / 255.0  # noqa: WPS432
@@ -105,7 +103,7 @@ def _load_image_data(rootpath: str, paths: List):
         img_data = torch.from_numpy(img_data)
 
     except ImportError as ex:
-        if settings.cv_required:
+        if SETTINGS.cv_required:
             logger.warning(
                 "some of catalyst-cv dependencies are not available,"
                 + " to install dependencies, run `pip install catalyst[cv]`."
@@ -140,7 +138,9 @@ def main(args, _=None):
 
     if args.img_col is not None:
         img_data = _load_image_data(
-            rootpath=args.img_rootpath, paths=df[args.img_col].values
+            rootpath=args.img_rootpath,
+            paths=df[args.img_col].values,
+            img_size=args.img_size,
         )
     else:
         img_data = None

@@ -1,5 +1,3 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 from typing import Dict, Iterable, List, Union
 import collections
 import os
@@ -12,8 +10,8 @@ from torch import nn, Tensor
 import torch.backends
 from torch.backends import cudnn
 
-from catalyst.tools.settings import IS_XLA_AVAILABLE
-from catalyst.tools.typing import Device, Model, Optimizer
+from catalyst.settings import IS_XLA_AVAILABLE
+from catalyst.typing import Device, Model, Optimizer
 from catalyst.utils.dict import merge_dicts
 
 
@@ -46,7 +44,7 @@ def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
 
     Args:
         optimizer: PyTorch optimizer
-        value (float): new value of momentum
+        value: new value of momentum
         index (int, optional): integer index of optimizer's param groups,
             default is 0
     """
@@ -126,7 +124,7 @@ def any2device(value, device: Device):
 
     Args:
         value: Object to be moved
-        device (Device): target device ids
+        device: target device ids
 
     Returns:
         Same structure as value, but all tensors and np.arrays moved to device
@@ -155,8 +153,8 @@ def prepare_cudnn(deterministic: bool = None, benchmark: bool = None) -> None:
     to be deterministic/non-deterministic mode
 
     Args:
-        deterministic (bool): deterministic mode if running in CuDNN backend.
-        benchmark (bool): If ``True`` use CuDNN heuristics to figure out
+        deterministic: deterministic mode if running in CuDNN backend.
+        benchmark: If ``True`` use CuDNN heuristics to figure out
             which algorithm will be most performant
             for your model architecture and input.
             Setting it to ``False`` may slow down your training.
@@ -185,13 +183,13 @@ def process_model_params(
     """Gains model parameters for ``torch.optim.Optimizer``.
 
     Args:
-        model (torch.nn.Module): Model to process
-        layerwise_params (Dict): Order-sensitive dict where
+        model: Model to process
+        layerwise_params: Order-sensitive dict where
             each key is regex pattern and values are layer-wise options
             for layers matching with a pattern
-        no_bias_weight_decay (bool): If true, removes weight_decay
+        no_bias_weight_decay: If true, removes weight_decay
             for all ``bias`` parameters in the model
-        lr_scaling (float): layer-wise learning rate scaling,
+        lr_scaling: layer-wise learning rate scaling,
             if 1.0, learning rates will not be scaled
 
     Returns:
@@ -241,7 +239,7 @@ def get_requires_grad(model: Model):
         >>> requires_grad = get_requires_grad(model)
 
     Args:
-        model (torch.nn.Module): model
+        model: model
 
     Returns:
         requires_grad (Dict[str, bool]): value
@@ -266,7 +264,7 @@ def set_requires_grad(
         >>> set_requires_grad(model, requires_grad={""})
 
     Args:
-        model (torch.nn.Module): model
+        model: model
         requires_grad (Union[bool, Dict[str, bool]]): value
     """
     if isinstance(requires_grad, dict):
@@ -291,7 +289,7 @@ def get_network_output(net: Model, *input_shapes_args, **input_shapes_kwargs):
         tensor([[[-0.2665,  0.5792,  0.9757, -0.5782,  0.1530]]])
 
     Args:
-        net (Model): the model
+        net: the model
         *input_shapes_args: variable length argument list of shapes
         **input_shapes_kwargs: key-value arguemnts of shapes
 
@@ -344,7 +342,7 @@ def trim_tensors(tensors):
     Adapted from `Dynamic minibatch trimming to improve BERT training speed`_.
 
     Args:
-        tensors ([torch.tensor]): list of tensors to trim.
+        tensors: list of tensors to trim.
 
     Returns:
         List[torch.tensor]: list of trimmed tensors.
