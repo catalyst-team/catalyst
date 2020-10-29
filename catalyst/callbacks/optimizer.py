@@ -373,9 +373,9 @@ class AMPOptimizerCallback(IOptimizerCallback):
                 optimizer=self._optimizer, grad_clip_fn=self.grad_clip_fn,
             )
             if not self.use_fast_zero_grad:
-                utils.maybe_recursive_call(self._optimizer, "zero_grad")
+                maybe_recursive_call(self._optimizer, "zero_grad")
             else:
-                utils.maybe_recursive_call(self._optimizer, zero_grad)
+                maybe_recursive_call(self._optimizer, zero_grad)
             self._accumulation_counter = 0
 
     def on_epoch_end(self, runner: "IRunner") -> None:
