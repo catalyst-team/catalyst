@@ -16,6 +16,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - update Catalyst version to `20.10.1` for tutorials ([#967](https://github.com/catalyst-team/catalyst/pull/967))
 - added link to dl-course ([#967](https://github.com/catalyst-team/catalyst/pull/967))
+- added fast_zero_grad support to AMPOptimizerCallback
+- scheduler callback now gets learning rate using get_last_lr() method from the scheduler object (As PyTorch suggests)
+- added supported `find_unused_parameters` option to use with DDP to detect whether there are any unused parameters of the model.
 
 ### Removed
 

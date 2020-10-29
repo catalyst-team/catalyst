@@ -62,7 +62,7 @@ class OptimizerCallback(IOptimizerCallback):
             grad_clip_params: params for gradient clipping
             decouple_weight_decay: If ``True`` - decouple weight decay
                 regularization.
-            use_fast_zero_grad: boost ``optiomizer.zero_grad()``,
+            use_fast_zero_grad: boost ``optimizer.zero_grad()``,
                 default is ``False``.
             xla_barrier: barrier option for xla. Here you can find
                 more about usage of `barrier flag
