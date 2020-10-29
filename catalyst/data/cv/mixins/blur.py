@@ -19,8 +19,8 @@ class BlurMixin:
     ):
         """
         Args:
-            input_key (str): input key to use from annotation dict
-            output_key (str): output key to use to store the result
+            input_key: input key to use from annotation dict
+            output_key: output key to use to store the result
         """
         self.input_key = input_key
         self.output_key = output_key

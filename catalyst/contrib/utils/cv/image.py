@@ -10,11 +10,11 @@ import imageio
 import numpy as np
 from skimage.color import label2rgb, rgb2gray
 
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
 
 logger = logging.getLogger(__name__)
 
-if settings.use_libjpeg_turbo:
+if SETTINGS.use_libjpeg_turbo:
     try:
         import jpeg4py as jpeg
 
@@ -52,8 +52,8 @@ def imread(
         uri (str, pathlib.Path, bytes, file): the resource to load the image
           from, e.g. a filename, ``pathlib.Path``, http address or file object,
           see ``imageio.imread`` docs for more info
-        grayscale (bool): if True, make all images grayscale
-        expand_dims (bool): if True, append channel axis to grayscale images
+        grayscale: if True, make all images grayscale
+        expand_dims: if True, append channel axis to grayscale images
           rootpath (Union[str, pathlib.Path]): path to the resource with image
           (allows to use relative path)
         rootpath (Union[str, pathlib.Path]): path to the resource with image
@@ -69,7 +69,7 @@ def imread(
         rootpath = str(rootpath)
         uri = uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
 
-    if settings.use_libjpeg_turbo and uri.endswith(
+    if SETTINGS.use_libjpeg_turbo and uri.endswith(
         ("jpg", "JPG", "jpeg", "JPEG")
     ):
         img = jpeg.JPEG(uri).decode()
@@ -134,7 +134,7 @@ def mimread(
           see ``imageio.mimread`` docs for more info
         clip_range (Tuple[int, int]): lower and upper interval edges,
           image values outside the interval are clipped to the interval edges
-        expand_dims (bool): if True, append channel axis to grayscale images
+        expand_dims: if True, append channel axis to grayscale images
           rootpath (Union[str, pathlib.Path]): path to the resource with image
           (allows to use relative path)
         rootpath (Union[str, pathlib.Path]): path to the resource with image
@@ -175,10 +175,10 @@ def mask_to_overlay_image(
     """Draws every mask for with some color over image.
 
     Args:
-        image (np.ndarray): RGB image used as underlay for masks
-        masks (List[np.ndarray]): list of masks
-        threshold (float): threshold for masks binarization
-        mask_strength (float): opacity of colorized masks
+        image: RGB image used as underlay for masks
+        masks: list of masks
+        threshold: threshold for masks binarization
+        mask_strength: opacity of colorized masks
 
     Returns:
         np.ndarray: HxWx3 image with overlay

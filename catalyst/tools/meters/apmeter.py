@@ -46,11 +46,11 @@ class APMeter(meter.Meter):
         """Add a new observation.
 
         Args:
-            output (Tensor): NxK tensor that for each of the N examples
+            output: NxK tensor that for each of the N examples
                 indicates the probability of the example belonging to each of
                 the K classes, according to the model. The probabilities should
                 sum to one over all classes
-            target (Tensor): binary NxK tensort that encodes which of the K
+            target: binary NxK tensort that encodes which of the K
                 classes are associated with the N-th input
                 (eg: a row [0, 1, 0, 1] indicates that the example is
                 associated with classes 2 and 4)

@@ -38,8 +38,7 @@ Getting started
     from torch.utils.data import DataLoader
     from torchvision.datasets import MNIST
     from torchvision.transforms import ToTensor
-    from catalyst import dl
-    from catalyst.utils import metrics
+    from catalyst import dl, metrics
 
     model = torch.nn.Linear(28 * 28, 10)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
@@ -146,12 +145,17 @@ Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10 and Windows Subsyste
 
 Structure
 ~~~~~~~~~~~~~~~~~~~~~~
+- **callbacks** - a variety of callbacks for your train-loop customization.
+- **contrib** - additional modules contributed by Catalyst users.
 - **core** - framework core with main abstractions - Experiment, Runner and Callback.
 - **data** - useful tools and scripts for data processing.
-- **dl** – runner for training and inference, all of the classic ML and CV/NLP/RecSys metrics and a variety of callbacks for training, validation and inference of neural networks.
+- **dl** - entrypoint for your deep learning experiments.
+- **experiments** - a number of useful experiments extensions for Notebook and Config API.
+- **metrics** – classic ML and CV/NLP/RecSys metrics.
+- **registry** - Catalyst global registry for Config API.
+- **runners** - runners extensions for different deep learning tasks.
 - **tools** - extra tools for Deep Learning research, class-based helpers.
 - **utils** - typical utils for Deep Learning research, function-based helpers.
-- **contrib** - additional modules contributed by Catalyst users.
 
 
 Tests
@@ -194,10 +198,17 @@ Indices and tables
 .. toctree::
     :caption: API
 
-    api/core
-    api/dl
-    api/registry
-
-    api/data
-    api/utils
+    api/callbacks
     api/contrib
+    api/core
+    api/data
+    api/experiments
+    api/metrics
+    api/registry
+    api/runners
+    api/settings
+    api/tools
+    api/typing
+    api/utils
+
+

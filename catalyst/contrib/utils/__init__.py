@@ -4,7 +4,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
 
 from catalyst.contrib.utils.argparse import boolean_flag
 from catalyst.contrib.utils.compression import (
@@ -66,7 +66,7 @@ try:
         plot_metrics,
     )
 except ImportError as ex:
-    if settings.plotly_required:
+    if SETTINGS.plotly_required:
         logger.warning(
             "plotly not available, to install plotly,"
             " run `pip install plotly`."

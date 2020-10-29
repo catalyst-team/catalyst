@@ -3,7 +3,8 @@
 import argparse
 from pathlib import Path
 
-from catalyst.dl import utils
+from catalyst.utils.pipelines import clone_pipeline
+from catalyst.utils.wizard import run_wizard
 
 
 def build_args(parser):
@@ -40,9 +41,9 @@ def parse_args():
 def main(args, _):
     """Runs the ``catalyst-dl init`` script."""
     if args.interactive:
-        utils.run_wizard()
+        run_wizard()
     else:
-        utils.clone_pipeline(args.pipeline, args.out_dir)
+        clone_pipeline(args.pipeline, args.out_dir)
 
 
 if __name__ == "__main__":

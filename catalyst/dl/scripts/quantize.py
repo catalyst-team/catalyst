@@ -5,7 +5,7 @@ from argparse import ArgumentParser
 import logging
 from pathlib import Path
 
-from catalyst.dl.utils.quantization import (
+from catalyst.utils.quantization import (
     quantize_model_from_checkpoint,
     save_quantized_model,
 )

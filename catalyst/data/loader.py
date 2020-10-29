@@ -46,7 +46,7 @@ class BatchLimitLoaderWrapper:
         Loader wrapper. Limits number of batches used per each iteration.
 
         Args:
-            loader (DataLoader): torch dataloader.
+            loader: torch dataloader.
             num_batches (Union[int, float]): number of batches to use (int),
                 or portion of iterator (float, should be in [0;1] range)
         """

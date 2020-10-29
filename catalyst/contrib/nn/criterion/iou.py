@@ -4,7 +4,7 @@ from functools import partial
 
 from torch import nn
 
-from catalyst.utils import metrics
+from catalyst import metrics
 
 
 class IoULoss(nn.Module):
@@ -21,9 +21,9 @@ class IoULoss(nn.Module):
     ):
         """
         Args:
-            eps (float): epsilon to avoid zero division
-            threshold (float): threshold for outputs binarization
-            activation (str): An torch.nn activation applied to the outputs.
+            eps: epsilon to avoid zero division
+            threshold: threshold for outputs binarization
+            activation: An torch.nn activation applied to the outputs.
                 Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
         """
         super().__init__()
@@ -52,11 +52,11 @@ class BCEIoULoss(nn.Module):
     ):
         """
         Args:
-            eps (float): epsilon to avoid zero division
-            threshold (float): threshold for outputs binarization
-            activation (str): An torch.nn activation applied to the outputs.
+            eps: epsilon to avoid zero division
+            threshold: threshold for outputs binarization
+            activation: An torch.nn activation applied to the outputs.
                 Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
-            reduction (str): Specifies the reduction to apply
+            reduction: Specifies the reduction to apply
                 to the output of BCE
         """
         super().__init__()

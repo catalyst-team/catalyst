@@ -19,8 +19,8 @@ class NaiveCrossEntropyLoss(nn.Module):
         """Calculates loss between ``input_`` and ``target`` tensors.
 
         Args:
-            input_ (torch.Tensor): input tensor of shape ...
-            target (torch.Tensor): target tensor of shape ...
+            input_: input tensor of shape ...
+            target: target tensor of shape ...
 
         @TODO: Docs (add shapes). Contribution is welcome.
         """
@@ -59,9 +59,9 @@ class SymmetricCrossEntropyLoss(nn.Module):
         """Calculates loss between ``input_`` and ``target`` tensors.
 
         Args:
-            input_ (torch.Tensor): input tensor of size
+            input_: input tensor of size
                 (batch_size, num_classes)
-            target (torch.Tensor): target tensor of size (batch_size), where
+            target: target tensor of size (batch_size), where
                 values of a vector correspond to class index
 
         Returns:

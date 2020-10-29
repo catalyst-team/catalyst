@@ -1,5 +1,3 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 from typing import Any
 from base64 import urlsafe_b64encode
 from hashlib import sha256

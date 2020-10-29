@@ -37,15 +37,15 @@ class OneCycleLRWithWarmup(BatchScheduler):
         """
         Args:
             optimizer: PyTorch optimizer
-            num_steps (int): total number of steps
+            num_steps: total number of steps
             lr_range: tuple with two or three elements
                 (max_lr, min_lr, [final_lr])
             init_lr (float, optional): initial lr
-            warmup_steps (int): count of steps for warm-up stage
+            warmup_steps: count of steps for warm-up stage
             warmup_fraction (float, optional): fraction in [0; 1) to calculate
                 number of warmup steps.
                 Cannot be set together with ``warmup_steps``
-            decay_steps (int): count of steps for lr decay stage
+            decay_steps: count of steps for lr decay stage
             decay_fraction (float, optional): fraction in [0; 1) to calculate
                 number of decay steps.
                 Cannot be set together with ``decay_steps``
@@ -202,8 +202,8 @@ class OneCycleLRWithWarmup(BatchScheduler):
         """Recalculates total num_steps for ``batch`` mode.
 
         Args:
-            loader_len (int): total count of batches in an epoch
-            current_step (int): current step
+            loader_len: total count of batches in an epoch
+            current_step: current step
         """
         warmup_steps = self.warmup_steps * loader_len
         lr_annealing_steps = self.lr_annealing_steps * loader_len
