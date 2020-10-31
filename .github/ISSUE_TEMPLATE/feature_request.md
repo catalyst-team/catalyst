@@ -25,3 +25,7 @@ assignees: Scitator, bagxi, Ditwoo
 
 ### Additional context
 <!-- Add any other context or screenshots about the feature request here. -->
+
+
+PS
+- [x] I know, that I could [join Catalyst slack (#__questions channel)](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for issue discussion.
