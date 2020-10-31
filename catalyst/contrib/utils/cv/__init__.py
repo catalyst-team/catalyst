@@ -4,7 +4,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
 
 try:
     from catalyst.contrib.utils.cv.image import (
@@ -17,7 +17,7 @@ try:
         mimwrite_with_meta,
     )
 except ImportError as ex:
-    if settings.cv_required:
+    if SETTINGS.cv_required:
         logger.warning(
             "some of catalyst-cv dependencies are not available,"
             " to install dependencies, run `pip install catalyst[cv]`."

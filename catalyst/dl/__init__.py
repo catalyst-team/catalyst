@@ -1,7 +1,6 @@
 # flake8: noqa
 
 from catalyst.core import *
-
-from catalyst.dl.callbacks import *
-from catalyst.dl.experiment import *
-from catalyst.dl.runner import *
+from catalyst.experiments import *
+from catalyst.runners import *
+from catalyst.callbacks import *

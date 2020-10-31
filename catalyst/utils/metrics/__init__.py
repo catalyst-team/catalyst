@@ -1,4 +1,5 @@
 # flake8: noqa
+<<<<<<< HEAD
 from catalyst.utils.metrics.accuracy import (
     accuracy,
     multi_label_accuracy,
@@ -16,3 +17,7 @@ from catalyst.utils.metrics.functional import (
     wrap_class_metric2dict,
     wrap_topk_metric2dict,
 )
+=======
+# backward compatibility
+from catalyst.metrics import *
+>>>>>>> master

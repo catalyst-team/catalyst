@@ -6,9 +6,9 @@
 - [ ] Did you make sure to update the docs? We use Google format for all the methods and classes.
 - [ ] Did you check the docs with `make check-docs`?
 - [ ] Did you write any new necessary tests?
+- [ ] Did you check that your code passes the unit tests `pytest .` ? 
 - [ ] Did you add your new functionality to the docs?
-- [ ] Did you update the [CHANGELOG](https://github.com/catalyst-team/catalyst/CHANGELOG.md)?
-- [x] **You can use 'Login as guest' to see Teamcity build logs.**
+- [ ] Did you update the [CHANGELOG](https://github.com/catalyst-team/catalyst/blob/master/CHANGELOG.md)?
 
 <!-- For CHANGELOG separate each item in unreleased section by blank line to reduce collisions -->
 
@@ -40,3 +40,7 @@ Anyone in the community is free to review the PR once the tests have passed.
 If we didn't discuss your PR in Github issues there's a high chance it will not be merged.
 
 <!-- Thank you for your contribution! -->
+
+
+PS
+- [x] I know, that I could [join slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for pull request discussion.

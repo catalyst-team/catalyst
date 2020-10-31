@@ -29,7 +29,7 @@ def run_ml_pipeline(sampler_inbatch: data.IInbatchTripletSampler) -> float:
         root=dataset_root, train=True, download=True, transform=transforms,
     )
     sampler = data.BalanceBatchSampler(
-        labels=dataset_train.get_labels(), p=10, k=10
+        labels=dataset_train.get_labels(), p=5, k=10
     )
     train_loader = DataLoader(
         dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size
@@ -55,7 +55,7 @@ def run_ml_pipeline(sampler_inbatch: data.IInbatchTripletSampler) -> float:
         dl.ControlFlowCallback(
             dl.CMCScoreCallback(topk_args=[1]), loaders="valid"
         ),
-        dl.PeriodicLoaderCallback(valid=50),
+        dl.PeriodicLoaderCallback(valid=100),
     ]
 
     runner = dl.SupervisedRunner(device=utils.get_device())
@@ -68,7 +68,7 @@ def run_ml_pipeline(sampler_inbatch: data.IInbatchTripletSampler) -> float:
         minimize_metric=False,
         verbose=True,
         valid_loader="valid",
-        num_epochs=50,
+        num_epochs=100,
         main_metric="cmc01",
     )
     return runner.best_valid_metrics["cmc01"]
@@ -79,7 +79,7 @@ def main() -> None:
     This function checks metric learning pipeline with
     different triplets samplers.
     """
-    cmc_score_th = 0.85
+    cmc_score_th = 0.65
 
     # Note! cmc_score should be > 0.97
     # after 600 epoch. Please check it mannually

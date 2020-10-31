@@ -5,13 +5,10 @@ import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
-from catalyst import dl
+from catalyst import dl, metrics
+from catalyst.contrib.callbacks.kornia_transform import BatchTransformCallback
 from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.dl.callbacks.kornia_transform import (
-    BatchTransformCallback,
-)
 from catalyst.data.cv import ToTensor
-from catalyst.utils import metrics
 
 
 class CustomRunner(dl.Runner):

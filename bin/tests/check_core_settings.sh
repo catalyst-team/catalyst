@@ -21,7 +21,7 @@ nlp_required = false
 EOT
 
 python -c """
-from catalyst.contrib.dl import callbacks
+from catalyst.contrib import callbacks
 from catalyst.contrib import utils
 
 try:
@@ -45,12 +45,12 @@ EOT
 
 # check if fail if requirements not installed
 python -c """
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
 
-assert settings.use_lz4 == False and settings.use_pyarrow == False
+assert SETTINGS.use_lz4 == False and SETTINGS.use_pyarrow == False
 
 try:
-    from catalyst.contrib.dl.callbacks import AlchemyLogger, VisdomLogger
+    from catalyst.contrib.callbacks import AlchemyLogger
 except ImportError:
     pass  # Ok
 else:
@@ -61,7 +61,7 @@ pip install -r requirements/requirements-contrib.txt --quiet --find-links https:
 pip install -r requirements/requirements-ecosystem.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
 
 python -c """
-from catalyst.contrib.dl.callbacks import AlchemyLogger, VisdomLogger
+from catalyst.contrib.callbacks import AlchemyLogger
 """
 
 
@@ -77,13 +77,13 @@ EOT
 
 # check if fail if requirements not installed
 python -c """
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
 
-assert settings.use_libjpeg_turbo == False
+assert SETTINGS.use_libjpeg_turbo == False
 
 try:
     from catalyst.contrib.data import cv as cv_data
-    from catalyst.contrib.dl.callbacks import InferMaskCallback
+    from catalyst.contrib.callbacks import InferMaskCallback
     from catalyst.contrib.models import cv as cv_models
     from catalyst.contrib.utils import imread, imwrite
     from catalyst.data.__main__ import COMMANDS
@@ -103,7 +103,7 @@ pip install -r requirements/requirements-cv.txt --quiet --find-links https://dow
 
 python -c """
 from catalyst.contrib.data import cv as cv_data
-from catalyst.contrib.dl.callbacks import InferMaskCallback
+from catalyst.contrib.callbacks import InferMaskCallback
 from catalyst.contrib.models import cv as cv_models
 from catalyst.contrib.utils import imread, imwrite
 from catalyst.data.__main__ import COMMANDS
