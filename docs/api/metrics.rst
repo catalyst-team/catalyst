@@ -76,6 +76,13 @@ Precision
     :undoc-members:
     :show-inheritance:
 
+Hitrate
+------------------------
+.. automodule:: catalyst.metrics.hitrate
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Functional
 ------------------------
 .. automodule:: catalyst.metrics.functional
