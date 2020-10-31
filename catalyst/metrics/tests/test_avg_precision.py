@@ -9,7 +9,7 @@ def test_avg_precision():
     """
     Tets for catalyst.metrics.map metric.
     """
-    # check everything is relevant
+    # # check everything is relevant
     y_pred = [0.5, 0.2, 0.3, 0.8]
     y_true = [1.0, 1.0, 1.0, 1.0]
 
@@ -18,7 +18,7 @@ def test_avg_precision():
     )
     assert average_precision[0] == 1
 
-    # check is everything is relevant for 3 users
+    # # check is everything is relevant for 3 users
     y_pred = [0.5, 0.2, 0.3, 0.8]
     y_true = [1.0, 1.0, 1.0, 1.0]
 
@@ -28,7 +28,7 @@ def test_avg_precision():
     )
     assert torch.equal(average_precision, torch.ones(3))
 
-    # check everything is irrelevant
+    # # check everything is irrelevant
     y_pred = [0.5, 0.2, 0.3, 0.8]
     y_true = [0.0, 0.0, 0.0, 0.0]
 
@@ -37,7 +37,7 @@ def test_avg_precision():
     )
     assert average_precision[0] == 0
 
-    # check is everything is irrelevant for 3 users
+    # # check is everything is irrelevant for 3 users
     y_pred = [0.5, 0.2, 0.3, 0.8]
     y_true = [0.0, 0.0, 0.0, 0.0]
 
@@ -47,7 +47,7 @@ def test_avg_precision():
     )
     assert torch.equal(average_precision, torch.zeros(3))
 
-    # check 4 test with k
+    # # check 4 test with k
     y_pred1 = [4.0, 2.0, 3.0, 1.0]
     y_pred2 = [1.0, 2.0, 3.0, 4.0]
     y_true1 = [0.0, 1.0, 1.0, 1.0]
@@ -58,7 +58,40 @@ def test_avg_precision():
 
     average_precision = metrics.avg_precision(y_pred_torch, y_true_torch, k=3)
 
-    # TO-DO: discuss better assertions
     assert np.allclose(
         [average_precision[0], 0.39], [average_precision[1], 0.11], atol=0.3
     )
+
+    # check 5
+    # Stanford Introdcution to information retrieval primer
+    y_pred1 = np.arange(9, -1, -1)
+    y_true1 = [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0]
+    y_pred2 = np.arange(9, -1, -1)
+    y_true2 = [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0]
+
+    y_pred_torch = torch.Tensor([y_pred1, y_pred2])
+    y_true_torch = torch.Tensor([y_true1, y_true2])
+
+    average_precision = metrics.avg_precision(y_pred_torch, y_true_torch)
+
+    assert np.allclose(
+        [average_precision[0], 0.62], [average_precision[1], 0.44], atol=0.3
+    )
+
+
+def test_mean_avg_precision():
+
+    # check 1
+    # Stanford Introdcution to information retrieval primer
+    y_pred1 = np.arange(9, -1, -1)
+    y_true1 = [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0]
+    y_pred2 = np.arange(9, -1, -1)
+    y_true2 = [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0]
+
+    y_pred_torch = torch.Tensor([y_pred1, y_pred2])
+    y_true_torch = torch.Tensor([y_true1, y_true2])
+
+    top_k = [10]
+    map = metrics.mean_avg_precision(y_pred_torch, y_true_torch, top_k)
+
+    assert np.allclose(map["map@10"], 0.53, atol=0.3)
