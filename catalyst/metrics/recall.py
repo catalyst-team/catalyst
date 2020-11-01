@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 import torch
 
@@ -11,7 +11,7 @@ def recall(
     argmax_dim: int = -1,
     eps: float = 1e-7,
     num_classes: Optional[int] = None,
-) -> torch.Tensor:
+) -> Union[float, torch.Tensor]:
     """
     Multiclass precision metric.
 
