@@ -18,7 +18,6 @@
 ![catalyst](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
 ![catalyst-cv](https://github.com/catalyst-team/catalyst/workflows/catalyst-cv/badge.svg?branch=master&event=push)
 ![catalyst-nlp](https://github.com/catalyst-team/catalyst/workflows/catalyst-nlp/badge.svg?branch=master&event=push)
-[![Build Status](http://66.248.205.49:8111/app/rest/builds/buildType:id:Catalyst_Deploy/statusIcon.svg)](http://66.248.205.49:8111/project.html?projectId=Catalyst&tab=projectOverview&guest=1)
 
 [![python](https://img.shields.io/badge/python_3.6-passing-success)](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
 [![python](https://img.shields.io/badge/python_3.7-passing-success)](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
