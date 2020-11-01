@@ -175,7 +175,11 @@ def main(args, _=None):
         features,
         label_img=img_data,
         metadata=metadata,
-        metadata_header=meta_header,
+        metadata_header=(
+            meta_header
+            if meta_header is not None and len(meta_header)
+            else None
+        ),
     )
     summary_writer.close()
 
