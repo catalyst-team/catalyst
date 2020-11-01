@@ -147,18 +147,28 @@ def main(args, _=None):
         img_data = None
 
     if meta_header is not None:
+
+        def _parse_metadata(texts):
+            if isinstance(texts, (list, tuple)):
+                return [
+                    str(text)
+                    .replace("\n", " ")
+                    .replace(r"\s", " ")
+                    .replace(r"\s\s+", " ")
+                    .strip()
+                    for text in texts
+                ]
+            else:
+                return (
+                    str(texts)
+                    .replace("\n", " ")
+                    .replace(r"\s", " ")
+                    .replace(r"\s\s+", " ")
+                    .strip()
+                )
+
         metadata = df[meta_header].values.tolist()
-        metadata = [
-            [
-                str(text)
-                .replace("\n", " ")
-                .replace(r"\s", " ")
-                .replace(r"\s\s+", " ")
-                .strip()
-                for text in texts
-            ]
-            for texts in metadata
-        ]
+        metadata = [_parse_metadata(texts) for texts in metadata]
         assert len(metadata) == len(features)
     elif args.img_col is not None:
 
