@@ -1,7 +1,7 @@
 """
 F1 score.
 """
-from typing import Optional
+from typing import Optional, Union
 
 import torch
 
@@ -15,7 +15,7 @@ def fbeta_score(
     eps: float = 1e-7,
     argmax_dim: int = -1,
     num_classes: Optional[int] = None,
-) -> float:
+) -> Union[float, torch.Tensor]:
     """
     Counts fbeta score for given ``outputs`` and ``targets``.
 
@@ -56,7 +56,7 @@ def f1_score(
     eps: float = 1e-7,
     argmax_dim: int = -1,
     num_classes: Optional[int] = None,
-) -> float:
+) -> Union[float, torch.Tensor]:
     """
     Args:
         outputs: A list of predicted elements
