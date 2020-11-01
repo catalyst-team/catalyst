@@ -160,6 +160,13 @@ def main(args, _=None):
             for texts in metadata
         ]
         assert len(metadata) == len(features)
+    elif args.img_col is not None:
+
+        def _image_name(s):
+            splitted = s.rsplit("/", 1)
+            return splitted[1] if len(splitted) else splitted[0]
+
+        metadata = [_image_name(str(path)) for path in df[args.img_col].values]
     else:
         metadata = None
 
