@@ -29,7 +29,7 @@ else:
 if version.parse(torch_version) < version.parse("1.2.0"):
     from tensorboardX.proto.event_pb2 import Event
 else:
-    from torch.utils.tensorboard import Event
+    from torch.utils.tensorboard.writer import Event
 
 
 def _u32(x):
