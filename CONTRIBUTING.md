@@ -68,7 +68,10 @@ Do not forget to check the codestyle for your PR with
 catalyst-make-codestyle && catalyst-check-codestyle
 ```
 
-Make sure to have your python packages complied with `requirements/requirements.txt` and `requirements/requirements-dev.txt` to get codestyle run clean.
+Make sure to have your python packages complied with `requirements/requirements.txt` and `requirements/requirements-dev.txt` to get codestyle run clean:
+```bash
+pip isntall -r requirements/requirements.txt -r requirements/requirements-dev.txt
+```
 
 #### Unit tests
 
@@ -129,7 +132,7 @@ rm -rf ./builds; REMOVE_BUILDS=0 make check-docs
 
 Now you can open them into your browser, for example with
 ```bash
-vivaldi-stable ./builds/index.html
+open ./builds/index.html
 ```
 
 If you have some issues with building docs - please make sure that you installed required pip packages.
