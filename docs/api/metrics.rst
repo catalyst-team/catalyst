@@ -69,6 +69,13 @@ MRR
     :undoc-members:
     :show-inheritance:
 
+NDCG
+------------------------
+.. automodule:: catalyst.metrics.ndcg
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Precision
 ------------------------
 .. automodule:: catalyst.metrics.precision
