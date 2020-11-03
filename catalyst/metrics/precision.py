@@ -3,8 +3,7 @@ from typing import Optional, Union
 import torch
 
 from catalyst.metrics import (
-    precision_recall_fbeta_support,
-    process_multilabel_components,
+    precision_recall_fbeta_support, process_multilabel_components,
 )
 
 

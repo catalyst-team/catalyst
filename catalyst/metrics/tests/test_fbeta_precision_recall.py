@@ -2,7 +2,13 @@ import pytest  # noqa: F401
 
 import torch
 
-from catalyst.metrics import f1_score, fbeta_score, precision, recall
+from catalyst.metrics import (
+    f1_score,
+    fbeta_score,
+    precision,
+    precision_recall_fbeta_support,
+    recall,
+)
 
 
 def test_precision_recall_f_binary_single_class() -> None:
@@ -18,3 +24,39 @@ def test_precision_recall_f_binary_single_class() -> None:
     assert 3.0 == recall([0, 1, 2], [0, 1, 2]).sum().item()
 
     assert 0.0 == f1_score(torch.arange(10), torch.arange(10)[::-1]).sum()
+
+
+@pytest.mark.parametrize(
+    [
+        "outputs",
+        "targets",
+        "precision_true",
+        "recall_true",
+        "fbeta_true",
+        "support_true",
+    ],
+    [
+        pytest.param(
+            torch.tensor([[0, 0, 1, 1, 0, 1, 0, 1]]),
+            torch.tensor([[0, 1, 0, 1, 0, 0, 1, 1]]),
+            0.5,
+            0.5,
+            0.5,
+            4,
+        ),
+    ],
+)
+def test_precision_recall_fbeta_support_binary(
+    outputs, targets, precision_true, recall_true, fbeta_true, support_true,
+):
+    (
+        precision_score,
+        recall_score,
+        fbeta_score,
+        support,
+    ) = precision_recall_fbeta_support(outputs=outputs, targets=targets)
+
+    assert torch.isclose(precision_score[1], precision_true)
+    assert torch.isclose(precision_score[1], precision_true)
+    assert torch.isclose(precision_score[1], precision_true)
+    assert support[1] == support_true
