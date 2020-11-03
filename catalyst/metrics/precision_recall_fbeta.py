@@ -1,6 +1,7 @@
 from typing import Optional, Tuple
 
 import torch
+
 from catalyst.metrics.functional import get_multiclass_statistics
 
 
