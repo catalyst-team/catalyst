@@ -58,7 +58,6 @@ def test_avg_precision():
 
     average_precision = metrics.avg_precision(y_pred_torch, y_true_torch, k=3)
 
-    print(average_precision[1]-0.333)
     assert np.isclose(average_precision[0], 0.5833, atol=1e03)
     assert np.isclose(average_precision[1], 0.333, atol=1e03)
 
