@@ -5,14 +5,14 @@ import torch
 from catalyst.metrics.functional import get_multiclass_statistics
 
 
-def precision_recall_fbeta(
+def precision_recall_fbeta_support(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     beta: float = 1,
     eps: float = 1e-6,
     argmax_dim: int = -1,
     num_classes: Optional[int] = None
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Counts precision, recall, fbeta_score.
 
@@ -31,7 +31,7 @@ def precision_recall_fbeta(
         outputs=outputs,
         targets=targets,
         argmax_dim=argmax_dim,
-        num_classes=num_classes
+        num_classes=num_classes,
     )
     precision = (tp + eps) / (fp + tp + eps)
     recall = (tp + eps) / (fn + tp + eps)
@@ -39,4 +39,4 @@ def precision_recall_fbeta(
     denominator = beta ** 2 * precision + recall
     fbeta = numerator / denominator
 
-    return precision, recall, fbeta
+    return precision, recall, fbeta, support

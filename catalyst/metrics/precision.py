@@ -2,8 +2,8 @@ from typing import Optional, Union
 
 import torch
 
-from catalyst.metrics.functional import (
-    get_multiclass_statistics,
+from catalyst.metrics import (
+    precision_recall_fbeta_support,
     process_multilabel_components,
 )
 
@@ -92,13 +92,14 @@ def precision(
     Returns:
         Tensor:
     """
-    _, fp, _, tp, _ = get_multiclass_statistics(
+    precision_score, _, _, _, = precision_recall_fbeta_support(
         outputs=outputs,
         targets=targets,
         argmax_dim=argmax_dim,
+        eps=eps,
         num_classes=num_classes,
     )
-    return (tp + eps) / (fp + tp + eps)
+    return precision_score
 
 
 __all__ = ["average_precision", "precision"]

@@ -5,7 +5,7 @@ from typing import Optional, Union
 
 import torch
 
-from catalyst.metrics.precision_recall_fbeta import precision_recall_fbeta
+from catalyst.metrics.classification import precision_recall_fbeta
 
 
 def fbeta_score(
