@@ -46,7 +46,8 @@ If you are not familiar with creating a Pull Request, here are some guides:
 
 1. Install requirements
     ```
-    brew install bash # for MacOS users, as we need bash version >= 4.0.0
+    # for MacOS users, as we need bash version >= 4.0.0, wget and gnu-based sed
+    brew install bash wget gnu-sed
     pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
     # for easy-to-go development, we suggest to install extra dependencies
     pip install -r requirements/requirements-ml.txt -r requirements/requirements-cv.txt -r requirements/requirements-nlp.txt
