@@ -219,8 +219,6 @@ def get_multiclass_statistics(
         argmax_dim=argmax_dim,
         num_classes=num_classes,
     )
-    if num_classes <= 2:
-        return get_binary_statistics(outputs=outputs, targets=targets)
 
     tn = torch.zeros((num_classes,), device=outputs.device)
     fp = torch.zeros((num_classes,), device=outputs.device)

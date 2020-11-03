@@ -5,7 +5,7 @@ from typing import Optional, Union
 
 import torch
 
-from catalyst.metrics.functional import get_multiclass_statistics
+from catalyst.metrics.precision_recall_fbeta import precision_recall_fbeta
 
 
 def fbeta_score(
@@ -14,7 +14,7 @@ def fbeta_score(
     beta: float = 1.0,
     eps: float = 1e-7,
     argmax_dim: int = -1,
-    num_classes: Optional[int] = None,
+    num_classes: Optional[int] = None
 ) -> Union[float, torch.Tensor]:
     """
     Counts fbeta score for given ``outputs`` and ``targets``.
@@ -37,17 +37,15 @@ def fbeta_score(
     if beta < 0:
         raise Exception("beta parameter should be non-negative")
 
-    _, fp, fn, tp, _ = get_multiclass_statistics(
+    _p, _r, fbeta = precision_recall_fbeta(
         outputs=outputs,
         targets=targets,
+        beta=beta,
+        eps=eps,
         argmax_dim=argmax_dim,
         num_classes=num_classes,
     )
-
-    precision_plus_recall = (1 + beta ** 2) * tp + beta ** 2 * fn + fp + eps
-
-    score = ((1 + beta ** 2) * tp + eps) / precision_plus_recall
-    return score
+    return fbeta
 
 
 def f1_score(
@@ -75,7 +73,7 @@ def f1_score(
         beta=1,
         eps=eps,
         argmax_dim=argmax_dim,
-        num_classes=num_classes,
+        num_classes=num_classes
     )
 
     return score
