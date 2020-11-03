@@ -18,7 +18,6 @@ def fbeta_score(
 ) -> Union[float, torch.Tensor]:
     """
     Counts fbeta score for given ``outputs`` and ``targets``.
-
     Args:
         outputs: A list of predicted elements
         targets:  A list of elements that are to be predicted
@@ -33,7 +32,7 @@ def fbeta_score(
 
     Returns:
         float: F_1 score.
-     """
+    """
     if beta < 0:
         raise Exception("beta parameter should be non-negative")
 
@@ -56,6 +55,8 @@ def f1_score(
     num_classes: Optional[int] = None,
 ) -> Union[float, torch.Tensor]:
     """
+    Fbeta_score with beta=1.
+
     Args:
         outputs: A list of predicted elements
         targets:  A list of elements that are to be predicted
