@@ -6,46 +6,6 @@ from typing import Dict, List
 import torch
 
 
-def mean_avg_precision(
-    outputs: torch.Tensor, targets: torch.Tensor, top_k: List[int]
-) -> Dict[str, int]:
-    """
-    Calculate the mean average precision (MAP) for RecSys.
-    The metrics calculates the mean of the AP across all users
-
-    MAP assumes user is interested in finding many
-    relevant items for each query
-
-
-    Args:
-        outputs (torch.Tensor):
-            Tensor weith predicted score
-            size: [batch_size, slate_length]
-            model outputs, logits
-        targets (torch.Tensor):
-            Binary tensor with ground truth.
-            1 means the item is relevant
-            for the user and 0 not relevant
-            size: [batch_szie, slate_length]
-            ground truth, labels
-        top_k (List[int]):
-            List of parameter for evaluation
-            topK items
-
-    Returns:
-        result (Dict[str, int]):
-            The map score for every k.
-            size: [len(top_k), 1]
-    """
-    map_k_dict = {
-        "map@{}".format(k): torch.mean(
-            avg_precision(outputs, targets, k)
-        ).item()
-        for k in top_k
-    }
-    return map_k_dict
-
-
 def avg_precision(
     outputs: torch.Tensor, targets: torch.Tensor, k=10
 ) -> torch.Tensor:
@@ -56,11 +16,12 @@ def avg_precision(
 
     To compute the precision at k set the threshold rank k,
     compute the percentage of relevant items in topK,
-    ignoreing the documnets ranked lower than k.
+    ignoring the documents ranked lower than k.
 
-    The average precison at k (AP at k) summarizes the average
+    The average precision at k (AP at k) summarizes the average
     precision for relevant items up to the k-th one.
     Wikipedia entry for the Average precision
+
     <https://en.wikipedia.org/w/index.php?title=Information_retrieval&
     oldid=793358396#Average_precision>
 
@@ -76,15 +37,16 @@ def avg_precision(
         targets (torch.Tensor):
             Binary tensor with ground truth.
             1 means the item is relevant
-            for the user and 0 not relevant
+            and 0 not relevant
             size: [batch_szie, slate_length]
             ground truth, labels
         k (int):
-            Parameter for evaluation on top-k items
+            The position to compute the truncated AP, 
+            must be positive
 
     Returns:
         result (torch.Tensor):
-            The mrr score for each user.
+            The map score for each batch.
             size: [batch_size, 1]
     """
     k = min(outputs.size(1), k)
@@ -107,6 +69,45 @@ def avg_precision(
     )
     ap[torch.isnan(ap)] = 0
     return ap
+
+
+def mean_avg_precision(
+    outputs: torch.Tensor, targets: torch.Tensor, top_k: List[int]
+) -> Dict[str, int]:
+    """
+    Calculate the mean average precision (MAP) for RecSys.
+    The metrics calculate the mean of the AP across all batches
+
+    MAP amplifies the interest in finding many
+    relevant items for each query
+
+    Args:
+        outputs (torch.Tensor):
+            Tensor weith predicted score
+            size: [batch_size, slate_length]
+            model outputs, logits
+        targets (torch.Tensor):
+            Binary tensor with ground truth.
+            1 means the item is relevant
+            and 0 not relevant
+            size: [batch_szie, slate_length]
+            ground truth, labels
+        top_k (List[int]):
+            List of parameter for evaluation
+            topK items
+
+    Returns:
+        result (Dict[str, int]):
+            The map score for every k.
+            size: [len(top_k), 1]
+    """
+    map_k_dict = {
+        "map@{}".format(k): torch.mean(
+            avg_precision(outputs, targets, k)
+        ).item()
+        for k in top_k
+    }
+    return map_k_dict
 
 
 __all__ = ["mean_avg_precision", "avg_precision"]
