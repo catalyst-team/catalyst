@@ -1,6 +1,6 @@
 # Framework must-haves
 numpy>=1.16.4
-torch>=1.1.0,<1.7.0
+torch>=1.1.0
 tqdm>=4.33.0
 PyYAML
 
