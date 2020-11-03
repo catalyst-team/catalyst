@@ -35,7 +35,7 @@ def precision_recall_fbeta(
     )
     precision = (tp + eps) / (fp + tp + eps)
     recall = (tp + eps) / (fn + tp + eps)
-    numerator = (1 + beta**2) * precision * recall
+    numerator = (1 + beta ** 2) * precision * recall
     denominator = beta ** 2 * precision + recall
     fbeta = numerator / denominator
 
