@@ -76,6 +76,13 @@ NDCG
     :undoc-members:
     :show-inheritance:
 
+DCG
+------------------------
+.. automodule:: catalyst.metrics.dcg
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Precision
 ------------------------
 .. automodule:: catalyst.metrics.precision
