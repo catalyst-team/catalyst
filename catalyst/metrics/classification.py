@@ -11,7 +11,7 @@ def precision_recall_fbeta_support(
     beta: float = 1,
     eps: float = 1e-6,
     argmax_dim: int = -1,
-    num_classes: Optional[int] = None
+    num_classes: Optional[int] = None,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Counts precision, recall, fbeta_score.

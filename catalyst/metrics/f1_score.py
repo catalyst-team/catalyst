@@ -14,7 +14,7 @@ def fbeta_score(
     beta: float = 1.0,
     eps: float = 1e-7,
     argmax_dim: int = -1,
-    num_classes: Optional[int] = None
+    num_classes: Optional[int] = None,
 ) -> Union[float, torch.Tensor]:
     """
     Counts fbeta score for given ``outputs`` and ``targets``.
@@ -73,7 +73,7 @@ def f1_score(
         beta=1,
         eps=eps,
         argmax_dim=argmax_dim,
-        num_classes=num_classes
+        num_classes=num_classes,
     )
 
     return score
