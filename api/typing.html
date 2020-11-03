@@ -376,8 +376,22 @@ returns the loss. Optional for most optimizers.</p>
 
 <dl class="method">
 <dt id="catalyst.typing.Optimizer.zero_grad">
-<code class="sig-name descname">zero_grad</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch/optim/optimizer.html#Optimizer.zero_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.typing.Optimizer.zero_grad" title="Permalink to this definition">¶</a></dt>
-<dd><p>Clears the gradients of all optimized <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code> s.</p>
+<code class="sig-name descname">zero_grad</code><span class="sig-paren">(</span><em class="sig-param">set_to_none: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/torch/optim/optimizer.html#Optimizer.zero_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.typing.Optimizer.zero_grad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the gradients of all optimized <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.Tensor</span></code> s to zero.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>set_to_none</strong> (<em>bool</em>) – instead of setting to zero, set the grads to None.
+This is will in general have lower memory footprint, and can modestly improve performance.
+However, it changes certain behaviors. For example:
+1. When the user tries to access a gradient and perform manual ops on it,
+a None attribute or a Tensor full of 0s will behave differently.
+2. If the user requests <code class="docutils literal notranslate"><span class="pre">zero_grad(set_to_none=True)</span></code> followed by a backward pass, <code class="docutils literal notranslate"><span class="pre">.grad</span></code>s
+are guaranteed to be None for params that did not receive a gradient.
+3. <code class="docutils literal notranslate"><span class="pre">torch.optim</span></code> optimizers have a different behavior if the gradient is 0 or None
+(in one case it does the step with a gradient of 0 and in the other it skips
+the step altogether).</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -391,7 +405,7 @@ returns the loss. Optional for most optimizers.</p>
 <dl class="class">
 <dt id="catalyst.typing.Dataset">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.typing.</code><code class="sig-name descname">Dataset</code><a class="reference internal" href="../_modules/torch/utils/data/dataset.html#Dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.typing.Dataset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">typing.Generic</span></code></p>
 <p>An abstract class representing a <a class="reference internal" href="#catalyst.typing.Dataset" title="catalyst.typing.Dataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></a>.</p>
 <p>All datasets that represent a map from keys to data samples should subclass
 it. All subclasses should overwrite <code class="xref py py-meth docutils literal notranslate"><span class="pre">__getitem__()</span></code>, supporting fetching a

@@ -279,6 +279,7 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 
 <span class="k">class</span> <span class="nc">_RequiredParameter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -400,8 +401,8 @@
 
         <span class="c1"># Update the state</span>
         <span class="n">id_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">old_id</span><span class="p">:</span> <span class="n">p</span> <span class="k">for</span> <span class="n">old_id</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span>
-                  <span class="nb">zip</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">saved_groups</span><span class="p">)),</span>
-                      <span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">)))}</span>
+                  <span class="nb">zip</span><span class="p">(</span><span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">((</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">saved_groups</span><span class="p">)),</span>
+                      <span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">((</span><span class="n">g</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">)))}</span>
 
         <span class="k">def</span> <span class="nf">cast</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
             <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Make a deep copy of value, casting all tensors to device of param.&quot;&quot;&quot;</span>
@@ -438,13 +439,32 @@
             <span class="n">update_group</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">ng</span><span class="p">)</span> <span class="k">for</span> <span class="n">g</span><span class="p">,</span> <span class="n">ng</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">groups</span><span class="p">,</span> <span class="n">saved_groups</span><span class="p">)]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__setstate__</span><span class="p">({</span><span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="n">state</span><span class="p">,</span> <span class="s1">&#39;param_groups&#39;</span><span class="p">:</span> <span class="n">param_groups</span><span class="p">})</span></div>
 
-<div class="viewcode-block" id="Optimizer.zero_grad"><a class="viewcode-back" href="../../../api/typing.html#catalyst.typing.Optimizer.zero_grad">[docs]</a>    <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Clears the gradients of all optimized :class:`torch.Tensor` s.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Optimizer.zero_grad"><a class="viewcode-back" href="../../../api/typing.html#catalyst.typing.Optimizer.zero_grad">[docs]</a>    <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">set_to_none</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Sets the gradients of all optimized :class:`torch.Tensor` s to zero.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            set_to_none (bool): instead of setting to zero, set the grads to None.</span>
+<span class="sd">                This is will in general have lower memory footprint, and can modestly improve performance.</span>
+<span class="sd">                However, it changes certain behaviors. For example:</span>
+<span class="sd">                1. When the user tries to access a gradient and perform manual ops on it,</span>
+<span class="sd">                a None attribute or a Tensor full of 0s will behave differently.</span>
+<span class="sd">                2. If the user requests ``zero_grad(set_to_none=True)`` followed by a backward pass, ``.grad``\ s</span>
+<span class="sd">                are guaranteed to be None for params that did not receive a gradient.</span>
+<span class="sd">                3. ``torch.optim`` optimizers have a different behavior if the gradient is 0 or None</span>
+<span class="sd">                (in one case it does the step with a gradient of 0 and in the other it skips</span>
+<span class="sd">                the step altogether).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">group</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]:</span>
                 <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">detach_</span><span class="p">()</span>
-                    <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span></div>
+                    <span class="k">if</span> <span class="n">set_to_none</span><span class="p">:</span>
+                        <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">grad_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                            <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">detach_</span><span class="p">()</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                        <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Optimizer.step"><a class="viewcode-back" href="../../../api/typing.html#catalyst.typing.Optimizer.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">closure</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Performs a single optimization step (parameter update).</span>
@@ -493,6 +513,12 @@
                                  <span class="n">name</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">param_group</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="n">param_group</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">params</span><span class="p">)):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;optimizer contains a parameter group with duplicate parameters; &quot;</span>
+                          <span class="s2">&quot;in future, this will cause an error; &quot;</span>
+                          <span class="s2">&quot;see github.com/pytorch/pytorch/issues/40967 for more information&quot;</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 
         <span class="n">param_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>

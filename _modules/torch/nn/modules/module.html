@@ -335,7 +335,7 @@
 <span class="sd">    .. warning ::</span>
 
 <span class="sd">        This adds global state to the `nn.module` module</span>
-<span class="sd">        and it is only intended for debugging/profiling purposes. </span>
+<span class="sd">        and it is only intended for debugging/profiling purposes.</span>
 
 <span class="sd">    The hook will be called every time before :func:`forward` is invoked.</span>
 <span class="sd">    It should have the following signature::</span>
@@ -367,7 +367,7 @@
 <span class="sd">    .. warning ::</span>
 
 <span class="sd">        This adds global state to the `nn.module` module</span>
-<span class="sd">        and it is only intended for debugging/profiling purposes. </span>
+<span class="sd">        and it is only intended for debugging/profiling purposes.</span>
 
 <span class="sd">    The hook will be called every time after :func:`forward` has computed an output.</span>
 <span class="sd">    It should have the following signature::</span>
@@ -399,7 +399,7 @@
 
 <span class="sd">    .. warning ::</span>
 <span class="sd">        This adds global state to the `nn.module` module</span>
-<span class="sd">        and it is only intended for debugging/profiling purposes. </span>
+<span class="sd">        and it is only intended for debugging/profiling purposes.</span>
 
 <span class="sd">        The current implementation will not have the presented behavior</span>
 <span class="sd">        for complex :class:`Module` that perform many operations.</span>
@@ -433,6 +433,23 @@
     <span class="k">return</span> <span class="n">handle</span>
 
 
+<span class="c1"># Trick mypy into not applying contravariance rules to inputs by defining</span>
+<span class="c1"># forward as a value, rather than a function.  See also</span>
+<span class="c1"># https://github.com/python/mypy/issues/8795</span>
+<span class="k">def</span> <span class="nf">_forward_unimplemented</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="nb">input</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Defines the computation performed at every call.</span>
+
+<span class="sd">    Should be overridden by all subclasses.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Although the recipe for forward pass needs to be defined within</span>
+<span class="sd">        this function, one should call the :class:`Module` instance afterwards</span>
+<span class="sd">        instead of this since the former takes care of running the</span>
+<span class="sd">        registered hooks while the latter silently ignores them.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
 <span class="k">class</span> <span class="nc">Module</span><span class="p">:</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Base class for all neural network modules.</span>
 
@@ -456,6 +473,10 @@
 
 <span class="sd">    Submodules assigned in this way will be registered, and will have their</span>
 <span class="sd">    parameters converted too when you call :meth:`to`, etc.</span>
+
+<span class="sd">    :ivar training: Boolean represents whether this module is in training or</span>
+<span class="sd">                    evaluation mode.</span>
+<span class="sd">    :vartype training: bool</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">dump_patches</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
@@ -491,25 +512,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_load_state_dict_pre_hooks</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_modules</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
 
-    <span class="c1"># Trick mypy into not applying contravariance rules to inputs by defining</span>
-    <span class="c1"># forward as a value, rather than a function.  See also</span>
-    <span class="c1"># https://github.com/python/mypy/issues/8795</span>
-    <span class="k">def</span> <span class="nf">_forward_unimplemented</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="nb">input</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Defines the computation performed at every call.</span>
-
-<span class="sd">    Should be overridden by all subclasses.</span>
-
-<span class="sd">    .. note::</span>
-<span class="sd">        Although the recipe for forward pass needs to be defined within</span>
-<span class="sd">        this function, one should call the :class:`Module` instance afterwards</span>
-<span class="sd">        instead of this since the former takes care of running the</span>
-<span class="sd">        registered hooks while the latter silently ignores them.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">forward</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">_forward_unimplemented</span>
 
-    <span class="k">def</span> <span class="nf">register_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tensor</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">persistent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">register_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">tensor</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span> <span class="n">persistent</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Adds a buffer to the module.</span>
 
 <span class="sd">        This is typically used to register a buffer that should not to be</span>
@@ -561,7 +566,7 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_non_persistent_buffers_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">register_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="n">Parameter</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">register_parameter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Parameter</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Adds a parameter to the module.</span>
 
 <span class="sd">        The parameter can be accessed as an attribute using given name.</span>
@@ -600,7 +605,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">param</span>
 
-    <span class="k">def</span> <span class="nf">add_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="s1">&#39;Module&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">add_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="s1">&#39;Module&#39;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Adds a child module to the current module.</span>
 
 <span class="sd">        The module can be accessed as an attribute using the given name.</span>
@@ -967,9 +972,9 @@
         <span class="n">tracing_state</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">_C</span><span class="o">.</span><span class="n">_get_tracing_state</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">tracing_state</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">_C</span><span class="o">.</span><span class="n">ScriptMethod</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="o">*</span><span class="nb">input</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">recording_scopes</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">_trace_module_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="n">recording_scopes</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">_trace</span><span class="o">.</span><span class="n">_trace_module_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">recording_scopes</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">_trace_module_map</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span> <span class="ow">in</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">_trace_module_map</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">_trace</span><span class="o">.</span><span class="n">_trace_module_map</span><span class="p">[</span><span class="bp">self</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span> <span class="ow">in</span> <span class="n">torch</span><span class="o">.</span><span class="n">jit</span><span class="o">.</span><span class="n">_trace</span><span class="o">.</span><span class="n">_trace_module_map</span> <span class="k">else</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
                 <span class="n">cur_scope_name</span> <span class="o">=</span> <span class="n">tracing_state</span><span class="o">.</span><span class="n">current_scope</span><span class="p">()</span>
                 <span class="n">tracing_state</span><span class="o">.</span><span class="n">push_scope</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
@@ -1029,6 +1034,8 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_state_dict_hooks</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="k">if</span> <span class="s1">&#39;_load_state_dict_pre_hooks&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_load_state_dict_pre_hooks</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s1">&#39;_non_persistent_buffers_set&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_non_persistent_buffers_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="s1">&#39;Module&#39;</span><span class="p">]:</span>
         <span class="k">if</span> <span class="s1">&#39;_parameters&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
@@ -1252,7 +1259,7 @@
                     <span class="n">error_msgs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;While copying the parameter named &quot;</span><span class="si">{}</span><span class="s1">&quot;, &#39;</span>
                                       <span class="s1">&#39;whose dimensions in the model are </span><span class="si">{}</span><span class="s1"> and &#39;</span>
                                       <span class="s1">&#39;whose dimensions in the checkpoint are </span><span class="si">{}</span><span class="s1">, &#39;</span>
-                                      <span class="s1">&#39;an exception occured : </span><span class="si">{}</span><span class="s1">.&#39;</span>
+                                      <span class="s1">&#39;an exception occurred : </span><span class="si">{}</span><span class="s1">.&#39;</span>
                                       <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">param</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">input_param</span><span class="o">.</span><span class="n">size</span><span class="p">(),</span> <span class="n">ex</span><span class="o">.</span><span class="n">args</span><span class="p">))</span>
             <span class="k">elif</span> <span class="n">strict</span><span class="p">:</span>
                 <span class="n">missing_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
@@ -1581,8 +1588,14 @@
             <span class="n">p</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="n">requires_grad</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span>
 
-    <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Sets gradients of all model parameters to zero.&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">set_to_none</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Sets gradients of all model parameters to zero. See similar function</span>
+<span class="sd">        under :class:`torch.optim.Optimizer` for more context.</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            set_to_none (bool): instead of setting to zero, set the grads to None.</span>
+<span class="sd">                See :meth:`torch.optim.Optimizer.zero_grad` for details.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_is_replica&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                 <span class="s2">&quot;Calling .zero_grad() from a module created with nn.DataParallel() has no effect. &quot;</span>
@@ -1592,8 +1605,14 @@
 
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">detach_</span><span class="p">()</span>
-                <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">set_to_none</span><span class="p">:</span>
+                    <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">grad_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">detach_</span><span class="p">()</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">requires_grad_</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+                    <span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">zero_</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">share_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">T</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">share_memory_</span><span class="p">())</span>
@@ -1604,7 +1623,7 @@
     <span class="k">def</span> <span class="nf">extra_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Set the extra representation of the module</span>
 
-<span class="sd">        To print customized extra information, you should reimplement</span>
+<span class="sd">        To print customized extra information, you should re-implement</span>
 <span class="sd">        this method in your own modules. Both single-line and multi-line</span>
 <span class="sd">        strings are acceptable.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
