@@ -23,8 +23,6 @@ def test_precision_recall_f_binary_single_class() -> None:
     assert 3.0 == precision([0, 1, 2], [0, 1, 2]).sum().item()
     assert 3.0 == recall([0, 1, 2], [0, 1, 2]).sum().item()
 
-    assert 0.0 == f1_score(torch.arange(10), torch.arange(10)[::-1]).sum()
-
 
 @pytest.mark.parametrize(
     [
@@ -56,7 +54,7 @@ def test_precision_recall_fbeta_support_binary(
         support,
     ) = precision_recall_fbeta_support(outputs=outputs, targets=targets)
 
-    assert torch.isclose(precision_score[1], precision_true)
-    assert torch.isclose(precision_score[1], precision_true)
-    assert torch.isclose(precision_score[1], precision_true)
+    assert torch.isclose(precision_score[1], torch.tensor(precision_true))
+    assert torch.isclose(recall_score[1], torch.tensor(recall_true))
+    assert torch.isclose(fbeta_score[1], torch.tensor(fbeta_true))
     assert support[1] == support_true

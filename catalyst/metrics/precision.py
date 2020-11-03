@@ -2,9 +2,8 @@ from typing import Optional, Union
 
 import torch
 
-from catalyst.metrics import (
-    precision_recall_fbeta_support, process_multilabel_components,
-)
+from catalyst.metrics import precision_recall_fbeta_support
+from catalyst.metrics.functional import process_multilabel_components
 
 
 def average_precision(
