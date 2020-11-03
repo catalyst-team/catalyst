@@ -5,6 +5,96 @@ if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
 
+class ICallback:
+    def on_experiment_start(self, runner: "IRunner"):
+        """Event handler for stage start.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+    def on_stage_start(self, runner: "IRunner"):
+        """Event handler for stage start.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+    def on_epoch_start(self, runner: "IRunner"):
+        """Event handler for epoch start.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+    def on_loader_start(self, runner: "IRunner"):
+        """Event handler for loader start.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+    def on_batch_start(self, runner: "IRunner"):
+        """Event handler for batch start.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+    def on_batch_end(self, runner: "IRunner"):
+        """Event handler for batch end.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+    def on_loader_end(self, runner: "IRunner"):
+        """Event handler for loader end.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+    def on_epoch_end(self, runner: "IRunner"):
+        """Event handler for epoch end.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+    def on_stage_end(self, runner: "IRunner"):
+        """Event handler for stage end.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+    def on_experiment_end(self, runner: "IRunner"):
+        """Event handler for stage start.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+    def on_exception(self, runner: "IRunner"):
+        """Event handler for exception case.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+
 class CallbackNode(IntFlag):
     """Callback node usage flag during distributed training.
 
@@ -78,7 +168,7 @@ class CallbackScope(IntFlag):
     Experiment = experiment = 1  # noqa: WPS115
 
 
-class Callback:
+class Callback(ICallback):
     """
     An abstraction that lets you customize your experiment run logic.
     To give users maximum flexibility and extensibility Catalyst supports
@@ -135,78 +225,6 @@ class Callback:
         self.node = node
         self.order = order
         self.scope = scope
-
-    def on_stage_start(self, runner: "IRunner"):
-        """Event handler for stage start.
-
-        Args:
-            runner: IRunner instance.
-        """
-        pass
-
-    def on_stage_end(self, runner: "IRunner"):
-        """Event handler for stage end.
-
-        Args:
-            runner: IRunner instance.
-        """
-        pass
-
-    def on_epoch_start(self, runner: "IRunner"):
-        """Event handler for epoch start.
-
-        Args:
-            runner: IRunner instance.
-        """
-        pass
-
-    def on_epoch_end(self, runner: "IRunner"):
-        """Event handler for epoch end.
-
-        Args:
-            runner: IRunner instance.
-        """
-        pass
-
-    def on_loader_start(self, runner: "IRunner"):
-        """Event handler for loader start.
-
-        Args:
-            runner: IRunner instance.
-        """
-        pass
-
-    def on_loader_end(self, runner: "IRunner"):
-        """Event handler for loader end.
-
-        Args:
-            runner: IRunner instance.
-        """
-        pass
-
-    def on_batch_start(self, runner: "IRunner"):
-        """Event handler for batch start.
-
-        Args:
-            runner: IRunner instance.
-        """
-        pass
-
-    def on_batch_end(self, runner: "IRunner"):
-        """Event handler for batch end.
-
-        Args:
-            runner: IRunner instance.
-        """
-        pass
-
-    def on_exception(self, runner: "IRunner"):
-        """Event handler for exception case.
-
-        Args:
-            runner: IRunner instance.
-        """
-        pass
 
 
 class CallbackWrapper(Callback):

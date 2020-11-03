@@ -63,6 +63,7 @@ from catalyst.utils.misc import (
     is_exception,
     maybe_recursive_call,
     fn_ends_with_pass,
+    get_attr,
 )
 from catalyst.utils.numpy import get_one_hot
 from catalyst.utils.parser import parse_config_args, parse_args_uargs

@@ -1,6 +1,7 @@
 from typing import Dict, List, TYPE_CHECKING, Union
 
 from catalyst.callbacks.metric import IBatchMetricCallback
+from catalyst.utils.misc import get_attr
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -55,8 +56,8 @@ class CriterionCallback(IBatchMetricCallback):
         Args:
             runner: current runner
         """
-        criterion = runner.get_attr(
-            key="criterion", inner_key=self.criterion_key
+        criterion = get_attr(
+            runner, key="criterion", inner_key=self.criterion_key
         )
         assert criterion is not None
         self._criterion = criterion

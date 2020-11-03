@@ -25,7 +25,7 @@ def _pack_runner(runner: "IRunner"):
         scheduler=runner.scheduler,
         epoch_metrics=dict(runner.epoch_metrics),
         valid_metrics=dict(runner.valid_metrics),
-        stage_name=runner.stage_name,
+        stage_name=runner.stage,
         epoch=runner.epoch,
         loader_name=runner.loader_name,
         loader_step=runner.loader_batch_step,
@@ -65,8 +65,8 @@ def _load_checkpoint(
     print(f"=> Loading checkpoint {filename}")
     checkpoint = load_checkpoint(filename)
 
-    if not runner.stage_name.startswith("infer") and load_full:
-        runner.stage_name = checkpoint["stage_name"]
+    if not runner.stage.startswith("infer") and load_full:
+        runner.stage = checkpoint["stage_name"]
         runner.epoch = checkpoint["epoch"]
         runner.global_epoch = checkpoint["global_epoch"]
         # @TODO: should we also load,
@@ -620,10 +620,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         Args:
             runner: current runner
         """
-        if (
-            runner.stage_name.startswith("infer")
-            or runner.is_distributed_worker
-        ):
+        if runner.stage.startswith("infer") or runner.is_distributed_worker:
             return
 
         if self.save_n_best > 0:
@@ -644,10 +641,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         Args:
             runner: current runner
         """
-        if (
-            runner.stage_name.startswith("infer")
-            or runner.is_distributed_worker
-        ):
+        if runner.stage.startswith("infer") or runner.is_distributed_worker:
             return
         log_message = "Top best models:\n"
         # store latest state

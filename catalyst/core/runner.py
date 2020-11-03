@@ -1,13 +1,14 @@
-from typing import Any, Callable, Dict, Mapping, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Mapping, Optional, Tuple, Union, List
 from abc import ABC, abstractmethod
 from collections import defaultdict, OrderedDict
+from functools import lru_cache
 from pathlib import Path
 
 import torch
 from torch import nn
 from torch.utils.data import DataLoader, DistributedSampler
 
-from catalyst.core.callback import Callback, CallbackScope
+from catalyst.core.callback import Callback, CallbackScope, ICallback
 from catalyst.core.experiment import IExperiment
 from catalyst.core.functional import (
     filter_callbacks_by_node,
@@ -35,6 +36,11 @@ from catalyst.utils.seed import set_global_seed
 from catalyst.utils.torch import any2device
 
 
+@lru_cache(maxsize=42)
+def _is_substring(origin_string: str, strings: List):
+    return any(x in origin_string for x in strings)
+
+
 class RunnerException(Exception):
     """Exception class for all runner errors."""
 
@@ -46,7 +52,7 @@ class RunnerException(Exception):
         super().__init__(message)
 
 
-class IRunner(ABC, IRunnerLegacy, FrozenClass):
+class IRunner(ABC, ICallback, IRunnerLegacy, FrozenClass):
     """
     An abstraction that knows how to run an experiment.
     It contains all the logic of **how** to run the experiment,
@@ -360,10 +366,11 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
 
     """
 
-    _experiment_fn: Callable = IExperiment
-
     def __init__(
-        self, model: RunnerModel = None, device: Device = None, **kwargs,
+        self,
+        model: RunnerModel = None,
+        device: Device = None,
+        experiment_fn: Callable = IExperiment,
     ):
         """
         Args:
@@ -372,9 +379,9 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         """
         self._device = None
         self._model = None
+        self.experiment = None
+        self._experiment_fn = experiment_fn
         self._prepare_inner_state(model=model, device=device)
-        self._unfreeze()
-        self._init(**kwargs)
         self._freeze()
 
     def _prepare_inner_state(
@@ -397,7 +404,6 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         verbose: bool = False,
         **kwargs,
     ):
-        self._unfreeze()
 
         # main runner components: model and device to run
         self.device: Device = device
@@ -412,6 +418,7 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         self.callbacks: Dict[str, "Callback"] = callbacks or {}
 
         # the data
+        self.loader = None
         self.loaders: OrderedDict[str, DataLoader] = loaders
         # and the dataflow - model input, model output
         self.input = None
@@ -458,8 +465,8 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         self.need_exception_reraise: bool = True
         # stage info
         self.num_epochs: int = num_epochs
-        self.stage_name: str = stage
-        self.is_infer_stage: bool = self.stage_name.startswith(
+        self.stage: str = stage
+        self.is_infer_stage: bool = self.stage.startswith(
             SETTINGS.stage_infer_prefix
         )
         # epoch info
@@ -488,15 +495,6 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         # kwargs
         for key, value in kwargs.items():
             setattr(self, key, value)
-
-        self._freeze()
-
-    def _init(self, **kwargs) -> None:
-        """
-        Inner method for children's classes
-        to specify type for Runners' Experiment.
-        """
-        self.experiment: IExperiment = None
 
     @property
     def model(self) -> Model:
@@ -577,137 +575,96 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
                 self._model, "to", device=self._device or "cpu"
             )
 
-    @staticmethod
-    def _get_experiment_components(
-        experiment: IExperiment, stage: str = None, device: Device = None,
-    ) -> Tuple[Model, Criterion, Optimizer, Scheduler, Device]:
-        """
-        Inner method for `Experiment` components preparation.
+    def on_experiment_start(self, runner: "IRunner"):
+        assert self.experiment is not None
 
-        Check available torch device, takes model from the experiment
-        and creates stage-specified criterion, optimizer, scheduler for it.
+    def on_stage_start(self, runner: "IRunner"):
+        pass
 
-        Args:
-            stage: experiment stage name of interest
-                like "pretrain" / "train" / "finetune" / etc
+    def on_epoch_start(self, runner: "IRunner"):
+        assert self.loaders is not None
 
-        Returns:
-            tuple: model, criterion, optimizer,
-                scheduler and device for a given stage and model
-        """
-        model = experiment.get_model(stage)
-        criterion = experiment.get_criterion(stage)
-        optimizer = experiment.get_optimizer(stage, model)
-        scheduler = experiment.get_scheduler(stage, optimizer)
-        model, criterion, optimizer, scheduler, device = process_components(
-            model=model,
-            criterion=criterion,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            distributed_params=experiment.distributed_params,
-            device=device,
-        )
-        return model, criterion, optimizer, scheduler, device
+        for loader_name, loader in self.loaders.items():
+            if len(loader) == 0:
+                raise RunnerException(
+                    f"DataLoader with name {loader_name} is empty."
+                )
 
-    @staticmethod
-    def _get_experiment_callbacks(
-        experiment: IExperiment, stage: str,
-    ) -> Dict[str, Callback]:
-        """Inner method for `Callbacks` preparation.
-
-        Takes callbacks from the Experiment
-        and filters them for distributed master/worker cases.
-
-        Args:
-            stage: stage name of interest,
-                like "pretrain" / "train" / "finetune" / etc
-
-        Returns:
-            OrderedDict[str, Callback]: Ordered dictionary
-                with callbacks for current experiment stage.
-        """
-        callbacks = experiment.get_callbacks(stage)
-        callbacks = filter_callbacks_by_node(callbacks)
-        callbacks = sort_callbacks_by_order(callbacks)
-        return callbacks
-
-    def get_attr(self, key: str, inner_key: str = None) -> Any:
-        """
-        Alias for python `getattr` method. Useful for Callbacks preparation
-        and cases with multi-criterion, multi-optimizer setup.
-        For example, when you would like to train multi-task classification.
-
-        Used to get a named attribute from a `IRunner` by `key` keyword;
-        for example\
-        ::
-
-            # example 1
-            runner.get_attr("criterion")
-            # is equivalent to
-            runner.criterion
-
-            # example 2
-            runner.get_attr("optimizer")
-            # is equivalent to
-            runner.optimizer
-
-            # example 3
-            runner.get_attr("scheduler")
-            # is equivalent to
-            runner.scheduler
-
-        With `inner_key` usage, it suppose to find a dictionary under `key`\
-        and would get `inner_key` from this dict; for example,
-        ::
-
-            # example 1
-            runner.get_attr("criterion", "bce")
-            # is equivalent to
-            runner.criterion["bce"]
-
-            # example 2
-            runner.get_attr("optimizer", "adam")
-            # is equivalent to
-            runner.optimizer["adam"]
-
-            # example 3
-            runner.get_attr("scheduler", "adam")
-            # is equivalent to
-            runner.scheduler["adam"]
-
-        Args:
-            key: name for attribute of interest,
-                like `criterion`, `optimizer`, `scheduler`
-            inner_key: name of inner dictionary key
-
-        Returns:
-            inner attribute
-        """
-        if inner_key is None:
-            return getattr(self, key)
+        self.is_infer_stage = self.stage.startswith("infer")
+        if not self.is_infer_stage:
+            assert self.valid_loader in self.loaders.keys(), (
+                f"'{self.valid_loader}' "
+                f"should be in provided loaders: {list(self.loaders.keys())}"
+            )
         else:
-            return getattr(self, key)[inner_key]
+            assert not any(
+                x.startswith(SETTINGS.loader_train_prefix)
+                for x in self.loaders.keys()
+            ), "for inference no train loader should be passed"
 
-    def _prepare_for_stage(self, stage: str) -> None:
-        """
-        Inner method to prepare `Runner` for the specified stage.
+        set_global_seed(self.experiment.initial_seed + self.global_epoch + 1)
 
-        Args:
-            stage: stage name of interest,
-                like "pretrain" / "train" / "finetune" / etc
-        """
+    def on_loader_start(self, runner: "IRunner"):
+        assert self.loader is not None
+        self.loader_len = len(self.loader)
+        if self.loader_len == 0:
+            raise RunnerException(
+                f"DataLoader with name {self.loader_name} is empty."
+            )
+        self.loader_batch_size = (
+            self.loader.batch_sampler.batch_size
+            if self.loader.batch_sampler is not None
+            else self.loader.batch_size
+        )
+        self.loader_sample_step = 0
+
+        self.is_train_loader = self.loader_name.startswith("train")
+        self.is_valid_loader = self.loader_name.startswith("valid")
+        self.is_infer_loader = self.loader_name.startswith("infer")
+        maybe_recursive_call(self.model, "train", mode=self.is_train_loader)
+
+        if isinstance(self.loader.sampler, DistributedSampler):
+            self.loader.sampler.set_epoch(self.epoch)
+
+        set_global_seed(self.experiment.initial_seed + self.global_epoch + 1)
+
+    def on_batch_start(self, runner: "IRunner"):
+        self.global_batch_step += 1
+        batch = self.input
+        if isinstance(batch, dict):
+            self.batch_size = len(next(iter(batch.values())))
+        else:
+            self.batch_size = len(batch[0])
+        self.global_sample_step += self.batch_size
+        self.loader_sample_step += self.batch_size
+
+    def on_batch_end(self, runner: "IRunner"):
         pass
 
-    def _prepare_for_epoch(self, stage: str, epoch: int) -> None:
-        """
-        Inner method to prepare `Runner` for the specified stage and epoch.
-
-        Args:
-            stage: stage name of interest,
-                like "pretrain" / "train" / "finetune" / etc
-            epoch: epoch index
-        """
+    def on_loader_end(self, runner: "IRunner"):
         pass
+
+    def on_epoch_end(self, runner: "IRunner"):
+        self.global_epoch += 1
+        self.epoch += 1
+
+    def on_stage_end(self, runner: "IRunner"):
+        pass
+
+    def on_experiment_end(self, runner: "IRunner"):
+        pass
+
+    def on_exception(self, runner: "IRunner"):
+        from catalyst.callbacks.exception import ExceptionCallback
+
+        def _exception_handler_check(callbacks: Union[OrderedDict, Dict]):
+            return callbacks is not None and any(
+                issubclass(x.__class__, ExceptionCallback)
+                for x in callbacks.values()
+            )
+
+        if not _exception_handler_check(getattr(self, "callbacks", None)):
+            raise self.exception
 
     def _run_event(self, event: str) -> None:
         """Inner method to run specified event on Runners' callbacks.
@@ -720,26 +677,13 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
             :py:mod:`catalyst.core.callback.Callback` documentation.
 
         """
+        # @TODO: how to remove self duplication?
+        if _is_substring(event, ["start", "exception"]):
+            getattr(self, event)(self)
         for callback in self.callbacks.values():
             getattr(callback, event)(self)
-
-    def _batch2device(
-        self, batch: Mapping[str, Any], device: Device,
-    ) -> Mapping[str, Any]:
-        """
-        Inner method to transfer incoming data batches to Runners' device.
-
-        Args:
-            batch (Mapping[str, Any]): dictionary with data batches
-                from DataLoader.
-            device: torch device
-
-        Returns:
-            Mapping[str, Any]: same structure as value,
-                but all tensors and np.arrays moved to device
-        """
-        output = any2device(batch, device)
-        return output
+        if _is_substring(event, ["end"]):
+            getattr(self, event)(self)
 
     @abstractmethod
     def _handle_batch(self, batch: Mapping[str, Any]) -> None:
@@ -753,145 +697,42 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
         """
         pass
 
-    def _run_batch(self, batch: Mapping[str, Any]) -> None:
-        """
-        Inner method to run train step on specified data batch,
-        with batch callbacks events.
-
-        Args:
-            batch (Mapping[str, Any]): dictionary with data batches
-                from DataLoader.
-        """
-        if isinstance(batch, dict):
-            self.batch_size = len(next(iter(batch.values())))
-        else:
-            self.batch_size = len(batch[0])
-        self.global_sample_step += self.batch_size
-        self.loader_sample_step += self.batch_size
-        batch = self._batch2device(batch, self.device)
-        self.input = batch
-
+    def _run_batch(self) -> None:
+        self.input = any2device(self.input, self.device)
         self._run_event("on_batch_start")
-        self._handle_batch(batch=batch)
+        self._handle_batch(batch=self.input)
         self._run_event("on_batch_end")
 
-    def _run_loader(self, loader: DataLoader) -> None:
-        """
-        Inner method to pass whole DataLoader through Runner,
-        with loader callbacks events.
-
-        Args:
-            loader: dataloader to iterate
-        """
-        if len(loader) == 0:
-            raise RunnerException(
-                f"DataLoader with name {self.loader_name} is empty."
-            )
-
-        self.loader_batch_size = (
-            loader.batch_sampler.batch_size
-            if loader.batch_sampler is not None
-            else loader.batch_size
-        )
-
-        self.loader_sample_step = 0
-        for i, batch in enumerate(loader):
-            self.global_batch_step += 1
-            self.loader_batch_step = i + 1
-            self._run_batch(batch)
+    def _run_loader(self) -> None:
+        self._run_event("on_loader_start")
+        for self.loader_batch_step, self.input in enumerate(self.loader):
+            self._run_batch()
             if self.need_early_stop:
                 self.need_early_stop = False
                 break
+        self._run_event("on_loader_end")
 
-    def _run_epoch(self, stage: str, epoch: int) -> None:
-        """
-        Inner method to run epoch on Runner,
-        with epoch callbacks events.
-
-        Args:
-            stage: stage name of interest,
-                like "pretrain" / "train" / "finetune" / etc
-            epoch: epoch index
-        """
-        self._prepare_for_epoch(stage=stage, epoch=epoch)
-        assert self.loaders is not None
-
-        for loader_name, loader in self.loaders.items():
-            if len(loader) == 0:
-                raise RunnerException(
-                    f"DataLoader with name {loader_name} is empty."
-                )
-
-        self.is_infer_stage = self.stage_name.startswith("infer")
-        if not self.is_infer_stage:
-            assert self.valid_loader in self.loaders.keys(), (
-                f"'{self.valid_loader}' "
-                f"should be in provided loaders: {list(self.loaders.keys())}"
-            )
-        else:
-            assert not any(
-                x.startswith(SETTINGS.loader_train_prefix)
-                for x in self.loaders.keys()
-            ), "for inference no train loader should be passed"
-
-        for loader_name, loader in self.loaders.items():
-            self.loader_name = loader_name
-            self.loader_len = len(loader)
-            self.is_train_loader = loader_name.startswith(
-                SETTINGS.loader_train_prefix
-            )
-            self.is_valid_loader = loader_name.startswith(
-                SETTINGS.loader_valid_prefix
-            )
-            self.is_infer_loader = loader_name.startswith(
-                SETTINGS.loader_infer_prefix
-            )
-            maybe_recursive_call(
-                self.model, "train", mode=self.is_train_loader,
-            )
-
-            if (
-                isinstance(loader.sampler, DistributedSampler)
-                and not self.is_infer_stage
-            ):
-                loader.sampler.set_epoch(self.epoch)
-
-            set_global_seed(
-                self.experiment.initial_seed + self.global_epoch + 1
-            )
-            self._run_event("on_loader_start")
+    def _run_epoch(self) -> None:
+        self._run_event("on_epoch_start")
+        for self.loader_name, self.loader in self.loaders.items():
             with torch.set_grad_enabled(self.is_train_loader):
-                self._run_loader(loader)
-            self._run_event("on_loader_end")
+                self._run_loader()
+        self._run_event("on_epoch_end")
 
-    def _run_stage(self, stage: str) -> None:
-        """
-        Inner method to run stage on Runner,
-        with stage callbacks events.
-
-        Args:
-            stage: stage name of interest,
-                like "pretrain" / "train" / "finetune" / etc
-
-        """
-        self._prepare_for_stage(stage)
-
+    def _run_stage(self) -> None:
         self._run_event("on_stage_start")
         while self.epoch < self.num_epochs + 1:
-            set_global_seed(
-                self.experiment.initial_seed + self.global_epoch + 1
-            )
-            self._run_event("on_epoch_start")
-            self._run_epoch(stage=stage, epoch=self.epoch)
-            self._run_event("on_epoch_end")
-
+            self._run_epoch()
             if self.need_early_stop:
                 self.need_early_stop = False
                 break
-
-            self.global_epoch += 1
-            self.epoch += 1
         self._run_event("on_stage_end")
+
+    def _run_experiment(self) -> None:
+        self._run_event("on_experiment_start")
+        for self.stage in self.experiment.stages:
+            self._run_stage()
+        self._run_event("on_experiment_end")
 
     def run_experiment(self, experiment: IExperiment = None) -> "IRunner":
         """
@@ -910,26 +751,11 @@ class IRunner(ABC, IRunnerLegacy, FrozenClass):
                 no handler we found into callbacks
         """
         self.experiment = experiment or self.experiment
-        assert self.experiment is not None
-
         try:
-            for stage in self.experiment.stages:
-                self._run_stage(stage)
+            self._run_experiment()
         except (Exception, KeyboardInterrupt) as ex:
-            from catalyst.callbacks.exception import ExceptionCallback
-
-            def _exception_handler_check(callbacks: Union[OrderedDict, Dict]):
-                return callbacks is not None and any(
-                    issubclass(x.__class__, ExceptionCallback)
-                    for x in callbacks.values()
-                )
-
-            if _exception_handler_check(getattr(self, "callbacks", None)):
-                self.exception = ex
-                self._run_event("on_exception")
-            else:
-                raise ex
-
+            self.exception = ex
+            self._run_event("on_exception")
         return self
 
 
@@ -939,7 +765,7 @@ class IStageBasedRunner(IRunner):
     datasources per stage.
     """
 
-    def _prepare_for_stage(self, stage: str):
+    def on_stage_start(self, runner: "IRunner"):
         """Inner method to prepare `Runner` for the specified stage.
 
         Sets `Experiment` initial seed.
@@ -953,27 +779,30 @@ class IStageBasedRunner(IRunner):
                 like "pretrain" / "train" / "finetune" / etc
         """
         set_global_seed(self.experiment.initial_seed)
-        loaders = self.experiment.get_loaders(stage=stage)
+        loaders = self.experiment.get_loaders(stage=self.stage)
         loaders = validate_loaders(loaders)
         self.loaders = loaders
 
         set_global_seed(self.experiment.initial_seed)
-        (
-            model,
-            criterion,
-            optimizer,
-            scheduler,
-            device,
-        ) = self._get_experiment_components(
-            experiment=self.experiment, stage=stage, device=self.device
+        model = self.experiment.get_model(self.stage)
+        criterion = self.experiment.get_criterion(self.stage)
+        optimizer = self.experiment.get_optimizer(self.stage, model)
+        scheduler = self.experiment.get_scheduler(self.stage, optimizer)
+        model, criterion, optimizer, scheduler, device = process_components(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            distributed_params=self.experiment.distributed_params,
+            device=self.device,
         )
 
         set_global_seed(self.experiment.initial_seed)
-        callbacks = self._get_experiment_callbacks(
-            experiment=self.experiment, stage=stage
-        )
+        callbacks = self.experiment.get_callbacks(self.stage)
+        callbacks = filter_callbacks_by_node(callbacks)
+        callbacks = sort_callbacks_by_order(callbacks)
 
-        migrating_params = dict(**self.experiment.get_stage_params(stage))
+        migrating_params = dict(**self.experiment.get_stage_params(self.stage))
         migrate_from_previous_stage = migrating_params.get(
             "migrate_from_previous_stage", True
         )
@@ -1000,7 +829,7 @@ class IStageBasedRunner(IRunner):
             )
 
         self._prepare_inner_state(
-            stage=stage,
+            stage=self.stage,
             model=model,
             device=device,
             criterion=criterion,
@@ -1010,6 +839,7 @@ class IStageBasedRunner(IRunner):
             loaders=getattr(self, "loaders", None),
             **migrating_params,
         )
+        super().on_stage_start(runner)
 
 
 __all__ = ["IRunner", "IStageBasedRunner", "RunnerException"]

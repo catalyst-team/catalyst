@@ -378,7 +378,7 @@ class ControlFlowCallback(CallbackWrapper):
         Args:
             runner: current runner
         """
-        stage = runner.stage_name
+        stage = runner.stage
         loader = runner.loader_name
         epoch = runner.global_epoch if self.use_global_epochs else runner.epoch
 

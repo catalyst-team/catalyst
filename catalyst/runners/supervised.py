@@ -13,8 +13,6 @@ logger = logging.getLogger(__name__)
 class SupervisedRunner(Runner):
     """Runner for experiments with supervised model."""
 
-    _experiment_fn: Callable = SupervisedExperiment
-
     def __init__(
         self,
         model: RunnerModel = None,
@@ -22,6 +20,7 @@ class SupervisedRunner(Runner):
         input_key: Any = "features",
         output_key: Any = "logits",
         input_target_key: str = "targets",
+        experiment_fn: Callable = SupervisedExperiment,
     ):
         """
         Args:
@@ -33,27 +32,12 @@ class SupervisedRunner(Runner):
             input_target_key: Key in batch dict mapping for target
         """
         super().__init__(
-            model=model,
-            device=device,
-            input_key=input_key,
-            output_key=output_key,
-            input_target_key=input_target_key,
+            model=model, device=device, experiment_fn=experiment_fn
         )
-
-    def _init(
-        self,
-        input_key: Any = "features",
-        output_key: Any = "logits",
-        input_target_key: str = "targets",
-    ):
-        """
-        Args:
-            input_key: Key in batch dict mapping for model input
-            output_key: Key in output dict model output
-                will be stored under
-            input_target_key: Key in batch dict mapping for target
-        """
-        self.experiment: SupervisedExperiment = None
+        self._device = None
+        self._model = None
+        self._experiment_fn = experiment_fn
+        self._prepare_inner_state(model=model, device=device)
 
         self.input_key = input_key
         self.output_key = output_key
@@ -82,6 +66,8 @@ class SupervisedRunner(Runner):
             self._process_output = self._process_output_none
         else:
             raise NotImplementedError()
+
+        self._freeze()
 
     def _batch2device(self, batch: Mapping[str, Any], device: Device):
         if isinstance(batch, (tuple, list)):

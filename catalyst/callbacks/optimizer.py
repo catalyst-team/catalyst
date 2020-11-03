@@ -7,7 +7,7 @@ import torch
 from catalyst import registry
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.typing import Optimizer
-from catalyst.utils.misc import maybe_recursive_call
+from catalyst.utils.misc import get_attr, maybe_recursive_call
 from catalyst.utils.torch import get_optimizer_momentum
 
 if TYPE_CHECKING:
@@ -149,8 +149,8 @@ class OptimizerCallback(IOptimizerCallback):
         Args:
             runner(IRunner): current runner
         """
-        self._optimizer = runner.get_attr(
-            key="optimizer", inner_key=self.optimizer_key
+        self._optimizer = get_attr(
+            runner, key="optimizer", inner_key=self.optimizer_key
         )
         # device based optimization step
         if runner.device.type == "xla":
@@ -326,8 +326,8 @@ class AMPOptimizerCallback(IOptimizerCallback):
         """
         from torch.cuda.amp import GradScaler
 
-        self._optimizer = runner.get_attr(
-            key="optimizer", inner_key=self.optimizer_key
+        self._optimizer = get_attr(
+            runner, key="optimizer", inner_key=self.optimizer_key
         )
         self.scaler = GradScaler()
         assert self._optimizer is not None

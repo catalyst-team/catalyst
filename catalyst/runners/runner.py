@@ -10,7 +10,14 @@ from catalyst.core.callback import Callback
 from catalyst.core.functional import sort_callbacks_by_order
 from catalyst.core.runner import IStageBasedRunner
 from catalyst.experiments.experiment import Experiment
-from catalyst.typing import Criterion, Device, Model, Optimizer, Scheduler
+from catalyst.typing import (
+    Criterion,
+    Device,
+    Model,
+    Optimizer,
+    RunnerModel,
+    Scheduler,
+)
 from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
 from catalyst.utils.components import process_components
 from catalyst.utils.misc import maybe_recursive_call
@@ -29,10 +36,15 @@ class Runner(IStageBasedRunner):
     Deep Learning Runner for supervised, unsupervised, gan, etc runs.
     """
 
-    _experiment_fn: Callable = Experiment
-
-    def _init(self, **kwargs):
-        self.experiment: Experiment = None
+    def __init__(
+        self,
+        model: RunnerModel = None,
+        device: Device = None,
+        experiment_fn: Callable = Experiment,
+    ):
+        super().__init__(
+            model=model, device=device, experiment_fn=experiment_fn
+        )
 
     def train(
         self,
