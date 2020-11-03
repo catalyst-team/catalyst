@@ -18,6 +18,7 @@ def fbeta_score(
 ) -> Union[float, torch.Tensor]:
     """
     Counts fbeta score for given ``outputs`` and ``targets``.
+
     Args:
         outputs: A list of predicted elements
         targets:  A list of elements that are to be predicted
