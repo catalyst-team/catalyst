@@ -85,8 +85,8 @@ from catalyst import utils
 metrics = utils.load_config('$LOGFILE')
 assert metrics['stage1.1']['loss'] < 2.0
 assert metrics['stage1.1']['accuracy01'] > 0.55
-assert metrics['stage1.1']['accuracy03'] > 0.75
-assert metrics['stage1.1']['accuracy05'] > 0.85
+assert metrics['stage1.1']['accuracy03'] > 0.65
+assert metrics['stage1.1']['accuracy05'] > 0.75
 """
 
 rm -rf ${LOGDIR} ${EXP_OUTPUT}
