@@ -23,7 +23,8 @@ def precision_recall_fbeta_support(
         eps: epsilon to avoid zero division
         argmax_dim: int, that specifies dimension for argmax transformation
             in case of scores/probabilities in ``outputs``
-        num_classes: int, that specifies number of classes if it known
+        num_classes: int, that specifies number of classes if it known.
+
     Returns:
         tuple of precision, recall, fbeta_score
     """

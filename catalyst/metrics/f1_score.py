@@ -5,7 +5,7 @@ from typing import Optional, Union
 
 import torch
 
-from catalyst.metrics.classification import precision_recall_fbeta
+from catalyst.metrics.classification import precision_recall_fbeta_support
 
 
 def fbeta_score(
@@ -37,7 +37,7 @@ def fbeta_score(
     if beta < 0:
         raise Exception("beta parameter should be non-negative")
 
-    _p, _r, fbeta = precision_recall_fbeta(
+    _p, _r, fbeta, _ = precision_recall_fbeta_support(
         outputs=outputs,
         targets=targets,
         beta=beta,
