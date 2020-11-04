@@ -143,7 +143,7 @@ def any2device(value, device: Device):
             k: any2device(value[k], device) for k in value.dtype.fields.keys()
         }
     elif isinstance(value, np.ndarray):
-        return torch.Tensor(value).to(device)
+        return torch.tensor(value, device=device)
     return value
 
 
