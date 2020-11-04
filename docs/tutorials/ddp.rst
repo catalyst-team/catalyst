@@ -1,4 +1,4 @@
-Distributed training
+Distributed training tutorial
 ==============================================================================
 
 If you have multiple GPUs,
