@@ -80,7 +80,7 @@ def parse_args():
     return args
 
 
-def _load_image_data(rootpath: str, paths: List):
+def _load_image_data(rootpath: str, paths: List, img_size: int):
     img_data = None
 
     try:
@@ -95,7 +95,7 @@ def _load_image_data(rootpath: str, paths: List):
 
         image_names = [path.join(rootpath, name) for name in paths]
         img_data = np.stack(
-            [_load_image(name, args.img_size) for name in image_names], axis=0
+            [_load_image(name, img_size) for name in image_names], axis=0
         )
         img_data = (
             img_data.transpose((0, 3, 1, 2)) / 255.0  # noqa: WPS432
@@ -138,7 +138,9 @@ def main(args, _=None):
 
     if args.img_col is not None:
         img_data = _load_image_data(
-            rootpath=args.img_rootpath, paths=df[args.img_col].values
+            rootpath=args.img_rootpath,
+            paths=df[args.img_col].values,
+            img_size=args.img_size,
         )
     else:
         img_data = None

@@ -1,6 +1,5 @@
 from typing import Dict, Optional, Sequence, Tuple, TYPE_CHECKING, Union
 
-from kornia.augmentation import AugmentationBase
 import torch
 from torch import nn
 
@@ -123,7 +122,7 @@ class BatchTransformCallback(Callback):
 
     def __init__(
         self,
-        transform: Sequence[Union[dict, AugmentationBase]],
+        transform: Sequence[Union[dict, nn.Module]],
         input_key: Union[str, int] = "image",
         additional_input_key: Optional[str] = None,
         output_key: Optional[Union[str, int]] = None,
@@ -132,12 +131,13 @@ class BatchTransformCallback(Callback):
         """Constructor method for the :class:`BatchTransformCallback` callback.
 
         Args:
-            transform (Sequence[Union[dict, AugmentationBase]]): define
+            transform (Sequence[Union[dict, nn.Module]]): define
                 augmentations to apply on a batch
 
                 If a sequence of transforms passed, then each element
-                should be either ``kornia.augmentation.AugmentationBase`` or
-                ``nn.Module`` compatible with kornia interface.
+                should be either ``kornia.augmentation.AugmentationBase2D``,
+                ``kornia.augmentation.AugmentationBase3D``, or ``nn.Module``
+                compatible with kornia interface.
 
                 If a sequence of params (``dict``) passed, then each
                 element of the sequence must contain ``'transform'`` key with
@@ -173,15 +173,15 @@ class BatchTransformCallback(Callback):
             else self._process_output_tensor
         )
 
-        transforms: Sequence[AugmentationBase] = [
+        transforms: Sequence[nn.Module] = [
             item
-            if isinstance(item, AugmentationBase)
+            if isinstance(item, nn.Module)
             else TRANSFORMS.get_from_params(**item)
             for item in transform
         ]
         assert all(
-            isinstance(t, AugmentationBase) for t in transforms
-        ), "`kornia.AugmentationBase` should be a base class for transforms"
+            isinstance(t, nn.Module) for t in transforms
+        ), "`nn.Module` should be a base class for transforms"
 
         self.transform = nn.Sequential(*transforms)
 
