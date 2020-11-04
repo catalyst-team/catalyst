@@ -14,9 +14,9 @@ from tensorboardX.crc32c import crc32c  # noqa: E402
 
 import numpy as np  # noqa: E402
 
-# Native tensorboard support from 1.2.0 version of PyTorch
-from torch import __version__ as torch_version  # noqa: E402
-from packaging import version  # noqa: E402
+# # Native tensorboard support from 1.2.0 version of PyTorch
+# from torch import __version__ as torch_version  # noqa: E402
+# from packaging import version  # noqa: E402
 
 # if version.parse(torch_version) < version.parse("1.2.0"):
 #     from tensorboardX import SummaryWriter as tensorboardX_SummaryWriter
