@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Distributed training &mdash; Catalyst 20.10.1 documentation</title>
+  <title>Distributed training tutorial &mdash; Catalyst 20.10.1 documentation</title>
   
 
   
@@ -29,8 +29,8 @@
   <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Contribution" href="contributing.html" />
-    <link rel="prev" title="Examples" href="examples.html" /> 
+    <link rel="next" title="How to make X?" href="../faq/intro.html" />
+    <link rel="prev" title="Migrating from other libraries" href="../getting_started/migrating_from_other.html" /> 
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
@@ -185,12 +185,37 @@
               
             
             
-              <p class="caption"><span class="caption-text">Overview</span></p>
-<ul class="current">
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
-<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Distributed training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quickstart 101</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&amp;sk=d3dd9b2b23500eca046361187b4619ff">Catalyst 101 — Accelerated PyTorch</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">ML - Linear Regression</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Classification</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Segmentation</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - AutoEncoder</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Variational AutoEncoder</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - GAN</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - DDP</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - TPU</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">AutoML - Catalyst with Optuna</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Distributed training tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributing guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/how_to_start.html">How to start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/codestyle.html">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/contributors.html">Contributors</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
@@ -246,14 +271,14 @@
       </li>
 
         
-      <li>Distributed training</li>
+      <li>Distributed training tutorial</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/info/distributed.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/tutorials/ddp.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -278,8 +303,8 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <div class="section" id="distributed-training">
-<h1>Distributed training<a class="headerlink" href="#distributed-training" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="distributed-training-tutorial">
+<h1>Distributed training tutorial<a class="headerlink" href="#distributed-training-tutorial" title="Permalink to this headline">¶</a></h1>
 <p>If you have multiple GPUs,
 the most reliable way to use all of them for training is to use the distributed package from pytorch.
 To help you, there is a distributed helpers in Catalyst to make it really easy.</p>
@@ -539,10 +564,10 @@ For more fine-tuning, we recommend reading the slurm documentation.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="contributing.html" class="btn btn-neutral float-right" title="Contribution" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../faq/intro.html" class="btn btn-neutral float-right" title="How to make X?" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="examples.html" class="btn btn-neutral" title="Examples" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="../getting_started/migrating_from_other.html" class="btn btn-neutral" title="Migrating from other libraries" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
@@ -570,7 +595,7 @@ For more fine-tuning, we recommend reading the slurm documentation.</p>
           <div class="catalyst-right-menu" id="catalyst-right-menu">
             <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
               <ul>
-<li><a class="reference internal" href="#">Distributed training</a><ul>
+<li><a class="reference internal" href="#">Distributed training tutorial</a><ul>
 <li><a class="reference internal" href="#prepare-your-script">Prepare your script</a></li>
 <li><a class="reference internal" href="#stage-1-i-just-want-distributed">Stage 1 - I just want distributed</a></li>
 <li><a class="reference internal" href="#case-2-we-are-going-deeper">Case 2 - We are going deeper</a></li>

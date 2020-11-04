@@ -29,7 +29,7 @@
   <!-- <link rel="stylesheet" href="_static/pygments.css" type="text/css" /> -->
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Examples" href="info/examples.html" /> 
+    <link rel="next" title="Quickstart 101" href="getting_started/quickstart.html" /> 
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
@@ -184,12 +184,37 @@
               
             
             
-              <p class="caption"><span class="caption-text">Overview</span></p>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Catalyst</a></li>
-<li class="toctree-l1"><a class="reference internal" href="info/examples.html">Examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="info/distributed.html">Distributed training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="info/contributing.html">Contribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/quickstart.html">Quickstart 101</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&amp;sk=d3dd9b2b23500eca046361187b4619ff">Catalyst 101 — Accelerated PyTorch</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">ML - Linear Regression</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Classification</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Segmentation</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - AutoEncoder</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Variational AutoEncoder</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - GAN</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - DDP</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - TPU</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">AutoML - Catalyst with Optuna</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="faq/intro.html">How to make X?</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributing guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contributing/how_to_start.html">How to start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing/codestyle.html">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing/contributors.html">Contributors</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
@@ -280,10 +305,11 @@
   <div class="section" id="catalyst">
 <h1>Catalyst<a class="headerlink" href="#catalyst" title="Permalink to this headline">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/catalyst-team/catalyst"><img alt="Catalyst logo" src="https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png" /></a>
-<p>PyTorch framework for Deep Learning research and development.
-It focuses on reproducibility, rapid experimentation, and codebase reuse
-so you can create something new rather than write another regular train loop.</p>
-<p>Break the cycle - use the <a class="reference external" href="https://github.com/catalyst-team/catalyst">Catalyst</a>!</p>
+<div class="section" id="pytorch-framework-for-deep-learning-research-and-development">
+<h2>PyTorch framework for Deep Learning research and development.<a class="headerlink" href="#pytorch-framework-for-deep-learning-research-and-development" title="Permalink to this headline">¶</a></h2>
+<p>It focuses on reproducibility, rapid experimentation, and codebase reuse
+so you can <strong>create</strong> something new rather than write another regular train loop.
+Break the cycle - use the <a class="reference external" href="https://github.com/catalyst-team/catalyst">Catalyst</a>!</p>
 <dl class="simple">
 <dt>Project <a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md">manifest</a>. Part of <a class="reference external" href="https://pytorch.org/ecosystem/">PyTorch Ecosystem</a>. Part of <a class="reference external" href="https://docs.google.com/presentation/d/1D-yhVOg6OXzjo9K_-IS5vSHLPIUxp1PEkFGnpRcNCNU/edit?usp=sharing">Catalyst Ecosystem</a>:</dt><dd><ul class="simple">
 <li><p><a class="reference external" href="https://github.com/catalyst-team/alchemy">Alchemy</a> - experiments logging &amp; visualization</p></li>
@@ -293,6 +319,7 @@ so you can create something new rather than write another regular train loop.</p
 </dd>
 </dl>
 <p><a class="reference external" href="https://landscape.lfai.foundation/selected=catalyst">Catalyst at AI Landscape</a>.</p>
+</div>
 <div class="section" id="getting-started">
 <h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
@@ -355,12 +382,17 @@ so you can create something new rather than write another regular train loop.</p
 <h3>Step by step guide<a class="headerlink" href="#step-by-step-guide" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
 <li><p>Start with <a class="reference external" href="https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&amp;sk=d3dd9b2b23500eca046361187b4619ff">Catalyst 101 — Accelerated PyTorch</a> introduction.</p></li>
+<li><p>Go through <a class="reference external" href="https://github.com/Scitator/kittylyst">Kittylyst</a> if you would like to dive into the core design concepts of the framework.</p></li>
 <li><p>Check <a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">minimal examples</a>.</p></li>
 <li><p>Try <a class="reference external" href="https://github.com/catalyst-team/catalyst#tutorials">notebook tutorials with Google Colab</a>.</p></li>
-<li><p>Read <a class="reference external" href="https://github.com/catalyst-team/catalyst#blogposts">blogposts</a> with use-cases and guides (and Config API intro).</p></li>
-<li><p>Go through advanced  <a class="reference external" href="https://github.com/catalyst-team/classification">classification</a>, <a class="reference external" href="https://github.com/catalyst-team/detection">detection</a> and <a class="reference external" href="https://github.com/catalyst-team/segmentation">segmentation</a> pipelines with Config API. More pipelines available under <a class="reference external" href="https://github.com/catalyst-team/catalyst#projects">projects section</a>.</p></li>
+<li><p>Read <a class="reference external" href="https://github.com/catalyst-team/catalyst#blogposts">blogposts</a> with use-cases and guides.</p></li>
+<li><p>Learn machine learning with our <a class="reference external" href="https://github.com/catalyst-team/dl-course">“Deep Learning with Catalyst” course</a>.</p></li>
+<li><p>Or go directly to advanced  <a class="reference external" href="https://github.com/catalyst-team/classification">classification</a>, <a class="reference external" href="https://github.com/catalyst-team/detection">detection</a> and <a class="reference external" href="https://github.com/catalyst-team/segmentation">segmentation</a> pipelines.</p></li>
 <li><p>Want more? See <a class="reference external" href="https://github.com/catalyst-team/alchemy">Alchemy</a> and <a class="reference external" href="https://github.com/catalyst-team/reaction">Reaction</a> packages.</p></li>
-<li><p>For Catalyst.RL introduction, please follow <a class="reference external" href="https://github.com/catalyst-team/catalyst-rl">Catalyst.RL repo</a>.</p></li>
+<li><p>RL fan? Please follow <a class="reference external" href="https://github.com/catalyst-team/catalyst-rl">Catalyst.RL repo</a>.</p></li>
+<li><p>If you would like to contribute to the project, follow our <a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">contribution guidelines</a>.</p></li>
+<li><p>If you want to support the project, feel free to donate on <a class="reference external" href="https://patreon.com/catalyst_team">patreon page</a> or <a class="reference external" href="https://github.com/catalyst-team/catalyst#user-feedback">write us</a> with your proposals.</p></li>
+<li><p>Finally, do not forget to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for collaboration.</p></li>
 </ol>
 </div>
 </div>
@@ -423,6 +455,12 @@ best practices for your deep learning research.</p>
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
 <div class="toctree-wrapper compound">
 </div>
 <div class="toctree-wrapper compound">
@@ -767,7 +805,7 @@ best practices for your deep learning research.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="info/examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <img src="_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="getting_started/quickstart.html" class="btn btn-neutral float-right" title="Quickstart 101" accesskey="n" rel="next">Next <img src="_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
     </div>
@@ -797,6 +835,7 @@ best practices for your deep learning research.</p>
             <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
               <ul>
 <li><a class="reference internal" href="#">Catalyst</a><ul>
+<li><a class="reference internal" href="#pytorch-framework-for-deep-learning-research-and-development">PyTorch framework for Deep Learning research and development.</a></li>
 <li><a class="reference internal" href="#getting-started">Getting started</a><ul>
 <li><a class="reference internal" href="#step-by-step-guide">Step by step guide</a></li>
 </ul>
