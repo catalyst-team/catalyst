@@ -276,6 +276,8 @@
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">Tensor</span>
 <span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
@@ -284,6 +286,74 @@
 <span class="c1"># after full classification metrics re-implementation, make a reference to</span>
 <span class="c1"># https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/metrics</span>
 <span class="c1"># as a baseline</span>
+
+
+<span class="k">def</span> <span class="nf">process_multiclass_components</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">argmax_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">num_classes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Preprocess input in case multiclass classification task.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        outputs: estimated targets as predicted by a model</span>
+<span class="sd">            with shape [bs; ..., (num_classes or 1)]</span>
+<span class="sd">        targets: ground truth (correct) target values</span>
+<span class="sd">            with shape [bs; ..., 1]</span>
+<span class="sd">        argmax_dim: int, that specifies dimension for argmax transformation</span>
+<span class="sd">            in case of scores/probabilities in ``outputs``</span>
+<span class="sd">        num_classes: int, that specifies number of classes if it known</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        preprocessed outputs, targets and num_classes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># @TODO: better multiclass preprocessing, label -&gt; class_id mapping</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">outputs</span><span class="p">):</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">outputs</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">targets</span><span class="p">):</span>
+        <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">targets</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">outputs</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="n">targets</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># looks like we have scores/probabilities in our outputs</span>
+        <span class="c1"># let&#39;s convert them to final model predictions</span>
+        <span class="n">num_classes</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+            <span class="n">outputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">argmax_dim</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">argmax_dim</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num_classes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># as far as we expect the outputs/targets tensors to be int64</span>
+        <span class="c1"># we could find number of classes as max available number</span>
+        <span class="n">num_classes</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">outputs</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">outputs</span> <span class="o">=</span> <span class="n">outputs</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">outputs</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">outputs</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># transpose case</span>
+        <span class="n">outputs</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">outputs</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">outputs</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span>
+            <span class="s2">&quot;Wrong `outputs` shape, &quot;</span>
+            <span class="s2">&quot;expected 1D or 2D with size 1 in the second dim &quot;</span>
+            <span class="s2">&quot;got </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">targets</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">targets</span> <span class="o">=</span> <span class="n">targets</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">targets</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">targets</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># transpose case</span>
+        <span class="n">targets</span><span class="o">.</span><span class="n">permute</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">targets</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">targets</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span>
+            <span class="s2">&quot;Wrong `outputs` shape, &quot;</span>
+            <span class="s2">&quot;expected 1D or 2D with size 1 in the second dim&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">num_classes</span>
 
 
 <div class="viewcode-block" id="process_multilabel_components"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics.functional.process_multilabel_components">[docs]</a><span class="k">def</span> <span class="nf">process_multilabel_components</span><span class="p">(</span>
@@ -402,8 +472,8 @@
 <span class="sd">            with shape [bs; ..., (num_classes or 1)]</span>
 <span class="sd">        targets: ground truth (correct) target values</span>
 <span class="sd">            with shape [bs; ..., 1]</span>
-<span class="sd">        argmax_dim: int, that specifies dimention for argmax transformation</span>
-<span class="sd">            in case of scores/probabilites in ``outputs``</span>
+<span class="sd">        argmax_dim: int, that specifies dimension for argmax transformation</span>
+<span class="sd">            in case of scores/probabilities in ``outputs``</span>
 <span class="sd">        num_classes: int, that specifies number of classes if it known</span>
 
 <span class="sd">    Returns:</span>
@@ -418,21 +488,12 @@
 <span class="sd">        tensor([0., 0., 0., 1., 1.]), tensor([1., 1., 0., 0., 0.]),</span>
 <span class="sd">        tensor([1., 1., 0., 1., 1.])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># @TODO: move to process_multiclass_components ?</span>
-    <span class="k">if</span> <span class="n">outputs</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">==</span> <span class="n">targets</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="c1"># looks like we have scores/probabilities in our outputs</span>
-        <span class="c1"># let&#39;s convert them to final model predictions</span>
-        <span class="n">num_classes</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
-            <span class="n">outputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">argmax_dim</span><span class="p">],</span> <span class="nb">int</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">argmax_dim</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">num_classes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># as far as we expect the outputs/targets tensors to be int64</span>
-        <span class="c1"># we could find number of classes as max available number</span>
-        <span class="n">num_classes</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
-            <span class="nb">int</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
-            <span class="nb">int</span><span class="p">(</span><span class="n">targets</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
-        <span class="p">)</span>
+    <span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">num_classes</span> <span class="o">=</span> <span class="n">process_multiclass_components</span><span class="p">(</span>
+        <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span>
+        <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
+        <span class="n">argmax_dim</span><span class="o">=</span><span class="n">argmax_dim</span><span class="p">,</span>
+        <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="n">tn</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_classes</span><span class="p">,),</span> <span class="n">device</span><span class="o">=</span><span class="n">outputs</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
     <span class="n">fp</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">num_classes</span><span class="p">,),</span> <span class="n">device</span><span class="o">=</span><span class="n">outputs</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
