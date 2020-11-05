@@ -67,7 +67,7 @@ class SupervisedRunner(Runner):
         else:
             raise NotImplementedError()
 
-        self._freeze()
+        # self._freeze()
 
     def _handle_batch_device(self, batch: Mapping[str, Any]):
         if isinstance(batch, (tuple, list)):
