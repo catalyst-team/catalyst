@@ -686,7 +686,7 @@ class IRunner(ABC, ICallback, IRunnerLegacy, FrozenClass):
             getattr(self, event)(self)
         for callback in self.callbacks.values():
             getattr(callback, event)(self)
-        if _is_substring(event, ("end")):
+        if _is_substring(event, ("end",)):
             getattr(self, event)(self)
 
     def _handle_batch_device(self, batch: Mapping[str, Any]):
@@ -712,18 +712,18 @@ class IRunner(ABC, ICallback, IRunnerLegacy, FrozenClass):
 
     def _run_loader(self) -> None:
         self._run_event("on_loader_start")
-        for self.loader_batch_step, self.input in enumerate(self.loader):
-            self._run_batch()
-            if self.need_early_stop:
-                self.need_early_stop = False
-                break
+        with torch.set_grad_enabled(self.is_train_loader):
+            for self.loader_batch_step, self.input in enumerate(self.loader):
+                self._run_batch()
+                if self.need_early_stop:
+                    self.need_early_stop = False
+                    break
         self._run_event("on_loader_end")
 
     def _run_epoch(self) -> None:
         self._run_event("on_epoch_start")
         for self.loader_name, self.loader in self.loaders.items():
-            with torch.set_grad_enabled(self.is_train_loader):
-                self._run_loader()
+            self._run_loader()
         self._run_event("on_epoch_end")
 
     def _run_stage(self) -> None:
