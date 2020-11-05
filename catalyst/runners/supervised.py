@@ -69,11 +69,11 @@ class SupervisedRunner(Runner):
 
         self._freeze()
 
-    def _batch2device(self, batch: Mapping[str, Any], device: Device):
+    def _handle_batch_device(self, batch: Mapping[str, Any]):
         if isinstance(batch, (tuple, list)):
             assert len(batch) == 2
             batch = {self.input_key: batch[0], self.target_key: batch[1]}
-        batch = super()._batch2device(batch, device)
+        batch = super()._handle_batch_device(batch)
         return batch
 
     def _process_input_str(self, batch: Mapping[str, Any], **kwargs):
@@ -148,7 +148,7 @@ class SupervisedRunner(Runner):
         Returns:
             Mapping[str, Any]: model output dictionary
         """
-        batch = self._batch2device(batch, self.device)
+        batch = self._handle_batch_device(batch)
         output = self.forward(batch, **kwargs)
         return output
 
