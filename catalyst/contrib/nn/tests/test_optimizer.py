@@ -9,7 +9,8 @@ def test_optimizer_init():
     model = nn.Linear(10, 10)
     for name, module_class in module.__dict__.items():
         if isinstance(module_class, type):
-            if name == "Optimizer":
+            if name in ["Optimizer", "SparseAdam"]:
+                # @TODO: add test for SparseAdam
                 continue
             elif module_class == Lookahead:
                 instance = optim.SGD(model.parameters(), lr=1e-3)
