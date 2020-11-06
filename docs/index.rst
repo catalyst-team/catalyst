@@ -221,13 +221,21 @@ Indices and tables
     CV - Variational AutoEncoder <https://github.com/catalyst-team/catalyst#minimal-examples>
     CV - GAN <https://github.com/catalyst-team/catalyst#minimal-examples>
 
-    Engine - AMP <https://github.com/catalyst-team/catalyst#minimal-examples>
-    Engine - DDP <https://github.com/catalyst-team/catalyst#minimal-examples>
-    Engine - TPU <https://github.com/catalyst-team/catalyst#minimal-examples>
+    Engine - AMP/DDP/TPU <https://github.com/catalyst-team/catalyst#minimal-examples>
 
     AutoML - Catalyst with Optuna <https://github.com/catalyst-team/catalyst#minimal-examples>
 
     tutorials/ddp
+
+.. toctree::
+    :caption: Core
+    :maxdepth: 2
+    :hidden:
+
+    core/experiment
+    core/runner
+    core/callback
+..    core/engine
 
 .. toctree::
     :caption: FAQ
@@ -235,6 +243,27 @@ Indices and tables
     :hidden:
 
     faq/intro
+
+    faq/data
+    faq/lr_finder
+
+    faq/dp
+    faq/amp
+    faq/ddp
+    faq/slurm
+    faq/tpu
+
+    faq/early_stopping
+    faq/checkpointing
+    faq/debugging
+    faq/logging
+    faq/finetuning
+    faq/inference
+
+    faq/stages
+    faq/config_api
+    faq/optuna
+
 
 .. toctree::
     :caption: Contributing guide
