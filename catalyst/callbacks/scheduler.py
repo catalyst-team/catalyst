@@ -118,7 +118,7 @@ class SchedulerCallback(ISchedulerCallback):
             lr = scheduler.optimizer.param_groups[0]["lr"]
         else:
             scheduler.step()
-            lr = scheduler.get_lr()[0]
+            lr = scheduler.get_last_lr()[0]
 
         momentum = get_optimizer_momentum(scheduler.optimizer)
 
