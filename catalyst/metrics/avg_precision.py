@@ -41,7 +41,7 @@ def avg_precision(
             size: [batch_szie, slate_length]
             ground truth, labels
         k (int):
-            The position to compute the truncated AP, 
+            The position to compute the truncated AP,
             must be positive
 
     Returns:
