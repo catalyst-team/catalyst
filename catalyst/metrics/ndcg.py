@@ -32,7 +32,7 @@ def dcg(
             Two options available:
             - `pow_rank`: torch.pow(2, x) - 1
             - `rank`: x
-            On the default, `pow_rank` is used 
+            On the default, `pow_rank` is used
             to emphasize on retrievng the relevant documents.
         k (int):
             Parameter fro evaluation on top-k items
