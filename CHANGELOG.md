@@ -9,15 +9,52 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- docs for MetricCallbacks ([#947](https://github.com/catalyst-team/catalyst/pull/947)) 
-- SoftMax, CosFace, ArcFace layers to contrib ([#939](https://github.com/catalyst-team/catalyst/pull/939))
+- hitrate calculations [#975] (https://github.com/catalyst-team/catalyst/pull/975)
+- extra functions for classification metrics ([#966](https://github.com/catalyst-team/catalyst/pull/966))
+- `OneOf` and `OneOfV2` batch transforms ([#951](https://github.com/catalyst-team/catalyst/pull/951))
+- ``precision_recall_fbeta_support`` metric ([#971](https://github.com/catalyst-team/catalyst/pull/971))
+- Pruning tutorial ([#987](https://github.com/catalyst-team/catalyst/pull/987))
 
 ### Changed
 
+- update Catalyst version to `20.10.1` for tutorials ([#967](https://github.com/catalyst-team/catalyst/pull/967))
+- added link to dl-course ([#967](https://github.com/catalyst-team/catalyst/pull/967))
+- docs were restructured ([#985](https://github.com/catalyst-team/catalyst/pull/985))
+
+### Removed
+
+- several deprecated tutorials ([#967](https://github.com/catalyst-team/catalyst/pull/967))
+
+### Fixed
+
+- `BatchTransformCallback` - add `nn.Module` transforms support ([#951](https://github.com/catalyst-team/catalyst/pull/951))
+- moved to `contiguous` view for accuracy computation ([#982](https://github.com/catalyst-team/catalyst/pull/982))
+- fixed torch warning on `optimizer.py:140` ([#979](https://github.com/catalyst-team/catalyst/pull/979))
+
+
+## [20.10.1] - 2020-10-15
+
+### Added
+
+- MRR metrics calculation ([#886](https://github.com/catalyst-team/catalyst/pull/886))
+- docs for MetricCallbacks ([#947](https://github.com/catalyst-team/catalyst/pull/947)) 
+- SoftMax, CosFace, ArcFace layers to contrib ([#939](https://github.com/catalyst-team/catalyst/pull/939))
+- ArcMargin layer to contrib ([#957](https://github.com/catalyst-team/catalyst/pull/957))
+- AdaCos to contrib ([#958](https://github.com/catalyst-team/catalyst/pull/958))
+- Manual SWA to utils ([#945](https://github.com/catalyst-team/catalyst/pull/945))
+
+### Changed
+
+- fixed path to `CHANGELOG.md` file and add information about unit test to `PULL_REQUEST_TEMPLATE.md` ([#955])(https://github.com/catalyst-team/catalyst/pull/955)
 - `catalyst-dl tune` config specification - now optuna params are grouped under `study_params` ([#947](https://github.com/catalyst-team/catalyst/pull/947))
 - `IRunner._prepare_for_stage` logic moved to `IStageBasedRunner.prepare_for_stage` ([#947](https://github.com/catalyst-team/catalyst/pull/947))
     - now we create components in the following order: datasets/loaders, model, criterion, optimizer, scheduler, callbacks
-- 
+- `MnistMLDataset` and `MnistQGDataset` data split logic - now targets of the datasets are disjoint ([#949](https://github.com/catalyst-team/catalyst/pull/949))
+- architecture redesign ([#953](https://github.com/catalyst-team/catalyst/pull/953))
+    - experiments, runners, callbacks grouped by primitives under `catalyst.experiments`/`catalyst.runners`/`catalyst.callbacks` respectively
+    - settings and typing moved from `catalyst.tools.*` to `catalyst.*`
+    - utils moved from `catalyst.*.utils` to `catalyst.utils`
+- swa moved to `catalyst.utils` ([#963](https://github.com/catalyst-team/catalyst/pull/963))
 
 ### Removed
 
@@ -28,6 +65,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `AMPOptimizerCallback` - fix grad clip fn support ([#948](https://github.com/catalyst-team/catalyst/pull/948))
 - removed deprecated docs types ([#947](https://github.com/catalyst-team/catalyst/pull/947)) ([#952](https://github.com/catalyst-team/catalyst/pull/952))
 - docs for a few files ([#952](https://github.com/catalyst-team/catalyst/pull/952))
+- extra backward compatibility fixes ([#963](https://github.com/catalyst-team/catalyst/pull/963))
 
 
 ## [20.09.1] - 2020-09-25
@@ -58,6 +96,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- `MovieLens dataset` loader ([#903](https://github.com/catalyst-team/catalyst/pull/903))
 - `force` and `bert-level` keywords to `catalyst-data text2embedding` ([#917](https://github.com/catalyst-team/catalyst/pull/917))
 - `OptunaCallback` to `catalyst.contrib` ([#915](https://github.com/catalyst-team/catalyst/pull/915))
 - `DynamicQuantizationCallback` and `catalyst-dl quantize` script for fast quantization of your model ([#890](https://github.com/catalyst-team/catalyst/pull/915))
@@ -90,7 +129,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [20.08] - 2020-08-09
 
 ### Added
-- Full metric learning pipeline including training and validation stages ([#886](https://github.com/catalyst-team/catalyst/pull/876))
 - `CMCScoreCallback` ([#880](https://github.com/catalyst-team/catalyst/pull/880))
 - kornia augmentations `BatchTransformCallback` ([#862](https://github.com/catalyst-team/catalyst/issues/862))
 - `average_precision` and `mean_average_precision` metrics ([#883](https://github.com/catalyst-team/catalyst/pull/883))

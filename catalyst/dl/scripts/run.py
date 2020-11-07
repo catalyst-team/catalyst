@@ -5,7 +5,17 @@ from argparse import ArgumentParser
 import os
 from pathlib import Path
 
-from catalyst.dl import utils
+from catalyst.contrib.utils.argparse import boolean_flag
+from catalyst.utils.distributed import get_rank
+from catalyst.utils.parser import parse_args_uargs
+from catalyst.utils.scripts import (
+    distributed_cmd_run,
+    dump_code,
+    prepare_config_api_components,
+)
+from catalyst.utils.seed import set_global_seed
+from catalyst.utils.sys import dump_environment
+from catalyst.utils.torch import prepare_cudnn
 
 
 def build_args(parser: ArgumentParser):
@@ -55,38 +65,36 @@ def build_args(parser: ArgumentParser):
         default=None,
     )
     parser.add_argument("--seed", type=int, default=42)
-    utils.boolean_flag(
+    boolean_flag(
         parser,
         "apex",
         default=os.getenv("USE_APEX", "0") == "1",
         help="Enable/disable using of Apex extension",
     )
-    utils.boolean_flag(
+    boolean_flag(
         parser,
         "amp",
         default=os.getenv("USE_AMP", "0") == "1",
         help="Enable/disable using of PyTorch AMP extension",
     )
-    utils.boolean_flag(
+    boolean_flag(
         parser,
         "distributed",
         shorthand="ddp",
         default=os.getenv("USE_DDP", "0") == "1",
         help="Run in distributed mode",
     )
-    utils.boolean_flag(parser, "verbose", default=None)
-    utils.boolean_flag(parser, "timeit", default=None)
-    utils.boolean_flag(parser, "check", default=None)
-    utils.boolean_flag(parser, "overfit", default=None)
-    utils.boolean_flag(
+    boolean_flag(parser, "verbose", default=None)
+    boolean_flag(parser, "timeit", default=None)
+    boolean_flag(parser, "check", default=None)
+    boolean_flag(parser, "overfit", default=None)
+    boolean_flag(
         parser,
         "deterministic",
         default=None,
         help="Deterministic mode if running in CuDNN backend",
     )
-    utils.boolean_flag(
-        parser, "benchmark", default=None, help="Use CuDNN benchmark"
-    )
+    boolean_flag(parser, "benchmark", default=None, help="Use CuDNN benchmark")
 
     return parser
 
@@ -101,29 +109,27 @@ def parse_args():
 
 def main_worker(args, unknown_args):
     """Runs main worker thread from model training."""
-    args, config = utils.parse_args_uargs(args, unknown_args)
-    utils.set_global_seed(args.seed)
-    utils.prepare_cudnn(args.deterministic, args.benchmark)
+    args, config = parse_args_uargs(args, unknown_args)
+    set_global_seed(args.seed)
+    prepare_cudnn(args.deterministic, args.benchmark)
 
     config.setdefault("distributed_params", {})["apex"] = args.apex
     config.setdefault("distributed_params", {})["amp"] = args.amp
 
-    experiment, runner, config = utils.prepare_config_api_components(
+    experiment, runner, config = prepare_config_api_components(
         expdir=Path(args.expdir), config=config
     )
 
-    if experiment.logdir is not None and utils.get_rank() <= 0:
-        utils.dump_environment(config, experiment.logdir, args.configs)
-        utils.dump_code(args.expdir, experiment.logdir)
+    if experiment.logdir is not None and get_rank() <= 0:
+        dump_environment(config, experiment.logdir, args.configs)
+        dump_code(args.expdir, experiment.logdir)
 
     runner.run_experiment(experiment)
 
 
 def main(args, unknown_args):
     """Runs the ``catalyst-dl run`` script."""
-    utils.distributed_cmd_run(
-        main_worker, args.distributed, args, unknown_args
-    )
+    distributed_cmd_run(main_worker, args.distributed, args, unknown_args)
 
 
 if __name__ == "__main__":

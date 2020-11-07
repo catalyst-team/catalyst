@@ -18,7 +18,6 @@
 ![catalyst](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
 ![catalyst-cv](https://github.com/catalyst-team/catalyst/workflows/catalyst-cv/badge.svg?branch=master&event=push)
 ![catalyst-nlp](https://github.com/catalyst-team/catalyst/workflows/catalyst-nlp/badge.svg?branch=master&event=push)
-[![Build Status](http://66.248.205.49:8111/app/rest/builds/buildType:id:Catalyst_Deploy/statusIcon.svg)](http://66.248.205.49:8111/project.html?projectId=Catalyst&tab=projectOverview&guest=1)
 
 [![python](https://img.shields.io/badge/python_3.6-passing-success)](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
 [![python](https://img.shields.io/badge/python_3.7-passing-success)](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
@@ -54,10 +53,9 @@ import os
 import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from catalyst import dl
+from catalyst import dl, metrics
 from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
-from catalyst.utils import metrics
 
 model = torch.nn.Linear(28 * 28, 10)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
@@ -108,15 +106,18 @@ traced_model = runner.trace(loader=loaders["valid"])
 ```
 
 ### Step by step guide
-1. Start with [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff) introduction.
-2. Check [minimal examples](#minimal-examples).
-3. Try [notebook tutorials with Google Colab](#tutorials).
-4. Read [blogposts](#blogposts) with use-cases and guides (and Config API intro).
-5. Go through advanced  [classification](https://github.com/catalyst-team/classification), [detection](https://github.com/catalyst-team/detection) and [segmentation](https://github.com/catalyst-team/segmentation) pipelines with Config API. More pipelines available under [projects section](#projects). 
-6. Want more? See [Alchemy](https://github.com/catalyst-team/alchemy) and [Reaction](https://github.com/catalyst-team/reaction) packages.
-7. For Catalyst.RL introduction, please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
-8. If you would like to contribute to the project, follow our [contribution guidelines](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md). 
-If you want to support the project, feel free to donate on [patreon page](https://patreon.com/catalyst_team) or [write us]((#user-feedback)) with your proposals.
+1. Start with [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff) introduction. 
+1. Go through [Kittylyst](https://github.com/Scitator/kittylyst) if you would like to dive into the core design concepts of the framework.
+1. Check [minimal examples](#minimal-examples).
+1. Try [notebook tutorials with Google Colab](#tutorials).
+1. Read [blogposts](#blogposts) with use-cases and guides.
+1. Learn machine learning with our ["Deep Learning with Catalyst" course](https://github.com/catalyst-team/dl-course).
+1. Or go directly to advanced  [classification](https://github.com/catalyst-team/classification), [detection](https://github.com/catalyst-team/detection) or [segmentation](https://github.com/catalyst-team/segmentation) pipelines with Config API. 
+1. Want more? See [Alchemy](https://github.com/catalyst-team/alchemy) and [Reaction](https://github.com/catalyst-team/reaction) packages.
+1. RL fan? Please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
+1. If you would like to contribute to the project, follow our [contribution guidelines](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md). 
+1. If you want to support the project, feel free to donate on [patreon page](https://patreon.com/catalyst_team) or [write us]((#user-feedback)) with your proposals.
+1. **Finally, do not forget to [join our slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for collaboration**.
 
 
 ## Table of Contents
@@ -307,10 +308,9 @@ import os
 import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from catalyst import dl
+from catalyst import dl, metrics
 from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
-from catalyst.utils import metrics
 
 model = torch.nn.Linear(28 * 28, 10)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
@@ -361,10 +361,9 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from catalyst import dl
+from catalyst import dl, metrics
 from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
-from catalyst.utils import metrics
 
 class ClassifyAE(nn.Module):
 
@@ -435,10 +434,9 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from catalyst import dl
+from catalyst import dl, metrics
 from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
-from catalyst.utils import metrics
 
 LOG_SCALE_MAX = 2
 LOG_SCALE_MIN = -10
@@ -526,10 +524,9 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from catalyst import dl
+from catalyst import dl, metrics
 from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
-from catalyst.utils import metrics
 
 class ClassifyUnet(nn.Module):
 
@@ -611,8 +608,8 @@ import catalyst.data.cv.transforms.torch as t
 dataset_root = "."
 transforms = t.Compose([t.ToTensor(), t.Normalize((0.1307,), (0.3081,))])
 
-dataset_train = datasets.MnistMLDataset(root=dataset_root, train=True, download=True, transform=transforms)
-sampler = data.BalanceBatchSampler(labels=dataset_train.get_labels(), p=10, k=10)
+dataset_train = datasets.MnistMLDataset(root=dataset_root, download=True, transform=transforms)
+sampler = data.BalanceBatchSampler(labels=dataset_train.get_labels(), p=5, k=10)
 train_loader = DataLoader(dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size)
 
 dataset_val = datasets.MnistQGDataset(root=dataset_root, transform=transforms, gallery_fraq=0.2)
@@ -908,10 +905,9 @@ import os
 import torch
 from torch import nn
 from torch.nn import functional as F
-from catalyst import dl, utils
+from catalyst import dl, metrics, utils
 from catalyst.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
-from catalyst.utils import metrics
 
 class ClassifyAE(nn.Module):
 
@@ -1095,16 +1091,18 @@ print(study.best_value, study.best_params)
 
 
 ### Structure
-- **core** - framework core with main abstractions - 
-    Experiment, Runner and Callback.
+- **callbacks** - a variety of callbacks for your train-loop customization.
+- **contrib** - additional modules contributed by Catalyst users.
+- **core** - framework core with main abstractions - Experiment, Runner and Callback.
 - **data** - useful tools and scripts for data processing.
-- **dl** – runner for training and inference,
-   all of the classic ML and CV/NLP/RecSys metrics
-   and a variety of callbacks for training, validation
-   and inference of neural networks.
+- **dl** - entrypoint for your deep learning experiments.
+- **experiments** - a number of useful experiments extensions for Notebook and Config API.
+- **metrics** – classic ML and CV/NLP/RecSys metrics.
+- **registry** - Catalyst global registry for Config API.
+- **runners** - runners extensions for different deep learning tasks.
 - **tools** - extra tools for Deep Learning research, class-based helpers.   
 - **utils** - typical utils for Deep Learning research, function-based helpers.
-- **contrib** - additional modules contributed by Catalyst users.
+
 
 
 ### Tests
@@ -1137,7 +1135,8 @@ best practices for your deep learning research.
 - [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff)
 - [BERT Distillation with Catalyst](https://medium.com/pytorch/bert-distillation-with-catalyst-c6f30c985854?source=friends_link&sk=1a28469ac8c0e6e6ad35bd26dfd95dd9)
 - [Metric Learning with Catalyst](https://medium.com/pytorch/metric-learning-with-catalyst-8c8337dfab1a?source=friends_link&sk=320b95f9b2a9074aab8d916ed78912d6)
-- [Distributed training best practices](https://catalyst-team.github.io/catalyst/info/distributed.html)
+- [Pruning with Catalyst](https://medium.com/pytorch/pruning-with-catalyst-50e98f2cef2d?source=friends_link&sk=688e7a2c2e963c69c7e022e3204de5ef)
+- [Distributed training best practices](https://catalyst-team.github.io/catalyst/tutorials/ddp.html)
 - [Addressing the Cocktail Party Problem using PyTorch](https://medium.com/pytorch/addressing-the-cocktail-party-problem-using-pytorch-305fb74560ea)
 - [Beyond fashion: Deep Learning with Catalyst (Config API)](https://evilmartians.com/chronicles/beyond-fashion-deep-learning-with-catalyst)
 - [Tutorial from Notebook API to Config API (RU)](https://github.com/Bekovmi/Segmentation_tutorial)
@@ -1146,6 +1145,7 @@ best practices for your deep learning research.
 ### Docs
 
 - [master](https://catalyst-team.github.io/catalyst/)
+- [20.10](https://catalyst-team.github.io/catalyst/v20.10/index.html)
 - [20.09](https://catalyst-team.github.io/catalyst/v20.09/index.html)
 - [20.08.2](https://catalyst-team.github.io/catalyst/v20.08.2/index.html)
 - [20.07](https://catalyst-team.github.io/catalyst/v20.07/index.html) - [dev blog: 20.07 release](https://medium.com/pytorch/catalyst-dev-blog-20-07-release-fb489cd23e14?source=friends_link&sk=7ab92169658fe9a9e1c44068f28cc36c)

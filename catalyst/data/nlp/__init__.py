@@ -1,7 +1,7 @@
 # flake8: noqa
 import logging
 
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +13,7 @@ try:
         TextClassificationDataset,
     )
 except ImportError as ex:
-    if settings.nlp_required:
+    if SETTINGS.nlp_required:
         logger.warning(
             "some of catalyst-nlp dependencies not available,"
             " to install dependencies, run `pip install catalyst[nlp]`."

@@ -41,7 +41,7 @@ import collections
 import numpy as np
 from catalyst.data.cv import Compose, Normalize
 from catalyst.data import Augmentor
-from catalyst.dl import utils
+from catalyst import utils
 from catalyst.contrib.nn.criterion import (
     LovaszLossBinary,
     LovaszLossMultiLabel,
@@ -113,7 +113,7 @@ from catalyst.contrib.models.cv import Unet
 
 import torch
 import torch.nn as nn
-from catalyst.dl.runner import SupervisedRunner
+from catalyst.runners import SupervisedRunner
 
 # experiment setup
 num_epochs = 2

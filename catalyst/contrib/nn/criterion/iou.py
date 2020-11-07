@@ -4,7 +4,7 @@ from functools import partial
 
 from torch import nn
 
-from catalyst.utils import metrics
+from catalyst import metrics
 
 
 class IoULoss(nn.Module):

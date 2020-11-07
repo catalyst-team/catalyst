@@ -3,7 +3,7 @@ from collections import OrderedDict
 import logging
 
 from catalyst.contrib.scripts import collect_env, find_thresholds
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
 
 logger = logging.getLogger(__name__)
 
@@ -18,12 +18,15 @@ try:
     COMMANDS["check-index-model"] = check_index_model
     COMMANDS["create-index-model"] = create_index_model
 except ImportError as ex:
-    if settings.nmslib_required:
+    if SETTINGS.nmslib_required:
         logger.warning(
             "nmslib not available, to install nmslib,"
             " run `pip install nmslib`."
         )
         raise ex
+
+
+COMMANDS = OrderedDict(sorted(COMMANDS.items()))
 
 
 def build_parser() -> ArgumentParser:

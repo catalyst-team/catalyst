@@ -10,11 +10,11 @@ import imageio
 import numpy as np
 from skimage.color import label2rgb, rgb2gray
 
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
 
 logger = logging.getLogger(__name__)
 
-if settings.use_libjpeg_turbo:
+if SETTINGS.use_libjpeg_turbo:
     try:
         import jpeg4py as jpeg
 
@@ -69,7 +69,7 @@ def imread(
         rootpath = str(rootpath)
         uri = uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
 
-    if settings.use_libjpeg_turbo and uri.endswith(
+    if SETTINGS.use_libjpeg_turbo and uri.endswith(
         ("jpg", "JPG", "jpeg", "JPEG")
     ):
         img = jpeg.JPEG(uri).decode()

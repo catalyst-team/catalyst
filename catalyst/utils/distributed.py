@@ -5,14 +5,12 @@ import random
 import socket
 import subprocess
 
-import deprecation
 from packaging.version import parse, Version
 
 import torch
 from torch import nn
 import torch.distributed
 
-from catalyst import __version__
 from catalyst.utils.misc import get_fn_default_params
 from catalyst.utils.torch import get_available_gpus
 
@@ -173,7 +171,12 @@ def get_distributed_mean(value: Union[float, torch.Tensor]):
 
 
 def get_slurm_params():
-    """@TODO: Docs. Contribution is welcome."""
+    """Return slurm params for experiment run.
+
+    Returns:
+        tuple with current node index, number of nodes, master node
+            and master port
+    """
     cmd = "scontrol show hostnames '%s'" % os.environ["SLURM_JOB_NODELIST"]
     nodes = subprocess.getoutput(cmd).split()
     num_nodes = int(os.environ["SLURM_JOB_NUM_NODES"])
@@ -186,7 +189,11 @@ def get_slurm_params():
 
 
 def get_distributed_params():
-    """@TODO: Docs. Contribution is welcome."""
+    """Returns distributed params for experiment run.
+
+    Returns:
+        dictionary with distributed params
+    """
     master_port = str(random.randint(5 * 10 ** 4, 6 * 10 ** 4))
     master_addr = "127.0.0.1"
     cur_node, num_nodes = 0, 1
@@ -218,9 +225,22 @@ def get_distributed_params():
 
 
 def get_distributed_env(
-    local_rank, rank, world_size, use_cuda_visible_devices=True
+    local_rank: int,
+    rank: int,
+    world_size: int,
+    use_cuda_visible_devices: bool = True,
 ):
-    """@TODO: Docs. Contribution is welcome."""
+    """Returns environment copy with extra distributed settings.
+
+    Args:
+        local_rank: worker local rank
+        rank: worker global rank
+        world_size: worker world size
+        use_cuda_visible_devices: boolean flag to use available GPU devices
+
+    Returns:
+        updated environment copy
+    """
     env = os.environ.copy()
     env["RANK"] = str(rank)
     env["WORLD_SIZE"] = str(world_size)
@@ -230,52 +250,6 @@ def get_distributed_env(
         env["LOCAL_RANK"] = "0"
         env["CUDA_VISIBLE_DEVICES"] = str(available_gpus[local_rank])
     return env
-
-
-@deprecation.deprecated(
-    deprecated_in="20.05",
-    removed_in="20.06",
-    current_version=__version__,
-    details="Use check_ddp_wrapped instead.",
-)
-def is_wrapped_with_ddp(model: nn.Module) -> bool:
-    """
-    Checks whether model is wrapped with DataParallel/DistributedDataParallel.
-    """
-    return check_ddp_wrapped(model)
-
-
-@deprecation.deprecated(
-    deprecated_in="20.05",
-    removed_in="20.06",
-    current_version=__version__,
-    details="Use check_torch_distributed_initialized instead.",
-)
-def is_torch_distributed_initialized() -> bool:
-    """Checks if torch.distributed is available and initialized."""
-    return check_torch_distributed_initialized()
-
-
-@deprecation.deprecated(
-    deprecated_in="20.05",
-    removed_in="20.06",
-    current_version=__version__,
-    details="Use check_slurm_available instead.",
-)
-def is_slurm_available() -> bool:
-    """Checks if slurm is available."""
-    return check_slurm_available()
-
-
-@deprecation.deprecated(
-    deprecated_in="20.05",
-    removed_in="20.06",
-    current_version=__version__,
-    details="Use check_apex_available instead.",
-)
-def is_apex_available() -> bool:
-    """Checks if apex is available."""
-    return check_apex_available()
 
 
 __all__ = [
@@ -292,8 +266,4 @@ __all__ = [
     "get_distributed_env",
     "get_distributed_params",
     "get_slurm_params",
-    "is_wrapped_with_ddp",
-    "is_torch_distributed_initialized",
-    "is_slurm_available",
-    "is_apex_available",
 ]

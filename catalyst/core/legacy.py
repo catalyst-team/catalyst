@@ -85,3 +85,6 @@ class IRunnerLegacy:
             DeprecationWarning,
         )
         return self
+
+
+__all__ = ["IRunnerLegacy"]

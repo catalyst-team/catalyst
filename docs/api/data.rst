@@ -341,6 +341,20 @@ ToTensor
     :undoc-members:
     :show-inheritance:
 
+OneOfPerBatch
+""""""""""""""""""""""""""
+.. autoclass:: catalyst.data.cv.transforms.kornia.OneOfPerBatch
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+OneOfPerSample
+""""""""""""""""""""""""""
+.. autoclass:: catalyst.data.cv.transforms.kornia.OneOfPerSample
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Natural Language Processing Extensions
 --------------------------------------

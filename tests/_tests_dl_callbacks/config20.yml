@@ -47,7 +47,7 @@ stages:
       saver:
         callback: CheckpointCallback
       tracer:
-        callback: TracerCallback
+        callback: TracingCallback
         metric: "loss"
         minimize: True
         mode: "best"

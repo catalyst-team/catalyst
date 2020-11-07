@@ -5,7 +5,7 @@ from functools import partial
 import torch
 from torch import nn
 
-from catalyst.utils import metrics
+from catalyst import metrics
 
 
 class DiceLoss(nn.Module):

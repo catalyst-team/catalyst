@@ -5,14 +5,8 @@ import torch
 from torch import nn
 import torch.distributed
 
-from catalyst.tools.settings import IS_XLA_AVAILABLE
-from catalyst.tools.typing import (
-    Criterion,
-    Device,
-    Model,
-    Optimizer,
-    Scheduler,
-)
+from catalyst.settings import IS_XLA_AVAILABLE
+from catalyst.typing import Criterion, Device, Model, Optimizer, Scheduler
 from catalyst.utils.distributed import (
     check_amp_available,
     check_apex_available,

@@ -62,21 +62,20 @@ class ArcFace(nn.Module):
 
     def __repr__(self) -> str:
         """Object representation."""
-        return (
+        rep = (
             "ArcFace("
-            + ",".join(
-                [
-                    f"in_features={self.in_features}",
-                    f"out_features={self.out_features}",
-                    f"s={self.s}",
-                    f"m={self.m}",
-                    f"eps={self.eps}",
-                ]
-            )
-            + ")"
+            f"in_features={self.in_features},"
+            f"out_features={self.out_features},"
+            f"s={self.s},"
+            f"m={self.m},"
+            f"eps={self.eps}"
+            ")"
         )
+        return rep
 
-    def forward(self, input, target):
+    def forward(
+        self, input: torch.Tensor, target: torch.LongTensor
+    ) -> torch.Tensor:
         """
         Args:
             input: input features,
@@ -89,14 +88,15 @@ class ArcFace(nn.Module):
 
         Returns:
             tensor (logits) with shapes ``BxC``
-            where ``C`` is a number of classes.
+            where ``C`` is a number of classes
+            (out_features).
         """
         cos_theta = F.linear(F.normalize(input), F.normalize(self.weight))
         theta = torch.acos(
             torch.clamp(cos_theta, -1.0 + self.eps, 1.0 - self.eps)
         )
 
-        one_hot = torch.zeros_like(cos_theta, device=input.device)
+        one_hot = torch.zeros_like(cos_theta)
         one_hot.scatter_(1, target.view(-1, 1).long(), 1)
 
         mask = torch.where(
@@ -174,22 +174,21 @@ class SubCenterArcFace(nn.Module):
 
     def __repr__(self) -> str:
         """Object representation."""
-        return (
+        rep = (
             "SubCenterArcFace("
-            + ",".join(
-                [
-                    f"in_features={self.in_features}",
-                    f"out_features={self.out_features}",
-                    f"s={self.s}",
-                    f"m={self.m}",
-                    f"k={self.k}",
-                    f"eps={self.eps}",
-                ]
-            )
-            + ")"
+            f"in_features={self.in_features},"
+            f"out_features={self.out_features},"
+            f"s={self.s},"
+            f"m={self.m},"
+            f"k={self.k},"
+            f"eps={self.eps}"
+            ")"
         )
+        return rep
 
-    def forward(self, input, label):
+    def forward(
+        self, input: torch.Tensor, label: torch.LongTensor
+    ) -> torch.Tensor:
         """
         Args:
             input: input features,
@@ -217,7 +216,7 @@ class SubCenterArcFace(nn.Module):
             torch.clamp(cos_theta, -1.0 + self.eps, 1.0 - self.eps)
         )
 
-        one_hot = torch.zeros(cos_theta.size()).to(input.device)
+        one_hot = torch.zeros_like(cos_theta)
         one_hot.scatter_(1, label.view(-1, 1).long(), 1)
 
         selected = torch.where(
@@ -228,3 +227,6 @@ class SubCenterArcFace(nn.Module):
         logits *= self.s
 
         return logits
+
+
+__all__ = ["ArcFace", "SubCenterArcFace"]

@@ -1,4 +1,4 @@
-Tools and Utilities
+Utilities
 ================================================
 
 .. toctree::
@@ -8,116 +8,8 @@ Tools and Utilities
    :local:
 
 
-Tools
+Main
 ----------------------
-
-.. automodule:: catalyst.tools
-    :members:
-    :show-inheritance:
-
-Frozen Class
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.frozen_class
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Time Manager
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.time_manager
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Typing
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.typing
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Meters
-------------------------
-
-The meters from torchnet.meters.
-
-Every meter implements :py:class:`catalyst.tools.meters.meter.Meter` interface.
-
-Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.meter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-AP Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.apmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-AUC Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.aucmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Average Value Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.averagevaluemeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Class Error Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.classerrormeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Confusion Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.confusionmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Map Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.mapmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Moving Average Value Meter
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.movingaveragevaluemeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-MSE Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.msemeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Precision-Recall-F1 Meter
-~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.ppv_tpr_f1_meter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Utils
-----------------------
-
 .. automodule:: catalyst.utils
     :members:
     :show-inheritance:
@@ -164,6 +56,13 @@ Initialization
     :undoc-members:
     :show-inheritance:
 
+Loaders
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.loaders
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Misc
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.misc
@@ -185,6 +84,27 @@ Parser
     :undoc-members:
     :show-inheritance:
 
+Pipelines
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.pipelines
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Pruning
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.pruning
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Quantization
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.quantization
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Scripts
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.scripts
@@ -195,6 +115,13 @@ Scripts
 Seed
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.seed
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Stochastic Weights Averaging (SWA)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.swa
     :members:
     :undoc-members:
     :show-inheritance:
@@ -213,80 +140,128 @@ Torch
     :undoc-members:
     :show-inheritance:
 
-
-Metrics
-------------------------
-
-Accuracy
+Tracing
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.metrics.accuracy
+.. automodule:: catalyst.utils.tracing
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.metrics.multi_label_accuracy
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-AUC
+Wizard
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.metrics.auc
+.. automodule:: catalyst.utils.wizard
     :members:
     :undoc-members:
     :show-inheritance:
 
 
-CMC score
+Contrib
+----------------------
+.. automodule:: catalyst.contrib.utils
+    :members:
+    :show-inheritance:
+
+Argparse
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.metrics.cmc_score_count
+.. automodule:: catalyst.contrib.utils.argparse
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.metrics.cmc_score
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Dice
+Compression
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.metrics.dice
+.. automodule:: catalyst.contrib.utils.compression
     :members:
     :undoc-members:
     :show-inheritance:
 
-F1 score
+Confusion Matrix
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.metrics.f1_score
+.. automodule:: catalyst.contrib.utils.confusion_matrix
     :members:
     :undoc-members:
     :show-inheritance:
 
-Focal
+Dataset
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.metrics.focal
+.. automodule:: catalyst.contrib.utils.dataset
     :members:
     :undoc-members:
     :show-inheritance:
 
-IoU
+Misc
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.metrics.iou
+.. automodule:: catalyst.contrib.utils.misc
     :members:
     :undoc-members:
     :show-inheritance:
 
-Precision
+Pandas
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.metrics.average_precision
+.. automodule:: catalyst.contrib.utils.pandas
     :members:
     :undoc-members:
     :show-inheritance:
 
-Functional
+Parallel
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.metrics.functional
+.. automodule:: catalyst.contrib.utils.parallel
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Plotly
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.plotly
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Serialization
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.serialization
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Visualization
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.visualization
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Computer Vision
+-------------------------
+.. automodule:: catalyst.contrib.utils.cv
+    :members:
+    :show-inheritance:
+
+Image
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.cv.image
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Tensor
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.cv.tensor
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Natural language processing
+-------------------------------------
+.. automodule:: catalyst.contrib.utils.nlp
+    :members:
+    :show-inheritance:
+
+Text
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.nlp.text
     :members:
     :undoc-members:
     :show-inheritance:

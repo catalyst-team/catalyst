@@ -8,7 +8,7 @@ class TimeManager(object):
     """@TODO: Docs. Contribution is welcome."""
 
     def __init__(self):
-        """@TODO: Docs. Contribution is welcome."""
+        """Initialization"""
         self._starts = {}
         self.elapsed = {}
 

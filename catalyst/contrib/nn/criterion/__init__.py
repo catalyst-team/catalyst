@@ -1,10 +1,11 @@
 # flake8: noqa
 
 from torch.nn.modules.loss import *
+
 from catalyst.contrib.nn.criterion.ce import (
     MaskCrossEntropyLoss,
-    NaiveCrossEntropyLoss,
     SymmetricCrossEntropyLoss,
+    NaiveCrossEntropyLoss,
 )
 from catalyst.contrib.nn.criterion.circle import CircleLoss
 from catalyst.contrib.nn.criterion.contrastive import (

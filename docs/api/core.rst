@@ -8,15 +8,13 @@ Core
    :local:
 
 
-Core
-----------------------
 .. automodule:: catalyst.core
     :members:
-    :undoc-members:
     :show-inheritance:
 
+
 Experiment
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 .. autoclass:: catalyst.core.experiment.IExperiment
     :members:
     :undoc-members:
@@ -27,8 +25,14 @@ Experiment
     :undoc-members:
     :show-inheritance:
 
+
 Runner
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
+.. autoclass:: catalyst.core.runner.RunnerException
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 .. autoclass:: catalyst.core.runner.IRunner
     :members:
     :undoc-members:
@@ -44,137 +48,43 @@ Runner
     :undoc-members:
     :show-inheritance:
 
-Callback
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callback
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
-Callbacks
-----------------------
-
-BatchOverfitCallback
-~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.batch_overfit
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Checkpoint
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.checkpoint
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Control Flow
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.control_flow
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Criterion
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.criterion
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Early Stop
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.early_stop
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Exception
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.exception
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Logging
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.logging
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Metrics
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.metrics
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Optimizer
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.optimizer
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-PeriodicLoaderCallback
-""""""""""""""""""""""
-.. automodule:: catalyst.core.callbacks.periodic_loader
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Scheduler
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.scheduler
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Timer
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.timer
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Validation
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.validation
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Registry
-----------------------
-
-.. automodule:: catalyst.core.registry
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Utils
-----------------------
-
-.. automodule:: catalyst.core.utils
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.core.utils.callbacks
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Legacy
-----------------------
-
-Runner
+RunnerLegacy
 ~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.core.legacy.IRunnerLegacy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Callback
+----------------------
+.. autoclass:: catalyst.core.callback.CallbackNode
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. autoclass:: catalyst.core.callback.CallbackOrder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. autoclass:: catalyst.core.callback.CallbackScope
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. autoclass:: catalyst.core.callback.Callback
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. autoclass:: catalyst.core.callback.CallbackWrapper
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. automodule:: catalyst.core.callback
     :members:
     :undoc-members:
     :show-inheritance:

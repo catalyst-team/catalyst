@@ -5,7 +5,7 @@ from collections import OrderedDict
 from torch.utils.data import DataLoader, Dataset
 
 from catalyst.core.callback import Callback
-from catalyst.tools.typing import Criterion, Model, Optimizer, Scheduler
+from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 
 
 class IExperiment(ABC):
@@ -24,9 +24,9 @@ class IExperiment(ABC):
 
     Abstraction, please check out the implementations:
 
-        - :py:mod:`catalyst.dl.experiment.base.BaseExperiment`
-        - :py:mod:`catalyst.dl.experiment.config.ConfigExperiment`
-        - :py:mod:`catalyst.dl.experiment.supervised.SupervisedExperiment`
+        - :py:mod:`catalyst.experiments.experiment.Experiment`
+        - :py:mod:`catalyst.experiments.config.ConfigExperiment`
+        - :py:mod:`catalyst.experiments.supervised.SupervisedExperiment`
     """
 
     @property

@@ -4,7 +4,8 @@ from collections import OrderedDict
 from torch.utils.data import Dataset
 
 from catalyst.contrib.datasets import MNIST as _MNIST
-from catalyst.dl.experiment import ConfigExperiment
+from catalyst.contrib.utils.cv.tensor import tensor_to_ndimage
+from catalyst.experiments import ConfigExperiment
 
 
 class MNIST(_MNIST):
@@ -22,6 +23,11 @@ class MNIST(_MNIST):
         image, target = self.data[index], self.targets[index]
 
         if self.transform is not None:
+            # fix for albumentations >= v0.5.0 - call `TensorToImage` directly
+            if len(image.shape) == 2:
+                image = image.unsqueeze(0)
+            image = tensor_to_ndimage(image, False, move_channels_dim=True)
+
             image = self.transform({"image": image})["image"]
 
         return image, target

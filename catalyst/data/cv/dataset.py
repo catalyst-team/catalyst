@@ -2,9 +2,9 @@ from typing import Callable, Dict, Mapping, Optional
 import glob
 from pathlib import Path
 
-from catalyst import utils
-from catalyst.data.cv import ImageReader
-from catalyst.data.dataset import PathsDataset
+from catalyst.contrib.utils.cv.image import has_image_extension
+from catalyst.data.cv.reader import ImageReader
+from catalyst.data.dataset.torch import PathsDataset
 from catalyst.data.reader import ReaderCompose, ScalarReader
 
 
@@ -48,7 +48,7 @@ class ImageFolderDataset(PathsDataset):
                 to use on dict
         """
         files = glob.iglob(f"{rootpath}/**/*")
-        images = sorted(filter(utils.has_image_extension, files))
+        images = sorted(filter(has_image_extension, files))
 
         if dir2class is None:
             dirs = sorted({Path(f).parent.name for f in images})

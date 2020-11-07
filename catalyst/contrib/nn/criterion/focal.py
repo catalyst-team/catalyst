@@ -2,7 +2,7 @@ from functools import partial
 
 from torch.nn.modules.loss import _Loss  # noqa: WPS450
 
-from catalyst.utils import metrics
+from catalyst import metrics
 
 
 class FocalLossBinary(_Loss):
