@@ -16,7 +16,7 @@ def dcg(
 ) -> torch.Tensor:
     """
     Computes DCG@topk for the specified values of `k`.
-    Uses graded relevance as a measure of  usefulness,
+    Graded relevance as a measure of  usefulness,
     or gain, from examining a set of items.
     Gain may be reduced at lower ranks.
     Reference:
