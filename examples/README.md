@@ -21,6 +21,12 @@
     - tensorboard logs visualization
     - predictions visualization
     - Test-time augmentations with [ttach](https://github.com/qubvel/ttach) library
+    
+3.  [Pruning tutorial](notebooks/Pruning.ipynb)[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/Pruning.ipynb)
+    - Pruning intro
+    - Lottery ticket hypothesis
+    - Catalyst pruning callback
+    - Loading training result from logs
 
 ### Usage examples
 1. [features – classification](./notebooks/classification-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-example.ipynb)

@@ -80,7 +80,7 @@ def parse_args():
     return args
 
 
-def _load_image_data(rootpath: str, paths: List):
+def _load_image_data(rootpath: str, paths: List, img_size: int):
     img_data = None
 
     try:
@@ -95,7 +95,7 @@ def _load_image_data(rootpath: str, paths: List):
 
         image_names = [path.join(rootpath, name) for name in paths]
         img_data = np.stack(
-            [_load_image(name, args.img_size) for name in image_names], axis=0
+            [_load_image(name, img_size) for name in image_names], axis=0
         )
         img_data = (
             img_data.transpose((0, 3, 1, 2)) / 255.0  # noqa: WPS432
@@ -126,7 +126,8 @@ def main(args, _=None):
     if args.meta_cols is not None:
         meta_header = args.meta_cols.split(",")
     else:
-        raise ValueError("meta-cols must not be None")
+        meta_header = None
+        # raise ValueError("meta-cols must not be None")
 
     features = np.load(args.in_npy, mmap_mode="r")
     assert len(df) == len(features)
@@ -138,30 +139,47 @@ def main(args, _=None):
 
     if args.img_col is not None:
         img_data = _load_image_data(
-            rootpath=args.img_rootpath, paths=df[args.img_col].values
+            rootpath=args.img_rootpath,
+            paths=df[args.img_col].values,
+            img_size=args.img_size,
         )
     else:
         img_data = None
 
-    summary_writer = SummaryWriter(args.out_dir)
-    metadata = df[meta_header].values.tolist()
-    metadata = [
-        [
-            str(text)
-            .replace("\n", " ")
-            .replace(r"\s", " ")
-            .replace(r"\s\s+", " ")
-            .strip()
-            for text in texts
+    if meta_header is not None:
+        metadata = df[meta_header].values.tolist()
+        metadata = [
+            [
+                str(text)
+                .replace("\n", " ")
+                .replace(r"\s", " ")
+                .replace(r"\s\s+", " ")
+                .strip()
+                for text in texts
+            ]
+            for texts in metadata
         ]
-        for texts in metadata
-    ]
-    assert len(metadata) == len(features)
+        assert len(metadata) == len(features)
+    elif args.img_col is not None:
+
+        def _image_name(s):
+            splitted = s.rsplit("/", 1)
+            return splitted[1] if len(splitted) else splitted[0]
+
+        metadata = [_image_name(str(path)) for path in df[args.img_col].values]
+    else:
+        metadata = None
+
+    summary_writer = SummaryWriter(args.out_dir)
     summary_writer.add_embedding(
         features,
-        metadata=metadata,
         label_img=img_data,
-        metadata_header=meta_header,
+        metadata=metadata,
+        # metadata_header=(
+        #     meta_header
+        #     if meta_header is not None and len(meta_header)
+        #     else None
+        # ),
     )
     summary_writer.close()
 

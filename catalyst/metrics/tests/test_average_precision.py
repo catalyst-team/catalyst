@@ -3,7 +3,7 @@ import math
 
 import torch
 
-from catalyst.utils.metrics import average_precision
+from catalyst.metrics.precision import average_precision
 
 
 def test_average_precision_base():

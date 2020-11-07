@@ -286,7 +286,7 @@ class TripletMarginLossWithSampler(nn.Module):
     ) -> Tensor:
         """
         Args:
-            features: features with the shape of [batch_size, features_dim]
+            features: features with shape [batch_size, features_dim]
             labels: labels of samples having batch_size elements
 
         Returns: loss value

@@ -2,7 +2,7 @@ import numpy as np
 
 import torch
 
-from catalyst import metrics
+from catalyst.metrics import accuracy
 
 BATCH_SIZE = 4
 NUM_CLASSES = 10
@@ -17,7 +17,7 @@ def test_accuracy_top1():
         outputs[:, i] = 1
         targets = torch.ones((BATCH_SIZE, 1)) * i
 
-        top1, top3, top5 = metrics.accuracy(outputs, targets, topk=(1, 3, 5))
+        top1, top3, top5 = accuracy(outputs, targets, topk=(1, 3, 5))
         assert np.isclose(top1, 1)
         assert np.isclose(top3, 1)
         assert np.isclose(top5, 1)
@@ -36,7 +36,7 @@ def test_accuracy_top3():
     for i in range(NUM_CLASSES):
         targets = torch.ones((BATCH_SIZE, 1)) * i
 
-        top1, top3, top5 = metrics.accuracy(outputs, targets, topk=(1, 3, 5))
+        top1, top3, top5 = accuracy(outputs, targets, topk=(1, 3, 5))
         assert np.isclose(top1, 1 if i >= NUM_CLASSES - 1 else 0)
         assert np.isclose(top3, 1 if i >= NUM_CLASSES - 3 else 0)
         assert np.isclose(top5, 1 if i >= NUM_CLASSES - 5 else 0)
