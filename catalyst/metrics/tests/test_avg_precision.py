@@ -58,8 +58,8 @@ def test_avg_precision():
 
     average_precision = metrics.avg_precision(y_pred_torch, y_true_torch, k=3)
 
-    assert np.isclose(average_precision[0], 0.5833, atol=1e03)
-    assert np.isclose(average_precision[1], 0.333, atol=1e03)
+    assert np.isclose(average_precision[0], 0.5833, atol=1e3)
+    assert np.isclose(average_precision[1], 0.333, atol=1e3)
 
     # check 5
     # Stanford Introdcution to information retrieval primer
@@ -74,7 +74,9 @@ def test_avg_precision():
     average_precision = metrics.avg_precision(y_pred_torch, y_true_torch)
 
     assert np.allclose(
-        [average_precision[0], 0.6222], [average_precision[1], 0.4429], atol=1e03
+        [average_precision[0], 0.6222], 
+        [average_precision[1], 0.4429], 
+        atol=1e3
     )
 
 
@@ -95,4 +97,4 @@ def test_mean_avg_precision():
     top_k = [10]
     map_at10 = metrics.mean_avg_precision(y_pred_torch, y_true_torch, top_k)[0]
 
-    assert np.allclose(map_at10, 0.53, atol=1e03)
+    assert np.allclose(map_at10, 0.53, atol=1e3)
