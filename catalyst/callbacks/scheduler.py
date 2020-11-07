@@ -1,5 +1,6 @@
 from typing import Optional, Tuple, TYPE_CHECKING
 from abc import ABC, abstractmethod
+
 from packaging import version
 
 import torch
