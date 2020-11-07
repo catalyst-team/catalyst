@@ -76,7 +76,7 @@ def test_avg_precision():
     assert np.allclose(
         [average_precision[0], 0.6222],
         [average_precision[1], 0.4429],
-        atol=1e3
+        atol=1e3,
     )
 
 

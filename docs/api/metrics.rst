@@ -97,5 +97,3 @@ Functional
     :members:
     :undoc-members:
     :show-inheritance:
-
-

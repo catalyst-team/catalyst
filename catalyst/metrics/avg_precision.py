@@ -102,10 +102,7 @@ def mean_avg_precision(
             size: [len(top_k), 1]
     """
     map_k_tuple = tuple(
-        torch.mean(
-            avg_precision(outputs, targets, k)
-        ).item()
-        for k in top_k
+        torch.mean(avg_precision(outputs, targets, k)).item() for k in top_k
     )
     return map_k_tuple
 
