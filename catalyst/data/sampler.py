@@ -2,6 +2,7 @@ from typing import Iterator, List, Optional, Union
 from collections import Counter
 from operator import itemgetter
 from random import choices, sample
+import warnings
 
 import numpy as np
 
@@ -206,8 +207,13 @@ class DynamicBalanceClassSampler(Sampler):
     Let's define D_i = #C_i/ #C_min where #C_i is a size of class i and #C_min
     is a size of the rarest class, so D_i define class distribution.
     Also define g(n_epoch) is a exponential scheduler. On each epoch
-    current D_i  calculated as currend D_i  = D_i ^ g(n_epoch),
+    current D_i  calculated as current D_i  = D_i ^ g(n_epoch),
     after this data samples according this distribution.
+
+    Note: In the end of the training, epochs will contain only
+    min_size_class * n_classes examples. So, possible it will not necessary to
+    do validation on each epoch. For this reason use ControlFlowCallback.
+
     Usage example:
 
         >>> import torch
@@ -230,25 +236,45 @@ class DynamicBalanceClassSampler(Sampler):
     """
 
     def __init__(
-        self, labels: List[Union[int, str]], exp_lambda=0.9, epoch=0, max_d=200
+        self,
+        labels: List[Union[int, str]],
+        exp_lambda=0.9,
+        epoch: int = 0,
+        max_d: int = None,
+        mode: int = None,
+        ignore_warning: bool = False,
     ):
         """
         Args:
             labels: list of labels for each elem in the dataset
             exp_lambda: exponent figure for schedule
             epoch: start epoch number can be useful for many stage experiments
-            max_d: limit on the difference between the most frequent and the
-            rarest classes, heuristic
+            max_d: if not None, limit on the difference between the most
+            frequent and the rarest classes, heuristic
+            mode: if not None, it means the final class size in training.
+            Before change it, make sure that you understand how does it work
+            ignore_warning: ignore warning about min class size
         """
-        assert isinstance(epoch, int) and isinstance(max_d, int)
+        assert isinstance(epoch, int)
         assert 0 < exp_lambda < 1, "exp_lambda must be in (0, 1)"
         super().__init__(labels)
         self.exp_lambda = exp_lambda
+        if max_d is None:
+            max_d = np.inf
         self.max_d = max_d
         self.epoch = epoch
         labels = np.array(labels)
         samples_per_class = Counter(labels)
         self.min_class_size = min(list(samples_per_class.values()))
+
+        if self.min_class_size < 100 and not ignore_warning:
+            warnings.warn(
+                f"the smallest class contains only"
+                f" {self.min_class_size} examples. At the end of"
+                f" training, epochs will contain only"
+                f" {self.min_class_size * len(samples_per_class)}"
+                f" examples"
+            )
 
         self.original_d = {
             key: value / self.min_class_size
@@ -258,6 +284,10 @@ class DynamicBalanceClassSampler(Sampler):
             label: np.arange(len(labels))[labels == label].tolist()
             for label in set(labels)
         }
+        if mode is not None:
+            assert isinstance(mode, int)
+            self.min_class_size = mode
+
         self.labels = labels
         self._update()
 
