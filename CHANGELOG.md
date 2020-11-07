@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
-- `catalyst` requires `torch>=1.3.0` instead of `>=1.1.0`
+- `catalyst` now requires `torch>=1.5.0` instead of `>=1.1.0`
 - update Catalyst version to `20.10.1` for tutorials ([#967](https://github.com/catalyst-team/catalyst/pull/967))
 - added link to dl-course ([#967](https://github.com/catalyst-team/catalyst/pull/967))
 - docs were restructured ([#985](https://github.com/catalyst-team/catalyst/pull/985))
