@@ -3,15 +3,11 @@ from catalyst.metrics.accuracy import accuracy, multi_label_accuracy
 from catalyst.metrics.auc import auc
 from catalyst.metrics.cmc_score import cmc_score, cmc_score_count
 from catalyst.metrics.dice import dice, calculate_dice
-<<<<<<< HEAD
-from catalyst.metrics.f1_score import f1_score
-from catalyst.metrics.hitrate import hitrate
-=======
 from catalyst.metrics.f1_score import f1_score, fbeta_score
+from catalyst.metrics.hitrate import hitrate
 from catalyst.metrics.classification import precision_recall_fbeta_support
 from catalyst.metrics.precision import precision
 from catalyst.metrics.recall import recall
->>>>>>> master
 from catalyst.metrics.focal import sigmoid_focal_loss, reduced_focal_loss
 from catalyst.metrics.functional import (
     process_multilabel_components,
