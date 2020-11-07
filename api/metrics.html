@@ -318,7 +318,8 @@
 <li><p><a class="reference internal" href="#module-catalyst.metrics.iou" id="id7">IoU</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.metrics.mrr" id="id8">MRR</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.metrics.precision" id="id9">Precision</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.functional" id="id10">Functional</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.hitrate" id="id10">Hitrate</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.functional" id="id11">Functional</a></p></li>
 </ul>
 </div>
 <span class="target" id="module-catalyst.metrics"></span><div class="section" id="module-catalyst.metrics.accuracy">
@@ -771,8 +772,51 @@ in case of scores/probabilities in <code class="docutils literal notranslate"><s
 </dd></dl>
 
 </div>
+<div class="section" id="module-catalyst.metrics.hitrate">
+<span id="hitrate"></span><h2><a class="toc-backref" href="#id10">Hitrate</a><a class="headerlink" href="#module-catalyst.metrics.hitrate" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt>Hitrate metric:</dt><dd><ul class="simple">
+<li><p><a class="reference internal" href="#catalyst.metrics.hitrate.hitrate" title="catalyst.metrics.hitrate.hitrate"><code class="xref py py-func docutils literal notranslate"><span class="pre">hitrate()</span></code></a></p></li>
+</ul>
+</dd>
+</dl>
+<dl class="function">
+<dt id="catalyst.metrics.hitrate.hitrate">
+<code class="sig-prename descclassname">catalyst.metrics.hitrate.</code><code class="sig-name descname">hitrate</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">k=10</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/hitrate.html#hitrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.hitrate.hitrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the hit rate score given model outputs and targets.
+Hit-rate is a metric for evaluating ranking systems.
+Generate top-N recommendations and if one of the recommendation is
+actually what user has rated, you consider that a hit.
+By rate we mean any explicit form of user’s interactions.
+Add up all of the hits for all users and then divide by number of users</p>
+<p>Compute top-N recomendation for each user in the training stage
+and intentionally remove one of this items fro the training data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – Tensor weith predicted score
+size: [batch_size, slate_length]
+model outputs, logits</p></li>
+<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – Binary tensor with ground truth.
+1 means the item is relevant
+for the user and 0 not relevant
+size: [batch_szie, slate_length]
+ground truth, labels</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Parameter fro evaluation on top-k items</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the hit rate score</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>hitrate (torch.Tensor)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 <div class="section" id="module-catalyst.metrics.functional">
-<span id="functional"></span><h2><a class="toc-backref" href="#id10">Functional</a><a class="headerlink" href="#module-catalyst.metrics.functional" title="Permalink to this headline">¶</a></h2>
+<span id="functional"></span><h2><a class="toc-backref" href="#id11">Functional</a><a class="headerlink" href="#module-catalyst.metrics.functional" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="catalyst.metrics.functional.process_multilabel_components">
 <code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">process_multilabel_components</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">weights: Optional[torch.Tensor] = None</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/functional.html#process_multilabel_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.process_multilabel_components" title="Permalink to this definition">¶</a></dt>
@@ -1038,6 +1082,7 @@ default: None - class indexes will be used.</p></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.iou">IoU</a></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.mrr">MRR</a></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.precision">Precision</a></li>
+<li><a class="reference internal" href="#module-catalyst.metrics.hitrate">Hitrate</a></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.functional">Functional</a></li>
 </ul>
 </li>
