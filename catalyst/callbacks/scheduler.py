@@ -1,5 +1,6 @@
 from typing import Optional, Tuple, TYPE_CHECKING
 from abc import ABC, abstractmethod
+from packaging import version
 
 import torch
 
@@ -118,7 +119,10 @@ class SchedulerCallback(ISchedulerCallback):
             lr = scheduler.optimizer.param_groups[0]["lr"]
         else:
             scheduler.step()
-            lr = scheduler.get_last_lr()[0]
+            if version.parse(torch.__version__) < version.parse("1.6.0"):
+                lr = scheduler.get_lr()[0]
+            else:
+                lr = scheduler.get_last_lr()[0]
 
         momentum = get_optimizer_momentum(scheduler.optimizer)
 
