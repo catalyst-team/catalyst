@@ -1,53 +1,84 @@
 """
 F1 score.
 """
+from typing import Optional, Union
+
 import torch
 
-from catalyst.utils.torch import get_activation_fn
+from catalyst.metrics.classification import precision_recall_fbeta_support
+
+
+def fbeta_score(
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    beta: float = 1.0,
+    eps: float = 1e-7,
+    argmax_dim: int = -1,
+    num_classes: Optional[int] = None,
+) -> Union[float, torch.Tensor]:
+    """
+    Counts fbeta score for given ``outputs`` and ``targets``.
+
+    Args:
+        outputs: A list of predicted elements
+        targets:  A list of elements that are to be predicted
+        beta: beta param for f_score
+        eps: epsilon to avoid zero division
+        argmax_dim: int, that specifies dimension for argmax transformation
+            in case of scores/probabilities in ``outputs``
+        num_classes: int, that specifies number of classes if it known
+
+    Raises:
+        Exception: If ``beta`` is a negative number.
+
+    Returns:
+        float: F_1 score.
+    """
+    if beta < 0:
+        raise Exception("beta parameter should be non-negative")
+
+    _p, _r, fbeta, _ = precision_recall_fbeta_support(
+        outputs=outputs,
+        targets=targets,
+        beta=beta,
+        eps=eps,
+        argmax_dim=argmax_dim,
+        num_classes=num_classes,
+    )
+    return fbeta
 
 
 def f1_score(
     outputs: torch.Tensor,
     targets: torch.Tensor,
-    beta: float = 1.0,
     eps: float = 1e-7,
-    threshold: float = None,
-    activation: str = "Sigmoid",
-):
+    argmax_dim: int = -1,
+    num_classes: Optional[int] = None,
+) -> Union[float, torch.Tensor]:
     """
+    Fbeta_score with beta=1.
+
     Args:
         outputs: A list of predicted elements
         targets:  A list of elements that are to be predicted
         eps: epsilon to avoid zero division
-        beta: beta param for f_score
-        threshold: threshold for outputs binarization
-        activation: An torch.nn activation applied to the outputs.
-            Must be one of ["none", "Sigmoid", "Softmax2d"]
+        argmax_dim: int, that specifies dimension for argmax transformation
+            in case of scores/probabilities in ``outputs``
+        num_classes: int, that specifies number of classes if it known
 
     Returns:
         float: F_1 score
     """
-    activation_fn = get_activation_fn(activation)
-
-    outputs = activation_fn(outputs)
-
-    if threshold is not None:
-        outputs = (outputs > threshold).float()
-
-    true_positive = torch.sum(targets * outputs)
-    false_positive = torch.sum(outputs) - true_positive
-    false_negative = torch.sum(targets) - true_positive
-
-    precision_plus_recall = (
-        (1 + beta ** 2) * true_positive
-        + beta ** 2 * false_negative
-        + false_positive
-        + eps
+    score = fbeta_score(
+        outputs=outputs,
+        targets=targets,
+        beta=1,
+        eps=eps,
+        argmax_dim=argmax_dim,
+        num_classes=num_classes,
     )
-
-    score = ((1 + beta ** 2) * true_positive + eps) / precision_plus_recall
 
     return score
 
 
-__all__ = ["f1_score"]
+__all__ = ["f1_score", "fbeta_score"]

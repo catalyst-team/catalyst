@@ -14,3 +14,7 @@ set -eo pipefail -v
 
 ####################################  NLP  ####################################
 (set -e; for f in ./bin/tests/check_dl_nlp*.sh; do bash "$f"; done)
+
+
+###################################  CONTRIB  ####################################
+(set -e; for f in ./bin/tests/check_contrib_*.sh; do bash "$f"; done)

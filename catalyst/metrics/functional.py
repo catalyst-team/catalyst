@@ -1,6 +1,8 @@
 from typing import Callable, Dict, Optional, Sequence, Tuple
 from functools import partial
 
+import numpy as np
+
 import torch
 from torch import Tensor
 from torch.nn import functional as F
@@ -9,6 +11,74 @@ from torch.nn import functional as F
 # after full classification metrics re-implementation, make a reference to
 # https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/metrics
 # as a baseline
+
+
+def process_multiclass_components(
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    argmax_dim: int = -1,
+    num_classes: Optional[int] = None,
+) -> Tuple[torch.Tensor, torch.Tensor, int]:
+    """
+    Preprocess input in case multiclass classification task.
+
+    Args:
+        outputs: estimated targets as predicted by a model
+            with shape [bs; ..., (num_classes or 1)]
+        targets: ground truth (correct) target values
+            with shape [bs; ..., 1]
+        argmax_dim: int, that specifies dimension for argmax transformation
+            in case of scores/probabilities in ``outputs``
+        num_classes: int, that specifies number of classes if it known
+
+    Returns:
+        preprocessed outputs, targets and num_classes
+    """
+    # @TODO: better multiclass preprocessing, label -> class_id mapping
+    if not torch.is_tensor(outputs):
+        outputs = torch.from_numpy(np.array(outputs))
+    if not torch.is_tensor(targets):
+        targets = torch.from_numpy(np.array(targets))
+
+    if outputs.dim() == targets.dim() + 1:
+        # looks like we have scores/probabilities in our outputs
+        # let's convert them to final model predictions
+        num_classes = max(
+            outputs.shape[argmax_dim], int(targets.max().detach().item() + 1)
+        )
+        outputs = torch.argmax(outputs, dim=argmax_dim)
+    if num_classes is None:
+        # as far as we expect the outputs/targets tensors to be int64
+        # we could find number of classes as max available number
+        num_classes = max(
+            int(outputs.max().detach().item() + 1),
+            int(targets.max().detach().item() + 1),
+        )
+
+    if outputs.dim() == 1:
+        outputs = outputs.view(-1, 1)
+    elif outputs.dim() == 2 and outputs.size(0) == 1:
+        # transpose case
+        outputs.permute(1, 0)
+    else:
+        assert outputs.size(1) == 1 and outputs.dim() == 2, (
+            "Wrong `outputs` shape, "
+            "expected 1D or 2D with size 1 in the second dim "
+            "got {}".format(outputs.shape)
+        )
+
+    if targets.dim() == 1:
+        targets = targets.view(-1, 1)
+    elif targets.dim() == 2 and targets.size(0) == 1:
+        # transpose case
+        targets.permute(1, 0)
+    else:
+        assert targets.size(1) == 1 and targets.dim() == 2, (
+            "Wrong `outputs` shape, "
+            "expected 1D or 2D with size 1 in the second dim"
+        )
+
+    return outputs, targets, num_classes
 
 
 def process_multilabel_components(
@@ -127,8 +197,8 @@ def get_multiclass_statistics(
             with shape [bs; ..., (num_classes or 1)]
         targets: ground truth (correct) target values
             with shape [bs; ..., 1]
-        argmax_dim: int, that specifies dimention for argmax transformation
-            in case of scores/probabilites in ``outputs``
+        argmax_dim: int, that specifies dimension for argmax transformation
+            in case of scores/probabilities in ``outputs``
         num_classes: int, that specifies number of classes if it known
 
     Returns:
@@ -143,21 +213,12 @@ def get_multiclass_statistics(
         tensor([0., 0., 0., 1., 1.]), tensor([1., 1., 0., 0., 0.]),
         tensor([1., 1., 0., 1., 1.])
     """
-    # @TODO: move to process_multiclass_components ?
-    if outputs.dim() == targets.dim() + 1:
-        # looks like we have scores/probabilities in our outputs
-        # let's convert them to final model predictions
-        num_classes = max(
-            outputs.shape[argmax_dim], int(targets.max().detach().item() + 1)
-        )
-        outputs = torch.argmax(outputs, dim=argmax_dim)
-    if num_classes is None:
-        # as far as we expect the outputs/targets tensors to be int64
-        # we could find number of classes as max available number
-        num_classes = max(
-            int(outputs.max().detach().item() + 1),
-            int(targets.max().detach().item() + 1),
-        )
+    outputs, targets, num_classes = process_multiclass_components(
+        outputs=outputs,
+        targets=targets,
+        argmax_dim=argmax_dim,
+        num_classes=num_classes,
+    )
 
     tn = torch.zeros((num_classes,), device=outputs.device)
     fp = torch.zeros((num_classes,), device=outputs.device)

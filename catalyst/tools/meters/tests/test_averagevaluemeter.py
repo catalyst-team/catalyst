@@ -25,7 +25,9 @@ def test_averagevaluemeter():
             x2[i : i + bs] = batch.mean()
             i += bs
         assert torch.allclose(
-            torch.tensor((x2.mean(), x2.std())), torch.tensor(meter.value())
+            torch.tensor((x2.mean(), x2.std())),
+            torch.tensor(meter.value()),
+            atol=1e-07,
         )
         meter.reset()
 
