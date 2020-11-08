@@ -28,9 +28,8 @@ class AccumulatorCallback(Callback):
         """
         super().__init__(order=CallbackOrder.Metric)
 
-        assert not set(input_keys).intersection(set(output_keys)), ValueError(
-            "Input and output keys should be different."
-        )
+        if set(input_keys).intersection(set(output_keys)):
+            raise ValueError("Input and output keys should be different.")
 
         self._input_keys = input_keys
         self._output_keys = output_keys
