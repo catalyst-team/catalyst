@@ -189,7 +189,7 @@ def test_masked_cmc_score(
         query_embeddings=query_embeddings,
         gallery_embeddings=gallery_embeddings,
         conformity_matrix=conformity_matrix,
-        mask=mask,
+        available_samples=mask,
         topk=topk,
     )
     assert score == expected
@@ -206,7 +206,7 @@ def test_masked_score(
         query_embeddings=query_embeddings,
         gallery_embeddings=gallery_embeddings,
         conformity_matrix=conformity_matrix,
-        mask=mask,
+        available_samples=mask,
         topk=topk,
     )
     score = cmc_score(
