@@ -55,7 +55,7 @@ def run_ml_pipeline(sampler_inbatch: data.IInbatchTripletSampler) -> float:
         dl.ControlFlowCallback(
             dl.CMCScoreCallback(topk_args=[1]), loaders="valid"
         ),
-        dl.PeriodicLoaderCallback(valid=100),
+        dl.PeriodicLoaderCallback(valid=50),
     ]
 
     runner = dl.SupervisedRunner(device=utils.get_device())
@@ -71,6 +71,7 @@ def run_ml_pipeline(sampler_inbatch: data.IInbatchTripletSampler) -> float:
         num_epochs=100,
         main_metric="cmc01",
     )
+    print(f"\n\n\n{runner.best_valid_metrics['cmc01']}\n\n\n")
     return runner.best_valid_metrics["cmc01"]
 
 
@@ -81,8 +82,8 @@ def main() -> None:
     """
     cmc_score_th = 0.65
 
-    # Note! cmc_score should be > 0.97
-    # after 600 epoch. Please check it mannually
+    # Note! cmc_score should be > 0.75
+    # after 1000 epoch. Please check it mannually
     # to avoid wasting time of CI pod
 
     all_sampler = data.AllTripletsSampler(max_output_triplets=512)

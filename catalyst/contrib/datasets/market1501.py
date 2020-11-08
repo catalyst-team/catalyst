@@ -181,7 +181,8 @@ class Market1501QGDataset(QueryGalleryDataset):
             img = self.transform(img)
         item = {
             "features": img,
-            "targets": {"pid": self.pids[index], "cid": self.cids[index],},
+            "pid": self.pids[index],
+            "cid": self.cids[index],
             "is_query": self._is_query[index],
         }
         return item
