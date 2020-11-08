@@ -73,8 +73,8 @@ def masked_cmc_score(
         conformity_matrix: binary matrix with 1 on same label pos
             and 0 otherwise
         available_samples: tensor of shape (query_size, gallery_size),
-            mask[i][j] == 1 means that j-th element of gallery should be
-            used while scoring i-th query one
+            available_samples[i][j] == 1 means that j-th element of gallery
+            should be used while scoring i-th query one
         topk: number of top examples for cumulative score counting
 
     Returns:
