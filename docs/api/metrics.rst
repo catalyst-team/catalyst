@@ -69,6 +69,21 @@ MRR
     :undoc-members:
     :show-inheritance:
 
+
+AP
+------------------------
+.. automodule:: catalyst.metrics.avg_precision
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+MAP
+------------------------
+.. automodule:: catalyst.metrics.mean_avg_precision
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Precision
 ------------------------
 .. automodule:: catalyst.metrics.precision
@@ -89,5 +104,3 @@ Functional
     :members:
     :undoc-members:
     :show-inheritance:
-
-
