@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 import torch
 
@@ -7,6 +7,10 @@ from catalyst.data import QueryGalleryDataset
 from catalyst.metrics.cmc_score import cmc_score, masked_cmc_score
 from catalyst.metrics.functional import get_default_topk_args
 
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
+
+TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
 TAccumulative = Union[List[int], torch.Tensor]
 
 
@@ -168,7 +172,7 @@ class CMCScoreCallback(AccumulatorCallback):
         """On loader end action"""
         self._check_completeness()
 
-        query_mask = self._storage[self._is_query_key].bool()
+        query_mask = self._storage[self._is_query_key].type(TORCH_BOOL)
         gallery_mask = ~query_mask
 
         gallery_labels = self._storage[self._labels_key][gallery_mask]
@@ -247,7 +251,7 @@ class ReidCMCScoreCallback(AccumulatorCallback):
         """On loader end action"""
         self._check_completeness()
 
-        query_mask = self._storage[self._is_query_key].bool()
+        query_mask = self._storage[self._is_query_key].type(TORCH_BOOL)
         gallery_mask = ~query_mask
 
         gallery_pids = self._storage[self._pids_key][gallery_mask]
@@ -266,7 +270,7 @@ class ReidCMCScoreCallback(AccumulatorCallback):
         # from the same camera cam_j. All other cases are available.
         available_samples = ~(
             pid_conformity_matrix * cid_conformity_matrix
-        ).bool()
+        ).type(TORCH_BOOL)
 
         if (available_samples.max(dim=1).values == 0).any():
             ValueError(
