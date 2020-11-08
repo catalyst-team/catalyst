@@ -69,7 +69,16 @@ class AccumulatorCallback(Callback):
         self._reset_fields()
 
     def on_batch_end(self, runner: "IRunner") -> None:
-        """On batch end action"""
+        """
+        On batch end action
+
+        Args:
+            runner: experiment runner
+
+        Raises:
+            ValueError: if any batch contains different number of
+                accumulative fields
+        """
         batch_size = None
         for keys, source in [
             (self._input_keys, runner.input),
@@ -160,7 +169,16 @@ class CMCScoreCallback(AccumulatorCallback):
         self._metric_fn = cmc_score
 
     def on_loader_start(self, runner: "IRunner") -> None:
-        """On loader start action"""
+        """
+        On loader start action
+
+        Args:
+            runner: experiment runner
+
+        Raises:
+            ValueError: if dataset that contains accumulative data
+                is not a QueryGalleryDataset
+        """
         dataset = runner.loaders[runner.loader_name].dataset
         if not isinstance(dataset, QueryGalleryDataset):
             raise ValueError(
@@ -169,7 +187,12 @@ class CMCScoreCallback(AccumulatorCallback):
         super(CMCScoreCallback, self).on_loader_start(runner=runner)
 
     def on_loader_end(self, runner: "IRunner") -> None:
-        """On loader end action"""
+        """
+        On loader end action
+
+        Args:
+            runner: experiment runner
+        """
         self._check_completeness()
 
         query_mask = self._storage[self._is_query_key].type(TORCH_BOOL)
@@ -194,6 +217,8 @@ class CMCScoreCallback(AccumulatorCallback):
 
 
 class ReidCMCScoreCallback(AccumulatorCallback):
+    """CMCScoreCallback for reid pipeline"""
+
     def __init__(
         self,
         embeddings_key: str = "logits",
@@ -238,7 +263,16 @@ class ReidCMCScoreCallback(AccumulatorCallback):
         self._metric_fn = masked_cmc_score
 
     def on_loader_start(self, runner: "IRunner") -> None:
-        """On loader start action"""
+        """
+        On loader start action
+
+        Args:
+            runner: experiment runner
+
+        Raises:
+            ValueError: if dataset that contains accumulative data
+                is not a QueryGalleryDataset
+        """
         dataset = runner.loaders[runner.loader_name].dataset
         if not isinstance(dataset, QueryGalleryDataset):
             raise ValueError(
@@ -248,7 +282,15 @@ class ReidCMCScoreCallback(AccumulatorCallback):
         super().on_loader_start(runner=runner)
 
     def on_loader_end(self, runner: "IRunner") -> None:
-        """On loader end action"""
+        """
+        On loader end action
+
+        Args:
+            runner: experiment runner
+
+        Raises:
+            ValueError: if any item in query has no relevant items in gallery
+        """
         self._check_completeness()
 
         query_mask = self._storage[self._is_query_key].type(TORCH_BOOL)
@@ -273,7 +315,7 @@ class ReidCMCScoreCallback(AccumulatorCallback):
         ).type(TORCH_BOOL)
 
         if (available_samples.max(dim=1).values == 0).any():
-            ValueError(
+            raise ValueError(
                 "There is a sample in query that has no relevant samples "
                 "in gallery."
             )

@@ -72,13 +72,17 @@ def masked_cmc_score(
             embeddings of the objects in gallery
         conformity_matrix: binary matrix with 1 on same label pos
             and 0 otherwise
-        available_samples: tensor of shape (query_size, gallery_size), mask[i][j] == 1
-            means that j-th element of gallery should be used while scoring
-            i-th query one
+        available_samples: tensor of shape (query_size, gallery_size),
+            mask[i][j] == 1 means that j-th element of gallery should be
+            used while scoring i-th query one
         topk: number of top examples for cumulative score counting
 
     Returns:
         cmc score with mask
+
+    Raises:
+        ValueError: if there are items that have different labels and are
+            unavailable for each other according to availability matrix
     """
     if not available_samples[conformity_matrix == 0].all():
         raise ValueError(

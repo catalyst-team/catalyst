@@ -22,6 +22,7 @@ class Market1501MLDataset(MetricLearningTrainDataset):
     ):
         """
         Market1501 dataset for train stage of reid task.
+
         Args:
             root: path to a directory that contains Market-1501-v15.09.15
             transform: transformation that should be applied to images
@@ -36,6 +37,7 @@ class Market1501MLDataset(MetricLearningTrainDataset):
         """
         Load data from train directory of the dataset.
         Parse names of images to get person id as labels.
+
         Args:
             data_dir: path to directory that contains training data
 
@@ -60,6 +62,7 @@ class Market1501MLDataset(MetricLearningTrainDataset):
     def __getitem__(self, index: int) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Get item from dataset.
+
         Args:
             index: index of the element
 
@@ -76,10 +79,13 @@ class Market1501MLDataset(MetricLearningTrainDataset):
         return len(self.targets)
 
     def get_labels(self) -> List[int]:
+        """Get list of labels of dataset"""
         return self.targets.tolist()
 
 
 class Market1501QGDataset(QueryGalleryDataset):
+    """Market1501QGDataset is a dataset for test stage of reid pipeline"""
+
     def __init__(
         self,
         root: str,
@@ -87,6 +93,7 @@ class Market1501QGDataset(QueryGalleryDataset):
     ):
         """
         Market1501 dataset for testing stage of reid task.
+
         Args:
             root: path to a directory that contains Market-1501-v15.09.15
             transform: transformation that should be applied to images
@@ -121,6 +128,7 @@ class Market1501QGDataset(QueryGalleryDataset):
     def query_size(self) -> int:
         """
         Length of query part of the dataset
+
         Returns:
             query size
         """
@@ -130,16 +138,18 @@ class Market1501QGDataset(QueryGalleryDataset):
     def gallery_size(self) -> int:
         """
         Length of gallery part of the dataset
+
         Returns:
             gallery size
         """
         return self._gallery_size
 
     @staticmethod
-    def _load_data(data_dir: Path,) -> Tuple[torch.Tensor, Iterable, Iterable]:
+    def _load_data(data_dir: Path) -> Tuple[torch.Tensor, Iterable, Iterable]:
         """
         Load data from directory.
         Parse names of images to get person ids as labels and camera ids.
+
         Args:
             data_dir: path to directory that contains data
 
@@ -168,6 +178,7 @@ class Market1501QGDataset(QueryGalleryDataset):
     def __getitem__(self, index: int) -> Dict[str, Any]:
         """
         Get an item from dataset
+
         Args:
             index: index of the item to get
 
