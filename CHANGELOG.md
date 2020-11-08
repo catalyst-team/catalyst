@@ -8,14 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [YY.MM.R] - YYYY-MM-DD
 
 ### Added
-
+- MAP calculations [#968](https://github.com/catalyst-team/catalyst/pull/968) 
+- hitrate calculations [#975] (https://github.com/catalyst-team/catalyst/pull/975)
 - extra functions for classification metrics ([#966](https://github.com/catalyst-team/catalyst/pull/966))
 - `OneOf` and `OneOfV2` batch transforms ([#951](https://github.com/catalyst-team/catalyst/pull/951))
+- ``precision_recall_fbeta_support`` metric ([#971](https://github.com/catalyst-team/catalyst/pull/971))
+- Pruning tutorial ([#987](https://github.com/catalyst-team/catalyst/pull/987))
 
 ### Changed
 
 - update Catalyst version to `20.10.1` for tutorials ([#967](https://github.com/catalyst-team/catalyst/pull/967))
 - added link to dl-course ([#967](https://github.com/catalyst-team/catalyst/pull/967))
+- docs were restructured ([#985](https://github.com/catalyst-team/catalyst/pull/985))
 
 ### Removed
 
@@ -24,6 +28,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - `BatchTransformCallback` - add `nn.Module` transforms support ([#951](https://github.com/catalyst-team/catalyst/pull/951))
+- moved to `contiguous` view for accuracy computation ([#982](https://github.com/catalyst-team/catalyst/pull/982))
+- fixed torch warning on `optimizer.py:140` ([#979](https://github.com/catalyst-team/catalyst/pull/979))
 
 
 ## [20.10.1] - 2020-10-15
