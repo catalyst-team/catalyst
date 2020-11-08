@@ -216,7 +216,7 @@ class DynamicBalanceClassSampler(Sampler):
         >>> import torch
         >>> import numpy as np
 
-        >>> from catalyst.data.sampler import DynamicBalanceClassSampler
+        >>> from catalyst.data import DynamicBalanceClassSampler
         >>> from torch.utils import data
 
         >>> features = torch.Tensor(np.random.random((200, 100)))
@@ -236,30 +236,32 @@ class DynamicBalanceClassSampler(Sampler):
         self,
         labels: List[Union[int, str]],
         exp_lambda=0.9,
-        epoch: int = 0,
+        start_epoch: int = 0,
         max_d: int = None,
-        mode: int = None,
+        mode: Union[str, int] = "downsampling",
         ignore_warning: bool = False,
     ):
         """
         Args:
             labels: list of labels for each elem in the dataset
             exp_lambda: exponent figure for schedule
-            epoch: start epoch number can be useful for many stage experiments
+            start_epoch: start epoch number, can be useful for multi-stage
+             experiments
             max_d: if not None, limit on the difference between the most
             frequent and the rarest classes, heuristic
-            mode: if not None, it means the final class size in training.
-            Before change it, make sure that you understand how does it work
+            mode: number of samples per class in the end of training. Must be
+            "downsampling" or number. Before change it, make sure that you
+            understand how does it work
             ignore_warning: ignore warning about min class size
         """
-        assert isinstance(epoch, int)
+        assert isinstance(start_epoch, int)
         assert 0 < exp_lambda < 1, "exp_lambda must be in (0, 1)"
         super().__init__(labels)
         self.exp_lambda = exp_lambda
         if max_d is None:
             max_d = np.inf
         self.max_d = max_d
-        self.epoch = epoch
+        self.epoch = start_epoch
         labels = np.array(labels)
         samples_per_class = Counter(labels)
         self.min_class_size = min(list(samples_per_class.values()))
@@ -281,9 +283,11 @@ class DynamicBalanceClassSampler(Sampler):
             label: np.arange(len(labels))[labels == label].tolist()
             for label in set(labels)
         }
-        if mode is not None:
-            assert isinstance(mode, int)
+
+        if isinstance(mode, int):
             self.min_class_size = mode
+        else:
+            assert mode == "downsampling"
 
         self.labels = labels
         self._update()
@@ -565,6 +569,6 @@ __all__ = [
     "BalanceBatchSampler",
     "MiniEpochSampler",
     "DistributedSamplerWrapper",
-    "DynamicLenBatchSampler",
     "DynamicBalanceClassSampler",
+    "DynamicLenBatchSampler",
 ]
