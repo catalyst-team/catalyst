@@ -71,7 +71,6 @@ def run_ml_pipeline(sampler_inbatch: data.IInbatchTripletSampler) -> float:
         num_epochs=100,
         main_metric="cmc01",
     )
-    print(f"\n\n\n{runner.best_valid_metrics['cmc01']}\n\n\n")
     return runner.best_valid_metrics["cmc01"]
 
 
