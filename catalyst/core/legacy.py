@@ -88,6 +88,21 @@ class IRunnerLegacy:
         return self.loader_key
 
     @property
+    def stage_name(self):
+        """Alias for `runner.stage`.
+
+        .. warning::
+            Deprecated, saved for backward compatibility.
+            Please use `runner.stage` instead.
+        """
+        warnings.warn(
+            "`stage_name` was deprecated, "
+            "please use `stage` instead",
+            DeprecationWarning,
+        )
+        return self.stage
+
+    @property
     def state(self):
         """Alias for `runner`.
 
