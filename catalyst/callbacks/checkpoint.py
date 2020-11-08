@@ -27,7 +27,7 @@ def _pack_runner(runner: "IRunner"):
         valid_metrics=dict(runner.valid_metrics),
         stage_name=runner.stage,
         epoch=runner.epoch,
-        loader_name=runner.loader_name,
+        loader_name=runner.loader_key,
         loader_step=runner.loader_batch_step,
         global_epoch=runner.global_epoch,
         checkpoint_data=runner.checkpoint_data,

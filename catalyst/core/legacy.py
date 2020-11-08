@@ -73,6 +73,21 @@ class IRunnerLegacy:
         return self.loader_batch_step
 
     @property
+    def loader_name(self):
+        """Alias for `runner.loader_key`.
+
+        .. warning::
+            Deprecated, saved for backward compatibility.
+            Please use `runner.loader_key` instead.
+        """
+        warnings.warn(
+            "`loader_name` was deprecated, "
+            "please use `loader_key` instead",
+            DeprecationWarning,
+        )
+        return self.loader_key
+
+    @property
     def state(self):
         """Alias for `runner`.
 

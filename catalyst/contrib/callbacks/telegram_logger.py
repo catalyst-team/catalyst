@@ -84,7 +84,7 @@ class TelegramLogger(Callback):
         """Notify about starting running the new loader."""
         if self.log_on_loader_start:
             text = (
-                f"{runner.loader_name} {runner.global_epoch} epoch has started"
+                f"{runner.loader_key} {runner.global_epoch} epoch has started"
             )
 
             self._send_text(text)
@@ -100,7 +100,7 @@ class TelegramLogger(Callback):
                 metrics_to_log = self.metrics_to_log
 
             rows: List[str] = [
-                f"{runner.loader_name} {runner.global_epoch}"
+                f"{runner.loader_key} {runner.global_epoch}"
                 f" epoch was finished:"
             ]
 

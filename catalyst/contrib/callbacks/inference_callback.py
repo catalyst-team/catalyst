@@ -72,7 +72,7 @@ class InferCallback(Callback):
         }
         if self.out_prefix is not None:
             for key, value in self.predictions.items():
-                suffix = ".".join([runner.loader_name, key])
+                suffix = ".".join([runner.loader_key, key])
                 np.save(f"{self.out_prefix}/{suffix}.npy", value)
 
 

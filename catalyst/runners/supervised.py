@@ -34,10 +34,6 @@ class SupervisedRunner(Runner):
         super().__init__(
             model=model, device=device, experiment_fn=experiment_fn
         )
-        self._device = None
-        self._model = None
-        self._experiment_fn = experiment_fn
-        self._prepare_inner_state(model=model, device=device)
 
         self.input_key = input_key
         self.output_key = output_key
@@ -66,15 +62,6 @@ class SupervisedRunner(Runner):
             self._process_output = self._process_output_none
         else:
             raise NotImplementedError()
-
-        # self._freeze()
-
-    def _handle_batch_device(self, batch: Mapping[str, Any]):
-        if isinstance(batch, (tuple, list)):
-            assert len(batch) == 2
-            batch = {self.input_key: batch[0], self.target_key: batch[1]}
-        batch = super()._handle_batch_device(batch)
-        return batch
 
     def _process_input_str(self, batch: Mapping[str, Any], **kwargs):
         output = self.model(batch[self.input_key], **kwargs)
@@ -118,6 +105,13 @@ class SupervisedRunner(Runner):
         output = self._process_output(output)
         return output
 
+    def _handle_device(self, batch: Mapping[str, Any]):
+        if isinstance(batch, (tuple, list)):
+            assert len(batch) == 2
+            batch = {self.input_key: batch[0], self.target_key: batch[1]}
+        batch = super()._handle_device(batch)
+        return batch
+
     def _handle_batch(self, batch: Mapping[str, Any]) -> None:
         """
         Inner method to handle specified data batch.
@@ -148,7 +142,7 @@ class SupervisedRunner(Runner):
         Returns:
             Mapping[str, Any]: model output dictionary
         """
-        batch = self._handle_batch_device(batch)
+        batch = self._handle_device(batch)
         output = self.forward(batch, **kwargs)
         return output
 

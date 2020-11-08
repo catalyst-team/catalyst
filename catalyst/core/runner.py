@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Mapping, Optional, Tuple, Union
 from abc import ABC, abstractmethod
 from collections import defaultdict, OrderedDict
 from functools import lru_cache
@@ -16,17 +16,13 @@ from catalyst.core.functional import (
 )
 from catalyst.core.legacy import IRunnerLegacy
 from catalyst.settings import SETTINGS
-from catalyst.tools.frozen_class import FrozenClass
 from catalyst.typing import (
-    Criterion,
     Device,
     Model,
-    Optimizer,
     RunnerCriterion,
     RunnerModel,
     RunnerOptimizer,
     RunnerScheduler,
-    Scheduler,
 )
 from catalyst.utils.components import process_components
 from catalyst.utils.distributed import get_rank
@@ -52,7 +48,7 @@ class RunnerException(Exception):
         super().__init__(message)
 
 
-class IRunner(ABC, ICallback, IRunnerLegacy, FrozenClass):
+class IRunner(ABC, ICallback, IRunnerLegacy):
     """
     An abstraction that knows how to run an experiment.
     It contains all the logic of **how** to run the experiment,
@@ -382,11 +378,10 @@ class IRunner(ABC, ICallback, IRunnerLegacy, FrozenClass):
         self.experiment = None
         self._experiment_fn = experiment_fn
         self._prepare_inner_state(model=model, device=device)
-        # self._freeze()
 
     def _prepare_inner_state(
         self,
-        stage: str = "infer",
+        stage: str = SETTINGS.stage_infer_prefix,
         device: Device = None,
         model: RunnerModel = None,
         criterion: RunnerCriterion = None,
@@ -398,7 +393,7 @@ class IRunner(ABC, ICallback, IRunnerLegacy, FrozenClass):
         num_epochs: int = 1,
         main_metric: str = "loss",
         minimize_metric: bool = True,
-        valid_loader: str = "valid",
+        valid_loader: str = SETTINGS.loader_valid_prefix,
         checkpoint_data: Dict = None,
         is_check_run: bool = False,
         verbose: bool = False,
@@ -467,13 +462,15 @@ class IRunner(ABC, ICallback, IRunnerLegacy, FrozenClass):
         # stage info
         self.num_epochs: int = num_epochs
         self.stage: str = stage
-        self.is_infer_stage: bool = self.stage.startswith("infer")
+        self.is_infer_stage: bool = self.stage.startswith(
+            SETTINGS.stage_infer_prefix
+        )
         # epoch info
         self.epoch: int = 1
         # loader info
         self.loader_sample_step: int = 0
         self.loader_batch_step: int = 0
-        self.loader_name: str = None
+        self.loader_key: str = None
         self.loader_len: int = 0
         self.loader_batch_size = 0
         self.is_train_loader: bool = False
@@ -612,7 +609,7 @@ class IRunner(ABC, ICallback, IRunnerLegacy, FrozenClass):
         self.loader_len = len(self.loader)
         if self.loader_len == 0:
             raise RunnerException(
-                f"DataLoader with name {self.loader_name} is empty."
+                f"DataLoader with name {self.loader_key} is empty."
             )
         self.loader_batch_size = (
             self.loader.batch_sampler.batch_size
@@ -621,9 +618,15 @@ class IRunner(ABC, ICallback, IRunnerLegacy, FrozenClass):
         )
         self.loader_sample_step = 0
 
-        self.is_train_loader = self.loader_name.startswith("train")
-        self.is_valid_loader = self.loader_name.startswith("valid")
-        self.is_infer_loader = self.loader_name.startswith("infer")
+        self.is_train_loader = self.loader_key.startswith(
+            SETTINGS.loader_train_prefix
+        )
+        self.is_valid_loader = self.loader_key.startswith(
+            SETTINGS.loader_valid_prefix
+        )
+        self.is_infer_loader = self.loader_key.startswith(
+            SETTINGS.loader_infer_prefix
+        )
         maybe_recursive_call(self.model, "train", mode=self.is_train_loader)
 
         if isinstance(self.loader.sampler, DistributedSampler):
@@ -689,7 +692,7 @@ class IRunner(ABC, ICallback, IRunnerLegacy, FrozenClass):
         if _is_substring(event, ("end",)):
             getattr(self, event)(self)
 
-    def _handle_batch_device(self, batch: Mapping[str, Any]):
+    def _handle_device(self, batch: Mapping[str, Any]):
         return any2device(batch, self.device)
 
     @abstractmethod
@@ -705,7 +708,7 @@ class IRunner(ABC, ICallback, IRunnerLegacy, FrozenClass):
         pass
 
     def _run_batch(self) -> None:
-        self.input = self._handle_batch_device(batch=self.input)
+        self.input = self._handle_device(batch=self.input)
         self._run_event("on_batch_start")
         self._handle_batch(batch=self.input)
         self._run_event("on_batch_end")
@@ -722,7 +725,7 @@ class IRunner(ABC, ICallback, IRunnerLegacy, FrozenClass):
 
     def _run_epoch(self) -> None:
         self._run_event("on_epoch_start")
-        for self.loader_name, self.loader in self.loaders.items():
+        for self.loader_key, self.loader in self.loaders.items():
             self._run_loader()
         self._run_event("on_epoch_end")
 

@@ -75,7 +75,7 @@ class InferMaskCallback(Callback):
         Args:
             runner: current runner
         """
-        lm = runner.loader_name
+        lm = runner.loader_key
         os.makedirs(f"{self.out_prefix}/{lm}/", exist_ok=True)
 
     def on_batch_end(self, runner: "IRunner"):
@@ -84,7 +84,7 @@ class InferMaskCallback(Callback):
         Args:
             runner: current runner
         """
-        lm = runner.loader_name
+        lm = runner.loader_key
         names = runner.input.get(self.name_key, [])
 
         features = runner.input[self.input_key].detach().cpu()
