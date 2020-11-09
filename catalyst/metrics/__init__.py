@@ -3,6 +3,7 @@ from catalyst.metrics.accuracy import accuracy, multi_label_accuracy
 from catalyst.metrics.avg_precision import avg_precision, mean_avg_precision
 from catalyst.metrics.auc import auc
 from catalyst.metrics.cmc_score import cmc_score, cmc_score_count
+from catalyst.metrics.ndcg import dcg, ndcg
 from catalyst.metrics.dice import dice, calculate_dice
 from catalyst.metrics.f1_score import f1_score, fbeta_score
 from catalyst.metrics.hitrate import hitrate

@@ -55,6 +55,13 @@ Focal
     :undoc-members:
     :show-inheritance:
 
+Hitrate
+------------------------
+.. automodule:: catalyst.metrics.hitrate
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 IoU
 ------------------------
 .. automodule:: catalyst.metrics.iou
@@ -69,6 +76,12 @@ MRR
     :undoc-members:
     :show-inheritance:
 
+MAP
+------------------------
+.. automodule:: catalyst.metrics.mean_avg_precision
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 AP
 ------------------------
@@ -77,9 +90,16 @@ AP
     :undoc-members:
     :show-inheritance:
 
-MAP
+NDCG
 ------------------------
-.. automodule:: catalyst.metrics.mean_avg_precision
+.. automodule:: catalyst.metrics.ndcg
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+DCG
+------------------------
+.. automodule:: catalyst.metrics.dcg
     :members:
     :undoc-members:
     :show-inheritance:
@@ -87,13 +107,6 @@ MAP
 Precision
 ------------------------
 .. automodule:: catalyst.metrics.precision
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Hitrate
-------------------------
-.. automodule:: catalyst.metrics.hitrate
     :members:
     :undoc-members:
     :show-inheritance:
