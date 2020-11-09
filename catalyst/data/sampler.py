@@ -3,8 +3,8 @@ from collections import Counter
 from operator import itemgetter
 from random import choices, sample
 
-import numpy as np
 import logging
+import numpy as np
 
 import torch
 from torch.utils.data import DistributedSampler
