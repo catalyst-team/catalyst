@@ -1,7 +1,5 @@
 """
-Discounted Cumulative Gain metrics:
-    * :func:`dcg`
-    * :func:`ndcg`
+Discounted Cumulative Gain metrics
 """
 from typing import List
 
@@ -20,7 +18,7 @@ def dcg(
     or gain, from examining a set of items.
     Gain may be reduced at lower ranks.
     Reference:
-        https://en.wikipedia.org/wiki/Discounted_cumulative_gain
+    https://en.wikipedia.org/wiki/Discounted_cumulative_gain
 
     Args:
         outputs (torch.Tensor): model outputs, logits
