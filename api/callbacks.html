@@ -30,7 +30,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Contrib" href="contrib.html" />
-    <link rel="prev" title="Contributors" href="../contributing/contributors.html" /> 
+    <link rel="prev" title="Optuna integration" href="../faq/optuna.html" /> 
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
@@ -201,21 +201,42 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - AutoEncoder</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Variational AutoEncoder</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - GAN</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - DDP</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - TPU</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP/DDP/TPU</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">AutoML - Catalyst with Optuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../core/experiment.html">Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/callback.html">Callback</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/lr_finder.html">[WIP] Learning Rate Finder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">[WIP] DataParallel training (single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/amp.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/ddp.html">[WIP] Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/slurm.html">[WIP] Slurm training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/tpu.html">[WIP] TPU training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">[WIP] Model checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/debugging.html">Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">[WIP] Finetuning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/stages.html">[WIP] Multi-stage experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">[WIP] Config API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/optuna.html">Optuna integration</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Contributing guide</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/how_to_start.html">How to start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/codestyle.html">Codestyle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/contributors.html">Contributors</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul class="current">
@@ -1033,6 +1054,41 @@ there are several of them and they are in a dictionary format.</p></li>
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.early_stop.</code><code class="sig-name descname">CheckRunCallback</code><span class="sig-paren">(</span><em class="sig-param">num_batch_steps: int = 3</em>, <em class="sig-param">num_epoch_steps: int = 2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/early_stop.html#CheckRunCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.early_stop.CheckRunCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
 <p>Executes only a pipeline part from the <code class="docutils literal notranslate"><span class="pre">Experiment</span></code>.</p>
+<p>Minimal working example (Notebook API):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="c1"># data</span>
+<span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">}</span>
+
+<span class="c1"># model, criterion, optimizer, scheduler</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+<span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+
+<span class="c1"># model training</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
+    <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir&quot;</span><span class="p">,</span>
+    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">CheckRunCallback</span><span class="p">(</span><span class="n">num_batch_steps</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">num_epoch_steps</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
 <dt id="catalyst.callbacks.early_stop.CheckRunCallback.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">num_batch_steps: int = 3</em>, <em class="sig-param">num_epoch_steps: int = 2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/early_stop.html#CheckRunCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.early_stop.CheckRunCallback.__init__" title="Permalink to this definition">¶</a></dt>
@@ -1075,21 +1131,39 @@ there are several of them and they are in a dictionary format.</p></li>
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.early_stop.</code><code class="sig-name descname">EarlyStoppingCallback</code><span class="sig-paren">(</span><em class="sig-param">patience: int</em>, <em class="sig-param">metric: str = 'loss'</em>, <em class="sig-param">minimize: bool = True</em>, <em class="sig-param">min_delta: float = 1e-06</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/early_stop.html#EarlyStoppingCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.early_stop.EarlyStoppingCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
 <p>Early exit based on metric.</p>
-<p>Example of usage in notebook API:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
+<p>Minimal working example (Notebook API):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="c1"># data</span>
+<span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">}</span>
+
+<span class="c1"># model, criterion, optimizer, scheduler</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+<span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+
+<span class="c1"># model training</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
 <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
-    <span class="o">...</span>
-    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
-        <span class="o">...</span>
-        <span class="n">EarlyStoppingCallback</span><span class="p">(</span>
-            <span class="n">patience</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-            <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;my_metric&quot;</span><span class="p">,</span>
-            <span class="n">minimize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="o">...</span>
-    <span class="p">]</span>
+  <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+  <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+  <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+  <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
+  <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
+  <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir&quot;</span><span class="p">,</span>
+  <span class="n">num_epochs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+  <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+  <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
+    <span class="n">dl</span><span class="o">.</span><span class="n">EarlyStoppingCallback</span><span class="p">(</span><span class="n">patience</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="n">minimize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+  <span class="p">]</span>
 <span class="p">)</span>
-<span class="o">...</span>
 </pre></div>
 </div>
 <p>Example of usage in config API:</p>
@@ -4067,7 +4141,7 @@ and <cite>dir</cite> which is set to <cite>&lt;logdir&gt;</cite></p></li>
         <a href="contrib.html" class="btn btn-neutral float-right" title="Contrib" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="../contributing/contributors.html" class="btn btn-neutral" title="Contributors" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="../faq/optuna.html" class="btn btn-neutral" title="Optuna integration" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   

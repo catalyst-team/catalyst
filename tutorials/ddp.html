@@ -29,7 +29,7 @@
   <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="How to make X?" href="../faq/intro.html" />
+    <link rel="next" title="Experiment" href="../core/experiment.html" />
     <link rel="prev" title="Migrating from other libraries" href="../getting_started/migrating_from_other.html" /> 
 
   
@@ -201,21 +201,42 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - AutoEncoder</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Variational AutoEncoder</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - GAN</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - DDP</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - TPU</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP/DDP/TPU</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">AutoML - Catalyst with Optuna</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Distributed training tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../core/experiment.html">Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/callback.html">Callback</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/lr_finder.html">[WIP] Learning Rate Finder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">[WIP] DataParallel training (single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/amp.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/ddp.html">[WIP] Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/slurm.html">[WIP] Slurm training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/tpu.html">[WIP] TPU training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">[WIP] Model checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/debugging.html">Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">[WIP] Finetuning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/stages.html">[WIP] Multi-stage experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">[WIP] Config API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/optuna.html">Optuna integration</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Contributing guide</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/how_to_start.html">How to start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/codestyle.html">Codestyle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/contributors.html">Contributors</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
@@ -564,7 +585,7 @@ For more fine-tuning, we recommend reading the slurm documentation.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../faq/intro.html" class="btn btn-neutral float-right" title="How to make X?" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../core/experiment.html" class="btn btn-neutral float-right" title="Experiment" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
         <a href="../getting_started/migrating_from_other.html" class="btn btn-neutral" title="Migrating from other libraries" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
