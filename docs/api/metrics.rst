@@ -69,16 +69,29 @@ MRR
     :undoc-members:
     :show-inheritance:
 
+<<<<<<< HEAD
 NDCG
 ------------------------
 .. automodule:: catalyst.metrics.ndcg
+=======
+
+AP
+------------------------
+.. automodule:: catalyst.metrics.avg_precision
+>>>>>>> master
     :members:
     :undoc-members:
     :show-inheritance:
 
+<<<<<<< HEAD
 DCG
 ------------------------
 .. automodule:: catalyst.metrics.dcg
+=======
+MAP
+------------------------
+.. automodule:: catalyst.metrics.mean_avg_precision
+>>>>>>> master
     :members:
     :undoc-members:
     :show-inheritance:
