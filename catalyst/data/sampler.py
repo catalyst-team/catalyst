@@ -2,9 +2,9 @@ from typing import Iterator, List, Optional, Union
 from collections import Counter
 from operator import itemgetter
 from random import choices, sample
-import warnings
 
 import numpy as np
+import logging
 
 import torch
 from torch.utils.data import DistributedSampler
@@ -201,17 +201,20 @@ class DynamicBalanceClassSampler(Sampler):
     The idea of this sampler that we start with the original class distribution
     and gradually move to uniform class distribution like with downsampling.
 
-    Let's define D_i = #C_i/ #C_min where #C_i is a size of class i and #C_min
-    is a size of the rarest class, so D_i define class distribution.
-    Also define g(n_epoch) is a exponential scheduler. On each epoch
-    current D_i  calculated as current D_i  = D_i ^ g(n_epoch),
+    Let's define :math: D_i = #C_i/ #C_min where :math: #C_i is a size of class
+    i and :math: #C_min is a size of the rarest class, so :math: D_i define
+    class distribution. Also define :math: g(n_epoch) is a exponential
+    scheduler. On each epoch current :math: D_i  calculated as
+    :math: current D_i  = D_i ^ g(n_epoch),
     after this data samples according this distribution.
 
-    Note: In the end of the training, epochs will contain only
-    min_size_class * n_classes examples. So, possible it will not necessary to
-    do validation on each epoch. For this reason use ControlFlowCallback.
+    Notes:
+         In the end of the training, epochs will contain only
+         min_size_class * n_classes examples. So, possible it will not
+         necessary to do validation on each epoch. For this reason use
+         ControlFlowCallback.
 
-    Usage example:
+    Examples:
 
         >>> import torch
         >>> import numpy as np
@@ -229,15 +232,15 @@ class DynamicBalanceClassSampler(Sampler):
         >>> for batch in loader:
         >>>     b_features, b_labels = batch
 
-    Sampler was inspired by https://arxiv.org/pdf/1901.06783.pdf
+    Sampler was inspired by https://arxiv.org/abs/1901.06783
     """
 
     def __init__(
         self,
         labels: List[Union[int, str]],
-        exp_lambda=0.9,
+        exp_lambda: float = 0.9,
         start_epoch: int = 0,
-        max_d: int = None,
+        max_d: Optional[int] = None,
         mode: Union[str, int] = "downsampling",
         ignore_warning: bool = False,
     ):
@@ -246,7 +249,7 @@ class DynamicBalanceClassSampler(Sampler):
             labels: list of labels for each elem in the dataset
             exp_lambda: exponent figure for schedule
             start_epoch: start epoch number, can be useful for multi-stage
-             experiments
+            experiments
             max_d: if not None, limit on the difference between the most
             frequent and the rarest classes, heuristic
             mode: number of samples per class in the end of training. Must be
@@ -264,10 +267,11 @@ class DynamicBalanceClassSampler(Sampler):
         self.epoch = start_epoch
         labels = np.array(labels)
         samples_per_class = Counter(labels)
-        self.min_class_size = min(list(samples_per_class.values()))
+        self.min_class_size = min(samples_per_class.values())
 
         if self.min_class_size < 100 and not ignore_warning:
-            warnings.warn(
+            logger = logging.getLogger(__name__)
+            logger.warning(
                 f"the smallest class contains only"
                 f" {self.min_class_size} examples. At the end of"
                 f" training, epochs will contain only"
