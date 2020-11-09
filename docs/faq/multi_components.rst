@@ -1,5 +1,10 @@
-Finetuning
+Multiple components
 ==============================================================================
+
+- multi model
+- multi criterion
+- multi optimizer
+- multi scheduler
 
 If you haven't found the answer for your question, feel free to `join our slack`_ for the discussion.
 

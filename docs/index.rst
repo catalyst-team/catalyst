@@ -253,12 +253,13 @@ Indices and tables
     faq/slurm
     faq/tpu
 
+    faq/multi_components
     faq/early_stopping
     faq/checkpointing
     faq/debugging
     faq/logging
-    faq/finetuning
     faq/inference
+    faq/finetuning
 
     faq/stages
     faq/config_api
@@ -270,10 +271,9 @@ Indices and tables
     :maxdepth: 2
     :hidden:
 
-    contributing/how_to_start
-    contributing/codestyle
-    contributing/contributors
-
+    How to start <https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md>
+    Codestyle <https://github.com/catalyst-team/codestyle>
+    Acknowledgments <https://github.com/catalyst-team/catalyst#acknowledgments>
 
 
 .. toctree::

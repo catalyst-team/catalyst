@@ -22,3 +22,8 @@ the Experiment provides interfaces to all primitives above + the callbacks.
 
 .. image:: https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/third_party_pics/catalyst102-experiment.png
     :alt: Experiment
+
+
+---
+
+- what is the difference between different Experiments?

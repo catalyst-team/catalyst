@@ -1,7 +1,19 @@
-Slurm training
+[WIP] Slurm training
 ==============================================================================
 
 - How to run Catalyst experiments on SLURM?
+
+Hi,
+
+Still work in progress here.
+
+But don't feel upset, check out the kitty... `Kittylyst`_ tutorial.
+
+.. _`Kittylyst`: https://github.com/Scitator/kittylyst
+
+.. image:: https://raw.githubusercontent.com/Scitator/kittylyst/master/assets/kitty.jpg
+    :target: https://github.com/Scitator/kittylyst
+    :alt: kitty
 
 If you haven't found the answer for your question, feel free to `join our slack`_ for the discussion.
 
