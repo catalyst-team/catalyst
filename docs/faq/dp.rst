@@ -1,4 +1,4 @@
-DataParallel training (single/multi-gpu)
+[WIP] DataParallel training (single/multi-gpu)
 ==============================================================================
 
 If you haven't found the answer for your question, feel free to `join our slack`_ for the discussion.

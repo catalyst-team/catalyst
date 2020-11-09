@@ -1,4 +1,4 @@
-Distributed training
+[WIP] Distributed training
 ==============================================================================
 
 - How to run experiments in distributed mode?

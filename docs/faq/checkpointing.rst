@@ -1,8 +1,8 @@
-Model checkpointing
+[WIP] Model checkpointing
 ==============================================================================
 
 - how to load bset model?
-    - notebook and config api
+- notebook and config api
 - how to save model?
 - how to load model?
 - whats the difference between checkpoint and checkpoint_full?

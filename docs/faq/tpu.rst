@@ -1,4 +1,4 @@
-TPU training
+[WIP] TPU training
 ==============================================================================
 
 - How to run Catalyst experiments on TPU?
