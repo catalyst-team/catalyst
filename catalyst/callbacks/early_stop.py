@@ -41,7 +41,9 @@ class CheckRunCallback(Callback):
             logdir="./logdir",
             num_epochs=8,
             verbose=True,
-            callbacks=[dl.CheckRunCallback(num_batch_steps=3, num_epoch_steps=3)]
+            callbacks=[
+                dl.CheckRunCallback(num_batch_steps=3, num_epoch_steps=3)
+            ]
         )
 
     """
@@ -102,15 +104,17 @@ class EarlyStoppingCallback(Callback):
         # model training
         runner = dl.SupervisedRunner()
         runner.train(
-            model=model,
-            criterion=criterion,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            loaders=loaders,
-            logdir="./logdir",
-            num_epochs=8,
-            verbose=True,
-            callbacks=[dl.EarlyStoppingCallback(patience=2, metric="loss", minimize=True)]
+          model=model,
+          criterion=criterion,
+          optimizer=optimizer,
+          scheduler=scheduler,
+          loaders=loaders,
+          logdir="./logdir",
+          num_epochs=8,
+          verbose=True,
+          callbacks=[
+            dl.EarlyStoppingCallback(patience=2, metric="loss", minimize=True)
+          ]
         )
 
     Example of usage in config API:

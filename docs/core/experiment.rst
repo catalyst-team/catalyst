@@ -3,7 +3,7 @@ Experiment
 
 Experiment - an abstraction that contains information about the experiment
 - a model, a criterion, an optimizer, a scheduler, and their hyperparameters.
-It also has information about the data and transformations used.
+It also holds information about the data and transformations to apply.
 The Experiment knows **what** you would like to run.
 
 Each deep learning project has several main components.
