@@ -22,6 +22,7 @@ from catalyst.data.sampler import (
     BalanceBatchSampler,
     DistributedSamplerWrapper,
     DynamicLenBatchSampler,
+    DynamicBalanceClassSampler,
     MiniEpochSampler,
 )
 from catalyst.data.sampler_inbatch import (

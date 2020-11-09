@@ -234,6 +234,13 @@ DistributedSamplerWrapper
     :undoc-members:
     :special-members: __iter__, __len__
 
+DynamicBalanceClassSampler
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.data.sampler.DynamicBalanceClassSampler
+    :members:
+    :undoc-members:
+    :special-members: __iter__, __len__
+
 DynamicLenBatchSampler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.data.sampler.DynamicLenBatchSampler
