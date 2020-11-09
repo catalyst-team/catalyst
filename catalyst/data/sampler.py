@@ -1,9 +1,9 @@
 from typing import Iterator, List, Optional, Union
 from collections import Counter
+import logging
 from operator import itemgetter
 from random import choices, sample
 
-import logging
 import numpy as np
 
 import torch
