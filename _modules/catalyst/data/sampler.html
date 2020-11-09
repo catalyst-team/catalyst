@@ -321,6 +321,7 @@
   <h1>Source code for catalyst.data.sampler</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
 <span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">choices</span><span class="p">,</span> <span class="n">sample</span>
 
@@ -511,6 +512,154 @@
             <span class="n">inds</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">selected_inds</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="n">inds</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="DynamicBalanceClassSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.DynamicBalanceClassSampler">[docs]</a><span class="k">class</span> <span class="nc">DynamicBalanceClassSampler</span><span class="p">(</span><span class="n">Sampler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This kind of sampler can be used for classification tasks with significant</span>
+<span class="sd">    class imbalance.</span>
+
+<span class="sd">    The idea of this sampler that we start with the original class distribution</span>
+<span class="sd">    and gradually move to uniform class distribution like with downsampling.</span>
+
+<span class="sd">    Let&#39;s define :math: D_i = #C_i/ #C_min where :math: #C_i is a size of class</span>
+<span class="sd">    i and :math: #C_min is a size of the rarest class, so :math: D_i define</span>
+<span class="sd">    class distribution. Also define :math: g(n_epoch) is a exponential</span>
+<span class="sd">    scheduler. On each epoch current :math: D_i  calculated as</span>
+<span class="sd">    :math: current D_i  = D_i ^ g(n_epoch),</span>
+<span class="sd">    after this data samples according this distribution.</span>
+
+<span class="sd">    Notes:</span>
+<span class="sd">         In the end of the training, epochs will contain only</span>
+<span class="sd">         min_size_class * n_classes examples. So, possible it will not</span>
+<span class="sd">         necessary to do validation on each epoch. For this reason use</span>
+<span class="sd">         ControlFlowCallback.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">        &gt;&gt;&gt; import torch</span>
+<span class="sd">        &gt;&gt;&gt; import numpy as np</span>
+
+<span class="sd">        &gt;&gt;&gt; from catalyst.data import DynamicBalanceClassSampler</span>
+<span class="sd">        &gt;&gt;&gt; from torch.utils import data</span>
+
+<span class="sd">        &gt;&gt;&gt; features = torch.Tensor(np.random.random((200, 100)))</span>
+<span class="sd">        &gt;&gt;&gt; labels = np.random.randint(0, 4, size=(200,))</span>
+<span class="sd">        &gt;&gt;&gt; sampler = DynamicBalanceClassSampler(labels)</span>
+<span class="sd">        &gt;&gt;&gt; labels = torch.LongTensor(labels)</span>
+<span class="sd">        &gt;&gt;&gt; dataset = data.TensorDataset(features, labels)</span>
+<span class="sd">        &gt;&gt;&gt; loader = data.dataloader.DataLoader(dataset, batch_size=8)</span>
+
+<span class="sd">        &gt;&gt;&gt; for batch in loader:</span>
+<span class="sd">        &gt;&gt;&gt;     b_features, b_labels = batch</span>
+
+<span class="sd">    Sampler was inspired by https://arxiv.org/abs/1901.06783</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DynamicBalanceClassSampler.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.DynamicBalanceClassSampler.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">labels</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+        <span class="n">exp_lambda</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span>
+        <span class="n">start_epoch</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">max_d</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;downsampling&quot;</span><span class="p">,</span>
+        <span class="n">ignore_warning</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            labels: list of labels for each elem in the dataset</span>
+<span class="sd">            exp_lambda: exponent figure for schedule</span>
+<span class="sd">            start_epoch: start epoch number, can be useful for multi-stage</span>
+<span class="sd">            experiments</span>
+<span class="sd">            max_d: if not None, limit on the difference between the most</span>
+<span class="sd">            frequent and the rarest classes, heuristic</span>
+<span class="sd">            mode: number of samples per class in the end of training. Must be</span>
+<span class="sd">            &quot;downsampling&quot; or number. Before change it, make sure that you</span>
+<span class="sd">            understand how does it work</span>
+<span class="sd">            ignore_warning: ignore warning about min class size</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">start_epoch</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">exp_lambda</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;exp_lambda must be in (0, 1)&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exp_lambda</span> <span class="o">=</span> <span class="n">exp_lambda</span>
+        <span class="k">if</span> <span class="n">max_d</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">max_d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_d</span> <span class="o">=</span> <span class="n">max_d</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">=</span> <span class="n">start_epoch</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="n">samples_per_class</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">min_class_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">samples_per_class</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_class_size</span> <span class="o">&lt;</span> <span class="mi">100</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">ignore_warning</span><span class="p">:</span>
+            <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;the smallest class contains only&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_class_size</span><span class="si">}</span><span class="s2"> examples. At the end of&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; training, epochs will contain only&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_class_size</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">samples_per_class</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; examples&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_d</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_class_size</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">samples_per_class</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">label2idxes</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">label</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">))[</span><span class="n">labels</span> <span class="o">==</span> <span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">min_class_size</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;downsampling&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">_update</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update d coefficients</span>
+<span class="sd">        Returns: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">current_d</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="nb">min</span><span class="p">(</span><span class="n">value</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exp_scheduler</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_d</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="n">samples_per_classes</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_class_size</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">current_d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">samples_per_classes</span> <span class="o">=</span> <span class="n">samples_per_classes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">length</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">samples_per_classes</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">_exp_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">exp_lambda</span> <span class="o">**</span> <span class="bp">self</span><span class="o">.</span><span class="n">epoch</span>
+
+<div class="viewcode-block" id="DynamicBalanceClassSampler.__iter__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.DynamicBalanceClassSampler.__iter__">[docs]</a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Yields:</span>
+<span class="sd">            indices of stratified sample</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label2idxes</span><span class="p">):</span>
+            <span class="n">samples_per_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples_per_classes</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="n">replace_flag</span> <span class="o">=</span> <span class="n">samples_per_class</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">label2idxes</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+            <span class="n">indices</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">label2idxes</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">samples_per_class</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="n">replace_flag</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DynamicBalanceClassSampler.__len__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.DynamicBalanceClassSampler.__len__">[docs]</a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">             length of result sample</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span></div></div>
 
 
 <div class="viewcode-block" id="MiniEpochSampler"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.sampler.MiniEpochSampler">[docs]</a><span class="k">class</span> <span class="nc">MiniEpochSampler</span><span class="p">(</span><span class="n">Sampler</span><span class="p">):</span>
@@ -745,6 +894,7 @@
     <span class="s2">&quot;BalanceBatchSampler&quot;</span><span class="p">,</span>
     <span class="s2">&quot;MiniEpochSampler&quot;</span><span class="p">,</span>
     <span class="s2">&quot;DistributedSamplerWrapper&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DynamicBalanceClassSampler&quot;</span><span class="p">,</span>
     <span class="s2">&quot;DynamicLenBatchSampler&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
