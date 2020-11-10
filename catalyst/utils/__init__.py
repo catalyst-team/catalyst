@@ -62,7 +62,7 @@ from catalyst.utils.misc import (
     get_utcnow_time,
     is_exception,
     maybe_recursive_call,
-    fn_ends_with_pass,
+    set_global_seed,
 )
 from catalyst.utils.numpy import get_one_hot
 from catalyst.utils.parser import parse_config_args, parse_args_uargs
@@ -74,7 +74,6 @@ from catalyst.utils.scripts import (
     dump_experiment_code,
     distributed_cmd_run,
 )
-from catalyst.utils.seed import set_global_seed
 from catalyst.utils.swa import (
     average_weights,
     get_averaged_weights_by_path_mask,

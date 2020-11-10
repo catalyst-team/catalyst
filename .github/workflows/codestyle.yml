@@ -66,7 +66,7 @@ jobs:
           flake8 . | reviewdog -f=pep8 -reporter=github-pr-review
 
   build:
-    name: codestyle
+    name: codestyle-pytest-docs
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:

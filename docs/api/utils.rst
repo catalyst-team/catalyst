@@ -112,13 +112,6 @@ Scripts
     :undoc-members:
     :show-inheritance:
 
-Seed
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.seed
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Stochastic Weights Averaging (SWA)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.swa
