@@ -48,7 +48,17 @@ If you are not familiar with creating a Pull Request, here are some guides:
     ```
     # for MacOS users, as we need bash version >= 4.0.0, wget and gnu-based sed
     brew install bash wget gnu-sed
+
+    # It is often useful to have one or more Python environments 
+    # where you can experiment with different combinations 
+    # of packages without affecting your main installation. 
+    # Create the virtual environment with your python setuo
+    virtualenv catalyst-dev
+    source catalyst-dev/bin/activate
+    
+    # Install the required dependencies√
     pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
+    
     # for easy-to-go development, we suggest to install extra dependencies
     pip install -r requirements/requirements-ml.txt -r requirements/requirements-cv.txt -r requirements/requirements-nlp.txt
     ```
@@ -71,7 +81,7 @@ catalyst-make-codestyle && catalyst-check-codestyle
 
 Make sure to have your python packages complied with `requirements/requirements.txt` and `requirements/requirements-dev.txt` to get codestyle run clean:
 ```bash
-pip isntall -r requirements/requirements.txt -r requirements/requirements-dev.txt
+pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
 ```
 
 #### Unit tests
