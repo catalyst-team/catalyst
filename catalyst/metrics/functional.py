@@ -80,6 +80,33 @@ def process_multiclass_components(
 
     return outputs, targets, num_classes
 
+def process_recsys(
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    k: int
+) -> torch.Tensor:
+    """
+    General pre-processing for calculation recsys metrics
+    
+        Args:
+        outputs (torch.Tensor):
+            Tensor weith predicted score
+            size: [batch_size, slate_length]
+            model outputs, logits
+        targets (torch.Tensor):
+            Binary tensor with ground truth.
+            1 means the item is relevant
+            for the user and 0 not relevant
+            size: [batch_szie, slate_length]
+            ground truth, labels
+        k (int):
+            Parameter fro evaluation on top-k items
+    """
+    outputs_order = torch.argsort(outputs, descending=True, dim=-1)
+    targets_sorted_by_outputs = torch.gather(
+        targets, dim=-1, index= outputs_order
+    )
+    return targets_sorted_by_outputs[:, :k]
 
 def process_multilabel_components(
     outputs: torch.Tensor,
@@ -179,7 +206,6 @@ def get_binary_statistics(
     tp = ((outputs == label) * (targets == label)).to(torch.long).sum()
     support = (targets == label).to(torch.long).sum()
     return tn, fp, fn, tp, support
-
 
 def get_multiclass_statistics(
     outputs: Tensor,
@@ -421,6 +447,7 @@ def wrap_topk_metric2dict(
 
 __all__ = [
     "process_multilabel_components",
+    "process_recsys",
     "get_binary_statistics",
     "get_multiclass_statistics",
     "get_multilabel_statistics",

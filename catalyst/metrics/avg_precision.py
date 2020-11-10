@@ -5,6 +5,8 @@ from typing import Dict, List
 
 import torch
 
+from catalyst.metrics.functional import process_recsys
+
 
 def avg_precision(
     outputs: torch.Tensor, targets: torch.Tensor, k=10
@@ -50,12 +52,9 @@ def avg_precision(
             size: [batch_size, 1]
     """
     k = min(outputs.size(1), k)
-    _, indices_for_sort = outputs.sort(descending=True, dim=-1)
-    targets_sorted_by_outputs = torch.gather(
-        targets, dim=-1, index=indices_for_sort
-    )
+    targets_sorted_by_outputs_at_k = process_recsys(outputs, targets, k)
 
-    targets_sorted_by_outputs_topk = targets_sorted_by_outputs[:, :k]
+    targets_sorted_by_outputs_topk = targets_sorted_by_outputs_at_k[:, :k]
     precisions = torch.zeros_like(targets_sorted_by_outputs_topk)
 
     for index in range(k):

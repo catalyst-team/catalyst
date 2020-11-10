@@ -5,6 +5,8 @@ from typing import List
 
 import torch
 
+from catalyst.metrics.functional import process_recsys
+
 
 def dcg(
     outputs: torch.Tensor,
@@ -42,25 +44,24 @@ def dcg(
         ValueError: gain function can be either `pow_rank` or `rank`
     """
     k = min(outputs.size(1), k)
-    order = torch.argsort(outputs, descending=True, dim=-1)
-    true_sorted_by_preds = torch.gather(targets, dim=-1, index=order)
+    targets_sorted_by_outputs_at_k = process_recsys(outputs, targets, k)
 
     if gain_function == "pow_rank":
         gain_function = lambda x: torch.pow(2, x) - 1
-        gains = gain_function(true_sorted_by_preds)
+        gains = gain_function(targets_sorted_by_outputs_at_k)
         discounts = torch.tensor(1) / torch.log2(
-            torch.arange(true_sorted_by_preds.shape[1], dtype=torch.float)
+            torch.arange(targets_sorted_by_outputs_at_k.shape[1], dtype=torch.float)
             + 2.0
         )
         discounted_gains = (gains * discounts)[:, :k]
 
     elif gain_function == "rank":
         discounts = torch.tensor(1) / torch.log2(
-            torch.arange(true_sorted_by_preds.shape[1], dtype=torch.float)
+            torch.arange(targets_sorted_by_outputs_at_k.shape[1], dtype=torch.float)
             + 1.0
         )
         discounts[0] = 1
-        discounted_gains = (true_sorted_by_preds * discounts)[:, :k]
+        discounted_gains = (targets_sorted_by_outputs_at_k * discounts)[:, :k]
 
     else:
         raise ValueError("gain function can be either pow_rank or rank")

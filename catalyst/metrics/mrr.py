@@ -4,6 +4,8 @@ MRR metric.
 
 import torch
 
+from catalyst.metrics.functional import process_recsys
+
 
 def mrr(outputs: torch.Tensor, targets: torch.Tensor, k=100) -> torch.Tensor:
     """
@@ -35,13 +37,9 @@ def mrr(outputs: torch.Tensor, targets: torch.Tensor, k=100) -> torch.Tensor:
             The mrr score for each user.
     """
     k = min(outputs.size(1), k)
-    _, indices_for_sort = outputs.sort(descending=True, dim=-1)
-    true_sorted_by_preds = torch.gather(
-        targets, dim=-1, index=indices_for_sort
-    )
-    true_sorted_by_pred_shrink = true_sorted_by_preds[:, :k]
+    targets_sorted_by_outputs_at_k = process_recsys(outputs, targets, k)
 
-    values, indices = torch.max(true_sorted_by_pred_shrink, dim=1)
+    values, indices = torch.max(targets_sorted_by_outputs_at_k, dim=1)
     indices = indices.type_as(values).unsqueeze(dim=0).t()
     result = torch.tensor(1.0) / (indices + torch.tensor(1.0))
 

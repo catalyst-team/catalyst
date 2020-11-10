@@ -4,6 +4,8 @@ Hitrate metric:
 """
 import torch
 
+from catalyst.metrics.functional import process_recsys
+
 
 def hitrate(
     outputs: torch.Tensor, targets: torch.Tensor, k=10
@@ -37,13 +39,8 @@ def hitrate(
         hitrate (torch.Tensor): the hit rate score
     """
     k = min(outputs.size(1), k)
-
-    _, indices_for_sort = outputs.sort(descending=True, dim=-1)
-    true_sorted_by_preds = torch.gather(
-        targets, dim=-1, index=indices_for_sort
-    )
-    true_sorted_by_pred_shrink = true_sorted_by_preds[:, :k]
-    hits = torch.sum(true_sorted_by_pred_shrink, dim=1) / k
+    targets_sorted_by_outputs_at_k = process_recsys(outputs, targets, k)
+    hits = torch.sum(targets_sorted_by_outputs_at_k, dim=1) / k
     return hits
 
 
