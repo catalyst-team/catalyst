@@ -1163,27 +1163,6 @@ k samples for each of p classes</p></li>
 object. No <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code>-specific code used.</p>
 </div>
 <dl class="method">
-<dt id="catalyst.data.loader.BatchLimitLoaderWrapper.__getattr__">
-<code class="sig-name descname">__getattr__</code><span class="sig-paren">(</span><em class="sig-param">key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/loader.html#BatchLimitLoaderWrapper.__getattr__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.loader.BatchLimitLoaderWrapper.__getattr__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets attribute by <code class="docutils literal notranslate"><span class="pre">key</span></code>.
-Firstly, looks at the <code class="docutils literal notranslate"><span class="pre">origin</span></code> for the appropriate <code class="docutils literal notranslate"><span class="pre">key</span></code>.
-If none founds - looks at the wrappers attributes.
-If could not found anything - raises <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>key</strong> – attribute key</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>attribute value</p>
-</dd>
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>NotImplementedError</strong> – if could not find attribute in <code class="docutils literal notranslate"><span class="pre">origin</span></code>
-    or <code class="docutils literal notranslate"><span class="pre">wrapper</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
 <dt id="catalyst.data.loader.BatchLimitLoaderWrapper.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">loader: torch.utils.data.dataloader.DataLoader, num_batches: Union[int, float]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/loader.html#BatchLimitLoaderWrapper.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.loader.BatchLimitLoaderWrapper.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loader wrapper. Limits number of batches used per each iteration.</p>
@@ -1210,20 +1189,6 @@ or portion of iterator (float, should be in [0;1] range)</p></li>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.data.loader.BatchLimitLoaderWrapper.__len__">
-<code class="sig-name descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/catalyst/data/loader.html#BatchLimitLoaderWrapper.__len__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.loader.BatchLimitLoaderWrapper.__len__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns length of the wrapper loader.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>length of the wrapper loader</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
 <dt id="catalyst.data.loader.BatchLimitLoaderWrapper.__next__">
 <code class="sig-name descname">__next__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/loader.html#BatchLimitLoaderWrapper.__next__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.loader.BatchLimitLoaderWrapper.__next__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Next batch.</p>
@@ -1232,12 +1197,6 @@ or portion of iterator (float, should be in [0;1] range)</p></li>
 <dd class="field-odd"><p>next batch</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="catalyst.data.loader.BatchLimitLoaderWrapper.__weakref__">
-<code class="sig-name descname">__weakref__</code><a class="headerlink" href="#catalyst.data.loader.BatchLimitLoaderWrapper.__weakref__" title="Permalink to this definition">¶</a></dt>
-<dd><p>list of weak references to the object (if defined)</p>
 </dd></dl>
 
 </dd></dl>

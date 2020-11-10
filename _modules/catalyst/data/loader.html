@@ -319,14 +319,62 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.data.loader</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">queue</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">threading</span>
 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 
 
-<div class="viewcode-block" id="BatchLimitLoaderWrapper"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper">[docs]</a><span class="k">class</span> <span class="nc">BatchLimitLoaderWrapper</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Loader wrapper. Limits number of batches used per each iteration.</span>
+<span class="k">class</span> <span class="nc">ILoaderWrapper</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Loader wrapper interface.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            loader: torch dataloader.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">origin</span> <span class="o">=</span> <span class="n">loader</span>
+
+    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets attribute by ``key``.</span>
+<span class="sd">        Firstly, looks at the ``origin`` for the appropriate ``key``.</span>
+<span class="sd">        If none founds - looks at the wrappers attributes.</span>
+<span class="sd">        If could not found anything - raises ``NotImplementedError``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            key: attribute key</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            attribute value</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: if could not find attribute in ``origin``</span>
+<span class="sd">                or ``wrapper``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">value</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">value</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns length of the wrapper loader.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: length of the wrapper loader</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="BatchLimitLoaderWrapper"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper">[docs]</a><span class="k">class</span> <span class="nc">BatchLimitLoaderWrapper</span><span class="p">(</span><span class="n">ILoaderWrapper</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Loader wrapper. Limits number of batches used per each iteration.</span>
 
 <span class="sd">    For example, if you have some loader and want to use only first 5 bathes:</span>
 
@@ -363,14 +411,14 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="BatchLimitLoaderWrapper.__init__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">num_batches</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Loader wrapper. Limits number of batches used per each iteration.</span>
+        <span class="sd">&quot;&quot;&quot;Loader wrapper. Limits number of batches used per each iteration.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            loader: torch dataloader.</span>
 <span class="sd">            num_batches (Union[int, float]): number of batches to use (int),</span>
 <span class="sd">                or portion of iterator (float, should be in [0;1] range)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num_batches</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)),</span> <span class="p">(</span>
             <span class="s2">&quot;Expected ``num_batches`` type is int/float&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;but got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">num_batches</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -382,35 +430,9 @@
             <span class="p">)</span>
             <span class="n">num_batches</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span> <span class="o">*</span> <span class="n">num_batches</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">origin</span> <span class="o">=</span> <span class="n">loader</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">iteration_index</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_batches</span> <span class="o">=</span> <span class="n">num_batches</span></div>
-
-<div class="viewcode-block" id="BatchLimitLoaderWrapper.__getattr__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper.__getattr__">[docs]</a>    <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Gets attribute by ``key``.</span>
-<span class="sd">        Firstly, looks at the ``origin`` for the appropriate ``key``.</span>
-<span class="sd">        If none founds - looks at the wrappers attributes.</span>
-<span class="sd">        If could not found anything - raises ``NotImplementedError``.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            key: attribute key</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            attribute value</span>
-
-<span class="sd">        Raises:</span>
-<span class="sd">            NotImplementedError: if could not find attribute in ``origin``</span>
-<span class="sd">                or ``wrapper``</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">value</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">value</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="BatchLimitLoaderWrapper.__iter__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper.__iter__">[docs]</a>    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Iterator.</span>
@@ -434,18 +456,189 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteration_index</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_batches</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">iterator</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">)</span>
         <span class="n">batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iterator</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">batch</span></div>
+        <span class="k">return</span> <span class="n">batch</span></div></div>
 
-<div class="viewcode-block" id="BatchLimitLoaderWrapper.__len__"><a class="viewcode-back" href="../../../api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper.__len__">[docs]</a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Returns length of the wrapper loader.</span>
+
+<span class="k">def</span> <span class="nf">_any2cuda_non_blocking</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="c1"># based on catalyst.utils.torch.any2device</span>
+    <span class="c1"># but with cuda non_blocking trick</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_any2cuda_non_blocking</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">_any2cuda_non_blocking</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">value</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">non_blocking</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span>
+        <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">void</span><span class="p">))</span>
+        <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">fields</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">k</span><span class="p">:</span> <span class="n">_any2cuda_non_blocking</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">fields</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="p">}</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">cuda</span><span class="p">(</span><span class="n">non_blocking</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_map_loop</span><span class="p">(</span>
+    <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span>
+    <span class="n">result_queue</span><span class="p">:</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">,</span>
+    <span class="n">error_queue</span><span class="p">:</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">,</span>
+    <span class="n">done_event</span><span class="p">:</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">result_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>  <span class="c1"># noqa: WPS424</span>
+        <span class="n">error_queue</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">exc_info</span><span class="p">())</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">done_event</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_prefetch_map</span><span class="p">(</span>
+    <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">,</span>
+    <span class="n">num_prefetches</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">:</span>
+    <span class="n">result_queue</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">(</span><span class="n">num_prefetches</span><span class="p">)</span>
+    <span class="n">error_queue</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">Queue</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">done_event</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+    <span class="n">map_thread</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">(</span>
+        <span class="n">target</span><span class="o">=</span><span class="n">_map_loop</span><span class="p">,</span>
+        <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">iterable</span><span class="p">,</span> <span class="n">result_queue</span><span class="p">,</span> <span class="n">error_queue</span><span class="p">,</span> <span class="n">done_event</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">map_thread</span><span class="o">.</span><span class="n">daemon</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">map_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="n">done_event</span><span class="o">.</span><span class="n">is_set</span><span class="p">()</span> <span class="ow">and</span> <span class="n">result_queue</span><span class="o">.</span><span class="n">empty</span><span class="p">()):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">result_queue</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">queue</span><span class="o">.</span><span class="n">Empty</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">yield</span> <span class="n">result</span>
+    <span class="k">if</span> <span class="n">error_queue</span><span class="o">.</span><span class="n">full</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="n">error_queue</span><span class="o">.</span><span class="n">get</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_prefetch_loader</span><span class="p">(</span><span class="n">loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">num_prefetches</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">_prefetch_map</span><span class="p">(</span>
+            <span class="n">_any2cuda_non_blocking</span><span class="p">,</span> <span class="n">loader</span><span class="p">,</span> <span class="n">num_prefetches</span><span class="o">=</span><span class="n">num_prefetches</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">BatchPrefetchLoaderWrapper</span><span class="p">(</span><span class="n">ILoaderWrapper</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Loader wrapper. Prefetches specified number of batches on the GPU.</span>
+
+<span class="sd">    Base usage:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst.data import BatchPrefetchLoaderWrapper</span>
+
+<span class="sd">        num_samples, num_features = int(1e4), int(1e1)</span>
+<span class="sd">        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loader = BatchPrefetchLoaderWrapper(loader)</span>
+
+<span class="sd">    Minimal working example:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import os</span>
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.nn import functional as F</span>
+<span class="sd">        from torch.utils.data import DataLoader</span>
+<span class="sd">        from catalyst import dl, metrics</span>
+<span class="sd">        from catalyst.data.cv import ToTensor</span>
+<span class="sd">        from catalyst.contrib.datasets import MNIST</span>
+<span class="sd">        from catalyst.data import BatchPrefetchLoaderWrapper</span>
+
+<span class="sd">        class CustomRunner(dl.Runner):</span>
+
+<span class="sd">            def _handle_batch(self, batch):</span>
+<span class="sd">                # model train/valid step</span>
+<span class="sd">                x, y = batch</span>
+<span class="sd">                y_hat = self.model(x.view(x.size(0), -1))</span>
+
+<span class="sd">                loss = F.cross_entropy(y_hat, y)</span>
+<span class="sd">                accuracy01 = metrics.accuracy(y_hat, y, topk=(1, ))</span>
+<span class="sd">                self.batch_metrics.update(</span>
+<span class="sd">                    {&quot;loss&quot;: loss, &quot;accuracy01&quot;: accuracy01}</span>
+<span class="sd">                )</span>
+
+<span class="sd">                if self.is_train_loader:</span>
+<span class="sd">                    loss.backward()</span>
+<span class="sd">                    self.optimizer.step()</span>
+<span class="sd">                    self.optimizer.zero_grad()</span>
+
+<span class="sd">        model = torch.nn.Linear(28 * 28, 10)</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters(), lr=0.02)</span>
+
+<span class="sd">        batch_size=32</span>
+<span class="sd">        loaders = {</span>
+<span class="sd">            &quot;train&quot;: DataLoader(</span>
+<span class="sd">                MNIST(</span>
+<span class="sd">                    os.getcwd(),</span>
+<span class="sd">                    train=True,</span>
+<span class="sd">                    download=True,</span>
+<span class="sd">                    transform=ToTensor()</span>
+<span class="sd">                ),</span>
+<span class="sd">                batch_size=batch_size),</span>
+<span class="sd">            &quot;valid&quot;: DataLoader(</span>
+<span class="sd">                MNIST(</span>
+<span class="sd">                    os.getcwd(),</span>
+<span class="sd">                    train=False,</span>
+<span class="sd">                    download=True,</span>
+<span class="sd">                    transform=ToTensor()</span>
+<span class="sd">                ),</span>
+<span class="sd">                batch_size=batch_size),</span>
+<span class="sd">        }</span>
+<span class="sd">        loaders = {</span>
+<span class="sd">            k: BatchPrefetchLoaderWrapper(v) for k, v in loaders.items()</span>
+<span class="sd">        }</span>
+
+<span class="sd">        runner = CustomRunner()</span>
+<span class="sd">        # model training</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            logdir=&quot;./logs&quot;,</span>
+<span class="sd">            num_epochs=5,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">            load_best_on_end=True,</span>
+<span class="sd">        )</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">num_prefetches</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Loader wrapper. Prefetches specified number of batches on the GPU.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            loader: torch dataloader.</span>
+<span class="sd">            num_prefetches: number of batches to prefetch on the GPU.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_prefetches</span> <span class="o">=</span> <span class="n">num_prefetches</span> <span class="ow">or</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Iterator.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            int: length of the wrapper loader</span>
+<span class="sd">            iterator object</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">_prefetch_loader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_prefetches</span><span class="p">)</span>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;BatchLimitLoaderWrapper&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;BatchLimitLoaderWrapper&quot;</span><span class="p">,</span> <span class="s2">&quot;BatchPrefetchLoaderWrapper&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

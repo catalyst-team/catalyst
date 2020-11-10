@@ -334,9 +334,8 @@
 <span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.checkpoint</span> <span class="kn">import</span> <span class="n">load_checkpoint</span><span class="p">,</span> <span class="n">unpack_checkpoint</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.components</span> <span class="kn">import</span> <span class="n">process_components</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">maybe_recursive_call</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">maybe_recursive_call</span><span class="p">,</span> <span class="n">set_global_seed</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.scripts</span> <span class="kn">import</span> <span class="n">distributed_cmd_run</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.seed</span> <span class="kn">import</span> <span class="n">set_global_seed</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_device</span><span class="p">,</span>
     <span class="n">get_requires_grad</span><span class="p">,</span>
