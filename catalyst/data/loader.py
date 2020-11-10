@@ -11,6 +11,11 @@ from torch.utils.data import DataLoader
 
 class ILoaderWrapper:
     def __init__(self, loader: DataLoader):
+        """Loader wrapper interface.
+
+        Args:
+            loader: torch dataloader.
+        """
         self.origin = loader
 
     def __getattr__(self, key):
@@ -48,8 +53,7 @@ class ILoaderWrapper:
 
 
 class BatchLimitLoaderWrapper(ILoaderWrapper):
-    """
-    Loader wrapper. Limits number of batches used per each iteration.
+    """Loader wrapper. Limits number of batches used per each iteration.
 
     For example, if you have some loader and want to use only first 5 bathes:
 
@@ -86,8 +90,7 @@ class BatchLimitLoaderWrapper(ILoaderWrapper):
     """
 
     def __init__(self, loader: DataLoader, num_batches: Union[int, float]):
-        """
-        Loader wrapper. Limits number of batches used per each iteration.
+        """Loader wrapper. Limits number of batches used per each iteration.
 
         Args:
             loader: torch dataloader.
@@ -167,7 +170,7 @@ def _map_loop(
         for x in iterable:
             result = func(x)
             result_queue.put(result)
-    except BaseException:
+    except BaseException:  # noqa: WPS424
         error_queue.put(sys.exc_info())
     finally:
         done_event.set()
@@ -200,14 +203,15 @@ def _prefetch_map(
 
 def _prefetch_loader(loader: DataLoader, num_prefetches: int) -> Iterable:
     if torch.cuda.is_available():
-        loader = _prefetch_map(
+        return _prefetch_map(
             _any2cuda_non_blocking, loader, num_prefetches=num_prefetches,
         )
-    return loader
+    else:
+        return iter(loader)
 
 
 class BatchPrefetchLoaderWrapper(ILoaderWrapper):
-    """
+    """Loader wrapper. Prefetches specified number of batches on the GPU.
 
     Base usage:
 
@@ -238,19 +242,15 @@ class BatchPrefetchLoaderWrapper(ILoaderWrapper):
 
         class CustomRunner(dl.Runner):
 
-            def predict_batch(self, batch):
-                # model inference step
-                return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
-
             def _handle_batch(self, batch):
                 # model train/valid step
                 x, y = batch
                 y_hat = self.model(x.view(x.size(0), -1))
 
                 loss = F.cross_entropy(y_hat, y)
-                accuracy01, accuracy03 = metrics.accuracy(y_hat, y, topk=(1, 3))
+                accuracy01 = metrics.accuracy(y_hat, y, topk=(1, ))
                 self.batch_metrics.update(
-                    {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
+                    {"loss": loss, "accuracy01": accuracy01}
                 )
 
                 if self.is_train_loader:
@@ -263,10 +263,26 @@ class BatchPrefetchLoaderWrapper(ILoaderWrapper):
 
         batch_size=32
         loaders = {
-            "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=batch_size),
-            "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=batch_size),
+            "train": DataLoader(
+                MNIST(
+                    os.getcwd(),
+                    train=True,
+                    download=True,
+                    transform=ToTensor()
+                ),
+                batch_size=batch_size),
+            "valid": DataLoader(
+                MNIST(
+                    os.getcwd(),
+                    train=False,
+                    download=True,
+                    transform=ToTensor()
+                ),
+                batch_size=batch_size),
         }
-        loaders = {k: BatchPrefetchLoaderWrapper(v) for k, v in loaders.items()}
+        loaders = {
+            k: BatchPrefetchLoaderWrapper(v) for k, v in loaders.items()
+        }
 
         runner = CustomRunner()
         # model training
@@ -279,19 +295,25 @@ class BatchPrefetchLoaderWrapper(ILoaderWrapper):
             verbose=True,
             load_best_on_end=True,
         )
-        # model inference
-        for prediction in runner.predict_loader(loader=loaders["valid"]):
-            assert prediction.detach().cpu().numpy().shape[-1] == 10
-        # model tracing
-        traced_model = runner.trace(loader=loaders["valid"])
 
     """
 
     def __init__(self, loader: DataLoader, num_prefetches: int = None):
+        """Loader wrapper. Prefetches specified number of batches on the GPU.
+
+        Args:
+            loader: torch dataloader.
+            num_prefetches: number of batches to prefetch on the GPU.
+        """
         super().__init__(loader)
-        self.num_prefetches = num_prefetches or loader.batch_size
+        self.num_prefetches = num_prefetches or 1
 
     def __iter__(self):
+        """Iterator.
+
+        Returns:
+            iterator object
+        """
         return _prefetch_loader(self.origin, self.num_prefetches)
 
 

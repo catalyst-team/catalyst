@@ -11,6 +11,7 @@ from catalyst.data.dataset import (
     QueryGalleryDataset,
 )
 from catalyst.data.loader import (
+    ILoaderWrapper,
     BatchLimitLoaderWrapper,
     BatchPrefetchLoaderWrapper,
 )
