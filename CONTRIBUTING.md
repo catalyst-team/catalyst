@@ -5,7 +5,7 @@
 Contributing is quite easy: suggest ideas and make them done.
 We use [GitHub issues](https://github.com/catalyst-team/catalyst/issues) for bug reports and feature requests.
 
-Every good PR is usually consists of:
+Every good PR usually consists of:
 - feature implementation :)
 - documentation to describe this feature to other people
 - tests to ensure everything is implemented correctly
@@ -52,14 +52,14 @@ If you are not familiar with creating a Pull Request, here are some guides:
     # It is often useful to have one or more Python environments 
     # where you can experiment with different combinations 
     # of packages without affecting your main installation. 
-    # Create the virtual environment with your python setuo
+    # Create the virtual environment with your python setup
     virtualenv catalyst-dev
     source catalyst-dev/bin/activate
     
     # Install the required dependencies√
     pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
     
-    # for easy-to-go development, we suggest to install extra dependencies
+    # for easy-to-go development, we suggest installing extra dependencies
     pip install -r requirements/requirements-ml.txt -r requirements/requirements-cv.txt -r requirements/requirements-nlp.txt
     ```
 2. Break your work into small, single-purpose updates if possible.
@@ -128,7 +128,7 @@ in python and check values or something similar) or `<logdir>/log.txt`.
 ## Documentation
 
 Catalyst uses [Google style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for formatting [docstrings](https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings).
-Length of line inside docstrings block must be limited to 80 characters to fit into Jupyter documentation popups.
+Length of a line inside docstrings block must be limited to 80 characters to fit into Jupyter documentation popups.
 
 How to setup Google style documentation style in PyCharm:
 [![Catalyst logo](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/third_party_pics/pycharm-google-style.png)](https://github.com/catalyst-team/catalyst)
@@ -146,7 +146,7 @@ Now you can open them into your browser, for example with
 open ./builds/index.html
 ```
 
-If you have some issues with building docs - please make sure that you installed required pip packages.
+If you have some issues with building docs - please make sure that you installed the required pip packages.
 
 ##### Check that you have written working docs with Docker
 
