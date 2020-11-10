@@ -36,12 +36,13 @@ def hitrate(
             Parameter fro evaluation on top-k items
 
     Returns:
-        hitrate (torch.Tensor): the hit rate score
+        hits_score (torch.Tensor): 
+            the hit rate score
     """
     k = min(outputs.size(1), k)
     targets_sorted_by_outputs_at_k = process_recsys(outputs, targets, k)
-    hits = torch.sum(targets_sorted_by_outputs_at_k, dim=1) / k
-    return hits
+    hits_score = torch.sum(targets_sorted_by_outputs_at_k, dim=1) / k
+    return hits_score
 
 
 __all__ = ["hitrate"]

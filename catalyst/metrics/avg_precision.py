@@ -5,7 +5,7 @@ from typing import Dict, List
 
 import torch
 
-from catalyst.metrics.functional import process_recsys
+from catalyst.metrics.functional import process_recsys, get_top_k
 
 
 def avg_precision(
@@ -47,7 +47,7 @@ def avg_precision(
             must be positive
 
     Returns:
-        result (torch.Tensor):
+        ap_score (torch.Tensor):
             The map score for each batch.
             size: [batch_size, 1]
     """
@@ -63,11 +63,11 @@ def avg_precision(
         ) / float(index + 1)
 
     only_relevant_precision = precisions * targets_sorted_by_outputs_topk
-    ap = only_relevant_precision.sum(dim=1) / (
+    ap_score = only_relevant_precision.sum(dim=1) / (
         (only_relevant_precision != 0).sum(dim=1)
     )
-    ap[torch.isnan(ap)] = 0
-    return ap
+    ap_score[torch.isnan(ap_score)] = 0
+    return ap_score
 
 
 def mean_avg_precision(
@@ -100,6 +100,7 @@ def mean_avg_precision(
             The map score for every k.
             size: [len(top_k), 1]
     """
+    map_k_tuple = 
     map_k_tuple = tuple(
         torch.mean(avg_precision(outputs, targets, k)).item() for k in top_k
     )

@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Optional, Sequence, Tuple
+from typing import Callable, Dict, Optional, Sequence, Tuple, Generator
 from functools import partial
 
 import numpy as np
@@ -363,6 +363,15 @@ def get_default_topk_args(num_classes: int) -> Sequence[int]:
 
     return result
 
+def get_top_k(recsys_metric_at_k_gen: Generator, k: int) -> Tuple:
+    map_k_tuple = tuple(
+        recsys_metric_at_k_gen for k in range(k)
+    )
+
+    '''
+        tuple(recsys_metric_at_k_gen for k in range(k))
+    '''
+    return map_k_tuple
 
 def wrap_class_metric2dict(
     metric_fn: Callable, class_args: Sequence[str] = None
@@ -452,6 +461,7 @@ __all__ = [
     "get_multiclass_statistics",
     "get_multilabel_statistics",
     "get_default_topk_args",
+    "get_top_k",
     "wrap_topk_metric2dict",
     "wrap_class_metric2dict",
 ]

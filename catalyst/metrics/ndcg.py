@@ -33,12 +33,13 @@ def dcg(
             - `pow_rank`: torch.pow(2, x) - 1
             - `rank`: x
             On the default, `pow_rank` is used
-            to emphasize on retrievng the relevant documents.
+            to emphasize on retrieving the relevant documents.
         k (int):
             Parameter fro evaluation on top-k items
 
     Returns:
-        torch.Tensor for dcg at k
+        dcg_score (torch.Tensor):
+            The dcg score at k
 
     Raises:
         ValueError: gain function can be either `pow_rank` or `rank`
@@ -66,8 +67,8 @@ def dcg(
     else:
         raise ValueError("gain function can be either pow_rank or rank")
 
-    sum_dcg = torch.sum(discounted_gains, dim=1)
-    return sum_dcg
+    dcg_score = torch.sum(discounted_gains, dim=1)
+    return dcg_score
 
 
 def ndcg(
