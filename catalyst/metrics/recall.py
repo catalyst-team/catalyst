@@ -37,3 +37,6 @@ def recall(
     )
 
     return recall_score
+
+
+__all__ = ["recall"]

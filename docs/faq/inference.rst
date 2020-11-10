@@ -1,27 +1,10 @@
-Quickstart 101
+Inference
 ==============================================================================
-**In this quickstart, we’ll show you how to organize your PyTorch code with Catalyst.**
 
-Catalyst goals
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- flexibility, keeping the PyTorch simplicity, but removing the boilerplate code.
-- readability by decoupling the experiment run.
-- reproducibility.
-- scalability to any hardware without code changes.
-- extensibility for pipeline customization.
+To use your model in the inference mode,
+you could redefine the ``Runner.predict_batch``.
 
-Step 1 - Install packages
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-You can install using `pip package`_:
-
-.. code:: bash
-
-   pip install -U catalyst
-
-.. _`pip package`: https://pypi.org/project/catalyst/
-
-Step 2 - Make python imports
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Suppose you have the following classification pipeline:
 
 .. code-block:: python
 
@@ -33,13 +16,8 @@ Step 2 - Make python imports
     from torchvision.transforms import ToTensor
     from catalyst import dl, metrics
 
-Step 3 - Write PyTorch code
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Let's define **what** we are experimenting with:
-
-.. code-block:: python
-
     model = torch.nn.Linear(28 * 28, 10)
+    criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
     loaders = {
@@ -47,24 +25,19 @@ Let's define **what** we are experimenting with:
         "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
     }
 
-Step 4 - Accelerate it with Catalyst
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Let's define **how** we are running the experiment (in pure PyTorch):
-
-.. code-block:: python
-
     class CustomRunner(dl.Runner):
 
+        # <--- model inference step --->
         def predict_batch(self, batch):
-            # model inference step
             return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
+        # <--- model inference step --->
 
         def _handle_batch(self, batch):
             # model train/valid step
             x, y = batch
             y_hat = self.model(x.view(x.size(0), -1))
 
-            loss = F.cross_entropy(y_hat, y)
+            loss = self.criterion(y_hat, y)
             accuracy01, accuracy03 = metrics.accuracy(y_hat, y, topk=(1, 3))
             self.batch_metrics.update(
                 {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
@@ -75,16 +48,11 @@ Let's define **how** we are running the experiment (in pure PyTorch):
                 self.optimizer.step()
                 self.optimizer.zero_grad()
 
-Step 5 - Run
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Let's **train**, **evaluate**, and **trace** your model with a few lines of code.
-
-.. code-block:: python
-
     runner = CustomRunner()
     # model training
     runner.train(
         model=model,
+        criterion=criterion,
         optimizer=optimizer,
         loaders=loaders,
         logdir="./logs",
@@ -92,10 +60,33 @@ Let's **train**, **evaluate**, and **trace** your model with a few lines of code
         verbose=True,
         load_best_on_end=True,
     )
-    # model inference
+
+Now you could easily predict your data with the Runner-specified logic.
+
+Predict batch
+----------------------------------------------------
+If you want to predict one batch:
+
+.. code-block:: python
+
+    batch_prediciton = runner.predict_batch(next(iter(loaders["valid"])))
+    # which would be the same with
+    batch_model_prediciton = model(next(iter(loaders["valid"]))[0].view(32, -1))
+    batch_prediciton == batch_model_prediciton
+    >>> True
+
+Predict loader
+----------------------------------------------------
+If you want to predict entire loader:
+
+.. code-block:: python
+
     for prediction in runner.predict_loader(loader=loaders["valid"]):
         assert prediction.detach().cpu().numpy().shape[-1] == 10
-    # model tracing
-    traced_model = runner.trace(loader=loaders["valid"])
 
-PS. Yes, this file is exactly 101 line.
+The ``runner.predict_loader`` method just iteratively goes through the loader batches,
+makes model predictions and yields the results.
+
+If you haven't found the answer for your question, feel free to `join our slack`_ for the discussion.
+
+.. _`join our slack`: https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw

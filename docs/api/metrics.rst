@@ -78,13 +78,6 @@ MRR
 
 MAP
 ------------------------
-.. automodule:: catalyst.metrics.mean_avg_precision
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-AP
-------------------------
 .. automodule:: catalyst.metrics.avg_precision
     :members:
     :undoc-members:
@@ -104,9 +97,9 @@ DCG
     :undoc-members:
     :show-inheritance:
 
-Precision
+Recall
 ------------------------
-.. automodule:: catalyst.metrics.precision
+.. automodule:: catalyst.metrics.recall
     :members:
     :undoc-members:
     :show-inheritance:
