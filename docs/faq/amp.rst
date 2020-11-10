@@ -1,4 +1,4 @@
-Mixed precision training
+[WIP] Mixed precision training
 ==============================================================================
 
 - How to use Nvidia Apex?
