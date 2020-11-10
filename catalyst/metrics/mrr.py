@@ -1,13 +1,18 @@
 """
 MRR metric.
 """
+from typing import List
 
 import torch
 
-from catalyst.metrics.functional import process_recsys
+from catalyst.metrics.functional import process_recsys, get_top_k
 
 
-def mrr(outputs: torch.Tensor, targets: torch.Tensor, k=10) -> torch.Tensor:
+def mrr(
+    outputs: torch.Tensor, 
+    targets: torch.Tensor, 
+    top_k: List[int]
+) -> Tuple[int]:
     """
     Calculate the Mean Reciprocal Rank (MRR)
     score given model outputs and targets
@@ -36,16 +41,26 @@ def mrr(outputs: torch.Tensor, targets: torch.Tensor, k=10) -> torch.Tensor:
         mrr_score (torch.Tensor):
             The mrr score for each batch.
     """
-    k = min(outputs.size(1), k)
-    targets_sorted_by_outputs_at_k = process_recsys(outputs, targets, k)
 
-    values, indices = torch.max(targets_sorted_by_outputs_at_k, dim=1)
-    indices = indices.type_as(values).unsqueeze(dim=0).t()
-    mrr_score = torch.tensor(1.0) / (indices + torch.tensor(1.0))
+    def recurrent_rank_at_k(
+        targets_sorted_by_outputs_at_k: torch.Tensor,
+        k: int
+    ):
+        """
+        TO:DO Add description later
+        """
+        k = min(outputs.size(1), k)
+        targets_sorted_by_outputs_at_k = process_recsys(outputs, targets, k)
+        values, indices = torch.max(targets_sorted_by_outputs_at_k, dim=1)
+        indices = indices.type_as(values).unsqueeze(dim=0).t()
+        mrr_score = torch.tensor(1.0) / (indices + torch.tensor(1.0))
 
-    zero_sum_mask = values == 0.0
-    mrr_score[zero_sum_mask] = 0.0
-    return mrr_score
+        zero_sum_mask = values == 0.0
+        mrr_score[zero_sum_mask] = 0.0
+        return mrr_score
+    
+    mrr_at_k = get_top_k(torch.mean(recurrent_rank_at_k(targets_sorted_by_outputs_at_k, k)), top_k)
+    return mrr_at_k
 
 
 __all__ = ["mrr"]

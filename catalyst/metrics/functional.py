@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Optional, Sequence, Tuple, Generator
+from typing import Callable, Dict, Optional, Sequence, Tuple, Generator, List
 from functools import partial
 
 import numpy as np
@@ -363,9 +363,9 @@ def get_default_topk_args(num_classes: int) -> Sequence[int]:
 
     return result
 
-def get_top_k(recsys_metric_at_k_gen: Generator, k: int) -> Tuple:
+def get_top_k(recsys_metric_at_k_gen: Generator, top_k: List[int]) -> Tuple:
     map_k_tuple = tuple(
-        recsys_metric_at_k_gen for k in range(k)
+        recsys_metric_at_k_gen for k in top_k
     )
 
     '''
