@@ -6,8 +6,8 @@ if TYPE_CHECKING:
 
 
 class ICallback:
-    def on_experiment_start(self, runner: "IRunner"):
-        """Event handler for stage start.
+    def on_experiment_start(self, runner: "IRunner") -> None:
+        """Event handler for experiment start.
 
         Args:
             runner: IRunner instance.
@@ -17,7 +17,7 @@ class ICallback:
         """
         pass
 
-    def on_stage_start(self, runner: "IRunner"):
+    def on_stage_start(self, runner: "IRunner") -> None:
         """Event handler for stage start.
 
         Args:
@@ -25,7 +25,7 @@ class ICallback:
         """
         pass
 
-    def on_epoch_start(self, runner: "IRunner"):
+    def on_epoch_start(self, runner: "IRunner") -> None:
         """Event handler for epoch start.
 
         Args:
@@ -33,7 +33,7 @@ class ICallback:
         """
         pass
 
-    def on_loader_start(self, runner: "IRunner"):
+    def on_loader_start(self, runner: "IRunner") -> None:
         """Event handler for loader start.
 
         Args:
@@ -41,7 +41,7 @@ class ICallback:
         """
         pass
 
-    def on_batch_start(self, runner: "IRunner"):
+    def on_batch_start(self, runner: "IRunner") -> None:
         """Event handler for batch start.
 
         Args:
@@ -49,7 +49,7 @@ class ICallback:
         """
         pass
 
-    def on_batch_end(self, runner: "IRunner"):
+    def on_batch_end(self, runner: "IRunner") -> None:
         """Event handler for batch end.
 
         Args:
@@ -57,7 +57,7 @@ class ICallback:
         """
         pass
 
-    def on_loader_end(self, runner: "IRunner"):
+    def on_loader_end(self, runner: "IRunner") -> None:
         """Event handler for loader end.
 
         Args:
@@ -65,7 +65,7 @@ class ICallback:
         """
         pass
 
-    def on_epoch_end(self, runner: "IRunner"):
+    def on_epoch_end(self, runner: "IRunner") -> None:
         """Event handler for epoch end.
 
         Args:
@@ -73,7 +73,7 @@ class ICallback:
         """
         pass
 
-    def on_stage_end(self, runner: "IRunner"):
+    def on_stage_end(self, runner: "IRunner") -> None:
         """Event handler for stage end.
 
         Args:
@@ -81,8 +81,8 @@ class ICallback:
         """
         pass
 
-    def on_experiment_end(self, runner: "IRunner"):
-        """Event handler for stage start.
+    def on_experiment_end(self, runner: "IRunner") -> None:
+        """Event handler for experiment end.
 
         Args:
             runner: IRunner instance.
@@ -92,7 +92,7 @@ class ICallback:
         """
         pass
 
-    def on_exception(self, runner: "IRunner"):
+    def on_exception(self, runner: "IRunner") -> None:
         """Event handler for exception case.
 
         Args:

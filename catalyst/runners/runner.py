@@ -31,9 +31,7 @@ from catalyst.utils.tracing import save_traced_model, trace_model
 
 
 class Runner(IStageBasedRunner):
-    """
-    Deep Learning Runner for supervised, unsupervised, gan, etc runs.
-    """
+    """Deep Learning Runner for supervised, unsupervised, gan, etc runs."""
 
     def __init__(
         self,
@@ -41,9 +39,17 @@ class Runner(IStageBasedRunner):
         device: Device = None,
         experiment_fn: Callable = Experiment,
     ):
-        super().__init__(
-            model=model, device=device, experiment_fn=experiment_fn
-        )
+        """
+
+        Args:
+            model: Torch model object
+            device: Torch device
+            experiment_fn: callable function,
+                which defines default experiment type to use
+                during ``.train`` and ``.infer`` methods.
+        """
+        super().__init__(model=model, device=device)
+        self._experiment_fn = experiment_fn
 
     def train(
         self,

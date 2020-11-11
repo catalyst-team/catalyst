@@ -1,4 +1,5 @@
 # flake8: noqa
+from typing import Any
 import warnings
 
 
@@ -81,8 +82,7 @@ class IRunnerLegacy:
             Please use `runner.loader_key` instead.
         """
         warnings.warn(
-            "`loader_name` was deprecated, "
-            "please use `loader_key` instead",
+            "`loader_name` was deprecated, please use `loader_key` instead",
             DeprecationWarning,
         )
         return self.loader_key
@@ -96,8 +96,7 @@ class IRunnerLegacy:
             Please use `runner.stage` instead.
         """
         warnings.warn(
-            "`stage_name` was deprecated, "
-            "please use `stage` instead",
+            "`stage_name` was deprecated, please use `stage` instead",
             DeprecationWarning,
         )
         return self.stage
@@ -111,7 +110,7 @@ class IRunnerLegacy:
             Please use `runner` instead.
         """
         warnings.warn(
-            "`runner.state` was deprecated, " "please use `runner` instead",
+            "`runner.state` was deprecated, please use `runner` instead",
             DeprecationWarning,
         )
         return self

@@ -220,6 +220,7 @@ def get_attr(obj: Any, key: str, inner_key: str = None) -> Any:
         runner.scheduler["adam"]
 
     Args:
+        obj: object of interest
         key: name for attribute of interest,
             like `criterion`, `optimizer`, `scheduler`
         inner_key: name of inner dictionary key

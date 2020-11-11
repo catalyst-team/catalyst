@@ -30,6 +30,9 @@ class SupervisedRunner(Runner):
             output_key: Key in output dict model output
                 will be stored under
             input_target_key: Key in batch dict mapping for target
+            experiment_fn: callable function,
+                which defines default experiment type to use
+                during ``.train`` and ``.infer`` methods.
         """
         super().__init__(
             model=model, device=device, experiment_fn=experiment_fn

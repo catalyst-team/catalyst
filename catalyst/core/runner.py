@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, Mapping, Optional, Tuple, Union
+from typing import Any, Dict, Mapping, Optional, Tuple, Union
 from abc import ABC, abstractmethod
 from collections import defaultdict, OrderedDict
 from functools import lru_cache
@@ -362,10 +362,7 @@ class IRunner(ABC, ICallback, IRunnerLegacy):
     """
 
     def __init__(
-        self,
-        model: RunnerModel = None,
-        device: Device = None,
-        experiment_fn: Callable = IExperiment,
+        self, model: RunnerModel = None, device: Device = None,
     ):
         """
         Args:
@@ -375,7 +372,6 @@ class IRunner(ABC, ICallback, IRunnerLegacy):
         self._device = None
         self._model = None
         self.experiment = None
-        self._experiment_fn = experiment_fn
         self._prepare_inner_state(model=model, device=device)
 
     def _prepare_inner_state(
@@ -571,16 +567,37 @@ class IRunner(ABC, ICallback, IRunnerLegacy):
             )
 
     def on_experiment_start(self, runner: "IRunner"):
+        """Event handler for experiment start.
+
+        Args:
+            runner: IRunner instance.
+
+        .. note::
+            This event work only on IRunner.
+        """
         assert self.experiment is not None
 
         set_global_seed(self.experiment.initial_seed + self.global_epoch + 1)
 
     def on_stage_start(self, runner: "IRunner"):
+        """Event handler for stage start.
+
+        Args:
+            runner: IRunner instance.
+        """
         assert self.stage is not None
 
         set_global_seed(self.experiment.initial_seed + self.global_epoch + 1)
 
     def on_epoch_start(self, runner: "IRunner"):
+        """Event handler for epoch start.
+
+        Args:
+            runner: IRunner instance.
+
+        Raises:
+            RunnerException: if current DataLoader is empty.
+        """
         assert self.loaders is not None
 
         for loader_name, loader in self.loaders.items():
@@ -603,6 +620,14 @@ class IRunner(ABC, ICallback, IRunnerLegacy):
         set_global_seed(self.experiment.initial_seed + self.global_epoch + 1)
 
     def on_loader_start(self, runner: "IRunner"):
+        """Event handler for loader start.
+
+        Args:
+            runner: IRunner instance.
+
+        Raises:
+            RunnerException: if current DataLoader is empty.
+        """
         assert self.loader is not None
 
         self.loader_len = len(self.loader)
@@ -634,6 +659,11 @@ class IRunner(ABC, ICallback, IRunnerLegacy):
         set_global_seed(self.experiment.initial_seed + self.global_epoch + 1)
 
     def on_batch_start(self, runner: "IRunner"):
+        """Event handler for batch start.
+
+        Args:
+            runner: IRunner instance.
+        """
         if isinstance(self.input, dict):
             self.batch_size = len(next(iter(self.input.values())))
         else:
@@ -645,22 +675,59 @@ class IRunner(ABC, ICallback, IRunnerLegacy):
         self.loader_sample_step += self.batch_size
 
     def on_batch_end(self, runner: "IRunner"):
+        """Event handler for batch end.
+
+        Args:
+            runner: IRunner instance.
+        """
         pass
 
     def on_loader_end(self, runner: "IRunner"):
+        """Event handler for loader end.
+
+        Args:
+            runner: IRunner instance.
+        """
         pass
 
     def on_epoch_end(self, runner: "IRunner"):
+        """Event handler for epoch end.
+
+        Args:
+            runner: IRunner instance.
+        """
         self.global_epoch += 1
         self.epoch += 1
 
     def on_stage_end(self, runner: "IRunner"):
+        """Event handler for stage end.
+
+        Args:
+            runner: IRunner instance.
+        """
         pass
 
     def on_experiment_end(self, runner: "IRunner"):
+        """Event handler for experiment end.
+
+        Args:
+            runner: IRunner instance.
+
+        .. note::
+            This event work only on IRunner.
+        """
         pass
 
     def on_exception(self, runner: "IRunner"):
+        """Event handler for exception case.
+
+        Args:
+            runner: IRunner instance.
+
+        Raises:
+            exception: if during pipeline exception,
+                no handler we found into callbacks
+        """
         from catalyst.callbacks.exception import ExceptionCallback
 
         def _exception_handler_check(callbacks: Union[OrderedDict, Dict]):
@@ -752,12 +819,6 @@ class IRunner(ABC, ICallback, IRunnerLegacy):
 
         Returns:
             self, `IRunner` instance after the experiment
-
-        Raises:
-            Exception: if during pipeline exception,
-                no handler we found into callbacks
-            KeyboardInterrupt: if during pipeline exception,
-                no handler we found into callbacks
         """
         self.experiment = experiment or self.experiment
         try:
@@ -774,7 +835,18 @@ class IStageBasedRunner(IRunner):
     datasources per stage.
     """
 
-    def on_stage_start(self, runner: "IRunner"):
+    def on_stage_start(self, runner: "IRunner") -> None:
+        """Event handler for stage start.
+
+        For the `IStageBasedRunner` case:
+
+        - prepares loaders - our datasources
+        - prepares model components - model, criterion, optimizer, scheduler
+        - prepares callbacks for the current stage
+
+        Args:
+            runner: IRunner instance.
+        """
         super().on_stage_start(runner)
 
         set_global_seed(self.experiment.initial_seed)
