@@ -76,7 +76,7 @@ class TelegramLogger(Callback):
     def on_stage_start(self, runner: "IRunner"):
         """Notify about starting a new stage."""
         if self.log_on_stage_start:
-            text = f"{runner.stage_name} stage was started"
+            text = f"{runner.stage} stage was started"
 
             self._send_text(text)
 
@@ -84,7 +84,7 @@ class TelegramLogger(Callback):
         """Notify about starting running the new loader."""
         if self.log_on_loader_start:
             text = (
-                f"{runner.loader_name} {runner.global_epoch} epoch has started"
+                f"{runner.loader_key} {runner.global_epoch} epoch has started"
             )
 
             self._send_text(text)
@@ -100,7 +100,7 @@ class TelegramLogger(Callback):
                 metrics_to_log = self.metrics_to_log
 
             rows: List[str] = [
-                f"{runner.loader_name} {runner.global_epoch}"
+                f"{runner.loader_key} {runner.global_epoch}"
                 f" epoch was finished:"
             ]
 
@@ -115,7 +115,7 @@ class TelegramLogger(Callback):
     def on_stage_end(self, runner: "IRunner"):
         """Notify about finishing a stage."""
         if self.log_on_stage_end:
-            text = f"{runner.stage_name} stage was finished"
+            text = f"{runner.stage} stage was finished"
 
             self._send_text(text)
 

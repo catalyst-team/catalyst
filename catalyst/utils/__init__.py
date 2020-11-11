@@ -62,6 +62,7 @@ from catalyst.utils.misc import (
     get_utcnow_time,
     is_exception,
     maybe_recursive_call,
+    get_attr,
     set_global_seed,
 )
 from catalyst.utils.numpy import get_one_hot

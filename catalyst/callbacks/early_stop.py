@@ -177,7 +177,7 @@ class EarlyStoppingCallback(Callback):
         Args:
             runner: current runner
         """
-        if runner.stage_name.startswith("infer"):
+        if runner.stage.startswith("infer"):
             return
 
         score = runner.valid_metrics[self.metric]

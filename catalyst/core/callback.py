@@ -5,6 +5,102 @@ if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
 
+class ICallback:
+    def on_experiment_start(self, runner: "IRunner") -> None:
+        """Event handler for experiment start.
+
+        Args:
+            runner: IRunner instance.
+
+        .. note::
+            This event work only on IRunner.
+        """
+        pass
+
+    def on_stage_start(self, runner: "IRunner") -> None:
+        """Event handler for stage start.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+    def on_epoch_start(self, runner: "IRunner") -> None:
+        """Event handler for epoch start.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+    def on_loader_start(self, runner: "IRunner") -> None:
+        """Event handler for loader start.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+    def on_batch_start(self, runner: "IRunner") -> None:
+        """Event handler for batch start.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+    def on_batch_end(self, runner: "IRunner") -> None:
+        """Event handler for batch end.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+    def on_loader_end(self, runner: "IRunner") -> None:
+        """Event handler for loader end.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+    def on_epoch_end(self, runner: "IRunner") -> None:
+        """Event handler for epoch end.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+    def on_stage_end(self, runner: "IRunner") -> None:
+        """Event handler for stage end.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+    def on_experiment_end(self, runner: "IRunner") -> None:
+        """Event handler for experiment end.
+
+        Args:
+            runner: IRunner instance.
+
+        .. note::
+            This event work only on IRunner.
+        """
+        pass
+
+    def on_exception(self, runner: "IRunner") -> None:
+        """Event handler for exception case.
+
+        Args:
+            runner: IRunner instance.
+        """
+        pass
+
+
 class CallbackNode(IntFlag):
     """Callback node usage flag during distributed training.
 
@@ -78,7 +174,7 @@ class CallbackScope(IntFlag):
     Experiment = experiment = 1  # noqa: WPS115
 
 
-class Callback:
+class Callback(ICallback):
     """
     An abstraction that lets you customize your experiment run logic.
     To give users maximum flexibility and extensibility Catalyst supports
@@ -112,11 +208,11 @@ class Callback:
 
     Abstraction, please check out the implementations:
 
-        - :py:mod:`catalyst.core.callbacks.criterion.CriterionCallback`
-        - :py:mod:`catalyst.core.callbacks.optimizer.OptimizerCallback`
-        - :py:mod:`catalyst.core.callbacks.scheduler.SchedulerCallback`
-        - :py:mod:`catalyst.core.callbacks.logging.TensorboardLogger`
-        - :py:mod:`catalyst.core.callbacks.checkpoint.CheckpointCallback`
+        - :py:mod:`catalyst.callbacks.criterion.CriterionCallback`
+        - :py:mod:`catalyst.callbacks.optimizer.OptimizerCallback`
+        - :py:mod:`catalyst.callbacks.scheduler.SchedulerCallback`
+        - :py:mod:`catalyst.callbacks.logging.TensorboardLogger`
+        - :py:mod:`catalyst.callbacks.checkpoint.CheckpointCallback`
     """
 
     def __init__(
@@ -135,78 +231,6 @@ class Callback:
         self.node = node
         self.order = order
         self.scope = scope
-
-    def on_stage_start(self, runner: "IRunner"):
-        """Event handler for stage start.
-
-        Args:
-            runner: IRunner instance.
-        """
-        pass
-
-    def on_stage_end(self, runner: "IRunner"):
-        """Event handler for stage end.
-
-        Args:
-            runner: IRunner instance.
-        """
-        pass
-
-    def on_epoch_start(self, runner: "IRunner"):
-        """Event handler for epoch start.
-
-        Args:
-            runner: IRunner instance.
-        """
-        pass
-
-    def on_epoch_end(self, runner: "IRunner"):
-        """Event handler for epoch end.
-
-        Args:
-            runner: IRunner instance.
-        """
-        pass
-
-    def on_loader_start(self, runner: "IRunner"):
-        """Event handler for loader start.
-
-        Args:
-            runner: IRunner instance.
-        """
-        pass
-
-    def on_loader_end(self, runner: "IRunner"):
-        """Event handler for loader end.
-
-        Args:
-            runner: IRunner instance.
-        """
-        pass
-
-    def on_batch_start(self, runner: "IRunner"):
-        """Event handler for batch start.
-
-        Args:
-            runner: IRunner instance.
-        """
-        pass
-
-    def on_batch_end(self, runner: "IRunner"):
-        """Event handler for batch end.
-
-        Args:
-            runner: IRunner instance.
-        """
-        pass
-
-    def on_exception(self, runner: "IRunner"):
-        """Event handler for exception case.
-
-        Args:
-            runner: IRunner instance.
-        """
-        pass
 
 
 class CallbackWrapper(Callback):
@@ -232,26 +256,6 @@ class CallbackWrapper(Callback):
         self.callback = base_callback
         self._is_enabled = enable_callback
 
-    def on_loader_start(self, runner: "IRunner") -> None:
-        """
-        Check if current epoch should be skipped.
-
-        Args:
-            runner: current runner
-        """
-        if self._is_enabled:
-            self.callback.on_loader_start(runner)
-
-    def on_loader_end(self, runner: "IRunner") -> None:
-        """
-        Reset status of callback
-
-        Args:
-            runner: current runner
-        """
-        if self._is_enabled:
-            self.callback.on_loader_end(runner)
-
     def on_stage_start(self, runner: "IRunner") -> None:
         """Run base_callback (if possible)
 
@@ -260,15 +264,6 @@ class CallbackWrapper(Callback):
         """
         if self._is_enabled:
             self.callback.on_stage_start(runner)
-
-    def on_stage_end(self, runner: "IRunner") -> None:
-        """Run base_callback (if possible)
-
-        Args:
-            runner: current runner
-        """
-        if self._is_enabled:
-            self.callback.on_stage_end(runner)
 
     def on_epoch_start(self, runner: "IRunner") -> None:
         """Run base_callback (if possible)
@@ -279,14 +274,15 @@ class CallbackWrapper(Callback):
         if self._is_enabled:
             self.callback.on_epoch_start(runner)
 
-    def on_epoch_end(self, runner: "IRunner") -> None:
-        """Run base_callback (if possible)
+    def on_loader_start(self, runner: "IRunner") -> None:
+        """
+        Check if current epoch should be skipped.
 
         Args:
             runner: current runner
         """
         if self._is_enabled:
-            self.callback.on_epoch_end(runner)
+            self.callback.on_loader_start(runner)
 
     def on_batch_start(self, runner: "IRunner") -> None:
         """Run base_callback (if possible)
@@ -305,6 +301,34 @@ class CallbackWrapper(Callback):
         """
         if self._is_enabled:
             self.callback.on_batch_end(runner)
+
+    def on_loader_end(self, runner: "IRunner") -> None:
+        """
+        Reset status of callback
+
+        Args:
+            runner: current runner
+        """
+        if self._is_enabled:
+            self.callback.on_loader_end(runner)
+
+    def on_epoch_end(self, runner: "IRunner") -> None:
+        """Run base_callback (if possible)
+
+        Args:
+            runner: current runner
+        """
+        if self._is_enabled:
+            self.callback.on_epoch_end(runner)
+
+    def on_stage_end(self, runner: "IRunner") -> None:
+        """Run base_callback (if possible)
+
+        Args:
+            runner: current runner
+        """
+        if self._is_enabled:
+            self.callback.on_stage_end(runner)
 
     def on_exception(self, runner: "IRunner") -> None:
         """Run base_callback (if possible)

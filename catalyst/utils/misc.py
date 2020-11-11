@@ -175,6 +175,65 @@ def get_fn_argsnames(fn: Callable[..., Any], exclude: List[str] = None):
     return params
 
 
+def get_attr(obj: Any, key: str, inner_key: str = None) -> Any:
+    """
+    Alias for python `getattr` method. Useful for Callbacks preparation
+    and cases with multi-criterion, multi-optimizer setup.
+    For example, when you would like to train multi-task classification.
+
+    Used to get a named attribute from a `IRunner` by `key` keyword;
+    for example\
+    ::
+
+        # example 1
+        runner.get_attr("criterion")
+        # is equivalent to
+        runner.criterion
+
+        # example 2
+        runner.get_attr("optimizer")
+        # is equivalent to
+        runner.optimizer
+
+        # example 3
+        runner.get_attr("scheduler")
+        # is equivalent to
+        runner.scheduler
+
+    With `inner_key` usage, it suppose to find a dictionary under `key`\
+    and would get `inner_key` from this dict; for example,
+    ::
+
+        # example 1
+        runner.get_attr("criterion", "bce")
+        # is equivalent to
+        runner.criterion["bce"]
+
+        # example 2
+        runner.get_attr("optimizer", "adam")
+        # is equivalent to
+        runner.optimizer["adam"]
+
+        # example 3
+        runner.get_attr("scheduler", "adam")
+        # is equivalent to
+        runner.scheduler["adam"]
+
+    Args:
+        obj: object of interest
+        key: name for attribute of interest,
+            like `criterion`, `optimizer`, `scheduler`
+        inner_key: name of inner dictionary key
+
+    Returns:
+        inner attribute
+    """
+    if inner_key is None:
+        return getattr(obj, key)
+    else:
+        return getattr(obj, key)[inner_key]
+
+
 __all__ = [
     "copy_directory",
     "format_metric",
@@ -183,5 +242,6 @@ __all__ = [
     "get_utcnow_time",
     "is_exception",
     "maybe_recursive_call",
+    "get_attr",
     "set_global_seed",
 ]
