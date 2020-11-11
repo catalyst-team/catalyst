@@ -326,6 +326,7 @@
 
 <span class="kn">from</span> <span class="nn">catalyst.contrib.nn.schedulers</span> <span class="kn">import</span> <span class="n">BatchScheduler</span><span class="p">,</span> <span class="n">OneCycleLRWithWarmup</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">get_attr</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="n">get_optimizer_momentum</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
@@ -494,8 +495,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reduced_metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduced_metric</span> <span class="ow">or</span> <span class="n">runner</span><span class="o">.</span><span class="n">main_metric</span>
 
-        <span class="n">scheduler</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span>
-            <span class="n">key</span><span class="o">=</span><span class="s2">&quot;scheduler&quot;</span><span class="p">,</span> <span class="n">inner_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scheduler_key</span>
+        <span class="n">scheduler</span> <span class="o">=</span> <span class="n">get_attr</span><span class="p">(</span>
+            <span class="n">runner</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;scheduler&quot;</span><span class="p">,</span> <span class="n">inner_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scheduler_key</span>
         <span class="p">)</span>
         <span class="k">assert</span> <span class="n">scheduler</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span> <span class="o">=</span> <span class="n">scheduler</span>
@@ -618,8 +619,8 @@
 <span class="sd">        Args:</span>
 <span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span>
-            <span class="n">key</span><span class="o">=</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="n">inner_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer_key</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">get_attr</span><span class="p">(</span>
+            <span class="n">runner</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="n">inner_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer_key</span>
         <span class="p">)</span>
         <span class="k">assert</span> <span class="n">optimizer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>

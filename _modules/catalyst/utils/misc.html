@@ -496,6 +496,65 @@
     <span class="k">return</span> <span class="n">params</span></div>
 
 
+<div class="viewcode-block" id="get_attr"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.get_attr">[docs]</a><span class="k">def</span> <span class="nf">get_attr</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inner_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Alias for python `getattr` method. Useful for Callbacks preparation</span>
+<span class="sd">    and cases with multi-criterion, multi-optimizer setup.</span>
+<span class="sd">    For example, when you would like to train multi-task classification.</span>
+
+<span class="sd">    Used to get a named attribute from a `IRunner` by `key` keyword;</span>
+<span class="sd">    for example\</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        # example 1</span>
+<span class="sd">        runner.get_attr(&quot;criterion&quot;)</span>
+<span class="sd">        # is equivalent to</span>
+<span class="sd">        runner.criterion</span>
+
+<span class="sd">        # example 2</span>
+<span class="sd">        runner.get_attr(&quot;optimizer&quot;)</span>
+<span class="sd">        # is equivalent to</span>
+<span class="sd">        runner.optimizer</span>
+
+<span class="sd">        # example 3</span>
+<span class="sd">        runner.get_attr(&quot;scheduler&quot;)</span>
+<span class="sd">        # is equivalent to</span>
+<span class="sd">        runner.scheduler</span>
+
+<span class="sd">    With `inner_key` usage, it suppose to find a dictionary under `key`\</span>
+<span class="sd">    and would get `inner_key` from this dict; for example,</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        # example 1</span>
+<span class="sd">        runner.get_attr(&quot;criterion&quot;, &quot;bce&quot;)</span>
+<span class="sd">        # is equivalent to</span>
+<span class="sd">        runner.criterion[&quot;bce&quot;]</span>
+
+<span class="sd">        # example 2</span>
+<span class="sd">        runner.get_attr(&quot;optimizer&quot;, &quot;adam&quot;)</span>
+<span class="sd">        # is equivalent to</span>
+<span class="sd">        runner.optimizer[&quot;adam&quot;]</span>
+
+<span class="sd">        # example 3</span>
+<span class="sd">        runner.get_attr(&quot;scheduler&quot;, &quot;adam&quot;)</span>
+<span class="sd">        # is equivalent to</span>
+<span class="sd">        runner.scheduler[&quot;adam&quot;]</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: object of interest</span>
+<span class="sd">        key: name for attribute of interest,</span>
+<span class="sd">            like `criterion`, `optimizer`, `scheduler`</span>
+<span class="sd">        inner_key: name of inner dictionary key</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        inner attribute</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">inner_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">key</span><span class="p">)[</span><span class="n">inner_key</span><span class="p">]</span></div>
+
+
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;copy_directory&quot;</span><span class="p">,</span>
     <span class="s2">&quot;format_metric&quot;</span><span class="p">,</span>
@@ -504,6 +563,7 @@
     <span class="s2">&quot;get_utcnow_time&quot;</span><span class="p">,</span>
     <span class="s2">&quot;is_exception&quot;</span><span class="p">,</span>
     <span class="s2">&quot;maybe_recursive_call&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_attr&quot;</span><span class="p">,</span>
     <span class="s2">&quot;set_global_seed&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>

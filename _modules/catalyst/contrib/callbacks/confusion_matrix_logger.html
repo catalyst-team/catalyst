@@ -467,7 +467,7 @@
         <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">distributed_rank</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">tb_callback</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">callbacks</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">tensorboard_callback_name</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_plot_confusion_matrix</span><span class="p">(</span>
-                <span class="n">logger</span><span class="o">=</span><span class="n">tb_callback</span><span class="o">.</span><span class="n">loggers</span><span class="p">[</span><span class="n">runner</span><span class="o">.</span><span class="n">loader_name</span><span class="p">],</span>
+                <span class="n">logger</span><span class="o">=</span><span class="n">tb_callback</span><span class="o">.</span><span class="n">loggers</span><span class="p">[</span><span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span><span class="p">],</span>
                 <span class="n">epoch</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">global_epoch</span><span class="p">,</span>
                 <span class="n">confusion_matrix</span><span class="o">=</span><span class="n">confusion_matrix</span><span class="p">,</span>
                 <span class="n">class_names</span><span class="o">=</span><span class="n">class_names</span><span class="p">,</span>

@@ -320,6 +320,7 @@
               
   <h1>Source code for catalyst.core.legacy</h1><div class="highlight"><pre>
 <span></span><span class="c1"># flake8: noqa</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 
@@ -394,6 +395,34 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_batch_step</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">loader_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Alias for `runner.loader_key`.</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            Deprecated, saved for backward compatibility.</span>
+<span class="sd">            Please use `runner.loader_key` instead.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;`loader_name` was deprecated, please use `loader_key` instead&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stage_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Alias for `runner.stage`.</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            Deprecated, saved for backward compatibility.</span>
+<span class="sd">            Please use `runner.stage` instead.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;`stage_name` was deprecated, please use `stage` instead&quot;</span><span class="p">,</span>
+            <span class="ne">DeprecationWarning</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stage</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Alias for `runner`.</span>
 
@@ -402,7 +431,7 @@
 <span class="sd">            Please use `runner` instead.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="s2">&quot;`runner.state` was deprecated, &quot;</span> <span class="s2">&quot;please use `runner` instead&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;`runner.state` was deprecated, please use `runner` instead&quot;</span><span class="p">,</span>
             <span class="ne">DeprecationWarning</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>

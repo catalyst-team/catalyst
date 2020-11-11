@@ -1175,8 +1175,8 @@ hyperparameters optimizers.</p>
 
 <dl class="class">
 <dt id="catalyst.core.runner.IRunner">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.runner.</code><code class="sig-name descname">IRunner</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code>, <a class="reference internal" href="#catalyst.core.legacy.IRunnerLegacy" title="catalyst.core.legacy.IRunnerLegacy"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.legacy.IRunnerLegacy</span></code></a>, <a class="reference internal" href="tools.html#catalyst.tools.frozen_class.FrozenClass" title="catalyst.tools.frozen_class.FrozenClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.tools.frozen_class.FrozenClass</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.runner.</code><code class="sig-name descname">IRunner</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.ICallback</span></code>, <a class="reference internal" href="#catalyst.core.legacy.IRunnerLegacy" title="catalyst.core.legacy.IRunnerLegacy"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.legacy.IRunnerLegacy</span></code></a></p>
 <p>An abstraction that knows how to run an experiment.
 It contains all the logic of <strong>how</strong> to run the experiment,
 stages, epoch and batches.</p>
@@ -1347,8 +1347,8 @@ counter for all epochs,    that have passed during model training, validation an
 </ul>
 </div></blockquote>
 <p>Stage info section</p>
-<p><strong>runner.stage_name</strong> - string, current stage name,    for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">runner</span><span class="o">.</span><span class="n">stage_name</span> <span class="o">=</span> <span class="s2">&quot;pretraining&quot;</span> <span class="o">/</span> <span class="s2">&quot;training&quot;</span> <span class="o">/</span> <span class="s2">&quot;finetuning&quot;</span> <span class="o">/</span> <span class="n">etc</span>
+<p><strong>runner.stage</strong> - string, current stage name,    for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">runner</span><span class="o">.</span><span class="n">stage</span> <span class="o">=</span> <span class="s2">&quot;pretraining&quot;</span> <span class="o">/</span> <span class="s2">&quot;training&quot;</span> <span class="o">/</span> <span class="s2">&quot;finetuning&quot;</span> <span class="o">/</span> <span class="n">etc</span>
 </pre></div>
 </div>
 <p><strong>runner.num_epochs</strong> - int, maximum number of epochs,     required for this stage</p>
@@ -1400,7 +1400,7 @@ counter for all epochs,    that have passed during model training, validation an
 <p><strong>runner.exception</strong> - python Exception instance to raise (or not ;) )</p>
 <dl class="method">
 <dt id="catalyst.core.runner.IRunner.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1418,64 +1418,148 @@ counter for all epochs,    that have passed during model training, validation an
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.core.runner.IRunner.get_attr">
-<code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">key: str</em>, <em class="sig-param">inner_key: str = None</em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.get_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner.get_attr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias for python <cite>getattr</cite> method. Useful for Callbacks preparation
-and cases with multi-criterion, multi-optimizer setup.
-For example, when you would like to train multi-task classification.</p>
-<p>Used to get a named attribute from a <cite>IRunner</cite> by <cite>key</cite> keyword;
-for example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># example 1</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;criterion&quot;</span><span class="p">)</span>
-<span class="c1"># is equivalent to</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">criterion</span>
+<dt id="catalyst.core.runner.IRunner.model">
+<em class="property">property </em><code class="sig-name descname">model</code><a class="headerlink" href="#catalyst.core.runner.IRunner.model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the runner’s model instance.</p>
+</dd></dl>
 
-<span class="c1"># example 2</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;optimizer&quot;</span><span class="p">)</span>
-<span class="c1"># is equivalent to</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">optimizer</span>
-
-<span class="c1"># example 3</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;scheduler&quot;</span><span class="p">)</span>
-<span class="c1"># is equivalent to</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">scheduler</span>
-</pre></div>
-</div>
-<p>With <cite>inner_key</cite> usage, it suppose to find a dictionary under <cite>key</cite>        and would get <cite>inner_key</cite> from this dict; for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># example 1</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="s2">&quot;bce&quot;</span><span class="p">)</span>
-<span class="c1"># is equivalent to</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">criterion</span><span class="p">[</span><span class="s2">&quot;bce&quot;</span><span class="p">]</span>
-
-<span class="c1"># example 2</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;adam&quot;</span><span class="p">)</span>
-<span class="c1"># is equivalent to</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">optimizer</span><span class="p">[</span><span class="s2">&quot;adam&quot;</span><span class="p">]</span>
-
-<span class="c1"># example 3</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;scheduler&quot;</span><span class="p">,</span> <span class="s2">&quot;adam&quot;</span><span class="p">)</span>
-<span class="c1"># is equivalent to</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">scheduler</span><span class="p">[</span><span class="s2">&quot;adam&quot;</span><span class="p">]</span>
-</pre></div>
-</div>
+<dl class="method">
+<dt id="catalyst.core.runner.IRunner.on_batch_end">
+<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner.on_batch_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event handler for batch end.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> – name for attribute of interest,
-like <cite>criterion</cite>, <cite>optimizer</cite>, <cite>scheduler</cite></p></li>
-<li><p><strong>inner_key</strong> – name of inner dictionary key</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>inner attribute</p>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.core.runner.IRunner.model">
-<em class="property">property </em><code class="sig-name descname">model</code><a class="headerlink" href="#catalyst.core.runner.IRunner.model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the runner’s model instance.</p>
+<dt id="catalyst.core.runner.IRunner.on_batch_start">
+<code class="sig-name descname">on_batch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_batch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner.on_batch_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event handler for batch start.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.runner.IRunner.on_epoch_end">
+<code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner.on_epoch_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event handler for epoch end.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.runner.IRunner.on_epoch_start">
+<code class="sig-name descname">on_epoch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_epoch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner.on_epoch_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event handler for epoch start.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#catalyst.core.runner.RunnerException" title="catalyst.core.runner.RunnerException"><strong>RunnerException</strong></a> – if current DataLoader is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.runner.IRunner.on_exception">
+<code class="sig-name descname">on_exception</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_exception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner.on_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event handler for exception case.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>exception</strong> – if during pipeline exception,
+    no handler we found into callbacks</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.runner.IRunner.on_experiment_end">
+<code class="sig-name descname">on_experiment_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_experiment_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner.on_experiment_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event handler for experiment end.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This event work only on IRunner.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.runner.IRunner.on_experiment_start">
+<code class="sig-name descname">on_experiment_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_experiment_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner.on_experiment_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event handler for experiment start.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This event work only on IRunner.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.runner.IRunner.on_loader_end">
+<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner.on_loader_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event handler for loader end.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.runner.IRunner.on_loader_start">
+<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event handler for loader start.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#catalyst.core.runner.RunnerException" title="catalyst.core.runner.RunnerException"><strong>RunnerException</strong></a> – if current DataLoader is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.runner.IRunner.on_stage_end">
+<code class="sig-name descname">on_stage_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner.on_stage_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event handler for stage end.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.runner.IRunner.on_stage_start">
+<code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IRunner.on_stage_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event handler for stage start.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1489,14 +1573,6 @@ like <cite>criterion</cite>, <cite>optimizer</cite>, <cite>scheduler</cite></p><
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>self, <cite>IRunner</cite> instance after the experiment</p>
 </dd>
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>Exception</strong> – if during pipeline exception,
-    no handler we found into callbacks</p></li>
-<li><p><strong>KeyboardInterrupt</strong> – if during pipeline exception,
-    no handler we found into callbacks</p></li>
-</ul>
-</dd>
 </dl>
 </dd></dl>
 
@@ -1504,16 +1580,33 @@ like <cite>criterion</cite>, <cite>optimizer</cite>, <cite>scheduler</cite></p><
 
 <dl class="class">
 <dt id="catalyst.core.runner.IStageBasedRunner">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.runner.</code><code class="sig-name descname">IStageBasedRunner</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IStageBasedRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IStageBasedRunner" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.runner.</code><code class="sig-name descname">IStageBasedRunner</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IStageBasedRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IStageBasedRunner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.runner.IRunner</span></code></a></p>
 <p>Runner abstraction that suppose to have constant
 datasources per stage.</p>
+<dl class="method">
+<dt id="catalyst.core.runner.IStageBasedRunner.on_stage_start">
+<code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/runner.html#IStageBasedRunner.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.runner.IStageBasedRunner.on_stage_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Event handler for stage start.</p>
+<p>For the <cite>IStageBasedRunner</cite> case:</p>
+<ul class="simple">
+<li><p>prepares loaders - our datasources</p></li>
+<li><p>prepares model components - model, criterion, optimizer, scheduler</p></li>
+<li><p>prepares callbacks for the current stage</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <span class="target" id="module-catalyst.core.runner"></span><dl class="class">
 <dt>
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.runner.</code><code class="sig-name descname">IRunner</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code>, <a class="reference internal" href="#catalyst.core.legacy.IRunnerLegacy" title="catalyst.core.legacy.IRunnerLegacy"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.legacy.IRunnerLegacy</span></code></a>, <a class="reference internal" href="tools.html#catalyst.tools.frozen_class.FrozenClass" title="catalyst.tools.frozen_class.FrozenClass"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.tools.frozen_class.FrozenClass</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.runner.</code><code class="sig-name descname">IRunner</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.ICallback</span></code>, <a class="reference internal" href="#catalyst.core.legacy.IRunnerLegacy" title="catalyst.core.legacy.IRunnerLegacy"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.legacy.IRunnerLegacy</span></code></a></p>
 <p>An abstraction that knows how to run an experiment.
 It contains all the logic of <strong>how</strong> to run the experiment,
 stages, epoch and batches.</p>
@@ -1684,8 +1777,8 @@ counter for all epochs,    that have passed during model training, validation an
 </ul>
 </div></blockquote>
 <p>Stage info section</p>
-<p><strong>runner.stage_name</strong> - string, current stage name,    for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">runner</span><span class="o">.</span><span class="n">stage_name</span> <span class="o">=</span> <span class="s2">&quot;pretraining&quot;</span> <span class="o">/</span> <span class="s2">&quot;training&quot;</span> <span class="o">/</span> <span class="s2">&quot;finetuning&quot;</span> <span class="o">/</span> <span class="n">etc</span>
+<p><strong>runner.stage</strong> - string, current stage name,    for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">runner</span><span class="o">.</span><span class="n">stage</span> <span class="o">=</span> <span class="s2">&quot;pretraining&quot;</span> <span class="o">/</span> <span class="s2">&quot;training&quot;</span> <span class="o">/</span> <span class="s2">&quot;finetuning&quot;</span> <span class="o">/</span> <span class="n">etc</span>
 </pre></div>
 </div>
 <p><strong>runner.num_epochs</strong> - int, maximum number of epochs,     required for this stage</p>
@@ -1737,7 +1830,7 @@ counter for all epochs,    that have passed during model training, validation an
 <p><strong>runner.exception</strong> - python Exception instance to raise (or not ;) )</p>
 <dl class="method">
 <dt>
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.__init__"><span class="viewcode-link">[source]</span></a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.__init__"><span class="viewcode-link">[source]</span></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1756,63 +1849,147 @@ counter for all epochs,    that have passed during model training, validation an
 
 <dl class="method">
 <dt>
-<code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">key: str</em>, <em class="sig-param">inner_key: str = None</em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.get_attr"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Alias for python <cite>getattr</cite> method. Useful for Callbacks preparation
-and cases with multi-criterion, multi-optimizer setup.
-For example, when you would like to train multi-task classification.</p>
-<p>Used to get a named attribute from a <cite>IRunner</cite> by <cite>key</cite> keyword;
-for example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># example 1</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;criterion&quot;</span><span class="p">)</span>
-<span class="c1"># is equivalent to</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">criterion</span>
+<em class="property">property </em><code class="sig-name descname">model</code></dt>
+<dd><p>Returns the runner’s model instance.</p>
+</dd></dl>
 
-<span class="c1"># example 2</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;optimizer&quot;</span><span class="p">)</span>
-<span class="c1"># is equivalent to</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">optimizer</span>
-
-<span class="c1"># example 3</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;scheduler&quot;</span><span class="p">)</span>
-<span class="c1"># is equivalent to</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">scheduler</span>
-</pre></div>
-</div>
-<p>With <cite>inner_key</cite> usage, it suppose to find a dictionary under <cite>key</cite>        and would get <cite>inner_key</cite> from this dict; for example,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># example 1</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="s2">&quot;bce&quot;</span><span class="p">)</span>
-<span class="c1"># is equivalent to</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">criterion</span><span class="p">[</span><span class="s2">&quot;bce&quot;</span><span class="p">]</span>
-
-<span class="c1"># example 2</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;adam&quot;</span><span class="p">)</span>
-<span class="c1"># is equivalent to</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">optimizer</span><span class="p">[</span><span class="s2">&quot;adam&quot;</span><span class="p">]</span>
-
-<span class="c1"># example 3</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;scheduler&quot;</span><span class="p">,</span> <span class="s2">&quot;adam&quot;</span><span class="p">)</span>
-<span class="c1"># is equivalent to</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">scheduler</span><span class="p">[</span><span class="s2">&quot;adam&quot;</span><span class="p">]</span>
-</pre></div>
-</div>
+<dl class="method">
+<dt>
+<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_batch_end"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Event handler for batch end.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> – name for attribute of interest,
-like <cite>criterion</cite>, <cite>optimizer</cite>, <cite>scheduler</cite></p></li>
-<li><p><strong>inner_key</strong> – name of inner dictionary key</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>inner attribute</p>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
 <dt>
-<em class="property">property </em><code class="sig-name descname">model</code></dt>
-<dd><p>Returns the runner’s model instance.</p>
+<code class="sig-name descname">on_batch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_batch_start"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Event handler for batch start.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_epoch_end"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Event handler for epoch end.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">on_epoch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_epoch_start"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Event handler for epoch start.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#catalyst.core.runner.RunnerException" title="catalyst.core.runner.RunnerException"><strong>RunnerException</strong></a> – if current DataLoader is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">on_exception</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_exception"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Event handler for exception case.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>exception</strong> – if during pipeline exception,
+    no handler we found into callbacks</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">on_experiment_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_experiment_end"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Event handler for experiment end.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This event work only on IRunner.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">on_experiment_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_experiment_start"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Event handler for experiment start.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This event work only on IRunner.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_loader_end"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Event handler for loader end.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_loader_start"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Event handler for loader start.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><a class="reference internal" href="#catalyst.core.runner.RunnerException" title="catalyst.core.runner.RunnerException"><strong>RunnerException</strong></a> – if current DataLoader is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">on_stage_end</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_stage_end"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Event handler for stage end.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IRunner.on_stage_start"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Event handler for stage start.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1826,14 +2003,6 @@ like <cite>criterion</cite>, <cite>optimizer</cite>, <cite>scheduler</cite></p><
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>self, <cite>IRunner</cite> instance after the experiment</p>
 </dd>
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>Exception</strong> – if during pipeline exception,
-    no handler we found into callbacks</p></li>
-<li><p><strong>KeyboardInterrupt</strong> – if during pipeline exception,
-    no handler we found into callbacks</p></li>
-</ul>
-</dd>
 </dl>
 </dd></dl>
 
@@ -1841,10 +2010,27 @@ like <cite>criterion</cite>, <cite>optimizer</cite>, <cite>scheduler</cite></p><
 
 <dl class="class">
 <dt>
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.runner.</code><code class="sig-name descname">IStageBasedRunner</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IStageBasedRunner"><span class="viewcode-link">[source]</span></a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.core.runner.</code><code class="sig-name descname">IStageBasedRunner</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/runner.html#IStageBasedRunner"><span class="viewcode-link">[source]</span></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.runner.IRunner</span></code></a></p>
 <p>Runner abstraction that suppose to have constant
 datasources per stage.</p>
+<dl class="method">
+<dt>
+<code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/runner.html#IStageBasedRunner.on_stage_start"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Event handler for stage start.</p>
+<p>For the <cite>IStageBasedRunner</cite> case:</p>
+<ul class="simple">
+<li><p>prepares loaders - our datasources</p></li>
+<li><p>prepares model components - model, criterion, optimizer, scheduler</p></li>
+<li><p>prepares callbacks for the current stage</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="exception">
@@ -1898,6 +2084,17 @@ Please use <cite>runner.output</cite> instead.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="catalyst.core.legacy.IRunnerLegacy.loader_name">
+<em class="property">property </em><code class="sig-name descname">loader_name</code><a class="headerlink" href="#catalyst.core.legacy.IRunnerLegacy.loader_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for <cite>runner.loader_key</cite>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Deprecated, saved for backward compatibility.
+Please use <cite>runner.loader_key</cite> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="catalyst.core.legacy.IRunnerLegacy.loader_step">
 <em class="property">property </em><code class="sig-name descname">loader_step</code><a class="headerlink" href="#catalyst.core.legacy.IRunnerLegacy.loader_step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for <cite>runner.loader_batch_step</cite>.</p>
@@ -1916,6 +2113,17 @@ Please use <cite>runner.loader_batch_step</cite> instead.</p>
 <p class="admonition-title">Warning</p>
 <p>Deprecated, saved for backward compatibility.
 Please use <cite>runner.is_train_loader</cite> instead.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.legacy.IRunnerLegacy.stage_name">
+<em class="property">property </em><code class="sig-name descname">stage_name</code><a class="headerlink" href="#catalyst.core.legacy.IRunnerLegacy.stage_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for <cite>runner.stage</cite>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Deprecated, saved for backward compatibility.
+Please use <cite>runner.stage</cite> instead.</p>
 </div>
 </dd></dl>
 
@@ -2131,7 +2339,7 @@ for example:</p>
 <dl class="class">
 <dt id="catalyst.core.callback.Callback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callback.</code><code class="sig-name descname">Callback</code><span class="sig-paren">(</span><em class="sig-param">order: int</em>, <em class="sig-param">node: int = &lt;CallbackNode.All: 0&gt;</em>, <em class="sig-param">scope: int = &lt;CallbackScope.Stage: 0&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.Callback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.ICallback</span></code></p>
 <p>An abstraction that lets you customize your experiment run logic.
 To give users maximum flexibility and extensibility Catalyst supports
 callback execution anywhere in the training loop:</p>
@@ -2170,11 +2378,11 @@ exception – <span class="k">if</span> an Exception was raised
 <p>Abstraction, please check out the implementations:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.callbacks.criterion.CriterionCallback</span></code></p></li>
-<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.callbacks.optimizer.OptimizerCallback</span></code></p></li>
-<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.callbacks.scheduler.SchedulerCallback</span></code></p></li>
-<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.callbacks.logging.TensorboardLogger</span></code></p></li>
-<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.callbacks.checkpoint.CheckpointCallback</span></code></p></li>
+<li><p><a class="reference internal" href="callbacks.html#catalyst.callbacks.criterion.CriterionCallback" title="catalyst.callbacks.criterion.CriterionCallback"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.callbacks.criterion.CriterionCallback</span></code></a></p></li>
+<li><p><a class="reference internal" href="callbacks.html#catalyst.callbacks.optimizer.OptimizerCallback" title="catalyst.callbacks.optimizer.OptimizerCallback"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.callbacks.optimizer.OptimizerCallback</span></code></a></p></li>
+<li><p><a class="reference internal" href="callbacks.html#catalyst.callbacks.scheduler.SchedulerCallback" title="catalyst.callbacks.scheduler.SchedulerCallback"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.callbacks.scheduler.SchedulerCallback</span></code></a></p></li>
+<li><p><a class="reference internal" href="callbacks.html#catalyst.callbacks.logging.TensorboardLogger" title="catalyst.callbacks.logging.TensorboardLogger"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.callbacks.logging.TensorboardLogger</span></code></a></p></li>
+<li><p><a class="reference internal" href="callbacks.html#catalyst.callbacks.checkpoint.CheckpointCallback" title="catalyst.callbacks.checkpoint.CheckpointCallback"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.callbacks.checkpoint.CheckpointCallback</span></code></a></p></li>
 </ul>
 </div></blockquote>
 <dl class="method">
@@ -2188,105 +2396,6 @@ exception – <span class="k">if</span> an Exception was raised
 <li><p><strong>node</strong> – flag from <code class="docutils literal notranslate"><span class="pre">CallbackNode</span></code></p></li>
 <li><p><strong>scope</strong> – flag from <code class="docutils literal notranslate"><span class="pre">CallbackScope</span></code></p></li>
 </ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callback.Callback.on_batch_end">
-<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.Callback.on_batch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event handler for batch end.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callback.Callback.on_batch_start">
-<code class="sig-name descname">on_batch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.on_batch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.Callback.on_batch_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event handler for batch start.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callback.Callback.on_epoch_end">
-<code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.Callback.on_epoch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event handler for epoch end.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callback.Callback.on_epoch_start">
-<code class="sig-name descname">on_epoch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.on_epoch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.Callback.on_epoch_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event handler for epoch start.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callback.Callback.on_exception">
-<code class="sig-name descname">on_exception</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.on_exception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.Callback.on_exception" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event handler for exception case.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callback.Callback.on_loader_end">
-<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.Callback.on_loader_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event handler for loader end.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callback.Callback.on_loader_start">
-<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.Callback.on_loader_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event handler for loader start.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callback.Callback.on_stage_end">
-<code class="sig-name descname">on_stage_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.Callback.on_stage_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event handler for stage end.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.core.callback.Callback.on_stage_start">
-<code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.callback.Callback.on_stage_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Event handler for stage start.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2417,7 +2526,7 @@ default <code class="docutils literal notranslate"><span class="pre">True</span>
 <span class="target" id="module-catalyst.core.callback"></span><dl class="class">
 <dt>
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.core.callback.</code><code class="sig-name descname">Callback</code><span class="sig-paren">(</span><em class="sig-param">order: int</em>, <em class="sig-param">node: int = &lt;CallbackNode.All: 0&gt;</em>, <em class="sig-param">scope: int = &lt;CallbackScope.Stage: 0&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.ICallback</span></code></p>
 <p>An abstraction that lets you customize your experiment run logic.
 To give users maximum flexibility and extensibility Catalyst supports
 callback execution anywhere in the training loop:</p>
@@ -2456,11 +2565,11 @@ exception – <span class="k">if</span> an Exception was raised
 <p>Abstraction, please check out the implementations:</p>
 <blockquote>
 <div><ul class="simple">
-<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.callbacks.criterion.CriterionCallback</span></code></p></li>
-<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.callbacks.optimizer.OptimizerCallback</span></code></p></li>
-<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.callbacks.scheduler.SchedulerCallback</span></code></p></li>
-<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.callbacks.logging.TensorboardLogger</span></code></p></li>
-<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.core.callbacks.checkpoint.CheckpointCallback</span></code></p></li>
+<li><p><a class="reference internal" href="callbacks.html#catalyst.callbacks.criterion.CriterionCallback" title="catalyst.callbacks.criterion.CriterionCallback"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.callbacks.criterion.CriterionCallback</span></code></a></p></li>
+<li><p><a class="reference internal" href="callbacks.html#catalyst.callbacks.optimizer.OptimizerCallback" title="catalyst.callbacks.optimizer.OptimizerCallback"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.callbacks.optimizer.OptimizerCallback</span></code></a></p></li>
+<li><p><a class="reference internal" href="callbacks.html#catalyst.callbacks.scheduler.SchedulerCallback" title="catalyst.callbacks.scheduler.SchedulerCallback"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.callbacks.scheduler.SchedulerCallback</span></code></a></p></li>
+<li><p><a class="reference internal" href="callbacks.html#catalyst.callbacks.logging.TensorboardLogger" title="catalyst.callbacks.logging.TensorboardLogger"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.callbacks.logging.TensorboardLogger</span></code></a></p></li>
+<li><p><a class="reference internal" href="callbacks.html#catalyst.callbacks.checkpoint.CheckpointCallback" title="catalyst.callbacks.checkpoint.CheckpointCallback"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.callbacks.checkpoint.CheckpointCallback</span></code></a></p></li>
 </ul>
 </div></blockquote>
 <dl class="method">
@@ -2474,105 +2583,6 @@ exception – <span class="k">if</span> an Exception was raised
 <li><p><strong>node</strong> – flag from <code class="docutils literal notranslate"><span class="pre">CallbackNode</span></code></p></li>
 <li><p><strong>scope</strong> – flag from <code class="docutils literal notranslate"><span class="pre">CallbackScope</span></code></p></li>
 </ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.on_batch_end"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Event handler for batch end.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">on_batch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.on_batch_start"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Event handler for batch start.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.on_epoch_end"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Event handler for epoch end.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">on_epoch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.on_epoch_start"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Event handler for epoch start.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">on_exception</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.on_exception"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Event handler for exception case.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.on_loader_end"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Event handler for loader end.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.on_loader_start"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Event handler for loader start.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">on_stage_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.on_stage_end"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Event handler for stage end.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/callback.html#Callback.on_stage_start"><span class="viewcode-link">[source]</span></a></dt>
-<dd><p>Event handler for stage start.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – IRunner instance.</p>
 </dd>
 </dl>
 </dd></dl>

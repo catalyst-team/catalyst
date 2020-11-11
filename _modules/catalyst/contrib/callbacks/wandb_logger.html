@@ -476,7 +476,7 @@
 <div class="viewcode-block" id="WandbLogger.on_batch_end"><a class="viewcode-back" href="../../../../api/callbacks.html#catalyst.contrib.callbacks.wandb_logger.WandbLogger.on_batch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Translate batch metrics to Weights &amp; Biases.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_on_batch_end</span><span class="p">:</span>
-            <span class="n">mode</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_name</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span>
             <span class="n">metrics</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">batch_metrics</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_log_metrics</span><span class="p">(</span>
                 <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>
@@ -489,7 +489,7 @@
 <div class="viewcode-block" id="WandbLogger.on_loader_end"><a class="viewcode-back" href="../../../../api/callbacks.html#catalyst.contrib.callbacks.wandb_logger.WandbLogger.on_loader_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Translate loader metrics to Weights &amp; Biases.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_on_epoch_end</span><span class="p">:</span>
-            <span class="n">mode</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_name</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span>
             <span class="n">metrics</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_metrics</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_log_metrics</span><span class="p">(</span>
                 <span class="n">metrics</span><span class="o">=</span><span class="n">metrics</span><span class="p">,</span>

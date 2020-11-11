@@ -346,10 +346,10 @@
         <span class="n">scheduler</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">scheduler</span><span class="p">,</span>
         <span class="n">epoch_metrics</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">epoch_metrics</span><span class="p">),</span>
         <span class="n">valid_metrics</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">valid_metrics</span><span class="p">),</span>
-        <span class="n">stage_name</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">stage_name</span><span class="p">,</span>
+        <span class="n">stage</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">stage</span><span class="p">,</span>
         <span class="n">epoch</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">epoch</span><span class="p">,</span>
-        <span class="n">loader_name</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">loader_name</span><span class="p">,</span>
-        <span class="n">loader_step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">loader_batch_step</span><span class="p">,</span>
+        <span class="n">loader_key</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span><span class="p">,</span>
+        <span class="n">loader_batch_step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">loader_batch_step</span><span class="p">,</span>
         <span class="n">global_epoch</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">global_epoch</span><span class="p">,</span>
         <span class="n">checkpoint_data</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">checkpoint_data</span><span class="p">,</span>
         <span class="n">main_metric</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">main_metric</span><span class="p">,</span>
@@ -386,8 +386,8 @@
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;=&gt; Loading checkpoint </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">load_checkpoint</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">runner</span><span class="o">.</span><span class="n">stage_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">load_full</span><span class="p">:</span>
-        <span class="n">runner</span><span class="o">.</span><span class="n">stage_name</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;stage_name&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">runner</span><span class="o">.</span><span class="n">stage</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">load_full</span><span class="p">:</span>
+        <span class="n">runner</span><span class="o">.</span><span class="n">stage</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;stage&quot;</span><span class="p">]</span>
         <span class="n">runner</span><span class="o">.</span><span class="n">epoch</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;epoch&quot;</span><span class="p">]</span>
         <span class="n">runner</span><span class="o">.</span><span class="n">global_epoch</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;global_epoch&quot;</span><span class="p">]</span>
         <span class="c1"># @TODO: should we also load,</span>
@@ -407,7 +407,7 @@
             <span class="sa">f</span><span class="s2">&quot;loaded state checkpoint </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2"> &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;(global epoch </span><span class="si">{</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;global_epoch&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;epoch </span><span class="si">{</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;epoch&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;stage </span><span class="si">{</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;stage_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;stage </span><span class="si">{</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;stage&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">unpack_checkpoint</span><span class="p">(</span>
@@ -694,12 +694,12 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            checkpoint: checkpoint dict,</span>
-<span class="sd">                should contain ``stage_name`` and ``epoch`` keys.</span>
+<span class="sd">                should contain ``stage`` and ``epoch`` keys.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            str: checkpoint suffix</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;stage_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;epoch&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;stage&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;epoch&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">result</span>
 
 <div class="viewcode-block" id="CheckpointCallback.process_metrics"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.checkpoint.CheckpointCallback.process_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">process_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">last_valid_metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
@@ -941,10 +941,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="n">runner</span><span class="o">.</span><span class="n">stage_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="n">runner</span><span class="o">.</span><span class="n">is_distributed_worker</span>
-        <span class="p">):</span>
+        <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">stage</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">runner</span><span class="o">.</span><span class="n">is_distributed_worker</span><span class="p">:</span>
             <span class="k">return</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_n_best</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -965,10 +962,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="n">runner</span><span class="o">.</span><span class="n">stage_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="n">runner</span><span class="o">.</span><span class="n">is_distributed_worker</span>
-        <span class="p">):</span>
+        <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">stage</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">runner</span><span class="o">.</span><span class="n">is_distributed_worker</span><span class="p">:</span>
             <span class="k">return</span>
         <span class="n">log_message</span> <span class="o">=</span> <span class="s2">&quot;Top best models:</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="c1"># store latest state</span>
@@ -1062,13 +1056,13 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            checkpoint: checkpoint dict,</span>
-<span class="sd">                should contain ``stage_name`` and ``epoch`` keys.</span>
+<span class="sd">                should contain ``stage`` and ``epoch`` keys.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            str: checkpoint suffix</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">result</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;stage_name&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;stage&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;epoch.</span><span class="si">{</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;epoch&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;iter.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_iteration_counter</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>

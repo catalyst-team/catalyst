@@ -694,6 +694,10 @@
 </li>
         <li><a href="api/registry.html#catalyst.registry.registry.RegistryException.__init__">(catalyst.registry.registry.RegistryException method)</a>
 </li>
+        <li><a href="api/runners.html#catalyst.runners.Runner.__init__">(catalyst.runners.Runner method)</a>
+</li>
+        <li><a href="api/runners.html#catalyst.runners.runner.Runner.__init__">(catalyst.runners.runner.Runner method)</a>
+</li>
         <li><a href="api/runners.html#catalyst.runners.supervised.SupervisedRunner.__init__">(catalyst.runners.supervised.SupervisedRunner method)</a>
 </li>
         <li><a href="api/runners.html#catalyst.runners.SupervisedRunner.__init__">(catalyst.runners.SupervisedRunner method)</a>
@@ -1637,7 +1641,7 @@
 </li>
       <li><a href="api/utils.html#catalyst.utils.torch.get_activation_fn">get_activation_fn() (in module catalyst.utils.torch)</a>
 </li>
-      <li><a href="api/core.html#catalyst.core.runner.IRunner.get_attr">get_attr() (catalyst.core.runner.IRunner method)</a>, <a href="api/core.html#catalyst.core.runner.IRunner.get_attr">[1]</a>
+      <li><a href="api/utils.html#catalyst.utils.misc.get_attr">get_attr() (in module catalyst.utils.misc)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.torch.get_available_gpus">get_available_gpus() (in module catalyst.utils.torch)</a>
 </li>
@@ -2057,6 +2061,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/core.html#catalyst.core.legacy.IRunnerLegacy.loader_name">loader_name() (catalyst.core.legacy.IRunnerLegacy property)</a>
+</li>
       <li><a href="api/core.html#catalyst.core.legacy.IRunnerLegacy.loader_step">loader_step() (catalyst.core.legacy.IRunnerLegacy property)</a>
 </li>
       <li><a href="api/callbacks.html#catalyst.callbacks.metric.LoaderMetricCallback">LoaderMetricCallback (class in catalyst.callbacks.metric)</a>
@@ -2302,9 +2308,9 @@
 </li>
         <li><a href="api/callbacks.html#catalyst.contrib.callbacks.wandb_logger.WandbLogger.on_batch_end">(catalyst.contrib.callbacks.wandb_logger.WandbLogger method)</a>
 </li>
-        <li><a href="api/core.html#catalyst.core.callback.Callback.on_batch_end">(catalyst.core.callback.Callback method)</a>, <a href="api/core.html#catalyst.core.callback.Callback.on_batch_end">[1]</a>
-</li>
         <li><a href="api/core.html#catalyst.core.callback.CallbackWrapper.on_batch_end">(catalyst.core.callback.CallbackWrapper method)</a>, <a href="api/core.html#catalyst.core.callback.CallbackWrapper.on_batch_end">[1]</a>
+</li>
+        <li><a href="api/core.html#catalyst.core.runner.IRunner.on_batch_end">(catalyst.core.runner.IRunner method)</a>, <a href="api/core.html#catalyst.core.runner.IRunner.on_batch_end">[1]</a>
 </li>
       </ul></li>
       <li><a href="api/callbacks.html#catalyst.callbacks.metric.MetricManagerCallback.on_batch_start">on_batch_start() (catalyst.callbacks.metric.MetricManagerCallback method)</a>
@@ -2320,9 +2326,9 @@
 </li>
         <li><a href="api/callbacks.html#catalyst.contrib.callbacks.mixup_callback.MixupCallback.on_batch_start">(catalyst.contrib.callbacks.mixup_callback.MixupCallback method)</a>
 </li>
-        <li><a href="api/core.html#catalyst.core.callback.Callback.on_batch_start">(catalyst.core.callback.Callback method)</a>, <a href="api/core.html#catalyst.core.callback.Callback.on_batch_start">[1]</a>
-</li>
         <li><a href="api/core.html#catalyst.core.callback.CallbackWrapper.on_batch_start">(catalyst.core.callback.CallbackWrapper method)</a>, <a href="api/core.html#catalyst.core.callback.CallbackWrapper.on_batch_start">[1]</a>
+</li>
+        <li><a href="api/core.html#catalyst.core.runner.IRunner.on_batch_start">(catalyst.core.runner.IRunner method)</a>, <a href="api/core.html#catalyst.core.runner.IRunner.on_batch_start">[1]</a>
 </li>
       </ul></li>
       <li><a href="api/callbacks.html#catalyst.callbacks.batch_overfit.BatchOverfitCallback.on_epoch_end">on_epoch_end() (catalyst.callbacks.batch_overfit.BatchOverfitCallback method)</a>
@@ -2364,9 +2370,9 @@
 </li>
         <li><a href="api/callbacks.html#catalyst.contrib.callbacks.wandb_logger.WandbLogger.on_epoch_end">(catalyst.contrib.callbacks.wandb_logger.WandbLogger method)</a>
 </li>
-        <li><a href="api/core.html#catalyst.core.callback.Callback.on_epoch_end">(catalyst.core.callback.Callback method)</a>, <a href="api/core.html#catalyst.core.callback.Callback.on_epoch_end">[1]</a>
-</li>
         <li><a href="api/core.html#catalyst.core.callback.CallbackWrapper.on_epoch_end">(catalyst.core.callback.CallbackWrapper method)</a>, <a href="api/core.html#catalyst.core.callback.CallbackWrapper.on_epoch_end">[1]</a>
+</li>
+        <li><a href="api/core.html#catalyst.core.runner.IRunner.on_epoch_end">(catalyst.core.runner.IRunner method)</a>, <a href="api/core.html#catalyst.core.runner.IRunner.on_epoch_end">[1]</a>
 </li>
       </ul></li>
       <li><a href="api/callbacks.html#catalyst.callbacks.batch_overfit.BatchOverfitCallback.on_epoch_start">on_epoch_start() (catalyst.callbacks.batch_overfit.BatchOverfitCallback method)</a>
@@ -2380,9 +2386,9 @@
 </li>
         <li><a href="api/callbacks.html#catalyst.callbacks.validation.ValidationManagerCallback.on_epoch_start">(catalyst.callbacks.validation.ValidationManagerCallback method)</a>
 </li>
-        <li><a href="api/core.html#catalyst.core.callback.Callback.on_epoch_start">(catalyst.core.callback.Callback method)</a>, <a href="api/core.html#catalyst.core.callback.Callback.on_epoch_start">[1]</a>
-</li>
         <li><a href="api/core.html#catalyst.core.callback.CallbackWrapper.on_epoch_start">(catalyst.core.callback.CallbackWrapper method)</a>, <a href="api/core.html#catalyst.core.callback.CallbackWrapper.on_epoch_start">[1]</a>
+</li>
+        <li><a href="api/core.html#catalyst.core.runner.IRunner.on_epoch_start">(catalyst.core.runner.IRunner method)</a>, <a href="api/core.html#catalyst.core.runner.IRunner.on_epoch_start">[1]</a>
 </li>
       </ul></li>
       <li><a href="api/callbacks.html#catalyst.callbacks.checkpoint.BaseCheckpointCallback.on_exception">on_exception() (catalyst.callbacks.checkpoint.BaseCheckpointCallback method)</a>
@@ -2394,11 +2400,15 @@
 </li>
         <li><a href="api/callbacks.html#catalyst.contrib.callbacks.telegram_logger.TelegramLogger.on_exception">(catalyst.contrib.callbacks.telegram_logger.TelegramLogger method)</a>
 </li>
-        <li><a href="api/core.html#catalyst.core.callback.Callback.on_exception">(catalyst.core.callback.Callback method)</a>, <a href="api/core.html#catalyst.core.callback.Callback.on_exception">[1]</a>
-</li>
         <li><a href="api/core.html#catalyst.core.callback.CallbackWrapper.on_exception">(catalyst.core.callback.CallbackWrapper method)</a>, <a href="api/core.html#catalyst.core.callback.CallbackWrapper.on_exception">[1]</a>
 </li>
+        <li><a href="api/core.html#catalyst.core.runner.IRunner.on_exception">(catalyst.core.runner.IRunner method)</a>, <a href="api/core.html#catalyst.core.runner.IRunner.on_exception">[1]</a>
+</li>
       </ul></li>
+      <li><a href="api/core.html#catalyst.core.runner.IRunner.on_experiment_end">on_experiment_end() (catalyst.core.runner.IRunner method)</a>, <a href="api/core.html#catalyst.core.runner.IRunner.on_experiment_end">[1]</a>
+</li>
+      <li><a href="api/core.html#catalyst.core.runner.IRunner.on_experiment_start">on_experiment_start() (catalyst.core.runner.IRunner method)</a>, <a href="api/core.html#catalyst.core.runner.IRunner.on_experiment_start">[1]</a>
+</li>
       <li><a href="api/callbacks.html#catalyst.callbacks.control_flow.ControlFlowCallback.on_loader_end">on_loader_end() (catalyst.callbacks.control_flow.ControlFlowCallback method)</a>
 
       <ul>
@@ -2430,9 +2440,9 @@
 </li>
         <li><a href="api/callbacks.html#catalyst.contrib.callbacks.wandb_logger.WandbLogger.on_loader_end">(catalyst.contrib.callbacks.wandb_logger.WandbLogger method)</a>
 </li>
-        <li><a href="api/core.html#catalyst.core.callback.Callback.on_loader_end">(catalyst.core.callback.Callback method)</a>, <a href="api/core.html#catalyst.core.callback.Callback.on_loader_end">[1]</a>
-</li>
         <li><a href="api/core.html#catalyst.core.callback.CallbackWrapper.on_loader_end">(catalyst.core.callback.CallbackWrapper method)</a>, <a href="api/core.html#catalyst.core.callback.CallbackWrapper.on_loader_end">[1]</a>
+</li>
+        <li><a href="api/core.html#catalyst.core.runner.IRunner.on_loader_end">(catalyst.core.runner.IRunner method)</a>, <a href="api/core.html#catalyst.core.runner.IRunner.on_loader_end">[1]</a>
 </li>
       </ul></li>
   </ul></td>
@@ -2470,9 +2480,9 @@
 </li>
         <li><a href="api/callbacks.html#catalyst.contrib.callbacks.telegram_logger.TelegramLogger.on_loader_start">(catalyst.contrib.callbacks.telegram_logger.TelegramLogger method)</a>
 </li>
-        <li><a href="api/core.html#catalyst.core.callback.Callback.on_loader_start">(catalyst.core.callback.Callback method)</a>, <a href="api/core.html#catalyst.core.callback.Callback.on_loader_start">[1]</a>
-</li>
         <li><a href="api/core.html#catalyst.core.callback.CallbackWrapper.on_loader_start">(catalyst.core.callback.CallbackWrapper method)</a>, <a href="api/core.html#catalyst.core.callback.CallbackWrapper.on_loader_start">[1]</a>
+</li>
+        <li><a href="api/core.html#catalyst.core.runner.IRunner.on_loader_start">(catalyst.core.runner.IRunner method)</a>, <a href="api/core.html#catalyst.core.runner.IRunner.on_loader_start">[1]</a>
 </li>
       </ul></li>
       <li><a href="api/callbacks.html#catalyst.callbacks.checkpoint.CheckpointCallback.on_stage_end">on_stage_end() (catalyst.callbacks.checkpoint.CheckpointCallback method)</a>
@@ -2496,9 +2506,9 @@
 </li>
         <li><a href="api/callbacks.html#catalyst.contrib.callbacks.wandb_logger.WandbLogger.on_stage_end">(catalyst.contrib.callbacks.wandb_logger.WandbLogger method)</a>
 </li>
-        <li><a href="api/core.html#catalyst.core.callback.Callback.on_stage_end">(catalyst.core.callback.Callback method)</a>, <a href="api/core.html#catalyst.core.callback.Callback.on_stage_end">[1]</a>
-</li>
         <li><a href="api/core.html#catalyst.core.callback.CallbackWrapper.on_stage_end">(catalyst.core.callback.CallbackWrapper method)</a>, <a href="api/core.html#catalyst.core.callback.CallbackWrapper.on_stage_end">[1]</a>
+</li>
+        <li><a href="api/core.html#catalyst.core.runner.IRunner.on_stage_end">(catalyst.core.runner.IRunner method)</a>, <a href="api/core.html#catalyst.core.runner.IRunner.on_stage_end">[1]</a>
 </li>
       </ul></li>
       <li><a href="api/callbacks.html#catalyst.callbacks.checkpoint.CheckpointCallback.on_stage_start">on_stage_start() (catalyst.callbacks.checkpoint.CheckpointCallback method)</a>
@@ -2532,9 +2542,11 @@
 </li>
         <li><a href="api/callbacks.html#catalyst.contrib.callbacks.wandb_logger.WandbLogger.on_stage_start">(catalyst.contrib.callbacks.wandb_logger.WandbLogger method)</a>
 </li>
-        <li><a href="api/core.html#catalyst.core.callback.Callback.on_stage_start">(catalyst.core.callback.Callback method)</a>, <a href="api/core.html#catalyst.core.callback.Callback.on_stage_start">[1]</a>
-</li>
         <li><a href="api/core.html#catalyst.core.callback.CallbackWrapper.on_stage_start">(catalyst.core.callback.CallbackWrapper method)</a>, <a href="api/core.html#catalyst.core.callback.CallbackWrapper.on_stage_start">[1]</a>
+</li>
+        <li><a href="api/core.html#catalyst.core.runner.IRunner.on_stage_start">(catalyst.core.runner.IRunner method)</a>, <a href="api/core.html#catalyst.core.runner.IRunner.on_stage_start">[1]</a>
+</li>
+        <li><a href="api/core.html#catalyst.core.runner.IStageBasedRunner.on_stage_start">(catalyst.core.runner.IStageBasedRunner method)</a>, <a href="api/core.html#catalyst.core.runner.IStageBasedRunner.on_stage_start">[1]</a>
 </li>
       </ul></li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.schedulers.onecycle.OneCycleLRWithWarmup">OneCycleLRWithWarmup (class in catalyst.contrib.nn.schedulers.onecycle)</a>
@@ -2891,13 +2903,15 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.modules.se.sSE">sSE (class in catalyst.contrib.nn.modules.se)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/core.html#catalyst.core.callback.CallbackScope.Stage">Stage (catalyst.core.callback.CallbackScope attribute)</a>, <a href="api/core.html#catalyst.core.callback.CallbackScope.Stage">[1]</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/core.html#catalyst.core.callback.CallbackScope.stage">stage (catalyst.core.callback.CallbackScope attribute)</a>, <a href="api/core.html#catalyst.core.callback.CallbackScope.stage">[1]</a>
 </li>
       <li><a href="api/experiments.html#catalyst.experiments.config.ConfigExperiment.STAGE_KEYWORDS">STAGE_KEYWORDS (catalyst.experiments.config.ConfigExperiment attribute)</a>
+</li>
+      <li><a href="api/core.html#catalyst.core.legacy.IRunnerLegacy.stage_name">stage_name() (catalyst.core.legacy.IRunnerLegacy property)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.experiment.IExperiment.stages">stages() (catalyst.core.experiment.IExperiment property)</a>, <a href="api/core.html#catalyst.core.experiment.IExperiment.stages">[1]</a>
 

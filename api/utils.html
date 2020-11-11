@@ -1044,6 +1044,62 @@ decimal chars are not enough (metric value lower than 1e-4).</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="catalyst.utils.misc.get_attr">
+<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">get_attr</code><span class="sig-paren">(</span><em class="sig-param">obj: Any</em>, <em class="sig-param">key: str</em>, <em class="sig-param">inner_key: str = None</em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="../_modules/catalyst/utils/misc.html#get_attr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.get_attr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for python <cite>getattr</cite> method. Useful for Callbacks preparation
+and cases with multi-criterion, multi-optimizer setup.
+For example, when you would like to train multi-task classification.</p>
+<p>Used to get a named attribute from a <cite>IRunner</cite> by <cite>key</cite> keyword;
+for example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># example 1</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;criterion&quot;</span><span class="p">)</span>
+<span class="c1"># is equivalent to</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">criterion</span>
+
+<span class="c1"># example 2</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;optimizer&quot;</span><span class="p">)</span>
+<span class="c1"># is equivalent to</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">optimizer</span>
+
+<span class="c1"># example 3</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;scheduler&quot;</span><span class="p">)</span>
+<span class="c1"># is equivalent to</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">scheduler</span>
+</pre></div>
+</div>
+<p>With <cite>inner_key</cite> usage, it suppose to find a dictionary under <cite>key</cite>    and would get <cite>inner_key</cite> from this dict; for example,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># example 1</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="s2">&quot;bce&quot;</span><span class="p">)</span>
+<span class="c1"># is equivalent to</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">criterion</span><span class="p">[</span><span class="s2">&quot;bce&quot;</span><span class="p">]</span>
+
+<span class="c1"># example 2</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;adam&quot;</span><span class="p">)</span>
+<span class="c1"># is equivalent to</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">optimizer</span><span class="p">[</span><span class="s2">&quot;adam&quot;</span><span class="p">]</span>
+
+<span class="c1"># example 3</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="s2">&quot;scheduler&quot;</span><span class="p">,</span> <span class="s2">&quot;adam&quot;</span><span class="p">)</span>
+<span class="c1"># is equivalent to</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">scheduler</span><span class="p">[</span><span class="s2">&quot;adam&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> – object of interest</p></li>
+<li><p><strong>key</strong> – name for attribute of interest,
+like <cite>criterion</cite>, <cite>optimizer</cite>, <cite>scheduler</cite></p></li>
+<li><p><strong>inner_key</strong> – name of inner dictionary key</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>inner attribute</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="catalyst.utils.misc.set_global_seed">
 <code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">set_global_seed</code><span class="sig-paren">(</span><em class="sig-param">seed: int</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/misc.html#set_global_seed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.set_global_seed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets random seed into Numpy and Random, PyTorch and TensorFlow.</p>

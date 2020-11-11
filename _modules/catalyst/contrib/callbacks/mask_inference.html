@@ -396,7 +396,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">lm</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_name</span>
+        <span class="n">lm</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">out_prefix</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">lm</span><span class="si">}</span><span class="s2">/&quot;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="InferMaskCallback.on_batch_end"><a class="viewcode-back" href="../../../../api/callbacks.html#catalyst.contrib.callbacks.mask_inference.InferMaskCallback.on_batch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
@@ -405,7 +405,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">lm</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_name</span>
+        <span class="n">lm</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span>
         <span class="n">names</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name_key</span><span class="p">,</span> <span class="p">[])</span>
 
         <span class="n">features</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">input</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
