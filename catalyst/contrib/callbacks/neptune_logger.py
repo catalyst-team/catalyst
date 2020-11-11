@@ -142,7 +142,7 @@ class NeptuneLogger(Callback):
     def on_batch_end(self, runner: "IRunner"):
         """Log batch metrics to Neptune."""
         if self.log_on_batch_end:
-            mode = runner.loader_name
+            mode = runner.loader_key
             metrics = runner.batch_metrics
             self._log_metrics(
                 metrics=metrics,
@@ -154,7 +154,7 @@ class NeptuneLogger(Callback):
     def on_loader_end(self, runner: "IRunner"):
         """Translate epoch metrics to Neptune."""
         if self.log_on_epoch_end:
-            mode = runner.loader_name
+            mode = runner.loader_key
             metrics = runner.loader_metrics
             self._log_metrics(
                 metrics=metrics,
