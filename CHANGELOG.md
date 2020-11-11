@@ -8,26 +8,33 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [YY.MM.R] - YYYY-MM-DD
 
 ### Added
-
+- DCG, nDCG metrics ([#881](https://github.com/catalyst-team/catalyst/pull/881))
+- MAP calculations [#968](https://github.com/catalyst-team/catalyst/pull/968) 
+- hitrate calculations [#975] (https://github.com/catalyst-team/catalyst/pull/975)
 - extra functions for classification metrics ([#966](https://github.com/catalyst-team/catalyst/pull/966))
 - `OneOf` and `OneOfV2` batch transforms ([#951](https://github.com/catalyst-team/catalyst/pull/951))
 - ``precision_recall_fbeta_support`` metric ([#971](https://github.com/catalyst-team/catalyst/pull/971))
 - Pruning tutorial ([#987](https://github.com/catalyst-team/catalyst/pull/987))
+- BatchPrefetchLoaderWrapper ([#986](https://github.com/catalyst-team/catalyst/pull/986))
+- DynamicBalanceClassSampler ([#954](https://github.com/catalyst-team/catalyst/pull/954))
 
 ### Changed
 
 - update Catalyst version to `20.10.1` for tutorials ([#967](https://github.com/catalyst-team/catalyst/pull/967))
 - added link to dl-course ([#967](https://github.com/catalyst-team/catalyst/pull/967))
 - docs were restructured ([#985](https://github.com/catalyst-team/catalyst/pull/985))
+- `set_global_seed` moved from `utils.seed` to `utils.misc` ([#986](https://github.com/catalyst-team/catalyst/pull/986))
 
 ### Removed
 
 - several deprecated tutorials ([#967](https://github.com/catalyst-team/catalyst/pull/967))
+- several deprecated func from utils.misc ([#986](https://github.com/catalyst-team/catalyst/pull/986))
 
 ### Fixed
 
 - `BatchTransformCallback` - add `nn.Module` transforms support ([#951](https://github.com/catalyst-team/catalyst/pull/951))
 - moved to `contiguous` view for accuracy computation ([#982](https://github.com/catalyst-team/catalyst/pull/982))
+- fixed torch warning on `optimizer.py:140` ([#979](https://github.com/catalyst-team/catalyst/pull/979))
 
 
 ## [20.10.1] - 2020-10-15
@@ -71,7 +78,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Runner registry support for Config API ([#936](https://github.com/catalyst-team/catalyst/pull/936))
-
 - `catalyst-dl tune` command - Optuna with Config API integration for AutoML hyperparameters optimization ([#937](https://github.com/catalyst-team/catalyst/pull/937))
 - `OptunaPruningCallback` alias for `OptunaCallback` ([#937](https://github.com/catalyst-team/catalyst/pull/937))
 - AdamP and SGDP to `catalyst.contrib.nn.criterion` ([#942](https://github.com/catalyst-team/catalyst/pull/942))
@@ -87,7 +93,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - Logging double logging :) ([#936](https://github.com/catalyst-team/catalyst/pull/936))
-
 - CMCCallback ([#941](https://github.com/catalyst-team/catalyst/pull/941))
 
 ## [20.09] - 2020-09-07

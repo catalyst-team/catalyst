@@ -2,7 +2,40 @@ from typing import Any, Callable, List, Union
 from datetime import datetime
 import inspect
 from pathlib import Path
+import random
 import shutil
+
+import numpy as np
+from packaging.version import parse, Version
+
+
+def set_global_seed(seed: int) -> None:
+    """Sets random seed into Numpy and Random, PyTorch and TensorFlow.
+
+    Args:
+        seed: random seed
+    """
+    random.seed(seed)
+    np.random.seed(seed)
+    try:
+        import torch
+    except ImportError:
+        pass
+    else:
+        torch.manual_seed(seed)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(seed)
+    try:
+        import tensorflow as tf
+    except ImportError:
+        pass
+    else:
+        if parse(tf.__version__) >= Version("2.0.0"):
+            tf.random.set_seed(seed)
+        elif parse(tf.__version__) <= Version("1.13.2"):
+            tf.set_random_seed(seed)
+        else:
+            tf.compat.v1.set_random_seed(seed)
 
 
 def maybe_recursive_call(
@@ -142,25 +175,6 @@ def get_fn_argsnames(fn: Callable[..., Any], exclude: List[str] = None):
     return params
 
 
-def fn_ends_with_pass(fn: Callable[..., Any]):
-    """
-    Check that function end with pass statement
-    (probably does nothing in any way).
-    Mainly used to filter callbacks with empty on_{event} methods.
-
-    Args:
-        fn (Callable[..., Any]): target Callable
-
-    Returns:
-        bool: True if there is pass in the first indentation level of fn
-        and nothing happens before it, False in any other case.
-    """
-    source_lines = inspect.getsourcelines(fn)[0]
-    if source_lines[-1].strip() == "pass":
-        return True
-    return False
-
-
 def get_attr(obj: Any, key: str, inner_key: str = None) -> Any:
     """
     Alias for python `getattr` method. Useful for Callbacks preparation
@@ -227,6 +241,6 @@ __all__ = [
     "get_utcnow_time",
     "is_exception",
     "maybe_recursive_call",
-    "fn_ends_with_pass",
     "get_attr",
+    "set_global_seed",
 ]

@@ -27,8 +27,7 @@ from catalyst.typing import (
 from catalyst.utils.components import process_components
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.loaders import validate_loaders
-from catalyst.utils.misc import maybe_recursive_call
-from catalyst.utils.seed import set_global_seed
+from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 from catalyst.utils.torch import any2device
 
 

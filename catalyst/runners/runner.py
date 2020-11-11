@@ -20,9 +20,8 @@ from catalyst.typing import (
 )
 from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
 from catalyst.utils.components import process_components
-from catalyst.utils.misc import maybe_recursive_call
+from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 from catalyst.utils.scripts import distributed_cmd_run
-from catalyst.utils.seed import set_global_seed
 from catalyst.utils.torch import (
     get_device,
     get_requires_grad,

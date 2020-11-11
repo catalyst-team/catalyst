@@ -1,27 +1,25 @@
-Quickstart 101
+Model debugging
 ==============================================================================
-**In this quickstart, we’ll show you how to organize your PyTorch code with Catalyst.**
 
-Catalyst goals
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-- flexibility, keeping the PyTorch simplicity, but removing the boilerplate code.
-- readability by decoupling the experiment run.
-- reproducibility.
-- scalability to any hardware without code changes.
-- extensibility for pipeline customization.
+Pipeline debugging
+----------------------------------------------------
+To check pipeline correctness, that everything is working correctly
+and does not throws any error, we suggest to use ``CheckRunCallback``.
+You could find more information about it here <../early_stopping.rst>.
 
-Step 1 - Install packages
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-You can install using `pip package`_:
+To check model convergence withing pipeline,
+we suggest to use ``BatchOverfitCallback``.
+You could find more information about it here <../data.rst>.
 
-.. code:: bash
+Python debugging
+----------------------------------------------------
+For python debugging we suggest to use ``ipdb``. You could install it with:
 
-   pip install -U catalyst
+.. code-block:: bash
 
-.. _`pip package`: https://pypi.org/project/catalyst/
+    pip install ipdb
 
-Step 2 - Make python imports
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+After that you could stop the pipeline in the place you prefer, for example:
 
 .. code-block:: python
 
@@ -29,15 +27,9 @@ Step 2 - Make python imports
     import torch
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
-    from torchvision.datasets import MNIST
-    from torchvision.transforms import ToTensor
     from catalyst import dl, metrics
-
-Step 3 - Write PyTorch code
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Let's define **what** we are experimenting with:
-
-.. code-block:: python
+    from catalyst.data.cv import ToTensor
+    from catalyst.contrib.datasets import MNIST
 
     model = torch.nn.Linear(28 * 28, 10)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
@@ -46,12 +38,6 @@ Let's define **what** we are experimenting with:
         "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
         "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
     }
-
-Step 4 - Accelerate it with Catalyst
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Let's define **how** we are running the experiment (in pure PyTorch):
-
-.. code-block:: python
 
     class CustomRunner(dl.Runner):
 
@@ -64,22 +50,20 @@ Let's define **how** we are running the experiment (in pure PyTorch):
             x, y = batch
             y_hat = self.model(x.view(x.size(0), -1))
 
+            # let's stop before metric computation, but after model forward pass
+            import ipdb; ipdb.set_trace()
+            # <--- we will stop here --->
             loss = F.cross_entropy(y_hat, y)
             accuracy01, accuracy03 = metrics.accuracy(y_hat, y, topk=(1, 3))
             self.batch_metrics.update(
                 {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
             )
 
+
             if self.is_train_loader:
                 loss.backward()
                 self.optimizer.step()
                 self.optimizer.zero_grad()
-
-Step 5 - Run
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Let's **train**, **evaluate**, and **trace** your model with a few lines of code.
-
-.. code-block:: python
 
     runner = CustomRunner()
     # model training
@@ -92,10 +76,8 @@ Let's **train**, **evaluate**, and **trace** your model with a few lines of code
         verbose=True,
         load_best_on_end=True,
     )
-    # model inference
-    for prediction in runner.predict_loader(loader=loaders["valid"]):
-        assert prediction.detach().cpu().numpy().shape[-1] == 10
-    # model tracing
-    traced_model = runner.trace(loader=loaders["valid"])
 
-PS. Yes, this file is exactly 101 line.
+
+If you haven't found the answer for your question, feel free to `join our slack`_ for the discussion.
+
+.. _`join our slack`: https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw
