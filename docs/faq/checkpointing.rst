@@ -9,12 +9,12 @@ Catalyst creates the following checkpoints structure under selected ``logdir``:
 .. code-block:: bash
 
     logdir/
-        code/ <--- your experiment and catalyst code for reproducibility --->
-        checkpoints/ <--- theme of the topic --->
-            {stage_name}.{epoch_index}.pth <--- topK checkpoints based on specified model selection logic --->
-            best.pth <--- best model based on specified model selection logic --->
-            last.pth <--- last model checkpoint in the whole experiment run --->
-            <--- the same checkpoints with ``_full`` prefix --->
+        code/ <-- your experiment and catalyst code for reproducibility -->
+        checkpoints/ <-- theme of the topic -->
+            {stage_name}.{epoch_index}.pth <-- topK checkpoints based on model selection logic -->
+            best.pth <-- best model based on specified model selection logic -->
+            last.pth <-- last model checkpoint in the whole experiment run -->
+            <-- the same checkpoints with ``_full`` prefix -->
         ...
 
 This checkpoint are pure PyTorch checkpoints without any mixins with the following structure:
@@ -33,7 +33,7 @@ Full checkpoints
 Catalyst saves 2 types of checkpoints:
 
 - ``{checkpoint}.pth`` - which stores only model state dict and could be easily used for production purposes.
-- ``{checkpoint}_full.pth`` - which stores all state dicts for model(s), criterion(s), optimizer(s) and scheduler(s)  and could be easily used for experiment analysis purposes.
+- ``{checkpoint}_full.pth`` - which stores all state dicts for model(s), criterion(s), optimizer(s) and scheduler(s) and could be easily used for experiment analysis purposes.
 
 Save model
 ----------------------------------------------------
@@ -60,7 +60,12 @@ With Catalyst utils it's very easy to load models after experiment run:
     optimizer = ...
     criterion = ...
     checkpoint = utils.load_checkpoint(path="/path/to/checkpoint")
-    utils.unpack_checkpoint(checkpoint=checkpoint, model=model, optimizer=optimizer, criterion=criterion)
+    utils.unpack_checkpoint(
+        checkpoint=checkpoint,
+        model=model,
+        optimizer=optimizer,
+        criterion=criterion
+    )
 
 In this case Catalyst would try to unpack requested state dicts from the checkpoint.
 
