@@ -600,10 +600,10 @@ class IRunner(ABC, ICallback, IRunnerLegacy):
         """
         assert self.loaders is not None
 
-        for loader_name, loader in self.loaders.items():
+        for loader_key, loader in self.loaders.items():
             if len(loader) == 0:
                 raise RunnerException(
-                    f"DataLoader with name {loader_name} is empty."
+                    f"DataLoader with name {loader_key} is empty."
                 )
 
         if not self.is_infer_stage:
