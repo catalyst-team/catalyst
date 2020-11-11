@@ -25,7 +25,7 @@ def _pack_runner(runner: "IRunner"):
         scheduler=runner.scheduler,
         epoch_metrics=dict(runner.epoch_metrics),
         valid_metrics=dict(runner.valid_metrics),
-        stage_name=runner.stage,
+        stage=runner.stage,
         epoch=runner.epoch,
         loader_name=runner.loader_key,
         loader_step=runner.loader_batch_step,
@@ -66,7 +66,7 @@ def _load_checkpoint(
     checkpoint = load_checkpoint(filename)
 
     if not runner.stage.startswith("infer") and load_full:
-        runner.stage = checkpoint["stage_name"]
+        runner.stage = checkpoint["stage"]
         runner.epoch = checkpoint["epoch"]
         runner.global_epoch = checkpoint["global_epoch"]
         # @TODO: should we also load,
@@ -86,7 +86,7 @@ def _load_checkpoint(
             f"loaded state checkpoint {filename} "
             f"(global epoch {checkpoint['global_epoch']}, "
             f"epoch {checkpoint['epoch']}, "
-            f"stage {checkpoint['stage_name']})"
+            f"stage {checkpoint['stage']})"
         )
     else:
         unpack_checkpoint(
@@ -373,12 +373,12 @@ class CheckpointCallback(BaseCheckpointCallback):
 
         Args:
             checkpoint: checkpoint dict,
-                should contain ``stage_name`` and ``epoch`` keys.
+                should contain ``stage`` and ``epoch`` keys.
 
         Returns:
             str: checkpoint suffix
         """
-        result = f"{checkpoint['stage_name']}.{checkpoint['epoch']}"
+        result = f"{checkpoint['stage']}.{checkpoint['epoch']}"
         return result
 
     def process_metrics(self, last_valid_metrics: Dict[str, float]) -> Dict:
@@ -735,13 +735,13 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
 
         Args:
             checkpoint: checkpoint dict,
-                should contain ``stage_name`` and ``epoch`` keys.
+                should contain ``stage`` and ``epoch`` keys.
 
         Returns:
             str: checkpoint suffix
         """
         result = (
-            f"{checkpoint['stage_name']}."
+            f"{checkpoint['stage']}."
             f"epoch.{checkpoint['epoch']}."
             f"iter.{self._iteration_counter}"
         )

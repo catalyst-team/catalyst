@@ -283,11 +283,11 @@ class IRunner(ABC, ICallback, IRunnerLegacy):
     Stage info section
 
 
-    **runner.stage_name** - string, current stage name,\
+    **runner.stage** - string, current stage name,\
     for example,
     ::
 
-        runner.stage_name = "pretraining" / "training" / "finetuning" / etc
+        runner.stage = "pretraining" / "training" / "finetuning" / etc
 
     **runner.num_epochs** - int, maximum number of epochs, \
     required for this stage

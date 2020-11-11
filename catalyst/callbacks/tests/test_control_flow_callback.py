@@ -12,8 +12,8 @@ from catalyst.dl import Callback, CallbackOrder, ControlFlowCallback
 
 
 class _Runner:
-    def __init__(self, stage_name, loader_name, global_epoch, epoch):
-        self.stage_name = stage_name
+    def __init__(self, stage, loader_name, global_epoch, epoch):
+        self.stage = stage
         self.loader_name = loader_name
         self.global_epoch = global_epoch
         self.epoch = epoch
@@ -448,7 +448,7 @@ class TestControlFlowCallback(unittest.TestCase):
             )
 
     def test_filter_fn_with_wrong_args(self):
-        runner = Mock(stage_name="stage1", loader_name="train", epoch=1)
+        runner = Mock(stage="stage1", loader_name="train", epoch=1)
         orders = (
             CallbackOrder.Internal,
             CallbackOrder.Metric,
@@ -504,7 +504,7 @@ class TestControlFlowCallback(unittest.TestCase):
                     wrapper.__getattribute__(event)(runner)
 
     def test_filter_fn_with_eval(self):
-        runner = Mock(stage_name="stage1", loader_name="train", epoch=1)
+        runner = Mock(stage="stage1", loader_name="train", epoch=1)
         orders = (
             CallbackOrder.Internal,
             CallbackOrder.Metric,
