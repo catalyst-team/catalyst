@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>[WIP] TPU training &mdash; Catalyst 20.11 documentation</title>
+  <title>TPU training &mdash; Catalyst 20.11 documentation</title>
   
 
   
@@ -214,11 +214,11 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lr_finder.html">[WIP] Learning Rate Finder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="dp.html">[WIP] DataParallel training (single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="amp.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ddp.html">Distributed training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="slurm.html">Slurm training</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">[WIP] TPU training</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">TPU training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="early_stopping.html">Early stopping</a></li>
 <li class="toctree-l1"><a class="reference internal" href="checkpointing.html">Model checkpointing</a></li>
@@ -230,7 +230,7 @@
 <li class="toctree-l1"><a class="reference internal" href="config_api.html">[WIP] Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optuna.html">Optuna integration</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contributing guide</span></p>
+<p class="caption"><span class="caption-text">Contribution guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
@@ -290,7 +290,7 @@
       </li>
 
         
-      <li>[WIP] TPU training</li>
+      <li>TPU training</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -322,12 +322,59 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <div class="section" id="wip-tpu-training">
-<h1>[WIP] TPU training<a class="headerlink" href="#wip-tpu-training" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p>How to run Catalyst experiments on TPU?</p></li>
-</ul>
+  <div class="section" id="tpu-training">
+<h1>TPU training<a class="headerlink" href="#tpu-training" title="Permalink to this headline">¶</a></h1>
+<p>Catalyst support TPU backend for your deep learning experiments.</p>
+<p>To use TPU support you firstly need to install it with,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">VERSION</span> <span class="o">=</span> <span class="s2">&quot;1.5&quot;</span>  <span class="c1"># possible version: [&quot;1.5&quot; , &quot;20200325&quot;, &quot;nightly&quot;]</span>
+!curl https://raw.githubusercontent.com/pytorch/xla/master/contrib/scripts/env-setup.py -o pytorch-xla-env-setup.py &gt; /dev/null
+!python pytorch-xla-env-setup.py --version <span class="nv">$VERSION</span> &gt; /dev/null
+</pre></div>
+</div>
+<div class="section" id="notebook-api">
+<h2>Notebook API<a class="headerlink" href="#notebook-api" title="Permalink to this headline">¶</a></h2>
+<p>Because of the PyTorch - TPU design,
+you need to specify the running device and transfer your experiment components on it <strong>before</strong> the experiment run.</p>
+<p>Here is a simple example of classification pipeline on TPU:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span><span class="p">,</span> <span class="n">utils</span>
+
+<span class="c1"># sample data</span>
+<span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">,</span> <span class="n">num_classes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">),</span> <span class="mi">4</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="p">)</span> <span class="o">*</span> <span class="n">num_classes</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+
+<span class="c1"># pytorch loaders</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">}</span>
+
+<span class="c1"># device (TPU &gt; GPU &gt; CPU)</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_device</span><span class="p">()</span>  <span class="c1"># &lt;--- TPU device will be selected here</span>
+<span class="c1"># we need to specify the device **before** the experiment run.</span>
+
+<span class="c1"># model, criterion, optimizer, scheduler</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+
+<span class="c1"># model training</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">(</span><span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
+    <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir&quot;</span><span class="p">,</span>
+    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">dl</span><span class="o">.</span><span class="n">AccuracyCallback</span><span class="p">(</span><span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">)]</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>You could also check out the example above in <a class="reference external" href="https://colab.research.google.com/drive/1AhvNzTRb3gd3AYhzUfm3dzw8TddlsfhD?usp=sharing">this Google Colab notebook</a></p>
 <p>If you haven’t found the answer for your question, feel free to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for the discussion.</p>
+</div>
 </div>
 
 
@@ -369,7 +416,10 @@
           <div class="catalyst-right-menu" id="catalyst-right-menu">
             <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
               <ul>
-<li><a class="reference internal" href="#">[WIP] TPU training</a></li>
+<li><a class="reference internal" href="#">TPU training</a><ul>
+<li><a class="reference internal" href="#notebook-api">Notebook API</a></li>
+</ul>
+</li>
 </ul>
 
             </div>

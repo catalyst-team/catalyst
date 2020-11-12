@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>[WIP] DataParallel training (single/multi-gpu) &mdash; Catalyst 20.11 documentation</title>
+  <title>DataParallel training (cpu, single/multi-gpu) &mdash; Catalyst 20.11 documentation</title>
   
 
   
@@ -214,11 +214,11 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lr_finder.html">[WIP] Learning Rate Finder</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">[WIP] DataParallel training (single/multi-gpu)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">DataParallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="amp.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ddp.html">Distributed training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="slurm.html">Slurm training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tpu.html">[WIP] TPU training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tpu.html">TPU training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="early_stopping.html">Early stopping</a></li>
 <li class="toctree-l1"><a class="reference internal" href="checkpointing.html">Model checkpointing</a></li>
@@ -230,7 +230,7 @@
 <li class="toctree-l1"><a class="reference internal" href="config_api.html">[WIP] Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optuna.html">Optuna integration</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contributing guide</span></p>
+<p class="caption"><span class="caption-text">Contribution guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
@@ -290,7 +290,7 @@
       </li>
 
         
-      <li>[WIP] DataParallel training (single/multi-gpu)</li>
+      <li>DataParallel training (cpu, single/multi-gpu)</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -322,9 +322,74 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <div class="section" id="wip-dataparallel-training-single-multi-gpu">
-<h1>[WIP] DataParallel training (single/multi-gpu)<a class="headerlink" href="#wip-dataparallel-training-single-multi-gpu" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="dataparallel-training-cpu-single-multi-gpu">
+<h1>DataParallel training (cpu, single/multi-gpu)<a class="headerlink" href="#dataparallel-training-cpu-single-multi-gpu" title="Permalink to this headline">¶</a></h1>
+<p>By framework design, Catalyst tries to use all visible GPUs of your machine.
+Nevertheless, thanks to Nvidia CUDA design,
+it’s easy to handle GPUs visibility with <code class="docutils literal notranslate"><span class="pre">CUDA_VISIBLE_DEVICES</span></code> flag.</p>
+<div class="section" id="cpu-training">
+<h2>CPU training<a class="headerlink" href="#cpu-training" title="Permalink to this headline">¶</a></h2>
+<p>If you don’t want to use GPUs at all you could set <code class="docutils literal notranslate"><span class="pre">CUDA_VISIBLE_DEVICES=&quot;&quot;</span></code>.</p>
+<p>For Notebook API case, do the following <strong>before</strong> your experiment code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CUDA_VISIBLE_DEVICES&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+</pre></div>
+</div>
+<p>For Config API case, it is a bit easier:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_VISIBLE_DEVICES</span><span class="o">=</span><span class="s2">&quot;&quot;</span> catalyst-dl run -C<span class="o">=</span>/path/to/configs
+</pre></div>
+</div>
+</div>
+<div class="section" id="single-gpu-training">
+<h2>Single GPU training<a class="headerlink" href="#single-gpu-training" title="Permalink to this headline">¶</a></h2>
+<p>If you would like to use only one specific GPU during your experiments…</p>
+<p>For Notebook API case, do the following <strong>before</strong> your experiment code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CUDA_VISIBLE_DEVICES&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;0&quot;</span> <span class="c1"># or &quot;1&quot;, &quot;2&quot; - index of the GPU</span>
+</pre></div>
+</div>
+<p>The same case for Config API:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_VISIBLE_DEVICES</span><span class="o">=</span><span class="s2">&quot;0&quot;</span> catalyst-dl run -C<span class="o">=</span>/path/to/configs
+</pre></div>
+</div>
+</div>
+<div class="section" id="multi-gpu-training">
+<h2>Multi GPU training<a class="headerlink" href="#multi-gpu-training" title="Permalink to this headline">¶</a></h2>
+<p>Multi GPU case is quite similar with Single GPU one.</p>
+<p>For Notebook API case, do the following <strong>before</strong> your experiment code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CUDA_VISIBLE_DEVICES&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;0,1&quot;</span> <span class="c1"># or &quot;1,2,3&quot;</span>
+</pre></div>
+</div>
+<p>The same case for Config API:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_VISIBLE_DEVICES</span><span class="o">=</span><span class="s2">&quot;0,1&quot;</span> catalyst-dl run -C<span class="o">=</span>/path/to/configs
+</pre></div>
+</div>
+</div>
+<div class="section" id="nvidia-smi">
+<h2>Nvidia SMI<a class="headerlink" href="#nvidia-smi" title="Permalink to this headline">¶</a></h2>
+<p>Rather that use GPU indexing, you could also pass their <code class="docutils literal notranslate"><span class="pre">UUID</span></code> to the <code class="docutils literal notranslate"><span class="pre">CUDA_VISIBLE_DEVICES</span></code>.
+To list them, do the following (with example output from my server):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nvidia-smi -L
+&gt;&gt;&gt; GPU <span class="m">0</span>: GeForce GTX <span class="m">1080</span> Ti <span class="o">(</span>UUID: GPU-62b307fa-ef1b-c0a8-0bb4-7311cce714a8<span class="o">)</span>
+&gt;&gt;&gt; GPU <span class="m">1</span>: GeForce GTX <span class="m">1080</span> Ti <span class="o">(</span>UUID: GPU-2c0d0e85-119e-a260-aed1-49071fc502bc<span class="o">)</span>
+&gt;&gt;&gt; GPU <span class="m">2</span>: GeForce GTX <span class="m">1080</span> Ti <span class="o">(</span>UUID: GPU-7269b4ac-2190-762c-dc34-fa144b1751f9<span class="o">)</span>
+<span class="c1"># Here we could see GPU indices and their UUIDs.</span>
+</pre></div>
+</div>
+<p>With this info, it’s also valid to specify GPU by their UUIDs.</p>
+<p>For Notebook API:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;CUDA_VISIBLE_DEVICES&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;GPU-62b307fa-ef1b-c0a8-0bb4-7311cce714a8&quot;</span>
+</pre></div>
+</div>
+<p>For Config API:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">CUDA_VISIBLE_DEVICES</span><span class="o">=</span><span class="s2">&quot;GPU-62b307fa-ef1b-c0a8-0bb4-7311cce714a8&quot;</span> <span class="se">\</span>
+    catalyst-dl run -C<span class="o">=</span>/path/to/configs
+</pre></div>
+</div>
 <p>If you haven’t found the answer for your question, feel free to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for the discussion.</p>
+</div>
 </div>
 
 
@@ -366,7 +431,13 @@
           <div class="catalyst-right-menu" id="catalyst-right-menu">
             <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
               <ul>
-<li><a class="reference internal" href="#">[WIP] DataParallel training (single/multi-gpu)</a></li>
+<li><a class="reference internal" href="#">DataParallel training (cpu, single/multi-gpu)</a><ul>
+<li><a class="reference internal" href="#cpu-training">CPU training</a></li>
+<li><a class="reference internal" href="#single-gpu-training">Single GPU training</a></li>
+<li><a class="reference internal" href="#multi-gpu-training">Multi GPU training</a></li>
+<li><a class="reference internal" href="#nvidia-smi">Nvidia SMI</a></li>
+</ul>
+</li>
 </ul>
 
             </div>
