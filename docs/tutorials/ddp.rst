@@ -18,7 +18,6 @@ For instance, here is a minimal script that trains a linear regression model.
 
     import torch
     from torch.utils.data import DataLoader, TensorDataset
-
     from catalyst.dl import SupervisedRunner
 
     # experiment setup
@@ -65,7 +64,6 @@ you can just pass ``distributed=True`` to ``.train`` call
 
     import torch
     from torch.utils.data import DataLoader, TensorDataset
-
     from catalyst.dl import SupervisedRunner
 
     # data
@@ -118,7 +116,6 @@ Let's make it more reusable:
 
     import torch
     from torch.utils.data import TensorDataset
-
     from catalyst.dl import SupervisedRunner
 
     # data
@@ -166,7 +163,6 @@ Yup, check this one, distributed training like a pro:
 
     import torch
     from torch.utils.data import TensorDataset
-
     from catalyst.dl import SupervisedRunner, utils
 
     def datasets_fn(num_features: int):
