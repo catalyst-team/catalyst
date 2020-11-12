@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>[WIP] Model checkpointing &mdash; Catalyst 20.10.1 documentation</title>
+  <title>Model checkpointing &mdash; Catalyst 20.11 documentation</title>
   
 
   
@@ -157,7 +157,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.10</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.11</a>
                 </div>
               
             
@@ -196,12 +196,10 @@
 <p class="caption"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">ML - Linear Regression</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Classification</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Segmentation</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - AutoEncoder</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Variational AutoEncoder</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Classification / Segmentation</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - AE / VAE</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - GAN</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP/DDP/TPU</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP / DDP / TPU</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">AutoML - Catalyst with Optuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
@@ -218,12 +216,12 @@
 <li class="toctree-l1"><a class="reference internal" href="lr_finder.html">[WIP] Learning Rate Finder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dp.html">[WIP] DataParallel training (single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="amp.html">Mixed precision training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ddp.html">[WIP] Distributed training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="slurm.html">[WIP] Slurm training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ddp.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="slurm.html">Slurm training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tpu.html">[WIP] TPU training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="early_stopping.html">Early stopping</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">[WIP] Model checkpointing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Model checkpointing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="debugging.html">Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inference.html">Inference</a></li>
@@ -292,7 +290,7 @@
       </li>
 
         
-      <li>[WIP] Model checkpointing</li>
+      <li>Model checkpointing</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -324,16 +322,72 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <div class="section" id="wip-model-checkpointing">
-<h1>[WIP] Model checkpointing<a class="headerlink" href="#wip-model-checkpointing" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="model-checkpointing">
+<h1>Model checkpointing<a class="headerlink" href="#model-checkpointing" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="experiment-checkpoints">
+<h2>Experiment checkpoints<a class="headerlink" href="#experiment-checkpoints" title="Permalink to this headline">¶</a></h2>
+<p>With the help of <code class="docutils literal notranslate"><span class="pre">CheckpointCallback</span></code>
+Catalyst creates the following checkpoints structure under selected <code class="docutils literal notranslate"><span class="pre">logdir</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>logdir/
+    code/ &lt;-- your experiment and catalyst code <span class="k">for</span> reproducibility --&gt;
+    checkpoints/ &lt;-- theme of the topic --&gt;
+        <span class="o">{</span>stage_name<span class="o">}</span>.<span class="o">{</span>epoch_index<span class="o">}</span>.pth &lt;-- topK checkpoints based on model selection logic --&gt;
+        best.pth &lt;-- best model based on specified model selection logic --&gt;
+        last.pth &lt;-- last model checkpoint in the whole experiment run --&gt;
+        &lt;-- the same checkpoints with <span class="sb">``</span>_full<span class="sb">``</span> prefix --&gt;
+    ...
+</pre></div>
+</div>
+<p>This checkpoint are pure PyTorch checkpoints without any mixins with the following structure:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>checkpoint.pth <span class="o">=</span> <span class="o">{</span>
+    <span class="s2">&quot;model_state_dict&quot;</span>: model.state_dict<span class="o">()</span>,
+    <span class="s2">&quot;criterion_state_dict&quot;</span>: criterion.state_dict<span class="o">()</span>,
+    <span class="s2">&quot;optimizer_state_dict&quot;</span>: optimizer.state_dict<span class="o">()</span>,
+    <span class="s2">&quot;scheduler_state_dict&quot;</span>: scheduler.state_dict<span class="o">()</span>,
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="full-checkpoints">
+<h2>Full checkpoints<a class="headerlink" href="#full-checkpoints" title="Permalink to this headline">¶</a></h2>
+<p>Catalyst saves 2 types of checkpoints:</p>
 <ul class="simple">
-<li><p>how to load bset model?</p></li>
-<li><p>notebook and config api</p></li>
-<li><p>how to save model?</p></li>
-<li><p>how to load model?</p></li>
-<li><p>whats the difference between checkpoint and checkpoint_full?</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{checkpoint}.pth</span></code> - which stores only model state dict and could be easily used for production purposes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{checkpoint}_full.pth</span></code> - which stores all state dicts for model(s), criterion(s), optimizer(s) and scheduler(s) and could be easily used for experiment analysis purposes.</p></li>
 </ul>
+</div>
+<div class="section" id="save-model">
+<h2>Save model<a class="headerlink" href="#save-model" title="Permalink to this headline">¶</a></h2>
+<p>Catalyst has a user-friendly utils to save the model:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Net</span><span class="p">()</span>
+<span class="n">checkpoint</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">pack_checkpoint</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;/path/to/logdir&quot;</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;my_checkpoint&quot;</span><span class="p">)</span>
+<span class="c1">#  now you could find your checkpoint under &quot;/path/to/logdir/my_checkpoint.pth&quot; location</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="load-model">
+<h2>Load model<a class="headerlink" href="#load-model" title="Permalink to this headline">¶</a></h2>
+<p>With Catalyst utils it’s very easy to load models after experiment run:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">Net</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">checkpoint</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="s2">&quot;/path/to/checkpoint&quot;</span><span class="p">)</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">unpack_checkpoint</span><span class="p">(</span>
+    <span class="n">checkpoint</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>In this case Catalyst would try to unpack requested state dicts from the checkpoint.</p>
 <p>If you haven’t found the answer for your question, feel free to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for the discussion.</p>
+</div>
 </div>
 
 
@@ -375,7 +429,13 @@
           <div class="catalyst-right-menu" id="catalyst-right-menu">
             <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
               <ul>
-<li><a class="reference internal" href="#">[WIP] Model checkpointing</a></li>
+<li><a class="reference internal" href="#">Model checkpointing</a><ul>
+<li><a class="reference internal" href="#experiment-checkpoints">Experiment checkpoints</a></li>
+<li><a class="reference internal" href="#full-checkpoints">Full checkpoints</a></li>
+<li><a class="reference internal" href="#save-model">Save model</a></li>
+<li><a class="reference internal" href="#load-model">Load model</a></li>
+</ul>
+</li>
 </ul>
 
             </div>

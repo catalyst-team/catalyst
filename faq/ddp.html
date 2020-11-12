@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>[WIP] Distributed training &mdash; Catalyst 20.10.1 documentation</title>
+  <title>Distributed training &mdash; Catalyst 20.11 documentation</title>
   
 
   
@@ -29,7 +29,7 @@
   <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="[WIP] Slurm training" href="slurm.html" />
+    <link rel="next" title="Slurm training" href="slurm.html" />
     <link rel="prev" title="Mixed precision training" href="amp.html" /> 
 
   
@@ -157,7 +157,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.10</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.11</a>
                 </div>
               
             
@@ -196,12 +196,10 @@
 <p class="caption"><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">ML - Linear Regression</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Classification</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Segmentation</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - AutoEncoder</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Variational AutoEncoder</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Classification / Segmentation</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - AE / VAE</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - GAN</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP/DDP/TPU</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP / DDP / TPU</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">AutoML - Catalyst with Optuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
@@ -218,12 +216,12 @@
 <li class="toctree-l1"><a class="reference internal" href="lr_finder.html">[WIP] Learning Rate Finder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dp.html">[WIP] DataParallel training (single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="amp.html">Mixed precision training</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">[WIP] Distributed training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="slurm.html">[WIP] Slurm training</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="slurm.html">Slurm training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tpu.html">[WIP] TPU training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="early_stopping.html">Early stopping</a></li>
-<li class="toctree-l1"><a class="reference internal" href="checkpointing.html">[WIP] Model checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="checkpointing.html">Model checkpointing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="debugging.html">Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inference.html">Inference</a></li>
@@ -292,7 +290,7 @@
       </li>
 
         
-      <li>[WIP] Distributed training</li>
+      <li>Distributed training</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -324,13 +322,133 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <div class="section" id="wip-distributed-training">
-<h1>[WIP] Distributed training<a class="headerlink" href="#wip-distributed-training" title="Permalink to this headline">¶</a></h1>
-<ul class="simple">
-<li><p>How to run experiments in distributed mode?</p></li>
-<li><p>(?) How to collect metrics in distributed mode in the right way?</p></li>
-</ul>
+  <div class="section" id="distributed-training">
+<h1>Distributed training<a class="headerlink" href="#distributed-training" title="Permalink to this headline">¶</a></h1>
+<p>Catalyst supports automatic experiments scaling with distributed training support.</p>
+<div class="section" id="notebook-api">
+<h2>Notebook API<a class="headerlink" href="#notebook-api" title="Permalink to this headline">¶</a></h2>
+<p>Suppose you have the following pipeline with Linear Regression:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">SupervisedRunner</span>
+
+<span class="c1"># experiment setup</span>
+<span class="n">logdir</span> <span class="o">=</span> <span class="s2">&quot;./logdir&quot;</span>
+<span class="n">num_epochs</span> <span class="o">=</span> <span class="mi">8</span>
+
+<span class="c1"># data</span>
+<span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">}</span>
+
+<span class="c1"># model, criterion, optimizer, scheduler</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+<span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+
+<span class="c1"># model training</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
+    <span class="n">logdir</span><span class="o">=</span><span class="n">logdir</span><span class="p">,</span>
+    <span class="n">num_epochs</span><span class="o">=</span><span class="n">num_epochs</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>For correct DDP training, you need to split your dataset creation from the main training.
+In this way Catalyst could easily transfer your datasets to the distributed mode
+and there would be no data re-creation on each worker.</p>
+<p>As a best practice scenario for this case:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">TensorDataset</span>
+<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">SupervisedRunner</span><span class="p">,</span> <span class="n">utils</span>
+
+<span class="k">def</span> <span class="nf">datasets_fn</span><span class="p">(</span><span class="n">num_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="n">num_features</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="p">}</span>
+
+<span class="k">def</span> <span class="nf">train</span><span class="p">():</span>
+    <span class="n">num_features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
+    <span class="c1"># model, criterion, optimizer, scheduler</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
+    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+    <span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
+    <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+        <span class="n">datasets</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">&quot;batch_size&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+            <span class="s2">&quot;num_workers&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;get_datasets_fn&quot;</span><span class="p">:</span> <span class="n">datasets_fn</span><span class="p">,</span>
+            <span class="s2">&quot;num_features&quot;</span><span class="p">:</span> <span class="n">num_features</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+        <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+        <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
+        <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logs/example_3&quot;</span><span class="p">,</span>
+        <span class="n">num_epochs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">distributed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<span class="n">utils</span><span class="o">.</span><span class="n">distributed_cmd_run</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="config-api">
+<h2>Config API<a class="headerlink" href="#config-api" title="Permalink to this headline">¶</a></h2>
+<p>To run Catalyst experiments in the DDP-mode,
+the only thing you need to do for the Config API - pass required flag to the <code class="docutils literal notranslate"><span class="pre">run</span></code> command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>catalyst-dl run -C<span class="o">=</span>/path/to/configs --distributed
+</pre></div>
+</div>
+</div>
+<div class="section" id="launch-your-training">
+<h2>Launch your training<a class="headerlink" href="#launch-your-training" title="Permalink to this headline">¶</a></h2>
+<p>In your terminal,
+type the following line (adapt <cite>script_name</cite> to your script name ending with .py).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python <span class="o">{</span>script_name<span class="o">}</span>
+</pre></div>
+</div>
+<p>You can vary availble GPUs with <code class="docutils literal notranslate"><span class="pre">CUDA_VIBIBLE_DEVICES</span></code> option, for example,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># run only on 1st and 2nd GPUs</span>
+<span class="nv">CUDA_VISIBLE_DEVICES</span><span class="o">=</span><span class="s2">&quot;1,2&quot;</span> python <span class="o">{</span>script_name<span class="o">}</span>
+</pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># run only on 0, 1st and 3rd GPUs</span>
+<span class="nv">CUDA_VISIBLE_DEVICES</span><span class="o">=</span><span class="s2">&quot;0,1,3&quot;</span> python <span class="o">{</span>script_name<span class="o">}</span>
+</pre></div>
+</div>
+<p>What will happen is that the same model will be copied on all your available GPUs.
+During training, the full dataset will randomly be split between the GPUs
+(that will change at each epoch).
+Each GPU will grab a batch (on that fractioned dataset),
+pass it through the model, compute the loss then back-propagate the gradients.
+Then they will share their results and average them,
+which means like your training is the equivalent of a training
+with a batch size of <code class="docutils literal notranslate"><span class="pre">`batch_size</span> <span class="pre">x</span> <span class="pre">num_gpus</span></code>
+(where <code class="docutils literal notranslate"><span class="pre">batch_size</span></code> is what you used in your script).</p>
+<p>Since they all have the same gradients at this stage,
+they will al perform the same update,
+so the models will still be the same after this step.
+Then training continues with the next batch,
+until the number of desired iterations is done.</p>
+<p>During training Catalyst will automatically average all metrics
+and log them on <code class="docutils literal notranslate"><span class="pre">Master</span></code> node only. Same logic used for model checkpointing.</p>
 <p>If you haven’t found the answer for your question, feel free to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for the discussion.</p>
+</div>
 </div>
 
 
@@ -341,7 +459,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="slurm.html" class="btn btn-neutral float-right" title="[WIP] Slurm training" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="slurm.html" class="btn btn-neutral float-right" title="Slurm training" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
         <a href="amp.html" class="btn btn-neutral" title="Mixed precision training" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
@@ -372,7 +490,12 @@
           <div class="catalyst-right-menu" id="catalyst-right-menu">
             <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
               <ul>
-<li><a class="reference internal" href="#">[WIP] Distributed training</a></li>
+<li><a class="reference internal" href="#">Distributed training</a><ul>
+<li><a class="reference internal" href="#notebook-api">Notebook API</a></li>
+<li><a class="reference internal" href="#config-api">Config API</a></li>
+<li><a class="reference internal" href="#launch-your-training">Launch your training</a></li>
+</ul>
+</li>
 </ul>
 
             </div>
