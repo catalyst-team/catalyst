@@ -8,6 +8,26 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [YY.MM.R] - YYYY-MM-DD
 
 ### Added
+
+- 
+
+### Changed
+
+- 
+
+### Removed
+
+- 
+
+### Fixed
+
+- 
+
+
+
+## [20.11] - 2020-11-12
+
+### Added
 - DCG, nDCG metrics ([#881](https://github.com/catalyst-team/catalyst/pull/881))
 - MAP calculations [#968](https://github.com/catalyst-team/catalyst/pull/968) 
 - hitrate calculations [#975] (https://github.com/catalyst-team/catalyst/pull/975)
