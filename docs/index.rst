@@ -6,7 +6,7 @@ Catalyst
     :alt: Catalyst logo
 
 
-PyTorch framework for Deep Learning research and development.
+PyTorch framework for Deep Learning R&D.
 --------------------------------------------------------------------------------
 
 It focuses on reproducibility, rapid experimentation, and codebase reuse
@@ -265,7 +265,7 @@ Indices and tables
 
 
 .. toctree::
-    :caption: Contributing guide
+    :caption: Contribution guide
     :maxdepth: 2
     :hidden:
 
