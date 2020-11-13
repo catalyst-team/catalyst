@@ -16,7 +16,7 @@ def test_dcg():
     y_pred = np.arange(3, -1, -1)
 
     dcg_at4 = metrics.dcg(
-        torch.tensor([y_pred]), torch.tensor([y_true]), gain_function="rank"
+        torch.tensor([y_pred]), torch.tensor([y_true]), gain_function="linear_rank"
     )
     assert torch.isclose(dcg_at4, torch.tensor(4.261), atol=0.05)
 
@@ -24,7 +24,7 @@ def test_dcg():
     y_pred = np.arange(3, -1, -1)
 
     dcg_at4 = metrics.dcg(
-        torch.tensor([y_pred]), torch.tensor([y_true]), gain_function="rank"
+        torch.tensor([y_pred]), torch.tensor([y_true]), gain_function="linear_rank"
     )
     assert torch.isclose(dcg_at4, torch.tensor(4.631), atol=0.05)
 
@@ -32,7 +32,7 @@ def test_dcg():
     y_pred = np.arange(9, -1, -1)
 
     dcg_at10 = metrics.dcg(
-        torch.tensor([y_pred]), torch.tensor([y_true]), gain_function="rank"
+        torch.tensor([y_pred]), torch.tensor([y_true]), gain_function="linear_rank"
     )
 
     assert torch.isclose(dcg_at10, torch.tensor(9.61), atol=0.05)
@@ -64,10 +64,10 @@ def test_sample_ndcg():
     outputs = torch.Tensor([y_pred])
     targets = torch.Tensor([y_true])
 
-    true_ndcg_at2 = torch.tensor(1.0 / (1.0 + 1 / math.log2(3)))
+    true_ndcg_at2 = (1.0 / (1.0 + 1 / math.log2(3)))
     comp_ndcg_at2 = metrics.ndcg(outputs, targets, top_k=[2])[0]
 
-    assert torch.isclose(true_ndcg_at2, comp_ndcg_at2)
+    assert np.isclose(true_ndcg_at2, comp_ndcg_at2)
 
 
     y_pred1 = [0.5, 0.2, 0.1]
@@ -78,7 +78,8 @@ def test_sample_ndcg():
     outputs = torch.Tensor([y_pred1, y_pred2])
     targets = torch.Tensor([y_true1, y_true2])
 
-    true_ndcg_at2 = torch.tensor(1.0 / (1.0 + 1 / math.log2(3)))
+    true_ndcg_at2 = (1.0 / (1.0 + 1 / math.log2(3)))
     comp_ndcg_at2 = metrics.ndcg(outputs, targets, top_k=[2])[0]
+    print("comp_ndcg", comp_ndcg_at2)
 
-    assert torch.isclose(true_ndcg_at2, comp_ndcg_at2)
+    assert np.isclose(true_ndcg_at2, comp_ndcg_at2)

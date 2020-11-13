@@ -380,16 +380,16 @@ def check_consistent_length(*tesors):
                          " samples: %r" % [int(l) for l in lengths])
 
 def get_top_k(recsys_metric_at_k_gen: Generator) -> Tuple[float]:
-    
+    '''
+    tuple(recsys_metric_at_k_gen for k in range(k))
+    Optioanlly return Python scalar with : map(lambda x: x.item(),
+    '''
     map_k_tuple = tuple(
-        map(lambda x: x.item(),
+        map(lambda x: x.float(),
         recsys_metric_at_k_gen
         )
     )
 
-    '''
-        tuple(recsys_metric_at_k_gen for k in range(k))
-    '''
     return map_k_tuple
 
 def wrap_class_metric2dict(
