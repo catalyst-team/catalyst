@@ -11,7 +11,7 @@ def test_reciprocal_rank():
     # # check 0 simple case
     y_pred = [0.5, 0.2]
     y_true = [1.0, 0.0]
-    k = 2 
+    k = 2
     value = reciprocal_rank_at_k(
         torch.Tensor([y_pred]),
         torch.Tensor([y_true]),
@@ -22,27 +22,27 @@ def test_reciprocal_rank():
     # check 1 simple case
     y_pred = [0.5, 0.2]
     y_true = [0.0, 1.0]
-    k = 2 
+    k = 2
 
     value = reciprocal_rank_at_k(
         torch.Tensor([y_pred]),
         torch.Tensor([y_true]),
         k
     )
-    
+
     assert value[0][0] == 0.5
-    
+
 
     # check 2 simple case
     y_pred = [0.2, 0.5]
     y_true = [0.0, 1.0]
-    k = 2 
+    k = 2
 
     value = reciprocal_rank_at_k(
         torch.Tensor([y_pred]),
         torch.Tensor([y_true]),
         k
-        )
+    )
     assert value[0][0] == 1.0
 
     # check 3 test multiple users
@@ -65,7 +65,7 @@ def test_reciprocal_rank():
     y_true1 = [0, 0, 1.0, 1.0]
     y_true2 = [0, 0, 1.0, 1.0]
     k = 3
-    
+
     y_pred_torch = torch.Tensor([y_pred1, y_pred2])
     y_true_torch = torch.Tensor([y_true1, y_true2])
 
@@ -85,7 +85,7 @@ def test_reciprocal_rank():
     y_true1 = [0, 0, 1.0, 1.0]
     y_true2 = [0, 0, 1.0, 1.0]
     k = 1
-    
+
     y_pred_torch = torch.Tensor([y_pred1, y_pred2])
     y_true_torch = torch.Tensor([y_true1, y_true2])
 
@@ -98,6 +98,7 @@ def test_reciprocal_rank():
     assert value[0][0] == 0.0
     assert value[1][0] == 1.0
 
+
 def test_mrr():
     '''
     Test mrr
@@ -107,7 +108,7 @@ def test_mrr():
     y_pred2 = [1.0, 2.0, 3.0, 4.0]
     y_true1 = [0, 0, 1.0, 1.0]
     y_true2 = [0, 0, 1.0, 1.0]
-    k_list = [1,3]
+    k_list = [1, 3]
 
     y_pred_torch = torch.Tensor([y_pred1, y_pred2])
     y_true_torch = torch.Tensor([y_true1, y_true2])

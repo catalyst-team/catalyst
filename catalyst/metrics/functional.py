@@ -87,7 +87,7 @@ def process_recsys(
 ) -> torch.Tensor:
     """
     General pre-processing for calculation recsys metrics
-    
+
         Args:
         outputs (torch.Tensor):
             Tensor weith predicted score
@@ -104,7 +104,7 @@ def process_recsys(
     """
     outputs_order = torch.argsort(outputs, descending=True, dim=-1)
     targets_sorted_by_outputs = torch.gather(
-        targets, dim=-1, index= outputs_order
+        targets, dim=-1, index=outputs_order
     )
     return targets_sorted_by_outputs[:, :k]
 
@@ -206,6 +206,7 @@ def get_binary_statistics(
     tp = ((outputs == label) * (targets == label)).to(torch.long).sum()
     support = (targets == label).to(torch.long).sum()
     return tn, fp, fn, tp, support
+
 
 def get_multiclass_statistics(
     outputs: Tensor,
@@ -363,6 +364,7 @@ def get_default_topk_args(num_classes: int) -> Sequence[int]:
 
     return result
 
+
 def check_consistent_length(*tesors):
     """Check that all arrays have consistent first dimensions.
     Checks whether all objects in arrays have the same shape or length.
@@ -373,11 +375,12 @@ def check_consistent_length(*tesors):
 
     TO-DO: write tests for the mehtod.
     """
-    lengths = [X.size(0)*X.size(1)for X in tensors]
+    lengths = [X.size(0) * X.size(1)for X in tensors]
     uniques = np.unique(lengths)
     if len(uniques) > 1:
         raise ValueError("Found input variables with inconsistent numbers of"
                          " samples: %r" % [int(l) for l in lengths])
+
 
 def get_top_k(recsys_metric_at_k_gen: Generator) -> Tuple[float]:
     '''
@@ -385,8 +388,9 @@ def get_top_k(recsys_metric_at_k_gen: Generator) -> Tuple[float]:
     Optioanlly return Python scalar with : map(lambda x: x.item(),
     '''
     map_k_tuple = tuple(
-        map(lambda tensor: tensor.float(),
-        recsys_metric_at_k_gen
+        map(
+            lambda tensor: tensor.float(),
+            recsys_metric_at_k_gen
         )
     )
     print("tuple", map_k_tuple)

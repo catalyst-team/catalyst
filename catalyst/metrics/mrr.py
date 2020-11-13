@@ -9,8 +9,8 @@ from catalyst.metrics.functional import process_recsys, get_top_k
 
 
 def reciprocal_rank_at_k(
-    outputs: torch.Tensor, 
-    targets: torch.Tensor, 
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
     k: int
 ) -> torch.Tensor:
     """
@@ -49,8 +49,8 @@ def reciprocal_rank_at_k(
 
 
 def mrr(
-    outputs: torch.Tensor, 
-    targets: torch.Tensor, 
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
     top_k: List[int]
 ) -> Tuple[float]:
     """
@@ -81,8 +81,10 @@ def mrr(
         mrr_score (torch.Tensor):
             The mrr score for each batch.
     """
-    
-    mrr_generator = (torch.mean(reciprocal_rank_at_k(outputs, targets, k)) for k in top_k)
+
+    mrr_generator = (
+        torch.mean(reciprocal_rank_at_k(outputs, targets, k)) for k in top_k
+    )
     mrr_at_k = get_top_k(mrr_generator)
     return mrr_at_k
 

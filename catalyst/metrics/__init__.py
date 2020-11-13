@@ -14,7 +14,10 @@ from catalyst.metrics.classification import precision_recall_fbeta_support
 
 from catalyst.metrics.accuracy import accuracy, multi_label_accuracy
 from catalyst.metrics.auc import auc
-from catalyst.metrics.avg_precision import avg_precision_at_k, mean_avg_precision
+from catalyst.metrics.avg_precision import (
+    avg_precision_at_k,
+    mean_avg_precision
+)
 from catalyst.metrics.cmc_score import cmc_score, cmc_score_count
 from catalyst.metrics.dice import dice, calculate_dice
 from catalyst.metrics.f1_score import f1_score, fbeta_score
