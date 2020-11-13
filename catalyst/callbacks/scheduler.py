@@ -5,6 +5,7 @@ import torch
 
 from catalyst.contrib.nn.schedulers import BatchScheduler, OneCycleLRWithWarmup
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.utils.misc import get_attr
 from catalyst.utils.torch import get_optimizer_momentum
 
 if TYPE_CHECKING:
@@ -173,8 +174,8 @@ class SchedulerCallback(ISchedulerCallback):
         """
         self.reduced_metric = self.reduced_metric or runner.main_metric
 
-        scheduler = runner.get_attr(
-            key="scheduler", inner_key=self.scheduler_key
+        scheduler = get_attr(
+            runner, key="scheduler", inner_key=self.scheduler_key
         )
         assert scheduler is not None
         self._scheduler = scheduler
@@ -297,8 +298,8 @@ class ILRUpdater(ABC, Callback):
         Args:
             runner: current runner
         """
-        optimizer = runner.get_attr(
-            key="optimizer", inner_key=self.optimizer_key
+        optimizer = get_attr(
+            runner, key="optimizer", inner_key=self.optimizer_key
         )
         assert optimizer is not None
         self._optimizer = optimizer

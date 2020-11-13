@@ -146,7 +146,7 @@ class ConfusionMatrixCallback(Callback):
         if runner.distributed_rank <= 0:
             tb_callback = runner.callbacks[self.tensorboard_callback_name]
             self._plot_confusion_matrix(
-                logger=tb_callback.loggers[runner.loader_name],
+                logger=tb_callback.loggers[runner.loader_key],
                 epoch=runner.global_epoch,
                 confusion_matrix=confusion_matrix,
                 class_names=class_names,

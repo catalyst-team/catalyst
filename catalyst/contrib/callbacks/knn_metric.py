@@ -203,7 +203,7 @@ class KNNMetricCallback(Callback):
             "labels": self.targets,
         }
 
-        self.sets[runner.loader_name] = s
+        self.sets[runner.loader_key] = s
 
         y_true, y_pred = self._knn(s)
 

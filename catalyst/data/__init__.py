@@ -10,7 +10,11 @@ from catalyst.data.dataset import (
     MetricLearningTrainDataset,
     QueryGalleryDataset,
 )
-from catalyst.data.loader import BatchLimitLoaderWrapper
+from catalyst.data.loader import (
+    ILoaderWrapper,
+    BatchLimitLoaderWrapper,
+    BatchPrefetchLoaderWrapper,
+)
 from catalyst.data.reader import (
     ReaderSpec,
     ScalarReader,
