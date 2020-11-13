@@ -9,6 +9,7 @@ from catalyst.contrib.callbacks.confusion_matrix_logger import (
     ConfusionMatrixCallback,
 )
 from catalyst.contrib.callbacks.cutmix_callback import CutmixCallback
+from catalyst.contrib.callbacks.draw_masks_callback import DrawMasksCallback
 from catalyst.contrib.callbacks.gradnorm_logger import GradNormLogger
 from catalyst.contrib.callbacks.inference_callback import InferCallback
 from catalyst.contrib.callbacks.knn_metric import KNNMetricCallback
