@@ -68,3 +68,17 @@ def test_sample_ndcg():
     comp_ndcg_at2 = metrics.ndcg(outputs, targets, top_k=[2])[0]
 
     assert torch.isclose(true_ndcg_at2, comp_ndcg_at2)
+
+
+    y_pred1 = [0.5, 0.2, 0.1]
+    y_pred2 = [0.5, 0.2, 0.1]
+    y_true1 = [1.0, 0.0, 1.0]
+    y_true2 = [1.0, 0.0, 1.0]
+
+    outputs = torch.Tensor([y_pred1, y_pred2])
+    targets = torch.Tensor([y_true1, y_true2])
+
+    true_ndcg_at2 = torch.tensor(1.0 / (1.0 + 1 / math.log2(3)))
+    comp_ndcg_at2 = metrics.ndcg(outputs, targets, top_k=[2])[0]
+
+    assert torch.isclose(true_ndcg_at2, comp_ndcg_at2)

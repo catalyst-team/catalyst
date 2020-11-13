@@ -363,9 +363,28 @@ def get_default_topk_args(num_classes: int) -> Sequence[int]:
 
     return result
 
-def get_top_k(recsys_metric_at_k_gen: Generator, top_k: List[int]) -> Tuple:
+def check_consistent_length(*tesors):
+    """Check that all arrays have consistent first dimensions.
+    Checks whether all objects in arrays have the same shape or length.
+    Parameters
+    ----------
+    *tensors : list or tensores of input objects.
+        Objects that will be checked for consistent length.
+
+    TO-DO: write tests for the mehtod.
+    """
+    lengths = [X.size(0)*X.size(1)for X in tensors]
+    uniques = np.unique(lengths)
+    if len(uniques) > 1:
+        raise ValueError("Found input variables with inconsistent numbers of"
+                         " samples: %r" % [int(l) for l in lengths])
+
+def get_top_k(recsys_metric_at_k_gen: Generator) -> Tuple[float]:
+    
     map_k_tuple = tuple(
-        recsys_metric_at_k_gen for k in top_k
+        map(lambda x: x.item(),
+        recsys_metric_at_k_gen
+        )
     )
 
     '''
