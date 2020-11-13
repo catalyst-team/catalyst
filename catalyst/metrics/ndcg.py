@@ -109,7 +109,7 @@ def ndcg(
         idcg_mask = ideal_dcgs == 0
         ndcg_score[idcg_mask] = 0.0
         return ndcg_score
-    
+
     ndcg_generator = (
         torch.mean(_ndcg(k)) for k in top_k
     )

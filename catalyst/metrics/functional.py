@@ -80,6 +80,7 @@ def process_multiclass_components(
 
     return outputs, targets, num_classes
 
+
 def process_recsys(
     outputs: torch.Tensor,
     targets: torch.Tensor,
@@ -379,7 +380,7 @@ def check_consistent_length(*tesors):
     uniques = np.unique(lengths)
     if len(uniques) > 1:
         raise ValueError("Found input variables with inconsistent numbers of"
-                         " samples: %r" % [int(l) for l in lengths])
+                         " samples:")
 
 
 def get_top_k(recsys_metric_at_k_gen: Generator) -> Tuple[float]:
