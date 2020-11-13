@@ -15,7 +15,7 @@ def test_dcg():
     y_true = [2.0, 1.0, 2.0, 0.0]
     y_pred = np.arange(3, -1, -1)
 
-    dcg_at4 = metrics.dcg(
+    dcg_at4 = metrics.dcg_at_k(
         torch.tensor([y_pred]), torch.tensor([y_true]), gain_function="linear_rank"
     )
     assert torch.isclose(dcg_at4, torch.tensor(4.261), atol=0.05)
@@ -23,7 +23,7 @@ def test_dcg():
     y_true = [2.0, 2.0, 1.0, 0.0]
     y_pred = np.arange(3, -1, -1)
 
-    dcg_at4 = metrics.dcg(
+    dcg_at4 = metrics.dcg_at_k(
         torch.tensor([y_pred]), torch.tensor([y_true]), gain_function="linear_rank"
     )
     assert torch.isclose(dcg_at4, torch.tensor(4.631), atol=0.05)
@@ -31,7 +31,7 @@ def test_dcg():
     y_true = [3, 2, 3, 0, 0, 1, 2, 2, 3, 0]
     y_pred = np.arange(9, -1, -1)
 
-    dcg_at10 = metrics.dcg(
+    dcg_at10 = metrics.dcg_at_k(
         torch.tensor([y_pred]), torch.tensor([y_true]), gain_function="linear_rank"
     )
 
@@ -68,7 +68,6 @@ def test_sample_ndcg():
     comp_ndcg_at2 = metrics.ndcg(outputs, targets, top_k=[2])[0]
 
     assert np.isclose(true_ndcg_at2, comp_ndcg_at2)
-
 
     y_pred1 = [0.5, 0.2, 0.1]
     y_pred2 = [0.5, 0.2, 0.1]

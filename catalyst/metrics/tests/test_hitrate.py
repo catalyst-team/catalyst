@@ -9,13 +9,23 @@ def test_hitrate():
     """
     y_pred = [0.5, 0.2]
     y_true = [1.0, 0.0]
+    k = 2
 
-    hitrate = metrics.hitrate(torch.Tensor([y_pred]), torch.Tensor([y_true]))
-    assert hitrate == 0.5
+    hitrate_at_2 = metrics.hitrate_at_k(
+        torch.Tensor([y_pred]),
+        torch.Tensor([y_true]),
+        k
+    )
+    assert hitrate_at_2 == 0.5
 
     # check 1 simple case
     y_pred = [0.5, 0.2]
     y_true = [0.0, 0.0]
+    k = 2
 
-    hitrate = metrics.hitrate(torch.Tensor([y_pred]), torch.Tensor([y_true]))
-    assert hitrate == 0.0
+    hitrate_at_2 = metrics.hitrate_at_k(
+        torch.Tensor([y_pred]),
+        torch.Tensor([y_true]),
+        k
+    )
+    assert hitrate_at_2 == 0.0

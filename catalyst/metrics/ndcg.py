@@ -8,7 +8,7 @@ import torch
 from catalyst.metrics.functional import process_recsys, get_top_k
 
 
-def dcg(
+def dcg_at_k(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     k=10,
@@ -103,8 +103,8 @@ def ndcg(
         '''
         Compute the ndcg at k
         '''
-        ideal_dcgs = dcg(targets, targets, k, gain_function)
-        predicted_dcgs = dcg(outputs, targets, k, gain_function)
+        ideal_dcgs = dcg_at_k(targets, targets, k, gain_function)
+        predicted_dcgs = dcg_at_k(outputs, targets, k, gain_function)
         ndcg_score = predicted_dcgs / ideal_dcgs
         idcg_mask = ideal_dcgs == 0
         ndcg_score[idcg_mask] = 0.0

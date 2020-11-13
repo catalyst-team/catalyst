@@ -8,6 +8,17 @@ import torch
 
 from catalyst.metrics.functional import process_recsys, get_top_k
 
+def hitrate_at_k(
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    k:int
+) -> torch.Tensor:
+
+    k = min(outputs.size(1), k)
+    targets_sorted_by_outputs_at_k = process_recsys(outputs, targets, k)
+    hits_score = torch.sum(targets_sorted_by_outputs_at_k, dim=1) / k
+    return hits_score
+    
 
 def hitrate(
     outputs: torch.Tensor, targets: torch.Tensor, top_k: List[int]
@@ -38,15 +49,10 @@ def hitrate(
             Parameter fro evaluation on top-k items
 
     Returns:
-        hits_score (torch.Tensor): 
+        hitrate_at_k (Tuple[float]):
             the hit rate score
     """
-    def _hitrate(k):
-        k = min(outputs.size(1), k)
-        targets_sorted_by_outputs_at_k = process_recsys(outputs, targets, k)
-        hits_score = torch.sum(targets_sorted_by_outputs_at_k, dim=1) / k
-    
-    hitrate_generator = (torch.mean(_hitrate(outputs, targets, k)) for k in top_k)
+    hitrate_generator = (torch.mean(hitrate_at(outputs, targets, k)) for k in top_k)
     hitrate_at_k = get_top_k(hitrate_generator)
     return hitrate_at_k
 

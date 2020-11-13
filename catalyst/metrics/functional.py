@@ -385,11 +385,11 @@ def get_top_k(recsys_metric_at_k_gen: Generator) -> Tuple[float]:
     Optioanlly return Python scalar with : map(lambda x: x.item(),
     '''
     map_k_tuple = tuple(
-        map(lambda x: x.float(),
+        map(lambda tensor: tensor.float(),
         recsys_metric_at_k_gen
         )
     )
-
+    print("tuple", map_k_tuple)
     return map_k_tuple
 
 def wrap_class_metric2dict(
