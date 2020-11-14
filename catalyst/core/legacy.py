@@ -74,7 +74,7 @@ class IRunnerLegacy:
         return self.loader_batch_step
 
     @property
-    def loader_key(self):
+    def loader_name(self):
         """Alias for `runner.loader_key`.
 
         .. warning::
