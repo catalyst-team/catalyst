@@ -2,7 +2,7 @@ TPU training
 ==============================================================================
 Catalyst support TPU backend for your deep learning experiments.
 
-To use TPU support you firstly need to install it with,
+Fist of all, to use TPU backend you need to install it with,
 
 .. code-block:: bash
 

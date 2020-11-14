@@ -128,7 +128,7 @@ You could also check out the example above in `this Google Colab notebook`_
 Nvidia Apex (Config API)
 ----------------------------------------------------
 
-Firstly, prepare the config. For example, like:
+Firstly, prepare the config. For example:
 
 .. code-block:: yaml
 
@@ -136,7 +136,7 @@ Firstly, prepare the config. For example, like:
         opt_level: "O1"
         ...
 
-After that you ca easily run:
+After that just run:
 
 .. code-block:: bash
 
