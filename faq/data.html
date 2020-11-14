@@ -327,8 +327,8 @@
 <div class="section" id="base-dataflow">
 <h2>Base dataflow<a class="headerlink" href="#base-dataflow" title="Permalink to this headline">¶</a></h2>
 <p>Catalyst uses the “key-value is all you need” approach.
-Speaking so, it expects key-value outputs from your Dataset/Dataloader.</p>
-<p>Example dataflow:</p>
+In other words, the output of your Dataset/Dataloader should be a key-value (python <cite>dict</cite>).</p>
+<p>Example of dataflow:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyDataset</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="nf">__get_item__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
@@ -419,7 +419,7 @@ you don’t have to rewrite your code:</p>
 <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Key-value storage is also used to store the datasets/loaders for the experiment.
+<p>Key-value storage also can be used to store the datasets/loaders for the experiment.
 In this case we also need to use <code class="docutils literal notranslate"><span class="pre">OrderedDict</span></code> to ensure correct epoch handling -
 that your model will firstly train on some <code class="docutils literal notranslate"><span class="pre">train</span></code> dataset
 and only then will be evaluated on some <code class="docutils literal notranslate"><span class="pre">valid</span></code> dataset:</p>
@@ -492,7 +492,7 @@ without code changes or tricks with Datasets concatination, etc:</p>
 </div>
 <div class="section" id="loader-for-model-selection">
 <h2>Loader for model selection<a class="headerlink" href="#loader-for-model-selection" title="Permalink to this headline">¶</a></h2>
-<p>In case of multiple loaders, you could easily select one for model selection
+<p>In case of multiple loaders, you could select one of them for model selection
 with <code class="docutils literal notranslate"><span class="pre">valid_loader</span></code> param in the <code class="docutils literal notranslate"><span class="pre">runner.train</span></code>.
 For example, to use <code class="docutils literal notranslate"><span class="pre">valid2</span></code> loaders as your
 model selection one you could do the following:</p>
@@ -519,7 +519,7 @@ model selection one you could do the following:</p>
 </div>
 <div class="section" id="metric-for-model-selection">
 <h2>Metric for model selection<a class="headerlink" href="#metric-for-model-selection" title="Permalink to this headline">¶</a></h2>
-<p>Suppose, you are using a number of different metrics in your pipeline:</p>
+<p>Suppose, you are using set of different metrics in your pipeline:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyRunner</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="nf">_handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
@@ -576,7 +576,7 @@ for model selection.</p>
 <div class="section" id="use-part-of-the-data">
 <h2>Use part of the data<a class="headerlink" href="#use-part-of-the-data" title="Permalink to this headline">¶</a></h2>
 <p>If you would like to use only some part of your data from the loader
-(for example, you would like to check your pipeline and overfit for one small portion of the data),
+(for example, you would like to overfit for one small portion of the data to check your pipeline),
 you could use <code class="docutils literal notranslate"><span class="pre">BatchLimitLoaderWrapper</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">train_loader</span> <span class="o">=</span> <span class="n">BatchLimitLoaderWrapper</span><span class="p">(</span><span class="n">MyDataset</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="n">num_batches</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">valid_loader</span> <span class="o">=</span> <span class="n">MyDataset</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
@@ -596,7 +596,7 @@ you could use <code class="docutils literal notranslate"><span class="pre">Batch
 <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span> <span class="n">overfit</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>And more convenient and customasible way:</p>
+<p>And more convenient and customizable way:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">train_loader</span> <span class="o">=</span> <span class="n">MyDataset</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 <span class="n">valid_loader</span> <span class="o">=</span> <span class="n">MyDataset</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 <span class="n">loaders</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">train_loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">valid_loader</span><span class="p">)</span>

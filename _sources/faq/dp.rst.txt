@@ -1,8 +1,8 @@
 DataParallel training (cpu, single/multi-gpu)
 ==============================================================================
-By framework design, Catalyst tries to use all visible GPUs of your machine.
+By design, Catalyst tries to use all visible GPUs of your machine.
 Nevertheless, thanks to Nvidia CUDA design,
-it's easy to handle GPUs visibility with ``CUDA_VISIBLE_DEVICES`` flag.
+it's easy to control GPUs visibility with ``CUDA_VISIBLE_DEVICES`` flag.
 
 CPU training
 ----------------------------------------------------
@@ -58,7 +58,7 @@ The same case for Config API:
 
 Nvidia SMI
 ----------------------------------------------------
-Rather that use GPU indexing, you could also pass their ``UUID`` to the ``CUDA_VISIBLE_DEVICES``.
+Rather than use GPU indexing, you could also pass their ``UUID`` to the ``CUDA_VISIBLE_DEVICES``.
 To list them, do the following (with example output from my server):
 
 .. code-block:: bash

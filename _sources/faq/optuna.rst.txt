@@ -73,13 +73,13 @@ Firstly, prepare the Optuna-based config. For example, like:
         num_hiddens2: "int(trial.suggest_loguniform('num_hiddens2', 32, 128))"
         ...
 
-After that you ca easily run:
+After that just run:
 
 .. code-block:: bash
 
     catalyst-dl tune --config=/path/to/config.yml --verbose
 
-And visualize current training progress with:
+You also can visualize current training progress with:
 
 .. code-block:: bash
 

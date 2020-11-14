@@ -329,7 +329,7 @@
 <p>With the help of <code class="docutils literal notranslate"><span class="pre">CheckpointCallback</span></code>
 Catalyst creates the following checkpoints structure under selected <code class="docutils literal notranslate"><span class="pre">logdir</span></code>:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>logdir/
-    code/ &lt;-- your experiment and catalyst code <span class="k">for</span> reproducibility --&gt;
+    code/ &lt;-- code of your experiment and dump of the catalyst, <span class="k">for</span> reproducibility --&gt;
     checkpoints/ &lt;-- theme of the topic --&gt;
         <span class="o">{</span>stage_name<span class="o">}</span>.<span class="o">{</span>epoch_index<span class="o">}</span>.pth &lt;-- topK checkpoints based on model selection logic --&gt;
         best.pth &lt;-- best model based on specified model selection logic --&gt;
@@ -338,7 +338,7 @@ Catalyst creates the following checkpoints structure under selected <code class=
     ...
 </pre></div>
 </div>
-<p>This checkpoint are pure PyTorch checkpoints without any mixins with the following structure:</p>
+<p>These checkpoints are pure PyTorch checkpoints without any mixins with the following structure:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>checkpoint.pth <span class="o">=</span> <span class="o">{</span>
     <span class="s2">&quot;model_state_dict&quot;</span>: model.state_dict<span class="o">()</span>,
     <span class="s2">&quot;criterion_state_dict&quot;</span>: criterion.state_dict<span class="o">()</span>,
@@ -352,8 +352,8 @@ Catalyst creates the following checkpoints structure under selected <code class=
 <h2>Full checkpoints<a class="headerlink" href="#full-checkpoints" title="Permalink to this headline">¶</a></h2>
 <p>Catalyst saves 2 types of checkpoints:</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">{checkpoint}.pth</span></code> - which stores only model state dict and could be easily used for production purposes.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">{checkpoint}_full.pth</span></code> - which stores all state dicts for model(s), criterion(s), optimizer(s) and scheduler(s) and could be easily used for experiment analysis purposes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{checkpoint}.pth</span></code> - stores only model state dict and could be easily used for deploying in the production.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">{checkpoint}_full.pth</span></code> - stores all state dicts for model(s), criterion(s), optimizer(s) and scheduler(s) and could be used for experiment analysis purposes.</p></li>
 </ul>
 </div>
 <div class="section" id="save-model">

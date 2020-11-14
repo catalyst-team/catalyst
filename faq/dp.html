@@ -324,9 +324,9 @@
               
   <div class="section" id="dataparallel-training-cpu-single-multi-gpu">
 <h1>DataParallel training (cpu, single/multi-gpu)<a class="headerlink" href="#dataparallel-training-cpu-single-multi-gpu" title="Permalink to this headline">¶</a></h1>
-<p>By framework design, Catalyst tries to use all visible GPUs of your machine.
+<p>By design, Catalyst tries to use all visible GPUs of your machine.
 Nevertheless, thanks to Nvidia CUDA design,
-it’s easy to handle GPUs visibility with <code class="docutils literal notranslate"><span class="pre">CUDA_VISIBLE_DEVICES</span></code> flag.</p>
+it’s easy to control GPUs visibility with <code class="docutils literal notranslate"><span class="pre">CUDA_VISIBLE_DEVICES</span></code> flag.</p>
 <div class="section" id="cpu-training">
 <h2>CPU training<a class="headerlink" href="#cpu-training" title="Permalink to this headline">¶</a></h2>
 <p>If you don’t want to use GPUs at all you could set <code class="docutils literal notranslate"><span class="pre">CUDA_VISIBLE_DEVICES=&quot;&quot;</span></code>.</p>
@@ -368,7 +368,7 @@ it’s easy to handle GPUs visibility with <code class="docutils literal notrans
 </div>
 <div class="section" id="nvidia-smi">
 <h2>Nvidia SMI<a class="headerlink" href="#nvidia-smi" title="Permalink to this headline">¶</a></h2>
-<p>Rather that use GPU indexing, you could also pass their <code class="docutils literal notranslate"><span class="pre">UUID</span></code> to the <code class="docutils literal notranslate"><span class="pre">CUDA_VISIBLE_DEVICES</span></code>.
+<p>Rather than use GPU indexing, you could also pass their <code class="docutils literal notranslate"><span class="pre">UUID</span></code> to the <code class="docutils literal notranslate"><span class="pre">CUDA_VISIBLE_DEVICES</span></code>.
 To list them, do the following (with example output from my server):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>nvidia-smi -L
 &gt;&gt;&gt; GPU <span class="m">0</span>: GeForce GTX <span class="m">1080</span> Ti <span class="o">(</span>UUID: GPU-62b307fa-ef1b-c0a8-0bb4-7311cce714a8<span class="o">)</span>

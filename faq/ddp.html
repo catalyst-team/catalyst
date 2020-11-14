@@ -363,7 +363,7 @@
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>For correct DDP training, you need to split your dataset creation from the main training.
+<p>For correct DDP training, you need to separate creation of the dataset(s) from the training.
 In this way Catalyst could easily transfer your datasets to the distributed mode
 and there would be no data re-creation on each worker.</p>
 <p>As a best practice scenario for this case:</p>
@@ -432,16 +432,16 @@ type the following line (adapt <cite>script_name</cite> to your script name endi
 </pre></div>
 </div>
 <p>What will happen is that the same model will be copied on all your available GPUs.
-During training, the full dataset will randomly be split between the GPUs
+During training, the full dataset will randomly split between the GPUs
 (that will change at each epoch).
-Each GPU will grab a batch (on that fractioned dataset),
-pass it through the model, compute the loss then back-propagate the gradients.
+Each GPU will grab a batch (on that fraction of the dataset),
+pass it through the model, compute the loss then back-propagate (to calculate the gradients).
 Then they will share their results and average them,
 which means like your training is the equivalent of a training
 with a batch size of <code class="docutils literal notranslate"><span class="pre">`batch_size</span> <span class="pre">x</span> <span class="pre">num_gpus</span></code>
 (where <code class="docutils literal notranslate"><span class="pre">batch_size</span></code> is what you used in your script).</p>
 <p>Since they all have the same gradients at this stage,
-they will al perform the same update,
+they will all perform the same update,
 so the models will still be the same after this step.
 Then training continues with the next batch,
 until the number of desired iterations is done.</p>

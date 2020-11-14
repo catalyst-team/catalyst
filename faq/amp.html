@@ -440,13 +440,13 @@ After PyTorch 1.6 release, it’s possible to use AMP natively inside <code clas
 </div>
 <div class="section" id="nvidia-apex-config-api">
 <h2>Nvidia Apex (Config API)<a class="headerlink" href="#nvidia-apex-config-api" title="Permalink to this headline">¶</a></h2>
-<p>Firstly, prepare the config. For example, like:</p>
+<p>Firstly, prepare the config. For example:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">distributed_params</span><span class="p">:</span>
     <span class="nt">opt_level</span><span class="p">:</span> <span class="s">&quot;O1&quot;</span>
     <span class="l l-Scalar l-Scalar-Plain">...</span>
 </pre></div>
 </div>
-<p>After that you ca easily run:</p>
+<p>After that just run:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>catalyst-dl run -C<span class="o">=</span>/path/to/configs --apex
 </pre></div>
 </div>
