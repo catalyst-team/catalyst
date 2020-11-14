@@ -37,6 +37,13 @@ try:
 except ModuleNotFoundError:
     IS_QUANTIZATION_AVAILABLE = False
 
+try:
+    import hydra
+
+    IS_HYDRA_AVAILABLE = True
+except ModuleNotFoundError:
+    IS_HYDRA_AVAILABLE = False
+
 
 class Settings(FrozenClass):
     def __init__(
@@ -330,4 +337,5 @@ __all__ = [
     "IS_XLA_AVAILABLE",
     "IS_GIT_AVAILABLE",
     "IS_QUANTIZATION_AVAILABLE",
+    "IS_HYDRA_AVAILABLE",
 ]

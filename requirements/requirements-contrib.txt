@@ -3,3 +3,4 @@ neptune-client
 visdom
 wandb
 optuna
+hydra-core
