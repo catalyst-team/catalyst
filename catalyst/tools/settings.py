@@ -10,13 +10,6 @@ from catalyst.tools.frozen_class import FrozenClass
 logger = logging.getLogger(__name__)
 
 try:
-    from git import Repo as repo
-
-    IS_GIT_AVAILABLE = True
-except ImportError:
-    IS_GIT_AVAILABLE = False
-
-try:
     import torch_xla.core.xla_model as xm
 
     IS_XLA_AVAILABLE = True
@@ -31,18 +24,18 @@ except ModuleNotFoundError:
     IS_PRUNING_AVAILABLE = False
 
 try:
+    from git import Repo as repo
+
+    IS_GIT_AVAILABLE = True
+except ImportError:
+    IS_GIT_AVAILABLE = False
+
+try:
     import torch.quantization
 
     IS_QUANTIZATION_AVAILABLE = True
 except ModuleNotFoundError:
     IS_QUANTIZATION_AVAILABLE = False
-
-try:
-    import optuna
-
-    IS_OPTUNA_AVAILABLE = True
-except ModuleNotFoundError:
-    IS_OPTUNA_AVAILABLE = False
 
 
 class Settings(FrozenClass):

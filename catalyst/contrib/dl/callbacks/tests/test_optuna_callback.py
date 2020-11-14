@@ -7,7 +7,7 @@ from torch.utils.data import DataLoader
 
 from catalyst import dl
 from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.dl.callbacks import OptunaPruningCallback
+from catalyst.contrib.dl.callbacks import OptunaCallback
 from catalyst.contrib.nn import Flatten
 from catalyst.data.cv.transforms.torch import ToTensor
 from catalyst.dl import AccuracyCallback
@@ -39,7 +39,7 @@ def test_mnist():
             criterion=criterion,
             optimizer=optimizer,
             callbacks=[
-                OptunaPruningCallback(trial),
+                OptunaCallback(trial),
                 AccuracyCallback(num_classes=10),
             ],
             num_epochs=10,

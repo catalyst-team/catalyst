@@ -3,7 +3,7 @@ from collections import OrderedDict
 
 from catalyst.__version__ import __version__
 from catalyst.dl.scripts import quantize, run, trace
-from catalyst.tools.settings import IS_GIT_AVAILABLE, IS_OPTUNA_AVAILABLE
+from catalyst.tools.settings import IS_GIT_AVAILABLE
 
 COMMANDS = OrderedDict(
     [("run", run), ("trace", trace), ("quantize", quantize)]
@@ -12,10 +12,6 @@ if IS_GIT_AVAILABLE:
     from catalyst.dl.scripts import init
 
     COMMANDS["init"] = init
-if IS_OPTUNA_AVAILABLE:
-    from catalyst.dl.scripts import tune
-
-    COMMANDS["tune"] = tune
 
 
 def build_parser() -> ArgumentParser:

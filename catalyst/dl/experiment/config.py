@@ -63,7 +63,6 @@ class ConfigExperiment(IExperiment):
             config (dict): dictionary with parameters
         """
         self._config: Dict = deepcopy(config)
-        self._trial = None
         self._initial_seed: int = self._config.get("args", {}).get("seed", 42)
         self._verbose: bool = self._config.get("args", {}).get(
             "verbose", False
@@ -78,7 +77,7 @@ class ConfigExperiment(IExperiment):
             "overfit", False
         )
 
-        self._prepare_logdir()
+        self.__prepare_logdir()
 
         self._config["stages"]["stage_params"] = utils.merge_dicts(
             deepcopy(
@@ -92,13 +91,7 @@ class ConfigExperiment(IExperiment):
             self._config["stages"]
         )
 
-    def _get_logdir(self, config: Dict) -> str:
-        timestamp = utils.get_utcnow_time()
-        config_hash = utils.get_short_hash(config)
-        logdir = f"{timestamp}.{config_hash}"
-        return logdir
-
-    def _prepare_logdir(self):  # noqa: WPS112
+    def __prepare_logdir(self):  # noqa: WPS112
         exclude_tag = "none"
 
         logdir = self._config.get("args", {}).get("logdir", None)
@@ -111,6 +104,11 @@ class ConfigExperiment(IExperiment):
             self._logdir = f"{baselogdir}/{logdir_postfix}"
         else:
             self._logdir = None
+
+    @property
+    def hparams(self) -> OrderedDict:
+        """Returns hyperparameters"""
+        return OrderedDict(self._config)
 
     def _get_stages_config(self, stages_config: Dict):
         stages_defaults = {}
@@ -149,6 +147,12 @@ class ConfigExperiment(IExperiment):
 
         return stages_config_out
 
+    def _get_logdir(self, config: Dict) -> str:
+        timestamp = utils.get_utcnow_time()
+        config_hash = utils.get_short_hash(config)
+        logdir = f"{timestamp}.{config_hash}"
+        return logdir
+
     @property
     def initial_seed(self) -> int:
         """Experiment's initial seed value."""
@@ -160,34 +164,15 @@ class ConfigExperiment(IExperiment):
         return self._logdir
 
     @property
-    def hparams(self) -> OrderedDict:
-        """Returns hyperparameters"""
-        return OrderedDict(self._config)
-
-    @property
-    def trial(self) -> Any:
-        """
-        Returns hyperparameter trial for current experiment.
-        Could be usefull for Optuna/HyperOpt/Ray.tune
-        hyperparameters optimizers.
-
-        Example::
-
-            >>> experiment.trial
-            optuna.trial._trial.Trial  # Optuna variant
-        """
-        return self._trial
+    def stages(self) -> List[str]:
+        """Experiment's stage names."""
+        stages_keys = list(self.stages_config.keys())
+        return stages_keys
 
     @property
     def distributed_params(self) -> Dict:
         """Dict with the parameters for distributed and FP16 methond."""
         return self._config.get("distributed_params", {})
-
-    @property
-    def stages(self) -> List[str]:
-        """Experiment's stage names."""
-        stages_keys = list(self.stages_config.keys())
-        return stages_keys
 
     def get_stage_params(self, stage: str) -> Mapping[str, Any]:
         """Returns the state parameters for a given stage."""

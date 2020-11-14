@@ -44,7 +44,6 @@ class Experiment(IExperiment):
         criterion: Criterion = None,
         optimizer: Optimizer = None,
         scheduler: Scheduler = None,
-        trial: Any = None,
         num_epochs: int = 1,
         valid_loader: str = "valid",
         main_metric: str = "loss",
@@ -76,8 +75,6 @@ class Experiment(IExperiment):
             criterion (Criterion): criterion function
             optimizer (Optimizer): optimizer
             scheduler (Scheduler): scheduler
-            trial : hyperparameters optimization trial.
-                Used for integrations with Optuna/HyperOpt/Ray.tune.
             num_epochs (int): number of experiment's epochs
             valid_loader (str): loader name used to calculate
                 the metrics and save the checkpoints. For example,
@@ -121,8 +118,6 @@ class Experiment(IExperiment):
         self._optimizer = optimizer
         self._scheduler = scheduler
 
-        self._trial = trial
-
         self._initial_seed = initial_seed
         self._logdir = logdir
         self._stage = stage
@@ -153,6 +148,11 @@ class Experiment(IExperiment):
         return [self._stage]
 
     @property
+    def distributed_params(self) -> Dict:
+        """Dict with the parameters for distributed and FP16 method."""
+        return self._distributed_params
+
+    @property
     def hparams(self) -> OrderedDict:
         """Returns hyper parameters"""
         hparams = OrderedDict()
@@ -168,25 +168,6 @@ class Experiment(IExperiment):
             if k.startswith("train"):
                 hparams[f"{k}_batch_size"] = v.batch_size
         return hparams
-
-    @property
-    def trial(self) -> Any:
-        """
-        Returns hyperparameter trial for current experiment.
-        Could be usefull for Optuna/HyperOpt/Ray.tune
-        hyperparameters optimizers.
-
-        Example::
-
-            >>> experiment.trial
-            optuna.trial._trial.Trial  # Optuna variant
-        """
-        return self._trial
-
-    @property
-    def distributed_params(self) -> Dict:
-        """Dict with the parameters for distributed and FP16 method."""
-        return self._distributed_params
 
     @staticmethod
     def _get_loaders(
