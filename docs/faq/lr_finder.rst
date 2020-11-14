@@ -6,7 +6,7 @@
 
 Hi,
 
-Still work in progress here.
+We're still working on that.
 
 But don't feel upset, check out the kitty... `Kittylyst`_ tutorial.
 

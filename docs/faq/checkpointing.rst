@@ -9,7 +9,7 @@ Catalyst creates the following checkpoints structure under selected ``logdir``:
 .. code-block:: bash
 
     logdir/
-        code/ <-- your experiment and catalyst code for reproducibility -->
+        code/ <-- code of your experiment and dump of the catalyst, for reproducibility -->
         checkpoints/ <-- theme of the topic -->
             {stage_name}.{epoch_index}.pth <-- topK checkpoints based on model selection logic -->
             best.pth <-- best model based on specified model selection logic -->
@@ -17,7 +17,7 @@ Catalyst creates the following checkpoints structure under selected ``logdir``:
             <-- the same checkpoints with ``_full`` prefix -->
         ...
 
-This checkpoint are pure PyTorch checkpoints without any mixins with the following structure:
+These checkpoints are pure PyTorch checkpoints without any mixins with the following structure:
 
 .. code-block:: bash
 
@@ -32,8 +32,8 @@ Full checkpoints
 ----------------------------------------------------
 Catalyst saves 2 types of checkpoints:
 
-- ``{checkpoint}.pth`` - which stores only model state dict and could be easily used for production purposes.
-- ``{checkpoint}_full.pth`` - which stores all state dicts for model(s), criterion(s), optimizer(s) and scheduler(s) and could be easily used for experiment analysis purposes.
+- ``{checkpoint}.pth`` - stores only model state dict and could be easily used for deploying in the production.
+- ``{checkpoint}_full.pth`` - stores all state dicts for model(s), criterion(s), optimizer(s) and scheduler(s) and could be used for experiment analysis purposes.
 
 Save model
 ----------------------------------------------------
