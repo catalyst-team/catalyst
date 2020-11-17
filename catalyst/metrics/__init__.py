@@ -6,7 +6,6 @@ from catalyst.metrics.functional import (
     get_multiclass_statistics,
     get_multilabel_statistics,
     get_default_topk_args,
-    get_top_k,
     wrap_class_metric2dict,
     wrap_topk_metric2dict,
 )

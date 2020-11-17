@@ -22,7 +22,9 @@ def hitrate_at_k(
 
 
 def hitrate(
-    outputs: torch.Tensor, targets: torch.Tensor, top_k: List[int]
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    topk: List[int]
 ) -> Tuple[float]:
     """
     Calculate the hit rate score given model outputs and targets.
@@ -53,11 +55,12 @@ def hitrate(
         hitrate_at_k (Tuple[float]):
             the hit rate score
     """
-    hitrate_generator = (
-        torch.mean(hitrate_at(outputs, targets, k)) for k in top_k
-    )
-    hitrate_at_k = get_top_k(hitrate_generator)
-    return hitrate_at_k
+
+    result = []
+    for k in topk:
+        results.append(torch.mean(hitrate_at(outputs, targets, k)))
+        
+    return result
 
 
 __all__ = ["hitrate"]

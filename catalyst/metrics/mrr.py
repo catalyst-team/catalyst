@@ -51,8 +51,8 @@ def reciprocal_rank_at_k(
 def mrr(
     outputs: torch.Tensor,
     targets: torch.Tensor,
-    top_k: List[int]
-) -> Tuple[float]:
+    topk: List[int]
+) -> List[torch.Tensor]:
     """
     Calculate the Mean Reciprocal Rank (MRR)
     score given model outputs and targets
@@ -82,11 +82,12 @@ def mrr(
             The mrr score for each batch.
     """
 
-    mrr_generator = (
-        torch.mean(reciprocal_rank_at_k(outputs, targets, k)) for k in top_k
-    )
-    mrr_at_k = get_top_k(mrr_generator)
-    return mrr_at_k
-
+    results = []
+    for k in topk:
+        results.append(
+            torch.mean(reciprocal_rank_at_k(outputs, targets, k))
+        )
+    
+    return results
 
 __all__ = ["mrr"]

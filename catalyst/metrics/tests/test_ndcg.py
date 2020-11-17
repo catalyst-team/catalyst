@@ -5,6 +5,8 @@ import numpy as np
 import torch
 
 from catalyst.utils import metrics
+from catalyst.metrics.functional import wrap_topk_metric2dict
+
 
 
 def test_dcg():
@@ -52,7 +54,7 @@ def test_zero_ndcg():
     y_true = [0, 0, 0, 0, 0, 0, 1]
 
     ndcg_at1, ndcg_at3, ndcg_at7 = metrics.ndcg(
-        torch.tensor([y_pred]), torch.tensor([y_true]), top_k=[1, 3, 7]
+        torch.tensor([y_pred]), torch.tensor([y_true]), topk=[1, 3, 7]
     )
 
     assert torch.isclose(ndcg_at1, torch.tensor(0.0))
@@ -71,7 +73,7 @@ def test_sample_ndcg():
     targets = torch.Tensor([y_true])
 
     true_ndcg_at2 = (1.0 / (1.0 + 1 / math.log2(3)))
-    comp_ndcg_at2 = metrics.ndcg(outputs, targets, top_k=[2])[0]
+    comp_ndcg_at2 = metrics.ndcg(outputs, targets, topk=[2])[0]
 
     assert np.isclose(true_ndcg_at2, comp_ndcg_at2)
 
@@ -84,8 +86,31 @@ def test_sample_ndcg():
     targets = torch.Tensor([y_true1, y_true2])
 
     true_ndcg_at2 = (1.0 / (1.0 + 1 / math.log2(3)))
-    comp_ndcg_at2 = metrics.ndcg(outputs, targets, top_k=[2])[0]
-    print("comp_ndcg", comp_ndcg_at2)
+    comp_ndcg_at2 = metrics.ndcg(outputs, targets, topk=[2])[0]
 
     assert np.isclose(true_ndcg_at2, comp_ndcg_at2)
+
+def test_wrapper_metrics():
+    '''
+    Tests for wrapper
+    '''
     
+    y_pred1 = [0.5, 0.2, 0.1]
+    y_pred2 = [0.5, 0.2, 0.1]
+    y_true1 = [1.0, 0.0, 1.0]
+    y_true2 = [1.0, 0.0, 1.0]
+
+    outputs = torch.Tensor([y_pred1, y_pred2])
+    targets = torch.Tensor([y_true1, y_true2])
+
+    topk_args = [1, 2]
+    ndcg_wrapper = wrap_topk_metric2dict(metrics.ndcg, topk_args)
+    ndcg_dict = ndcg_wrapper(outputs, targets)
+
+    ndcg_at1 = ndcg_dict['01']
+    ndcg_at2 = ndcg_dict['02']
+
+    true_ndcg_at1 = 1.0
+    true_ndcg_at2 = (1.0 / (1.0 + 1 / math.log2(3)))
+    assert np.isclose(true_ndcg_at1, ndcg_at1)
+    assert np.isclose(true_ndcg_at2, ndcg_at2)

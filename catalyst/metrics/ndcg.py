@@ -78,11 +78,11 @@ def dcg_at_k(
 def ndcg(
     outputs: torch.Tensor,
     targets: torch.Tensor,
-    top_k: List[int],
+    topk: List[int],
     gain_function="exp_rank"
-) -> Tuple[float]:
+) -> List[torch.Tensor]:
     """
-    Computes nDCG@topk for the specified values of `top_k`.
+    Computes nDCG@topk for the specified values of `topk`.
 
     Args:
         outputs (torch.Tensor): model outputs, logits
@@ -96,29 +96,24 @@ def ndcg(
             - `rank`: x
             On the default, `exp_rank` is used
             to emphasize on retrieving the relevant documents.
-        top_k (List[int]):
+        topk (List[int]):
             Parameter fro evaluation on top-k items
 
     Returns:
         result (Tuple[float]):
         tuple with computed ndcg@topk
     """
-    def _ndcg(k):
-        '''
-        Compute the ndcg at k
-        '''
+
+    result = []
+    for k in topk:
         ideal_dcgs = dcg_at_k(targets, targets, k, gain_function)
         predicted_dcgs = dcg_at_k(outputs, targets, k, gain_function)
         ndcg_score = predicted_dcgs / ideal_dcgs
         idcg_mask = ideal_dcgs == 0
         ndcg_score[idcg_mask] = 0.0
-        return ndcg_score
-
-    ndcg_generator = (
-        torch.mean(_ndcg(k)) for k in top_k
-    )
-    ndcg_at_k = get_top_k(ndcg_generator)
-    return ndcg_at_k
+        result.append(torch.mean(ndcg_score))
+    
+    return result
 
 
 __all__ = ["dcg", "ndcg"]

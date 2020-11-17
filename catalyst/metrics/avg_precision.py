@@ -73,8 +73,8 @@ def avg_precision_at_k(
 def mean_avg_precision(
     outputs: torch.Tensor,
     targets: torch.Tensor,
-    top_k: List[int]
-) -> Tuple[float]:
+    topk: List[int]
+) -> List[torch.Tensor]:
     """
     Calculate the mean average precision (MAP) for RecSys.
     The metrics calculate the mean of the AP across all batches
@@ -102,11 +102,13 @@ def mean_avg_precision(
             The map score for every k.
             size: len(top_k)
     """
-    map_generator = (
-        torch.mean(avg_precision_at_k(outputs, targets, k)) for k in top_k
-    )
-    map_at_k = get_top_k(map_generator)
-    return map_at_k
+    result = []
+    for k in topk:
+        result.append(
+            torch.mean(avg_precision_at_k(outputs, targets, k))
+        )
+
+    return result
 
 
 __all__ = ["mean_avg_precision", "avg_precision"]

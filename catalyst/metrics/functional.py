@@ -383,20 +383,6 @@ def check_consistent_length(*tesors):
                          " samples:")
 
 
-def get_top_k(recsys_metric_at_k_gen: Generator) -> Tuple[float]:
-    '''
-    tuple(recsys_metric_at_k_gen for k in range(k))
-    Optioanlly return Python scalar with : map(lambda x: x.item(),
-    '''
-    map_k_tuple = tuple(
-        map(
-            lambda tensor: tensor.float(),
-            recsys_metric_at_k_gen
-        )
-    )
-    print("tuple", map_k_tuple)
-    return map_k_tuple
-
 def wrap_class_metric2dict(
     metric_fn: Callable, class_args: Sequence[str] = None
 ) -> Callable:
@@ -485,7 +471,6 @@ __all__ = [
     "get_multiclass_statistics",
     "get_multilabel_statistics",
     "get_default_topk_args",
-    "get_top_k",
     "wrap_topk_metric2dict",
     "wrap_class_metric2dict",
 ]
