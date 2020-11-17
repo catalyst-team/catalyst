@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from catalyst.data.nlp import TextClassificationDataset
+from catalyst.contrib.data.nlp import TextClassificationDataset
 from catalyst.dl import ConfigExperiment
 
 

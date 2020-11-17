@@ -16,9 +16,10 @@ from catalyst.typing import Criterion, Optimizer, Scheduler
 from catalyst.utils.distributed import check_amp_available
 
 
-class SupervisedExperiment(Experiment):
+# @TODO: should be mixin-based
+class AutoCallbackExperiment(Experiment):
     """
-    Supervised experiment.
+    Auto-optimized experiment.
 
     The main difference with Experiment that it will
     add several callbacks by default if you haven't.
@@ -104,4 +105,4 @@ class SupervisedExperiment(Experiment):
         return callbacks
 
 
-__all__ = ["SupervisedExperiment"]
+__all__ = ["AutoCallbackExperiment"]

@@ -75,10 +75,13 @@ from collections import OrderedDict
 import logging
 
 from catalyst.__version__ import __version__
-from catalyst.data.scripts import (
+from catalyst.contrib.scripts import (
+    image2embedding,
+    process_images,
     project_embeddings,
     split_dataframe,
     tag2label,
+    text2embedding,
 )
 from catalyst.settings import SETTINGS
 
@@ -94,10 +97,6 @@ COMMANDS = OrderedDict(
 
 try:
     import imageio  # noqa: F401
-    from catalyst.data.scripts import (
-        image2embedding,
-        process_images,
-    )
 
     COMMANDS["process-images"] = process_images
     COMMANDS["image2embedding"] = image2embedding
@@ -111,7 +110,6 @@ except ImportError as ex:  # noqa: WPS440
 
 try:
     import transformers  # noqa: F401
-    from catalyst.data.scripts import text2embedding
 
     COMMANDS["text2embedding"] = text2embedding
 except ImportError as ex:  # noqa: WPS440

@@ -10,7 +10,7 @@ from transformers.data.data_collator import DataCollatorForLanguageModeling
 
 from catalyst import dl
 from catalyst.contrib.callbacks import PerplexityMetricCallback
-from catalyst.data.nlp import LanguageModelingDataset
+from catalyst.contrib.data.nlp import LanguageModelingDataset
 
 
 class HuggingFaceRunner(dl.Runner):

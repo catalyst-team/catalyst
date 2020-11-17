@@ -5,27 +5,20 @@ from torch.jit.frontend import UnsupportedNodeError
 
 from catalyst.settings import SETTINGS
 
-from catalyst.data.cv.transforms.torch import (
-    Compose,
-    Normalize,
-    ToTensor,
-)
-
-
 logger = logging.getLogger(__name__)
 
 
 try:
-    from catalyst.data.cv.reader import ImageReader, MaskReader
-    from catalyst.data.cv.dataset import ImageFolderDataset
+    from catalyst.contrib.data.cv import ImageReader, MaskReader
+    from catalyst.contrib.data.cv import ImageFolderDataset
 
-    from catalyst.data.cv.mixins import BlurMixin, FlareMixin, RotateMixin
+    from catalyst.contrib.data.cv import BlurMixin, FlareMixin, RotateMixin
 
-    from catalyst.data.cv.transforms.albumentations import (
+    from catalyst.contrib.data.cv import (
         TensorToImage,
         ImageToTensor,
     )
-    from catalyst.data.cv.transforms.kornia import (
+    from catalyst.contrib.data.cv import (
         OneOfPerBatch,
         OneOfPerSample,
     )

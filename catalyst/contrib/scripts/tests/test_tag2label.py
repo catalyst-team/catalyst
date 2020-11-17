@@ -1,5 +1,5 @@
 # flake8: noqa
-from catalyst.data.scripts.tag2label import _prepare_df_from_dirs
+from catalyst.contrib.scripts.tag2label import _prepare_df_from_dirs
 
 
 def _setup_dataset_fs(tmp_path):

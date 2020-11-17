@@ -8,16 +8,16 @@ PyYAML
 packaging
 deprecation
 
-# wizard
-ipython
+## wizard
+# ipython
 
-# logging
-tensorboard>=1.14.0
-tensorboardX
-plotly>=4.1.0
+## logging
+# tensorboard>=1.14.0
+# tensorboardX
+# plotly>=4.1.0
 
-# Used in scripts  -> contrib (?)
-matplotlib
-pandas>=0.22
-scikit-learn>=0.20
-GitPython>=3.1.1
+## Used in scripts  -> contrib (?)
+# matplotlib
+# pandas>=0.22
+# scikit-learn>=0.20
+# GitPython>=3.1.1

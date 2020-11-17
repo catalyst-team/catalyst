@@ -1,5 +1,5 @@
 from catalyst import utils
-from catalyst.data.cv import BlurMixin, FlareMixin, RotateMixin
+from catalyst.contrib.data.cv import BlurMixin, FlareMixin, RotateMixin
 
 jpg_rgb_uri = (
     "https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master"

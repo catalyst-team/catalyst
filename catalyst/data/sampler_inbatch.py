@@ -11,8 +11,7 @@ import torch
 from torch import Tensor
 
 from catalyst.contrib.utils.misc import find_value_ids
-from catalyst.data.utils import convert_labels2list
-from catalyst.utils.torch import normalize
+from catalyst.utils.torch import convert_labels2list, normalize
 
 # order in the triplets: (anchor, positive, negative)
 TTriplets = Tuple[Tensor, Tensor, Tensor]

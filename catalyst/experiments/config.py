@@ -25,10 +25,10 @@ from catalyst.callbacks.optimizer import (
 from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
 from catalyst.callbacks.timer import TimerCallback
 from catalyst.callbacks.validation import ValidationManagerCallback
+from catalyst.contrib.data.augmentor import Augmentor, AugmentorCompose
 from catalyst.core.callback import Callback
 from catalyst.core.experiment import IExperiment
 from catalyst.core.functional import check_callback_isinstance
-from catalyst.data.augmentor import Augmentor, AugmentorCompose
 from catalyst.registry import (
     CALLBACKS,
     CRITERIONS,

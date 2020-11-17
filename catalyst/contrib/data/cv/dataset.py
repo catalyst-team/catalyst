@@ -2,8 +2,8 @@ from typing import Callable, Dict, Mapping, Optional
 import glob
 from pathlib import Path
 
+from catalyst.contrib.data.cv import ImageReader
 from catalyst.contrib.utils.cv.image import has_image_extension
-from catalyst.data.cv.reader import ImageReader
 from catalyst.data.dataset.torch import PathsDataset
 from catalyst.data.reader import ReaderCompose, ScalarReader
 

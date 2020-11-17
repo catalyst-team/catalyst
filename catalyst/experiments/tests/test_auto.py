@@ -16,7 +16,7 @@ from catalyst.callbacks import (
     ValidationManagerCallback,
     VerboseLogger,
 )
-from catalyst.experiments.supervised import SupervisedExperiment
+from catalyst.experiments.auto import AutoCallbackExperiment
 
 
 def _test_callbacks(test_callbacks, exp, stage="train"):
@@ -55,7 +55,7 @@ def test_defaults():
         ]
     )
 
-    exp = SupervisedExperiment(
+    exp = AutoCallbackExperiment(
         model=model, loaders=loaders, valid_loader="train",
     )
     _test_callbacks(test_callbacks, exp)
@@ -81,7 +81,7 @@ def test_defaults_verbose():
     loaders = OrderedDict()
     loaders["train"] = dataloader
 
-    exp = SupervisedExperiment(
+    exp = AutoCallbackExperiment(
         model=model,
         loaders=loaders,
         verbose=True,
@@ -111,7 +111,7 @@ def test_defaults_check():
     loaders = OrderedDict()
     loaders["train"] = dataloader
 
-    exp = SupervisedExperiment(
+    exp = AutoCallbackExperiment(
         model=model,
         loaders=loaders,
         check_run=True,
@@ -144,7 +144,7 @@ def test_criterion():
     loaders = OrderedDict()
     loaders["train"] = dataloader
 
-    exp = SupervisedExperiment(
+    exp = AutoCallbackExperiment(
         model=model,
         loaders=loaders,
         criterion=criterion,
@@ -179,7 +179,7 @@ def test_optimizer():
     loaders = OrderedDict()
     loaders["train"] = dataloader
 
-    exp = SupervisedExperiment(
+    exp = AutoCallbackExperiment(
         model=model,
         loaders=loaders,
         criterion=criterion,
@@ -215,7 +215,7 @@ def test_scheduler():
     loaders = OrderedDict()
     loaders["train"] = dataloader
 
-    exp = SupervisedExperiment(
+    exp = AutoCallbackExperiment(
         model=model,
         loaders=loaders,
         optimizer=optimizer,
@@ -252,7 +252,7 @@ def test_all():
     loaders = OrderedDict()
     loaders["train"] = dataloader
 
-    exp = SupervisedExperiment(
+    exp = AutoCallbackExperiment(
         model=model,
         loaders=loaders,
         criterion=criterion,
@@ -278,7 +278,7 @@ def test_infer_defaults():
     loaders = OrderedDict()
     loaders["train"] = dataloader
 
-    exp = SupervisedExperiment(
+    exp = AutoCallbackExperiment(
         model=model,
         loaders=loaders,
         criterion=criterion,
@@ -308,7 +308,7 @@ def test_infer_all():
     loaders = OrderedDict()
     loaders["train"] = dataloader
 
-    exp = SupervisedExperiment(
+    exp = AutoCallbackExperiment(
         model=model,
         loaders=loaders,
         criterion=criterion,
@@ -335,7 +335,7 @@ def test_hparams():
     loaders = OrderedDict()
     loaders["train"] = dataloader
 
-    exp = SupervisedExperiment(
+    exp = AutoCallbackExperiment(
         model=model,
         loaders=loaders,
         criterion=criterion,

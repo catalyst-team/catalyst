@@ -54,7 +54,7 @@ import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl, metrics
-from catalyst.data.cv import ToTensor
+from catalyst.contrib.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 model = torch.nn.Linear(28 * 28, 10)
@@ -309,7 +309,7 @@ import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl, metrics
-from catalyst.data.cv import ToTensor
+from catalyst.contrib.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 model = torch.nn.Linear(28 * 28, 10)
@@ -362,7 +362,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl, metrics
-from catalyst.data.cv import ToTensor
+from catalyst.contrib.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 class ClassifyAE(nn.Module):
@@ -435,7 +435,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl, metrics
-from catalyst.data.cv import ToTensor
+from catalyst.contrib.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 LOG_SCALE_MAX = 2
@@ -525,7 +525,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl, metrics
-from catalyst.data.cv import ToTensor
+from catalyst.contrib.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 class ClassifyUnet(nn.Module):
@@ -601,7 +601,7 @@ from torch.utils.data import DataLoader
 
 from catalyst import data, dl, utils
 from catalyst.contrib import datasets, models, nn
-import catalyst.data.cv.transforms.torch as t
+import catalyst.contrib.data.cv.transforms.torch as t
 
 
 # 1. train and valid datasets
@@ -658,7 +658,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.data.cv import ToTensor
+from catalyst.contrib.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.nn.modules import Flatten, GlobalMaxPool2d, Lambda
 
@@ -906,7 +906,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from catalyst import dl, metrics, utils
-from catalyst.data.cv import ToTensor
+from catalyst.contrib.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 class ClassifyAE(nn.Module):
@@ -1032,7 +1032,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.data.cv import ToTensor
+from catalyst.contrib.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.nn import Flatten
     

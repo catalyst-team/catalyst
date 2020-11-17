@@ -1,4 +1,4 @@
-from catalyst.data.nlp import TextClassificationDataset
+from catalyst.contrib.data.nlp import TextClassificationDataset
 
 texts = [
     "The color of this T-shirt is sooo so horrible",

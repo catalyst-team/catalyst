@@ -3,7 +3,7 @@ import pytest
 import torch  # noqa: F401
 from transformers import AutoTokenizer
 
-from catalyst.data.nlp import LanguageModelingDataset
+from catalyst.contrib.data.nlp import LanguageModelingDataset
 
 texts = [
     "Bonaparte Crossing the Alps is an oil-on-canvas painting by French artist",  # noqa: E501

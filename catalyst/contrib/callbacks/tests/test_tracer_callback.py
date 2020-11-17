@@ -13,10 +13,10 @@ from catalyst.callbacks import (
     OptimizerCallback,
     TracingCallback,
 )
+from catalyst.contrib.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.data.cv import ToTensor
 from catalyst.dl import SupervisedRunner
 from catalyst.registry import Model
 from catalyst.utils import get_device, get_trace_name

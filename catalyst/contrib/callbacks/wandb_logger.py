@@ -148,10 +148,6 @@ class WandbLogger(Callback):
             models=runner.model, criterion=runner.criterion, log=self.log
         )
 
-    def on_stage_end(self, runner: "IRunner"):
-        """Finish logging to Weights & Biases."""
-        wandb.join()
-
     def on_batch_end(self, runner: "IRunner"):
         """Translate batch metrics to Weights & Biases."""
         if self.log_on_batch_end:
@@ -197,6 +193,10 @@ class WandbLogger(Callback):
                     suffix=self.epoch_log_suffix,
                     commit=True,
                 )
+
+    def on_stage_end(self, runner: "IRunner"):
+        """Finish logging to Weights & Biases."""
+        wandb.join()
 
 
 __all__ = ["WandbLogger"]
