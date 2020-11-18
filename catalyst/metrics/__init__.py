@@ -1,7 +1,7 @@
 # flake8: noqa
 from catalyst.metrics.functional import (
     process_multilabel_components,
-    process_recsys,
+    process_recsys_components,
     get_binary_statistics,
     get_multiclass_statistics,
     get_multilabel_statistics,
