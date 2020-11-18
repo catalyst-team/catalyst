@@ -71,7 +71,7 @@ def prepare_config_api_components(expdir: pathlib.Path, config: Dict):
         experiment_fn = EXPERIMENTS.get(experiment_from_config)
 
     runner_params = config.get("runner_params", {})
-    runner_from_config = runner_params.get("runner", None)
+    runner_from_config = runner_params.pop("runner", None)
     assert any(
         x is None for x in (runner_fn, runner_from_config)
     ), "Runner is set both in code and config."
