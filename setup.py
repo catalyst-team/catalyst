@@ -24,26 +24,20 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 
 def load_requirements(filename):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome"""
     with open(os.path.join(PROJECT_ROOT, filename), "r") as f:
         return f.read().splitlines()
 
 
 def load_readme():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome"""
     readme_path = os.path.join(PROJECT_ROOT, "README.md")
     with io.open(readme_path, encoding="utf-8") as f:
         return f"\n{f.read()}"
 
 
 def load_version():
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """@TODO: Docs. Contribution is welcome"""
     context = {}
     with open(os.path.join(PROJECT_ROOT, "catalyst", "__version__.py")) as f:
         exec(f.read(), context)
@@ -62,21 +56,15 @@ class UploadCommand(Command):
         print("\033[1m{0}\033[0m".format(s))
 
     def initialize_options(self):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome"""
         pass
 
     def finalize_options(self):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome"""
         pass
 
     def run(self):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """@TODO: Docs. Contribution is welcome"""
         try:
             self.status("Removing previous builds…")
             rmtree(os.path.join(PROJECT_ROOT, "dist"))
@@ -100,14 +88,13 @@ class UploadCommand(Command):
 
 # Specific dependencies.
 extras = {
-    # "contrib": load_requirements("requirements/requirements-contrib.txt"),
+    "contrib": load_requirements("requirements/requirements-contrib.txt"),
     "cv": load_requirements("requirements/requirements-cv.txt"),
-    # "dev": load_requirements("requirements/requirements-dev.txt"),
+    "dev": load_requirements("requirements/requirements-dev.txt"),
     "ecosystem": load_requirements("requirements/requirements-ecosystem.txt"),
-    # "ml": load_requirements("requirements/requirements-ml.txt"),
     "nlp": load_requirements("requirements/requirements-nlp.txt"),
 }
-extras["contrib"] += extras["ecosystem"] + extras["cv"] + extras["nlp"]
+# extras["contrib"] += extras["ecosystem"] + extras["cv"] + extras["nlp"]
 
 # Meta dependency groups.
 all_deps = []
@@ -125,7 +112,7 @@ setup(
         "Machine Learning",
         "Distributed Computing",
         "Deep Learning",
-        # "Reinforcement Learning",
+        "Reinforcement Learning",
         "Computer Vision",
         "Natural Language Processing",
         "Recommendation Systems",
@@ -145,9 +132,8 @@ setup(
     packages=find_packages(exclude=("tests",)),
     entry_points={
         "console_scripts": [
-            "catalyst-dl=catalyst.dl.__main__:main",
             "catalyst-contrib=catalyst.contrib.__main__:main",
-            "catalyst-data=catalyst.data.__main__:main",
+            "catalyst-dl=catalyst.dl.__main__:main",
         ],
     },
     scripts=[
@@ -176,6 +162,7 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
     # $ setup.py publish support.

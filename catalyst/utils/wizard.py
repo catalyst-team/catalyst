@@ -291,7 +291,7 @@ class Wizard:
         for all stages
         """
         self.__sep("stages")
-        cnt = prompt("How much stages your exepriment will contain: ")
+        cnt = prompt("How much stages your experiment will contain: ")
         self.__res(cnt)
         cnt = int(cnt) or 1
         if cnt > 1:

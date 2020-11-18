@@ -6,15 +6,15 @@ PyYAML
 
 # packaging
 packaging
-deprecation
+# deprecation
+
+## logging
+tensorboardX>=2.1.0
+# tensorboard>=1.14.0
+# plotly>=4.1.0
 
 ## wizard
 # ipython
-
-## logging
-# tensorboard>=1.14.0
-# tensorboardX
-# plotly>=4.1.0
 
 ## Used in scripts  -> contrib (?)
 # matplotlib

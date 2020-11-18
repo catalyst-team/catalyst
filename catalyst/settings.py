@@ -8,6 +8,13 @@ from catalyst.tools.frozen_class import FrozenClass
 logger = logging.getLogger(__name__)
 
 try:
+    import ipython  # noqa: F401
+
+    IS_IPYTHON_AVAILABLE = True
+except ImportError:
+    IS_IPYTHON_AVAILABLE = False
+
+try:
     from git import Repo  # noqa: F401
 
     IS_GIT_AVAILABLE = True

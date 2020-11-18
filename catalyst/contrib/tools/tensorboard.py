@@ -1,36 +1,13 @@
-# isort:skip_file
-"""
-Tensorboard readers:
-    * :py:class:`EventsFileReader`
-    * :py:class:`SummaryReader`
-"""
 from typing import BinaryIO, Optional, Union
 from collections import namedtuple
 from collections.abc import Iterable
 from pathlib import Path
 import struct
 
-from tensorboardX.crc32c import crc32c  # noqa: E402
-
-import numpy as np  # noqa: E402
-
-# # Native tensorboard support from 1.2.0 version of PyTorch
-# from torch import __version__ as torch_version  # noqa: E402
-# from packaging import version  # noqa: E402
-
-# if version.parse(torch_version) < version.parse("1.2.0"):
-#     from tensorboardX import SummaryWriter as tensorboardX_SummaryWriter
-#     from tensorboardX.proto.event_pb2 import Event
-
-#     SummaryWriter = tensorboardX_SummaryWriter
-# else:
-#     from torch.utils.tensorboard import SummaryWriter as torch_SummaryWriter
-#     from torch.utils.tensorboard.writer import Event
-
-#     SummaryWriter = torch_SummaryWriter
-
+import numpy as np
 
 from tensorboardX import SummaryWriter as tensorboardX_SummaryWriter
+from tensorboardX.crc32c import crc32c
 from tensorboardX.proto.event_pb2 import Event
 
 SummaryWriter = tensorboardX_SummaryWriter
@@ -247,10 +224,10 @@ class SummaryReader(Iterable):
                 )
 
 
-# __all__ = [
-#     "EventReadingException",
-#     "EventsFileReader",
-#     "SummaryItem",
-#     "SummaryReader",
-#     "SummaryWriter",
-# ]
+__all__ = [
+    "EventReadingException",
+    "EventsFileReader",
+    "SummaryItem",
+    "SummaryReader",
+    "SummaryWriter",
+]
