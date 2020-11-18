@@ -63,7 +63,7 @@ def prepare_config_api_components(expdir: pathlib.Path, config: Dict):
     runner_fn = getattr(m, "Runner", None)
 
     experiment_params = config.get("experiment_params", {})
-    experiment_from_config = experiment_params.pop("experiment", None)
+    experiment_from_config = experiment_params.get("experiment", None)
     assert any(
         x is None for x in (experiment_fn, experiment_from_config)
     ), "Experiment is set both in code and config."
@@ -71,7 +71,7 @@ def prepare_config_api_components(expdir: pathlib.Path, config: Dict):
         experiment_fn = EXPERIMENTS.get(experiment_from_config)
 
     runner_params = config.get("runner_params", {})
-    runner_from_config = runner_params.pop("runner", None)
+    runner_from_config = runner_params.get("runner", None)
     assert any(
         x is None for x in (runner_fn, runner_from_config)
     ), "Runner is set both in code and config."
