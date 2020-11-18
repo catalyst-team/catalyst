@@ -18,7 +18,7 @@ from catalyst.utils.dict import merge_dicts
 def get_optimizable_params(model_or_params):
     """Returns all the parameters that requires gradients."""
     params: Iterable[torch.Tensor] = model_or_params
-    if isinstance(model_or_params, nn.Module):
+    if isinstance(model_or_params, torch.nn.Module):
         params = model_or_params.parameters()
 
     master_params = [p for p in params if p.requires_grad]

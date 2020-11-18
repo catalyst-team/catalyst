@@ -14,7 +14,7 @@ def build_args(parser):
         "--pipeline",
         type=str,
         default=None,
-        choices=["empty", "classification", "segmentation", "detection"],
+        choices=["empty", "classification", "detection", "segmentation"],
         help="select a Catalyst pipeline",
     )
     parser.add_argument(

@@ -139,6 +139,7 @@ class Runner(IStageBasedRunner):
         assert state_kwargs is None or stage_kwargs is None
 
         if isinstance(fp16, bool) and fp16:
+            # @TODO: fix fp16 for amp and apex here (and other places)
             fp16 = {"opt_level": "O1"}
 
         if resume is not None or load_best_on_end:
@@ -386,6 +387,8 @@ class Runner(IStageBasedRunner):
         Raises:
             ValueError: if `batch` and `loader` are Nones
         """
+        # @TODO: refactor for easy use
+        # @TODO: also add quantize, prune, onnx-convert
         if batch is None:
             if loader is None:
                 raise ValueError(
