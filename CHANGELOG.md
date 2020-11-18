@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
-- fixed bug with saving experiment and runner parameters to config#1003
+- 
 
 ### Removed
 
@@ -44,7 +44,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - added link to dl-course ([#967](https://github.com/catalyst-team/catalyst/pull/967))
 - docs were restructured ([#985](https://github.com/catalyst-team/catalyst/pull/985))
 - `set_global_seed` moved from `utils.seed` to `utils.misc` ([#986](https://github.com/catalyst-team/catalyst/pull/986))
-
 
 ### Removed
 
