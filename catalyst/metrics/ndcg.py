@@ -5,7 +5,7 @@ from typing import List, Tuple
 
 import torch
 
-from catalyst.metrics.functional import process_recsys, get_top_k
+from catalyst.metrics.functional import process_recsys
 
 
 def dcg_at_k(

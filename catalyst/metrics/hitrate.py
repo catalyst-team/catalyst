@@ -6,7 +6,7 @@ from typing import List, Tuple
 
 import torch
 
-from catalyst.metrics.functional import process_recsys, get_top_k
+from catalyst.metrics.functional import process_recsys
 
 
 def hitrate_at_k(
@@ -59,7 +59,7 @@ def hitrate(
     result = []
     for k in topk:
         results.append(torch.mean(hitrate_at(outputs, targets, k)))
-        
+
     return result
 
 

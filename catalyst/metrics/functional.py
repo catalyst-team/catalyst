@@ -103,6 +103,7 @@ def process_recsys(
         k (int):
             Parameter fro evaluation on top-k items
     """
+    check_consistent_length(outputs, targets)
     outputs_order = torch.argsort(outputs, descending=True, dim=-1)
     targets_sorted_by_outputs = torch.gather(
         targets, dim=-1, index=outputs_order
@@ -366,7 +367,7 @@ def get_default_topk_args(num_classes: int) -> Sequence[int]:
     return result
 
 
-def check_consistent_length(*tesors):
+def check_consistent_length(*tensors):
     """Check that all arrays have consistent first dimensions.
     Checks whether all objects in arrays have the same shape or length.
     Parameters
@@ -379,8 +380,7 @@ def check_consistent_length(*tesors):
     lengths = [X.size(0) * X.size(1)for X in tensors]
     uniques = np.unique(lengths)
     if len(uniques) > 1:
-        raise ValueError("Found input variables with inconsistent numbers of"
-                         " samples:")
+        raise ValueError("Inconsistent numbers of samples")
 
 
 def wrap_class_metric2dict(

@@ -5,7 +5,7 @@ from typing import Tuple, List
 
 import torch
 
-from catalyst.metrics.functional import process_recsys, get_top_k
+from catalyst.metrics.functional import process_recsys
 
 
 def avg_precision_at_k(
@@ -53,16 +53,14 @@ def avg_precision_at_k(
     """
     k = min(outputs.size(1), k)
     targets_sorted_by_outputs_at_k = process_recsys(outputs, targets, k)
-
-    targets_sorted_by_outputs_topk = targets_sorted_by_outputs_at_k[:, :k]
-    precisions = torch.zeros_like(targets_sorted_by_outputs_topk)
+    precisions = torch.zeros_like(targets_sorted_by_outputs_at_k)
 
     for index in range(k):
         precisions[:, index] = torch.sum(
-            targets_sorted_by_outputs_topk[:, : (index + 1)], dim=1
+            targets_sorted_by_outputs_at_k[:, : (index + 1)], dim=1
         ) / float(index + 1)
 
-    only_relevant_precision = precisions * targets_sorted_by_outputs_topk
+    only_relevant_precision = precisions * targets_sorted_by_outputs_at_k
     ap_score = only_relevant_precision.sum(dim=1) / (
         (only_relevant_precision != 0).sum(dim=1)
     )
