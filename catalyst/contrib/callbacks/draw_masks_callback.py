@@ -1,4 +1,4 @@
-from typing import List, Optional, TYPE_CHECKING
+from typing import List, Optional, Iterable, TYPE_CHECKING
 import os
 
 import numpy as np
@@ -10,6 +10,7 @@ from torch.utils.tensorboard import SummaryWriter
 from catalyst.callbacks import ILoggerCallback
 from catalyst.contrib.utils.cv.tensor import tensor_to_ndimage
 from catalyst.core.callback import CallbackNode, CallbackOrder
+from catalyst import utils
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -25,7 +26,7 @@ class DrawMasksCallback(ILoggerCallback):
         pred_mask_key: str,
         image_key: Optional[str] = None,
         gt_mask_key: Optional[str] = None,
-        mask2show: Optional[List[int]] = None,
+        mask2show: Optional[Iterable[int]] = None,
         activation: Optional[str] = "Sigmoid",
         log_name: str = "images",
         summary_step: int = 50,
@@ -65,7 +66,7 @@ class DrawMasksCallback(ILoggerCallback):
         elif activation == "Softmax2d":
             self.activation = torch.nn.Softmax2d()
         else:
-            self.activation = lambda x: x
+            self.activation = torch.nn.Identity()
 
         self.loggers = {}
         self.step = None  # initialization
@@ -86,18 +87,18 @@ class DrawMasksCallback(ILoggerCallback):
     def _draw_masks(
         self,
         writer: SummaryWriter,
-        image_over_predicted_mask: np.array,
-        image_over_gt_mask: Optional[np.array],
         global_step: int,
+        image_over_predicted_mask: np.ndarray,
+        image_over_gt_mask: Optional[np.ndarray] = None,
     ) -> None:
         """
         Draw image over mask to tensorboard
 
         Args:
             writer: loader writer
+            global_step: global step
             image_over_predicted_mask: image over predicted mask
             image_over_gt_mask: image over ground truth mask
-            global_step: global step
         """
         if image_over_gt_mask is not None:
             writer.add_image(
@@ -114,7 +115,7 @@ class DrawMasksCallback(ILoggerCallback):
             dataformats="HWC",
         )
 
-    def _prob2mask(self, prob_masks: np.array) -> np.array:
+    def _prob2mask(self, prob_masks: np.ndarray) -> np.ndarray:
         """
         Convert probability masks into label mask
 
@@ -145,12 +146,12 @@ class DrawMasksCallback(ILoggerCallback):
         if self.step % self.summary_step == 0:
             pred_mask = runner.output[self.pred_mask_key][0]
             pred_mask = self.activation(pred_mask)
-            pred_mask = pred_mask.cpu().detach().numpy()
+            pred_mask = utils.detach(pred_mask)
             pred_mask = self._prob2mask(pred_mask)
 
             if self.gt_mask_key is not None:
                 gt_mask = runner.input[self.gt_mask_key][0]
-                gt_mask = gt_mask.cpu().detach().numpy()
+                gt_mask = utils.detach(gt_mask)
                 gt_mask = self._prob2mask(gt_mask)
             else:
                 gt_mask = None
@@ -159,7 +160,8 @@ class DrawMasksCallback(ILoggerCallback):
                 image = runner.input[self.image_key][0].cpu()
                 image = tensor_to_ndimage(image)
             else:
-                image = np.zeros_like(pred_mask, dtype=np.uint8)
+                # white background
+                image = np.ones_like(pred_mask, dtype=np.uint8) * 255
 
             image_over_predicted_mask = label2rgb(pred_mask, image, bg_label=0)
             if gt_mask is not None:
@@ -169,9 +171,9 @@ class DrawMasksCallback(ILoggerCallback):
 
             self._draw_masks(
                 self.loggers[runner.loader_key],
+                runner.global_sample_step,
                 image_over_predicted_mask,
                 image_over_gt_mask,
-                runner.global_sample_step,
             )
         self.step += 1
 
