@@ -6,7 +6,7 @@ from typing import List, Tuple
 
 import torch
 
-from catalyst.metrics.functional import process_recsys
+from catalyst.metrics.functional import process_recsys_components
 
 
 def hitrate_at_k(
@@ -16,7 +16,7 @@ def hitrate_at_k(
 ) -> torch.Tensor:
 
     k = min(outputs.size(1), k)
-    targets_sorted_by_outputs_at_k = process_recsys(outputs, targets, k)
+    targets_sorted_by_outputs_at_k = process_recsys_components(outputs, targets, k)
     hits_score = torch.sum(targets_sorted_by_outputs_at_k, dim=1) / k
     return hits_score
 

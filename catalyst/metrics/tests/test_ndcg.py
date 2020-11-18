@@ -4,7 +4,7 @@ import numpy as np
 
 import torch
 
-from catalyst.utils import metrics
+from catalyst import metrics
 from catalyst.metrics.functional import wrap_topk_metric2dict
 
 
@@ -92,7 +92,7 @@ def test_sample_ndcg():
 
 def test_wrapper_metrics():
     '''
-    Tests for wrapper
+    Tests for wrapper for metrics
     '''
     
     y_pred1 = [0.5, 0.2, 0.1]

@@ -5,7 +5,7 @@ from typing import Tuple, List
 
 import torch
 
-from catalyst.metrics.functional import process_recsys
+from catalyst.metrics.functional import process_recsys_components
 
 
 def avg_precision_at_k(
@@ -52,7 +52,7 @@ def avg_precision_at_k(
             size: [batch_size, 1]
     """
     k = min(outputs.size(1), k)
-    targets_sorted_by_outputs_at_k = process_recsys(outputs, targets, k)
+    targets_sorted_by_outputs_at_k = process_recsys_components(outputs, targets, k)
     precisions = torch.zeros_like(targets_sorted_by_outputs_at_k)
 
     for index in range(k):

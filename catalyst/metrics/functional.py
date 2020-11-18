@@ -81,7 +81,7 @@ def process_multiclass_components(
     return outputs, targets, num_classes
 
 
-def process_recsys(
+def process_recsys_components(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     k: int
@@ -466,7 +466,7 @@ def wrap_topk_metric2dict(
 
 __all__ = [
     "process_multilabel_components",
-    "process_recsys",
+    "process_recsys_components",
     "get_binary_statistics",
     "get_multiclass_statistics",
     "get_multilabel_statistics",
