@@ -1,4 +1,4 @@
-from typing import List, Optional, Iterable, TYPE_CHECKING
+from typing import Iterable, Optional, TYPE_CHECKING
 import os
 
 import numpy as np
@@ -7,10 +7,10 @@ from skimage.color import label2rgb
 import torch
 from torch.utils.tensorboard import SummaryWriter
 
+from catalyst import utils
 from catalyst.callbacks import ILoggerCallback
 from catalyst.contrib.utils.cv.tensor import tensor_to_ndimage
 from catalyst.core.callback import CallbackNode, CallbackOrder
-from catalyst import utils
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
