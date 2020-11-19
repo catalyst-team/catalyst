@@ -105,9 +105,7 @@ def build_args(parser):
         default=None,
         help="Deterministic mode if running in CuDNN backend",
     )
-    boolean_flag(
-        parser, "benchmark", default=None, help="Use CuDNN benchmark"
-    )
+    boolean_flag(parser, "benchmark", default=None, help="Use CuDNN benchmark")
     boolean_flag(
         parser,
         "force-save",
