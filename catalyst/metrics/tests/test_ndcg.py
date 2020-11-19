@@ -4,9 +4,8 @@ import numpy as np
 
 import torch
 
-from catalyst import metrics
 from catalyst.metrics.functional import wrap_topk_metric2dict
-
+from catalyst import metrics
 
 
 def test_dcg():
