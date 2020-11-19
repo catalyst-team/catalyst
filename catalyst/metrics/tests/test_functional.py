@@ -171,6 +171,6 @@ def test_get_multilabel_statistics(
     ],
 )
 def test_check_consistent_length(outputs, targets):
-    with pytest.raises(ValueError) as execinfo: 
+    with pytest.raises(ValueError) as execinfo:
         check_consistent_length(outputs, targets)
     assert str(execinfo.value) == "Inconsistent numbers of samples"

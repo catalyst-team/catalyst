@@ -55,16 +55,16 @@ def dcg_at_k(
         discounts = torch.tensor(1) / torch.log2(
             torch.arange(
                 targets_sorted_by_outputs_at_k.shape[1], dtype=torch.float
-                )+ 2.0
-            )
+            ) + 2.0
+        )
         discounted_gains = (gains * discounts)[:, :k]
 
     elif gain_function == "linear_rank":
         discounts = torch.tensor(1) / torch.log2(
             torch.arange(
                 targets_sorted_by_outputs_at_k.shape[1], dtype=torch.float
-                )+ 1.0
-            )
+            ) + 1.0
+        )
         discounts[0] = 1
         discounted_gains = (targets_sorted_by_outputs_at_k * discounts)[:, :k]
 

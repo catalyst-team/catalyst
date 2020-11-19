@@ -89,7 +89,7 @@ def mrr(
         results.append(
             torch.mean(reciprocal_rank_at_k(outputs, targets, k))
         )
-    
+
     return results
 
 __all__ = ["mrr"]
