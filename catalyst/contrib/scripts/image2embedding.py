@@ -64,7 +64,7 @@ def dict_transformer(sample):
 def build_args(parser):
     """
     Constructs the command-line arguments for
-    ``catalyst-data image2embeddings``.
+    ``catalyst-contrib image2embeddings``.
 
     Args:
         parser: parser
@@ -166,7 +166,7 @@ def parse_args():
 
 
 def main(args, _=None):
-    """Run the ``catalyst-data image2embeddings`` script."""
+    """Run the ``catalyst-contrib image2embeddings`` script."""
     global IMG_SIZE
 
     utils.set_global_seed(args.seed)

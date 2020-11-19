@@ -10,7 +10,7 @@ from catalyst import utils
 def build_args(parser):
     """
     Constructs the command-line arguments for
-    ``catalyst-data split-dataframe``.
+    ``catalyst-contrib split-dataframe``.
 
     Args:
         parser: parser
@@ -100,7 +100,7 @@ def parse_args():
 
 
 def main(args, uargs=None):
-    """Run the ``catalyst-data split-dataframe`` script."""
+    """Run the ``catalyst-contrib split-dataframe`` script."""
     dataframe = pd.read_csv(args.in_csv)
 
     train_folds = (

@@ -18,7 +18,7 @@ from catalyst.data import LambdaReader
 def build_args(parser):
     """
     Constructs the command-line arguments for
-    ``catalyst-data text2embeddings``.
+    ``catalyst-contrib text2embeddings``.
 
     Args:
         parser: parser
@@ -126,7 +126,7 @@ def _detach(tensor):
 
 @torch.no_grad()
 def main(args, _=None):
-    """Run the ``catalyst-data text2embeddings`` script."""
+    """Run the ``catalyst-contrib text2embeddings`` script."""
     batch_size = args.batch_size
     num_workers = args.num_workers
     max_length = args.max_length

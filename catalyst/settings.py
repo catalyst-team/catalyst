@@ -72,6 +72,9 @@ class Settings(FrozenClass):
         segmentation_models_required: Optional[bool] = None,
         use_libjpeg_turbo: bool = False,
         nmslib_required: Optional[bool] = None,
+        pandas_required: Optional[bool] = None,
+        sklearn_required: Optional[bool] = None,
+        scipy_required: Optional[bool] = None,
         transformers_required: Optional[bool] = None,
     ):
         # [catalyst]
@@ -106,6 +109,9 @@ class Settings(FrozenClass):
             plotly_required, default=contrib_required
         )
         self.nmslib_required: bool = nmslib_required
+        self.scipy_required: bool = scipy_required
+        self.pandas_required: bool = pandas_required
+        self.sklearn_required: bool = sklearn_required
         self.telegram_logger_token: str = telegram_logger_token
         self.telegram_logger_chat_id: str = telegram_logger_chat_id
         self.use_lz4: bool = use_lz4

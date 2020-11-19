@@ -7,7 +7,7 @@ from catalyst import utils
 
 
 def build_args(parser):
-    """Constructs the command-line arguments for ``catalyst-data tag2label``.
+    """Constructs the command-line arguments for ``catalyst-contrib tag2label``.
 
     Args:
         parser: current parser
@@ -97,7 +97,7 @@ def _prepare_df_from_dirs(in_dirs, tag_column_name, recursive: bool = False):
 
 
 def main(args, _=None):
-    """Run the ``catalyst-data tag2label`` script."""
+    """Run the ``catalyst-contrib tag2label`` script."""
     if args.in_csv is not None:
         df = pd.read_csv(args.in_csv)
     elif args.in_dir is not None:

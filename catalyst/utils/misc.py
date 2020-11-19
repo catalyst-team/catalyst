@@ -185,18 +185,15 @@ def get_attr(obj: Any, key: str, inner_key: str = None) -> Any:
     for example\
     ::
 
-        # example 1
-        runner.get_attr("criterion")
+        get_attr(runner, "criterion")
         # is equivalent to
         runner.criterion
 
-        # example 2
-        runner.get_attr("optimizer")
+        get_attr(runner, "optimizer")
         # is equivalent to
         runner.optimizer
 
-        # example 3
-        runner.get_attr("scheduler")
+        get_attr(runner, "scheduler")
         # is equivalent to
         runner.scheduler
 
@@ -204,18 +201,15 @@ def get_attr(obj: Any, key: str, inner_key: str = None) -> Any:
     and would get `inner_key` from this dict; for example,
     ::
 
-        # example 1
-        runner.get_attr("criterion", "bce")
+        get_attr(runner, "criterion", "bce")
         # is equivalent to
         runner.criterion["bce"]
 
-        # example 2
-        runner.get_attr("optimizer", "adam")
+        get_attr(runner, "optimizer", "adam")
         # is equivalent to
         runner.optimizer["adam"]
 
-        # example 3
-        runner.get_attr("scheduler", "adam")
+        get_attr(runner, "scheduler", "adam")
         # is equivalent to
         runner.scheduler["adam"]
 

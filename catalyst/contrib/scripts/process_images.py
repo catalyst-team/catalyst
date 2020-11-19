@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # usage:
-# catalyst-data process-images \
+# catalyst-contrib process-images \
 #   --in-dir ./data_in \
 #   --out-dir ./data_out \
 #   --num-workers 4 \
@@ -29,7 +29,7 @@ cv2.ocl.setUseOpenCL(False)
 
 def build_args(parser):
     """
-    Constructs the command-line arguments for ``catalyst-data process-images``.
+    Constructs the command-line arguments for ``catalyst-contrib process-images``.
     """
     parser.add_argument(
         "--in-dir", required=True, type=Path, help="Raw data folder path"
@@ -194,7 +194,7 @@ class Preprocessor:
 
 
 def main(args, _=None):
-    """Run the ``catalyst-data process-images`` script."""
+    """Run the ``catalyst-contrib process-images`` script."""
     args = args.__dict__
     args.pop("command", None)
     num_workers = args.pop("num_workers")

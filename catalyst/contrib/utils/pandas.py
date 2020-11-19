@@ -11,7 +11,7 @@ from tqdm.auto import tqdm
 
 from catalyst.contrib.utils.misc import args_are_not_none
 
-tqdm.pandas()
+# tqdm.pandas()
 
 
 def dataframe_to_list(dataframe: pd.DataFrame) -> List[dict]:

@@ -119,7 +119,7 @@ def _load_image_data(rootpath: str, paths: List, img_size: int):
 
 
 def main(args, _=None):
-    """Run ``catalyst-data project-embeddings`` script."""
+    """Run ``catalyst-contrib project-embeddings`` script."""
     df = pd.read_csv(args.in_csv)
     os.makedirs(args.out_dir, exist_ok=True)
 

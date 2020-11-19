@@ -17,12 +17,12 @@ Data subpackage has data preprocessers and dataloader abstractions.
 Scripts
 --------------------------------------
 
-You can use scripts typing `catalyst-data` in your terminal.
+You can use scripts typing `catalyst-contrib` in your terminal.
 For example:
 
 .. code-block:: bash
 
-    $ catalyst-data tag2label --help
+    $ catalyst-contrib tag2label --help
 
 .. automodule:: catalyst.data.__main__
     :members:
