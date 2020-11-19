@@ -80,55 +80,46 @@ from catalyst.settings import SETTINGS
 
 logger = logging.getLogger(__name__)
 
-COMMANDS = OrderedDict([("collect-env", collect_env),])
+COMMANDS = OrderedDict([("collect-env", collect_env)])
 
 try:
     from catalyst.contrib.scripts import project_embeddings
 
     COMMANDS["project-embeddings"] = project_embeddings
 except ImportError as ex:
-    if SETTINGS.pandas_required or SETTINGS.sklearn_required:
+    if SETTINGS.pandas_required:
         logger.warning(
             "pandas not available, to install pandas,"
             " run `pip install pandas`."
         )
         raise ex
+except Exception as ex:
+    raise ex
 
 try:
-    from catalyst.contrib.scripts import find_thresholds
+    from catalyst.contrib.scripts import (
+        find_thresholds,
+        tag2label,
+        split_dataframe,
+    )
 
     COMMANDS["find-thresholds"] = find_thresholds
-except ImportError as ex:
-    if SETTINGS.pandas_required or SETTINGS.sklearn_required:
-        logger.warning(
-            "pandas not available, to install pandas,"
-            " run `pip install pandas`."
-        )
-        raise ex
-
-try:
-    from catalyst.contrib.scripts import tag2label
-
     COMMANDS["tag2label"] = tag2label
-except ImportError as ex:
-    if SETTINGS.pandas_required or SETTINGS.sklearn_required:
-        logger.warning(
-            "pandas not available, to install pandas,"
-            " run `pip install pandas`."
-        )
-        raise ex
-
-try:
-    from catalyst.contrib.scripts import split_dataframe
-
     COMMANDS["split-dataframe"] = split_dataframe
 except ImportError as ex:
-    if SETTINGS.pandas_required or SETTINGS.sklearn_required:
+    if (
+        SETTINGS.pandas_required
+        or SETTINGS.sklearn_required
+        or SETTINGS.scipy_required
+    ):
         logger.warning(
-            "pandas not available, to install pandas,"
-            " run `pip install pandas`."
+            "pandas/scipy/sklearn are not available, to install them,"
+            " run `pip install pandas scipy sklearn`."
         )
         raise ex
+except Exception as ex:
+    raise ex
+
 
 try:
     from catalyst.contrib.scripts import check_index_model, create_index_model
@@ -136,12 +127,18 @@ try:
     COMMANDS["check-index-model"] = check_index_model
     COMMANDS["create-index-model"] = create_index_model
 except ImportError as ex:
-    if SETTINGS.nmslib_required or SETTINGS.sklearn_required:
+    if (
+        SETTINGS.nmslib_required
+        or SETTINGS.sklearn_required
+        or SETTINGS.pandas_required
+    ):
         logger.warning(
-            "nmslib not available, to install nmslib,"
-            " run `pip install nmslib`."
+            "nmslib/pandas/sklearn are not available, to install them,"
+            " run `pip install nmslib pandas sklearn`."
         )
         raise ex
+except Exception as ex:
+    raise ex
 
 try:
     from catalyst.contrib.scripts import process_images, image2embedding
@@ -155,6 +152,8 @@ except ImportError as ex:  # noqa: WPS440
             + " to install dependencies, run `pip install catalyst[cv]`."
         )
         raise ex
+except Exception as ex:
+    raise ex
 
 try:
     from catalyst.contrib.scripts import text2embedding
@@ -167,7 +166,8 @@ except ImportError as ex:  # noqa: WPS440
             + " run `pip install transformers`."
         )
         raise ex
-
+except Exception as ex:
+    raise ex
 
 COMMANDS = OrderedDict(sorted(COMMANDS.items()))
 

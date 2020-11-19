@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from catalyst import utils
+from catalyst.contrib.utils.pandas import folds_to_list, split_dataframe
 
 
 def build_args(parser):
@@ -104,17 +104,17 @@ def main(args, uargs=None):
     dataframe = pd.read_csv(args.in_csv)
 
     train_folds = (
-        utils.folds_to_list(args.train_folds)
+        folds_to_list(args.train_folds)
         if args.train_folds is not None
         else None
     )
     valid_folds = (
-        utils.folds_to_list(args.valid_folds)
+        folds_to_list(args.valid_folds)
         if args.valid_folds is not None
         else None
     )
     infer_folds = (
-        utils.folds_to_list(args.infer_folds)
+        folds_to_list(args.infer_folds)
         if args.infer_folds is not None
         else None
     )
@@ -123,7 +123,7 @@ def main(args, uargs=None):
         json.load(open(args.tag2class)) if args.tag2class is not None else None
     )
 
-    df_all, train, valid, infer = utils.split_dataframe(
+    df_all, train, valid, infer = split_dataframe(
         dataframe,
         train_folds=train_folds,
         valid_folds=valid_folds,

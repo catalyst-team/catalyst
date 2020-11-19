@@ -18,13 +18,13 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from catalyst import utils
-
-# Limit cv2's processor usage
-# cv2.setNumThreads() doesn't work
-os.environ["OMP_NUM_THREADS"] = "1"
-os.environ["MKL_NUM_THREADS"] = "1"
-cv2.ocl.setUseOpenCL(False)
+from catalyst.contrib.utils.argparse import boolean_flag
+from catalyst.contrib.utils.cv.image import (
+    has_image_extension,
+    imread,
+    imwrite,
+)
+from catalyst.contrib.utils.parallel import get_pool, tqdm_parallel_imap
 
 
 def build_args(parser):
@@ -58,15 +58,13 @@ def build_args(parser):
         help="Output images size. E.g. 224, 448",
     )
 
-    utils.boolean_flag(
-        parser, "clear-exif", default=True, help="Clear EXIF data"
-    )
+    boolean_flag(parser, "clear-exif", default=True, help="Clear EXIF data")
 
-    utils.boolean_flag(
+    boolean_flag(
         parser, "grayscale", default=False, help="Read images in grayscale"
     )
 
-    utils.boolean_flag(
+    boolean_flag(
         parser,
         "expand-dims",
         default=True,
@@ -163,7 +161,7 @@ class Preprocessor:
                 # imread does not have exifrotate for non-jpeg type
                 kwargs["exifrotate"] = not self.clear_exif
 
-            image = np.array(utils.imread(uri=image_path, **kwargs))
+            image = np.array(imread(uri=image_path, **kwargs))
         except Exception as e:
             print(f"Cannot read file {image_path}, exception: {e}")
             return
@@ -175,7 +173,7 @@ class Preprocessor:
         target_path.parent.mkdir(parents=True, exist_ok=True)
 
         image = image.clip(0, 255).round().astype(np.uint8)  # noqa: WPS432
-        utils.imwrite(target_path, image)
+        imwrite(target_path, image)
 
     def process_all(self, pool: Pool):
         """@TODO: Docs. Contribution is welcome."""
@@ -186,11 +184,11 @@ class Preprocessor:
                 [
                     root / filename
                     for filename in files
-                    if utils.has_image_extension(filename)
+                    if has_image_extension(filename)
                 ]
             )
 
-        utils.tqdm_parallel_imap(self.preprocess, images, pool)
+        tqdm_parallel_imap(self.preprocess, images, pool)
 
 
 def main(args, _=None):
@@ -199,10 +197,16 @@ def main(args, _=None):
     args.pop("command", None)
     num_workers = args.pop("num_workers")
 
-    with utils.get_pool(num_workers) as p:
+    with get_pool(num_workers) as p:
         Preprocessor(**args).process_all(p)
 
 
 if __name__ == "__main__":
+    # Limit cv2's processor usage
+    # cv2.setNumThreads() doesn't work
+    os.environ["OMP_NUM_THREADS"] = "1"
+    os.environ["MKL_NUM_THREADS"] = "1"
+    cv2.ocl.setUseOpenCL(False)
+
     args = parse_args()
     main(args)

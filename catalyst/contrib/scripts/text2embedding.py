@@ -10,9 +10,15 @@ from tqdm import tqdm
 import torch
 from transformers import BertConfig, BertModel, BertTokenizer
 
-from catalyst import utils
-from catalyst.contrib.utils import process_bert_output, tokenize_text
-from catalyst.data import LambdaReader
+from catalyst.contrib.data import LambdaReader
+from catalyst.contrib.utils.argparse import boolean_flag
+from catalyst.contrib.utils.nlp import process_bert_output, tokenize_text
+from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
+from catalyst.utils.components import process_components
+from catalyst.utils.distributed import check_ddp_wrapped
+from catalyst.utils.loaders import get_loader
+from catalyst.utils.misc import set_global_seed
+from catalyst.utils.torch import any2device, prepare_cudnn
 
 
 def build_args(parser):
@@ -59,17 +65,17 @@ def build_args(parser):
         "--out-prefix", type=str, required=True,
     )
     parser.add_argument("--max-length", type=int, default=512)  # noqa: WPS432
-    utils.boolean_flag(parser, "mask-for-max-length", default=False)
-    utils.boolean_flag(parser, "output-hidden-states", default=False)
+    boolean_flag(parser, "mask-for-max-length", default=False)
+    boolean_flag(parser, "output-hidden-states", default=False)
     parser.add_argument(
         "--bert-level",
         type=int,
         help="BERT features level to use",
         default=None,  # noqa: WPS432
     )
-    utils.boolean_flag(parser, "strip", default=True)
-    utils.boolean_flag(parser, "lowercase", default=True)
-    utils.boolean_flag(parser, "remove-punctuation", default=True)
+    boolean_flag(parser, "strip", default=True)
+    boolean_flag(parser, "lowercase", default=True)
+    boolean_flag(parser, "remove-punctuation", default=True)
     parser.add_argument("--pooling", type=str, default="avg")
     parser.add_argument(
         "--num-workers",
@@ -93,16 +99,16 @@ def build_args(parser):
         help="Print additional information",
     )
     parser.add_argument("--seed", type=int, default=42)  # noqa: WPS432
-    utils.boolean_flag(
+    boolean_flag(
         parser,
         "deterministic",
         default=None,
         help="Deterministic mode if running in CuDNN backend",
     )
-    utils.boolean_flag(
+    boolean_flag(
         parser, "benchmark", default=None, help="Use CuDNN benchmark"
     )
-    utils.boolean_flag(
+    boolean_flag(
         parser,
         "force-save",
         default=None,
@@ -138,8 +144,8 @@ def main(args, _=None):
             args.output_hidden_states
         ), "You need hidden states output for level specification"
 
-    utils.set_global_seed(args.seed)
-    utils.prepare_cudnn(args.deterministic, args.benchmark)
+    set_global_seed(args.seed)
+    prepare_cudnn(args.deterministic, args.benchmark)
 
     if getattr(args, "in_huggingface", False):
         model_config = BertConfig.from_pretrained(args.in_huggingface)
@@ -154,12 +160,12 @@ def main(args, _=None):
         model = BertModel(config=model_config)
         tokenizer = BertTokenizer.from_pretrained(args.in_vocab)
     if getattr(args, "in_model", None) is not None:
-        checkpoint = utils.load_checkpoint(args.in_model)
+        checkpoint = load_checkpoint(args.in_model)
         checkpoint = {"model_state_dict": checkpoint}
-        utils.unpack_checkpoint(checkpoint=checkpoint, model=model)
+        unpack_checkpoint(checkpoint=checkpoint, model=model)
 
     model = model.eval()
-    model, _, _, _, device = utils.process_components(model=model)
+    model, _, _, _, device = process_components(model=model)
 
     df = pd.read_csv(args.in_csv)
     df = df.dropna(subset=[args.txt_col])
@@ -181,7 +187,7 @@ def main(args, _=None):
         max_length=max_length,
     )
 
-    dataloader = utils.get_loader(
+    dataloader = get_loader(
         df, open_fn, batch_size=batch_size, num_workers=num_workers,
     )
 
@@ -189,7 +195,7 @@ def main(args, _=None):
     dataloader = tqdm(dataloader) if args.verbose else dataloader
     with torch.no_grad():
         for idx, batch_input in enumerate(dataloader):
-            batch_input = utils.any2device(batch_input, device)
+            batch_input = any2device(batch_input, device)
             batch_output = model(**batch_input)
             mask = (
                 batch_input["attention_mask"].unsqueeze(-1)
@@ -197,7 +203,7 @@ def main(args, _=None):
                 else None
             )
 
-            if utils.check_ddp_wrapped(model):
+            if check_ddp_wrapped(model):
                 # using several gpu
                 hidden_size = model.module.config.hidden_size
                 hidden_states = model.module.config.output_hidden_states

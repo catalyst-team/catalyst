@@ -9,12 +9,13 @@ from tqdm import tqdm
 
 import torch
 
-from catalyst import utils
 from catalyst.contrib.data.cv import ImageReader
 from catalyst.contrib.models.cv import ResnetEncoder
-
-cv2.setNumThreads(0)
-cv2.ocl.setUseOpenCL(False)
+from catalyst.contrib.utils.argparse import boolean_flag
+from catalyst.utils.components import process_components
+from catalyst.utils.loaders import get_loader
+from catalyst.utils.misc import set_global_seed
+from catalyst.utils.torch import get_device, prepare_cudnn
 
 IMG_SIZE = (224, 224)
 
@@ -144,15 +145,13 @@ def build_args(parser):
         help="Print additional information",
     )
     parser.add_argument("--seed", type=int, default=42)
-    utils.boolean_flag(
+    boolean_flag(
         parser,
         "deterministic",
         default=None,
         help="Deterministic mode if running in CuDNN backend",
     )
-    utils.boolean_flag(
-        parser, "benchmark", default=None, help="Use CuDNN benchmark"
-    )
+    boolean_flag(parser, "benchmark", default=None, help="Use CuDNN benchmark")
 
     return parser
 
@@ -169,18 +168,18 @@ def main(args, _=None):
     """Run the ``catalyst-contrib image2embeddings`` script."""
     global IMG_SIZE
 
-    utils.set_global_seed(args.seed)
-    utils.prepare_cudnn(args.deterministic, args.benchmark)
+    set_global_seed(args.seed)
+    prepare_cudnn(args.deterministic, args.benchmark)
 
     IMG_SIZE = (args.img_size, args.img_size)  # noqa: WPS442
 
     if args.traced_model is not None:
-        device = utils.get_device()
+        device = get_device()
         model = torch.jit.load(str(args.traced_model), map_location=device)
     else:
         model = ResnetEncoder(arch=args.arch, pooling=args.pooling)
         model = model.eval()
-        model, _, _, _, device = utils.process_components(model=model)
+        model, _, _, _, device = process_components(model=model)
 
     df = pd.read_csv(args.in_csv)
     df = df.reset_index().drop("index", axis=1)
@@ -190,7 +189,7 @@ def main(args, _=None):
         input_key=args.img_col, output_key="image", rootpath=args.rootpath
     )
 
-    dataloader = utils.get_loader(
+    dataloader = get_loader(
         df,
         open_fn,
         batch_size=args.batch_size,
@@ -211,5 +210,8 @@ def main(args, _=None):
 
 
 if __name__ == "__main__":
+    cv2.setNumThreads(0)
+    cv2.ocl.setUseOpenCL(False)
+
     args = parse_args()
     main(args)
