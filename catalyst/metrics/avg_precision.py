@@ -52,15 +52,17 @@ def avg_precision_at_k(
             size: [batch_size, 1]
     """
     k = min(outputs.size(1), k)
-    targets_sorted_by_outputs_at_k = process_recsys_components(outputs, targets, k)
-    precisions = torch.zeros_like(targets_sorted_by_outputs_at_k)
+    targets_sort_by_outputs_at_k = process_recsys_components(
+        outputs, targets, k
+    )
+    precisions = torch.zeros_like(targets_sort_by_outputs_at_k)
 
     for index in range(k):
         precisions[:, index] = torch.sum(
-            targets_sorted_by_outputs_at_k[:, : (index + 1)], dim=1
+            targets_sort_by_outputs_at_k[:, : (index + 1)], dim=1
         ) / float(index + 1)
 
-    only_relevant_precision = precisions * targets_sorted_by_outputs_at_k
+    only_relevant_precision = precisions * targets_sort_by_outputs_at_k
     ap_score = only_relevant_precision.sum(dim=1) / (
         (only_relevant_precision != 0).sum(dim=1)
     )

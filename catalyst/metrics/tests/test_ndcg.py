@@ -90,11 +90,11 @@ def test_sample_ndcg():
 
     assert np.isclose(true_ndcg_at2, comp_ndcg_at2)
 
+
 def test_wrapper_metrics():
     '''
     Tests for wrapper for metrics
     '''
-    
     y_pred1 = [0.5, 0.2, 0.1]
     y_pred2 = [0.5, 0.2, 0.1]
     y_true1 = [1.0, 0.0, 1.0]

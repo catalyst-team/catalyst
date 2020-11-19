@@ -10,21 +10,19 @@ from catalyst.metrics.functional import process_recsys_components
 
 
 def hitrate_at_k(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    k: int
+    outputs: torch.Tensor, targets: torch.Tensor, k: int
 ) -> torch.Tensor:
 
     k = min(outputs.size(1), k)
-    targets_sorted_by_outputs_at_k = process_recsys_components(outputs, targets, k)
-    hits_score = torch.sum(targets_sorted_by_outputs_at_k, dim=1) / k
+    targets_sort_by_outputs_at_k = process_recsys_components(
+        outputs, targets, k
+    )
+    hits_score = torch.sum(targets_sort_by_outputs_at_k, dim=1) / k
     return hits_score
 
 
 def hitrate(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    topk: List[int]
+    outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]
 ) -> Tuple[float]:
     """
     Calculate the hit rate score given model outputs and targets.

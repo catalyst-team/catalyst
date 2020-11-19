@@ -38,8 +38,10 @@ def reciprocal_rank_at_k(
     """
 
     k = min(outputs.size(1), k)
-    targets_sorted_by_outputs_at_k = process_recsys_components(outputs, targets, k)
-    values, indices = torch.max(targets_sorted_by_outputs_at_k, dim=1)
+    targets_sort_by_outputs_at_k = process_recsys_components(
+        outputs, targets, k
+    )
+    values, indices = torch.max(targets_sort_by_outputs_at_k, dim=1)
     indices = indices.type_as(values).unsqueeze(dim=0).t()
     mrr_score = torch.tensor(1.0) / (indices + torch.tensor(1.0))
 

@@ -58,9 +58,7 @@ def test_avg_precision():
     y_true_torch = torch.Tensor([y_true1, y_true2])
 
     average_precision = metrics.avg_precision_at_k(
-        y_pred_torch,
-        y_true_torch,
-        k=3
+        y_pred_torch, y_true_torch, k=3
     )
 
     assert np.isclose(average_precision[0], 0.5833, atol=1e3)
@@ -76,10 +74,7 @@ def test_avg_precision():
     y_pred_torch = torch.Tensor([y_pred1, y_pred2])
     y_true_torch = torch.Tensor([y_true1, y_true2])
 
-    average_precision = metrics.avg_precision_at_k(
-        y_pred_torch,
-        y_true_torch
-    )
+    average_precision = metrics.avg_precision_at_k(y_pred_torch, y_true_torch)
 
     assert np.allclose(
         [average_precision[0], 0.6222],
@@ -107,10 +102,11 @@ def test_mean_avg_precision():
 
     assert np.allclose(map_at10, 0.53, atol=1e3)
 
+
 def test_wrapper_metrics():
-    '''
+    """
     Tests for wrapper for metrics
-    '''
+    """
 
     y_pred1 = np.arange(9, -1, -1)
     y_true1 = [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0]
@@ -123,5 +119,5 @@ def test_wrapper_metrics():
     topk_args = [10]
     map_wrapper = wrap_topk_metric2dict(metrics.mean_avg_precision, topk_args)
     map_dict = map_wrapper(outputs, targets)
-    map_at10 = map_dict['10']
+    map_at10 = map_dict["10"]
     assert np.allclose(map_at10, 0.53, atol=1e3)

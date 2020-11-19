@@ -120,7 +120,7 @@ def test_mrr():
 
     mrr_at_1 = mrr_results[0]
     mrr_at_3 = mrr_results[1]
-    
+
     print(mrr_at_1)
     assert mrr_at_1 == 0.5
     assert mrr_at_3 == 0.75
@@ -135,7 +135,7 @@ def wrapper_mrr():
     y_pred2 = [1.0, 2.0, 3.0, 4.0]
     y_true1 = [0, 0, 1.0, 1.0]
     y_true2 = [0, 0, 1.0, 1.0]
-    
+
     topk_args = [1, 3]
 
     output = torch.Tensor([y_pred1, y_pred2])
@@ -143,7 +143,7 @@ def wrapper_mrr():
 
     mrr_wrapper = wrap_topk_metric2dict(metrics.mrr, topk_args)
     mrr_dict = mrr_wrapper(outputs, targets)
-    
+
     mrr_at_1 = mrr_dict['01']
     mrr_at_3 = mrr_dict['03']
 

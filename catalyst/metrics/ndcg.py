@@ -12,7 +12,7 @@ def dcg_at_k(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     k=10,
-    gain_function="exp_rank"
+    gain_function="exp_rank",
 ) -> torch.Tensor:
     """
     Computes DCG@topk for the specified values of `k`.
@@ -45,26 +45,26 @@ def dcg_at_k(
         ValueError: gain function can be either `pow_rank` or `rank`
     """
     k = min(outputs.size(1), k)
-    targets_sorted_by_outputs_at_k = process_recsys_components(outputs, targets, k)
+    targets_sort_by_outputs_at_k = process_recsys_components(
+        outputs, targets, k
+    )
 
     if gain_function == "exp_rank":
         gain_function = lambda x: torch.pow(2, x) - 1
         gains = gain_function(targets_sorted_by_outputs_at_k)
         discounts = torch.tensor(1) / torch.log2(
             torch.arange(
-                targets_sorted_by_outputs_at_k.shape[1],
-                dtype=torch.float
-                ) + 2.0
-        )
+                targets_sorted_by_outputs_at_k.shape[1], dtype=torch.float
+                )+ 2.0
+            )
         discounted_gains = (gains * discounts)[:, :k]
 
     elif gain_function == "linear_rank":
         discounts = torch.tensor(1) / torch.log2(
             torch.arange(
-                targets_sorted_by_outputs_at_k.shape[1],
-                dtype=torch.float
-                ) + 1.0
-        )
+                targets_sorted_by_outputs_at_k.shape[1], dtype=torch.float
+                )+ 1.0
+            )
         discounts[0] = 1
         discounted_gains = (targets_sorted_by_outputs_at_k * discounts)[:, :k]
 
@@ -79,7 +79,7 @@ def ndcg(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     topk: List[int],
-    gain_function="exp_rank"
+    gain_function="exp_rank",
 ) -> List[torch.Tensor]:
     """
     Computes nDCG@topk for the specified values of `topk`.
@@ -112,7 +112,6 @@ def ndcg(
         idcg_mask = ideal_dcgs == 0
         ndcg_score[idcg_mask] = 0.0
         result.append(torch.mean(ndcg_score))
-    
     return result
 
 
