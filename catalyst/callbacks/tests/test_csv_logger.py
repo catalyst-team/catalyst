@@ -31,7 +31,7 @@ def test_logger():
         criterion=criterion,
         optimizer=optimizer,
         scheduler=scheduler,
-        callbacks=[CSVLogger(),],
+        callbacks=[CSVLogger()],
         loaders=loaders,
         logdir="./logdir/test_csv",
         num_epochs=8,

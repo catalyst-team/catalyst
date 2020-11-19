@@ -276,6 +276,7 @@ class TensorboardLogger(ILoggerCallback):
 
 class CSVLogger(ILoggerCallback):
     """Logs metrics to csv file on epoch end"""
+
     def __init__(
         self, metric_names: List[str] = None,
     ):
