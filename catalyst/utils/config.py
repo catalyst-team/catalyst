@@ -7,7 +7,7 @@ import re
 
 import yaml
 
-LOG = getLogger(__name__)
+logger = getLogger(__name__)
 
 
 class OrderedLoader(yaml.Loader):
