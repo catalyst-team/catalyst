@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Optional, Sequence, Tuple, Generator, List
+from typing import Callable, Dict, Generator, List, Optional, Sequence, Tuple
 from functools import partial
 
 import numpy as np

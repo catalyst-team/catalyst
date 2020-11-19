@@ -4,10 +4,10 @@ import pytest
 import torch
 
 from catalyst.metrics.functional import (
+    check_consistent_length,
     get_binary_statistics,
     get_multiclass_statistics,
-    get_multilabel_statistics,
-    check_consistent_length
+    get_multilabel_statistics
 )
 
 
