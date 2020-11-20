@@ -51,7 +51,7 @@ Hash
 
 Initialization
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.initialization
+.. automodule:: catalyst.utils.torch
     :members:
     :undoc-members:
     :show-inheritance:
