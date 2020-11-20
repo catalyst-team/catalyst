@@ -1,4 +1,4 @@
-from catalyst.utils.hash import get_hash
+from catalyst.utils.misc import get_hash
 
 
 def test_hash():

@@ -5,7 +5,7 @@ import numpy as np
 
 from torch.utils.data import Dataset, Sampler
 
-from catalyst.utils.dict import merge_dicts
+from catalyst.utils.misc import merge_dicts
 
 _Path = Union[str, Path]
 

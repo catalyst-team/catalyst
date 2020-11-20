@@ -1,11 +1,13 @@
 from collections import OrderedDict
-import pathlib
+from pathlib import Path
+import shutil
 
+from git import Repo as repo  # noqa: N813
 from prompt_toolkit import prompt
 import yaml
 
 from catalyst import registry
-from catalyst.utils.pipelines import clone_pipeline, URLS
+from catalyst.utils.misc import copy_directory
 from catalyst.utils.scripts import import_module
 
 yaml.add_representer(
@@ -14,6 +16,37 @@ yaml.add_representer(
         "tag:yaml.org,2002:map", data.items()
     ),
 )
+
+URLS = {  # noqa: WPS407
+    "classification": "https://github.com/catalyst-team/classification/",
+    "segmentation": "https://github.com/catalyst-team/segmentation/",
+    "detection": "https://github.com/catalyst-team/detection/",
+}
+
+CATALYST_ROOT = Path(__file__).resolve().parents[3]
+PATH_TO_TEMPLATE = CATALYST_ROOT / "examples" / "_empty"
+
+
+def clone_pipeline(template: str, out_dir: Path) -> None:
+    """Clones pipeline from empty pipeline template or from demo pipelines
+    available in Git repos of Catalyst Team.
+
+    Args:
+        template: type of pipeline you want to clone.
+            empty/classification/segmentation
+        out_dir: path where pipeline directory should be cloned
+    """
+    if template == "empty" or template is None:
+        copy_directory(PATH_TO_TEMPLATE, out_dir)
+    else:
+        url = URLS[template]
+        repo.clone_from(url, out_dir / "__git_temp")
+        shutil.rmtree(out_dir / "__git_temp" / ".git")
+        if (out_dir / "__git_temp" / ".gitignore").exists():
+            (out_dir / "__git_temp" / ".gitignore").unlink()
+
+        copy_directory(out_dir / "__git_temp", out_dir)
+        shutil.rmtree(out_dir / "__git_temp")
 
 
 class Wizard:
@@ -61,7 +94,7 @@ class Wizard:
             ]
         )
 
-        self.pipeline_path = pathlib.Path("./")
+        self.pipeline_path = Path("./")
         self.__before_export = {
             "MODELS": registry.__dict__["MODELS"].all(),
             "CRITERIONS": registry.__dict__["CRITERIONS"].all(),
@@ -119,7 +152,7 @@ class Wizard:
         """Asking where and saving final config converted into YAML."""
         path = prompt("Enter config path: ", default="./configs/config.yml")
         self.__res(path)
-        path = pathlib.Path(path)
+        path = Path(path)
         with path.open(mode="w") as stream:
             yaml.dump(self._cfg, stream, default_flow_style=False)
         print(f"Config was written to {path}")
@@ -331,8 +364,8 @@ class Wizard:
         try:
             # We need to import module to add possible modules to registry
             expdir = self._cfg["args"]["expdir"]
-            if not isinstance(expdir, pathlib.Path):
-                expdir = pathlib.Path(expdir)
+            if not isinstance(expdir, Path):
+                expdir = Path(expdir)
             import_module(expdir)
             self.__res(f"Modules from {expdir} exported")
         except OSError:
@@ -395,7 +428,7 @@ class Wizard:
             f"Where we need to copy {pipeline} " "template files?: ",
             default="./",
         )
-        self.pipeline_path = pathlib.Path(out_dir)
+        self.pipeline_path = Path(out_dir)
         clone_pipeline(pipeline.lower(), self.pipeline_path)
         self.__res(f"{pipeline} cloned to {self.pipeline_path}")
 
@@ -424,4 +457,4 @@ def run_wizard():
     wiz.run()
 
 
-__all__ = ["run_wizard", "Wizard"]
+__all__ = ["run_wizard", "Wizard", "clone_pipeline"]

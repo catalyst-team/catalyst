@@ -1,6 +1,10 @@
-from typing import Any, Callable, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 import argparse
+from base64 import urlsafe_b64encode
+import collections
+import copy
 from datetime import datetime
+from hashlib import sha256
 import inspect
 from pathlib import Path
 import random
@@ -263,6 +267,190 @@ def get_attr(obj: Any, key: str, inner_key: str = None) -> Any:
         return getattr(obj, key)[inner_key]
 
 
+def _get_key_str(
+    dictionary: dict, key: Optional[Union[str, List[str]]],
+) -> Any:
+    return dictionary[key]
+
+
+def _get_key_list(
+    dictionary: dict, key: Optional[Union[str, List[str]]],
+) -> Dict:
+    result = {name: dictionary[name] for name in key}
+    return result
+
+
+def _get_key_dict(
+    dictionary: dict, key: Optional[Union[str, List[str]]],
+) -> Dict:
+    result = {key_out: dictionary[key_in] for key_in, key_out in key.items()}
+    return result
+
+
+def _get_key_none(
+    dictionary: dict, key: Optional[Union[str, List[str]]],
+) -> Dict:
+    return {}
+
+
+def _get_key_all(
+    dictionary: dict, key: Optional[Union[str, List[str]]],
+) -> Dict:
+    return dictionary
+
+
+def get_dictkey_auto_fn(key: Optional[Union[str, List[str]]]) -> Callable:
+    """Function generator for sub-dict preparation from dict
+    based on predefined keys.
+
+    Args:
+        key: keys
+
+    Returns:
+        function
+
+    Raises:
+        NotImplementedError: if key is out of
+            `str`, `tuple`, `list`, `dict`, `None`
+    """
+    if isinstance(key, str):
+        if key == "__all__":
+            return _get_key_all
+        else:
+            return _get_key_str
+    elif isinstance(key, (list, tuple)):
+        return _get_key_list
+    elif isinstance(key, dict):
+        return _get_key_dict
+    elif key is None:
+        return _get_key_none
+    else:
+        raise NotImplementedError()
+
+
+def merge_dicts(*dicts: dict) -> dict:
+    """Recursive dict merge.
+    Instead of updating only top-level keys,
+    ``merge_dicts`` recurses down into dicts nested
+    to an arbitrary depth, updating keys.
+
+    Args:
+        *dicts: several dictionaries to merge
+
+    Returns:
+        dict: deep-merged dictionary
+    """
+    assert len(dicts) > 1
+
+    dict_ = copy.deepcopy(dicts[0])
+
+    for merge_dict in dicts[1:]:
+        merge_dict = merge_dict or {}
+        for k in merge_dict:
+            if (
+                k in dict_
+                and isinstance(dict_[k], dict)
+                and isinstance(merge_dict[k], collections.Mapping)
+            ):
+                dict_[k] = merge_dicts(dict_[k], merge_dict[k])
+            else:
+                dict_[k] = merge_dict[k]
+
+    return dict_
+
+
+def flatten_dict(
+    dictionary: Dict[str, Any], parent_key: str = "", separator: str = "/"
+) -> "collections.OrderedDict":
+    """Make the given dictionary flatten.
+
+    Args:
+        dictionary: giving dictionary
+        parent_key (str, optional): prefix nested keys with
+            string ``parent_key``
+        separator (str, optional): delimiter between
+            ``parent_key`` and ``key`` to use
+
+    Returns:
+        collections.OrderedDict: ordered dictionary with flatten keys
+    """
+    items = []
+    for key, value in dictionary.items():
+        new_key = parent_key + separator + key if parent_key else key
+        if isinstance(value, collections.MutableMapping):
+            items.extend(
+                flatten_dict(value, new_key, separator=separator).items()
+            )
+        else:
+            items.append((new_key, value))
+    return collections.OrderedDict(items)
+
+
+def split_dict_to_subdicts(dct: Dict, prefixes: List, extra_key: str):
+    """@TODO: Docs. Contribution is welcome."""
+    subdicts = {}
+    extra_subdict = {
+        k: v
+        for k, v in dct.items()
+        if all(not k.startswith(prefix) for prefix in prefixes)
+    }
+    if len(extra_subdict) > 0:
+        subdicts[extra_key] = extra_subdict
+    for prefix in prefixes:
+        subdicts[prefix] = {
+            k.replace(f"{prefix}_", ""): v
+            for k, v in dct.items()
+            if k.startswith(prefix)
+        }
+    return subdicts
+
+
+def _make_hashable(o):
+    if isinstance(o, (tuple, list)):
+        return tuple(((type(o).__name__, _make_hashable(e)) for e in o))
+    if isinstance(o, dict):
+        return tuple(
+            sorted(
+                (type(o).__name__, k, _make_hashable(v)) for k, v in o.items()
+            )
+        )
+    if isinstance(o, (set, frozenset)):
+        return tuple(sorted((type(o).__name__, _make_hashable(e)) for e in o))
+    return o
+
+
+def get_hash(obj: Any) -> str:
+    """
+    Creates unique hash from object following way:
+    - Represent obj as sting recursively
+    - Hash this string with sha256 hash function
+    - encode hash with url-safe base64 encoding
+
+    Args:
+        obj: object to hash
+
+    Returns:
+        base64-encoded string
+    """
+    bytes_to_hash = repr(_make_hashable(obj)).encode()
+    hash_bytes = sha256(bytes_to_hash).digest()
+    return urlsafe_b64encode(hash_bytes).decode()
+
+
+def get_short_hash(o) -> str:
+    """Creates unique short hash from object.
+
+    Args:
+        obj: object to hash
+
+    Returns:
+        short base64-encoded string (6 chars)
+    """
+
+    hash_ = get_hash(o)[:6]
+    return hash_
+
+
 __all__ = [
     "boolean_flag",
     "copy_directory",
@@ -274,4 +462,10 @@ __all__ = [
     "maybe_recursive_call",
     "get_attr",
     "set_global_seed",
+    "get_dictkey_auto_fn",
+    "merge_dicts",
+    "flatten_dict",
+    "split_dict_to_subdicts",
+    "get_hash",
+    "get_short_hash",
 ]

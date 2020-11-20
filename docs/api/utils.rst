@@ -44,7 +44,7 @@ Distributed
 
 Hash
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.hash
+.. automodule:: catalyst.utils.misc
     :members:
     :undoc-members:
     :show-inheritance:

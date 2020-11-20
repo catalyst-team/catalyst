@@ -1,3 +1,4 @@
+import pandas as pd
 import pytest
 
 from catalyst.contrib.utils.pandas import (

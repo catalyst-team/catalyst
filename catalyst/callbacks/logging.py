@@ -8,8 +8,7 @@ from tqdm import tqdm
 from catalyst.callbacks.formatters import TxtMetricsFormatter
 from catalyst.contrib.tools.tensorboard import SummaryWriter
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.utils.dict import split_dict_to_subdicts
-from catalyst.utils.misc import is_exception
+from catalyst.utils.misc import is_exception, split_dict_to_subdicts
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner

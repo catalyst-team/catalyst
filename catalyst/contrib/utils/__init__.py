@@ -22,25 +22,6 @@ from catalyst.contrib.utils.misc import (
     make_tuple,
     pairwise,
 )
-from catalyst.contrib.utils.pandas import (
-    dataframe_to_list,
-    folds_to_list,
-    split_dataframe_train_test,
-    split_dataframe_on_folds,
-    split_dataframe_on_stratified_folds,
-    split_dataframe_on_column_folds,
-    map_dataframe,
-    separate_tags,
-    get_dataset_labeling,
-    split_dataframe,
-    merge_multiple_fold_csv,
-    read_multiple_dataframes,
-    read_csv_data,
-    balance_classes,
-    create_dataset,
-    split_dataset_train_test,
-    create_dataframe,
-)
 from catalyst.contrib.utils.parallel import (
     parallel_imap,
     tqdm_parallel_imap,
@@ -52,9 +33,36 @@ from catalyst.contrib.utils.visualization import (
     render_figure_to_tensor,
 )
 
+try:
+    import pandas as pd  # noqa: F401
 
-from catalyst.contrib.utils.cv import *
-from catalyst.contrib.utils.nlp import *
+    from catalyst.contrib.utils.pandas import (
+        dataframe_to_list,
+        folds_to_list,
+        split_dataframe_train_test,
+        split_dataframe_on_folds,
+        split_dataframe_on_stratified_folds,
+        split_dataframe_on_column_folds,
+        map_dataframe,
+        separate_tags,
+        get_dataset_labeling,
+        split_dataframe,
+        merge_multiple_fold_csv,
+        read_multiple_dataframes,
+        read_csv_data,
+        balance_classes,
+        create_dataset,
+        split_dataset_train_test,
+        create_dataframe,
+    )
+except ImportError as ex:
+    if SETTINGS.sklearn_required or SETTINGS.pandas_required:
+        logger.warning(
+            "pandas/sklearn are not available, to install them,"
+            " run `pip install pandas sklearn`."
+        )
+        raise ex
+
 
 try:
     import plotly  # noqa: F401
@@ -69,3 +77,14 @@ except ImportError as ex:
             " run `pip install plotly`."
         )
         raise ex
+
+from catalyst.contrib.utils.cv import *
+from catalyst.contrib.utils.nlp import *
+
+
+if SETTINGS.IS_GIT_AVAILABLE:
+    from catalyst.contrib.utils.wizard import (
+        clone_pipeline,
+        run_wizard,
+        Wizard,
+    )

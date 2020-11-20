@@ -10,7 +10,7 @@ from catalyst.core.callback import (
     CallbackOrder,
     CallbackScope,
 )
-from catalyst.utils.dict import split_dict_to_subdicts
+from catalyst.utils.misc import split_dict_to_subdicts
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
