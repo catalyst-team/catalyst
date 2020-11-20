@@ -116,13 +116,13 @@ def main_worker(args, unknown_args):
     config.setdefault("distributed_params", {})["apex"] = args.apex
     config.setdefault("distributed_params", {})["amp"] = args.amp
 
+    if args.logdir is not None and get_rank() <= 0:
+        dump_environment(config, args.logdir, args.configs)
+        dump_code(args.expdir, args.logdir)
+
     experiment, runner, config = prepare_config_api_components(
         expdir=Path(args.expdir), config=config
     )
-
-    if experiment.logdir is not None and get_rank() <= 0:
-        dump_environment(config, experiment.logdir, args.configs)
-        dump_code(args.expdir, experiment.logdir)
 
     runner.run_experiment(experiment)
 
