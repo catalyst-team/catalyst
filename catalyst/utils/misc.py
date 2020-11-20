@@ -1,4 +1,5 @@
-from typing import Any, Callable, List, Union
+from typing import Any, Callable, List, Optional, Union
+import argparse
 from datetime import datetime
 import inspect
 from pathlib import Path
@@ -7,6 +8,40 @@ import shutil
 
 import numpy as np
 from packaging.version import parse, Version
+
+
+def boolean_flag(
+    parser: argparse.ArgumentParser,
+    name: str,
+    default: Optional[bool] = False,
+    help: str = None,  # noqa: WPS125
+    shorthand: str = None,
+) -> None:
+    """Add a boolean flag to a parser inplace.
+
+    Examples:
+        >>> parser = argparse.ArgumentParser()
+        >>> boolean_flag(
+        >>>     parser, "flag", default=False, help="some flag", shorthand="f"
+        >>> )
+
+    Args:
+        parser: parser to add the flag to
+        name: argument name
+            --<name> will enable the flag,
+            while --no-<name> will disable it
+        default (bool, optional): default value of the flag
+        help: help string for the flag
+        shorthand: shorthand string for the argument
+    """
+    dest = name.replace("-", "_")
+    names = ["--" + name]
+    if shorthand is not None:
+        names.append("-" + shorthand)
+    parser.add_argument(
+        *names, action="store_true", default=default, dest=dest, help=help
+    )
+    parser.add_argument("--no-" + name, action="store_false", dest=dest)
 
 
 def set_global_seed(seed: int) -> None:
@@ -229,6 +264,7 @@ def get_attr(obj: Any, key: str, inner_key: str = None) -> Any:
 
 
 __all__ = [
+    "boolean_flag",
     "copy_directory",
     "format_metric",
     "get_fn_default_params",

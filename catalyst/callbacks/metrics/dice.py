@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 from catalyst.callbacks.metric import BatchMetricCallback
-from catalyst.contrib.utils.confusion_matrix import (
+from catalyst.contrib.utils.torch import (
     calculate_confusion_matrix_from_tensors,
     calculate_tp_fp_fn,
 )

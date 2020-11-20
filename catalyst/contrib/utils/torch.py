@@ -1,12 +1,18 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 import numpy as np
 
 import torch
 
 
 def calculate_tp_fp_fn(confusion_matrix: np.ndarray) -> np.ndarray:
-    """@TODO: Docs. Contribution is welcome."""
+    """
+    Calculated TP, FP, FN statistics from confusion matrix.
+
+    Args:
+        confusion_matrix: confusion matrix, np.ndarray
+
+    Returns:
+        dictionary with TP, FP, FN statistics
+    """
     true_positives = np.diag(confusion_matrix)
     false_positives = confusion_matrix.sum(axis=0) - true_positives
     false_negatives = confusion_matrix.sum(axis=1) - true_positives

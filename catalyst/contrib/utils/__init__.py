@@ -6,22 +6,16 @@ logger = logging.getLogger(__name__)
 
 from catalyst.settings import SETTINGS
 
-from catalyst.contrib.utils.argparse import boolean_flag
 from catalyst.contrib.utils.compression import (
     pack,
     pack_if_needed,
     unpack,
     unpack_if_needed,
 )
-from catalyst.contrib.utils.confusion_matrix import (
+from catalyst.contrib.utils.torch import (
     calculate_tp_fp_fn,
     calculate_confusion_matrix_from_arrays,
     calculate_confusion_matrix_from_tensors,
-)
-from catalyst.contrib.utils.dataset import (
-    create_dataset,
-    split_dataset_train_test,
-    create_dataframe,
 )
 from catalyst.contrib.utils.misc import (
     args_are_not_none,
@@ -43,6 +37,9 @@ from catalyst.contrib.utils.pandas import (
     read_multiple_dataframes,
     read_csv_data,
     balance_classes,
+    create_dataset,
+    split_dataset_train_test,
+    create_dataframe,
 )
 from catalyst.contrib.utils.parallel import (
     parallel_imap,

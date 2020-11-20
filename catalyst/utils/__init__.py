@@ -64,6 +64,7 @@ from catalyst.utils.misc import (
     maybe_recursive_call,
     get_attr,
     set_global_seed,
+    boolean_flag,
 )
 from catalyst.utils.numpy import get_one_hot
 from catalyst.utils.parser import parse_config_args, parse_args_uargs
