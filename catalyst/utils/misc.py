@@ -437,8 +437,9 @@ def get_hash(obj: Any) -> str:
     return urlsafe_b64encode(hash_bytes).decode()
 
 
-def get_short_hash(o) -> str:
-    """Creates unique short hash from object.
+def get_short_hash(obj) -> str:
+    """
+    Creates unique short hash from object.
 
     Args:
         obj: object to hash
@@ -446,8 +447,7 @@ def get_short_hash(o) -> str:
     Returns:
         short base64-encoded string (6 chars)
     """
-
-    hash_ = get_hash(o)[:6]
+    hash_ = get_hash(obj)[:6]
     return hash_
 
 

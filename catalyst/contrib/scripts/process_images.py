@@ -31,6 +31,12 @@ def build_args(parser):
     """
     Constructs the command-line arguments for
     ``catalyst-contrib process-images``.
+
+    Args:
+        parser: current parser
+
+    Returns:
+        updated parser
     """
     parser.add_argument(
         "--in-dir", required=True, type=Path, help="Raw data folder path"

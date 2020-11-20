@@ -3,14 +3,18 @@ import json
 
 import pandas as pd
 
-# @TODO: move all to pandas.py
-from catalyst.contrib.utils.dataset import create_dataframe, create_dataset
-from catalyst.contrib.utils.pandas import get_dataset_labeling, separate_tags
+from catalyst.contrib.utils.pandas import (
+    create_dataframe,
+    create_dataset,
+    get_dataset_labeling,
+    separate_tags,
+)
 from catalyst.utils.misc import boolean_flag
 
 
 def build_args(parser):
-    """Constructs the command-line arguments for ``catalyst-contrib tag2label``.
+    """
+    Constructs the command-line arguments for ``catalyst-contrib tag2label``.
 
     Args:
         parser: current parser
