@@ -93,8 +93,7 @@ except ImportError as ex:
             " run `pip install pandas`."
         )
         raise ex
-except Exception as ex:
-    raise ex
+
 
 try:
     from catalyst.contrib.scripts import (
@@ -117,8 +116,6 @@ except ImportError as ex:
             " run `pip install pandas scipy sklearn`."
         )
         raise ex
-except Exception as ex:
-    raise ex
 
 
 try:
@@ -137,8 +134,6 @@ except ImportError as ex:
             " run `pip install nmslib pandas sklearn`."
         )
         raise ex
-except Exception as ex:
-    raise ex
 
 try:
     from catalyst.contrib.scripts import process_images, image2embedding
@@ -152,8 +147,6 @@ except ImportError as ex:  # noqa: WPS440
             + " to install dependencies, run `pip install catalyst[cv]`."
         )
         raise ex
-except Exception as ex:
-    raise ex
 
 try:
     from catalyst.contrib.scripts import text2embedding
@@ -166,8 +159,6 @@ except ImportError as ex:  # noqa: WPS440
             + " run `pip install transformers`."
         )
         raise ex
-except Exception as ex:
-    raise ex
 
 COMMANDS = OrderedDict(sorted(COMMANDS.items()))
 

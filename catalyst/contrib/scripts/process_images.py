@@ -29,7 +29,8 @@ from catalyst.contrib.utils.parallel import get_pool, tqdm_parallel_imap
 
 def build_args(parser):
     """
-    Constructs the command-line arguments for ``catalyst-contrib process-images``.
+    Constructs the command-line arguments for
+    ``catalyst-contrib process-images``.
     """
     parser.add_argument(
         "--in-dir", required=True, type=Path, help="Raw data folder path"
