@@ -13,8 +13,8 @@ from scipy.special import expit
 from sklearn import metrics
 from sklearn.model_selection import RepeatedStratifiedKFold
 
-from catalyst.contrib.utils.argparse import boolean_flag
 from catalyst.contrib.utils.parallel import get_pool, tqdm_parallel_imap
+from catalyst.utils.misc import boolean_flag
 
 _BINARY_PER_CLASS_METRICS = [  # noqa: WPS407
     "accuracy_score",

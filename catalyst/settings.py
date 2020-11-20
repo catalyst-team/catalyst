@@ -8,13 +8,6 @@ from catalyst.tools.frozen_class import FrozenClass
 logger = logging.getLogger(__name__)
 
 try:
-    import ipython  # noqa: F401
-
-    IS_IPYTHON_AVAILABLE = True
-except ImportError:
-    IS_IPYTHON_AVAILABLE = False
-
-try:
     from git import Repo  # noqa: F401
 
     IS_GIT_AVAILABLE = True
@@ -348,6 +341,7 @@ setattr(SETTINGS, "IS_PRUNING_AVAILABLE", IS_PRUNING_AVAILABLE)  # noqa: B010
 setattr(  # noqa: B010
     SETTINGS, "IS_QUANTIZATION_AVAILABLE", IS_QUANTIZATION_AVAILABLE
 )
+setattr(SETTINGS, "IS_OPTUNA_AVAILABLE", IS_OPTUNA_AVAILABLE)  # noqa: B010
 
 
 __all__ = [
@@ -359,4 +353,5 @@ __all__ = [
     "IS_XLA_AVAILABLE",
     "IS_GIT_AVAILABLE",
     "IS_QUANTIZATION_AVAILABLE",
+    "IS_OPTUNA_AVAILABLE",
 ]

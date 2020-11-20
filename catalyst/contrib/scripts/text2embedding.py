@@ -11,13 +11,12 @@ import torch
 from transformers import BertConfig, BertModel, BertTokenizer
 
 from catalyst.contrib.data import LambdaReader
-from catalyst.contrib.utils.argparse import boolean_flag
 from catalyst.contrib.utils.nlp import process_bert_output, tokenize_text
 from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
 from catalyst.utils.components import process_components
 from catalyst.utils.distributed import check_ddp_wrapped
 from catalyst.utils.loaders import get_loader
-from catalyst.utils.misc import set_global_seed
+from catalyst.utils.misc import boolean_flag, set_global_seed
 from catalyst.utils.torch import any2device, prepare_cudnn
 
 

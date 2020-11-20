@@ -11,10 +11,9 @@ import torch
 
 from catalyst.contrib.data.cv import ImageReader
 from catalyst.contrib.models.cv import ResnetEncoder
-from catalyst.contrib.utils.argparse import boolean_flag
 from catalyst.utils.components import process_components
 from catalyst.utils.loaders import get_loader
-from catalyst.utils.misc import set_global_seed
+from catalyst.utils.misc import boolean_flag, set_global_seed
 from catalyst.utils.torch import get_device, prepare_cudnn
 
 IMG_SIZE = (224, 224)
