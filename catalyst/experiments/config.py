@@ -17,10 +17,7 @@ from catalyst.callbacks.logging import (
     VerboseLogger,
 )
 from catalyst.callbacks.metric import MetricManagerCallback
-from catalyst.callbacks.optimizer import (
-    IOptimizerCallback,
-    OptimizerCallback,
-)
+from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
 from catalyst.callbacks.timer import TimerCallback
 from catalyst.callbacks.validation import ValidationManagerCallback

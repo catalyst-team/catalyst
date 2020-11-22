@@ -3,10 +3,7 @@ from collections import OrderedDict
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
 from catalyst.callbacks.criterion import CriterionCallback
-from catalyst.callbacks.optimizer import (
-    IOptimizerCallback,
-    OptimizerCallback,
-)
+from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
 from catalyst.core.callback import Callback
 from catalyst.core.functional import check_callback_isinstance
