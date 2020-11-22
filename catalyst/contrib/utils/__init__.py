@@ -12,12 +12,12 @@ from catalyst.contrib.utils.compression import (
     unpack,
     unpack_if_needed,
 )
-from catalyst.contrib.utils.torch import (
+from catalyst.contrib.utils.torch_extra import (
     calculate_tp_fp_fn,
     calculate_confusion_matrix_from_arrays,
     calculate_confusion_matrix_from_tensors,
 )
-from catalyst.contrib.utils.misc import (
+from catalyst.contrib.utils.misc_extra import (
     args_are_not_none,
     make_tuple,
     pairwise,

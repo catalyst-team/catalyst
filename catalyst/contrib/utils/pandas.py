@@ -12,7 +12,7 @@ from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.utils import shuffle
 from tqdm.auto import tqdm
 
-from catalyst.contrib.utils.misc import args_are_not_none
+from catalyst.contrib.utils.misc_extra import args_are_not_none
 
 DictDataset = Dict[str, object]
 
