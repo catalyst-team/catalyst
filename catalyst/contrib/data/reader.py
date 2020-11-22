@@ -6,7 +6,7 @@ import numpy as np
 from catalyst.utils.numpy import get_one_hot
 
 
-class ReaderSpec:
+class IReader:
     """Reader abstraction for all Readers.
 
     Applies a function to an element of your data.
@@ -42,7 +42,7 @@ class ReaderSpec:
         )
 
 
-class ScalarReader(ReaderSpec):
+class ScalarReader(IReader):
     """
     Numeric data reader abstraction.
     Reads a single float, int, str or other from data
@@ -99,7 +99,7 @@ class ScalarReader(ReaderSpec):
         return output
 
 
-class LambdaReader(ReaderSpec):
+class LambdaReader(IReader):
     """
     Reader abstraction with an lambda encoders.
     Can read an elem from dataset and apply `encode_fn` function to it.
@@ -146,7 +146,7 @@ class LambdaReader(ReaderSpec):
 class ReaderCompose(object):
     """Abstraction to compose several readers into one open function."""
 
-    def __init__(self, readers: List[ReaderSpec], mixins: list = None):
+    def __init__(self, readers: List[IReader], mixins: list = None):
         """
         Args:
             readers: list of reader to compose
@@ -175,7 +175,7 @@ class ReaderCompose(object):
 
 
 __all__ = [
-    "ReaderSpec",
+    "IReader",
     "ScalarReader",
     "LambdaReader",
     "ReaderCompose",

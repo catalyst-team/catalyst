@@ -5,7 +5,7 @@ from catalyst.contrib.data.augmentor import (
     AugmentorKeys,
 )
 from catalyst.contrib.data.reader import (
-    ReaderSpec,
+    IReader,
     ScalarReader,
     LambdaReader,
     ReaderCompose,

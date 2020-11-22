@@ -1,10 +1,10 @@
 from typing import Optional, Tuple, Union
 
-from catalyst.contrib.data.reader import ReaderSpec
+from catalyst.contrib.data.reader import IReader
 from catalyst.contrib.utils.cv.image import imread, mimread
 
 
-class ImageReader(ReaderSpec):
+class ImageReader(IReader):
     """Image reader abstraction. Reads images from a ``csv`` dataset."""
 
     def __init__(
@@ -47,7 +47,7 @@ class ImageReader(ReaderSpec):
         return output
 
 
-class MaskReader(ReaderSpec):
+class MaskReader(IReader):
     """Mask reader abstraction. Reads masks from a `csv` dataset."""
 
     def __init__(
