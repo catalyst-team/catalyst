@@ -52,7 +52,7 @@ class OptimizerCallback(IOptimizerCallback):
         use_fast_zero_grad: bool = False,
         xla_barrier: bool = True,
         use_amp: bool = None,
-        use_apex: bool = None
+        use_apex: bool = None,
     ):
         """
         Args:
@@ -138,7 +138,7 @@ class OptimizerCallback(IOptimizerCallback):
             xm.optimizer_step(self._optimizer)
 
     def grad_step(
-            self, *, optimizer: Optimizer, grad_clip_fn: Callable = None
+        self, *, optimizer: Optimizer, grad_clip_fn: Callable = None
     ) -> None:
         """Makes a gradient step for a given optimizer.
 
@@ -170,8 +170,8 @@ class OptimizerCallback(IOptimizerCallback):
         """
         if self.use_amp is None and runner.experiment is not None:
             self.use_amp = runner.experiment.distributed_params.get(
-                    "amp", False
-                )
+                "amp", False
+            )
         else:
             self.use_amp = False
 
