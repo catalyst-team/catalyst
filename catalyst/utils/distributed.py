@@ -86,7 +86,6 @@ def initialize_apex(model, optimizer=None, **distributed_params):
     Returns:
         model and optimiezer, wrapped with Nvidia Apex initialization
     """
-
     import apex
 
     amp_params = get_fn_default_params(
