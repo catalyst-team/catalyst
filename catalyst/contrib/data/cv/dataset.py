@@ -1,14 +1,13 @@
-from typing import Callable, Dict, Mapping, Optional
-from typing import Iterable, Tuple
-import os
+from typing import Callable, Dict, Iterable, Mapping, Optional, Tuple
 import glob
+import os
 from pathlib import Path
 
 from catalyst.contrib.data.cv.reader import ImageReader
 from catalyst.contrib.data.reader import ReaderCompose, ScalarReader
+from catalyst.contrib.datasets.functional import download_and_extract_archive
 from catalyst.contrib.utils.cv.image import has_image_extension
 from catalyst.data.dataset.torch import PathsDataset
-from catalyst.contrib.datasets.functional import download_and_extract_archive
 
 
 class ImageFolderDataset(PathsDataset):
@@ -75,6 +74,7 @@ class ImageFolderDataset(PathsDataset):
             target_key=target_key,
             dict_transform=dict_transform,
         )
+
 
 class ImageClassificationDataset(ImageFolderDataset):
     """
@@ -143,7 +143,6 @@ class ImageClassificationDataset(ImageFolderDataset):
 
         rootpath = os.path.join(root, self.name, "train" if train else "val")
         super().__init__(rootpath=rootpath, **kwargs)
-
 
 
 __all__ = ["ImageFolderDataset", "ImageClassificationDataset"]

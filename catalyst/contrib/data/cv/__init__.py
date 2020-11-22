@@ -18,7 +18,10 @@ logger = logging.getLogger(__name__)
 
 try:
     from catalyst.contrib.data.cv.reader import ImageReader, MaskReader
-    from catalyst.contrib.data.cv.dataset import ImageFolderDataset, ImageClassificationDataset
+    from catalyst.contrib.data.cv.dataset import (
+        ImageFolderDataset,
+        ImageClassificationDataset,
+    )
 
     from catalyst.contrib.data.cv.mixins import (
         BlurMixin,
