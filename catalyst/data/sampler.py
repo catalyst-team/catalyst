@@ -571,8 +571,8 @@ class DistributedSamplerWrapper(DistributedSampler):
 __all__ = [
     "BalanceClassSampler",
     "BalanceBatchSampler",
-    "MiniEpochSampler",
     "DistributedSamplerWrapper",
     "DynamicBalanceClassSampler",
     "DynamicLenBatchSampler",
+    "MiniEpochSampler",
 ]

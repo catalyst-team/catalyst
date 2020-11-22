@@ -262,8 +262,6 @@ Indices and tables
     faq/stages
     faq/config_api
     faq/optuna
-    Neptune integration
-    Wandb integration
 
 
 .. toctree::

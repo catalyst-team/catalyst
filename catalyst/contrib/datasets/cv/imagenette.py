@@ -1,4 +1,4 @@
-from catalyst.contrib.datasets.cv.fastai import ImageClassificationDataset
+from catalyst.contrib.data.cv.dataset import ImageClassificationDataset
 
 
 class Imagenette(ImageClassificationDataset):

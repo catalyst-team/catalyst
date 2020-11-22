@@ -10,46 +10,11 @@ Data subpackage has data preprocessers and dataloader abstractions.
    :local:
 
 
+Main
+----------------------
 .. automodule:: catalyst.data
     :members:
-    :undoc-members:
-
-Scripts
---------------------------------------
-
-You can use scripts typing `catalyst-contrib` in your terminal.
-For example:
-
-.. code-block:: bash
-
-    $ catalyst-contrib tag2label --help
-
-.. automodule:: catalyst.data.__main__
-    :members:
-    :exclude-members: build_parser, main
-
-
-Augmentors
---------------------------------------
-
-Augmentor
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.data.augmentor.Augmentor
-    :members:
-    :undoc-members:
-
-AugmentorCompose
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.data.augmentor.AugmentorCompose
-    :members:
-    :undoc-members:
-
-AugmentorKeys
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.data.augmentor.AugmentorKeys
-    :members:
-    :undoc-members:
-
+    :show-inheritance:
 
 Collate Functions
 --------------------------------------
@@ -182,41 +147,6 @@ BatchPrefetchLoaderWrapper
     :special-members:
 
 
-Readers
---------------------------------------
-
-Readers are the abstraction for your dataset. They can open an elem from the dataset and transform it to data, needed by your network.
-For example open image by path, or read string and tokenize it.
-
-ReaderSpec
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.data.reader.ReaderSpec
-    :members:
-    :undoc-members:
-    :special-members: __init__, __call__
-
-ScalarReader
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.data.reader.ScalarReader
-    :members:
-    :undoc-members:
-    :special-members: __init__, __call__
-
-LambdaReader
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.data.reader.LambdaReader
-    :members:
-    :undoc-members:
-    :special-members: __init__, __call__
-
-ReaderCompose
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.data.reader.ReaderCompose
-    :members:
-    :undoc-members:
-    :special-members: __init__, __call__
-
-
 Samplers
 --------------------------------------
 
@@ -263,134 +193,192 @@ MiniEpochSampler
     :special-members: __iter__, __len__
 
 
-CV Extensions
---------------------------------------
-
-Dataset
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-ImageFolderDataset
-""""""""""""""""""""""""""
-.. autoclass:: catalyst.data.cv.dataset.ImageFolderDataset
-    :show-inheritance:
+Contrib
+----------------------
+.. automodule:: catalyst.contrib.data
     :members:
-    :special-members: __getitem__, __len__
+    :show-inheritance:
 
-Mixins
+Augmentors
+~~~~~~~~~~~~~~~~
+
+Augmentor
+""""""""""""""""""""""""""
+.. autoclass:: catalyst.contrib.data.augmentor.Augmentor
+    :members:
+    :undoc-members:
+
+AugmentorCompose
+""""""""""""""""""""""""""
+.. autoclass:: catalyst.contrib.data.augmentor.AugmentorCompose
+    :members:
+    :undoc-members:
+
+AugmentorKeys
+""""""""""""""""""""""""""
+.. autoclass:: catalyst.contrib.data.augmentor.AugmentorKeys
+    :members:
+    :undoc-members:
+
+Readers
+~~~~~~~~~~~~~~~~
+
+Readers are the abstraction for your dataset. They can open an elem from the dataset and transform it to data, needed by your network.
+For example open image by path, or read string and tokenize it.
+
+IReader
+""""""""""""""""""""""""""
+.. autoclass:: catalyst.contrib.data.reader.IReader
+    :members:
+    :undoc-members:
+    :special-members: __init__, __call__
+
+ImageReader (CV)
+""""""""""""""""""""""""""
+.. autoclass:: catalyst.contrib.data.cv.reader.ImageReader
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+LambdaReader
+""""""""""""""""""""""""""
+.. autoclass:: catalyst.contrib.data.reader.LambdaReader
+    :members:
+    :undoc-members:
+    :special-members: __init__, __call__
+
+MaskReader (CV)
+""""""""""""""""""""""""""
+.. autoclass:: catalyst.contrib.data.cv.reader.MaskReader
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ScalarReader
+""""""""""""""""""""""""""
+.. autoclass:: catalyst.contrib.data.reader.ScalarReader
+    :members:
+    :undoc-members:
+    :special-members: __init__, __call__
+
+ReaderCompose
+""""""""""""""""""""""""""
+.. autoclass:: catalyst.contrib.data.reader.ReaderCompose
+    :members:
+    :undoc-members:
+    :special-members: __init__, __call__
+
+
+Mixins (CV)
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 BlurMixin
 """"""""""""""""""""""""""
-.. autoclass:: catalyst.data.cv.mixins.blur.BlurMixin
+.. autoclass:: catalyst.contrib.data.cv.mixins.blur.BlurMixin
     :members:
     :undoc-members:
     :show-inheritance:
 
 FlareMixin
 """"""""""""""""""""""""""
-.. autoclass:: catalyst.data.cv.mixins.flare.FlareMixin
+.. autoclass:: catalyst.contrib.data.cv.mixins.flare.FlareMixin
     :members:
     :undoc-members:
     :show-inheritance:
 
 RotateMixin
 """"""""""""""""""""""""""
-.. autoclass:: catalyst.data.cv.mixins.rotate.RotateMixin
+.. autoclass:: catalyst.contrib.data.cv.mixins.rotate.RotateMixin
     :members:
     :undoc-members:
     :show-inheritance:
 
-Readers
+
+Transforms (CV)
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-ImageReader
+Compose
 """"""""""""""""""""""""""
-.. autoclass:: catalyst.data.cv.reader.ImageReader
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-MaskReader
-""""""""""""""""""""""""""
-.. autoclass:: catalyst.data.cv.reader.MaskReader
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Transforms
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-TensorToImage
-""""""""""""""""""""""""""
-.. autoclass:: catalyst.data.cv.transforms.albumentations.TensorToImage
+.. autoclass:: catalyst.contrib.data.cv.transforms.torch.Compose
     :members:
     :undoc-members:
     :show-inheritance:
 
 ImageToTensor
 """"""""""""""""""""""""""
-.. autoclass:: catalyst.data.cv.transforms.albumentations.ImageToTensor
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Compose
-""""""""""""""""""""""""""
-.. autoclass:: catalyst.data.cv.transforms.torch.Compose
+.. autoclass:: catalyst.contrib.data.cv.transforms.albumentations.ImageToTensor
     :members:
     :undoc-members:
     :show-inheritance:
 
 Normalize
 """"""""""""""""""""""""""
-.. autoclass:: catalyst.data.cv.transforms.torch.Normalize
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ToTensor
-""""""""""""""""""""""""""
-.. autoclass:: catalyst.data.cv.transforms.torch.ToTensor
+.. autoclass:: catalyst.contrib.data.cv.transforms.torch.Normalize
     :members:
     :undoc-members:
     :show-inheritance:
 
 OneOfPerBatch
 """"""""""""""""""""""""""
-.. autoclass:: catalyst.data.cv.transforms.kornia.OneOfPerBatch
+.. autoclass:: catalyst.contrib.data.cv.transforms.kornia.OneOfPerBatch
     :members:
     :undoc-members:
     :show-inheritance:
 
 OneOfPerSample
 """"""""""""""""""""""""""
-.. autoclass:: catalyst.data.cv.transforms.kornia.OneOfPerSample
+.. autoclass:: catalyst.contrib.data.cv.transforms.kornia.OneOfPerSample
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+TensorToImage
+""""""""""""""""""""""""""
+.. autoclass:: catalyst.contrib.data.cv.transforms.albumentations.TensorToImage
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+ToTensor
+""""""""""""""""""""""""""
+.. autoclass:: catalyst.contrib.data.cv.transforms.torch.ToTensor
     :members:
     :undoc-members:
     :show-inheritance:
 
 
-NLP Extensions
---------------------------------------
+Datasets (CV)
+~~~~~~~~~~~~~~~~
 
-.. automodule:: catalyst.data.nlp
+ImageFolderDataset
+""""""""""""""""""""""""""
+.. autoclass:: catalyst.contrib.data.cv.dataset.ImageFolderDataset
+    :show-inheritance:
     :members:
-    :undoc-members:
-    :special-members:
+    :special-members: __getitem__, __len__
 
-Datasets
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ImageClassificationDataset
+""""""""""""""""""""""""""
+.. autoclass:: catalyst.contrib.data.cv.dataset.ImageClassificationDataset
+    :show-inheritance:
+    :members:
+    :special-members: __getitem__, __len__
+
+
+Datasets (NLP)
+~~~~~~~~~~~~~~~~
 
 LanguageModelingDataset
 """"""""""""""""""""""""""
-.. autoclass:: catalyst.data.nlp.dataset.language_modeling.LanguageModelingDataset
-    :members:
-    :undoc-members:
+.. autoclass:: catalyst.contrib.data.nlp.dataset.language_modeling.LanguageModelingDataset
     :show-inheritance:
+    :members:
+    :special-members: __getitem__, __len__
 
 TextClassificationDataset
 """"""""""""""""""""""""""
-.. autoclass:: catalyst.data.nlp.dataset.text_classification.TextClassificationDataset
-    :members:
-    :undoc-members:
+.. autoclass:: catalyst.contrib.data.nlp.dataset.text_classification.TextClassificationDataset
     :show-inheritance:
+    :members:
+    :special-members: __getitem__, __len__
