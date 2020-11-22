@@ -42,17 +42,17 @@ class OptimizerCallback(IOptimizerCallback):
     """Optimizer callback, abstraction over optimizer step."""
 
     def __init__(
-            self,
-            metric_key: str = None,
-            optimizer_key: str = None,
-            accumulation_steps: int = 1,
-            grad_clip_params: Dict = None,
-            decouple_weight_decay: bool = False,
-            loss_key: str = None,
-            use_fast_zero_grad: bool = False,
-            xla_barrier: bool = True,
-            use_amp: bool = None,
-            use_apex: bool = None
+        self,
+        metric_key: str = None,
+        optimizer_key: str = None,
+        accumulation_steps: int = 1,
+        grad_clip_params: Dict = None,
+        decouple_weight_decay: bool = False,
+        loss_key: str = None,
+        use_fast_zero_grad: bool = False,
+        xla_barrier: bool = True,
+        use_amp: bool = None,
+        use_apex: bool = None
     ):
         """
         Args:
@@ -138,10 +138,7 @@ class OptimizerCallback(IOptimizerCallback):
             xm.optimizer_step(self._optimizer)
 
     def grad_step(
-        self,
-        *,
-        optimizer: Optimizer,
-        grad_clip_fn: Callable = None,
+            self, *, optimizer: Optimizer, grad_clip_fn: Callable = None
     ) -> None:
         """Makes a gradient step for a given optimizer.
 
@@ -152,8 +149,9 @@ class OptimizerCallback(IOptimizerCallback):
         if self.decouple_weight_decay:
             for group, wd in zip(optimizer.param_groups, self._optimizer_wds):
                 for param in group["params"]:
-                    param.data = param.data.add(other=param.data,
-                                                alpha=-wd * group["lr"])
+                    param.data = param.data.add(
+                        other=param.data, alpha=-wd * group["lr"]
+                    )
 
         if grad_clip_fn is not None:
             if self.use_amp:
@@ -171,14 +169,16 @@ class OptimizerCallback(IOptimizerCallback):
             runner(IRunner): current runner
         """
         if self.use_amp is None and runner.experiment is not None:
-            self.use_amp = \
-                runner.experiment.distributed_params.get("amp", False)
+            self.use_amp = runner.experiment.distributed_params.get(
+                    "amp", False
+                )
         else:
             self.use_amp = False
 
         if self.use_apex is None and runner.experiment is not None:
-            self.use_apex = \
-                runner.experiment.distributed_params.get("apex", False)
+            self.use_apex = runner.experiment.distributed_params.get(
+                "apex", False
+            )
         else:
             self.use_apex = False
 
@@ -205,6 +205,7 @@ class OptimizerCallback(IOptimizerCallback):
 
         if self.use_amp:
             from torch.cuda.amp import GradScaler
+
             self.scaler = GradScaler()
 
     def on_epoch_start(self, runner: "IRunner") -> None:
@@ -274,8 +275,7 @@ class OptimizerCallback(IOptimizerCallback):
 
         if need_gradient_step:
             self.grad_step(
-                optimizer=self._optimizer,
-                grad_clip_fn=self.grad_clip_fn,
+                optimizer=self._optimizer, grad_clip_fn=self.grad_clip_fn,
             )
             if not self.use_fast_zero_grad:
                 maybe_recursive_call(self._optimizer, "zero_grad")

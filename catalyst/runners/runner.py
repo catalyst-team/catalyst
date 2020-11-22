@@ -47,8 +47,11 @@ def resolve_bool_fp16(fp16: Union[Dict, bool]):
     """
     if isinstance(fp16, bool):
         if fp16:
-            return {"amp": True} if check_amp_available() \
+            return (
+                {"amp": True}
+                if check_amp_available()
                 else {"apex": True, "opt_level": "O1"}
+            )
         else:
             return {}
     else:
