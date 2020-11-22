@@ -3,7 +3,7 @@ from torch import nn
 from catalyst.callbacks.metric import BatchMetricCallback
 
 
-class PerplexityMetricCallback(BatchMetricCallback):
+class PerplexityCallback(BatchMetricCallback):
     """
     Perplexity is a very popular metric in NLP
     especially in Language Modeling task.
@@ -51,3 +51,9 @@ class PerplexityMetricCallback(BatchMetricCallback):
         )
         perplexity = 2 ** cross_entropy
         return perplexity.item()
+
+
+# backward compatibility
+PerplexityMetricCallback = PerplexityCallback
+
+__all__ = ["PerplexityCallback", "PerplexityMetricCallback"]
