@@ -47,7 +47,8 @@ def resolve_bool_fp16(fp16: Union[Dict, bool]):
     """
     if isinstance(fp16, bool):
         if fp16:
-            return {"amp": True} if check_amp_available() else {"apex": True, "opt_level": "O1"}
+            return {"amp": True} if check_amp_available() \
+                else {"apex": True, "opt_level": "O1"}
         else:
             return {}
     else:
@@ -140,7 +141,8 @@ class Runner(IStageBasedRunner):
             fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
                 To use pytorch native amp: ``{"amp": True}``
                 To use apex: ``{"apex": True, "opt_level": "O1", ...}``
-                    See https://nvidia.github.io/apex/amp.html#properties for more params
+                    See https://nvidia.github.io/apex/amp.html#properties
+                    for more params
 
                 If fp16=True, params by default will be:
                     * ``{"amp": True}`` if torch>=1.6.0
@@ -421,7 +423,9 @@ class Runner(IStageBasedRunner):
         assert self.model is not None
 
         fp16 = resolve_bool_fp16(fp16)
-        opt_level = fp16.get("opt_level", None)
+        opt_level = None
+        if fp16:
+            fp16.get("opt_level", None)
 
         if opt_level is not None:
             device = "cuda"

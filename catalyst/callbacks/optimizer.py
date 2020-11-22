@@ -74,10 +74,10 @@ class OptimizerCallback(IOptimizerCallback):
                 <https://pytorch.org/xla/release/1.5/index.html#
                 running-on-a-single-xla-device>`_.
                 Default is ``True``.
-            use_amp: whether to use native pytorch AMP,
-                if None will be set based on runner.experiment.distributed_params on stage start
-            use_apex: whether to use apex,
-                if None will be set based on runner.experiment.distributed_params on stage start
+            use_amp: whether to use native pytorch AMP, if None will be set
+                based on runner.experiment.distributed_params on stage start
+            use_apex: whether to use apex, if None will be set
+                based on runner.experiment.distributed_params on stage start
 
         """
         super().__init__(order=CallbackOrder.optimizer, node=CallbackNode.all)
@@ -171,12 +171,14 @@ class OptimizerCallback(IOptimizerCallback):
             runner(IRunner): current runner
         """
         if self.use_amp is None and runner.experiment is not None:
-            self.use_amp = runner.experiment.distributed_params.get("amp", False)
+            self.use_amp = \
+                runner.experiment.distributed_params.get("amp", False)
         else:
             self.use_amp = False
 
         if self.use_apex is None and runner.experiment is not None:
-            self.use_apex = runner.experiment.distributed_params.get("apex", False)
+            self.use_apex = \
+                runner.experiment.distributed_params.get("apex", False)
         else:
             self.use_apex = False
 
