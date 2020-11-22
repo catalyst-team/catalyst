@@ -75,7 +75,18 @@ def assert_fp16_available() -> None:
 
 
 def initialize_apex(model, optimizer=None, **distributed_params):
-    """@TODO: Docs. Contribution is welcome."""
+    """
+    Prepares model and optimizer for work with Nvidia Apex.
+
+    Args:
+        model: torch model
+        optimizer: torch optimizer
+        **distributed_params: extra params for ``apex.amp.initialize``
+
+    Returns:
+        model and optimiezer, wrapped with Nvidia Apex initialization
+    """
+
     import apex
 
     amp_params = get_fn_default_params(

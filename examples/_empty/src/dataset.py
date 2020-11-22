@@ -5,7 +5,7 @@ class SomeDataset(Dataset):
     """Class representing a `Dataset`."""
 
     def __init__(self):
-        """@TODO: Docs. Contribution is welcome."""
+        """Docs? Contribution is welcome.."""
         pass
 
     def __getitem__(self, index: int):

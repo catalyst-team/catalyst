@@ -117,7 +117,7 @@ class MultiClassDiceMetricCallback(Callback):
             self.confusion_matrix += confusion_matrix
 
     def on_loader_end(self, runner: "IRunner"):
-        """@TODO: Docs. Contribution is welcome.
+        """Logs dice scores to the ``loader_metrics``.
 
         Args:
             runner: current runner

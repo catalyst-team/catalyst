@@ -62,7 +62,7 @@ def test_defaults():
 
 
 def test_defaults_verbose():
-    """@TODO: Docs. Contribution is welcome."""
+    """Docs? Contribution is welcome."""
     test_callbacks = OrderedDict(
         [
             ("_verbose", VerboseLogger),
@@ -92,7 +92,7 @@ def test_defaults_verbose():
 
 
 def test_defaults_check():
-    """@TODO: Docs. Contribution is welcome."""
+    """Docs? Contribution is welcome."""
     test_callbacks = OrderedDict(
         [
             ("_check", CheckRunCallback),
@@ -122,7 +122,7 @@ def test_defaults_check():
 
 
 def test_criterion():
-    """@TODO: Docs. Contribution is welcome."""
+    """Docs? Contribution is welcome."""
     test_callbacks = OrderedDict(
         [
             ("_metrics", MetricManagerCallback),
@@ -157,7 +157,7 @@ def test_criterion():
 
 
 def test_optimizer():
-    """@TODO: Docs. Contribution is welcome."""
+    """Docs? Contribution is welcome."""
     test_callbacks = OrderedDict(
         [
             ("_metrics", MetricManagerCallback),
@@ -192,7 +192,7 @@ def test_optimizer():
 
 
 def test_scheduler():
-    """@TODO: Docs. Contribution is welcome."""
+    """Docs? Contribution is welcome."""
     test_callbacks = OrderedDict(
         [
             ("_metrics", MetricManagerCallback),
@@ -228,7 +228,7 @@ def test_scheduler():
 
 
 def test_all():
-    """@TODO: Docs. Contribution is welcome."""
+    """Docs? Contribution is welcome."""
     test_callbacks = OrderedDict(
         [
             ("_verbose", VerboseLogger),
@@ -266,7 +266,7 @@ def test_all():
 
 
 def test_infer_defaults():
-    """@TODO: Docs. Contribution is welcome."""
+    """Docs? Contribution is welcome."""
     test_callbacks = OrderedDict([("_exception", ExceptionCallback)])
 
     model = torch.nn.Linear(10, 10)
@@ -290,7 +290,7 @@ def test_infer_defaults():
 
 
 def test_infer_all():
-    """@TODO: Docs. Contribution is welcome."""
+    """Docs? Contribution is welcome."""
     test_callbacks = OrderedDict(
         [
             ("_verbose", VerboseLogger),

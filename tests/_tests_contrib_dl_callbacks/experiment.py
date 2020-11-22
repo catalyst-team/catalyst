@@ -9,15 +9,11 @@ from catalyst.dl import ConfigExperiment
 
 
 class Experiment(ConfigExperiment):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """Docs? Contribution is welcome"""
 
     @staticmethod
     def get_transforms(stage: str = None, mode: str = None):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """Docs? Contribution is welcome"""
         return Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
     def get_datasets(
@@ -27,9 +23,7 @@ class Experiment(ConfigExperiment):
         duplicate_loaders: bool = False,
         **kwargs
     ):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """Docs? Contribution is welcome"""
         datasets = OrderedDict()
 
         if stage != "infer":

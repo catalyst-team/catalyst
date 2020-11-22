@@ -24,20 +24,20 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 
 def load_requirements(filename):
-    """@TODO: Docs. Contribution is welcome"""
+    """Docs? Contribution is welcome."""
     with open(os.path.join(PROJECT_ROOT, filename), "r") as f:
         return f.read().splitlines()
 
 
 def load_readme():
-    """@TODO: Docs. Contribution is welcome"""
+    """Docs? Contribution is welcome."""
     readme_path = os.path.join(PROJECT_ROOT, "README.md")
     with io.open(readme_path, encoding="utf-8") as f:
         return f"\n{f.read()}"
 
 
 def load_version():
-    """@TODO: Docs. Contribution is welcome"""
+    """Docs? Contribution is welcome."""
     context = {}
     with open(os.path.join(PROJECT_ROOT, "catalyst", "__version__.py")) as f:
         exec(f.read(), context)
@@ -56,15 +56,15 @@ class UploadCommand(Command):
         print("\033[1m{0}\033[0m".format(s))
 
     def initialize_options(self):
-        """@TODO: Docs. Contribution is welcome"""
+        """Docs? Contribution is welcome."""
         pass
 
     def finalize_options(self):
-        """@TODO: Docs. Contribution is welcome"""
+        """Docs? Contribution is welcome."""
         pass
 
     def run(self):
-        """@TODO: Docs. Contribution is welcome"""
+        """Docs? Contribution is welcome."""
         try:
             self.status("Removing previous builds…")
             rmtree(os.path.join(PROJECT_ROOT, "dist"))
