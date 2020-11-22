@@ -18,7 +18,6 @@ from catalyst.callbacks.logging import (
 )
 from catalyst.callbacks.metric import MetricManagerCallback
 from catalyst.callbacks.optimizer import (
-    AMPOptimizerCallback,
     IOptimizerCallback,
     OptimizerCallback,
 )
@@ -537,12 +536,7 @@ class ConfigExperiment(IExperiment):
         # default_callbacks = [(Name, InterfaceClass, InstanceFactory)]
         default_callbacks = []
 
-        is_amp_enabled = (
-            self.distributed_params.get("amp", False) and check_amp_available()
-        )
-        optimizer_cls = (
-            AMPOptimizerCallback if is_amp_enabled else OptimizerCallback
-        )
+        optimizer_cls = OptimizerCallback
 
         if self._verbose:
             default_callbacks.append(("_verbose", None, VerboseLogger))

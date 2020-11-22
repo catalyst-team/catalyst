@@ -371,7 +371,7 @@ class IRunner(ABC, ICallback, IRunnerLegacy):
         """
         self._device = None
         self._model = None
-        self.experiment = None
+        self.experiment: IExperiment = None
         self._prepare_inner_state(model=model, device=device)
 
     def _prepare_inner_state(
