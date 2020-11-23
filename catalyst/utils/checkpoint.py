@@ -16,7 +16,7 @@ def pack_checkpoint(
     criterion: nn.Module = None,
     optimizer=None,
     scheduler=None,
-    **kwargs
+    **kwargs,
 ):
     """
     Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``
