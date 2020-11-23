@@ -125,7 +125,7 @@ class DrawMasksCallback(ILoggerCallback):
         Returns: [H, W] label mask
         """
         mask = np.zeros_like(prob_masks[0], dtype=np.uint8)
-        n_classes = mask.shape[0]
+        n_classes = prob_masks.shape[0]
         if self.mask2show is not None:
             assert max(self.mask2show) < n_classes
             mask2show = self.mask2show
