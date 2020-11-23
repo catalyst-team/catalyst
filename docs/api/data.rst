@@ -358,14 +358,6 @@ ImageFolderDataset
     :special-members: __getitem__, __len__
 
 
-ImageClassificationDataset
-""""""""""""""""""""""""""
-.. autoclass:: catalyst.contrib.data.cv.dataset.ImageClassificationDataset
-    :show-inheritance:
-    :members:
-    :special-members: __getitem__, __len__
-
-
 Datasets (NLP)
 ~~~~~~~~~~~~~~~~
 
