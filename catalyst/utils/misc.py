@@ -386,8 +386,25 @@ def flatten_dict(
     return collections.OrderedDict(items)
 
 
-def split_dict_to_subdicts(dct: Dict, prefixes: List, extra_key: str):
-    """@TODO: Docs. Contribution is welcome."""
+def split_dict_to_subdicts(dct: Dict, prefixes: List, extra_key: str) -> Dict:
+    """
+    Splits dict into subdicts with spesicied ``prefixes``.
+    Keys, which don't startswith one of the prefixes go to ``extra_key``.
+
+    Examples:
+        >>> dct = {"train_v1": 1, "train_v2": 2, "not_train": 3}
+        >>> split_dict_to_subdicts(dct, prefixes=["train"], extra_key="_extra")
+        >>> {"train": {"v1": 1, "v2": 2}, "_extra": {"not_train": 3}}
+
+    Args:
+        dct: dictionary with keys with prefixes
+        prefixes: prefixes of interest, which we would like to reveal
+        extra_key: extra key to store everything else
+
+    Returns:
+        dictionary with subdictionaries with
+        ``prefixes`` and ``extra_key`` keys
+    """
     subdicts = {}
     extra_subdict = {
         k: v

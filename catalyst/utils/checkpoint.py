@@ -5,15 +5,35 @@ from pathlib import Path
 import shutil
 
 import torch
+from torch import nn
 
 from catalyst.utils.distributed import get_nn_from_ddp_module
 from catalyst.utils.misc import maybe_recursive_call
 
 
 def pack_checkpoint(
-    model=None, criterion=None, optimizer=None, scheduler=None, **kwargs
+    model: nn.Module = None,
+    criterion: nn.Module = None,
+    optimizer=None,
+    scheduler=None,
+    **kwargs
 ):
-    """@TODO: Docs. Contribution is welcome."""
+    """
+    Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``
+    and some extra info ``**kwargs`` to torch-based checkpoint.
+
+    Args:
+        model: torch model
+        criterion: torch criterion
+        optimizer: torch optimizer
+        scheduler: torch scheduler
+        **kwargs: some extra info to pack
+
+    Returns:
+        torch-based checkpoint with ``model_state_dict``,
+        ``criterion_state_dict``, ``optimizer_state_dict``,
+        ``scheduler_state_dict`` keys.
+    """
     checkpoint = kwargs
 
     if isinstance(model, OrderedDict):
@@ -30,7 +50,7 @@ def pack_checkpoint(
     ):
         if dict2save is None:
             continue
-        # @TODO refactor with maybe_recursive_call
+        # @TODO refactor with maybe_recursive_call (?)
         if isinstance(dict2save, dict):
             for key, value in dict2save.items():
                 if value is not None:
