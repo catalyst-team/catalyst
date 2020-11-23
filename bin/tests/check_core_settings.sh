@@ -6,7 +6,7 @@ set -eo pipefail -v
 pip uninstall -r requirements/requirements-contrib.txt -y
 pip uninstall -r requirements/requirements-cv.txt -y
 pip uninstall -r requirements/requirements-ecosystem.txt -y
-pip uninstall -r requirements/requirements-ml.txt -y
+pip uninstall nmslib -y
 pip uninstall -r requirements/requirements-nlp.txt -y
 pip install -r requirements/requirements.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
 
@@ -140,7 +140,7 @@ else:
     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
 """
 
-pip install -r requirements/requirements-ml.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+pip install nmslib --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
 
 python -c """
 from catalyst.contrib.__main__ import COMMANDS

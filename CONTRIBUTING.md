@@ -60,7 +60,7 @@ If you are not familiar with creating a Pull Request, here are some guides:
     pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
     
     # for easy-to-go development, we suggest installing extra dependencies
-    pip install -r requirements/requirements-ml.txt -r requirements/requirements-cv.txt -r requirements/requirements-nlp.txt
+    pip install -r requirements/requirements-cv.txt -r requirements/requirements-nlp.txt
     ```
 2. Break your work into small, single-purpose updates if possible.
 It's much harder to merge in a large change with a lot of disjoint features.
