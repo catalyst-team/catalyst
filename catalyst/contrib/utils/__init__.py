@@ -63,7 +63,6 @@ except ImportError as ex:
         )
         raise ex
 
-
 try:
     import plotly  # noqa: F401
     from catalyst.contrib.utils.plotly import (
@@ -78,13 +77,19 @@ except ImportError as ex:
         )
         raise ex
 
-from catalyst.contrib.utils.cv import *
-from catalyst.contrib.utils.nlp import *
-
-
-if SETTINGS.IS_GIT_AVAILABLE:
+try:
     from catalyst.contrib.utils.wizard import (
         clone_pipeline,
         run_wizard,
         Wizard,
     )
+except ImportError as ex:
+    if SETTINGS.ipython_required:
+        logger.warning(
+            "ipython not available, to install ipython,"
+            " run `pip install ipython`."
+        )
+        raise ex
+
+from catalyst.contrib.utils.cv import *
+from catalyst.contrib.utils.nlp import *

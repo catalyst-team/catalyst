@@ -69,6 +69,7 @@ class Settings(FrozenClass):
         sklearn_required: Optional[bool] = None,
         scipy_required: Optional[bool] = None,
         transformers_required: Optional[bool] = None,
+        ipython_required: Optional[bool] = None,
     ):
         # [catalyst]
         self.contrib_required: bool = contrib_required
@@ -105,6 +106,7 @@ class Settings(FrozenClass):
         self.scipy_required: bool = scipy_required
         self.pandas_required: bool = pandas_required
         self.sklearn_required: bool = sklearn_required
+        self.ipython_required: bool = ipython_required
         self.telegram_logger_token: str = telegram_logger_token
         self.telegram_logger_chat_id: str = telegram_logger_chat_id
         self.use_lz4: bool = use_lz4
