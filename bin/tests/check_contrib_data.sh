@@ -44,7 +44,7 @@ np.save(os.path.join(dir, 'embeddings.npy'), vectors)
 """
 
 PYTHONPATH=.:${PYTHONPATH} \
-    python catalyst/data/scripts/project_embeddings.py \
+    python catalyst/contrib/scripts/project_embeddings.py \
     --in-npy="${TEST_DIR}/embeddings.npy" \
     --in-csv="${TEST_DIR}/images.csv" \
     --out-dir=${TEST_DIR} \

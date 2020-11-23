@@ -153,10 +153,10 @@ try:
 
     COMMANDS["text2embedding"] = text2embedding
 except ImportError as ex:  # noqa: WPS440
-    if SETTINGS.transformers_required:
+    if SETTINGS.transformers_required or SETTINGS.pandas_required:
         logger.warning(
-            "transformers not available, to install transformers,"
-            + " run `pip install transformers`."
+            "transformers/pandas are not available, to install them,"
+            + " run `pip install transformers pandas`."
         )
         raise ex
 

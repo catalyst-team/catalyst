@@ -45,7 +45,7 @@ rm -rf ./examples/logs/_tests_nlp_classification
 echo "test text2embedding script"
 mkdir ./tmp && \
 PYTHONPATH=.:${PYTHONPATH} \
-python ./catalyst/data/scripts/text2embedding.py \
+python ./catalyst/contrib/scripts/text2embedding.py \
     --in-csv=examples/distilbert_text_classification/input/train.csv \
     --txt-col="text" \
     --in-huggingface="bert-base-uncased" \

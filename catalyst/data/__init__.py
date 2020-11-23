@@ -29,3 +29,5 @@ from catalyst.data.sampler_inbatch import (
     HardTripletsSampler,
     HardClusterSampler,
 )
+
+from catalyst.contrib.data import *
