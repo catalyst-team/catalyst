@@ -76,7 +76,7 @@ jobs:
       - name: install dependencies
         run: |
           # python -m pip install --upgrade --user pip
-          pip install -r ./requirements/requirements.txt -r ./tests/requirements.txt -r ./requirements/requirements-nlp.txt -r ./requirements/requirements-tests.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+          pip install -r ./requirements/requirements.txt -r ./tests/requirements.txt -r ./requirements/requirements-nlp.txt -r ./requirements/requirements-nlp-tests.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
           python --version
           pip --version
           pip list
