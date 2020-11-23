@@ -16,8 +16,8 @@ cat <<EOT > .catalyst
 [catalyst]
 contrib_required = false
 cv_required = false
-ml_required = false
 nlp_required = false
+
 EOT
 
 python -c """
@@ -39,8 +39,8 @@ cat <<EOT > .catalyst
 [catalyst]
 contrib_required = true
 cv_required = false
-ml_required = false
 nlp_required = false
+nmslib_required = false
 EOT
 
 # check if fail if requirements not installed
@@ -71,8 +71,8 @@ cat <<EOT > .catalyst
 [catalyst]
 contrib_required = false
 cv_required = true
-ml_required = false
 nlp_required = false
+nmslib_required = false
 EOT
 
 # check if fail if requirements not installed
@@ -122,8 +122,8 @@ cat <<EOT > .catalyst
 [catalyst]
 contrib_required = false
 cv_required = false
-ml_required = true
 nlp_required = false
+nmslib_required = true
 EOT
 
 # check if fail if requirements not installed
@@ -155,8 +155,8 @@ cat <<EOT > .catalyst
 [catalyst]
 contrib_required = false
 cv_required = false
-ml_required = false
 nlp_required = true
+nmslib_required = false
 EOT
 
 # check if fail if requirements not installed
