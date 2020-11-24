@@ -1,5 +1,4 @@
 from typing import Callable, Dict, Union
-from collections import OrderedDict
 import os
 from pathlib import Path
 import shutil
@@ -36,8 +35,12 @@ def pack_checkpoint(
     """
     checkpoint = kwargs
 
-    if isinstance(model, OrderedDict):
-        raise NotImplementedError()
+    if isinstance(model, dict):
+        for key, value in model.items():
+            model_module = get_nn_from_ddp_module(value)
+            checkpoint[f"model_{key}_state_dict"] = maybe_recursive_call(
+                model_module, "state_dict"
+            )
     else:
         model_module = get_nn_from_ddp_module(model)
         checkpoint["model_state_dict"] = maybe_recursive_call(
