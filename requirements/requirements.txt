@@ -8,4 +8,4 @@ packaging
 
 ## logging
 tqdm>=4.33.0
-tensorboardX>=2.1.0
+# tensorboardX>=2.1.0
