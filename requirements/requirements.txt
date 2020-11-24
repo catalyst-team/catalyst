@@ -1,4 +1,4 @@
-# Framework must-haves
+# framework must-haves
 numpy>=1.16.4
 torch>=1.1.0
 PyYAML
@@ -9,14 +9,3 @@ packaging
 ## logging
 tqdm>=4.33.0
 tensorboardX>=2.1.0
-# tensorboard>=1.14.0
-# plotly>=4.1.0
-
-## wizard
-# ipython
-
-## Used in scripts  -> contrib (?)
-# matplotlib
-# pandas>=0.22
-# scikit-learn>=0.20
-# GitPython>=3.1.1
