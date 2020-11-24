@@ -20,6 +20,8 @@ jobs:
         os: [ubuntu-18.04]
         python-version: [3.6]
     timeout-minutes: 60
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
       - uses: actions/checkout@v2
 
