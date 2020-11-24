@@ -83,6 +83,7 @@ logger = logging.getLogger(__name__)
 COMMANDS = OrderedDict([("collect-env", collect_env)])
 
 try:
+    import pandas  # noqa: F401
     from catalyst.contrib.scripts import project_embeddings
 
     COMMANDS["project-embeddings"] = project_embeddings
@@ -96,6 +97,9 @@ except ImportError as ex:
 
 
 try:
+    import sklearn  # noqa: F401
+    import pandas  # noqa: F401
+    import scipy  # noqa: F401
     from catalyst.contrib.scripts import (
         find_thresholds,
         tag2label,
@@ -119,6 +123,9 @@ except ImportError as ex:
 
 
 try:
+    import nmslib  # noqa: F401
+    import sklearn  # noqa: F401
+    import pandas  # noqa: F401
     from catalyst.contrib.scripts import check_index_model, create_index_model
 
     COMMANDS["check-index-model"] = check_index_model
@@ -136,27 +143,33 @@ except ImportError as ex:
         raise ex
 
 try:
+    import cv2  # noqa: F401
+    import imageio  # noqa: F401
+    import torchvision  # noqa: F401
+    import pandas  # noqa: F401
     from catalyst.contrib.scripts import process_images, image2embedding
 
     COMMANDS["process-images"] = process_images
     COMMANDS["image2embedding"] = image2embedding
 except ImportError as ex:  # noqa: WPS440
-    if SETTINGS.cv_required:
+    if SETTINGS.cv_required or SETTINGS.pandas_required:
         logger.warning(
-            "some of catalyst-cv dependencies are not available,"
-            + " to install dependencies, run `pip install catalyst[cv]`."
+            "catalyst-cv/pandas are not available, to install them,"
+            + " run `pip install catalyst[nlp] pandas`."
         )
         raise ex
 
 try:
+    import transformers  # noqa: F401
+    import pandas  # noqa: F401
     from catalyst.contrib.scripts import text2embedding
 
     COMMANDS["text2embedding"] = text2embedding
 except ImportError as ex:  # noqa: WPS440
     if SETTINGS.transformers_required or SETTINGS.pandas_required:
         logger.warning(
-            "transformers/pandas are not available, to install them,"
-            + " run `pip install transformers pandas`."
+            "catalyst-nlp/pandas are not available, to install them,"
+            + " run `pip install catalyst[nlp] pandas`."
         )
         raise ex
 
