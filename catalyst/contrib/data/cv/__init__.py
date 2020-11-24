@@ -26,11 +26,11 @@ try:
         RotateMixin,
     )
 
-    from catalyst.contrib.data.cv.transforms import (
+    from catalyst.contrib.data.cv.transforms.albumentations import (
         TensorToImage,
         ImageToTensor,
     )
-    from catalyst.contrib.data.cv.transforms import (
+    from catalyst.contrib.data.cv.transforms.kornia import (
         OneOfPerBatch,
         OneOfPerSample,
     )
