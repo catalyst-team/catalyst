@@ -86,7 +86,7 @@ try:
     from catalyst.contrib.callbacks import InferMaskCallback
     from catalyst.contrib.models import cv as cv_models
     from catalyst.contrib.utils import imread, imwrite
-    from catalyst.data.__main__ import COMMANDS
+    from catalyst.contrib.__main__ import COMMANDS
 
     assert not (
         'process-images' in COMMANDS
@@ -106,7 +106,7 @@ from catalyst.contrib.data import cv as cv_data
 from catalyst.contrib.callbacks import InferMaskCallback
 from catalyst.contrib.models import cv as cv_models
 from catalyst.contrib.utils import imread, imwrite
-from catalyst.data.__main__ import COMMANDS
+from catalyst.contrib.__main__ import COMMANDS
 
 assert (
     'process-images' in COMMANDS
@@ -165,8 +165,7 @@ try:
     from catalyst.contrib.data import nlp as nlp_data
     from catalyst.contrib.models import nlp as nlp_models
     from catalyst.contrib.utils import tokenize_text, process_bert_output
-    from catalyst.contrib.__main__ import COMMANDS as CONTRIB_SCRIPTS
-    from catalyst.data.__main__ import COMMANDS
+    from catalyst.contrib.__main__ import COMMANDS
 
     assert 'text2embedding' not in COMMANDS
 except (ImportError, AssertionError):
@@ -181,7 +180,7 @@ python -c """
 from catalyst.contrib.data import nlp as nlp_data
 from catalyst.contrib.models import nlp as nlp_models
 from catalyst.contrib.utils import tokenize_text, process_bert_output
-from catalyst.data.__main__ import COMMANDS
+from catalyst.contrib.__main__ import COMMANDS
 
 assert 'text2embedding' in COMMANDS
 """
