@@ -3,21 +3,21 @@
 # Cause the script to exit if a single command fails
 set -eo pipefail -v
 
-pip uninstall -r requirements/requirements-contrib.txt -y
-pip uninstall -r requirements/requirements-cv.txt -y
-pip uninstall -r requirements/requirements-ecosystem.txt -y
-pip uninstall nmslib -y
-pip uninstall -r requirements/requirements-nlp.txt -y
-pip install -r requirements/requirements.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
 
 ################################  pipeline 00  ################################
 # checking catalyst-core loading (default)
+pip uninstall -r requirements/requirements-contrib.txt -y
+pip uninstall -r requirements/requirements-cv.txt -y
+pip uninstall -r requirements/requirements-nlp.txt -y
+pip uninstall -r requirements/requirements-ecosystem.txt -y
+pip uninstall nmslib scikit-learn pandas -y
+pip install -r requirements/requirements.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+
 cat <<EOT > .catalyst
 [catalyst]
 contrib_required = false
 cv_required = false
 nlp_required = false
-
 EOT
 
 python -c """
@@ -35,12 +35,21 @@ else:
 
 ################################  pipeline 01  ################################
 # checking catalyst-contrib dependencies loading
+pip uninstall -r requirements/requirements-contrib.txt -y
+pip uninstall -r requirements/requirements-cv.txt -y
+pip uninstall -r requirements/requirements-nlp.txt -y
+pip uninstall -r requirements/requirements-ecosystem.txt -y
+pip uninstall nmslib scikit-learn pandas -y
+pip install -r requirements/requirements.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+
 cat <<EOT > .catalyst
 [catalyst]
 contrib_required = true
 cv_required = false
 nlp_required = false
 nmslib_required = false
+sklearn_required = false
+pandas_required = false
 EOT
 
 # check if fail if requirements not installed
@@ -62,11 +71,20 @@ pip install -r requirements/requirements-ecosystem.txt --quiet --find-links http
 
 python -c """
 from catalyst.contrib.callbacks import AlchemyLogger
+from catalyst.contrib.callbacks import NeptuneLogger
+from catalyst.contrib.callbacks import WandbLogger
 """
 
 
 ################################  pipeline 02  ################################
 # checking catalyst-cv dependencies loading
+pip uninstall -r requirements/requirements-contrib.txt -y
+pip uninstall -r requirements/requirements-cv.txt -y
+pip uninstall -r requirements/requirements-nlp.txt -y
+pip uninstall -r requirements/requirements-ecosystem.txt -y
+pip uninstall nmslib scikit-learn pandas -y
+pip install -r requirements/requirements.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+
 cat <<EOT > .catalyst
 [catalyst]
 contrib_required = false
@@ -120,12 +138,21 @@ assert (
 
 ################################  pipeline 03  ################################
 # checking catalyst-ml dependencies loading
+pip uninstall -r requirements/requirements-contrib.txt -y
+pip uninstall -r requirements/requirements-cv.txt -y
+pip uninstall -r requirements/requirements-nlp.txt -y
+pip uninstall -r requirements/requirements-ecosystem.txt -y
+pip uninstall nmslib scikit-learn pandas -y
+pip install -r requirements/requirements.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+
 cat <<EOT > .catalyst
 [catalyst]
 contrib_required = false
 cv_required = false
 nlp_required = false
 nmslib_required = true
+sklearn_required = false
+pandas_required = false
 EOT
 
 # check if fail if requirements not installed
@@ -142,7 +169,7 @@ else:
     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
 """
 
-pip install nmslib --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+pip install nmslib scikit-learn pandas --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
 
 python -c """
 from catalyst.contrib.__main__ import COMMANDS
@@ -153,12 +180,21 @@ assert 'check-index-model' in COMMANDS and 'create-index-model' in COMMANDS
 
 ################################  pipeline 04  ################################
 # checking catalyst-nlp dependencies loading
+pip uninstall -r requirements/requirements-contrib.txt -y
+pip uninstall -r requirements/requirements-cv.txt -y
+pip uninstall -r requirements/requirements-nlp.txt -y
+pip uninstall -r requirements/requirements-ecosystem.txt -y
+pip uninstall nmslib scikit-learn pandas -y
+pip install -r requirements/requirements.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+
 cat <<EOT > .catalyst
 [catalyst]
 contrib_required = false
 cv_required = false
 nlp_required = true
 nmslib_required = false
+sklearn_required = false
+pandas_required = false
 EOT
 
 # check if fail if requirements not installed
@@ -176,7 +212,7 @@ else:
     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
 """
 
-pip install -r requirements/requirements-nlp.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+pip install pandas -r requirements/requirements-nlp.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
 
 python -c """
 from catalyst.contrib.data import nlp as nlp_data
