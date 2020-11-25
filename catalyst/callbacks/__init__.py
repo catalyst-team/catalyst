@@ -40,7 +40,6 @@ from catalyst.callbacks.metric import (
 from catalyst.callbacks.optimizer import (
     IOptimizerCallback,
     OptimizerCallback,
-    AMPOptimizerCallback,
 )
 from catalyst.callbacks.periodic_loader import PeriodicLoaderCallback
 from catalyst.callbacks.scheduler import (
