@@ -57,6 +57,7 @@ python -c """
 from catalyst.settings import SETTINGS
 
 assert SETTINGS.use_lz4 == False and SETTINGS.use_pyarrow == False
+assert SETTINGS.sklearn_required == False and SETTINGS.pandas_required == False
 
 try:
     from catalyst.contrib.callbacks import AlchemyLogger
