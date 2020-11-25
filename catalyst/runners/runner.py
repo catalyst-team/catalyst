@@ -18,6 +18,7 @@ from catalyst.typing import (
     RunnerModel,
     Scheduler,
 )
+from catalyst.utils import check_amp_available
 from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
 from catalyst.utils.components import process_components
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
@@ -28,6 +29,33 @@ from catalyst.utils.torch import (
     set_requires_grad,
 )
 from catalyst.utils.tracing import save_traced_model, trace_model
+
+
+def _resolve_bool_fp16(fp16: Union[Dict, bool]):
+    """If fp16 is bool then converts it to dict in the following way
+    If ``fp16==True``:
+        * ``{"amp": True}`` if torch>=1.6.0
+        * ``{"apex": True, "opt_level": "O1", ...}`` if torch<1.6.0
+    If ``fp16==False``:
+        * ``{}``
+    Otherwise returns fp16 unchanged
+
+    Args:
+        fp16: (Union[Dict, bool]): fp16 params
+
+    Returns: resolved version of fp16
+    """
+    if isinstance(fp16, bool):
+        if fp16:
+            return (
+                {"amp": True}
+                if check_amp_available()
+                else {"apex": True, "opt_level": "O1"}
+            )
+        else:
+            return {}
+    else:
+        return fp16
 
 
 class Runner(IStageBasedRunner):
@@ -114,8 +142,14 @@ class Runner(IStageBasedRunner):
             checkpoint_data: additional data to save in checkpoint,
                 for example: ``class_names``, ``date_of_training``, etc
             fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
-                See https://nvidia.github.io/apex/amp.html#properties
-                if fp16=True, params by default will be ``{"opt_level": "O1"}``
+                To use pytorch native amp: ``{"amp": True}``
+                To use apex: ``{"apex": True, "opt_level": "O1", ...}``
+                    See https://nvidia.github.io/apex/amp.html#properties
+                    for more params
+
+                If fp16=True, params by default will be:
+                    * ``{"amp": True}`` if torch>=1.6.0
+                    * ``{"apex": True, "opt_level": "O1", ...}`` if torch<1.6.0
             distributed: if `True` will start training
                 in distributed mode.
                 Note: Works only with python scripts. No jupyter support.
@@ -138,9 +172,7 @@ class Runner(IStageBasedRunner):
         """
         assert state_kwargs is None or stage_kwargs is None
 
-        if isinstance(fp16, bool) and fp16:
-            # @TODO: fix fp16 for amp and apex here (and other places)
-            fp16 = {"opt_level": "O1"}
+        fp16 = _resolve_bool_fp16(fp16)
 
         if resume is not None or load_best_on_end:
             load_on_stage_end = None
@@ -224,9 +256,7 @@ class Runner(IStageBasedRunner):
             verbose: if `True`, it displays the status of the training
                 to the console.
             stage_kwargs: additional stage params
-            fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
-                See https://nvidia.github.io/apex/amp.html#properties
-                if fp16=True, params by default will be ``{"opt_level": "O1"}``
+            fp16 (Union[Dict, bool]): fp16 settings (same as in `train`)
             check: if True, then only checks that pipeline is working
                 (3 epochs only)
             timeit: if True, computes the execution time
@@ -240,8 +270,7 @@ class Runner(IStageBasedRunner):
         """
         assert state_kwargs is None or stage_kwargs is None
 
-        if isinstance(fp16, bool) and fp16:
-            fp16 = {"opt_level": "O1"}
+        fp16 = _resolve_bool_fp16(fp16)
 
         if resume is not None:
             callbacks = sort_callbacks_by_order(callbacks)
@@ -313,14 +342,13 @@ class Runner(IStageBasedRunner):
             loader: loader to predict
             model: model to use for prediction
             resume: path to checkpoint to resume
-            fp16 (Union[Dict, bool]): fp16 usage flag
+            fp16 (Union[Dict, bool]): fp16 settings (same as in `train`)
             initial_seed: seed to use before prediction
 
         Yields:
             bathes with model predictions
         """
-        if isinstance(fp16, bool) and fp16:
-            fp16 = {"opt_level": "O1"}
+        fp16 = _resolve_bool_fp16(fp16)
 
         if model is not None:
             self.model = model
@@ -376,8 +404,7 @@ class Runner(IStageBasedRunner):
             method_name: model's method name that will be traced
             mode: ``train`` or ``eval``
             requires_grad: flag to trace with gradients
-            fp16 (Union[Dict, bool]): If not None, then sets
-                tracing params to FP16
+            fp16 (Union[Dict, bool]): fp16 settings (same as in `train`)
             device: Torch device or a string
             predict_params: additional parameters for model forward
 
@@ -400,14 +427,10 @@ class Runner(IStageBasedRunner):
             self.model = model
         assert self.model is not None
 
-        if isinstance(fp16, bool) and fp16:
-            opt_level = "O1"
-        elif isinstance(fp16, bool) and not fp16:
-            opt_level = None
-        elif isinstance(fp16, dict):
-            opt_level = fp16["opt_level"]
-        else:
-            opt_level = fp16
+        fp16 = _resolve_bool_fp16(fp16)
+        opt_level = None
+        if fp16:
+            opt_level = fp16.get("opt_level", None)
 
         if opt_level is not None:
             device = "cuda"
