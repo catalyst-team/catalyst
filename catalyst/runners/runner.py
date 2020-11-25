@@ -428,7 +428,7 @@ class Runner(IStageBasedRunner):
         fp16 = resolve_bool_fp16(fp16)
         opt_level = None
         if fp16:
-            fp16.get("opt_level", None)
+            opt_level = fp16.get("opt_level", None)
 
         if opt_level is not None:
             device = "cuda"
