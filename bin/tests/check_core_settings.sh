@@ -73,6 +73,8 @@ contrib_required = false
 cv_required = true
 nlp_required = false
 nmslib_required = false
+sklearn_required = false
+pandas_required = false
 EOT
 
 # check if fail if requirements not installed

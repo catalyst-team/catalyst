@@ -107,8 +107,10 @@ class Settings(FrozenClass):
         self.pandas_required: bool = pandas_required
         self.sklearn_required: bool = sklearn_required
         self.ipython_required: bool = ipython_required
+
         self.telegram_logger_token: str = telegram_logger_token
         self.telegram_logger_chat_id: str = telegram_logger_chat_id
+
         self.use_lz4: bool = use_lz4
         self.use_pyarrow: bool = use_pyarrow
 

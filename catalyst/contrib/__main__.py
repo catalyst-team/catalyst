@@ -83,10 +83,17 @@ logger = logging.getLogger(__name__)
 COMMANDS = OrderedDict([("collect-env", collect_env)])
 
 try:
-    import pandas  # noqa: F401
+    import pandas  # noqa: F401 F811
     from catalyst.contrib.scripts import project_embeddings
 
     COMMANDS["project-embeddings"] = project_embeddings
+except ModuleNotFoundError as ex:
+    if SETTINGS.pandas_required:
+        logger.warning(
+            "pandas not available, to install pandas,"
+            " run `pip install pandas`."
+        )
+        raise ex
 except ImportError as ex:
     if SETTINGS.pandas_required:
         logger.warning(
@@ -97,9 +104,9 @@ except ImportError as ex:
 
 
 try:
-    import sklearn  # noqa: F401
-    import pandas  # noqa: F401
-    import scipy  # noqa: F401
+    import sklearn  # noqa: F401 F811
+    import pandas  # noqa: F401 F811
+    import scipy  # noqa: F401 F811
     from catalyst.contrib.scripts import (
         find_thresholds,
         tag2label,
@@ -109,6 +116,17 @@ try:
     COMMANDS["find-thresholds"] = find_thresholds
     COMMANDS["tag2label"] = tag2label
     COMMANDS["split-dataframe"] = split_dataframe
+except ModuleNotFoundError as ex:
+    if (
+        SETTINGS.pandas_required
+        or SETTINGS.sklearn_required
+        or SETTINGS.scipy_required
+    ):
+        logger.warning(
+            "pandas/scipy/sklearn are not available, to install them,"
+            " run `pip install pandas scipy sklearn`."
+        )
+        raise ex
 except ImportError as ex:
     if (
         SETTINGS.pandas_required
@@ -124,12 +142,23 @@ except ImportError as ex:
 
 try:
     import nmslib  # noqa: F401
-    import sklearn  # noqa: F401
-    import pandas  # noqa: F401
+    import sklearn  # noqa: F401 F811
+    import pandas  # noqa: F401 F811
     from catalyst.contrib.scripts import check_index_model, create_index_model
 
     COMMANDS["check-index-model"] = check_index_model
     COMMANDS["create-index-model"] = create_index_model
+except ModuleNotFoundError as ex:
+    if (
+        SETTINGS.nmslib_required
+        or SETTINGS.sklearn_required
+        or SETTINGS.pandas_required
+    ):
+        logger.warning(
+            "nmslib/pandas/sklearn are not available, to install them,"
+            " run `pip install nmslib pandas sklearn`."
+        )
+        raise ex
 except ImportError as ex:
     if (
         SETTINGS.nmslib_required
@@ -146,11 +175,18 @@ try:
     import cv2  # noqa: F401
     import imageio  # noqa: F401
     import torchvision  # noqa: F401
-    import pandas  # noqa: F401
+    import pandas  # noqa: F401 F811
     from catalyst.contrib.scripts import process_images, image2embedding
 
     COMMANDS["process-images"] = process_images
     COMMANDS["image2embedding"] = image2embedding
+except ModuleNotFoundError as ex:  # noqa: WPS440
+    if SETTINGS.cv_required or SETTINGS.pandas_required:
+        logger.warning(
+            "catalyst-cv/pandas are not available, to install them,"
+            + " run `pip install catalyst[nlp] pandas`."
+        )
+        raise ex
 except ImportError as ex:  # noqa: WPS440
     if SETTINGS.cv_required or SETTINGS.pandas_required:
         logger.warning(
@@ -161,10 +197,17 @@ except ImportError as ex:  # noqa: WPS440
 
 try:
     import transformers  # noqa: F401
-    import pandas  # noqa: F401
+    import pandas  # noqa: F401 F811
     from catalyst.contrib.scripts import text2embedding
 
     COMMANDS["text2embedding"] = text2embedding
+except ModuleNotFoundError as ex:  # noqa: WPS440
+    if SETTINGS.transformers_required or SETTINGS.pandas_required:
+        logger.warning(
+            "catalyst-nlp/pandas are not available, to install them,"
+            + " run `pip install catalyst[nlp] pandas`."
+        )
+        raise ex
 except ImportError as ex:  # noqa: WPS440
     if SETTINGS.transformers_required or SETTINGS.pandas_required:
         logger.warning(

@@ -3,4 +3,8 @@ torch>=1.1.0
 PyYAML
 tqdm>=4.33.0
 tensorboardX>=2.1.0
+# for future development:
+# tensorboardX provides tensorboard support for any framework
+# for future development, it's much easier to maintain one general tb provider
+# rather than a bunch of framework-adapted alternatives
 packaging
