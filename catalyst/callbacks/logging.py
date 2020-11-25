@@ -291,7 +291,13 @@ class CSVLogger(ILoggerCallback):
         self.loggers = {}
         self.header_created = {}
 
-    def on_loader_start(self, runner: "IRunner"):
+    def on_loader_start(self, runner: "IRunner") -> None:
+        """
+        On loader start action.
+
+        Args:
+            runner: current runner
+        """
         if runner.loader_key not in self.loggers:
             log_dir = os.path.join(runner.logdir, f"{runner.loader_key}_log")
             os.makedirs(log_dir, exist_ok=True)
