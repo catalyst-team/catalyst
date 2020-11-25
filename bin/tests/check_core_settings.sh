@@ -128,7 +128,7 @@ else:
     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
 """
 
-pip install -r requirements/requirements-cv.txt --quiet \
+pip install pandas -r requirements/requirements-cv.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
 
