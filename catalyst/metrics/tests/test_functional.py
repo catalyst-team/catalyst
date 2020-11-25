@@ -6,8 +6,8 @@ import torch
 from catalyst.metrics.functional import (
     check_consistent_length,
     get_binary_statistics,
+    get_multiclass_statistics,
     get_multilabel_statistics,
-    get_multiclass_statistics
 )
 
 
@@ -159,14 +159,11 @@ def test_get_multilabel_statistics(
 
 
 @pytest.mark.parametrize(
-    [
-        "outputs",
-        "targets"
-    ],
+    ["outputs", "targets"],
     [
         pytest.param(
             torch.tensor([[4.0, 2.0, 3.0, 1.0], [1.0, 2.0, 3.0, 4.0]]),
-            torch.tensor([[0, 0, 1.0, 1.0, 1.0], [0, 0, 1.0, 1.0, 1.0]])
+            torch.tensor([[0, 0, 1.0, 1.0, 1.0], [0, 0, 1.0, 1.0, 1.0]]),
         ),
     ],
 )
