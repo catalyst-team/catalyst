@@ -102,11 +102,21 @@ class Settings(FrozenClass):
         self.plotly_required: bool = self._optional_value(
             plotly_required, default=contrib_required
         )
-        self.nmslib_required: bool = nmslib_required
-        self.scipy_required: bool = scipy_required
-        self.pandas_required: bool = pandas_required
-        self.sklearn_required: bool = sklearn_required
-        self.ipython_required: bool = ipython_required
+        self.nmslib_required: bool = self._optional_value(
+            nmslib_required, default=False
+        )
+        self.scipy_required: bool = self._optional_value(
+            scipy_required, default=False
+        )
+        self.pandas_required: bool = self._optional_value(
+            pandas_required, default=False
+        )
+        self.sklearn_required: bool = self._optional_value(
+            sklearn_required, default=False
+        )
+        self.ipython_required: bool = self._optional_value(
+            ipython_required, default=False
+        )
 
         self.telegram_logger_token: str = telegram_logger_token
         self.telegram_logger_chat_id: str = telegram_logger_chat_id

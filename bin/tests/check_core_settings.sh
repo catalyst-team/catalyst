@@ -40,7 +40,9 @@ pip uninstall -r requirements/requirements-cv.txt -y
 pip uninstall -r requirements/requirements-nlp.txt -y
 pip uninstall -r requirements/requirements-ecosystem.txt -y
 pip uninstall nmslib scikit-learn pandas -y
-pip install -r requirements/requirements.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+pip install -r requirements/requirements.txt --quiet \
+  --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
+  --upgrade-strategy only-if-needed
 
 cat <<EOT > .catalyst
 [catalyst]
@@ -67,8 +69,12 @@ else:
     raise AssertionError('\'ImportError\' expected')
 """
 
-pip install -r requirements/requirements-contrib.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
-pip install -r requirements/requirements-ecosystem.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+pip install -r requirements/requirements-contrib.txt --quiet \
+  --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
+  --upgrade-strategy only-if-needed
+pip install -r requirements/requirements-ecosystem.txt --quiet \
+  --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
+  --upgrade-strategy only-if-needed
 
 python -c """
 from catalyst.contrib.callbacks import AlchemyLogger
@@ -84,7 +90,9 @@ pip uninstall -r requirements/requirements-cv.txt -y
 pip uninstall -r requirements/requirements-nlp.txt -y
 pip uninstall -r requirements/requirements-ecosystem.txt -y
 pip uninstall nmslib scikit-learn pandas -y
-pip install -r requirements/requirements.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+pip install -r requirements/requirements.txt --quiet \
+  --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
+  --upgrade-strategy only-if-needed
 
 cat <<EOT > .catalyst
 [catalyst]
@@ -120,7 +128,9 @@ else:
     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
 """
 
-pip install -r requirements/requirements-cv.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+pip install -r requirements/requirements-cv.txt --quiet \
+  --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
+  --upgrade-strategy only-if-needed
 
 python -c """
 from catalyst.contrib.data import cv as cv_data
@@ -144,7 +154,9 @@ pip uninstall -r requirements/requirements-cv.txt -y
 pip uninstall -r requirements/requirements-nlp.txt -y
 pip uninstall -r requirements/requirements-ecosystem.txt -y
 pip uninstall nmslib scikit-learn pandas -y
-pip install -r requirements/requirements.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+pip install -r requirements/requirements.txt --quiet \
+  --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
+  --upgrade-strategy only-if-needed
 
 cat <<EOT > .catalyst
 [catalyst]
@@ -170,7 +182,9 @@ else:
     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
 """
 
-pip install nmslib scikit-learn pandas --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+pip install nmslib scikit-learn pandas --quiet \
+  --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
+  --upgrade-strategy only-if-needed
 
 python -c """
 from catalyst.contrib.__main__ import COMMANDS
@@ -186,7 +200,9 @@ pip uninstall -r requirements/requirements-cv.txt -y
 pip uninstall -r requirements/requirements-nlp.txt -y
 pip uninstall -r requirements/requirements-ecosystem.txt -y
 pip uninstall nmslib scikit-learn pandas -y
-pip install -r requirements/requirements.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+pip install -r requirements/requirements.txt --quiet \
+  --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
+  --upgrade-strategy only-if-needed
 
 cat <<EOT > .catalyst
 [catalyst]
@@ -213,7 +229,9 @@ else:
     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
 """
 
-pip install pandas -r requirements/requirements-nlp.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+pip install pandas -r requirements/requirements-nlp.txt --quiet \
+  --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
+  --upgrade-strategy only-if-needed
 
 python -c """
 from catalyst.contrib.data import nlp as nlp_data
