@@ -34,7 +34,8 @@ from catalyst.contrib.utils.visualization import (
 )
 
 try:
-    import pandas as pd  # noqa: F401
+    import sklearn  # noqa: F401 F811
+    import pandas  # noqa: F401 F811
 
     from catalyst.contrib.utils.pandas import (
         dataframe_to_list,
@@ -55,6 +56,13 @@ try:
         split_dataset_train_test,
         create_dataframe,
     )
+except ModuleNotFoundError as ex:
+    if SETTINGS.sklearn_required or SETTINGS.pandas_required:
+        logger.warning(
+            "pandas/sklearn are not available, to install them,"
+            " run `pip install pandas sklearn`."
+        )
+        raise ex
 except ImportError as ex:
     if SETTINGS.sklearn_required or SETTINGS.pandas_required:
         logger.warning(
@@ -69,6 +77,13 @@ try:
         plot_tensorboard_log,
         plot_metrics,
     )
+except ModuleNotFoundError as ex:
+    if SETTINGS.plotly_required:
+        logger.warning(
+            "plotly not available, to install plotly,"
+            " run `pip install plotly`."
+        )
+        raise ex
 except ImportError as ex:
     if SETTINGS.plotly_required:
         logger.warning(
@@ -78,16 +93,26 @@ except ImportError as ex:
         raise ex
 
 try:
+    from git import Repo as repo  # noqa: N813 F401
+    from prompt_toolkit import prompt  # noqa: F401
+
     from catalyst.contrib.utils.wizard import (
         clone_pipeline,
         run_wizard,
         Wizard,
     )
+except ModuleNotFoundError as ex:
+    if SETTINGS.ipython_required:
+        logger.warning(
+            "ipython/prompt_toolkit not available, to install them,"
+            " run `pip install ipython prompt_toolkit`."
+        )
+        raise ex
 except ImportError as ex:
     if SETTINGS.ipython_required:
         logger.warning(
-            "ipython not available, to install ipython,"
-            " run `pip install ipython`."
+            "ipython/prompt_toolkit not available, to install them,"
+            " run `pip install ipython prompt_toolkit`."
         )
         raise ex
 
