@@ -12,9 +12,7 @@ def test_reciprocal_rank():
     y_true = [1.0, 0.0]
     k = 2
     value = metrics.reciprocal_rank_at_k(
-        torch.Tensor([y_pred]),
-        torch.Tensor([y_true]),
-        k
+        torch.Tensor([y_pred]), torch.Tensor([y_true]), k
     )
     assert value[0][0] == 1
 
@@ -24,13 +22,10 @@ def test_reciprocal_rank():
     k = 2
 
     value = metrics.reciprocal_rank_at_k(
-        torch.Tensor([y_pred]),
-        torch.Tensor([y_true]),
-        k
+        torch.Tensor([y_pred]), torch.Tensor([y_true]), k
     )
 
     assert value[0][0] == 0.5
-
 
     # check 2 simple case
     y_pred = [0.2, 0.5]
@@ -38,9 +33,7 @@ def test_reciprocal_rank():
     k = 2
 
     value = metrics.reciprocal_rank_at_k(
-        torch.Tensor([y_pred]),
-        torch.Tensor([y_true]),
-        k
+        torch.Tensor([y_pred]), torch.Tensor([y_true]), k
     )
     assert value[0][0] == 1.0
 
@@ -51,9 +44,7 @@ def test_reciprocal_rank():
     k = 2
 
     value = metrics.reciprocal_rank_at_k(
-        torch.Tensor([y_pred1, y_pred05]),
-        torch.Tensor([y_true, y_true]),
-        k
+        torch.Tensor([y_pred1, y_pred05]), torch.Tensor([y_true, y_true]), k
     )
     assert value[0][0] == 1.0
     assert value[1][0] == 0.5
@@ -68,11 +59,7 @@ def test_reciprocal_rank():
     y_pred_torch = torch.Tensor([y_pred1, y_pred2])
     y_true_torch = torch.Tensor([y_true1, y_true2])
 
-    value = metrics.reciprocal_rank_at_k(
-        y_pred_torch,
-        y_true_torch,
-        k=k
-    )
+    value = metrics.reciprocal_rank_at_k(y_pred_torch, y_true_torch, k=k)
 
     assert value[0][0] == 0.5
     assert value[1][0] == 1.0
@@ -88,20 +75,16 @@ def test_reciprocal_rank():
     y_pred_torch = torch.Tensor([y_pred1, y_pred2])
     y_true_torch = torch.Tensor([y_true1, y_true2])
 
-    value = metrics.reciprocal_rank_at_k(
-        y_pred_torch,
-        y_true_torch,
-        k=1
-    )
+    value = metrics.reciprocal_rank_at_k(y_pred_torch, y_true_torch, k=1)
 
     assert value[0][0] == 0.0
     assert value[1][0] == 1.0
 
 
 def test_mrr():
-    '''
+    """
     Test mrr
-    '''
+    """
 
     y_pred1 = [4.0, 2.0, 3.0, 1.0]
     y_pred2 = [1.0, 2.0, 3.0, 4.0]
@@ -112,11 +95,7 @@ def test_mrr():
     y_pred_torch = torch.Tensor([y_pred1, y_pred2])
     y_true_torch = torch.Tensor([y_true1, y_true2])
 
-    mrr_results = metrics.mrr(
-        y_pred_torch,
-        y_true_torch,
-        k_list
-    )
+    mrr_results = metrics.mrr(y_pred_torch, y_true_torch, k_list)
 
     mrr_at_1 = mrr_results[0]
     mrr_at_3 = mrr_results[1]
@@ -127,9 +106,9 @@ def test_mrr():
 
 
 def wrapper_mrr():
-    '''
+    """
     Tets wrapper
-    '''
+    """
 
     y_pred1 = [4.0, 2.0, 3.0, 1.0]
     y_pred2 = [1.0, 2.0, 3.0, 4.0]
@@ -144,8 +123,8 @@ def wrapper_mrr():
     mrr_wrapper = wrap_topk_metric2dict(metrics.mrr, topk_args)
     mrr_dict = mrr_wrapper(outputs, targets)
 
-    mrr_at_1 = mrr_dict['01']
-    mrr_at_3 = mrr_dict['03']
+    mrr_at_1 = mrr_dict["01"]
+    mrr_at_3 = mrr_dict["03"]
 
     assert mrr_at_1 == 0.5
     assert mrr_at_3 == 0.75
