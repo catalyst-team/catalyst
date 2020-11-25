@@ -31,7 +31,7 @@ from catalyst.utils.torch import (
 from catalyst.utils.tracing import save_traced_model, trace_model
 
 
-def resolve_bool_fp16(fp16: Union[Dict, bool]):
+def _resolve_bool_fp16(fp16: Union[Dict, bool]):
     """If fp16 is bool then converts it to dict in the following way
     If ``fp16==True``:
         * ``{"amp": True}`` if torch>=1.6.0
@@ -172,7 +172,7 @@ class Runner(IStageBasedRunner):
         """
         assert state_kwargs is None or stage_kwargs is None
 
-        fp16 = resolve_bool_fp16(fp16)
+        fp16 = _resolve_bool_fp16(fp16)
 
         if resume is not None or load_best_on_end:
             load_on_stage_end = None
@@ -270,7 +270,7 @@ class Runner(IStageBasedRunner):
         """
         assert state_kwargs is None or stage_kwargs is None
 
-        fp16 = resolve_bool_fp16(fp16)
+        fp16 = _resolve_bool_fp16(fp16)
 
         if resume is not None:
             callbacks = sort_callbacks_by_order(callbacks)
@@ -348,7 +348,7 @@ class Runner(IStageBasedRunner):
         Yields:
             bathes with model predictions
         """
-        fp16 = resolve_bool_fp16(fp16)
+        fp16 = _resolve_bool_fp16(fp16)
 
         if model is not None:
             self.model = model
@@ -425,7 +425,7 @@ class Runner(IStageBasedRunner):
             self.model = model
         assert self.model is not None
 
-        fp16 = resolve_bool_fp16(fp16)
+        fp16 = _resolve_bool_fp16(fp16)
         opt_level = None
         if fp16:
             opt_level = fp16.get("opt_level", None)
