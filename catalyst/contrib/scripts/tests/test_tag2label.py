@@ -1,4 +1,4 @@
-# # flake8: noqa
+# flake8: noqa
 # from catalyst.contrib.scripts.tag2label import _prepare_df_from_dirs
 #
 #
