@@ -842,7 +842,7 @@ runner.train(
     logdir="./logdir",
     num_epochs=3,
     callbacks=[dl.AccuracyCallback(num_classes=num_classes)],
-    fp16=dict(opt_level="O1"),
+    fp16=dict(apex=True, opt_level="O1"),
 )
 ```
 </p>
