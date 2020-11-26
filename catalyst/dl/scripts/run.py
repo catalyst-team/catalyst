@@ -5,9 +5,8 @@ from argparse import ArgumentParser
 import os
 from pathlib import Path
 
-from catalyst.contrib.utils.argparse import boolean_flag
 from catalyst.utils.distributed import get_rank
-from catalyst.utils.misc import set_global_seed
+from catalyst.utils.misc import boolean_flag, set_global_seed
 from catalyst.utils.parser import parse_args_uargs
 from catalyst.utils.scripts import (
     distributed_cmd_run,

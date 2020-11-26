@@ -3,8 +3,7 @@ from abc import ABC, abstractmethod
 import logging
 
 from catalyst.core.runner import IRunner
-from catalyst.utils.dict import split_dict_to_subdicts
-from catalyst.utils.misc import format_metric
+from catalyst.utils.misc import format_metric, split_dict_to_subdicts
 
 
 class MetricsFormatter(ABC, logging.Formatter):

@@ -351,9 +351,6 @@ class IRunner(ABC, ICallback, IRunnerLegacy):
     **runner.logdir** - string, path to logging directory to save\
     all logs, metrics, checkpoints and artifacts
 
-    **runner.checkpoint_data** - dictionary\
-    with all extra data for experiment tracking
-
     Extra section
 
 
@@ -433,16 +430,19 @@ class IRunner(ABC, ICallback, IRunnerLegacy):
         self.epoch_metrics: Dict = defaultdict(None)
 
         # metrics & validation
+        # @TODO: mote to validation callback
         self.main_metric: str = main_metric
         self.minimize_metric: bool = minimize_metric
 
         # validation
+        # @TODO: mote to validation callback
         self.valid_loader: str = valid_loader
         self.valid_metrics: Dict = defaultdict(None)
         self.is_best_valid: bool = False
         self.best_valid_metrics: Dict = defaultdict(None)
 
-        # distributed info (@TODO: move to Engine?)
+        # distributed info
+        # @TODO: move to Engine
         self.distributed_rank: int = get_rank()
         self.is_distributed_master: bool = ~(self.distributed_rank > 0)
         self.is_distributed_worker: bool = self.distributed_rank > 0
@@ -475,7 +475,8 @@ class IRunner(ABC, ICallback, IRunnerLegacy):
         self.batch_size: int = 0
 
         # logging
-        self.expdir: Path = None
+        # @TODO: mote to checkpoint callback
+        # self.expdir: Path = None
         self.logdir: Path = Path(logdir) if logdir is not None else None
         # extra checkpoint data for saving in checkpoint files
         self.checkpoint_data: Dict = checkpoint_data or {}

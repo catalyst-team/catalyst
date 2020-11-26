@@ -12,6 +12,8 @@ from catalyst.utils.misc import format_metric, is_exception
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
+logger = logging.getLogger(__name__)
+
 
 class TelegramLogger(Callback):
     """
@@ -71,7 +73,7 @@ class TelegramLogger(Callback):
             request = Request(url)
             urlopen(request)  # noqa: S310
         except Exception as e:
-            logging.getLogger(__name__).warning(f"telegram.send.error:{e}")
+            logger.warning(f"telegram.send.error:{e}")
 
     def on_stage_start(self, runner: "IRunner"):
         """Notify about starting a new stage."""

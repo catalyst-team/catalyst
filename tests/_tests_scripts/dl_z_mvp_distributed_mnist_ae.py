@@ -6,8 +6,8 @@ from torch import nn
 from torch.nn import functional as F
 
 from catalyst import dl, metrics, utils
+from catalyst.contrib.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
-from catalyst.data.cv import ToTensor
 
 
 class ClassifyAE(nn.Module):
