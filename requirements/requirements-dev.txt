@@ -9,3 +9,4 @@ catalyst-sphinx-theme==1.1.2
 # TODO: remove
 ipython
 pandas
+sklearn
